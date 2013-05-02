@@ -103,7 +103,7 @@ class Lookup {
 		$_['BJ'] = array('name'=>__('Benin','Shopp'),'currency'=>array('code'=>'XOF','format'=>'# ### CFA'),'units'=>'metric','region'=>5);
 		$_['BM'] = array('name'=>__('Bermuda','Shopp'),'currency'=>array('code'=>'BMD','format'=>'BD$#,###.##'),'units'=>'metric','region'=>0);
 		$_['BT'] = array('name'=>__('Bhutan','Shopp'),'currency'=>array('code'=>'BTN','format'=>'Nu. #,###.##'),'units'=>'metric','region'=>6);
-		$_['BO'] = array('name'=>__('Bolivia','Shopp'),'currency'=>array('code'=>'BOB','format'=>'Bs #.###,##'),'units'=>'metric','region'=>5);
+		$_['BO'] = array('name'=>__('Bolivia','Shopp'),'currency'=>array('code'=>'BOB','format'=>'Bs #.###,##'),'units'=>'metric','region'=>2);
 		$_['BA'] = array('name'=>__('Bosnia and Herzegovina','Shopp'),'currency'=>array('code'=>'BAM','format'=>'KM #.###,##'),'units'=>'metric','region'=>3);
 		$_['BW'] = array('name'=>__('Botswana','Shopp'),'currency'=>array('code'=>'BWP','format'=>'P#,###.##'),'units'=>'metric','region'=>5);
 		$_['BR'] = array('name'=>__('Brazil','Shopp'),'currency'=>array('code'=>'BRL','format'=>'R$#.###,##'),'units'=>'metric','region'=>2);
@@ -259,7 +259,7 @@ class Lookup {
 		$_['LC'] = array('name'=>__('Saint Lucia','Shopp'),'currency'=>array('code'=>'XCD','format'=>'EC$#,###.##'),'units'=>'metric','region'=>1);
 		$_['MF'] = array('name'=>__('Saint Martin','Shopp'),'currency'=>array('code'=>'EUR','format'=>'€ #,###.##'),'units'=>'metric','region'=>1);
 		$_['PM'] = array('name'=>__('Saint Pierre and Miquelon','Shopp'),'currency'=>array('code'=>'EUR','format'=>'# ###,## €'),'units'=>'metric','region'=>0);
-		$_['VC'] = array('name'=>__('Saint Vincent','Shopp'),'currency'=>array('code'=>'XCD','format'=>'EC$#,###.##'),'units'=>'metric','region'=>6);
+		$_['VC'] = array('name'=>__('Saint Vincent','Shopp'),'currency'=>array('code'=>'XCD','format'=>'EC$#,###.##'),'units'=>'metric','region'=>2);
 		$_['WS'] = array('name'=>__('Samoa','Shopp'),'currency'=>array('code'=>'WST','format'=>'WS$#,###.##'),'units'=>'metric','region'=>7);
 		$_['SM'] = array('name'=>__('San Marino','Shopp'),'currency'=>array('code'=>'EUR','format'=>'€ #,###.##'),'units'=>'metric','region'=>3);
 		$_['ST'] = array('name'=>__('São Tomé and Príncipe','Shopp'),'currency'=>array('code'=>'STD','format'=>'Db #,###.##'),'units'=>'metric','region'=>5);

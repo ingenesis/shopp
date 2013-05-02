@@ -565,14 +565,14 @@ class ShoppOrder {
 
 		if ( 0 == $Cart->count() ) {
 			$valid = apply_filters('shopp_ordering_empty_cart',false);
-			shopp_error(__('There are no items in the cart.', 'Shopp'), $errlevel);
+			shopp_add_error(__('There are no items in the cart.', 'Shopp'), $errlevel);
 		}
 
 		$stock = true;
 		foreach ( $Cart as $item ) {
 			if ( ! $item->instock() ){
 				$valid = apply_filters('shopp_ordering_items_outofstock',false);
-				shopp_error( sprintf(__('%s does not have sufficient stock to process order.', 'Shopp'),
+				shopp_add_error( sprintf(__('%s does not have sufficient stock to process order.', 'Shopp'),
 					$item->name . ( empty($item->option->label) ? '' : '(' . $item->option->label . ')' )
 				), $errlevel);
 				$stock = false;
@@ -589,7 +589,7 @@ class ShoppOrder {
 
 		if ( ! $valid_customer ) {
 			$valid = false;
-			shopp_error(__('There is not enough customer information to process the order.','Shopp'), $errlevel);
+			shopp_add_error(__('There is not enough customer information to process the order.','Shopp'), $errlevel);
 		}
 
 		// Check for shipped items but no Shipping information
@@ -610,14 +610,14 @@ class ShoppOrder {
 				if ( $Shiprates->realtime() )
 					$message = __('The order cannot be processed. The shipping rate service did not provide rates because of a problem and no other shipping is available to the address you provided. Please return to %scheckout%s and try again or contact the store administrator.', 'Shopp');
 
-				if ( ! $valid ) shopp_error( sprintf($message, '<a href="'.shoppurl(false,'checkout',$this->security()).'">', '</a>'), $errlevel );
+				if ( ! $valid ) shopp_add_error( sprintf($message, '<a href="'.shoppurl(false,'checkout',$this->security()).'">', '</a>'), $errlevel );
 			}
 
 		}
 
 		if ( ! $valid_shipping ) {
 			$valid = false;
-			shopp_error(__('The shipping address information is incomplete. The order cannot be processed.','Shopp'), $errlevel);
+			shopp_add_error(__('The shipping address information is incomplete. The order cannot be processed.','Shopp'), $errlevel);
 		}
 
 		return $valid;

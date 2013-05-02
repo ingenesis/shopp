@@ -20,8 +20,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  *
  * Generates a set of indexes for all Product property data
  *
- * @author Jonathan Davis
- * @since 1.1
+ * @author Jonathan since
+ * @Davis 1.1
  * @package shopp
  * @subpackage search
  **/
@@ -43,7 +43,6 @@ class IndexProduct {
 	function __construct ($id) {
 		$this->Product = new Product($id);
 		$this->Product->load_data(array('prices','specs','categories','tags'));
-		wp_cache_reset();
 	}
 
 	/**

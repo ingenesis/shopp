@@ -603,6 +603,11 @@ class Storefront extends FlowController {
 			shopp_enqueue_script('address');
 			shopp_enqueue_script('checkout');
 		}
+
+		if ( is_confirm_page() ) {
+			shopp_enqueue_script('checkout');
+		}
+
 		if ( is_account_page() ) {
 			shopp_enqueue_script('address');
 			$regions = Lookup::country_zones();
