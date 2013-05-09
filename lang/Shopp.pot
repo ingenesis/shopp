@@ -8778,22 +8778,22 @@ msgstr ""
 #: templates/thanks.php:42
 msgid "Your order is still in progress and has not yet been received from the payment processor. You will receive an email notification when your payment has been verified and the order has been completed."
 msgstr ""
-#. Plugin Name of the plugin/theme
+#: Plugin Name of the plugin/theme
 msgid "Shopp"
 msgstr ""
 
-#. Plugin URI of the plugin/theme
+#: Plugin URI of the plugin/theme
 msgid "http://shopplugin.net"
 msgstr ""
 
-#. Description of the plugin/theme
+#: Description of the plugin/theme
 msgid "Bolt-on ecommerce solution for WordPress"
 msgstr ""
 
-#. Author of the plugin/theme
+#: Author of the plugin/theme
 msgid "Ingenesis Limited"
 msgstr ""
 
-#. Author URI of the plugin/theme
+#: Author URI of the plugin/theme
 msgid "http://ingenesis.net"
 msgstr ""
