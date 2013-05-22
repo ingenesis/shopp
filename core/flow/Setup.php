@@ -184,7 +184,7 @@ class Setup extends AdminController {
 	 * @return void
 	 **/
 	function setup () {
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings')) )
+		if ( ! current_user_can('shopp_settings') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		// Welcome screen handling
@@ -277,7 +277,7 @@ class Setup extends AdminController {
 	}
 
 	function presentation () {
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_presentation')) )
+		if ( ! current_user_can('shopp_settings_presentation') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$builtin_path = SHOPP_PATH.'/templates';
@@ -352,7 +352,7 @@ class Setup extends AdminController {
 		global $Shopp;
 
 		$db =& DB::get();
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_checkout')) )
+		if ( ! current_user_can('shopp_settings_checkout') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$purchasetable = DatabaseObject::tablename(Purchase::$table);
@@ -428,7 +428,7 @@ class Setup extends AdminController {
 	 **/
 	function shipping () {
 
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_shipping')) )
+		if ( ! current_user_can('shopp_settings_shipping') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$sub = 'settings';
@@ -715,7 +715,7 @@ class Setup extends AdminController {
 	}
 
 	function taxes () {
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_taxes')) )
+		if ( ! current_user_can('shopp_settings_taxes') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$sub = 'settings';
@@ -756,7 +756,7 @@ class Setup extends AdminController {
 	}
 
 	function taxrates () {
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_taxes')) )
+		if ( ! current_user_can('shopp_settings_taxes') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$edit = false;
@@ -927,7 +927,7 @@ class Setup extends AdminController {
 	}
 
 	function payments () {
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_payments')) )
+		if ( ! current_user_can('shopp_settings_payments') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		global $Shopp;
@@ -1024,7 +1024,7 @@ class Setup extends AdminController {
 
 	function pages () {
 
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings')) )
+		if ( ! current_user_can('shopp_settings') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		if ( ! empty($_POST['save']) ) {
@@ -1064,7 +1064,7 @@ class Setup extends AdminController {
 
 	function images () {
 
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings')) )
+		if ( ! current_user_can('shopp_settings') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$defaults = array(
@@ -1150,7 +1150,7 @@ class Setup extends AdminController {
 	}
 
 	function system () {
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_system')) )
+		if ( ! current_user_can('shopp_settings_system') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$Shopp = Shopp::object();
