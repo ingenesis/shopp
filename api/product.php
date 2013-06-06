@@ -1807,7 +1807,7 @@ function shopp_product_variant_set_saleprice ( $variant = false, $flag = false, 
  * @return bool/Price false on failure, true if Price saved, else the modified Price object.
  **/
 function shopp_product_variant_set_shipping ( $variant = false, $flag = false, $settings = array(), $context = 'variant' ) {
-	global $Shopp;
+	$Shopp = Shopp::object();
 	$context = ( 'variant' == $context ? 'variation' : $context );
 	$save = true;
 	if ( is_object($variant) && is_a($variant, 'Price') ) {

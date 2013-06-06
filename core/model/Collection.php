@@ -1202,7 +1202,7 @@ class ProductCategory extends ProductTaxonomy {
 	// 				WHERE {$loading['where']}
 	// 				GROUP BY letter";
 	//
-	// 	$alpha = $db->query($ac,AS_ARRAY);
+	// 	$alpha = $db->query($ac,'array');
 	//
 	// 	$entry = new stdClass();
 	// 	$entry->letter = false;
@@ -1243,7 +1243,7 @@ class ProductCategory extends ProductTaxonomy {
 	 * @return object The Product object
 	 **/
 	public function adjacent_product($next=1) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		if ($next < 0) $this->loading['adjacent'] = "previous";
 		else $this->loading['adjacent'] = "next";
@@ -1908,7 +1908,7 @@ class RelatedProducts extends SmartCollection {
 		// Or load a product specified
 		if ( isset($options['product']) ) {
 			if ( 'recent-cartitem' == $options['product'] ) {			// Use most recently added item in the cart
-				$this->product = new Product($Cart->Added->product);
+				$this->product = new Product($Cart->added()->product);
 			} elseif ( intval($options['product']) > 0 ) { 	// Load by specified id
 				$this->product = new Product( intval($options['product']) );
 			} else {
@@ -1991,7 +1991,7 @@ class AlsoBoughtProducts extends SmartCollection {
 		// Or load a product specified
 		if (isset($options['product'])) {
 			if ($options['product'] == "recent-cartitem") { 			// Use most recently added item in the cart
-				$this->product = new Product($Cart->Added->product);
+				$this->product = new Product($Cart->added()->product);
 			} elseif (preg_match('/^[\d+]$/',$options['product'])) {	// Load by specified id
 				$this->product = new Product($options['product']);
 			} else {

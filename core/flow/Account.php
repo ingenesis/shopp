@@ -323,7 +323,7 @@ class Account extends AdminController {
 	 * @return void Description...
 	 **/
 	function layout () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Admin =& $Shopp->Flow->Admin;
 		include(SHOPP_ADMIN_PATH."/customers/ui.php");
 	}

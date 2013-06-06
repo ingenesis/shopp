@@ -55,11 +55,11 @@ class Purchase extends DatabaseObject {
 		$price = DatabaseObject::tablename(Price::$table);
 		$Purchased = new Purchased();
 		if (empty($this->id)) return false;
-		$this->purchased = DB::query("SELECT pd.*,pr.inventory FROM $table AS pd LEFT JOIN $price AS pr ON pr.id=pd.price WHERE pd.purchase=$this->id",'array',array($Purchased,'loader'));
+		$this->purchased = DB::query("SELECT pd.*,pr.inventory FROM $table AS pd LEFT JOIN $price AS pr ON pr.id=pd.price WHERE pd.purchase=$this->id", 'array', array($Purchased, 'loader') );
 		foreach ( $this->purchased as &$purchase) {
 			if (!empty($purchase->download)) $this->downloads = true;
 			if ('Shipped' == $purchase->type) $this->shipable = true;
-			if ( str_true($purchase->inventory) ) $this->stocked = true;
+			if ( isset($purchase->inventory) && str_true($purchase->inventory) ) $this->stocked = true;
 			if ( is_string($purchase->data) ) $purchase->data = unserialize($purchase->data);
 			if ('yes' == $purchase->addons) {
 				$purchase->addons = new ObjectMeta($purchase->id,'purchased','addon');
@@ -147,8 +147,11 @@ class Purchase extends DatabaseObject {
 	 * @return boolean
 	 **/
 	function ispaid () {
-		if (empty($this->events)) $this->load_events();
-		return ($this->captured == $this->total);
+		if ( empty($this->events) ) $this->load_events();
+
+		$legacypaid = ( 0 == $this->captured && 'CHARGED' == $Purchase->txnstatus );
+
+		return ($this->captured == $this->total || $legacypaid);
 	}
 
 	static function unstock ( UnstockOrderEvent $Event ) {
@@ -163,9 +166,10 @@ class Purchase extends DatabaseObject {
 		if ( empty($Purchase->purchased) ) $Purchase->load_purchased();
 		if ( ! $Purchase->stocked ) return true; // no inventory in purchase
 
+		$prices = array();
 		$allocated = array();
 		foreach ( $Purchase->purchased as $Purchased ) {
-			if ( is_a($Purchased->addons,'ObjectMeta') && ! empty($Purchased->addons->meta) ) {
+			if ( is_a($Purchased->addons, 'ObjectMeta') && ! empty($Purchased->addons->meta) ) {
 				foreach ( $Purchased->addons->meta as $index => $Addon ) {
 					if ( ! str_true($Addon->value->inventory) ) continue;
 
@@ -177,6 +181,10 @@ class Purchase extends DatabaseObject {
 						'quantity' => $Purchased->quantity
 					));
 
+					$prices[ $Addon->value->id ] = array(
+						$Purchased->name,
+						isset($prices[ $Addon->value->id ]) ? $prices[ $Addon->value->id ][1] + $Purchased->quantity : $Purchased->quantity
+					);
 				}
 			}
 			if ( ! str_true($Purchased->inventory) ) continue;
@@ -187,19 +195,31 @@ class Purchase extends DatabaseObject {
 				'price' => $Purchased->price,
 				'quantity' => $Purchased->quantity
 			));
+
+			$prices[ $Purchased->price ] = array(
+				$Purchased->name,
+				isset($prices[ $Purchased->price ]) ? $prices[ $Purchased->price ][1] + $Purchased->quantity : $Purchased->quantity
+			);
 		}
 
-		if ( ! empty($allocated) ) {
-			$pricetable = DatabaseObject::tablename(Price::$table);
-			$prices = array();
-			foreach ( $allocated as $id => $PSA )
-				$prices[$PSA->price] = isset($prices[$PSA->price]) ? $prices[$PSA->price] + $PSA->quantity : $PSA->quantity;
+		if ( empty($allocated) ) return;
 
-			foreach ( $prices as $price => $qty )
-				DB::query("UPDATE $pricetable SET stock=stock-".(int)$qty." WHERE id='$price' LIMIT 1");
+		$pricetable = DatabaseObject::tablename(Price::$table);
+		$lowlevel = shopp_setting('lowstock_level');
+		foreach ( $prices as $price => $data ) {
+			list($productname, $qty) = $data;
+			DB::query("UPDATE $pricetable SET stock=(stock-" . (int)$qty . ") WHERE id='$price' LIMIT 1");
+			$inventory = DB::query("SELECT label, stock, stocked FROM $pricetable WHERE id='$price' LIMIT 1", 'auto');
 
-			$Event->unstocked($allocated);
+			$product = "$productname, $inventory->label";
+			if ( 0 == $inventory->stock ) {
+				new ShoppError(sprintf(__('%s is now out-of-stock!', 'Shopp'), $product), 'outofstock_warning', SHOPP_STOCK_ERR);
+			} elseif ( ($inventory->stock / $inventory->stocked * 100) <= $lowlevel ) {
+				new ShoppError(sprintf(__('%s has low stock levels and should be re-ordered soon.', 'Shopp'), $product), 'lowstock_warning', SHOPP_STOCK_ERR);
+			}
 		}
+
+		$Event->unstocked($allocated);
 	}
 
 	/**
@@ -278,7 +298,7 @@ class Purchase extends DatabaseObject {
 	}
 
 	function gateway () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$processor = $this->gateway;
 		if ('FreeOrder' == $processor) return $Shopp->Gateways->freeorder;
@@ -585,7 +605,7 @@ class PurchasesExport {
 	var $limit = 1024;
 
 	function __construct () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$this->purchase_cols = Purchase::exportcolumns();
 		$this->purchased_cols = Purchased::exportcolumns();
@@ -816,7 +836,7 @@ class PurchasesXLSExport extends PurchasesExport {
 
 class PurchasesIIFExport extends PurchasesExport {
 	function __construct () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		parent::__construct();
 		$this->content_type = "application/qbooks";
 		$this->extension = "iif";
@@ -857,7 +877,7 @@ class PurchasesIIFExport extends PurchasesExport {
 	function record () { }
 
 	function settings () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		?>
 		<div id="iif-settings" class="hidden">
 			<input type="text" id="iif-account" name="settings[purchaselog_iifaccount]" value="<?php echo shopp_setting('purchaselog_iifaccount'); ?>" size="30"/><br />

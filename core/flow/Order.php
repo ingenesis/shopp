@@ -63,6 +63,8 @@ class ShoppOrder {
 		$this->Shipping->locate();
 
 		$this->Tax = ShoppingObject::__new( 'ShoppTax' );
+		$this->taxaddress();
+
 		$this->Shiprates = ShoppingObject::__new( 'ShoppShiprates' );
 		$this->Discounts = ShoppingObject::__new( 'ShoppDiscounts' );
 
@@ -371,7 +373,7 @@ class ShoppOrder {
 		} else { // Handle updates to an existing order from checkout reprocessing
 			if ( !empty(ShoppPurchase()->id) ) $Purchase = ShoppPurchase();	// Update existing order
 			else $Purchase = new Purchase($this->inprogress);
-			$changed = ($this->checksum != $this->Cart->checksum); // Detect changes to the cart
+			$changed = $this->Cart->changed(); // Detect changes to the cart
 		}
 
 		// Capture early event transaction IDs
@@ -534,17 +536,17 @@ class ShoppOrder {
 	 * @return void
 	 **/
 	public function success () {
-		$purchase = $this->inprogress;
 
-		do_action('shopp_order_success',ShoppPurchase());
+		$this->purchase = $this->inprogress;
+		$this->inprogress = false;
+
+		do_action('shopp_order_success', ShoppPurchase());
 
 		Shopping::resession();
 
-		$this->purchase = $purchase;
-		$this->inprogress = false;
+		if ( false !== $this->purchase )
+			shopp_redirect( shoppurl(false, 'thanks') );
 
-		if ($this->purchase !== false)
-			shopp_redirect(shoppurl(false,'thanks'));
 	}
 
 	public function validate () {
@@ -674,9 +676,7 @@ class ShoppOrder {
 		$this->Cart->clear();
 
 		$this->data = array();
-
 		$this->inprogress = false;
-		$this->purchase = false;
 		$this->txnid = false;
 
 	}

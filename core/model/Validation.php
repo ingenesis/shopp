@@ -171,7 +171,7 @@ class ShoppFormValidation {
 		if ( apply_filters('shopp_billing_valid_cardtype', ! $card ))
 			return shopp_add_error( __('The credit card type you provided is invalid.','Shopp') );
 
-		if ( apply_filters('shopp_billing_valid_card',! $card->validate($_POST['billing']['card'])))
+		if ( apply_filters('shopp_billing_valid_card', ! $card->validate($_POST['billing']['card']) ))
 			return shopp_add_error( __('The credit card number you provided is invalid.','Shopp') );
 
 		if ( apply_filters('shopp_billing_cardexpires_month_required',empty($_POST['billing']['cardexpires-mm'])) )
@@ -180,8 +180,7 @@ class ShoppFormValidation {
 		if ( apply_filters('shopp_billing_cardexpires_year_required',empty($_POST['billing']['cardexpires-yy'])) )
 			return shopp_add_error( __('You did not enter the year the credit card expires.','Shopp') );
 
-		if ( apply_filters('shopp_billing_card_expired',( ! empty($_POST['billing']['cardexpires-mm']) && ! empty($_POST['billing']['cardexpires-yy'])))
-		 	&& $_POST['billing']['cardexpires-mm'] < date('n') && $_POST['billing']['cardexpires-yy'] <= date('y') )
+		if ( apply_filters('shopp_billing_card_expired', intval($_POST['billing']['cardexpires-yy']) <= intval(date('y')) || intval($_POST['billing']['cardexpires-mm']) < intval(date('n')) ) )
 			return shopp_add_error( __('The credit card expiration date you provided has already expired.','Shopp') );
 
 		if ( apply_filters('shopp_billing_cardholder_required',strlen($_POST['billing']['cardholder']) < 2) )

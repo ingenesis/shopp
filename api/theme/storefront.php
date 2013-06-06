@@ -128,7 +128,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		if ($id !== false) {
 			if (isset($O->images[$id])) $img = $O->images[$id];
 			else {
-				shopp_debug( sprintf('No %s image exists at with the specified database ID of %s.',get_class($O),$id) );
+				shopp_debug( sprintf('No %s image exists at with the specified database ID of %d.', get_class($O), $id) );
 				return '';
 			}
 		}
@@ -139,7 +139,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			if( isset($keys[$index]) && isset($O->images[ $keys[$index] ]) )
 				$img = $O->images[$keys[$index]];
 			else {
-				shopp_debug( sprintf('No %s image exists at the specified index position %s.',get_class($O),$id) );
+				shopp_debug( sprintf('No %s image exists at the specified index position %d.', get_class($O), $id) );
 				return '';
 			}
 		}
@@ -196,7 +196,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	}
 
 	static function breadcrumb ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$defaults = array(
 			'separator' => '&nbsp;&raquo; ',
@@ -655,7 +655,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	}
 
 	static function product ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Storefront = ShoppStorefront();
 
 		if (isset($options['name'])) ShoppProduct(new Product($options['name'],'name'));
@@ -826,7 +826,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	}
 
 	static function side_product ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$content = false;
 		$source = isset($options['source'])?$options['source']:'product';
@@ -907,20 +907,20 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			'format' => 'list',
 			'link' => 'view'
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract($options);
 
 		$tags = get_terms( ProductTag::$taxon, array( 'orderby' => 'count', 'order' => 'DESC', 'number' => $number) );
 
-		if (empty($tags)) return false;
+		if ( empty($tags) ) return false;
 
 		$min = $max = false;
-		foreach ($tags as &$tag) {
-			$min = !$min?$tag->count:min($min,$tag->count);
-			$max = !$max?$tag->count:max($max,$tag->count);
+		foreach ( $tags as &$entry ) {
+			$min = ! $min ? $entry->count : min($min, $entry->count);
+			$max = ! $max ? $entry->count : max($max, $entry->count);
 
-			$link_function = ('edit' == $link?'get_edit_tag_link':'get_term_link');
-			$tag->link = $link_function(intval($tag->term_id),ProductTag::$taxon);
+			$link_function = ( 'edit' == $link ? 'get_edit_tag_link' : 'get_term_link');
+			$entry->link = $link_function(intval($entry->term_id), ProductTag::$taxon);
 		}
 
 		// Sorting
@@ -930,22 +930,24 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			if ( 'RAND' == $order ) shuffle($tags);
 			else {
 				if ( 'name' == $orderby )
-					uasort( $tags, create_function('$a, $b', 'return strnatcasecmp($a->name, $b->name);') );
+					usort( $tags, create_function('$a, $b', 'return strnatcasecmp($a->name, $b->name);') );
 				else
-					uasort( $tags, create_function('$a, $b', 'return ($a->count > $b->count);') );
+					usort( $tags, create_function('$a, $b', 'return ($a->count > $b->count);') );
 
 				if ( 'DESC' == $order ) $tags = array_reverse( $tags, true );
 			}
 		}
 
 		// Markup
-		if ('inline' == $format) $markup = '<div class="shopp tagcloud">';
-		if ('list' == $format) $markup = '<ul class="shopp tagcloud">';
-		foreach ((array)$tags as $tag) {
-			$level = floor((1-$tag->count/$max)*$levels)+1;
-			if ('list' == $format) $markup .= '<li class="level-'.$level.'">';
-			$markup .= '<a href="'.esc_url($tag->link).'" rel="tag">'.$tag->name.'</a>';
-			if ('list' == $format) $markup .= '</li> ';
+		if ( 'inline' == $format ) $markup = '<div class="shopp tagcloud">';
+		if ( 'list' == $format ) $markup = '<ul class="shopp tagcloud">';
+		foreach ( (array)$tags as $tag ) {
+
+			$level = floor( (1 - $tag->count / $max) * $levels )+1;
+			if ( 'list' == $format ) $markup .= '<li class="level-' . $level . '">';
+			$markup .= '<a href="' . esc_url($tag->link) . '" rel="tag">' . $tag->name . '</a>';
+			if ( 'list' == $format ) $markup .= '</li> ';
+
 		}
 		if ('list' == $format) $markup .= '</ul>';
 		if ('inline' == $format) $markup .= '</div>';
@@ -956,7 +958,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	static function url ($result, $options, $O) { return shoppurl(false,'catalog'); }
 
 	static function views ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		if (isset($Shopp->Category->controls)) return false;
 		$string = "";
 		$string .= '<ul class="views">';

@@ -211,7 +211,7 @@ class FSStorage extends StorageModule implements StorageEngine {
 		if ($_GET['t'] == "image") $this->context('image');
 		else $this->context('download');
 
-		global $Shopp;
+		$Shopp = Shopp::object();
 		if ($Shopp->Storage->engines[$this->context] != $this->module) return;
 
 		$directory = false;	// The directory to search

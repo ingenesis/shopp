@@ -72,7 +72,7 @@ class Promote extends AdminController {
 	 * @author Jonathan Davis
 	 **/
 	function admin () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		if (!empty($_GET['id'])) $this->editor();
 		else $this->promotions();
 	}
@@ -84,7 +84,7 @@ class Promote extends AdminController {
 	 * @return void
 	 **/
 	function promotions () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		if ( ! current_user_can('shopp_promotions') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -131,10 +131,7 @@ class Promote extends AdminController {
 
 			// $Promotion->reset_discounts();
 			if ($Promotion->target == "Catalog")
-				$Promotion->catalog_discounts();
-
-			// Force reload of the session promotions to include any updates
-			$Shopp->Promotions->reload();
+				$Promotion->catalog();
 
 		}
 
@@ -221,7 +218,7 @@ class Promote extends AdminController {
 	 * @return void
 	 **/
 	function layout () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Admin =& $Shopp->Flow->Admin;
 		include(SHOPP_PATH."/core/ui/promotions/ui.php");
 	}
@@ -235,7 +232,7 @@ class Promote extends AdminController {
 	 * @return void
 	 **/
 	function editor () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		if ( ! current_user_can('shopp_promotions') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));

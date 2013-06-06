@@ -76,11 +76,11 @@ class ImageServer {
 	function __construct () {
 		global $Shopp;
 		if ( ! defined('SHOPP_PATH') )
-				define('SHOPP_PATH', self::path() );
+			define('SHOPP_PATH', self::path() );
 		if ( ! defined('SHOPP_MODEL_PATH') )
-				define('SHOPP_MODEL_PATH', SHOPP_PATH.'/core/model');
+			define('SHOPP_MODEL_PATH', SHOPP_PATH.'/core/model');
 		if ( ! defined('SHOPP_STORAGE') )
-				define('SHOPP_STORAGE', SHOPP_PATH.'/storage');
+			define('SHOPP_STORAGE', SHOPP_PATH.'/storage');
 
 		$Shopp->Storage = new StorageEngines();
 
@@ -167,10 +167,10 @@ class ImageServer {
 		if ($this->Image->width == $this->width && $this->Image->height == $this->height) return;
 
 		$Cached = new ImageAsset(array(
-				'parent' => $this->Image->id,
-				'context'=>'image',
-				'type'=>'image',
-				'name'=>'cache_'.implode('_',$this->parameters)
+			'parent' => $this->Image->id,
+			'context'=>'image',
+			'type'=>'image',
+			'name'=>'cache_'.implode('_',$this->parameters)
 		));
 
 		// Use the cached version if it exists, otherwise resize the image

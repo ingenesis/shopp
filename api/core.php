@@ -56,7 +56,7 @@ function ShoppCustomer ( $Object = false ) {
  * @param Collection (optional) $Object the Collection object to set to the global context.
  * @return mixed if the global Collection context isn't set, bool false will be returned, otherwise the global Collection object will be returned
  **/
-function ShoppCollection ( ShoppCollection $Object = null ) {
+function ShoppCollection ( ProductCollection $Object = null ) {
 	$Shopp = Shopp::object();
 	if ( isset($Object) ) $Shopp->Category = $Object;
 	return $Shopp->Category;
@@ -88,8 +88,8 @@ function ShoppCatalog ( ShoppCatalog $Object = null ) {
  * @return mixed if the global Purchase context isn't set, bool false will be returned, otherwise the global Purchase object will be returned
  **/
 function ShoppPurchase ( $Object = false ) {
-	global $Shopp; $false = false;
-	if (empty($Shopp)) return $false;
+	$Shopp = Shopp::object();
+	if (empty($Shopp)) return false;
 	if ($Object !== false) $Shopp->Purchase = $Object;
 	return $Shopp->Purchase;
 }
@@ -103,8 +103,8 @@ function ShoppPurchase ( $Object = false ) {
  * @return Order
  **/
 function ShoppOrder ( $Object = false ) {
-	global $Shopp; $false = false;
-	if (empty($Shopp)) return $false;
+	$Shopp = Shopp::object();
+	if (empty($Shopp)) return false;
 	if ($Object !== false) $Shopp->Order = $Object;
 	return $Shopp->Order;
 }
@@ -392,11 +392,10 @@ function is_shopp_smart_collection ( $wp_query = false ) {
 function is_shopp_taxonomy ( $wp_query = false ) {
 	if ( false === $wp_query ) { global $wp_the_query; $wp_query = $wp_the_query; }
 
+	$object = $wp_query->get_queried_object();
 	$taxonomies = get_object_taxonomies(Product::$posttype, 'names');
-	foreach ( $taxonomies as $taxonomy ) {
-		if ( $wp_query->is_tax($taxonomy) ) return true;
-	}
-	return false;
+
+	return isset($object->taxonomy) && in_array($object->taxonomy, $taxonomies);
 }
 
 /**

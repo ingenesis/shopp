@@ -10,7 +10,7 @@
 class CatalogAPITests extends ShoppTestCase {
 
 	function setUp () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		parent::setUp();
 		$Shopp->Flow->handler('Storefront');
 		$Shopp->Catalog = false;
@@ -36,7 +36,7 @@ class CatalogAPITests extends ShoppTestCase {
 
 	// Can't get this to work yet, need better http environment emulator
 	// function test_catalog_iscatalog () {
-	// 	global $Shopp;
+	// 	$Shopp = Shopp::object();
 	// 	$this->http('http://shopptest/');
 	// 	$Shopp->Catalog->type = 'catalog';
 	// 	$this->assertTrue(shopp('catalog','is-catalog'));
@@ -52,7 +52,7 @@ class CatalogAPITests extends ShoppTestCase {
 	}
 
 	function test_catalog_categories () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		shopp('catalog','has-categories');
 		$this->assertTrue(shopp('catalog','has-categories'));
 		$expected = 22;
@@ -87,7 +87,7 @@ class CatalogAPITests extends ShoppTestCase {
 	}
 
 	function test_catalog_orderbylist () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$_SERVER['REQUEST_URI'] = "/";
 		$Shopp->Catalog = new Catalog();
 		$Shopp->Category = new NewProducts();

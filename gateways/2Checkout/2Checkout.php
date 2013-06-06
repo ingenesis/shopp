@@ -163,7 +163,7 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 	}
 
 	// function process () {
-	// 	global $Shopp;
+	// 	$Shopp = Shopp::object();
 	//
 	// 	if ($this->settings['verify'] == "on" && !$this->verify($_POST['key'])) {
 	// 		new ShoppError(__('The order submitted to 2Checkout could not be verified.','Shopp'),'2co_validation_error',SHOPP_TRXN_ERR);

@@ -567,7 +567,7 @@ class Product extends WPShoppObject {
 			$price->promoprice = $discount->pricetag;
 		}
 
-		if ($price->promoprice < $price->price) $target->sale = 'on';
+		if ($price->promoprice < $price->price) $target->sale = $price->sale = 'on';
 
 		// Grab price and saleprice ranges (minimum - maximum)
 		if (!$price->price) $price->price = 0;
@@ -1012,7 +1012,7 @@ class Product extends WPShoppObject {
 
 		// Delete images
 		$images = array();
-		$src = DB::query("SELECT id FROM $table WHERE parent='$id' AND context='product' AND type='image'",AS_ARRAY);
+		$src = DB::query("SELECT id FROM $table WHERE parent='$id' AND context='product' AND type='image'",'array');
 		foreach ($src as $img) $images[] = $img->id;
 		$this->delete_images($images);
 
@@ -1114,6 +1114,12 @@ class Product extends WPShoppObject {
 
 		// Re-summarize product pricing
 		$this->load_data(array('prices','summary'));
+
+		// Duplicate (WP) post meta data
+		foreach ( get_post_custom( $original ) as $key => $values ) {
+			foreach ( (array) $values as $value )
+				add_post_meta( $this->id, $key, $value );
+		}
 	}
 
 	/**

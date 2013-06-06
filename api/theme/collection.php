@@ -518,7 +518,8 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			$O->_rindex = false;
 			$O->_product_loop = true;
 		} else {
-			ShoppProduct(next($O->products));
+			if ( $Product = next($O->products) )
+				ShoppProduct($Product);
 			$O->_pindex++;
 		}
 
@@ -533,7 +534,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	}
 
 	static function row ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		if (!isset($O->_rindex) || $O->_rindex === false) $O->_rindex = 0;
 		else $O->_rindex++;
 		if (empty($options['products'])) $options['products'] = shopp_setting('row_products');

@@ -68,7 +68,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	 * @since 1.2
 	 *
 	 **/
-	static function _setobject ($Object, $object) {
+	static function _setobject ( $Object, $object ) {
 		if ( is_object($Object) && is_a($Object, 'Order') && isset($Object->Cart) && 'cart' == strtolower($object) )
 			return $Object->Cart;
 		else if ( strtolower($object) != 'cart' ) return $Object; // not mine, do nothing
@@ -77,27 +77,27 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		return $Order->Cart;
 	}
 
-	static function _cart ($result, $options, $property, $O) {
+	static function _cart ( $result, $options, $property, $O) {
 		// Passthru for non-monetary results
-		$monetary = array('discount','subtotal','shipping','tax','total');
-		if (!in_array($property,$monetary) || !is_numeric($result)) return $result;
+		$monetary = array('discount', 'subtotal', 'shipping', 'tax', 'total');
+		if ( ! in_array($property, $monetary) || ! is_numeric($result) ) return $result;
 
 		// @deprecated currency parameter
-		if (isset($options['currency'])) $options['money'] = $options['currency'];
+		if ( isset($options['currency']) ) $options['money'] = $options['currency'];
 		// @deprecated wrapper parameter
-		if (isset($options['wrapper'])) $options['wrap'] = $options['wrapper'];
+		if ( isset($options['wrapper']) ) $options['wrap'] = $options['wrapper'];
 
 		$defaults = array(
 			'wrap' => 'on',
 			'money' => 'on',
 			'number' => false,
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract($options);
 
 		if ( str_true($number) ) return $result;
 		if ( str_true($money)  ) $result = money( roundprice($result) );
-		if ( str_true($wrap)   ) return '<span class="shopp-cart cart-'.strtolower($property).'">'.$result.'</span>';
+		if ( str_true($wrap)   ) return '<span class="shopp-cart cart-' . strtolower($property) . '">' . $result . '</span>';
 
 		return $result;
 	}
@@ -107,16 +107,16 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	}
 
 	static function discounts ($result, $options, $O) {
-		if (!isset($O->_promo_looping)) {
+		if ( ! isset($O->_promo_looping) ) {
 			reset($O->discounts);
 			$O->_promo_looping = true;
 		} else next($O->discounts);
 
 		$discount = current($O->discounts);
-		while ($discount && empty($discount->applied) && !$discount->freeshipping)
+		while ( $discount && empty($discount->applied) && ! $discount->freeshipping )
 			$discount = next($O->discounts);
 
-		if (current($O->discounts)) return true;
+		if ( current($O->discounts) ) return true;
 		else {
 			unset($O->_promo_looping);
 			reset($O->discounts);
@@ -125,12 +125,12 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	}
 
 	static function download_items ($result, $options, $O) {
-		if (!isset($O->_downloads_loop)) {
+		if ( ! isset($O->_downloads_loop) ) {
 			reset($O->downloads);
 			$O->_downloads_loop = true;
 		} else next($O->downloads);
 
-		if (current($O->downloads)) return true;
+		if ( current($O->downloads) ) return true;
 		else {
 			unset($O->_downloads_loop);
 			reset($O->downloads);
@@ -139,9 +139,9 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	}
 
 	static function empty_button ($result, $options, $O) {
-		$submit_attrs = array('title','value','disabled','tabindex','accesskey','class');
-		if (!isset($options['value'])) $options['value'] = __('Empty Cart','Shopp');
-		return '<input type="submit" name="empty" id="empty-button" '.inputattrs($options,$submit_attrs).' />';
+		$submit_attrs = array('title', 'value', 'disabled', 'tabindex', 'accesskey', 'class');
+		if ( ! isset($options['value']) ) $options['value'] = __('Empty Cart', 'Shopp');
+		return '<input type="submit" name="empty" id="empty-button" ' . inputattrs($options,$submit_attrs) . ' />';
 	}
 
 	static function cart_function ($result, $options, $O) {
@@ -149,7 +149,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	}
 
 	static function has_discount ($result, $options, $O) {
-		return (abs($O->Totals->total('discount')) > 0);
+		return ( abs($O->Totals->total('discount')) > 0 );
 	}
 
 	static function has_downloads ($result, $options, $O) {
@@ -222,7 +222,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 			'before' => '<p class="error">',
 			'after' => '</p>'
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract($options);
 		if ( $Errors->exist() ) {
 			while ( $Errors->exist() )
@@ -230,14 +230,14 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		}
 
 		$result .= '<span><input type="text" id="promocode" name="promocode" value="" size="10" /></span>';
-		$result .= '<span><input type="submit" id="apply-code" name="update" '.inputattrs($options,$submit_attrs).' /></span>';
+		$result .= '<span><input type="submit" id="apply-code" name="update" '.inputattrs($options, $submit_attrs).' /></span>';
 		$result .= '</div>';
 		return $result;
 	}
 
 	static function promo_discount ($result, $options, $O) {
 		$Discount = ShoppOrder()->Discounts->current();
-		if ($Discount->amount() == 0 && ! $Discount->shipfree() ) return false;
+		if ( $Discount->amount() == 0 && ! $Discount->shipfree() ) return false;
 
 		if ( ! isset($options['label']) ) $options['label'] = ' ' . __('Off!','Shopp');
 		else $options['label'] = ' ' . $options['label'];
@@ -257,7 +257,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 
 	static function promo_name ($result, $options, $O) {
 		$Discount = ShoppOrder()->Discounts->current();
-		if ($Discount->amount() == 0 && ! $Discount->shipfree() ) return false;
+		if ( $Discount->amount() == 0 && ! $Discount->shipfree() ) return false;
 		return $Discount->name();
 	}
 
@@ -277,18 +277,16 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	}
 
 	static function promos_available ($result, $options, $O) {
-		global $Shopp;
-		if (!$Shopp->Promotions->available()) return false;
+		if ( ! ShoppOrder()->Promotions->available() ) return false;
 		// Skip if the promo limit has been reached
-		if (shopp_setting('promo_limit') > 0 &&
-			count($O->discounts) >= shopp_setting('promo_limit')) return false;
+		if ( shopp_setting('promo_limit') > 0 && count($O->discounts) >= shopp_setting('promo_limit') ) return false;
 		return true;
 	}
 
 	static function referrer ($result, $options, $O) {
 		$Shopping = ShoppShopping();
 		$referrer = $Shopping->data->referrer;
-		if (!$referrer) $referrer = shopp('catalog','url','return=1');
+		if ( ! $referrer ) $referrer = shopp('catalog', 'url', 'return=1');
 		return $referrer;
 	}
 
@@ -307,19 +305,19 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	}
 
 	static function shipping ($result, $options, $O) {
-		if (empty($O->shipped)) return "";
-		if (isset($options['label'])) {
+		if ( empty($O->shipped) ) return "";
+		if ( isset($options['label']) ) {
 			$options['currency'] = "false";
-			if ($O->freeshipping) {
+			if ( $O->freeshipping ) {
 				$result = shopp_setting('free_shipping_text');
-				if (empty($result)) $result = __('Free Shipping!','Shopp');
+				if ( empty($result) ) $result = __('Free Shipping!','Shopp');
 			}
 
 			else $result = $options['label'];
 		} else {
-			if ($O->Totals->total('shipping') === false)
+			if ( false === $O->Totals->total('shipping') )
 				return __("Enter Postal Code","Shopp");
-			elseif ($O->Totals->shipping === false)
+			elseif ( false === $O->Totals->shipping )
 				return __("Not Available","Shopp");
 			else $result = $O->Totals->total('shipping');
 		}
@@ -331,10 +329,10 @@ class ShoppCartThemeAPI implements ShoppAPI {
 			'postcode' => true,
 			'class' => 'ship-estimates'
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract($options);
 
-		if (empty($O->shipped)) return '';
+		if ( empty($O->shipped) ) return '';
 
 		$base = shopp_setting('base_operations');
 		$markets = shopp_setting('target_markets');
@@ -343,77 +341,83 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		if (empty($markets)) return '';
 
 		foreach ($markets as $iso => $country) $countries[$iso] = $country;
-		if (!empty($Shipping->country)) $selected = $Shipping->country;
+		if ( ! empty($Shipping->country) ) $selected = $Shipping->country;
 		else $selected = $base['country'];
-		$postcode = (str_true($postcode) || $O->showpostcode);
+		$postcode = ( str_true($postcode) || $O->showpostcode );
 
 		$button = isset($button) ? esc_attr($button) : __('Estimate Shipping & Taxes', 'Shopp');
 
-		$_[] = '<div class="'.$class.'">';
-		if (count($countries) > 1) {
-			$_[] = '<span>';
-			$_[] = '<select name="shipping[country]" id="shipping-country">';
-			$_[] = menuoptions($countries,$selected,true);
-			$_[] = '</select>';
-			$_[] = '</span>';
-		} else $_[] = '<input type="hidden" name="shipping[country]" id="shipping-country" value="'.key($markets).'" />';
-		if ($postcode) {
-			$_[] = '<span>';
-			$_[] = '<input type="text" name="shipping[postcode]" id="shipping-postcode" size="6" value="' . $Shipping->postcode . '"' . inputattrs($options) . ' />&nbsp;';
-			$_[] = '</span>';
-			$_[] = shopp('cart','get-update-button',array('value' => $button));
+		$_ = '<div class="' . $class . '">';
+		if ( count($countries) > 1 ) {
+			$_ .= '<span>';
+			$_ .= '<select name="shipping[country]" id="shipping-country">';
+			$_ .= menuoptions($countries, $selected, true);
+			$_ .= '</select>';
+			$_ .= '</span>';
+		} else {
+			$_ .= '<input type="hidden" name="shipping[country]" id="shipping-country" value="' . key($markets) . '" />';
+		}
+		if ( $postcode ) {
+			$_ .= '<span>';
+			$_ .= '<input type="text" name="shipping[postcode]" id="shipping-postcode" size="6" value="' . $Shipping->postcode . '"' . inputattrs($options) . ' />&nbsp;';
+			$_ .= '</span>';
+			$_ .= shopp('cart','get-update-button', array('value' => $button));
 		}
 
-		$_[] = '</div>';
-
-		return join('',$_);
+		return $_ . '</div>';
 	}
 
 	static function sidecart ($result, $options, $O) {
-		if (!shopp_setting_enabled('shopping_cart')) return '';
+		if ( ! shopp_setting_enabled('shopping_cart') ) return '';
 		ob_start();
-		locate_shopp_template(array('sidecart.php'),true);
+		locate_shopp_template(array('sidecart.php'), true);
 		$content = ob_get_contents();
 		ob_end_clean();
 		return $content;
 	}
 
-	static function subtotal ($result, $options, $O) { return $O->Totals->total('order'); }
+	static function subtotal ($result, $options, $O) {
+		return $O->Totals->total('order');
+	}
 
 	static function tax ($result, $options, $O) {
 		$defaults = array(
 			'label' => false,
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract($options);
 
-		if (!empty($label)) return $label;
+		if ( ! empty($label) ) return $label;
 
-		return (float)$O->Totals->total('tax');
+		return (float) $O->Totals->total('tax');
 
 	 }
 
-	static function total ($result, $options, $O) { return $O->Totals->total(); }
+	static function total ($result, $options, $O) {
+		return $O->Totals->total();
+	}
 
 	static function total_items ($result, $options, $O) {
 	 	return count($O);
 	}
 
-	static function total_promos ($result, $options, $O) { return count($O->discounts); }
+	static function total_promos ($result, $options, $O) {
+		return count($O->discounts);
+	}
 
 	static function total_quantity ($result, $options, $O) {
 	 	return $O->Totals->total('quantity');
 	}
 
 	static function update_button ($result, $options, $O) {
-		$submit_attrs = array('title','value','disabled','tabindex','accesskey','class');
-		if (!isset($options['value'])) $options['value'] = __('Update Subtotal','Shopp');
-		if (isset($options['class'])) $options['class'] .= " update-button";
-		else $options['class'] = "update-button";
-		return '<input type="submit" name="update"'.inputattrs($options,$submit_attrs).' />';
+		$submit_attrs = array('title', 'value', 'disabled', 'tabindex', 'accesskey', 'class');
+		if ( ! isset($options['value']) ) $options['value'] = __('Update Subtotal', 'Shopp');
+		if ( isset($options['class']) ) $options['class'] .= ' update-button';
+		else $options['class'] = 'update-button';
+		return '<input type="submit" name="update"' . inputattrs($options, $submit_attrs) . ' />';
 	}
 
 	static function url ($result, $options, $O) {
-			return shoppurl(false,'cart');
+		return shoppurl(false, 'cart');
 	}
 }

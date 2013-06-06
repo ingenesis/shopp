@@ -66,7 +66,7 @@ class Members extends AdminController {
 	 * @return void
 	 **/
 	function memeberships () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$db = DB::get();
 
 		$defaults = array(

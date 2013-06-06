@@ -518,7 +518,7 @@ class Storefront extends FlowController {
 	 **/
 	public function security () {
 
-		global $Shopp;
+		$Shopp = Shopp::object();
 	    if ( SHOPP_NOSSL || ! $Shopp->Gateways->secure || is_ssl() ) return;
 
 		$redirect = false;
@@ -567,7 +567,7 @@ class Storefront extends FlowController {
 	 * @return void
 	 **/
 	public function behaviors () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		if ( is_ssl() ) {
 			add_filter( 'option_siteurl',			'force_ssl' );
@@ -853,7 +853,7 @@ class Storefront extends FlowController {
 	 * @return void
 	 **/
 	public function securelinks ( $items ) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		if ( ! $Shopp->Gateways->secure ) return $items;
 
 		$hrefs = array(
@@ -880,12 +880,12 @@ class Storefront extends FlowController {
 	 * @return void Description...
 	 **/
 	public function cart () {
+
 		if ( isset($_REQUEST['checkout']) ) shopp_redirect( shoppurl(false, 'checkout', $this->security()) );
-		if ( isset($_REQUEST['shopping']) ) shopp_redirect( shoppurl() );
+
 		if ( isset($_REQUEST['shopping']) && 'reset' == strtolower($_REQUEST['shopping']) ) {
-			$Shopping = ShoppShopping();
-			$Shopping->reset();
-			shopp_redirect(shoppurl());
+			ShoppShopping()->reset();
+			shopp_redirect( shoppurl() );
 		}
 
 		if ( empty($_REQUEST['cart']) ) return true;

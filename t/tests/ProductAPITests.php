@@ -10,7 +10,7 @@
 class ProductAPITests extends ShoppTestCase {
 
 	function setUp () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		parent::setUp();
 
 		// capture original settings
@@ -59,7 +59,7 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_url () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		ob_start();
 		shopp('product','url');
 		$output = ob_get_contents();
@@ -84,7 +84,7 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_found () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$this->assertTrue(shopp('product','found'));
 		$original = $Shopp->Product;
 		$Shopp->Product = new Product(-1);
@@ -118,7 +118,7 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_prices_withvat () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		shopp_set_setting('base_operations', array(
 			'name' => 'USA',
@@ -244,14 +244,14 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_hasimages () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$this->assertTrue(shopp('product','hasimages'));
 		$this->assertTrue(shopp('product','has-images'));
 		$this->assertEquals(1,count($Shopp->Product->images));
 	}
 
 	function test_product_hascategories () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$this->assertTrue(shopp('product','has-categories'));
 		$this->assertEquals(3,count($Shopp->Product->categories));
 	}
@@ -288,7 +288,7 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_hastags () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$this->assertTrue(shopp('product','hastags'));
 		$this->assertTrue(shopp('product','has-tags'));
 		$this->assertEquals(6,count($Shopp->Product->tags));
@@ -314,7 +314,7 @@ class ProductAPITests extends ShoppTestCase {
 
 
 	function test_product_hasspecs () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$this->assertTrue(shopp('product','hasspecs'));
 		$this->assertTrue(shopp('product','has-specs'));
 
@@ -380,7 +380,7 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_variations_menus () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		ob_start();
 		shopp('product','variations','mode=single');
@@ -440,7 +440,7 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_addtocart () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$Shopp->Product->outofstock = true;
 		ob_start();

@@ -450,7 +450,7 @@ class GatewayModules extends ModuleLoader {
 	 * @return array List of module names for the activated modules
 	 **/
 	function activated () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$this->activated = array();
 		$gateways = explode(",",shopp_setting('active_gateways'));
 		$modules = array_keys($this->modules);
@@ -703,10 +703,10 @@ class PayCard {
 		$this->inputs = $inputs;
 	}
 
-	function validate ($pan) {
-		$n = preg_replace('/\D/','',$pan);
-		if (strlen($pan) == 4) return true;
-		return ($this->match($n) && $this->checksum($n));
+	function validate ( $pan ) {
+		$n = preg_replace('/\D/', '', $pan);
+		if ( strlen($n) == 4 ) return true;
+		return ( $this->match($n) && $this->checksum($n) );
 	}
 
 	function match ($number) {

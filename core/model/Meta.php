@@ -124,7 +124,7 @@ abstract class MetasetObject extends DatabaseObject {
 				$where .= ($where == ""?"":" AND ")."$key='".$db->escape($id)."'";
 		} else $where = "{$args[1]}='{$args[0]}' OR (parent={$args[0]} AND context='meta')";
 
-		$r = $db->query("SELECT * FROM $this->_table WHERE $where",AS_ARRAY);
+		$r = $db->query("SELECT * FROM $this->_table WHERE $where",'array');
 
 		foreach ($r as $row) {
 			$meta = new MetaObject();
@@ -246,7 +246,7 @@ class ObjectMeta {
 		foreach ($args[0] as $key => $id)
 			$where .= ($where == ""?"":" AND ")."$key='".$db->escape($id)."'";
 
-		$r = $db->query("SELECT * FROM $this->_table WHERE $where",AS_ARRAY);
+		$r = $db->query("SELECT * FROM $this->_table WHERE $where",'array');
 
 		foreach ($r as $row) {
 			$meta = new MetaObject();

@@ -261,7 +261,7 @@ abstract class AdminController extends FlowController {
 	 **/
 	function __construct () {
 		// parent::__construct();
-		global $Shopp;
+		$Shopp = Shopp::object();
 		if (!empty($Shopp->Flow->Admin)) $this->Admin = &$Shopp->Flow->Admin;
 		$screen = get_current_screen();
 
@@ -307,17 +307,15 @@ abstract class AdminController extends FlowController {
  * @return Storefront|false
  **/
 function &ShoppStorefront () {
-	global $Shopp;
-	$false = false;
-	if (!isset($Shopp->Flow) || !is_object($Shopp->Flow->Controller)) return $false;
-	if (get_class($Shopp->Flow->Controller) != "Storefront") return $false;
+	$Shopp = Shopp::object();
+	if (!isset($Shopp->Flow) || !is_object($Shopp->Flow->Controller)) return false;
+	if (get_class($Shopp->Flow->Controller) != "Storefront") return false;
 	return $Shopp->Flow->Controller;
 }
 
 function &ShoppAdmin() {
-	global $Shopp;
-	$false = false;
-	if ( ! isset($Shopp->Flow) || ! isset($Shopp->Flow->Admin) || empty($Shopp->Flow->Admin) ) return $false;
+	$Shopp = Shopp::object();
+	if ( ! isset($Shopp->Flow) || ! isset($Shopp->Flow->Admin) || empty($Shopp->Flow->Admin) ) return false;
 	return $Shopp->Flow->Admin;
 }
 

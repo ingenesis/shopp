@@ -740,9 +740,13 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			'taxes' => null,
 			'starting' => '',
 			'separator' => ' &mdash; ',
-			'property' => 'price'
+			'property' => 'price',
+			'money' => 'on',
+			'number' => false,
+			'high' => false,
+			'low' => false
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract($options);
 
 		if ( ! is_null($taxes) ) $taxes = str_true($taxes);
@@ -750,29 +754,35 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		if ( ! str_true($O->sale) ) $property = 'price';
 
 		$min = isset($O->min[ $property ]) ? $O->min[ $property ] : false;
-		$mintax = isset($O->min[ $property . '_tax' ]) ? $O->min[ $property . '_tax' ] : false; // flag to apply tax to min price (from summary)
+		$taxmin = isset($O->min[ $property . '_tax' ]) ? $O->min[ $property . '_tax' ] : false; // flag to apply tax to min price (from summary)
+		$mintaxrate = $taxes && $taxmin ? $min * shopp_taxrate($taxes, $taxmin, $O) : 0;
 
 		$max = isset($O->max[ $property ]) ? $O->max[ $property ] : false;
-		$maxtax = isset($O->max[ $property . '_tax' ]) ? $O->max[ $property . '_tax' ] : false; // flag to apply tax to max price (from summary)
-
-		$taxrate = shopp_taxrate($taxes,$mintax,$O);
+		$taxmax = isset($O->max[ $property . '_tax' ]) ? $O->max[ $property . '_tax' ] : false; // flag to apply tax to max price (from summary)
+		$maxtaxrate = $taxes && $taxmax ? $max * shopp_taxrate($taxes, $taxmax, $O) : 0;
 
 		// Handle inclusive/exclusive tax presentation options (product editor setting or api option)
 		$taxes = is_null($taxes) ? self::_include_tax($O) : str_true( $taxes );
 		if ( ! $taxes ) $taxrate = 0;
 
-		if ('saleprice' == $property) $pricetag = $O->min['saleprice'];
-		else $pricetag = $O->min['price'];
+		if ( $min == $max || ! empty($starting) || str_true($low) ) {
+			$prices = array($min + $mintaxrate);
+		} elseif ( str_true($high) ) {
+			$prices = array($max + $maxtaxrate);
+		} else {
+			$prices = array(
+				$min + $mintaxrate,
+				$max + $maxtaxrate
+			);
+		}
 
-		if ($min != $max) {
-			$taxrate = shopp_taxrate($taxes,true,$O);
-			$mintax = $taxes && $mintax?$min*$taxrate:0;
-			$maxtax = $taxes && $maxtax?$max*$taxrate:0;
+		$prices = array_map('roundprice', $prices);
+		if ( str_true($number)  ) return join($separator, $prices);
+		if ( str_true($money)   ) $prices = array_map('money', $prices);
+		if ( ! empty($starting) && $min != $max ) $prices = "$starting {$prices[0]}";
 
-			if (!empty($starting)) return "$starting ".money($min+$mintax);
-			return money($min+$mintax).$separator.money($max+$maxtax);
-
-		} else return money( $pricetag + ($pricetag * $taxrate ) );
+		if ( is_array($prices) ) return join($separator, $prices);
+		else return $prices;
 	}
 
 	static function saleprice ($result, $options, $O) {

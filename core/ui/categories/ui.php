@@ -1,6 +1,6 @@
 <?php
 function save_meta_box ($Category) {
-	global $Shopp;
+	$Shopp = Shopp::object();
 
 	$workflows = array(
 		"continue" => __('Continue Editing','Shopp'),
@@ -23,7 +23,7 @@ function save_meta_box ($Category) {
 add_meta_box('save-category', __('Save','Shopp').$Admin->boxhelp('category-editor-save'), 'save_meta_box', 'shopp_page_shopp-category', 'side', 'core');
 
 function settings_meta_box ($Category) {
-	global $Shopp;
+	$Shopp = Shopp::object();
 	$tax = get_taxonomy($Category->taxonomy);
 
 ?>

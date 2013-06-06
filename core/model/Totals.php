@@ -24,9 +24,9 @@
 class OrderTotals extends ListFramework {
 
 	const TOTAL = 'total';
-	private $register = array( self::TOTAL => null );	// Registry of "register" entries
+	protected $register = array( self::TOTAL => null );	// Registry of "register" entries
 
-	private $checks   = array();	// Track changes in the column registers
+	protected $checks   = array();	// Track changes in the column registers
 
 	public function __construct () {
 		$this->add('total', new OrderTotal( array('amount' => 0.0) ));
@@ -179,7 +179,7 @@ class OrderTotals extends ListFramework {
 	 * @param string $register The name of the register to check
 	 * @return boolean True when the register has changed
 	 **/
-	private function changed ( string $register ) {
+	public function changed ( string $register ) {
 		$check = isset($this->checks[ $register ]) ? $this->checks[$register] : 0;
 		$this->checks[$register] = hash('crc32b', serialize($this->register[$register]) );
 		if ( 0 == $check ) return true;
@@ -187,15 +187,19 @@ class OrderTotals extends ListFramework {
 	}
 
 	public function data () {
-		return json_decode((string)$this);
+		return json_decode( (string)$this );
 	}
 
 	public function __toString () {
-		$data = array();
+		$data = new StdClass();
 		foreach ( $this as $id => $entry )
-			$data[$id] = (string)$entry;
+			$data->$id = (string)$entry;
 
 		return json_encode($data);
+	}
+
+	public function __sleep () {
+		return array_keys( get_object_vars($this) );
 	}
 
 }

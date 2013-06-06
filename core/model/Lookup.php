@@ -609,6 +609,7 @@ class Lookup {
 	static function customer_types () {
 		$_ = array(
 			__('Retail','Shopp'),
+			__('Guest','Shopp'),
 			__('Wholesale','Shopp'),
 			__('Referral','Shopp'),
 			__('Tax-Exempt','Shopp')

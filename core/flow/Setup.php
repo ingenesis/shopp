@@ -120,7 +120,7 @@ class Setup extends AdminController {
 				$customer_service = ' '.sprintf(__('Contact %s customer service %s.','Shopp'),'<a href="'.SHOPP_CUSTOMERS.'" target="_blank">','</a>');
 
 				$this->keystatus = array(
-					'ks_inactive' => sprintf(__('Activate your Shopp access key for automatic updates and official support services. If you don\'t have a Shopp key, feel free to support the project by %s purchasing a key from the Shopp Store %s.','Shopp'),'<a href="'.SHOPP_HOME.'store/'.'">','</a>'), // No key is activated yet
+					'ks_inactive' => sprintf(__('Activate your Shopp access key for automatic updates and official support services. If you don&apos;t have a Shopp key, feel free to support the project by %s purchasing a key from the Shopp Store %s.','Shopp'),'<a href="' . ShoppSupport::STORE . '">','</a>'), // No key is activated yet
 					'k_000' => __('The server could not be reached because of a connection problem.','Shopp'), 		// Cannot communicate with the server, config?, firewall?
 					'k_001' => __('The server is experiencing problems.','Shopp').$customer_service,			// The server did not provide a valid response? Uncovered maintenance?
 					'ks_1' => __('An unkown error occurred.','Shopp'),											// Absolutely no clue what happened
@@ -184,7 +184,7 @@ class Setup extends AdminController {
 	 * @return void
 	 **/
 	function setup () {
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings')) )
+		if ( ! current_user_can('shopp_settings') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		// Welcome screen handling
@@ -205,14 +205,14 @@ class Setup extends AdminController {
 		// Key activation
 		if (!empty($_POST['activation'])) {
 			check_admin_referer('shopp-settings-activation');
-			$sitekey = Shopp::keysetting();
+			$sitekey = ShoppSupport::key();
 			$key = $_POST['updatekey'];
 			if ($key == str_repeat('0',40)) $key = $sitekey['k'];
 			Shopp::key($_POST['activation'],$key);
 		}
 
-		$sitekey = Shopp::keysetting();
-		$activated = Shopp::activated();
+		$sitekey = ShoppSupport::key();
+		$activated = ShoppSupport::activated();
 		$key = $sitekey['k'];
 		$status = $sitekey['s'];
 
@@ -277,7 +277,7 @@ class Setup extends AdminController {
 	}
 
 	function presentation () {
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_presentation')) )
+		if ( ! current_user_can('shopp_settings_presentation') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$builtin_path = SHOPP_PATH.'/templates';
@@ -349,10 +349,10 @@ class Setup extends AdminController {
 	}
 
 	function preferences () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$db =& DB::get();
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_checkout')) )
+		if ( ! current_user_can('shopp_settings_checkout') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$purchasetable = DatabaseObject::tablename(Purchase::$table);
@@ -428,7 +428,7 @@ class Setup extends AdminController {
 	 **/
 	function shipping () {
 
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_shipping')) )
+		if ( ! current_user_can('shopp_settings_shipping') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$sub = 'settings';
@@ -458,7 +458,8 @@ class Setup extends AdminController {
 		if ($term_recount) {
 			$taxonomy = ProductCategory::$taxon;
 			$terms = get_terms( $taxonomy, array('hide_empty' => 0,'fields'=>'ids') );
-			wp_update_term_count_now( $terms, $taxonomy );
+			if ( ! empty($terms) )
+				wp_update_term_count_now( $terms, $taxonomy );
 		}
 
 		$base = shopp_setting('base_operations');
@@ -492,7 +493,7 @@ class Setup extends AdminController {
 	}
 
 	function shiprates () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Shipping = $Shopp->Shipping;
 		$Shipping->settings(); // Load all installed shipping modules for settings UIs
 
@@ -715,7 +716,7 @@ class Setup extends AdminController {
 	}
 
 	function taxes () {
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_taxes')) )
+		if ( ! current_user_can('shopp_settings_taxes') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$sub = 'settings';
@@ -756,7 +757,7 @@ class Setup extends AdminController {
 	}
 
 	function taxrates () {
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_taxes')) )
+		if ( ! current_user_can('shopp_settings_taxes') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$edit = false;
@@ -927,10 +928,10 @@ class Setup extends AdminController {
 	}
 
 	function payments () {
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_payments')) )
+		if ( ! current_user_can('shopp_settings_payments') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Gateways = $Shopp->Gateways;
 
 	 	$active_gateways = shopp_setting('active_gateways');
@@ -1024,7 +1025,7 @@ class Setup extends AdminController {
 
 	function pages () {
 
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings')) )
+		if ( ! current_user_can('shopp_settings') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		if ( ! empty($_POST['save']) ) {
@@ -1037,7 +1038,7 @@ class Setup extends AdminController {
 
 			// Re-register page, collection, taxonomies and product rewrites
 			// so that the new slugs work immediately
-			global $Shopp;
+			$Shopp = Shopp::object();
 			$Shopp->pages();
 			$Shopp->collections();
 			$Shopp->taxonomies();
@@ -1064,7 +1065,7 @@ class Setup extends AdminController {
 
 	function images () {
 
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings')) )
+		if ( ! current_user_can('shopp_settings') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$defaults = array(
@@ -1150,7 +1151,7 @@ class Setup extends AdminController {
 	}
 
 	function system () {
-		if ( !(current_user_can('manage_options') && current_user_can('shopp_settings_system')) )
+		if ( ! current_user_can('shopp_settings_system') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$Shopp = Shopp::object();
@@ -1239,7 +1240,7 @@ class Setup extends AdminController {
 	}
 
 	function storage_ui () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Shopp->Storage->settings();
 		$Shopp->Storage->ui();
 	}

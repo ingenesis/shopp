@@ -15,7 +15,7 @@ class OrderDevAPITests extends ShoppTestCase {
 	}
 
 	function test_shopp_add_order () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$user = get_user_by('login', 'jdillick');
 		$data = array(

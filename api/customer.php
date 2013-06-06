@@ -111,7 +111,7 @@ function shopp_customer_marketing (  $customer = false, $flag = null ) {
 function shopp_customer_marketing_list ( $exclude = false ) {
 	$table = DatabaseObject::tablename(Customer::$table);
 	$where = ( $exclude ? "WHERE marketing='yes'" : "");
-	$results = db::query( "SELECT id, firstname, lastname, email, marketing, type FROM $table $where", AS_ARRAY );
+	$results = db::query( "SELECT id, firstname, lastname, email, marketing, type FROM $table $where", 'array' );
 
 	$marketing = array();
 	foreach ( $results as $c ) {

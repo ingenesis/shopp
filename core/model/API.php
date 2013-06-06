@@ -144,7 +144,7 @@ class ShoppAPIFile extends ModuleFile {
 
 		if (strtolower($context) != strtolower($apicontext)) return $Object; // do nothing
 
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$property = ucfirst($apicontext);
 		if (property_exists($Shopp,$property))
 			return $Shopp->{$property};

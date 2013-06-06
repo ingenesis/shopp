@@ -24,8 +24,9 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 class ListFramework implements Iterator {
 
-	private $_list = array();
-	private $_added = null;
+	protected $_list = array();
+	protected $_added = null;
+	protected $_checks = 0;
 
 	public function &add ( string $key, $entry ) {
 		$this->_list[$key] = $entry;
@@ -114,7 +115,21 @@ class ListFramework implements Iterator {
 		return json_encode($this->_list);
 	}
 
-}
+	public function __sleep () {
+		return array('_added', '_checks', '_list');
+	}
+
+	public function changed () {
+
+		$lastcheck = $this->_checks; // Keep current checksum
+		$this->_checks = hash('crc32b', serialize($this->_list) );
+
+		if ( 0 == $lastcheck ) return true;
+		return ( $lastcheck != $this->_checks );
+
+	}
+
+} // END class ListFramework
 
 /**
  * Implements a Singleton pattern object
@@ -159,7 +174,7 @@ class SingletonFramework {
 
 class AutoObjectFramework {
 
-	function __construct ($input) {
+	public function __construct ($input) {
 		$properties = get_object_vars($this);
 		$args = func_num_args();
 		if ($args > 1) {
@@ -182,12 +197,12 @@ class SubscriberFramework {
 
 	private $subscribers = array();
 
-	function subscribe ($target,$method) {
+	public function subscribe ($target,$method) {
 		if ( ! isset($this->subscribers[get_class($target)]))
 			$this->subscribers[get_class($target)] = array(&$target,$method);
 	}
 
-	function send () {
+	public function send () {
 		$args = func_get_args();
 		foreach ($this->subscribers as $callback) {
 			call_user_func_array($callback,$args);

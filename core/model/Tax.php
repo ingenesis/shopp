@@ -310,6 +310,10 @@ class ShoppTax {
 
 	}
 
+	public function __sleep () {
+		return array('address');
+	}
+
 }
 
 /**

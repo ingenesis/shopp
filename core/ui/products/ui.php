@@ -1,7 +1,7 @@
 <?php
 
 function save_meta_box ($Product) {
-	global $Shopp;
+	$Shopp = Shopp::object();
 
 	$workflows = array(
 		"continue" => __('Continue Editing','Shopp'),
@@ -151,7 +151,7 @@ function shopp_tags_meta_box ($Product, $options) {
 }
 
 // Load all Shopp product taxonomies
-global $Shopp;
+$Shopp = Shopp::object();
 foreach ( get_object_taxonomies(Product::$posttype) as $taxonomy_name ) {
 	$taxonomy = get_taxonomy($taxonomy_name);
 	$label = $taxonomy->labels->name;
@@ -162,7 +162,7 @@ foreach ( get_object_taxonomies(Product::$posttype) as $taxonomy_name ) {
 }
 
 function settings_meta_box ($Product) {
-	global $Shopp;
+	$Shopp = Shopp::object();
 	$Admin =& $Shopp->Flow->Admin;
 
 ?>

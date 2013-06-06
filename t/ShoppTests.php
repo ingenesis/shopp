@@ -39,7 +39,7 @@ class ShoppTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 	function tearDown() {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		// $Shopp->Catalog = false;
 		// $Shopp->Category = false;
 		// $Shopp->Product = false;

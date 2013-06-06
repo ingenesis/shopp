@@ -23,7 +23,7 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppTagCloudWidget') ) {
 	    }
 
 	    function widget($args, $options) {
-			global $Shopp;
+			$Shopp = Shopp::object();
 			if (!empty($args)) extract($args);
 
 			if (empty($options['title'])) $options['title'] = "Product Tags";

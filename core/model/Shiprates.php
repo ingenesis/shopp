@@ -25,11 +25,13 @@ class ShoppShiprates extends ListFramework {
 
 	private $selected = false;		// The currently selected shipping method
 	private $fees = 0;				// Merchant shipping fees
-	private $track = array();		// modules register properties for the change checksum hash
-	private $request = false;		// The generated request checksum
-
+	private $shippable = 0;			// Tracks the total number of shippable items
+	private $freeitems = 0;			// Tracks the total number of shipped items that are eligible for free shipping
 	private $free = false;			// Free shipping
 	private $realtime = false;		// Flag for when realtime shipping systems are enabled
+
+	private $request = false;		// The generated request checksum
+	private $track = array();		// modules register properties for the change checksum hash
 
 	/**
 	 * Determines if the shipping system is disabled
@@ -71,7 +73,23 @@ class ShoppShiprates extends ListFramework {
 	}
 
 	/**
-	 * Adds up line item shipping fees
+	 * Initializes item counters
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return void
+	 **/
+	public function init () {
+
+		$this->fees = 0;
+		$this->shippable = 0;
+		$this->freeitems = 0;
+
+	}
+
+	/**
+	 * Adds up line item shipping properties
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.3
@@ -79,8 +97,12 @@ class ShoppShiprates extends ListFramework {
 	 * @param ShoppShippableItem $Item A ShoppShippableItem compatible item
 	 * @return void
 	 **/
-	public function itemfees ( ShoppShippableItem $Item ) {
+	public function item ( ShoppShippableItem $Item ) {
+
+		$this->shippable++;
 		$this->fees += $Item->fees;
+		if ( $Item->shipsfree ) $this->freeitems++;
+
 	}
 
 	/**
@@ -105,8 +127,10 @@ class ShoppShiprates extends ListFramework {
 	 * @return boolean True if free, false otherwise
 	 **/
 	public function free ( boolean $free = null ) {
-		if ( isset($free) )
+
+		if ( isset($free) ) // Override the free setting if the free flag is set
 			$this->free = $free;
+
 		return $this->free;
 	}
 
@@ -123,10 +147,15 @@ class ShoppShiprates extends ListFramework {
 	 * @return float The cost amount of the selected shiprate service
 	 **/
 	public function amount () {
+
 		$selection = $this->selected();
 		if ( false === $selection ) return false;	// Check selection first, since a selection must be made
-		if ( $this->free() ) return (float)0;		// regardless of free shipping
-		return (float)$selection->amount;
+		$amount = $selection->amount;				// regardless of free shipping
+
+		// Override the amount for free shipping or when all items in the order ship free
+		if ( $this->free() || $this->shippable == $this->freeitems ) $amount = 0;
+
+		return (float)$amount;
 	}
 
 	/**
@@ -268,11 +297,16 @@ class ShoppShiprates extends ListFramework {
 	 * @return boolean True if the current request is the same as the prior request
 	 **/
 	private function requested () {
+		var_dump(__METHOD__);
 		if ( is_string($this->track) ) $request = $this->track;
 		else $request = hash('crc32b', serialize($this->track));
 		if ( $this->request == $request ) return true;
 		$this->request = $request;
 		return false;
+	}
+
+	public function __sleep () {
+		return array('selected','fees','shippable','freeitems','free','request','_list','_added','_checks');
 	}
 
 }

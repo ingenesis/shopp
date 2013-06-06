@@ -275,15 +275,15 @@ class ShoppAjax {
 
 	function activate_key () {
 		check_admin_referer('wp_ajax_shopp_activate_key');
-		echo Shopp::key('activate',$_GET['key']);
+		echo ShoppSupport::activate($_GET['key']);
 		exit();
 	}
 
 	function deactivate_key () {
 		check_admin_referer('wp_ajax_shopp_deactivate_key');
-		$sitekey = Shopp::keysetting();
+		$sitekey = ShoppSupport::key();
 		$key = $sitekey['k'];
-		echo Shopp::key('deactivate',$key);
+		echo ShoppSupport::deactivate($key);
 		exit();
 	}
 
@@ -601,7 +601,7 @@ class ShoppAjax {
 
 	function import_file () {
 		check_admin_referer('wp_ajax_shopp_import_file');
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Engine =& $Shopp->Storage->engines['download'];
 
 		$error = create_function('$s', 'die(json_encode(array("error" => $s)));');

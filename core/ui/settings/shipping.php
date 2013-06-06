@@ -39,7 +39,7 @@
 				<label><?php _e('Select the shipping carriers you will be using for shipment tracking.','Shopp'); ?></label>
 				</td>
 			</tr>
-			<?php global $Shopp; if ($Shopp->Shipping->realtime): ?>
+			<?php $Shopp = Shopp::object(); if ($Shopp->Shipping->realtime): ?>
 			<tr>
 				<th scope="row" valign="top"><label for="packaging"><?php _e('Packaging','Shopp'); ?></label></th>
 				<td>

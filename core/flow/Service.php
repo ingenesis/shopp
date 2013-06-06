@@ -326,7 +326,7 @@ class Service extends AdminController {
 	 * @return
 	 **/
 	function layout () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Admin =& $Shopp->Flow->Admin;
 		ShoppUI::register_column_headers($this->screen, apply_filters('shopp_order_manager_columns',array(
 			'items' => __('Items','Shopp'),

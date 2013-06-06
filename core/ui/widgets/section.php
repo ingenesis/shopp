@@ -23,7 +23,7 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppCategorySectionWidget') )
 	    }
 
 	    function widget($args, $options) {
-			global $Shopp;
+			$Shopp = Shopp::object();
 			extract($args);
 
 			$title = $before_title.$options['title'].$after_title;

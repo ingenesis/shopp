@@ -81,7 +81,7 @@ function _jse ( $text, $domain = 'default' ) {
  * @return string The object structure
  **/
 function _object_r ($object) {
-	global $Shopp;
+	$Shopp = Shopp::object();
 	ob_start();
 	print_r($object);
 	$result = ob_get_contents();
@@ -1899,6 +1899,27 @@ function valid_input ($type) {
 	$inputs = array("text","hidden","checkbox","radio","button","submit");
 	if (in_array($type,$inputs) !== false) return true;
 	return false;
+}
+
+/**
+ * Variable sprintf rendering for Shopp gettext wrappers
+ *
+ * @author Jonathan Davis
+ * @since 1.3
+ *
+ * @param string $text The text to render with sprintf
+ * @param array $args The argument list from the calling function
+ * @return string The sprintf rendered string
+ **/
+function sprintf_gettext ( string $text, array $args, integer $parameters = null ) {
+	if ( is_null($parameters) ) $parameters = 1;
+
+	if ( count($args) > $parameters ) {
+	    $args = array_slice($args, $parameters);
+	  	return vsprintf($text, $args);
+	}
+
+	return $text; // Do nothing
 }
 
 if ( ! function_exists('get_class_property') ) {

@@ -23,8 +23,8 @@
 			<?php if ( shopp( 'customer.notloggedin' ) ) : ?>
 				<li>
 					<label for="login"><?php _e('Login to Your Account','Shopp'); ?></label>
-					<span><?php shopp('customer','account-login','size=20&title='.__('Login','Shopp')); ?><label for="account-login"><?php _e('Email','Shopp'); ?></label></span>
-					<span><?php shopp('customer','password-login','size=20&title='.__('Password','Shopp')); ?><label for="password-login"><?php _e('Password','Shopp'); ?></label></span>
+					<span><label for="account-login"><?php _e('Email','Shopp'); ?></label><?php shopp('customer','account-login','size=20&title='.__('Login','Shopp')); ?></span>
+					<span><label for="password-login"><?php _e('Password','Shopp'); ?></label><?php shopp('customer','password-login','size=20&title='.__('Password','Shopp')); ?></span>
 					<span><?php shopp('customer','login-button','context=checkout&value=Login'); ?></span>
 				</li>
 			<?php endif; ?>
@@ -42,10 +42,11 @@
 			
 			<?php if ( shopp( 'customer.notloggedin' ) ) : ?>
 				<li>
-					<span><?php shopp('checkout','password','required=true&format=passwords&size=16&title='.__('Password','Shopp')); ?>
-					<label for="password"><?php _e('Password','Shopp'); ?></label></span>
-					<span><?php shopp('checkout','confirm-password','required=true&format=passwords&size=16&title='.__('Password Confirmation','Shopp')); ?>
-					<label for="confirm-password"><?php _e('Confirm Password','Shopp'); ?></label></span>
+					<span><label for="password"><?php _e('Password','Shopp'); ?></label>
+					<?php shopp('checkout','password','required=true&format=passwords&size=16&title='.__('Password','Shopp')); ?></span>
+
+					<span><label for="confirm-password"><?php _e('Confirm Password','Shopp'); ?></label>
+					<?php shopp('checkout','confirm-password','required=true&format=passwords&size=16&title='.__('Password Confirmation','Shopp')); ?></span>
 				</li>
 			<?php endif; ?>
 			

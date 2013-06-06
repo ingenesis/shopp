@@ -95,7 +95,7 @@ class Categorize extends AdminController {
 	 * @return void
 	 **/
 	function workflow () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$defaults = array(
 			'apply' => false,
@@ -294,7 +294,7 @@ class Categorize extends AdminController {
 	 * @return void
 	 **/
 	function layout () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Admin =& $Shopp->Flow->Admin;
 		include(SHOPP_ADMIN_PATH."/categories/ui.php");
 	}
@@ -374,7 +374,7 @@ class Categorize extends AdminController {
 	 * @return void
 	 **/
 	function save ($Category) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$db = DB::get();
 		check_admin_referer('shopp-save-category');
 
@@ -498,7 +498,7 @@ class Categorize extends AdminController {
 	 * @return void
 	 **/
 	function products ($workflow=false) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$db = DB::get();
 
 		if ( ! current_user_can('shopp_categories') )

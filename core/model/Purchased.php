@@ -12,6 +12,8 @@
 class Purchased extends DatabaseObject {
 	static $table = "purchased";
 
+	public $inventory = false;
+
 	function Purchased ($id=false,$key=false) {
 		$this->init(self::$table);
 		if ($this->load($id,$key)) return true;

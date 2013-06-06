@@ -54,6 +54,9 @@ jQuery(document).ready(function($) {
 		$('#billing-name,#shipping-name').val(new String($('#firstname').val()+" "+$('#lastname').val()).trim());
 	});
 
+	// Update state/province
+	$('#billing-country,#shipping-country').upstate();
+
 	// Toggle same shipping address
 	sameaddr.change(function (e,init) {
 		var refocus = false,
@@ -74,8 +77,5 @@ jQuery(document).ready(function($) {
 		if (sc.is(':visible')) sc.trigger('change.localemenu',[init]);
 		if (refocus) alt.find('input:first').focus();
 	}).trigger('change',[true])
-		.click(function () { $(this).change(); }); // For IE compatibility;
-
-	// Update state/province
-	$('#billing-country,#shipping-country').upstate();
+		.click(function () { $(this).change(); }); // For IE compatibility
 });

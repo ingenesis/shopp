@@ -364,7 +364,7 @@ abstract class ShippingFramework {
 	 * @return boolean
 	 **/
 	function activated () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$activated = $Shopp->Shipping->activated();
 		return (in_array($this->module,$activated));
 	}

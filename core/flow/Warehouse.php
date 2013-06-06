@@ -170,6 +170,7 @@ class Warehouse extends AdminController {
 		if ($duplicate) {
 			$Product = new Product($duplicate);
 			$Product->duplicate();
+			$this->index($Product);
 			shopp_redirect(add_query_arg('page',$this->Admin->pagename('products'),$adminurl));
 		}
 
@@ -624,7 +625,7 @@ class Warehouse extends AdminController {
 	 * @return void
 	 **/
 	function editor () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		if ( ! current_user_can('shopp_products') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));

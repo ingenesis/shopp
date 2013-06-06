@@ -372,7 +372,7 @@ class CartTotalsTests extends ShoppTestCase {
 			)
 		);
 
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Shopp->Promotions->promotions = array($Promotion);
 		shopp_add_cart_promocode('cartitemamount');
 
@@ -438,7 +438,7 @@ class CartTotalsTests extends ShoppTestCase {
 			)
 		);
 
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Shopp->Promotions->promotions = array($Promotion);
 
 		shopp_empty_cart();
@@ -503,7 +503,7 @@ class CartTotalsTests extends ShoppTestCase {
 		);
 
 
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Shopp->Promotions->promotions = array($Promotion);
 
 		shopp_empty_cart();

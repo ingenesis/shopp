@@ -223,7 +223,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	}
 
 	public static function billing_locale ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$select_attrs = array('title','required','class','disabled','required','size','tabindex','accesskey');
 		$output = false;
@@ -329,7 +329,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	}
 
 	public static function billing_xcsc_required ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Gateways = $Shopp->Gateways->active;
 		foreach ($Gateways as $Gateway) {
 			foreach ((array)$Gateway->settings['cards'] as $card) {
@@ -341,7 +341,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	}
 
 	public static function card_required ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		if ($O->Cart->Totals->total() == 0) return false;
 		foreach ($Shopp->Gateways->active as $gateway)
 			if (!empty($gateway->cards)) return true;
@@ -751,7 +751,10 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		return $output;
 	}
 
-	public static function receipt ($result, $options, $O) { global $Shopp; if (!empty($Shopp->Purchase->id)) return $Shopp->Purchase->receipt(); }
+	public static function receipt ($result, $options, $O) {
+		$Shopp = Shopp::object();
+		if (!empty($Shopp->Purchase->id)) return $Shopp->Purchase->receipt();
+	}
 
 	public static function residential_shipping_address ($result, $options, $O) {
 		$allowed = array('class','checked','title');

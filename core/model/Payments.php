@@ -160,7 +160,7 @@ class ShoppPayments extends ListFramework {
 	}
 
 	private function modules ( string $module = null ) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		if ( is_null($module) ) return $Shopp->Gateways->active;
 
@@ -170,7 +170,7 @@ class ShoppPayments extends ListFramework {
 	}
 
 	private static function freeorder () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Module = $Shopp->Gateways->freeorder;
 		return new ShoppPaymentOption(
 			'freeorder',

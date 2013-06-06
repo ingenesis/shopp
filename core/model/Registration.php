@@ -39,14 +39,14 @@ class ShoppRegistration {
 		'info' => array(),
 	);
 
-	public function __construct () {
+	public function __construct ( $must_setup = false ) {
 
 		$_POST = apply_filters('shopp_customer_registration',$_POST);
 
 		$submitted = stripslashes_deep($_POST);					// Clean it up
 		$this->form = array_merge(self::$defaults, $submitted);	// Capture it
 
-		if ( ! self::submitted() ) return;
+		if ( ! self::submitted() && ! $must_setup ) return;
 
 		add_action('parse_request', array($this, 'info'));
 		add_action('parse_request', array($this, 'customer'));
@@ -95,6 +95,7 @@ class ShoppRegistration {
 			'firstname' => $this->form('firstname'),
 			'lastname' => $this->form('lastname'),
 			'company' => $this->form('company'),
+			'email' => $this->form('email'),
 			'phone' => $this->form('phone'),
 			'info' => $this->form('info')
 		);
@@ -147,10 +148,10 @@ class ShoppRegistration {
 
 		// Prevent overwriting the card data when updating the BillingAddress
 		$ignore = array();
-		if ( ! empty($form['card']) && $form['card'] == substr($BillingAddress->card,-4) )
+		if ( ! empty($form['card']) && preg_replace('/[^\d]/','',$form['card']) == substr($BillingAddress->card,-4) )
 			$ignore[] = 'card';
 
-		$BillingAddress->updates($_POST['billing'],$ignore);
+		$BillingAddress->updates($form,$ignore);
 
 		// Handle same address copying
 		$copy = strtolower( $this->form('sameaddress') );
@@ -169,7 +170,12 @@ class ShoppRegistration {
 		$BillingAddress = ShoppOrder()->Billing;
 		$ShippingAddress = ShoppOrder()->Shipping;
 
-		if ( ! $Customer->guest ) {
+
+		if ( $Customer->guest ) {
+
+			$Customer->type = __('Guest', 'Shopp');
+
+		} else {
 
 			// WordPress account integration used, customer has no wp user
 			if ( 'wordpress' == shopp_setting('account_system') && empty($Customer->wpuser) ) {

@@ -90,7 +90,7 @@ class ShoppAdmin extends FlowController {
 		add_action('load-plugins.php',array($this, 'pluginspage'));
 		add_action('switch_theme',array($this, 'themepath'));
 		add_filter('favorite_actions', array($this, 'favorites'));
-		add_filter('shopp_admin_boxhelp', array($this, 'keystatus'));
+		add_filter('shopp_admin_boxhelp', array($this, 'support'));
 		add_action('load-update.php', array($this, 'admin_css'));
 		add_action('admin_menu',array($this, 'taxonomies'),20);
 		add_action('load-nav-menus.php',array($this, 'navmenus')); // @todo redundant? (Check with JD)
@@ -227,7 +227,7 @@ class ShoppAdmin extends FlowController {
 	 * @param mixed $page ShoppAdminPage object
 	 **/
 	function addmenu ($page) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$name = $page->page;
 
 		$controller = array(&$Shopp->Flow,'admin');
@@ -415,6 +415,11 @@ class ShoppAdmin extends FlowController {
 		$link = htmlspecialchars($page->doc);
 		$content = '<a href="'.$url.'" target="_blank">'.$link.'</a>';
 
+		$screenname = $this->Pages[$pagename]->name;
+
+		if ( file_exists(SHOPP_PATH . "/core/ui/help/$screenname.php") )
+			return include SHOPP_PATH . "/core/ui/help/$screenname.php";
+
 		get_current_screen()->add_help_tab(array(
 			'id' => 'shopp-help',
 			'title' => __('Help'),
@@ -459,7 +464,7 @@ class ShoppAdmin extends FlowController {
 	 * @author Jonathan Davis
 	 **/
 	function welcome () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		if (shopp_setting('display_welcome') == "on" && empty($_POST['setup'])) {
 			include(SHOPP_ADMIN_PATH."/help/welcome.php");
 			return true;
@@ -474,7 +479,7 @@ class ShoppAdmin extends FlowController {
 	 * @author Jonathan Davis
 	 **/
 	function reactivate () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		include(SHOPP_ADMIN_PATH."/help/reactivate.php");
 	}
 
@@ -545,7 +550,7 @@ class ShoppAdmin extends FlowController {
 	 * @return void
 	 **/
 	function stats_widget ($args=false) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$ranges = array(
 			'today' => __('Today','Shopp'),
@@ -715,7 +720,7 @@ class ShoppAdmin extends FlowController {
 	 * @return void
 	 **/
 	function orders_widget ($args=null) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$db = DB::get();
 		$defaults = array(
 			'before_widget' => '',
@@ -738,7 +743,7 @@ class ShoppAdmin extends FlowController {
 		$purchasetable = DatabaseObject::tablename(Purchase::$table);
 		$purchasedtable = DatabaseObject::tablename(Purchased::$table);
 
-		$Orders = $db->query("SELECT p.*,count(i.id) as items FROM $purchasetable AS p LEFT JOIN $purchasedtable AS i ON i.purchase=p.id GROUP BY i.purchase ORDER BY created DESC LIMIT 6",AS_ARRAY);
+		$Orders = $db->query("SELECT p.*,count(i.id) as items FROM $purchasetable AS p LEFT JOIN $purchasedtable AS i ON i.purchase=p.id GROUP BY i.purchase ORDER BY created DESC LIMIT 6",'array');
 
 		if (!empty($Orders)) {
 		echo '<table class="widefat">';
@@ -856,16 +861,16 @@ class ShoppAdmin extends FlowController {
 	}
 
 	/**
-	 * Report the current status of the update key
+	 * Report the current status of Shopp support
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
 	 * @return boolean
 	 **/
-	function keystatus ($_=true) {
-		if (!Shopp::activated()) return false;
-		return $_;
+	function support ( $status = true ) {
+		if ( ! ShoppSupport::activated() ) return false;
+		return $status;
 	}
 
 	/**

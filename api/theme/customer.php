@@ -141,7 +141,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	}
 
 	public static function billing_country ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$base = shopp_setting('base_operations');
 		$countries = shopp_setting('target_markets');
@@ -168,7 +168,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 
 	public static function billing_state ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$base = shopp_setting('base_operations');
 		$countries = shopp_setting('target_markets');
 		$select_attrs = array('title','required','class','disabled','required','size','tabindex','accesskey');
@@ -628,7 +628,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	}
 
 	public static function shipping_state ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$base = shopp_setting('base_operations');
 		$countries = shopp_setting('target_markets');
@@ -710,7 +710,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	}
 
 	public static function url ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		return shoppurl(array('acct'=>null),'account',$Shopp->Gateways->secure);
 	}
 

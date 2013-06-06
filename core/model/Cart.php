@@ -42,7 +42,6 @@ class ShoppCart extends ListFramework {
 	public $changed = false;		// Flag when Cart updates and needs retotaled
 	public $added = false;			// The index of the last item added
 
-	public $runaway = 0;
 	public $retotal = false;
 	public $handlers = false;
 
@@ -68,6 +67,11 @@ class ShoppCart extends ListFramework {
 	 **/
 	public function __wakeup () {
 		$this->listeners();
+	}
+
+	public function __sleep () {
+		$properties = array_keys( get_object_vars($this) );
+		return array_diff($properties, array('shipped', 'downloads', 'recurring', 'Added', 'retotal', 'promocodes',' discounts'));
 	}
 
 	/**
@@ -230,7 +234,7 @@ class ShoppCart extends ListFramework {
 			$AjaxCart->Contents[] = $CartItem;
 		}
 		if (isset($this->added))
-			$AjaxCart->Item = clone($this->Added);
+			$AjaxCart->Item = clone($this->added());
 		else $AjaxCart->Item = new ShoppCartItem();
 		unset($AjaxCart->Item->options);
 
@@ -271,7 +275,6 @@ class ShoppCart extends ListFramework {
 			return $this->remove( $this->added() ); // Remove items if no cross-item stock available
 
 		do_action_ref_array('shopp_cart_add_item',array($NewItem));
-		$this->Added = $NewItem;
 
 		return true;
 	}
@@ -398,22 +401,6 @@ class ShoppCart extends ListFramework {
 	}
 
 	/**
-	 * Empties the contents of the cart
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.0
-	 *
-	 * @return boolean
-	 **/
-	public function clear () {
-		parent::clear();
-		$this->promocodes = array();
-		$this->discounts = array();
-		if (isset($this->promocode)) unset($this->promocode);
-		return true;
-	}
-
-	/**
 	 * Changes an item to a different product/price variation
 	 *
 	 * @author Jonathan Davis
@@ -490,7 +477,7 @@ class ShoppCart extends ListFramework {
 
 	public function tracking () {
 
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$Order = ShoppOrder();
 
 		$ShippingAddress = $Order->Shipping;
@@ -509,24 +496,8 @@ class ShoppCart extends ListFramework {
 		$Shiprates->track('postcodes', $ShippingModules->postcodes);
 		$Shiprates->track('realtime', $ShippingModules->realtime);
 
-		// Have Shiprates calculate item fees
-		add_action( 'shopp_cart_item_retotal', array($this, 'shipitems') );
+		add_action('shopp_cart_item_totals', array($Shiprates, 'init'));
 
-	}
-
-	/**
-	 * Calculate shippable item fees
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.3
-	 *
-	 * @return void
-	 **/
-	public function shipitems ( ShoppCartItem $Item ) {
-		$Shiprates = ShoppOrder()->Shiprates;
-
-		$ShippableItem = new ShoppShippableItem($Item);
-		$Shiprates->itemfees($ShippableItem);
 	}
 
 	/**
@@ -563,11 +534,12 @@ class ShoppCart extends ListFramework {
 			foreach ( $Item->taxes as $taxid => $Tax )
 				$Totals->register( new OrderAmountItemTax( $Tax, $id ) );
 
+			$Shipping->item( new ShoppShippableItem($Item) );
+
 		}
 
-		// @todo handle free shipping??
-		// $Shipping->free($shipfree);
 		$Shipping->calculate();
+
 		$Totals->register( new OrderAmountShipping( array('id' => 'cart', 'amount' => $Shipping->amount() ) ) );
 
 		// Calculate discounts
@@ -788,7 +760,7 @@ class CartDiscounts {
 	 * @return void
 	 **/
 	public function __construct () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$this->limit = shopp_setting('promo_limit');
 		$baseop = shopp_setting('base_operations');
 		$this->precision = $baseop['currency']['format']['precision'];
@@ -1150,7 +1122,7 @@ class CartShipping {
 	 * @return void
 	 **/
 	public function __construct () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 
 		$this->Cart = &$Shopp->Order->Cart;
 		$this->modules = &$Shopp->Shipping->active;
@@ -1183,7 +1155,6 @@ class CartShipping {
 	 * @return void
 	 **/
 	public function calculate () {
-		global $Shopp;
 
 		$status = $this->status();
 		if ($status !== true) return $status;
@@ -1314,7 +1285,7 @@ class CartTax {
 	 * @return void
 	 **/
 	public function __construct () {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$this->Order = ShoppOrder();
 		$base = shopp_setting('base_operations');
 		$this->format = $base['currency']['format'];

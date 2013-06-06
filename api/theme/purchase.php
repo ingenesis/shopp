@@ -210,7 +210,9 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 
 	static function has_downloads ($result, $options, $O) { reset($O->downloads); return ($O->downloads); }
 
-	static function has_freight ($result, $options, $O) { return (!empty($O->shipmethod) || $O->freight > 0); }
+	static function has_freight ($result, $options, $O) {
+		return ( $O->shipable || ! empty($O->shipmethod) || $O->freight > 0 );
+	}
 
 	static function has_items ($result, $options, $O) {
 		if (empty($O->purchased)) $O->load_purchased();
@@ -504,7 +506,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 	static function ship_city ($result, $options, $O) { return esc_html($O->shipcity); }
 
 	static function ship_country ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$countries = shopp_setting('target_markets');
 		return $countries[$O->shipcountry];
 	}
@@ -544,7 +546,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 	}
 
 	static function status ($result, $options, $O) {
-		global $Shopp;
+		$Shopp = Shopp::object();
 		$labels = shopp_setting('order_status');
 		if (empty($labels)) $labels = array('');
 		return $labels[$O->status];

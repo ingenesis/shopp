@@ -1,43 +1,45 @@
 <?php
 /**
- * Customer class
- * Customer contact information
+ * Customer.php
+ *
+ * Customer management classes
  *
  * @author Jonathan Davis
- * @version 1.0
- * @copyright Ingenesis Limited, 28 March, 2008
+ * @version 1.3
+ * @copyright Ingenesis Limited, May 2013
  * @package shopp
  * @since 1.0
  * @subpackage customer
  **/
 
-require('Address.php');
-
 class Customer extends DatabaseObject {
 	static $table = 'customer';
 
-	var $login = false;			// Login authenticated flag
-	var $info = false;			// Custom customer info fields
-	var $newuser = false;		// New WP user created flag
-	var $loginname = false;		// Account login name
+	public $login = false;			// Login authenticated flag
+	public $info = false;			// Custom customer info fields
+	public $newuser = false;		// New WP user created flag
+	public $loginname = false;		// Account login name
 
-	function __construct ($id=false,$key=false) {
+	public function __construct ( $id = false, $key = 'id' ) {
 		$this->init(self::$table);
-		$this->load($id,$key);
-		if (!empty($this->id)) $this->load_info();
+		$this->load($id, $key);
+
+		if ( ! empty($this->id) )
+			$this->load_info();
 
 		$this->listeners();
 	}
 
-	function __wakeup () {
+	public function __wakeup () {
+		$this->init(self::$table);
 		$this->listeners();
 	}
 
-	function reset () {
+	public function reset () {
 		$this->newuser = false;
 	}
 
-	function listeners () {
+	public function listeners () {
 		// add_action('parse_request',array($this,'menus'));
 		// add_action('shopp_account_management',array($this,'management'));
 		add_action('shopp_logged_out', array($this, 'logout'));
@@ -51,7 +53,7 @@ class Customer extends DatabaseObject {
 	 *
 	 * @return stdClass returns stdClass simplified version of the customer object
 	 **/
-	function simplify () {
+	public function simplify () {
 		$map = array('id', 'wpuser', 'firstname', 'lastname', 'email', 'phone', 'company', 'marketing', 'type');
 		$_ = new stdClass;
 
@@ -71,12 +73,12 @@ class Customer extends DatabaseObject {
 	 *
 	 * @return void
 	 **/
-	function load_info () {
+	public function load_info () {
 		$this->info = new ObjectMeta($this->id,'customer');
 		if (!$this->info) $this->info = new ObjectMeta();
 	}
 
-	function save () {
+	public function save () {
 		parent::save();
 
 		if (empty($this->info) || !is_array($this->info)) return true;
@@ -104,7 +106,7 @@ class Customer extends DatabaseObject {
 	 *
 	 * @return bool true if logged in, false if not logged in
 	 **/
-	function logged_in () {
+	public function logged_in () {
 		if ( 'wordpress' == shopp_setting('account_system') ) {
 			$user = wp_get_current_user();
 			return apply_filters('shopp_customer_login_check', $user->ID == $this->wpuser && $this->login );
@@ -113,12 +115,12 @@ class Customer extends DatabaseObject {
 		return apply_filters('shopp_customer_login_check', $this->login);
 	}
 
-	function logout () {
+	public function logout () {
 		$this->login = false;
 	}
 
-	function order () {
-		global $Shopp;
+	public function order () {
+		$Shopp = Shopp::object();
 
 		if (!empty($_POST['vieworder']) && !empty($_POST['purchaseid'])) {
 
@@ -161,8 +163,8 @@ class Customer extends DatabaseObject {
 		}
 	}
 
-	function notification () {
-		global $Shopp;
+	public function notification () {
+		$Shopp = Shopp::object();
 		// The blogname option is escaped with esc_html on the way into the database in sanitize_option
 		// we want to reverse this for the plain text arena of emails.
 		$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
@@ -200,7 +202,7 @@ class Customer extends DatabaseObject {
 		else shopp_debug('Successfully created the WordPress user for the Shopp account.');
 	}
 
-	function load_downloads () {
+	public function load_downloads () {
 		$Storefront = ShoppStorefront();
 		if (empty($this->id)) return false;
 		$orders = DatabaseObject::tablename(Purchase::$table);
@@ -228,7 +230,7 @@ class Customer extends DatabaseObject {
 		}
 	}
 
-	function load_orders ($filters=array()) {
+	public function load_orders ($filters=array()) {
 		if (empty($this->id)) return false;
 
 		$request = false; $id = false;
@@ -263,7 +265,7 @@ class Customer extends DatabaseObject {
 		$Storefront->purchases = DB::query($query,'array',array($PurchaseLoader,'loader'));
 	}
 
-	function create_wpuser () {
+	public function create_wpuser () {
 		require(ABSPATH.'/wp-includes/registration.php');
 		if (empty($this->loginname)) return false;
 		if (!validate_username($this->loginname)) {
@@ -312,7 +314,7 @@ class Customer extends DatabaseObject {
 	 *
 	 * @return boolean|string output based on the account menu request
 	 **/
-	function profile () {
+	public function profile () {
 		if (empty($_POST['customer'])) return; // Not a valid customer profile update request
 
 		$_POST['phone'] = preg_replace('/[^\d\(\)\-+\. (ext|x)]/','',$_POST['phone']);
@@ -348,7 +350,7 @@ class Customer extends DatabaseObject {
 
 	}
 
-	function exportcolumns () {
+	public function exportcolumns () {
 		$prefix = "c.";
 		return array(
 			$prefix.'firstname' => __('Customer\'s First Name','Shopp'),
@@ -363,30 +365,32 @@ class Customer extends DatabaseObject {
 			);
 	}
 
-} // end Customer class
+} // END class Customer
 
 class CustomersExport {
-	var $sitename = "";
-	var $headings = false;
-	var $data = false;
-	var $defined = array();
-	var $customer_cols = array();
-	var $billing_cols = array();
-	var $shipping_cols = array();
-	var $selected = array();
-	var $recordstart = true;
-	var $content_type = "text/plain";
-	var $extension = "txt";
-	var $set = 0;
-	var $limit = 1024;
 
-	function __construct () {
-		global $Shopp;
+	public $sitename = "";
+	public $headings = false;
+	public $data = false;
+	public $defined = array();
+	public $customer_cols = array();
+	public $billing_cols = array();
+	public $shipping_cols = array();
+	public $selected = array();
+	public $recordstart = true;
+	public $content_type = "text/plain";
+	public $extension = "txt";
+	public $set = 0;
+	public $limit = 1024;
+
+	public function __construct () {
+
+		$Shopp = Shopp::object();
 
 		$this->customer_cols = Customer::exportcolumns();
 		$this->billing_cols = BillingAddress::exportcolumns();
 		$this->shipping_cols = ShippingAddress::exportcolumns();
-		$this->defined = array_merge($this->customer_cols,$this->billing_cols,$this->shipping_cols);
+		$this->defined = array_merge($this->customer_cols, $this->billing_cols, $this->shipping_cols);
 
 		$this->sitename = get_bloginfo('name');
 		$this->headings = (shopp_setting('customerexport_headers') == "on");
@@ -394,7 +398,7 @@ class CustomersExport {
 		shopp_set_setting('customerexport_lastexport',current_time('timestamp'));
 	}
 
-	function query ($request=array()) {
+	public function query ($request=array()) {
 		if (empty($request)) $request = $_GET;
 
 		if (!empty($request['start'])) {
@@ -423,7 +427,7 @@ class CustomersExport {
 	}
 
 	// Implement for exporting all the data
-	function output () {
+	public function output () {
 		if (!$this->data) $this->query();
 		if (!$this->data) return false;
 		header("Content-type: $this->content_type; charset=UTF-8");
@@ -438,15 +442,15 @@ class CustomersExport {
 		$this->end();
 	}
 
-	function begin() {}
+	public function begin() {}
 
-	function heading () {
+	public function heading () {
 		foreach ($this->selected as $name)
 			$this->export($this->defined[$name]);
 		$this->record();
 	}
 
-	function records () {
+	public function records () {
 		while (!empty($this->data)) {
 			foreach ($this->data as $key => $record) {
 				foreach(get_object_vars($record) as $column)
@@ -458,7 +462,7 @@ class CustomersExport {
 		}
 	}
 
-	function parse ($column) {
+	public function parse ($column) {
 		if (preg_match("/^[sibNaO](?:\:.+?\{.*\}$|\:.+;$|;$)/",$column)) {
 			$list = unserialize($column);
 			$column = "";
@@ -469,67 +473,67 @@ class CustomersExport {
 		return $this->escape($column);
 	}
 
-	function end() {}
+	public function end() {}
 
 	// Implement for exporting a single value
-	function export ($value) {
+	public function export ($value) {
 		echo ($this->recordstart?"":"\t").$this->escape($value);
 		$this->recordstart = false;
 	}
 
-	function record () {
+	public function record () {
 		echo "\n";
 		$this->recordstart = true;
 	}
 
-	function escape ($value) {
+	public function escape ($value) {
 		return $value;
 	}
 
-}
+} // END class CustomersExport
 
 class CustomersTabExport extends CustomersExport {
 
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 		$this->output();
 	}
 
-	function escape ($value) {
+	public function escape ($value) {
 		$value = str_replace(array("\n", "\r"), ' ', $value); // No newlines
 		if ( false !== strpos($value, "\t") && false === strpos($value,'"') )	// Quote tabs
 			$value = '"' . $value . '"';
 		return $value;
 	}
 
-}
+} // END class CustomersTabExport
 
 class CustomersCSVExport extends CustomersExport {
 
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 		$this->content_type = "text/csv";
 		$this->extension = "csv";
 		$this->output();
 	}
 
-	function export ($value) {
+	public function export ($value) {
 		echo ($this->recordstart?"":",").$value;
 		$this->recordstart = false;
 	}
 
-	function escape ($value) {
+	public function escape ($value) {
 		$value = str_replace('"','""',$value);
 		if ( preg_match('/^\s|[,"\n\r]|\s$/',$value) )
 			$value = '"'.$value.'"';
 		return $value;
 	}
 
-}
+} // END class CustomersCSVExport
 
 class CustomersXLSExport extends CustomersExport {
 
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 		$this->content_type = "application/vnd.ms-excel";
 		$this->extension = "xls";
@@ -537,15 +541,15 @@ class CustomersXLSExport extends CustomersExport {
 		$this->output();
 	}
 
-	function begin () {
+	public function begin () {
 		echo pack("ssssss", 0x809, 0x8, 0x0, 0x10, 0x0, 0x0);
 	}
 
-	function end () {
+	public function end () {
 		echo pack("ss", 0x0A, 0x00);
 	}
 
-	function export ($value) {
+	public function export ($value) {
 		if (preg_match('/^[\d\.]+$/',$value)) {
 		 	echo pack("sssss", 0x203, 14, $this->r, $this->c, 0x0);
 			echo pack("d", $value);
@@ -557,11 +561,11 @@ class CustomersXLSExport extends CustomersExport {
 		$this->c++;
 	}
 
-	function record () {
+	public function record () {
 		$this->c = 0;
 		$this->r++;
 	}
-}
+} // END class CustomerXLSExport
 
 /**
  * CustomerAccountPage class
@@ -573,16 +577,15 @@ class CustomersXLSExport extends CustomersExport {
  * @package customer
  **/
 class CustomerAccountPage {
-	var $request = "";
-	var $label = "";
-	var $handler = false;
 
-	function __construct ($request,$label,$handler) {
+	public $request = '';
+	public $label = '';
+	public $handler = false;
+
+	public function __construct ( $request, $label, $handler ) {
 		$this->request = $request;
 		$this->label = $label;
 		$this->handler = $handler;
 	}
 
 } // END class CustomerAccountPage
-
-?>

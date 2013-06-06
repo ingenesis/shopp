@@ -25,14 +25,14 @@ class ShoppOrdersRemoteAPI {
 	 * @return void
 	 **/
 	static function _register () {
-		shopp_add_remoteapi('orders', array(__CLASS__,'orders'), 'read' );
+		shopp_add_remoteapi('orders', array(__CLASS__, 'orders'), 'read');
 	}
 
-	static function orders ($response,$resource,$options) {
-		list($request,$id) = $resource;
-		if ( ! empty($id) ) return shopp_order((int)$id);
+	static function orders ($response, $resource, $options) {
+		list($request, $id) = $resource;
+		if ( ! empty($id) ) return shopp_order((int) $id);
 
-		$options = wp_parse_args($options,array(
+		$options = wp_parse_args($options, array(
 			'from' => false,
 			'to' => false,
 			'itmes' => true,
@@ -40,7 +40,7 @@ class ShoppOrdersRemoteAPI {
 			'limit' => false,
 			'order' => 'DESC'
 		));
-		extract($options,EXTR_SKIP);
+		extract($options, EXTR_SKIP);
 		return shopp_orders($from, $to, $items, $customers, $limit, $order);
 	}
 

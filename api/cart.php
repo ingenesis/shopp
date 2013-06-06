@@ -177,7 +177,7 @@ function shopp_cart_item ( $item = false ) {
 		shopp_debug(__FUNCTION__ . " failed: Missing item parameter.");
 	}
 
-	if ( 'recent-cartitem' === $item && $Order->Cart->Added ) return $Order->Cart->Added;
+	if ( 'recent-cartitem' === $item ) return $Order->Cart->added();
 
 	$items = shopp_cart_items();
 

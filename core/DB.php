@@ -15,22 +15,21 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-define('AS_ARRAY',false); // @deprecated
-if ( ! defined('SHOPP_DBPREFIX') ) define('SHOPP_DBPREFIX','shopp_');
-if ( ! defined('SHOPP_QUERY_DEBUG') ) define('SHOPP_QUERY_DEBUG',false);
+if ( ! defined('SHOPP_DBPREFIX') ) define('SHOPP_DBPREFIX', 'shopp_');
+if ( ! defined('SHOPP_QUERY_DEBUG') ) define('SHOPP_QUERY_DEBUG', false);
 
 // Make sure that compatibility mode is not enabled
 if ( ini_get('zend.ze1_compatibility_mode') )
-	ini_set('zend.ze1_compatibility_mode','Off');
+	ini_set('zend.ze1_compatibility_mode', 'Off');
 
 /**
- * Provides the DB query interface for Shopp
+ * The database query interface for Shopp
  *
  * @author Jonathan Davis
  * @since 1.0
  * @version 1.2
  **/
-class DB extends SingletonFramework {
+class sDB extends SingletonFramework {
 
 	static $version = 1150;	// Database schema version
 
@@ -71,14 +70,10 @@ class DB extends SingletonFramework {
 	}
 
 	/**
-	 * Provides a reference to the instantiated DB singleton
-	 *
-	 * The DB class uses a singleton to ensure only one DB object is
-	 * instantiated at any time
+	 * Provides a reference to the running sDB object
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.0
-	 * @deprecated Will be removed in 1.3, use DB::instance() instead
 	 *
 	 * @return DB Returns a reference to the DB object
 	 **/
@@ -86,15 +81,18 @@ class DB extends SingletonFramework {
 		return self::object();
 	}
 
+	/**
+	 * The singleton access method
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return DB Returns the a reference to the running DB object
+	 **/
 	public static function object () {
 		if ( ! self::$object instanceof self )
 			self::$object = new self;
 		return self::$object;
-	}
-
-	public static function table_prefix () {
-		global $wpdb;
-		return $wpdb->get_blog_prefix();
 	}
 
 	/**
@@ -144,8 +142,8 @@ class DB extends SingletonFramework {
 	 * @param string $database The database name
 	 * @return void
 	 **/
-	public function db ($database) {
-		if( ! @mysql_select_db($database,$this->dbh) )
+	public function db ( $database ) {
+		if( ! @mysql_select_db($database, $this->dbh) )
 			trigger_error("Could not select the '$database' database.");
 	}
 
@@ -157,9 +155,9 @@ class DB extends SingletonFramework {
 	 *
 	 * @return boolean True if the table exists, otherwise false
 	 **/
-	public function hastable ($table) {
-		$table = DB::escape($table);
-		$result = DB::query("SHOW TABLES FROM ".DB_NAME." LIKE '$table'",'auto','col');
+	public function hastable ( $table ) {
+		$table = sDB::escape($table);
+		$result = sDB::query("SHOW TABLES FROM " . DB_NAME . " LIKE '$table'", 'auto', 'col');
 		return ! empty($result);
 	}
 
@@ -172,9 +170,9 @@ class DB extends SingletonFramework {
 	 * @param string $datetime A MySQL date time string
 	 * @return int A timestamp number usable by PHP date functions
 	 **/
-	public static function mktime ($datetime) {
+	public static function mktime ( $datetime ) {
 		$h = $mn = $s = 0;
-		list($Y, $M, $D, $h, $mn, $s) = sscanf($datetime,'%d-%d-%d %d:%d:%d');
+		list($Y, $M, $D, $h, $mn, $s) = sscanf($datetime, '%d-%d-%d %d:%d:%d');
 		if (max($Y, $M, $D, $h, $mn, $s) == 0) return 0;
 		return mktime($h, $mn, $s, $M, $D, $Y);
 	}
@@ -188,8 +186,8 @@ class DB extends SingletonFramework {
 	 * @param int $timestamp A timestamp number
 	 * @return string An SQL datetime formatted string
 	 **/
-	public static function mkdatetime ($timestamp) {
-		return date('Y-m-d H:i:s',$timestamp);
+	public static function mkdatetime ( $timestamp ) {
+		return date('Y-m-d H:i:s', $timestamp);
 	}
 
 	/**
@@ -201,11 +199,12 @@ class DB extends SingletonFramework {
 	 * @param string|array|object $data Data to be escaped
 	 * @return string Database-safe data
 	 **/
-	public static function escape ($data) {
+	public static function escape ( $data ) {
 		// Prevent double escaping by stripping any existing escapes out
-		if (is_array($data)) array_map(array('DB','escape'), $data);
-		elseif (is_object($data)) {
-			foreach (get_object_vars($data) as $p => $v) $data->{$p} = DB::escape($v);
+		if ( is_array($data) ) array_map(array('DB', 'escape'), $data);
+		elseif ( is_object($data) ) {
+			foreach ( get_object_vars($data) as $p => $v )
+				$data->$p = sDB::escape($v);
 		} else $data = addslashes(stripslashes($data));
 		return $data;
 	}
@@ -219,9 +218,9 @@ class DB extends SingletonFramework {
 	 * @param string|array|object $data Data to be sanitized
 	 * @return string Cleaned up data
 	 **/
-	public static function clean ($data) {
-		if (is_array($data)) array_map(array('DB','clean'), $data);
-		if (is_string($data)) $data = rtrim($data);
+	public static function clean ( $data ) {
+		if ( is_array($data) ) array_map(array('DB', 'clean'), $data);
+		if ( is_string($data) ) $data = rtrim($data);
 		return $data;
 	}
 
@@ -248,73 +247,106 @@ class DB extends SingletonFramework {
 	/**
 	 * Send a query to the database and retrieve the results
 	 *
+	 * Results can be formatted using 'auto', 'object' or 'array'.
+	 *
+	 *    auto - Automatically detects 'object' and 'array' results (default)
+	 *  object - Provides a single object as the result
+	 *   array - Provides a list of records/objects
+	 *
+	 * Processing results can also be automated by specifying a record processor
+	 * function. A custom callback function can be provided using standard PHP
+	 * callback notation, or there are builtin record processing methods
+	 * supported that can be specified as a string in the callback
+	 * parameter: 'auto', 'index' or 'col'
+	 *
+	 *  auto - Simply adds a record to the result set as a numerically indexed array of records
+	 *
+	 * index - Indexes record objects into an associative array using a given column name as the key
+	 *         sDB::query('query', 'format', 'index', 'column', (bool)collate)
+	 *         A column name is provided (4th argument) for the index key value
+	 *         A 'collate' boolean flag can also be provided (5th argument) to collect records with identical index column values into an array
+	 *
+	 *   col - Builds records as an associative array with a single column as the array value
+	 *         sDB::query('query', 'format', 'column', 'indexcolumn', (bool)collate)
+	 *         A column name is provided (4th argument) as the column for the array value
+	 *         An index column name can be provided (5th argument) to index records as an associative array using the index column value as the key
+	 *         A 'collate' boolean flag can also be provided (6th argument) to collect records with identical index column values into an array
+	 *
+	 * Collating records using the 'index' or 'col' record processors require an index column.
+	 * When a record's column value matches another record, the two records are collected into
+	 * a nested array. The results array will have a single entry where the key is the
+	 * index column's value and the value of the entry is an array of all the records that share
+	 * the index column value.
+	 *
 	 * @author Jonathan Davis
 	 * @since 1.0
+	 * @version 1.2
 	 *
 	 * @param string $query The SQL query to send
-	 * @param boolean $output (optional) Return results as an object (default) or as an array of result rows
-	 * @return array|object The query results as an object or array of result rows
+	 * @param string $format (optional) Supports 'auto' (default), 'object', or 'array'
+ 	 * @return array|object The query results as an object or array of result rows
 	 **/
-	public static function query ($query, $format='auto', $callback=false) {
-		$db = DB::get();
+	public static function query ( $query, $format = 'auto', $callback = false ) {
+		$db = sDB::get();
+
 		$args = func_get_args();
-		$args = (count($args) > 3)?array_slice($args,3):array();
+		$args = ( count($args) > 3 ) ? array_slice($args, 3) : array();
 
-		// @deprecated Supports deprecated AS_ARRAY argument
-		if ($format === AS_ARRAY) $format = 'array';
-
-		if (SHOPP_QUERY_DEBUG) $timer = microtime(true);
+		if ( SHOPP_QUERY_DEBUG ) $timer = microtime(true);
 
 		$result = @mysql_query($query, $db->dbh);
 
-		if (SHOPP_QUERY_DEBUG) $db->queries[] = array($query, microtime(true)-$timer, DB::caller());
+		if ( SHOPP_QUERY_DEBUG ) $db->queries[] = array($query, microtime(true) - $timer, sDB::caller());
 
 		// Error handling
-		if ($db->dbh && $error = mysql_error($db->dbh)) {
-			shopp_add_error( sprintf('Query failed: %s - DB Query: %s', $error, str_replace("\n","",$query) ), SHOPP_DB_ERR);
+		if ( $db->dbh && $error = mysql_error($db->dbh) ) {
+			shopp_add_error( sprintf('Query failed: %s - DB Query: %s', $error, str_replace("\n", "", $query) ), SHOPP_DB_ERR);
 			return false;
 		}
 
 		/** Results handling **/
 
 		// Handle special cases
-		if ( preg_match("/^\\s*(create|drop|insert|delete|update|replace) /i",$query) ) {
+		if ( preg_match("/^\\s*(create|drop|insert|delete|update|replace) /i", $query) ) {
 			$db->affected = mysql_affected_rows();
-			if ( preg_match("/^\\s*(insert|replace) /i",$query) ) {
-				$insert = @mysql_fetch_object(@mysql_query("SELECT LAST_INSERT_ID() AS id", $db->dbh));
+			if ( preg_match("/^\\s*(insert|replace) /i", $query) ) {
+				$insert = @mysql_fetch_object( @mysql_query("SELECT LAST_INSERT_ID() AS id", $db->dbh) );
 				return (int)$insert->id;
 			}
 
-			if ($db->affected > 0) return $db->affected;
+			if ( $db->affected > 0 ) return $db->affected;
 			else return true;
-		} elseif ( preg_match("/ SQL_CALC_FOUND_ROWS /i",$query) ) {
-			$rows = @mysql_fetch_object(@mysql_query("SELECT FOUND_ROWS() AS found", $db->dbh));
+		} elseif ( preg_match("/ SQL_CALC_FOUND_ROWS /i", $query) ) {
+			$rows = @mysql_fetch_object( @mysql_query("SELECT FOUND_ROWS() AS found", $db->dbh) );
 		}
-
 
 		// Default data processing
-		if (is_bool($result)) return (boolean)$result;
+		if ( is_bool($result) ) return (boolean)$result;
 
 		// Setup record processing callback
-		if (is_string($callback) && !function_exists($callback))
-			$callback = array('DB',$callback);
+		if ( is_string($callback) && ! function_exists($callback) )
+			$callback = array('DB', $callback);
 
-		if (!$callback || (is_array($callback) && !method_exists($callback[0],$callback[1])))
-			$callback =  array('DB','auto');
+		// Failsafe if callback isn't valid
+		if ( ! $callback || ( is_array($callback) && ! method_exists($callback[0], $callback[1]) ) )
+			$callback = array('DB', 'auto');
 
+		// Process each row through the record processing callback
 		$records = array();
-		while ($row = @mysql_fetch_object($result)) {
-			call_user_func_array($callback,array_merge(array(&$records,&$row),$args));
-		}
+		while ( $row = @mysql_fetch_object($result) )
+			call_user_func_array($callback, array_merge( array(&$records, &$row), $args) );
 
+		// Free the results immediately to save memory
 		@mysql_free_result($result);
 
-		if (isset($rows->found)) $db->found = (int) $rows->found;
+		// Save the found count if it is present
+		if ( isset($rows->found) ) $db->found = (int) $rows->found;
 
+		// Handle result format post processing
 		switch (strtolower($format)) {
 			case 'object': return reset($records); break;
-			case 'array': return $records; break;
-			default: return (count($records) == 1)?reset($records):$records; break;
+			case 'array':  return $records; break;
+			default:       return (count($records) == 1)?reset($records):$records; break;
 		}
 	}
 
@@ -327,7 +359,7 @@ class DB extends SingletonFramework {
 	 * @param array $options The SQL fragments
 	 * @return string The complete SELECT SQL statement
 	 **/
-	public static function select ( $options=array() ) {
+	public static function select ( $options = array() ) {
 		$defaults = array(
 			'columns' => '*',
 			'useindex' => '',
@@ -364,7 +396,7 @@ class DB extends SingletonFramework {
 	 * @return int The number of records found
 	 **/
 	public static function found () {
-		$db = DB::get();
+		$db = sDB::get();
 		$found = $db->found;
 		$db->found = false;
 		return $found;
@@ -379,11 +411,11 @@ class DB extends SingletonFramework {
 	 * @param string $type The SQL data type
 	 * @return string|boolean The primitive datatype or false if not found
 	 **/
-	public static function datatype ($type) {
-		foreach((array)DB::$datatypes as $datatype => $patterns) {
-			foreach((array)$patterns as $pattern) {
-				if (strpos($type,$pattern) !== false) return $datatype;
-			}
+	public static function datatype ( $type ) {
+		foreach( (array)sDB::$datatypes as $datatype => $patterns ) {
+			foreach( (array)$patterns as $pattern )
+				if ( strpos($type, $pattern) !== false)
+					return $datatype;
 		}
 		return false;
 	}
@@ -406,59 +438,59 @@ class DB extends SingletonFramework {
 		$data = array();
 
 		// Go through each data property of the object
-		foreach(get_object_vars($Object) as $var => $value) {
-			$property = isset($mapping[$var])?$mapping[$var]:$var;
-			if (!isset($Object->_datatypes[$property])) continue;
+		foreach( get_object_vars($Object) as $var => $value) {
+			$property = isset($mapping[ $var ]) ? $mapping[ $var ] : $var;
+			if ( ! isset($Object->_datatypes[ $property ]) ) continue;
 
 			// If the property is has a _datatype
 			// it belongs in the database and needs
 			// to be prepared
 
 			// Process the data
-			switch ($Object->_datatypes[$property]) {
-				case "string":
+			switch ( $Object->_datatypes[ $property ] ) {
+				case 'string':
 					// Escape characters in strings as needed
-					if (is_array($value) || is_object($value)) $data[$property] = "'".addslashes(serialize($value))."'";
-					else $data[$property] = "'".DB::escape($value)."'";
+					if ( is_array($value) || is_object($value) ) $data[ $property ] = "'" . addslashes(serialize($value)) . "'";
+					else $data[ $property ] = "'" . sDB::escape($value) . "'";
 					break;
-				case "list":
+				case 'list':
 					// If value is empty, skip setting the field
 					// so it inherits the default value in the db
-					if (!empty($value))
-						$data[$property] = "'$value'";
+					if ( ! empty($value) )
+						$data[ $property ] = "'$value'";
 					break;
-				case "date":
+				case 'date':
 					// If it's an empty date, set it to the current time
-					if (is_null($value)) {
+					if ( is_null($value) ) {
 						$value = current_time('mysql');
 					// If the date is an integer, convert it to an
 					// sql YYYY-MM-DD HH:MM:SS format
-					} elseif (!empty($value) && (is_int($value) || intval($value) > 86400)) {
-						$value = DB::mkdatetime(intval($value));
+					} elseif ( ! empty($value) && ( is_int($value) || intval($value) > 86400) ) {
+						$value = sDB::mkdatetime( intval($value) );
 					}
 
 					$data[$property] = "'$value'";
 					break;
-				case "float":
+				case 'float':
 					// Sanitize without rounding to protect precision
-					if ( function_exists('floatvalue') ) $value = floatvalue($value,false);
+					if ( function_exists('floatvalue') ) $value = floatvalue($value, false);
 					else $value = floatval($value);
-				case "int":
+				case 'int':
 					// Normalize for MySQL float representations (@see bug #853)
 					// Force formating with full stop (.) decimals
 					// Trim excess 0's followed by trimming (.) when there is no fractional value
-					$value = rtrim(rtrim(number_format($value,6,'.',''),'0'),'.');
+					$value = rtrim(rtrim( number_format((double)$value, 6, '.', ''), '0'), '.');
 
-					$data[$property] = "'$value'";
-					if (empty($value)) $data[$property] = "'0'";
+					$data[ $property ] = "'$value'";
+					if ( empty($value) ) $data[ $property ] = "'0'";
 
 					// Special exception for id fields
-					if ($property == "id" && empty($value)) $data[$property] = "NULL";
+					if ( 'id' == $property && empty($value) ) $data[ $property ] = "NULL";
 					break;
 				default:
 					// Anything not needing processing
 					// passes through into the structure
-					$data[$property] = "'$value'";
+					$data[ $property ] = "'$value'";
 			}
 
 		}
@@ -476,16 +508,16 @@ class DB extends SingletonFramework {
 	 * @param string $column The column name to inspect
 	 * @return array List of values
 	 **/
-	public static function column_options($table = null, $column = null) {
-		if ( ! ($table && $column)) return array();
-		$r = DB::query("SHOW COLUMNS FROM $table LIKE '$column'");
-		if ( strpos($r[0]->Type,"enum('") )
+	public static function column_options ( $table = null, $column = null ) {
+		if ( ! ( $table && $column ) ) return array();
+		$r = sDB::query("SHOW COLUMNS FROM $table LIKE '$column'");
+		if ( strpos($r[0]->Type, "enum('") )
 			$list = substr($r[0]->Type, 6, strlen($r[0]->Type) - 8);
 
-		if ( strpos($r[0]->Type,"set('") )
+		if ( strpos($r[0]->Type, "set('") )
 			$list = substr($r[0]->Type, 5, strlen($r[0]->Type) - 7);
 
-		return explode("','",$list);
+		return explode("','", $list);
 	}
 
 	/**
@@ -496,43 +528,98 @@ class DB extends SingletonFramework {
 	 * @param string $queries Long string of multiple queries
 	 * @return boolean
 	 **/
-	public function loaddata ($queries) {
+	public function loaddata ( $queries ) {
 		$queries = explode(";\n", $queries);
 		array_pop($queries);
-		foreach ($queries as $query) if (!empty($query)) DB::query($query);
+		foreach ($queries as $query) if ( ! empty($query) ) sDB::query($query);
 		return true;
 	}
 
-
-	private static function auto (&$records,&$record) {
+	/**
+	 * Add a record to the record set
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @param array $records The record set
+	 * @param object $record The record to process
+	 * @return void
+	 **/
+	private static function auto ( &$records, &$record ) {
 		$records[] = $record;
 	}
 
-	private static function index (&$records,&$record,$column,$collate=false) {
-		if (isset($record->$column)) $col = $record->$column;
+	/**
+	 * Add a record to the set and index it by a given column name
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @param array $records The record set
+	 * @param object $record The record to process
+	 * @param string $column The column name to use as the key for record
+	 * @param boolean $collate (optional) Set to true to collate the records (defaults to false)
+	 * @return void
+	 **/
+	private static function index ( &$records, &$record, $column, $collate = false ) {
+		if ( isset($record->$column) ) $col = $record->$column;
 		else $col = null;
-		if ($collate) {
-			if (isset($records[$col])) $records[$col][] = $record;
-			else $records[$col] = array($record);
-		} else $records[$col] = $record;
+
+		if ( $collate ) {
+
+			if ( isset($records[ $col ]) ) $records[ $col ][] = $record;
+			else $records[ $col ] = array($record);
+
+		} else $records[ $col ] = $record;
 	}
 
-	private static function col (&$records,&$record,$column=false,$index=false,$collate=false) {
+	/**
+	 * Add a record to the set and index it by a given column name
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @param array $records The record set
+	 * @param object $record The record to process
+	 * @param string $column The column name to use as the value for the record
+	 * @param string $index The index column name to use as the key for record
+	 * @param boolean $collate (optional) Set to true to collate the records (defaults to false)
+	 * @return void
+	 **/
+	private static function col ( &$records, &$record, $column = false, $index = false, $collate = false ) {
+
 		$columns = get_object_vars($record);
-		if (isset($record->$column)) $col = $record->$column;
+
+		if ( isset($record->$column) ) $col = $record->$column;
 		else $col = reset($columns); // No column specified, get first column
-		if ($index) {
-			if (isset($record->$index)) $id = $record->$index;
+
+		if ( $index ) {
+			if ( isset($record->$index) ) $id = $record->$index;
 			else $id = 0;
-			if ($collate && !empty($id)) {
-				if (isset($records[$id])) $records[$id][] = $col;
-				else $records[$id] = array($col);
-			} else $records[$id] = $col;
+
+			if ( $collate && ! empty($id) ) {
+
+				if ( isset($records[ $id ]) ) $records[ $id ][] = $col;
+				else $records[ $id ] = array($col);
+
+			} else $records[ $id ] = $col;
+
 		} else $records[] = $col;
 	}
 
 
-} // END class DB
+} // END class sDB
+
+if ( ! class_exists('DB',false) ) {
+	class DB extends sDB {
+		/* @deprecated use sDB class */
+
+		public static function get () {
+			return DB::object();
+		}
+
+	}
+}
 
 /**
  * Provides interfacing between database records and active data objects
@@ -546,6 +633,7 @@ abstract class DatabaseObject implements Iterator {
 	protected $_position = 0;
 	protected $_properties = array();
 	protected $_ignores = array('_');
+	protected $_key = '';
 	protected $_map = array();
 
 	/**
@@ -566,35 +654,38 @@ abstract class DatabaseObject implements Iterator {
 	 *
 	 * @param string $table The base table name (without prefixes)
 	 * @param string $key (optional) The column name of the primary key
-	 * @return void
+	 * @return boolean True if init was successful, otherwise false
 	 **/
-	function init ($table,$key="id") {
+	public function init ( $table, $key = null ) {
+
+		if ( is_null($key) ) $key = 'id';
+
 		$Settings = ShoppSettings();
 
 		// So we know what the table name is
-		if (!empty($table) && (!isset($this->_table) || empty($this->_table))  )
+		if ( ! empty($table) && ( ! isset($this->_table) || empty($this->_table) )  )
 			$this->_table = $this->tablename($table);
 
-		if (empty($this->_table)) return false;
+		if ( empty($this->_table) ) return false;
 
 		$this->_key = $key;				// So we know what the primary key is
 		$this->_datatypes = array();	// So we know the format of the table
 		$this->_lists = array();		// So we know the options for each list
 		$defaults = array();			// So we know the default values for each field
 
-		$map = !empty($this->_map)?array_flip($this->_map):array();
+		$map = ! empty($this->_map) ? array_flip($this->_map) : array();
 
-		$Tables = $Settings->available()?$Settings->get('data_model'):array();
+		$Tables = $Settings->available() ? $Settings->get('data_model') : array();
 
-		if (isset($Tables[$this->_table])) {
-			$this->_datatypes = $Tables[$this->_table]->_datatypes;
-			$this->_lists = $Tables[$this->_table]->_lists;
-			$defaults = $Tables[$this->_table]->_defaults;
+		if ( isset($Tables[ $this->_table ]) ) {
+			$this->_datatypes = $Tables[ $this->_table ]->_datatypes;
+			$this->_lists = $Tables[ $this->_table ]->_lists;
+			$defaults = $Tables[ $this->_table ]->_defaults;
 
-			foreach($this->_datatypes as $var => $type) {
-				$property = isset($map[$var])?$map[$var]:$var;
+			foreach ( $this->_datatypes as $var => $type ) {
+				$property = isset($map[ $var ]) ? $map[ $var ] : $var;
 
-				if ( !isset($this->{$property}) )
+				if ( ! isset($this->$property) )
 					$this->{$property} = isset($defaults[$var]) ? $defaults[$var] : '';
 				if ( 'date' == $type
 					&& ('0000-00-00 00:00:00' == $this->{$property} || empty($this->{$property}) ))
@@ -604,17 +695,17 @@ abstract class DatabaseObject implements Iterator {
 			return true;
 		}
 
-		if (!$r = DB::query("SHOW COLUMNS FROM $this->_table",'array')) return false;
+		if ( ! $r = sDB::query("SHOW COLUMNS FROM $this->_table", 'array') ) return false;
 
 		// Map out the table definition into our data structure
-		foreach($r as $object) {
+		foreach ( $r as $object ) {
 			$var = $object->Field;
-			if (!empty($map) && !isset($map[$var])) continue;
-			$this->_datatypes[$var] = DB::datatype($object->Type);
-			$this->_defaults[$var] = $object->Default;
+			if ( ! empty($map) &&  ! isset($map[ $var ]) ) continue;
+			$this->_datatypes[ $var ] = sDB::datatype($object->Type);
+			$this->_defaults[ $var ] = $object->Default;
 
 			// Grab out options from list fields
-			if ('list' == DB::datatype($object->Type)) {
+			if ('list' == sDB::datatype($object->Type)) {
 				$values = str_replace("','", ",", substr($object->Type,strpos($object->Type,"'")+1,-2));
 				$this->_lists[$var] = explode(",",$values);
 			}
@@ -626,14 +717,14 @@ abstract class DatabaseObject implements Iterator {
 
 		}
 
-		if ($Settings->available()) {
+		if ( $Settings->available() ) {
 
-			$Tables[$this->_table] = new StdClass();
-			$Tables[$this->_table]->_datatypes =& $this->_datatypes;
-			$Tables[$this->_table]->_lists =& $this->_lists;
-			$Tables[$this->_table]->_defaults =& $this->_defaults;
+			$Tables[ $this->_table ] = new StdClass();
+			$Tables[ $this->_table ]->_datatypes =& $this->_datatypes;
+			$Tables[ $this->_table ]->_lists =& $this->_lists;
+			$Tables[ $this->_table ]->_defaults =& $this->_defaults;
 
-			$Settings->save('data_model',$Tables);
+			$Settings->save('data_model', $Tables);
 		}
 		return true;
 	}
@@ -651,25 +742,25 @@ abstract class DatabaseObject implements Iterator {
 	 * @param $id - A string containing the object's id value
 	 * @param $key - A string of the name of the db object's primary key
 	 **/
-	function load () {
+	public function load () {
 		$args = func_get_args();
-		if (empty($args[0])) return false;
+		if ( empty($args[0]) ) return false;
 
 		$where = "";
-		if (is_array($args[0])) {
-			foreach ($args[0] as $key => $id)
-				$where .= ($where == ""?"":" AND ")."$key='".DB::escape($id)."'";
+		if ( is_array($args[0]) ) {
+			foreach ( $args[0] as $key => $id )
+				$where .= ( $where == "" ? "" : " AND " ) . "$key='" . sDB::escape($id) . "'";
 		} else {
 			$id = $args[0];
 			$key = $this->_key;
-			if (!empty($args[1])) $key = $args[1];
-			$where = $key."='".DB::escape($id)."'";
+			if ( ! empty($args[1]) ) $key = $args[1];
+			$where = $key . "='" . sDB::escape($id) . "'";
 		}
 
-		$r = DB::query("SELECT * FROM $this->_table WHERE $where LIMIT 1",'object');
+		$r = sDB::query("SELECT * FROM $this->_table WHERE $where LIMIT 1", 'object');
 		$this->populate($r);
 
-		if (!empty($this->id)) return true;
+		if ( ! empty($this->id) ) return true;
 		return false;
 	}
 
@@ -680,25 +771,31 @@ abstract class DatabaseObject implements Iterator {
 	 * @since 1.2
 	 *
 	 * @param array $records A reference to the loaded record set
+	 * @param object $record A reference to the individual record to process
+	 * @param string $DatabaseObject (optional) The DatabaseObject class name to convert the record to
+	 * @param string $index (optional) The record column to use as the index in the record set
+	 * @param boolean $collate (optional) Flag to collate the records (records with matching index columns are collected into a nested array on the index in the set)
 	 * @param object $record Result record data object
 	 * @return void
 	 **/
-	function loader (&$records,&$record,$DatabaseObject=false,$index='id',$collate=false) {
-		if (isset($this)) {
-			if ($index == 'id') $index = $this->_key;
+	public function loader ( array &$records, &$record, $DatabaseObject = false, $index='id', $collate = false ) {
+
+		if ( isset($this) ) {
+			if ( 'id' == $index ) $index = $this->_key;
 			$DatabaseObject = get_class($this);
 		}
-		$index = isset($record->$index)?$record->$index:'!NO_INDEX!';
-		if (!isset($DatabaseObject) || !class_exists($DatabaseObject)) return;
+		$index = isset($record->$index) ? $record->$index : '!NO_INDEX!';
+		if ( ! isset($DatabaseObject) || ! class_exists($DatabaseObject) ) return;
 		$Object = new $DatabaseObject();
 		$Object->populate($record);
-		if (method_exists($Object,'expopulate'))
+		if ( method_exists($Object, 'expopulate') )
 			$Object->expopulate();
 
-		if ($collate) {
-			if (!isset($records[$index])) $records[$index] = array();
-			$records[$index][] = $Object;
-		} else $records[$index] = $Object;
+		if ( $collate ) {
+			if ( ! isset($records[ $index ]) ) $records[$index] = array();
+			$records[ $index ][] = $Object;
+		} else $records[ $index ] = $Object;
+
 	}
 
 	/**
@@ -716,41 +813,41 @@ abstract class DatabaseObject implements Iterator {
 	 * @param boolean $merge
 	 * @return void
 	 **/
-	function metaloader (&$records,&$record,$objects=array(),$id='id',$property='',$collate=false,$merge=false) {
+	public function metaloader ( &$records, &$record, $objects = array(), $id = 'id', $property = '', $collate = false, $merge = false ) {
 
-		if (is_array($objects) && isset($record->{$id}) && isset($objects[$record->{$id}])) {
-			$target = $objects[$record->{$id}];
-		} elseif (isset($this)) {
+		if ( is_array($objects) && isset($record->$id) && isset($objects[ $record->$id ]) ) {
+			$target = $objects[ $record->$id ];
+		} elseif ( isset($this) ) {
 			$target = $this;
 		}
 
 		// Remove record ID before attaching record (duplicates $this->id)
-		unset($record->{$id});
+		unset( $record->$id );
 
-		if ($collate) {
-			if (!isset($target->{$property}) || !is_array($target->{$property}))
-				$target->{$property} = array();
+		if ( $collate ) {
+			if ( ! isset($target->$property) || ! is_array($target->$property) )
+				$target->$property = array();
 
 			// Named collation if collate is a valid record property
-			if (isset($record->{$collate})) {
+			if ( isset($record->$collate) ) {
 
 				// If multiple entries line up on the same key, build a list inside that key
-				if (isset($target->{$property}[$record->{$collate}])) {
-					if (!is_array($target->{$property}[$record->{$collate}]))
-						$target->{$property}[$record->{$collate}] = array($target->{$property}[$record->{$collate}]->id => $target->{$property}[$record->{$collate}]);
-					$target->{$property}[$record->{$collate}][$record->id] = $record;
+				if ( isset($target->{$property}[ $record->$collate ]) ) {
+					if ( ! is_array($target->{$property}[ $record->$collate ]) )
+						$target->{$property}[ $record->$collate ] = array($target->{$property}[ $record->$collate ]->id => $target->{$property}[ $record->$collate ]);
+					$target->{$property}[ $record->$collate ][ $record->id ] = $record;
 
-				} else $target->{$property}[$record->{$collate}] = $record; // or index directly on the key
+				} else $target->{$property}[ $record->$collate ] = $record; // or index directly on the key
 
 			} else $target->{$property}[] = $record; // Build a non-indexed list
 
-		} else $target->{$property} = $record; // Map a single property
+		} else $target->$property = $record; // Map a single property
 
-		if ($merge) {
-			foreach (get_object_vars($record) as $name => $value) {
-				if ($name == 'id' // Protect $target object's' id column from being overwritten by meta data
-					|| (isset($target->_datatypes) && in_array($name,$target->_datatypes))) continue; // Protect $target object's' db columns
-				$target->{$name} = &$record->{$name};
+		if ( $merge ) {
+			foreach ( get_object_vars($record) as $name => $value ) {
+				if ( 'id' == $name // Protect $target object's' id column from being overwritten by meta data
+					|| ( isset($target->_datatypes ) && in_array($name, $target->_datatypes) ) ) continue; // Protect $target object's' db columns
+				$target->$name = &$record->$name;
 			}
 		}
 	}
@@ -764,10 +861,9 @@ abstract class DatabaseObject implements Iterator {
 	 * @param string $table The base table name
 	 * @return string The full, prefixed table name
 	 **/
-	static function tablename ($table) {
+	public static function tablename ( $table = '' ) {
 		global $wpdb;
 		return $wpdb->get_blog_prefix() . SHOPP_DBPREFIX . $table;
-		return $wpdb->get_blog_prefix().SHOPP_DBPREFIX.$table;
 	}
 
 	/**
@@ -783,32 +879,36 @@ abstract class DatabaseObject implements Iterator {
 	 *
 	 * @return boolean|int Returns true when UPDATEs are successful; returns an integer with the record ID
 	 **/
-	function save () {
-		$data = DB::prepare($this,$this->_map);
+	public function save () {
 
-		$id = $this->{$this->_key};
-		if (!empty($this->_map)) {
+		$classhook = strtolower( get_class($this) );
+		$data = sDB::prepare($this, $this->_map);
+
+		$id = isset($this->{$this->_key}) ? $this->{$this->_key} : false;
+		if ( ! empty($this->_map) ) {
 			$remap = array_flip($this->_map);
-			if (isset($remap[$this->_key]))
-				$id = $this->{$remap[$this->_key]};
+			if ( isset($remap[ $this->_key ]) )
+				$id = $this->{$remap[ $this->_key ]};
 		}
 
-		if (empty($id)) {
-			// Insert new record
-			if (isset($data['created'])) $data['created'] = "'".current_time('mysql')."'";
-			if (isset($data['modified'])) $data['modified'] = "'".current_time('mysql')."'";
+		$time = current_time('mysql');
+		if ( isset($data['modified']) ) $data['modified'] = "'$time'";
+
+		if ( empty($id) ) { // Insert new record
+
+			if ( isset($data['created']) ) $data['created'] = "'$time'";
 			$dataset = DatabaseObject::dataset($data);
-			$this->id = DB::query("INSERT $this->_table SET $dataset");
-			do_action_ref_array('shopp_save_'.strtolower(get_class($this)), array(&$this));
+			$this->id = sDB::query("INSERT $this->_table SET $dataset");
+			do_action_ref_array( "shopp_save_$classhook", array($this) );
 			return $this->id;
+
 		}
 
 		// Update record
-		if (isset($data['modified'])) $data['modified'] = "'".current_time('mysql')."'";
 		$dataset = DatabaseObject::dataset($data);
-		DB::query("UPDATE $this->_table SET $dataset WHERE $this->_key=$id");
+		sDB::query("UPDATE $this->_table SET $dataset WHERE $this->_key='$id'");
 
-		do_action_ref_array('shopp_save_'.strtolower(get_class($this)), array(&$this));
+		do_action_ref_array( "shopp_save_$classhook", array($this) );
 		return true;
 
 	}
@@ -824,11 +924,14 @@ abstract class DatabaseObject implements Iterator {
 	 *
 	 * @return boolean
 	 **/
-	function delete () {
-		// Delete record
+	public function delete () {
+
 		$id = $this->{$this->_key};
-		if (!empty($id)) return DB::query("DELETE FROM $this->_table WHERE $this->_key='$id'");
-		else return false;
+
+		if ( ! empty($id) )
+			return sDB::query("DELETE FROM $this->_table WHERE $this->_key='$id'");
+
+		return false;
 	}
 
 	/**
@@ -839,11 +942,12 @@ abstract class DatabaseObject implements Iterator {
 	 *
 	 * @return boolean
 	 **/
-	function exists () {
+	public function exists () {
 		$key = $this->_key;
-		$id = $this->{$this->_key};
-		$r = DB::query("SELECT id FROM $this->_table WHERE $key='$id' LIMIT 1");
-		return (!empty($r->id));
+		if ( ! isset($this->$key) ) return false;
+		$id = $this->$key;
+		$r = sDB::query("SELECT id FROM $this->_table WHERE $key='$id' LIMIT 1");
+		return ( ! empty($r->id) );
 	}
 
 	/**
@@ -856,35 +960,36 @@ abstract class DatabaseObject implements Iterator {
 	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
-	 * @param string $data The query results
+	 * @param object $data The query results
 	 * @return void
 	 **/
-	function populate ($data) {
-		if(empty($data)) return false;
+	public function populate ( $data ) {
+		if ( empty($data) ) return false;
+
 		$properties = get_object_vars($data);
-		foreach((array)$properties as $var => $value) {
+		foreach( (array)$properties as $var => $value ) {
 
-			$mapping = empty($this->_map)?array():array_flip($this->_map);
-			if (!isset($this->_addmap) && !empty($mapping) && !isset($mapping[$var])) continue;
-			$property = isset($mapping[$var])?$mapping[$var]:$var;
+			$mapping = empty($this->_map) ? array() : array_flip($this->_map);
+			if ( ! isset($this->_addmap) && ! empty($mapping) && ! isset($mapping[ $var ]) ) continue;
+			$property = isset($mapping[ $var ]) ? $mapping[ $var ] : $var;
 
-			if (empty($this->_datatypes[$var])) continue;
+			if ( empty($this->_datatypes[ $var ]) ) continue;
 
 			// Process the data
-			switch ($this->_datatypes[$var]) {
-				case "date":
-					$this->{$property} = DB::mktime($value);
+			switch ( $this->_datatypes[ $var ] ) {
+				case 'date':
+					$this->$property = sDB::mktime($value);
 					break;
-				case "float": $this->{$property} = (float)$value; break;
-				case "int": $this->{$property} = (int)$value; break;
-				case "string":
+				case 'float': $this->$property = (float)$value; break;
+				case 'int': $this->$property = (int)$value; break;
+				case 'string':
 					// If string has been serialized, unserialize it
-					if ( is_string($value) && preg_match("/^[sibNaO](?:\:.+?\{.*\}$|\:.+;$|;$)/s",$value) )
+					if ( is_string($value) && preg_match("/^[sibNaO](?:\:.+?\{.*\}$|\:.+;$|;$)/s", $value) )
 						$value = unserialize($value);
 				default:
 					// Anything not needing processing
 					// passes through into the object
-					$this->{$property} = $value;
+					$this->$property = $value;
 			}
 		}
 	}
@@ -898,7 +1003,7 @@ abstract class DatabaseObject implements Iterator {
 	 * @param array $data The prepared data
 	 * @return string The query fragment of column value updates
 	 **/
-	static function dataset ( array $data ) {
+	public static function dataset ( array $data ) {
 		$sets = array();
 		foreach ( $data as $property => $value )
 			$sets[] = "$property=$value";
@@ -918,8 +1023,8 @@ abstract class DatabaseObject implements Iterator {
 	 * @param array $ignores (optional) A list of properties to skip updating
 	 * @return void
 	 **/
-	function updates ( array $data, array $ignores = array() ) {
-		if (!is_array($data)) return;
+	public function updates ( array $data, array $ignores = array() ) {
+		if ( ! is_array($data)) return;
 		foreach ($data as $key => $value) {
 			if (!is_null($value)
 				&& ($ignores === false
@@ -927,7 +1032,7 @@ abstract class DatabaseObject implements Iterator {
 							&& !in_array($key,$ignores)
 						)
 					) && property_exists($this, $key) ) {
-				$this->$key = DB::clean($value);
+				$this->$key = sDB::clean($value);
 			}
 		}
 	}
@@ -946,7 +1051,7 @@ abstract class DatabaseObject implements Iterator {
 	 * @param array $ignores (optional) List of property names to ignore copying from
 	 * @return void
 	 **/
-	function copydata ($data,$prefix="",$ignores=array("_datatypes","_table","_key","_lists","_map","id","created","modified")) {
+	public function copydata ($data,$prefix="",$ignores=array("_datatypes","_table","_key","_lists","_map","id","created","modified")) {
 		if (!is_array($ignores)) $ignores = array();
 		if (is_object($data)) $properties = get_object_vars($data);
 		else $properties = $data;
@@ -954,7 +1059,7 @@ abstract class DatabaseObject implements Iterator {
 			$property = $prefix.$property;
 			if (property_exists($this,$property) &&
 				!in_array($property,$ignores))
-					$this->{$property} = DB::clean($value);
+					$this->{$property} = sDB::clean($value);
 		}
 	}
 
@@ -966,9 +1071,9 @@ abstract class DatabaseObject implements Iterator {
 	 *
 	 * @return array JSON-ready data set
 	 **/
-	function json ($ignores = array()) {
+	public function json ($ignores = array()) {
 		$this->_ignores = array_merge($this->_ignores,$ignores);
-		$this->_get_properties(true);
+		$this->_properties = $this->_properties(true);
 		$json = array();
 		foreach ($this as $name => $property) $json[$name] = $property;
 		return $json;
@@ -986,38 +1091,57 @@ abstract class DatabaseObject implements Iterator {
 	 * @param array $options (optional) The tag options to process
 	 * @return mixed
 	 **/
-	function tag ($property,$options=array()) {
-		$options = array_merge( array('return' => true),shopp_parse_options($options) );
-		return shopp($this,$property,$options);
+	public function tag ( string $property, array $options = array() ) {
+		$options = array_merge( array('return' => true), shopp_parse_options($options) );
+		return shopp($this, $property, $options);
 	}
 
 	/** Iterator Support **/
 
-	function current () {
-		return $this->{$this->_properties[$this->_position]};
+	public function current () {
+		return $this->{$this->_properties[ $this->_position ]};
 	}
 
-	function key () {
-		return $this->_properties[$this->_position];
+	public function key () {
+		return $this->_properties[ $this->_position ];
 	}
 
-	function next () {
+	public function next () {
 		++$this->_position;
 	}
 
-	function rewind () {
+	public function rewind () {
 		$this->_position = 0;
 	}
 
-	function valid () {
-		return (isset($this->_properties[$this->_position]) && isset($this->{$this->_properties[$this->_position]}));
+	public function valid () {
+		return ( isset($this->_properties[ $this->_position ]) && isset($this->{$this->_properties[ $this->_position ]}) );
 	}
 
-	private function _get_properties ($compact=false) {
-		$this->_properties = array_keys(get_object_vars($this));
-		if ($compact) $this->_properties = array_values(array_filter($this->_properties,array($this,'_ignored')));
+	/**
+	 * Get the a list of the current property names in the object
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @param boolean $compact (optional) Set to true for a compact list of properties (skip the ignored properties)
+	 * @return array The list of property names
+	 **/
+	private function _properties ( boolean $compact = null ) {
+		$properties = array_keys( get_object_vars($this) );
+		if ( $compact ) $properties = array_values( array_filter($properties, array($this, '_ignored')) );
+		return $properties;
 	}
 
+	/**
+	 * Checks if a property should be ignored
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @param string $property The name of the property to check
+	 * @return boolean True if ignored, false otherwise
+	 **/
 	private function _ignored ($property) {
 		return (! (
 					in_array($property,$this->_ignores)
@@ -1029,12 +1153,39 @@ abstract class DatabaseObject implements Iterator {
 
 	}
 
-	function __wakeup () {
+	/**
+	 * Streamlines data for serialization
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return array List of properties to serialize
+	 **/
+	public function __sleep () {
+		return $this->_properties(true);
+	}
+
+	/**
+	 * Reanimate the object
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @return void
+	 **/
+	public function __wakeup () {
 		$this->init(false);
 	}
 
 } // END class DatabaseObject
 
+/**
+ * Integrates Shopp DatabaseObjects with WordPress data tables
+ *
+ * @author Jonathan Davis
+ * @since 1.2
+ * @package DB
+ **/
 class WPDatabaseObject extends DatabaseObject {
 
 	/**
@@ -1046,7 +1197,7 @@ class WPDatabaseObject extends DatabaseObject {
 	 * @param string $table The base table name
 	 * @return string The full, prefixed table name
 	 **/
-	static function tablename ($table) {
+	static function tablename ($table = '') {
 		global $wpdb;
 		return $wpdb->get_blog_prefix() . $table;
 	}
@@ -1066,6 +1217,13 @@ class WPDatabaseObject extends DatabaseObject {
 
 }
 
+/**
+ * A foundational Shopp/WordPress CPT DatabaseObject
+ *
+ * @author Jonathan Davis
+ * @since 1.2
+ * @package DB
+ **/
 class WPShoppObject extends WPDatabaseObject {
 	static $posttype = 'shopp_post';
 
@@ -1128,12 +1286,20 @@ abstract class SessionObject {
 
 	public $secure = false;
 
-	function __construct () {
+	/**
+	 * The object constructor
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.1
+	 *
+	 * @return void
+	 **/
+	public function __construct () {
 		if ( ! defined('SHOPP_SECURE_KEY') )
 			define('SHOPP_SECURE_KEY','shopp_sec_'.COOKIEHASH);
 
 		// Close out any early session calls
-		if(session_id()) session_write_close();
+		if( session_id() ) session_write_close();
 
 		if ( ! $this->handling() )
 			trigger_error('The session handlers could not be initialized.',E_USER_NOTICE);
@@ -1150,7 +1316,7 @@ abstract class SessionObject {
 	 *
 	 * @return void
 	 **/
-	function handling () {
+	protected function handling () {
 		return session_set_save_handler(
 			array( $this, 'open' ),		// Open
 			array( $this, 'close' ),	// Close
@@ -1169,7 +1335,7 @@ abstract class SessionObject {
 	 *
 	 * @return boolean
 	 **/
-	function open ($path,$name) {
+	public function open ( $path, $name ) {
 		$this->path = $path;
 		if ( empty($this->path) ) $this->path = sanitize_path(realpath(SHOPP_TEMP_PATH));
         if ( ! is_dir($this->path) ) mkdir($this->path, 0777);
@@ -1192,7 +1358,9 @@ abstract class SessionObject {
 	 *
 	 * @return boolean
 	 **/
-	function close () { return true; }
+	public function close () {
+		return true;
+	}
 
 	/**
 	 * Gets data from the session data table and loads Member
@@ -1203,19 +1371,19 @@ abstract class SessionObject {
 	 *
 	 * @return boolean
 	 **/
-	function load ($id) {
+	public function load ( $id ) {
 		if ( is_robot() || empty($this->session) ) return true;
 
 		$loaded = false;
 		$query = "SELECT * FROM $this->_table WHERE session='$this->session'";
 
-		if ( $result = DB::query($query) ) {
+		if ( $result = sDB::query($query) ) {
 			if ( '!' == substr($result->data,0,1) ) {
 				$key = $_COOKIE[SHOPP_SECURE_KEY];
 
 				if ( empty($key) && ! is_ssl() ) shopp_redirect( force_ssl(raw_request_url(),true) );
 
-				$readable = DB::query("SELECT AES_DECRYPT('".
+				$readable = sDB::query("SELECT AES_DECRYPT('".
 										mysql_real_escape_string(
 											base64_decode(
 												substr($result->data,1)
@@ -1227,15 +1395,15 @@ abstract class SessionObject {
 			$this->ip = $result->ip;
 			$this->data = unserialize($result->data);
 			$this->stash = $result->stash;
-			$this->created = DB::mktime($result->created);
-			$this->modified = DB::mktime($result->modified);
+			$this->created = sDB::mktime($result->created);
+			$this->modified = sDB::mktime($result->modified);
 			$loaded = true;
 
 			do_action('shopp_session_loaded');
 		} else {
 			$now = current_time('mysql');
 			if ( ! empty($this->session) )
-				DB::query("INSERT INTO $this->_table (session, ip, data, created, modified)
+				sDB::query("INSERT INTO $this->_table (session, ip, data, created, modified)
 							VALUES ('$this->session','$this->ip','','$now','$now')");
 		}
 
@@ -1257,16 +1425,16 @@ abstract class SessionObject {
 	 *
 	 * @return boolean
 	 **/
-	function unload () {
+	public function unload () {
 		if( empty($this->session) ) return false;
 
-		if ( ! DB::query("DELETE FROM $this->_table WHERE session='$this->session'") )
+		if ( ! sDB::query("DELETE FROM $this->_table WHERE session='$this->session'") )
 			trigger_error("Could not clear session data.");
 
 		// Handle clean-up of file storage sessions
         if ( file_exists("$this->path/sess_$id") ) unlink($file);
 
-		unset($this->session,$this->ip,$this->data);
+		unset($this->session, $this->ip, $this->data);
 		return true;
 	}
 
@@ -1278,18 +1446,18 @@ abstract class SessionObject {
 	 *
 	 * @return boolean
 	 **/
-	function save ($id,$session) {
+	public function save ( $id, $session ) {
 
 		// Don't update the session for prefetch requests (via <link rel="next" /> tags) currently FF-only
 		if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == "prefetch") return false;
 
-		$data = DB::escape( addslashes(serialize($this->data)) );
+		$data = sDB::escape( addslashes(serialize($this->data)) );
 
 		if ($this->secured() && is_ssl()) {
 			$key = isset($_COOKIE[SHOPP_SECURE_KEY])?$_COOKIE[SHOPP_SECURE_KEY]:'';
 			if (!empty($key) && $key !== false) {
 				shopp_debug('Cart saving in secure mode!');
-				$secure = DB::query("SELECT AES_ENCRYPT('$data','$key') AS data");
+				$secure = sDB::query("SELECT AES_ENCRYPT('$data','$key') AS data");
 				$data = "!".base64_encode($secure->data);
 			} else {
 				return false;
@@ -1298,7 +1466,7 @@ abstract class SessionObject {
 
 		$now = current_time('mysql');
 		$query = "UPDATE $this->_table SET ip='$this->ip',stash='$this->stash',data='$data',modified='$now' WHERE session='$this->session'";
-		if (!DB::query($query))
+		if (!sDB::query($query))
 			trigger_error("Could not save session updates to the database.");
 
 		do_action('shopp_session_saved');
@@ -1322,17 +1490,17 @@ abstract class SessionObject {
 	 *
 	 * @return boolean
 	 **/
-	function clean ( $lifetime = false ) {
+	public function clean ( $lifetime = false ) {
 		if ( empty($this->session) ) return false;
 
 		$timeout = SHOPP_SESSION_TIMEOUT;
 		$now = current_time('mysql');
 
-		if ( ! DB::query("DELETE LOW_PRIORITY FROM $this->_table WHERE $timeout < UNIX_TIMESTAMP('$now') - UNIX_TIMESTAMP(modified)") )
+		if ( ! sDB::query("DELETE LOW_PRIORITY FROM $this->_table WHERE $timeout < UNIX_TIMESTAMP('$now') - UNIX_TIMESTAMP(modified)") )
 			trigger_error("Could not delete cached session data.");
 
 		// Garbage collection for file-system sessions
-        foreach (glob("$this->path/sess_*") as $file)
+        foreach ( glob("$this->path/sess_*") as $file )
             if ( filemtime($file) + $lifetime < time() && file_exists($file) ) unlink($file);
 
 		return true;
@@ -1346,7 +1514,7 @@ abstract class SessionObject {
 	 *
 	 * @return boolean
 	 **/
-	function secured ( $setting = null ) {
+	public function secured ( $setting = null ) {
 		if ( is_null($setting) ) return $this->secure;
 		$this->secure = ($setting);
 
@@ -1363,7 +1531,7 @@ abstract class SessionObject {
 	 *
 	 * @return string
 	 **/
-	function securekey () {
+	private function securekey () {
 		if ( ! is_ssl() ) return false;
 
 		$expiration = time() + SHOPP_SESSION_TIMEOUT;
@@ -1373,8 +1541,8 @@ abstract class SessionObject {
 
 		$success = false;
 		if ( version_compare(phpversion(), '5.2.0', 'ge') )
-			$success = setcookie(SHOPP_SECURE_KEY,$content,0,'/','',true,true);
-		else $success = setcookie(SHOPP_SECURE_KEY,$content,0,'/','',true);
+			$success = setcookie(SHOPP_SECURE_KEY, $content, 0, '/', '', true, true);
+		else $success = setcookie(SHOPP_SECURE_KEY, $content, 0, '/', '', true);
 
 		if ( $success ) return $content;
 		else return false;
