@@ -79,6 +79,7 @@ class Product extends WPShoppObject {
 	function save () {
 		if ( ! isset($this->ID) ) $this->ID = $this->id ? $this->id : null;
 		$this->post_content_filtered = $this->to_ping = $this->pinged = '';
+		$this->post_modified = current_time('timestamp');
 		$gmtoffset = get_option( 'gmt_offset' ) * 3600;
 		$this->post_modified_gmt = current_time('timestamp')+$gmtoffset;
 		if (is_null($this->publish)) $this->post_date_gmt = $this->post_modified_gmt;
