@@ -436,21 +436,50 @@ class ProductCollection implements Iterator {
 		return apply_filters('shopp_rss_item',$item,$product);
 	}
 
-	public function feeditem ($item) {
+	function feeditem ($item) {
 		foreach ($item as $key => $value) {
-			$key = preg_replace('/\[\d+\]$/','',$key); // Remove duplicate tag identifiers
-			$attrs = '';
 			if (is_array($value)) {
 				$rss = $value;
-				$value = '';
+				$child_tags = false;
 				foreach ($rss as $name => $content) {
-					if (empty($name)) $value = $content;
-					else $attrs .= ' '.$name.'="'.esc_attr($content).'"';
+					if(is_array($content)) {
+						$child_tags = true;
+						break;
+					}
 				}
+				
+				if (true == $child_tags) {
+					//Two levels of child tags
+					
+					$max_content_arr_size = 0;
+					//Find the size of the largest content array
+					foreach ($rss as $name => $content) {
+						if (count($content) > $max_content_arr_size)
+							$max_content_arr_size = count($content);
+					}
+					
+					for ($i=0; $i<$max_content_arr_size; $i++) {
+						echo "\t\t<$key>\n";
+						foreach ($rss as $name => $content) {
+							echo "\t\t<$name>";
+							if (isset($content[$i]))
+								echo $content[$i];
+							echo "</$name>\n";
+						}
+						echo "\t\t</$key>\n";
+					}
+				} else {
+					//One level of child tags
+					echo "\t\t<$key>\n";
+					foreach ($rss as $name => $content) {
+						echo "\t\t<$name>$content</$name>\n";
+					}
+					echo "\t\t</$key>\n";
+				}
+			} else {
+				if (strpos($value,'<![CDATA[') === false) $value = esc_html($value);
+				echo "\t\t<$key>$value</$key>\n";
 			}
-			if (strpos($value,'<![CDATA[') === false) $value = esc_html($value);
-			if (!empty($value)) echo "\t\t<$key$attrs>$value</$key>\n";
-			else echo "\t\t<$key$attrs />\n";
 		}
 	}
 
