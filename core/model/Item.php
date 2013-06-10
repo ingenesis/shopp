@@ -790,8 +790,20 @@ class ShoppCartItem {
 			case 'Tag name': $subject = $this->tags; break;
 			case 'Variation': $subject = $this->option->label; break;
 
-			// case 'Input name': $subject = $Item->option->label; break;
-			// case 'Input value': $subject = $Item->option->label; break;
+			case 'Input name': 
+				foreach($this->data as $inputName=>$inputValue){
+					if (Promotion::match_rule($inputName, $logic, $value, $property)){
+						return true;
+					}
+				}
+				return false;
+			case 'Input value': 
+				foreach($this->data as $inputName=>$inputValue){
+					if (Promotion::match_rule($inputValue, $logic, $value, $property)){
+						return true;
+					}
+				}
+				return false;
 
 			case 'Quantity': $subject = $this->quantity; break;
 			case 'Unit price': $subject = $this->unitprice; break;
