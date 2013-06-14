@@ -1064,6 +1064,7 @@ class Product extends WPShoppObject {
 		$this->slug = wp_unique_post_slug($slug, $this->id, $this->status, Product::posttype(), 0);
 		$this->created = '';
 		$this->modified = '';
+		$this->status = 'draft'; // Set duplicated product to draft status
 
 		$this->save();
 
