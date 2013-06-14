@@ -970,8 +970,8 @@ class Storefront extends FlowController {
 
 		do_action( 'shopp_account_management' );
 
-		if ( 'rp' == $request ) AccountStorefrontPage::resetpassword($_GET['rp']);
-		if ( isset($_POST['recover-login']) ) AccountStorefrontPage::recovery();
+		if ( 'rp' == $request ) ShoppAccountPage::resetpassword($_GET['rp']);
+		if ( isset($_POST['recover-login']) ) ShoppAccountPage::recovery();
 
 	}
 
