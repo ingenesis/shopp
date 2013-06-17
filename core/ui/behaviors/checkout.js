@@ -51,6 +51,18 @@ jQuery(document).ready(function () {
 		});
 
 	}).change();
+	
+	// Add credit card classes to the checkout form
+	billCardtype.change(function () {
+
+		var cardtype = new String( billCardtype.val() ).toLowerCase();
+		
+		for (var key in paycards) {
+			if(checkoutForm.hasClass('cardtype-'+key)) checkoutForm.removeClass('cardtype-'+key);
+		}
+		
+		checkoutForm.addClass('cardtype-'+cardtype);
+	}).change();
 
 	if (localeMenu.children().size() == 0) localeFields.hide();
 
