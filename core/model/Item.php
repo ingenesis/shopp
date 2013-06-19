@@ -124,7 +124,7 @@ class ShoppCartItem {
 		if ( ! $Price && ! str_true($Product->variants) ) {
 			foreach ( $Product->prices as &$Price ) {
 				$stock = true;
-				if ( str_true($Price->inventory) && 1 > $Price->stock ) $stock = false;
+				if ( Shopp::str_true($Price->inventory) && 1 > $Price->stock ) $stock = false;
 				if ( 'product' == $Price->context && 'N/A' != $Price->type && $stock ) break;
 			}
 		}
