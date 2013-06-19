@@ -151,11 +151,11 @@ class ShoppCartItem {
 		$this->description = $Product->summary;
 
 		// Product has variants
-		if ( str_true($Product->variants) )
+		if ( Shopp::str_true($Product->variants) )
 			$this->variants($Product->prices);
 
 		// Product has Addons
-		if (str_true($Product->addons))
+		if ( Shopp::str_true($Product->addons) )
 			$this->addons($this->addonsum,$addons,$Product->prices);
 
 		if (isset($Price->id))
@@ -163,7 +163,7 @@ class ShoppCartItem {
 
 		$this->sku = $Price->sku;
 		$this->type = $Price->type;
-		$this->sale = str_true($Product->sale);
+		$this->sale = Shopp::str_true($Product->sale);
 		$this->freeshipping = ( isset($Price->freeshipping) ? $Price->freeshipping : false );
 
 		$baseprice = roundprice( $this->sale ? $Price->promoprice : $Price->price );
