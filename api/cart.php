@@ -219,7 +219,13 @@ function shopp_add_cart_promocode ($code = false) {
 	$Cart->totals();
 }
 
-// todo: implement shopp_add_cart_item_addon in plugin api
+/**
+ * Adds an addon to an existing cartitem. The addonkey should be the numeric ID of the addon.
+ *
+ * @param mixed $itemkey
+ * @param mixed $addonkey
+ * @return bool
+ */
 function shopp_add_cart_item_addon ( $itemkey = false, $addonkey = false ) {
 	$Order = ShoppOrder();
 
@@ -248,27 +254,47 @@ function shopp_add_cart_item_addon ( $itemkey = false, $addonkey = false ) {
 	}
 
 	$addons[] = $addon;
-	foreach ($addons as &$addon) $addon = $addon->id; // Convert to an array of ids
+	foreach ( $addons as &$addon ) $addon = $addon->id; // Convert to an array of ids
 
 	return $Order->Cart->change($itemkey, $item->product, (int) $item->priceline, $addons);
 }
 
-// todo: implement shopp_rmv_cart_item_addon in plugin api
-function shopp_rmv_cart_item_addon ( $item = false, $addon = false ) {
-	// $Order = ShoppOrder();
-	// if ( false === $item || false === $addon ) {
-	// 	shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
-	// 	return false;
-	// }
-	// if ( $item < 0 || $item >= shopp_cart_items_count() ) {
-	// 	shopp_debug(__FUNCTION__ . " failed: No such item $item");
-	// 	return false;
-	// }
-	// $Item = $Order->Cart->contents[$item];
-	// if ( $addon < 0 || $addon >= count( $Item->addons ) ) {
-	// 	shopp_debug(__FUNCTION__ . " failed: No such addon $addon on this item.");
-	// 	return false;
-	// }
+/**
+ * Removes an addon from a cartitem. The addonkey should be the numeric ID of the addon.
+ *
+ * @param mixed $item
+ * @param mixed $addon
+ * @return bool
+ */
+function shopp_rmv_cart_item_addon ( $itemkey = false, $addonkey = false ) {
+	$Order = ShoppOrder();
+	$exists = false;
+
+	if ( false === $itemkey || false === $addonkey ) {
+		shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
+		return false;
+	}
+	if ( ! ( $item = shopp_cart_item($itemkey) ) ) {
+		shopp_debug(__FUNCTION__ . " failed: no such item $itemkey");
+		return false;
+	}
+	if ( false === ( $addons = shopp_cart_item_addons($itemkey) ) ) {
+		return false; // Debug message will already have been generated in shopp_cart_item_addons()
+	}
+
+	foreach ($addons as $existing)
+		if ( $existing->id == $addonkey ) $exists = true;
+
+	if ( ! $exists ) {
+		shopp_debug(__FUNCTION__ . " failed: addon $addonkey was not found in item $itemkey");
+		return false;
+	}
+
+	$revised = array();
+	foreach ( $addons as $addon )
+		if ( $addonkey != $addon->id ) $revised[] = $addon->id;
+
+	return $Order->Cart->change($itemkey, $item->product, (int) $item->priceline, $revised);
 }
 
 /**
