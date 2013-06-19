@@ -107,12 +107,12 @@ function shopp_rmv_cart_item ( $item = false ) {
 		return false;
 	}
 
-	if ( 0 == $count = count($Order->Cart->contents) ) return true;
-	if ( $item < 0 || $item >= $count ) {
+	if ( 0 == $count = count($Order->Cart) ) return true;
+	if ( ! $Order->Cart->exists($item) ) {
 		shopp_debug(__FUNCTION__ . " failed: No such item $item");
 		return false;
 	}
-	$remove = $Order->Cart->remove($item);
+	$remove = $Order->Cart->rmvitem($item);
 	$Order->Cart->totals();
 	return $remove;
 }
@@ -132,7 +132,7 @@ function shopp_set_cart_item_quantity ( $item = false, $quantity = 1 ) {
 	}
 
     $Order = ShoppOrder();
-    return $Order->Cart->update($item, $quantity);
+    return $Order->Cart->setitem($item, $quantity);
 }
 
 /**
@@ -186,7 +186,6 @@ function shopp_cart_item ( $item = false ) {
 		return false;
 	}
 	return $items[$item];
-
 }
 
 /**
@@ -221,16 +220,23 @@ function shopp_add_cart_promocode ($code = false) {
 }
 
 // todo: implement shopp_add_cart_item_addon in plugin api
-function shopp_add_cart_item_addon ( $item = false, $addon = false ) {
-	// $Order = ShoppOrder();
-	// if ( false === $item || false === $addon ) {
-	// 	shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
-	// 	return false;
-	// }
-	// if ( $item < 0 || $item >= shopp_cart_items_count() ) {
-	// 	shopp_debug(__FUNCTION__ . " failed: No such item $item");
-	// 	return false;
-	// }
+function shopp_add_cart_item_addon ( $itemkey = false, $addon = false ) {
+	$Order = ShoppOrder();
+	$items = shopp_cart_items();
+
+	if ( false === $itemkey || false === $addon ) {
+		shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
+		return false;
+	}
+	if ( ! ( $item = shopp_cart_item($itemkey) ) ) {
+		shopp_debug(__FUNCTION__ . " failed: No such item $itemkey");
+		return false;
+	}
+
+	$addons = shopp_cart_item_addons($item);
+
+
+	//$Order->Cart->change($itemkey, $item->product, (int) $item->priceline, $addons);
 }
 
 // todo: implement shopp_rmv_cart_item_addon in plugin api
@@ -252,7 +258,21 @@ function shopp_rmv_cart_item_addon ( $item = false, $addon = false ) {
 }
 
 // todo: implement shopp_cart_item_addons in plugin api
-function shopp_cart_item_addons ($item) {}
+function shopp_cart_item_addons ( $itemkey = false ) {
+	if ( false === $itemkey || false === $addon ) {
+		shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
+		return false;
+	}
+	if ( ! ( $item = shopp_cart_item($itemkey) ) ) {
+		shopp_debug(__FUNCTION__ . " failed: No such item $itemkey");
+		return false;
+	}
+
+	$Order = ShoppOrder();
+	$items = shopp_cart_items();
+
+
+}
 
 // todo: implement shopp_cart_item_addons_count in plugin api
 function shopp_cart_item_addons_count ($item) {}
