@@ -2405,7 +2405,7 @@ function ini_size ($name) {
  * @deprecated Use Shopp::
  **/
 function inputattrs ($options,$allowed=array()) {
-	return Shopp::inputattrs();
+	return Shopp::inputattrs($options,$allowed);
 }
 
 /**
