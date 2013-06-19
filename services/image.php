@@ -24,10 +24,11 @@ if ( ! isset($GLOBALS['Shopp']) ) $GLOBALS['Shopp'] = new stdClass;
 
 // Make core Shopp functionality available
 if ( ! defined('WPINC') ) define('WPINC', 'wp-includes'); // Stop 403s from unauthorized direct access
-require "$path/core/functions.php";
 
-// Developer API and core functions
-require 'Loader.php';
+// Core functions and lazy loader
+if ( ! class_exists('ShoppCore'))
+	require_once "$path/core/library/Core.php";
+require "$path/core/library/Loader.php";
 
 // Barebones bootstrap (say that 5x fast) for WordPress
 if ( ! defined('ABSPATH') && $loadfile = ShoppLoader::find_wpload()) {
@@ -36,7 +37,7 @@ if ( ! defined('ABSPATH') && $loadfile = ShoppLoader::find_wpload()) {
 }
 
 // Stub i18n for compatibility
-if (!function_exists('__')) {
+if ( ! function_exists('__')) {
 	// Localization API is not available at this point
 	function __ ($string,$domain=false) {
 		return $string;
@@ -149,7 +150,7 @@ class ImageServer {
 
 		wp_cache_set($cache, $this->Image, 'shopp_image');
 
-		if (!empty($this->Image->id) || !empty($this->Image->data)) return true;
+		if ( ! empty($this->Image->id) || ! empty($this->Image->data) ) return true;
 		else return false;
 	}
 
@@ -308,8 +309,6 @@ class ImageServer {
 
 		if ( ! defined('SHOPP_PATH') )
 			define('SHOPP_PATH', self::path() );
-		if ( ! defined('SHOPP_MODEL_PATH') )
-			define('SHOPP_MODEL_PATH', SHOPP_PATH . '/core/model');
 		if ( ! defined('SHOPP_STORAGE') )
 			define('SHOPP_STORAGE', SHOPP_PATH . '/storage');
 

@@ -170,7 +170,7 @@ class Warehouse extends AdminController {
 			$Product = new Product($duplicate);
 			$Product->duplicate();
 			$this->index($Product);
-			shopp_redirect(add_query_arg('page',$this->Admin->pagename('products'),$adminurl));
+			shopp_redirect(add_query_arg(array('page' => $this->Admin->pagename('products'), 'paged' => $_REQUEST['paged']),$adminurl));
 		}
 
 		if (isset($id) && $id != "new") {
