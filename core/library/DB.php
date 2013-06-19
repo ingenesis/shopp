@@ -1,6 +1,6 @@
 <?php
 /**
- * DB.php
+ * /library/DB.php
  *
  * Database management classes
  *
@@ -473,7 +473,7 @@ class sDB extends SingletonFramework {
 					break;
 				case 'float':
 					// Sanitize without rounding to protect precision
-					if ( function_exists('floatvalue') ) $value = floatvalue($value, false);
+					if ( function_exists('ShoppCore::floatvalue') ) $value = ShoppCore::floatvalue($value, false);
 					else $value = floatval($value);
 				case 'int':
 					// Normalize for MySQL float representations (@see bug #853)

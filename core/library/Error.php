@@ -72,6 +72,7 @@ class ShoppErrors {
 
 		add_action('init', array($this, 'init'), 5);
 		do_action('shopp_errors_init');
+
 	}
 
 	public static function object () {

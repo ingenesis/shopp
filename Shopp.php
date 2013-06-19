@@ -30,10 +30,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-if ( Shopp::services() || Shopp::unsupported() ) return; // Prevent loading the plugin
-
-/* Start the core */
-$Shopp = Shopp::object();
+require 'core/library/Core.php';
 
 /**
  * Shopp core plugin management class
@@ -42,7 +39,7 @@ $Shopp = Shopp::object();
  * @since 1.0
  * @package shopp
  **/
-class Shopp {
+class Shopp extends ShoppCore {
 
 	const VERSION = '1.3dev';
 	const CODENAME = 'Mars';
@@ -51,12 +48,10 @@ class Shopp {
 
 	private function __construct () {
 
-		// Autoload system
-		require 'core/Loader.php';
-		ShoppLoader::includes();
+		require 'core/library/Loader.php';
 
-		$this->constants();			// Setup Shopp constants
 		$this->paths();				// Determine Shopp paths
+		$this->constants();			// Setup Shopp constants
 
 		load_plugin_textdomain( 'Shopp', false, SHOPP_DIR . '/lang' );
 
@@ -311,7 +306,7 @@ class Shopp {
  		global $is_IIS;
  		$structure = get_option('permalink_structure');
  		if ('' == $structure) return $wp_rewrite_rules;
- 		$path = str_replace('%2F', '/', urlencode(join('/', array(PLUGINDIR, SHOPP_DIR, 'core'))));
+ 		$path = str_replace('%2F', '/', urlencode(join('/', array(PLUGINDIR, SHOPP_DIR, 'services'))));
 
  		// Download URL rewrites
 		$AccountPage = ShoppPages()->get('account');
@@ -380,269 +375,11 @@ class Shopp {
 
 		// Image Server request handling
 		if ( isset($_GET['siid']) || (false !== strpos($_SERVER['REQUEST_URI'], '/images/') && sscanf($_SERVER['REQUEST_URI'], '%s/images/%d/')))
-			return require 'core/image.php';
+			return require 'services/image.php';
 
 		// Script Server request handling
 		if ( isset($_GET['sjsl']) )
-			return require 'core/scripts.php';
-	}
-
-	/**
-	 * Detects if Shopp is unsupported in the current hosting environment
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.1
-	 *
-	 * @return boolean True if requirements are missing, false if no errors were detected
-	 **/
-	public static function unsupported () {
-		$activation = false;
-		if ( isset($_GET['action']) && isset($_GET['plugin']) ) {
-			$activation = ('activate' == $_GET['action']);
-			if ($activation) {
-				$plugin = $_GET['plugin'];
-				if (function_exists('check_admin_referer'))
-					check_admin_referer('activate-plugin_' . $plugin);
-			}
-		}
-
-		$errors = array();
-
-		// Check PHP version
-		if ( version_compare(PHP_VERSION, '5.2.4', '<') ) array_push($errors, 'phpversion', 'php524');
-
-		// Check WordPress version
-		if ( version_compare(get_bloginfo('version'), '3.5', '<') )
-			array_push($errors, 'wpversion', 'wp35');
-
-		// Check for GD
-		if ( ! function_exists('gd_info') ) $errors[] = 'gd';
-		elseif ( ! array_keys( gd_info(), array('JPG Support', 'JPEG Support')) ) $errors[] = 'jpgsupport';
-
-		if ( empty($errors) ) {
-			if ( ! defined('SHOPP_UNSUPPORTED') ) define('SHOPP_UNSUPPORTED', false);
-			return false;
-		}
-
-		$plugin_path = dirname(__FILE__);
-		// Manually load text domain for translated activation errors
-		$languages_path = str_replace('\\', '/', $plugin_path.'/lang');
-		load_plugin_textdomain('Shopp', false, $languages_path);
-
-		// Define translated messages
-		$_ = array(
-			'header' => Shopp::_x('Shopp Activation Error', 'Shopp activation error'),
-			'intro' => Shopp::_x('Sorry! Shopp cannot be activated for this WordPress install.', 'Shopp activation error'),
-			'phpversion' => sprintf(Shopp::_x('Your server is running PHP %s!', 'Shopp activation error'), PHP_VERSION),
-			'php524' => Shopp::_x('Shopp requires PHP 5.2.4+.', 'Shopp activation error'),
-			'wpversion' => sprintf(Shopp::_x('This site is running WordPress %s!', 'Shopp activation error'), get_bloginfo('version')),
-			'wp35' => Shopp::_x('Shopp requires WordPress 3.5.', 'Shopp activation error'),
-			'gdsupport' => Shopp::_x('Your server does not have GD support! Shopp requires the GD image library with JPEG support for generating gallery and thumbnail images.', 'Shopp activation error'),
-			'jpgsupport' => Shopp::_x('Your server does not have JPEG support for the GD library! Shopp requires JPEG support in the GD image library to generate JPEG images.', 'Shopp activation error'),
-			'nextstep' => sprintf(Shopp::_x('Try contacting your web hosting provider or server administrator to upgrade your server. For more information about the requirements for running Shopp, see the %sShopp Documentation%s', 'Shopp activation error'), '<a href="'.SHOPP_DOCS.'Requirements">', '</a>'),
-			'continue' => Shopp::_x('Return to Plugins page', 'Shopp activation error')
-		);
-
-		if ( $activation ) {
-			$string = '<h1>'.$_['header'].'</h1><p>'.$_['intro'].'</h1></p><ul>';
-			foreach ((array)$errors as $error) if (isset($_[$error])) $string .= "<li>{$_[$error]}</li>";
-			$string .= '</ul><p>'.$_['nextstep'].'</p><p><a class="button" href="javascript:history.go(-1);">&larr; '.$_['continue'].'</a></p>';
-			wp_die($string);
-		}
-
-		if ( ! function_exists('deactivate_plugins') )
-			require( ABSPATH . 'wp-admin/includes/plugin.php' );
-
-		$plugin = basename($plugin_path).__FILE__;
-		deactivate_plugins($plugin, true);
-
-		$phperror = '';
-		if ( is_array($errors) && ! empty($errors) ) {
-			foreach ( $errors as $error ) {
-				if ( isset($_[$error]) )
-					$phperror .= $_[$error].' ';
-				trigger_error($phperror, E_USER_WARNING);
-			}
-		}
-
-		if ( ! defined('SHOPP_UNSUPPORTED') )
-			define('SHOPP_UNSUPPORTED', true);
-
-		return true;
-	}
-
-	/**
-	 * Detect if the Shopp installation needs maintenance
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.1
-	 *
-	 * @return boolean
-	 **/
-	public static function maintenance () {
-
-		$db_version = intval(shopp_setting('db_version'));
-		return ( ! ShoppSettings()->available() || $db_version != DB::$version || shopp_setting_enabled('maintenance') );
-
-		// Settings unavailable
-		if ( ! ShoppSettings()->available() || 'completed' != shopp_setting('shopp_setup') )
-			return false;
-
-		shopp_set_setting('maintenance', 'on');
-		return true;
-	}
-
-
-	/**
-	 * Shopp wrapper for gettext translation strings (with optional context and Markdown support)
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.3
-	 *
-	 * @param string $text The text to translate
-	 * @param string $context An explination of how and where the text is used
-	 * @return string The translated text
-	 **/
-	public static function translate ( string $text, string $context = null ) {
-
-		$domain = __CLASS__;
-
-		if ( is_null($context) ) $string = translate( $text, $domain );
-		else $string = translate_with_gettext_context($text, $context, $domain);
-
-		return $string;
-
-	}
-
-	/**
-	 * Shopp wrapper to return gettext translation strings
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.3
-	 *
-	 * @param string $text The text to translate
-	 * @return string The translated text
-	 **/
-	public static function __ ( string $text ) {
-
-		$translated = Shopp::translate($text);
-		$args = func_get_args(); // Handle sprintf rendering
-		return sprintf_gettext($translated, $args, 1);
-
-	}
-
-	/**
-	 * Shopp wrapper to output gettext translation strings
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.3
-	 *
-	 * @param string $text The text to translate
-	 * @return string The translated text
-	 **/
-	public static function _e ( string $text) {
-
-		$translated = Shopp::translate($text);
-		$args = func_get_args(); // Handle sprintf rendering
-		echo sprintf_gettext($translated, $args, 1);
-
-	}
-
-	/**
-	 * Shopp wrapper to return gettext translation strings with context support
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.3
-	 *
-	 * @param string $text The text to translate
-	 * @param string $context An explination of how and where the text is used
-	 * @return string The translated text
-	 **/
-	public static function _x ( string $text, string $context ) {
-
-		$translated = Shopp::translate($text, $context);
-		$args = func_get_args(); // Handle sprintf rendering
-		return sprintf_gettext($translated, $args, 2);
-
-	}
-
-	/**
-	 * Get translated Markdown rendered HTML
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.3
-	 *
-	 * @param string $text The text to translate
-	 * @return string The translated Markdown-rendered HTML text
-	 **/
-	public static function _m ( string $text ) {
-
-		$translated = Shopp::translate($text);
-		$args = func_get_args(); // Handle sprintf rendering
-		$translated = sprintf_gettext($translated, $args, 1);
-
-		$Markdown = new Markdownr($translated);
-		return $Markdown->html();
-	}
-
-	/**
-	 * Output translated Markdown rendered HTML
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.3
-	 *
-	 * @param string $text The text to translate
-	 * @return void
-	 **/
-	public static function _em ( string $text ) {
-
-		$translated = Shopp::translate($text);
-		$args = func_get_args();
-		$translated = sprintf_gettext($translated, $args, 1);
-
-		$Markdown = new Markdownr($translated);
-		$Markdown->render();
-
-	}
-
-	/**
-	 * Get translated Markdown rendered HTML with translator context
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.3
-	 *
-	 * @param string $text The text to translate
-	 * @param string $context An explination of how and where the text is used
-	 * @return string The translated text
-	 **/
-	public static function _mx ( string $text, string $context ) {
-
-		$translated = Shopp::translate($text);
-		$args = func_get_args();
-		$translated = sprintf_gettext($translated, $args, 2);
-
-		$Markdown = new Markdownr($translated);
-		return $Markdown->html();
-	}
-
-	/**
-	 * Output translated Markdown rendered HTML with translator context
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.3
-	 *
-	 * @param string $text The text to translate
-	 * @param string $context An explination of how and where the text is used
-	 * @return string The translated text
-	 **/
-	public static function _emx ( string $text, string $context ) {
-
-		$translated = Shopp::translate($text);
-		$args = func_get_args();
-		$translated = sprintf_gettext($translated, $args, 2);
-
-		$Markdown = new Markdownr($translated);
-		$Markdown->render();
+			return require 'services/scripts.php';
 	}
 
 	// Deprecated properties
@@ -664,3 +401,8 @@ class Shopp {
 	public $Storage;		// @deprecated Storage engine modules
 
 } // END class Shopp
+
+if ( Shopp::services() || Shopp::unsupported() ) return; // Prevent loading the plugin
+
+/* Start the core */
+$Shopp = Shopp::object();
