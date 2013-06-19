@@ -422,7 +422,7 @@ class ShoppCart extends ListFramework {
 		// and remove this one
 
 		foreach ( $this as $id => $thisitem ) {
-			if ($thisitem->product == $product && $thisitem->price == $pricing) {
+			if ($thisitem->product == $product && $thisitem->priceline == $pricing) {
 				$this->update($id,$thisitem->quantity+$this->get($item)->quantity);
 				$this->remove($item);
 			}
