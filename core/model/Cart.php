@@ -406,6 +406,7 @@ class ShoppCart extends ListFramework {
 	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
+	 * @fixme foreach over iterable items prevents addons from being added via cart API
 	 * @param int $item Index of the item to change
 	 * @param Product $Product Product object to change to
 	 * @param int|array|Price $pricing Price record ID or an array of pricing record IDs or a Price object
@@ -421,19 +422,19 @@ class ShoppCart extends ListFramework {
 		// add the updated quantity of this item to the other item
 		// and remove this one
 
-		foreach ( $this as $id => $thisitem ) {
+		/*foreach ( $this as $id => $thisitem ) {
 			if ($thisitem->product == $product && $thisitem->priceline == $pricing) {
 				$this->update($id,$thisitem->quantity+$this->get($item)->quantity);
 				$this->remove($item);
 			}
-		}
+		}*/
 
 		// Maintain item state, change variant
 		$Item = $this->get($item);
 		$qty = $Item->quantity;
 		$category = $Item->category;
 		$data = $Item->data;
-		$addons = array();
+
 		foreach ($Item->addons as $addon)
 			$addons[] = $addon->options;
 
