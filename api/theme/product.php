@@ -781,6 +781,9 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 		if ( ! str_true($O->sale) ) $property = 'price';
 
+		// Handle inclusive/exclusive tax presentation options (product editor setting or api option)
+		$taxes = is_null($taxes) ? self::_include_tax($O) : str_true( $taxes );
+
 		$min = isset($O->min[ $property ]) ? $O->min[ $property ] : false;
 		$taxmin = isset($O->min[ $property . '_tax' ]) ? $O->min[ $property . '_tax' ] : false; // flag to apply tax to min price (from summary)
 		$mintaxrate = $taxes && $taxmin ? $min * shopp_taxrate($taxes, $taxmin, $O) : 0;
@@ -789,8 +792,6 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		$taxmax = isset($O->max[ $property . '_tax' ]) ? $O->max[ $property . '_tax' ] : false; // flag to apply tax to max price (from summary)
 		$maxtaxrate = $taxes && $taxmax ? $max * shopp_taxrate($taxes, $taxmax, $O) : 0;
 
-		// Handle inclusive/exclusive tax presentation options (product editor setting or api option)
-		$taxes = is_null($taxes) ? self::_include_tax($O) : str_true( $taxes );
 		if ( ! $taxes ) $taxrate = 0;
 
 		if ( $min == $max || ! empty($starting) || str_true($low) ) {
@@ -1302,7 +1303,7 @@ new ProductOptionsMenus(<?php printf("'select%s.product%d.options'",$collection_
 	}
 
 	static function _include_tax ($O) {
-		return (shopp_setting_enabled('tax_inclusive') && !str_true($O->excludetax));
+		return ( shopp_setting_enabled('tax_inclusive') && ! str_true($O->excludetax) );
 	}
 
 }

@@ -845,6 +845,15 @@ class ShoppCollectionPage extends ShoppPage {
 		return apply_filters('shopp_category_template', $content);
 	}
 
+	public function poststub () {
+		global $wp_query, $wp_the_query;
+		if ($wp_the_query !== $wp_query) return;
+
+		$query_object = $wp_query->queried_object;
+		parent::poststub();
+		$wp_query->queried_object = $query_object;
+	}
+
 }
 
 /**

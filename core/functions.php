@@ -650,26 +650,27 @@ function file_mimetype ($file,$name=false) {
  **/
 function floatvalue ($value, $round=true, $format=false) {
 	$format = currency_format($format);
-	extract($format,EXTR_SKIP);
+	extract($format, EXTR_SKIP);
 
 	$float = false;
 	if (is_float($value)) $float = $value;
 
-	$value = preg_replace('/(\D\.|[^\d\,\.\-])/','',$value); // Remove any non-numeric string data
-	$value = preg_replace('/\\'.$thousands.'/','',$value); // Remove thousands
+	$value = preg_replace('/(\D\.|[^\d\,\.\-])/', '', $value); // Remove any non-numeric string data
+	if ( ! empty($thousands) )
+		$value = preg_replace('/\\'.$thousands.'/', '', $value); // Remove thousands
 	$v = (float)$value;
 
-	if ('.' == $decimals && $v > 0) $float = $v;
+	if ( $v > 0 || '.' == $decimals ) $float = $v;
 
-	if (false === $float) {
-		$value = preg_replace('/^\./','',$value); // Remove any decimals at the beginning of the string
+	if ( false === $float ) {
+		$value = preg_replace('/^\./', '', $value); // Remove any decimals at the beginning of the string
 		if ($precision > 0) // Don't convert decimals if not required
-			$value = preg_replace('/\\'.$decimals.'/','.',$value); // Convert decimal delimter
+			$value = preg_replace('/\\'.$decimals.'/', '.', $value); // Convert decimal delimter
 
 		$float = (float)$value;
 	}
 
-	return $round?round($float,$precision):$float;
+	return $round ? round($float, $precision) : $float;
 }
 
 /**
@@ -1156,13 +1157,13 @@ function phone ($num) {
  * @param array $format A specific format for the number
  * @return string The formatted percentage
  **/
-function percentage ($amount,$format=false) {
+function percentage ( $amount, $format = false) {
 	$format = currency_format($format);
-	extract($format,EXTR_SKIP);
-	$float = floatvalue($amount,true,$format);
+	extract($format, EXTR_SKIP);
+	$float = floatvalue($amount, true, $format);
 	$percent = numeric_format($float, $precision, $decimals, $thousands, $grouping);
-	if (strpos($percent,$decimals) !== false) { // Only remove trailing 0's after the decimal
-		$percent = rtrim($percent,'0');
+	if ( false !== strpos($percent, $decimals) ) { // Only remove trailing 0's after the decimal
+		$percent = rtrim($percent, '0');
 		$percent = rtrim($percent, $decimals);
 	}
 	return "$percent%";
@@ -1286,33 +1287,43 @@ if(!function_exists('sanitize_path')){
  * @param string $format A currency formatting string such as $#,###.##
  * @return array Formatting options list
  **/
-function scan_money_format ($format) {
+function scan_money_format ( string $format ) {
 	$f = array(
-		"cpos" => true,
-		"currency" => "",
-		"precision" => 0,
-		"decimals" => "",
-		"thousands" => "",
-		"grouping" => 3
+		'cpos' => true,
+		'currency' => '',
+		'precision' => 0,
+		'decimals' => '',
+		'thousands' => '',
+		'grouping' => 3
 	);
 
-	$ds = strpos($format,'#'); $de = strrpos($format,'#')+1;
-	$df = substr($format,$ds,($de-$ds));
+	$decimals = array('.', ',', '·', "'");
 
-	$f['cpos'] = true;
-	if ($de == strlen($format)) $f['currency'] = substr($format,0,$ds);
+	$ds = strpos($format, '#'); // Position of the first digit
+	$de = strrpos($format, '#') + 1; // Position of the last digit
+	$df = substr($format, $ds, ($de - $ds)); // Digit formatting from first to last #
+
+	// Currency symbol
+	$f['cpos'] = true; // True means symbol prefixes number
+	if ( strlen($format) == $de ) $f['currency'] = substr($format, 0, $ds);
 	else {
-		$f['currency'] = substr($format,$de);
+		$currency = substr($format, $de);
+		if ( in_array($currency{0}, $decimals) ) {
+			$f['decimals'] = $currency{0};
+			$f['currency'] = substr($currency, 1);
+		} else {
+			$f['currency'] = substr($format, $de);
+		}
 		$f['cpos'] = false;
 	}
 
 	$found = array();
-	if (!preg_match_all('/([^#]+)/',$df,$found) || empty($found)) return $f;
+	if ( ! preg_match_all('/([^#]+)/', $df, $found) || empty($found) ) return $f;
 
 	$dl = $found[0];
 	$dd = 0; // Decimal digits
 
-	if (count($dl) > 1) {
+	if ( count($dl) > 1 ) {
 		if ($dl[0] == $dl[1] && !isset($dl[2])) {
 			$f['thousands'] = $dl[1];
 			$f['precision'] = 0;
@@ -1324,7 +1335,7 @@ function scan_money_format ($format) {
 
 	$dfc = $df;
 	// Count for precision
-	if (!empty($f['decimals']) && strpos($df,$f['decimals']) !== false) {
+	if ( ! empty($f['decimals']) && strpos($df, $f['decimals']) !== false) {
 		list($dfc,$dd) = explode($f['decimals'],$df);
 		$f['precision'] = strlen($dd);
 	}

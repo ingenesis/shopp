@@ -540,7 +540,7 @@ class PayPalStandard extends GatewayFramework implements GatewayModule {
 
 		}
 
-		$_ = array_merge($_,$options);
+		$_ = apply_filters('shopp_paypal_standard_form', array_merge($_, $options));
 
 		return $form.$this->format($_);
 	}

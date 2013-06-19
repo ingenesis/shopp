@@ -426,7 +426,8 @@ class Storefront extends FlowController {
 		if ( ! is_shopp_collection() ) return $template;
 
 		$Page = new ShoppCollectionPage();
-		$Page->filters();
+		$Page->poststub();
+
 		return locate_template( $Page->templates() );
 	}
 
