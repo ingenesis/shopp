@@ -30,7 +30,7 @@ class AssetDevAPITests extends ShoppTestCase {
 		$this->assets = array(
 			'product' => array(),
 			'category' => array(),
-		 	'download' => array(),
+			'download' => array(),
 		);
 		$path = dirname(__FILE__).'/Assets/';
 		$this->files = array(

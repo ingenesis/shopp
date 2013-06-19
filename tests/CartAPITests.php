@@ -14,33 +14,96 @@
  **/
 
 class CartAPITests extends ShoppTestCase {
+	protected $products = array();
+	protected $productdefinitions = array(
+		array(
+			'name' => '1930s Chrome Art Deco Decanter',
+			'slug' => '1930s-decanter',
+			'publish' => array('flag' => true)
+		),
+		array(
+			'name' => 'Multi-Prism Spectroscope',
+			'slug' => 'multi-prism-spectroscope',
+			'publish' => array('flag' => true)
+		)
+	);
+	protected $promos = array();
+	protected $promodefinitions = array(
+		array(
+			'name' => '2 PC Off',
+			'status' => 'enabled',
+			'type' => 'Percentage Off',
+			'target' => 'Cart',
+			'discount' => '2.0',
+			'search' => 'any',
+			'rules' => array(
+				1 => array(
+					'property' => 'Promo code',
+					'logic' => 'Is equal to',
+					'value' => '2percent'
+			))
+		),
+		array(
+			'name' => '3 Dollars Off',
+			'status' => 'enabled',
+			'type' => 'Amount Off',
+			'target' => 'Cart',
+			'discount' => '3.0',
+			'search' => 'any',
+			'rules' => array(
+				1 => array(
+					'property' => 'Promo code',
+					'logic' => 'Is equal to',
+					'value' => '3DollarsOff'
+				))
+		)
+	);
+
 
 	function setUp () {
 		parent::setUp();
 		ShoppOrder()->Shipping->country = 'US';
+
+		/*foreach ($this->productdefinitions as $productdata) {
+			$this->products[] = shopp_add_product($productdata);
+		}
+
+		foreach ($this->promodefinitions as $promodata) {
+			$Promotion = new Promotion();
+			$Promotion->updates($promodata);
+			$Promotion->save();
+			$this->promos[] = $Promotion->id;
+		}*/
+	}
+
+	function tearDown() {
+		parent::tearDown();
+
+		/*foreach ($this->products as $Product)
+			shopp_rmv_product($Product->id);
+
+		Promotion::deleteset($this->promos);*/
 	}
 
 	function test_cart_url () {
-		ob_start();
-		shopp('cart','url');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('http://shopptest/store/cart/',$actual);
+		$actual = shopp('cart','url','return=1');
+		$expected = 'http://'.WP_TESTS_DOMAIN.'/?shopp_page=cart'; // Ugly permalinks straight out of the box
+		$this->assertEquals($expected, $actual);
 	}
 
 	function test_cart_hasitems () {
 		shopp_empty_cart();
 		$this->assertFalse(shopp('cart','hasitems'));
 
-		$Product = shopp_product('knowing','slug');
+		$Product = shopp_product('1930s-decanter','slug');
 		shopp_add_cart_product($Product->id,1);
 
 		$this->assertTrue(shopp('cart','hasitems'));
 	}
 
 	function test_cart_totalitems () {
-		$FirstProduct =  shopp_product('eagle-eye','slug');
-		$SecondProduct = shopp_product('knowing','slug');
+		$FirstProduct = shopp_product('1930s-decanter','slug');
+		$SecondProduct = shopp_product('multi-prism-spectroscope','slug');
 
 		shopp_empty_cart();
 
@@ -77,8 +140,8 @@ class CartAPITests extends ShoppTestCase {
 
 
 	function test_cart_totalquantity () {
-		$FirstProduct =  shopp_product('eagle-eye','slug');
-		$SecondProduct = shopp_product('knowing','slug');
+		$FirstProduct =  shopp_product('1930s-decanter','slug');
+		$SecondProduct = shopp_product('multi-prism-spectroscope','slug');
 
 		shopp_empty_cart();
 
@@ -117,10 +180,10 @@ class CartAPITests extends ShoppTestCase {
 	function test_cart_itemlooping () {
 		shopp_empty_cart();
 
-		$FirstProduct = shopp_product('eagle-eye','slug');
+		$FirstProduct = shopp_product('1930s-decanter','slug');
 		shopp_add_cart_product($FirstProduct->id,1);
 
-		$SecondProduct = shopp_product('knowing','slug');
+		$SecondProduct = shopp_product('multi-prism-spectroscope','slug');
 		shopp_add_cart_product($SecondProduct->id,1);
 
 		ob_start();
@@ -134,26 +197,28 @@ class CartAPITests extends ShoppTestCase {
 
 	function test_cart_lastitem () {
 		shopp_empty_cart();
-		$FirstProduct = shopp_product('eagle-eye','slug');
 
-		shopp_add_cart_product($FirstProduct->id,1);
-		$Item = shopp('cart','lastitem','return=true');
-		$this->assertEquals($FirstProduct->name,$Item->name);
+		$FirstProduct = shopp_product('multi-prism-spectroscope', 'slug');
+		shopp_add_cart_product($FirstProduct->id, 1);
 
-		$SecondProduct = shopp_product('knowing','slug');
-		shopp_add_cart_product($SecondProduct->id,1);
-		$Item = shopp('cart','lastitem','return=true');
-		$this->assertEquals($SecondProduct->name,$Item->name);
+		$Item = shopp('cart','lastitem', 'return=true');
+		$this->assertEquals($FirstProduct->name, $Item->name);
 
-		shopp_add_cart_product($FirstProduct->id,1);
-		$Item = shopp('cart','lastitem','return=true');
-		$this->assertEquals($FirstProduct->name,$Item->name);
+		$SecondProduct = shopp_product('multi-prism-spectroscope', 'slug');
+		shopp_add_cart_product($SecondProduct->id, 1);
+
+		$Item = shopp('cart', 'lastitem', 'return=true');
+		$this->assertEquals($SecondProduct->name, $Item->name);
+
+		shopp_add_cart_product($FirstProduct->id, 1);
+		$Item = shopp('cart', 'lastitem', 'return=true');
+		$this->assertEquals($FirstProduct->name, $Item->name);
 	}
 
 	function test_cart_haspromos () {
 		shopp_empty_cart();
 
-		$Product = shopp_product('code-is-poetry-t-shirt','slug');
+		$Product = shopp_product('1930s-decanter','slug');
 		shopp_add_cart_product($Product->id,1);
 
 		$this->assertFalse(shopp('cart','haspromos'));
@@ -168,7 +233,7 @@ class CartAPITests extends ShoppTestCase {
 
 		shopp_empty_cart();
 
-		$Product = shopp_product('code-is-poetry-t-shirt','slug');
+		$Product = shopp_product('1930s-decanter','slug');
 		shopp_add_cart_product($Product->id,1);
 
 		ob_start();
@@ -177,7 +242,7 @@ class CartAPITests extends ShoppTestCase {
 		ob_end_clean();
 		$this->assertEquals(0,$actual);
 
-		shopp_add_cart_promocode('2percent');
+		shopp_add_cart_promocode('2Percent');
 		ob_start();
 		shopp('cart','totalpromos');
 		$actual = ob_get_contents();
@@ -189,7 +254,7 @@ class CartAPITests extends ShoppTestCase {
 		shopp_set_setting('promo_limit',0);
 		shopp_empty_cart();
 
-		$Product = shopp_product('eagle-eye','slug');
+		$Product = shopp_product('1930s-decanter','slug');
 		shopp_add_cart_product($Product->id,1);
 		shopp_add_cart_promocode('2Percent');
 		shopp_add_cart_promocode('3DollarsOff');
@@ -201,14 +266,14 @@ class CartAPITests extends ShoppTestCase {
 		$actual = ob_get_contents();
 		ob_end_clean();
 
-		$this->assertEquals('2% Off$3 Off',$actual);
+		$this->assertEquals('2 PC Off3 Dollars Off',$actual);
 	}
 
 	function test_cart_promo_discount () {
 		shopp_set_setting('promo_limit',0);
 		shopp_empty_cart();
 
-		$Product = shopp_product('eagle-eye','slug');
+		$Product = shopp_product('multi-prism-spectroscope','slug');
 		shopp_add_cart_product($Product->id,1);
 		shopp_add_cart_promocode('2Percent');
 		shopp_add_cart_promocode('3DollarsOff');
@@ -292,7 +357,7 @@ class CartAPITests extends ShoppTestCase {
 		$Product = shopp_product('code-is-poetry-t-shirt','slug');
 		shopp_add_cart_product($Product->id,1);
 
-		$_REQUEST['promocode'] = '2percent';
+		$_REQUEST['promocode'] = '2Percent';
 		ShoppOrder()->Cart->request();
 		ShoppOrder()->Cart->totals();
 
@@ -380,6 +445,7 @@ class CartAPITests extends ShoppTestCase {
 		ShoppOrder()->Cart->clear();
 
 		$Product = shopp_product('code-is-poetry-t-shirt','slug'); $Price = false;
+		new ShoppError("TEST CART HASSHIPPINGMETHODS ".print_r($Product, true), SHOPP_DEBUG_ERR, false);
 		ShoppOrder()->Cart->add(1,$Product,$Price,false);
 		ShoppOrder()->Cart->totals();
 
