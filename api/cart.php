@@ -316,5 +316,23 @@ function shopp_cart_item_addons ( $itemkey = false ) {
 	return (array) $item->addons;
 }
 
-// todo: implement shopp_cart_item_addons_count in plugin api
-function shopp_cart_item_addons_count ($item) {}
+/**
+ * Returns the number of addons added to the cartitem.
+ *
+ * @param $item
+ * @return bool|int
+ */
+function shopp_cart_item_addons_count ($itemkey) {
+	if ( false === $itemkey ) {
+		shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
+		return false;
+	}
+	if ( ! ( $item = shopp_cart_item($itemkey) ) ) {
+		shopp_debug(__FUNCTION__ . " failed: no such item $itemkey");
+		return false;
+	}
+	if ( false === ( $addons = shopp_cart_item_addons($itemkey) ) ) {
+		return false; // Debug message will already have been generated in shopp_cart_item_addons()
+	}
+	return (int) count($addons);
+}
