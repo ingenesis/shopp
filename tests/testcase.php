@@ -1,24 +1,9 @@
-#!/usr/bin/php -q
 <?php
-/**
- * ShoppTests
- *
- *
- * @author Jonathan Davis
- * @version 1.0
- * @copyright Ingenesis Limited,  6 October, 2009
- * @package
- **/
 
-/**
- * Initialize
- **/
-
-require('PHPUnit/Autoload.php');
-require('xHTMLvalidator.php');
+require 'xHTMLvalidator.php';
 
 // Abstraction Layer
-class ShoppTestCase extends PHPUnit_Framework_TestCase {
+class ShoppTestCase extends WP_UnitTestCase {
 
 
 	protected $backupGlobals = FALSE;
@@ -26,20 +11,21 @@ class ShoppTestCase extends PHPUnit_Framework_TestCase {
 	var $shopp_settings = array(); // testing settings, so tests can play nice
 
 	function setUp() {
+		parent::setUp();
+
 		// error types taken from PHPUnit_Framework_TestResult::run
-		$this->_phpunit_err_mask = E_USER_ERROR | E_NOTICE | E_STRICT;
-		$this->_old_handler = set_error_handler(array(&$this, '_error_handler'));
-		if (is_null($this->_old_handler)) {
+		$this->_phpunit_err_mask = E_STRICT;
+		$this->_old_handler = set_error_handler(array($this, '_error_handler'));
+		if ( is_null($this->_old_handler) ) {
 			restore_error_handler();
 		}
 
 		set_time_limit($this->_time_limit);
-		$db =& DB::get();
-		if (!$db->dbh) $db->connect(DB_USER,DB_PASSWORD,DB_NAME,DB_HOST);
 	}
 
 	function tearDown() {
-		$Shopp = Shopp::object();
+		parent::tearDown();
+		global $Shopp;
 		// $Shopp->Catalog = false;
 		// $Shopp->Category = false;
 		// $Shopp->Product = false;
@@ -60,9 +46,35 @@ class ShoppTestCase extends PHPUnit_Framework_TestCase {
 	 */
 	function _error_handler($errno, $errstr, $errfile, $errline) {
 		// @ in front of statement
-		if (error_reporting() == 0) {
+		if ( error_reporting() == 0 ) {
 			return;
 		}
+
+		$pattern = '/^Argument (\d)+ passed to (?:(\w+)::)?(\w+)\(\) must be an instance of (\w+), (\w+) given/';
+
+		$typehints = array(
+			'boolean'   => 'is_bool',
+			'integer'   => 'is_int',
+			'float'     => 'is_float',
+			'string'    => 'is_string',
+			'resource'  => 'is_resource'
+		);
+
+		if ( E_RECOVERABLE_ERROR == $errno && preg_match( $pattern, $errstr, $matches ) ) {
+
+			list($matched, $index, $class, $function, $hint, $type) = $matches;
+
+            list($null,$backtrace,) = debug_backtrace();
+
+			if ( isset($typehints[$hint]) ) {
+				if ($backtrace['function'] == $function) {
+					$argument = $backtrace['args'][$index - 1];
+
+					if ( call_user_func($typehints[$hint],$argument) ) return;
+				}
+			}
+		}
+
 		// notices and strict warnings are passed on to the phpunit error handler but don't trigger an exception
 		if ($errno | $this->_phpunit_err_mask) {
 			PHPUnit_Util_ErrorHandler::handleError($errno, $errstr, $errfile, $errline);
@@ -95,6 +107,8 @@ class ShoppTestCase extends PHPUnit_Framework_TestCase {
 
 } // end ShoppTestCase class
 
+
+/*
 function shopp_run_tests($classes, $classname='') {
 	$suite = new PHPUnit_Framework_TestSuite();
 	foreach ($classes as $testcase)
@@ -178,5 +192,4 @@ $tests = get_all_test_cases();
 
 list ($result, $printer) = shopp_run_tests($tests);
 shopptests_print_result($printer,$result);
-
-?>
+*/

@@ -12,7 +12,7 @@ class CustomerAPITests extends ShoppTestCase {
 
 	function setUp () {
 		parent::setUp();
-		$Shopp = Shopp::object();
+		global $Shopp;
 		$Shopp->Flow->handler('Storefront');
 
 		$_SERVER['REQUEST_URI'] = "/";

@@ -12,7 +12,7 @@ class CategoryAPITests extends ShoppTestCase {
 
 	function setUp () {
 		parent::setUp();
-		$Shopp = Shopp::object();
+		global $Shopp;
 
 		if (!$Shopp->Catalog) $Shopp->Catalog = new Catalog();
 

@@ -11,7 +11,7 @@ class CheckoutAPITests extends ShoppTestCase {
 
 	function setUp () {
 		parent::setUp();
-		$Shopp = Shopp::object();
+		global $Shopp;
 		$_SERVER['REQUEST_URI'] = "/store/checkout/";
 		$Shopp->Flow->Controller = new Storefront();
 	}
@@ -49,7 +49,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_cartsummary () {
-		$Shopp = Shopp::object();
+		global $Shopp;
 		$Shopp->Order->Cart->clear();
 
 		$Product = new Product(81); $Price = false;
@@ -77,7 +77,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_loggedin () {
-		$Shopp = Shopp::object();
+		global $Shopp;
 		shopp_set_setting('account_system', 'wordpress');
 		$Order =& ShoppOrder();
 		$Order->Customer = new Customer();
@@ -395,7 +395,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_billingrequired () {
-		$Shopp = Shopp::object();
+		global $Shopp;
 
 		$this->assertTrue(shopp('checkout','billing-required'));
 	}
@@ -627,7 +627,7 @@ class CheckoutAPITests extends ShoppTestCase {
 		$this->assertTag($expected,$actual,$actual,true);
 		$this->assertValidMarkup($actual);
 
-		// $Shopp = Shopp::object();
+		// global $Shopp;
 		// $Shopp->Order->Cart->clear();
 		//
 		// $Product = new Product(81); $Price = false;

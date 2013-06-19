@@ -22,7 +22,7 @@ interface ShoppAPI {
 final class ShoppDeveloperAPI {
 
 	static $core = array(
-		'core', 'theme', 'remote', 'script',
+		'core', 'theme', 'script',
 		'admin', 'asset', 'cart', 'collection',
 		'customer', 'meta', 'order', 'product',
 		'settings'
@@ -151,52 +151,6 @@ class ShoppAPIFile extends ModuleFile {
 			return $Shopp->{$property};
 
 		return false;
-	}
-
-}
-
-
-/**
- * ShoppRemoteAPIModules
- *
- * Loader for builtin RemoteAPI handlers
- *
- * @author Jonathan Davis
- * @since 1.3
- * @package shopp
- **/
-class ShoppRemoteAPIModules extends ModuleLoader {
-
-	protected $loader = 'ShoppRemoteAPIFile';
-
-	/**
-	 * API constructor
-	 *
-	 * @author Jonathan Davis
-	 *
-	 * @return void
-	 **/
-	public function __construct () {
-		$this->path = SHOPP_REMOTE_APIS;
-
-		$this->installed(); // Find modules
-		$this->load(true);  // Load all
-
-	}
-
-} // END class ShoppAPILoader
-
-class ShoppRemoteAPIFile extends ModuleFile {
-
-	public function load () {
-		include_once($this->file);
-		$this->register();
-	}
-
-	public function register () {
-		// Hook _context
-		$api = $this->subpackage;
-		if ( method_exists($api,'_register') ) call_user_func( array($api, '_register') );
 	}
 
 }
