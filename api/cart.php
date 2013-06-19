@@ -220,23 +220,37 @@ function shopp_add_cart_promocode ($code = false) {
 }
 
 // todo: implement shopp_add_cart_item_addon in plugin api
-function shopp_add_cart_item_addon ( $itemkey = false, $addon = false ) {
+function shopp_add_cart_item_addon ( $itemkey = false, $addonkey = false ) {
 	$Order = ShoppOrder();
-	$items = shopp_cart_items();
 
-	if ( false === $itemkey || false === $addon ) {
+	if ( false === $itemkey || false === $addonkey ) {
 		shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
 		return false;
 	}
 	if ( ! ( $item = shopp_cart_item($itemkey) ) ) {
-		shopp_debug(__FUNCTION__ . " failed: No such item $itemkey");
+		shopp_debug(__FUNCTION__ . " failed: no such item $itemkey");
+		return false;
+	}
+	if ( ! ( $addon = shopp_product_addon($addonkey) ) ) {
+		shopp_debug(__FUNCTION__ . " failed: addon $addonkey is not available for item $itemkey");
 		return false;
 	}
 
-	$addons = shopp_cart_item_addons($item);
+	if ( false === ( $addons = shopp_cart_item_addons($itemkey) ) ) {
+		return false; // Debug message will already have been generated in shopp_cart_item_addons()
+	}
 
+	foreach ($addons as $existing) {
+		if ( $existing->id == $addonkey ) {
+			shopp_debug(__FUNCTION__ . " failed: item $itemkey already includes addon $addonkey");
+			return false;
+		}
+	}
 
-	//$Order->Cart->change($itemkey, $item->product, (int) $item->priceline, $addons);
+	$addons[] = $addon;
+	foreach ($addons as &$addon) $addon = $addon->id; // Convert to an array of ids
+
+	return $Order->Cart->change($itemkey, $item->product, (int) $item->priceline, $addons);
 }
 
 // todo: implement shopp_rmv_cart_item_addon in plugin api
@@ -257,21 +271,23 @@ function shopp_rmv_cart_item_addon ( $item = false, $addon = false ) {
 	// }
 }
 
-// todo: implement shopp_cart_item_addons in plugin api
+/**
+ * Returns an array of item addons (may be an empty array) or fals if the item does not exist/no item is specified.
+ *
+ * @param bool $itemkey
+ * @return array|bool
+ */
 function shopp_cart_item_addons ( $itemkey = false ) {
-	if ( false === $itemkey || false === $addon ) {
+	if ( false === $itemkey ) {
 		shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
 		return false;
 	}
 	if ( ! ( $item = shopp_cart_item($itemkey) ) ) {
-		shopp_debug(__FUNCTION__ . " failed: No such item $itemkey");
+		shopp_debug(__FUNCTION__ . " failed: no such item $itemkey");
 		return false;
 	}
 
-	$Order = ShoppOrder();
-	$items = shopp_cart_items();
-
-
+	return (array) $item->addons;
 }
 
 // todo: implement shopp_cart_item_addons_count in plugin api
