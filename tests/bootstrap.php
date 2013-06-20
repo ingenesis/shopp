@@ -8,8 +8,6 @@
 define('SHOPP_UNSUPPORTED', false);
 define('SHOPP_UNITTEST_DIR', __DIR__);
 define('SHOPP_UNITTEST_CONFIG', SHOPP_UNITTEST_DIR.'/wp-tests-config.php');
-define('WP_UNITTEST_DIR', SHOPP_UNITTEST_DIR.'/lib');
-define('DIR_TESTDATA', WP_UNITTEST_DIR.'/data');
 define('WP_TESTS_FORCE_KNOWN_BUGS', false);
 define('DISABLE_WP_CRON', true); // Stop HTTP requests during testing (which is in CLI mode)
 define('WP_MEMORY_LIMIT', -1);
@@ -25,6 +23,8 @@ if ( !is_readable( SHOPP_UNITTEST_CONFIG ) )
 require_once 'PHPUnit/Autoload.php';
 require_once SHOPP_UNITTEST_CONFIG;
 
+define('WP_UNITTEST_DIR', realpath(ABSPATH . '../includes'));
+define('DIR_TESTDATA', WP_UNITTEST_DIR . '/data');
 
 // Simulate the HTTP request (since we're actually in CLI mode here)
 $_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
