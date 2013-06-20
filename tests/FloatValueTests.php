@@ -20,6 +20,10 @@
  **/
 class FloatValueTests extends ShoppTestCase {
 
+	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+	}
+
     /**
      * @dataProvider dot_decimals_set
      */
