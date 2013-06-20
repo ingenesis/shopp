@@ -33,7 +33,7 @@ class FloatValueTests extends ShoppTestCase {
 			'grouping' => array(3)
 		);
 
-		$float = floatvalue($string,false,$format);
+		$float = Shopp::floatval($string,false,$format);
 		$this->assertEquals($expected,$float);
 	}
 
@@ -101,7 +101,7 @@ class FloatValueTests extends ShoppTestCase {
 			'grouping' => array(3)
 		);
 
-		$float = Shopp::floatvalue($string, false, $format);
+		$float = Shopp::floatval($string, false, $format);
 		$this->assertEquals($expected, $float);
 	}
 

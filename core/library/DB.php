@@ -473,7 +473,7 @@ class sDB extends SingletonFramework {
 					break;
 				case 'float':
 					// Sanitize without rounding to protect precision
-					if ( method_exists('ShoppCore', 'floatvalue') ) $value = ShoppCore::floatvalue($value, false);
+					if ( method_exists('ShoppCore', 'floatval') ) $value = ShoppCore::floatval($value, false);
 					else $value = floatval($value);
 				case 'int':
 					// Normalize for MySQL float representations (@see bug #853)

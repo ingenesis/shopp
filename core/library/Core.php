@@ -924,7 +924,7 @@ abstract class ShoppCore {
 	 * @param array $format (optional) The currency format to use for precision (defaults to the current base of operations)
 	 * @return float
 	 **/
-	public static function floatvalue ( $value, $round = true, $format = false ) {
+	public static function floatval ( $value, $round = true, array $format = array() ) {
 		$format = currency_format($format);
 		extract($format, EXTR_SKIP);
 
@@ -2319,7 +2319,7 @@ function crc16 ($data) {
 /**
  * @deprecated Use Shopp::
  **/
-function currency_format ( $format=false ) {
+function currency_format ( $format = array() ) {
 	return Shopp::currency_format($format);
 }
 
@@ -2383,7 +2383,7 @@ function file_mimetype ($file,$name=false) {
  * @deprecated Use Shopp::
  **/
 function floatvalue ($value, $round=true, $format=false) {
-	return Shopp::floatvalue($value, $round, $format);
+	return Shopp::floatval($value, $round, $format);
 }
 
 /**
