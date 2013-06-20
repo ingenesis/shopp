@@ -32,7 +32,7 @@
 			<li>
 				<label for="firstname"><?php _e('Contact Information','Shopp'); ?></label>
 				<span><label for="firstname"><?php _e('First','Shopp'); ?></label><?php shopp('checkout','firstname','required=true&minlength=2&size=8&title='.__('First Name','Shopp')); ?></span>
-				<span><label for="lastname"><?php _e('Last','Shopp'); ?></label><?php shopp('checkout','lastname','required=true&minlength=3&size=14&title='.__('Last Name','Shopp')); ?></span>
+				<span><label for="lastname"><?php _e('Last','Shopp'); ?></label><?php shopp('checkout','lastname','required=true&minlength=2&size=14&title='.__('Last Name','Shopp')); ?></span>
 				<span><label for="company"><?php _e('Company/Organization','Shopp'); ?></label><?php shopp('checkout','company','size=22&title='.__('Company/Organization','Shopp')); ?></span>
 			</li>
 			<li>
