@@ -544,7 +544,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	public static function residential_shipping_address ($result, $options, $O) {
 		$label = __("Residential shipping address","Shopp");
 		if (isset($options['label'])) $label = $options['label'];
-		if (isset($options['checked']) && value_is_true($options['checked'])) $checked = ' checked="checked"';
+		if (isset($options['checked']) && Shopp::str_true($options['checked'])) $checked = ' checked="checked"';
 		$output = '<label for="residential-shipping"><input type="hidden" name="shipping[residential]" value="no" /><input type="checkbox" name="shipping[residential]" value="yes" id="residential-shipping" '.$checked.' /> '.$label.'</label>';
 		return $output;
 	}

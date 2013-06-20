@@ -647,7 +647,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults,$options);
 		extract($options);
 
-		if (value_is_true($return)) return $payoption;
+		if (Shopp::str_true($return)) return $payoption;
 
 		$types = array('radio','checkbox','hidden');
 		if (!in_array($type,$types)) $type = 'hidden';

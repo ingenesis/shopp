@@ -324,7 +324,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		if (isset($options['taxquery'])) ShoppCollection()->loading['taxquery'] = $options['taxquery'];
 
 		if (isset($options['load'])) return true;
-		if (isset($options['controls']) && !value_is_true($options['controls']))
+		if (isset($options['controls']) && !Shopp::str_true($options['controls']))
 			ShoppCollection()->controls = false;
 		if (isset($options['view'])) {
 			if ($options['view'] == "grid") ShoppCollection()->view = "grid";
@@ -672,9 +672,9 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 				if ($options['load'] == "next") ShoppProduct($Category->adjacent_product(1));
 				elseif ($options['load'] == "previous") ShoppProduct($Category->adjacent_product(-1));
 			} else {
-				if (isset($options['next']) && value_is_true($options['next']))
+				if (isset($options['next']) && Shopp::str_true($options['next']))
 					ShoppProduct($Category->adjacent_product(1));
-				elseif (isset($options['previous']) && value_is_true($options['previous']))
+				elseif (isset($options['previous']) && Shopp::str_true($options['previous']))
 					ShoppProduct($Category->adjacent_product(-1));
 			}
 		}

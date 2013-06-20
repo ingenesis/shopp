@@ -329,7 +329,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 				$link = '<br /><a href="'.$url.'">'.$download.'</a>';
 			}
 
-			$pricing = value_is_true($prices)?" (".money($price).")":"";
+			$pricing = Shopp::str_true($prices)?" (".money($price).")":"";
 			$result .= '<li>'.esc_html($addon->name.$pricing).$link.'</li>';
 		}
 		$result .= '</ul>'.$after;

@@ -1949,7 +1949,7 @@ class RelatedProducts extends SmartCollection {
 		$this->loading = compact('columns','joins','where','groupby','order');
 
 		if (isset($options['order'])) $this->loading['order'] = $options['order'];
-		if (isset($options['controls']) && value_is_true($options['controls']))
+		if (isset($options['controls']) && Shopp::str_true($options['controls']))
 			unset($this->controls);
 	}
 
@@ -2020,7 +2020,7 @@ class AlsoBoughtProducts extends SmartCollection {
 		$where = array("p.id IN (".join(',',$matches).")");
 		$this->loading = compact('columns','joins','where','groupby','order');
 
-		if (isset($options['controls']) && value_is_true($options['controls']))
+		if (isset($options['controls']) && Shopp::str_true($options['controls']))
 			unset($this->controls);
 	}
 

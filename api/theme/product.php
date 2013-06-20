@@ -1145,7 +1145,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 		if ('single' == $mode) {
 			if (!empty($options['before_menu'])) $string .= $options['before_menu']."\n";
-			if (value_is_true($options['label'])) $string .= '<label for="product-options'.$O->id.'">'. __('Options', 'Shopp').': </label> '."\n";
+			if (Shopp::str_true($options['label'])) $string .= '<label for="product-options'.$O->id.'">'. __('Options', 'Shopp').': </label> '."\n";
 
 			$string .= '<select name="products['.$O->id.'][price]" id="product-options'.$O->id.'">';
 			if (!empty($options['defaults'])) $string .= '<option value="">'.$options['defaults'].'</option>'."\n";
@@ -1237,7 +1237,7 @@ new ProductOptionsMenus(<?php printf("'select%s.product%d.options'",$collection_
 
 			foreach ($menuoptions as $id => $menu) {
 				if (!empty($options['before_menu'])) $string .= $options['before_menu']."\n";
-				if (value_is_true($options['label'])) $string .= '<label for="options-'.$menu['id'].'">'.$menu['name'].'</label> '."\n";
+				if (Shopp::str_true($options['label'])) $string .= '<label for="options-'.$menu['id'].'">'.$menu['name'].'</label> '."\n";
 				$string .= '<select name="products['.$O->id.'][options][]" class="'.$collection_class.' product'.$O->id.' options" id="options-'.$menu['id'].'">';
 				if (!empty($options['defaults'])) $string .= '<option value="">'.$options['defaults'].'</option>'."\n";
 				foreach ($menu['options'] as $key => $option)
@@ -1298,7 +1298,7 @@ new ProductOptionsMenus(<?php printf("'select%s.product%d.options'",$collection_
 		}
 
 		$string = ($min == $max)?round($min,3):round($range[0],3)." - ".round($range[1],3);
-		$string .= value_is_true($units) ? " $unit" : "";
+		$string .= Shopp::str_true($units) ? " $unit" : "";
 		return $string;
 	}
 

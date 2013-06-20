@@ -226,7 +226,7 @@ function shopp_add_customer_address (  $customer = false, $data = false, $type =
 
 	foreach ( $map as $property ) {
 		if ( isset($data[$property]) ) $address[$property] = $data[$property];
-		if ( isset($data[$property]) && 'residential' == $property ) $address[$property] = value_is_true($data[$property]) ? "on" : "off";
+		if ( isset($data[$property]) && 'residential' == $property ) $address[$property] = Shopp::str_true($data[$property]) ? "on" : "off";
 	}
 
 	if ( in_array($type, array('billing','both')) ) {

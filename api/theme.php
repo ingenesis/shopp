@@ -85,7 +85,7 @@ function shopp () {
 
 	// Force boolean result
 	if (isset($options['is'])) {
-		if (value_is_true($options['is'])) {
+		if (Shopp::str_true($options['is'])) {
 			if ($result) return true;
 		} else {
 			if ($result == false) return true;
@@ -97,8 +97,8 @@ function shopp () {
 	if (is_bool($result)) return $result;
 
 	if ( $get ||
-		( isset($options['return']) && value_is_true($options['return']) ) ||
-		( isset($options['echo']) && !value_is_true($options['echo']) )	)
+		( isset($options['return']) && Shopp::str_true($options['return']) ) ||
+		( isset($options['echo']) && !Shopp::str_true($options['echo']) )	)
 		return $result;
 
 	// Output the result

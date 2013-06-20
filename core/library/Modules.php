@@ -362,7 +362,7 @@ class ModuleSettingsUI {
 			'class' => '',
 		);
 		$attributes = array_merge($defaults,$attributes);
-		$attributes['checked'] = (value_is_true($attributes['checked'])?true:false);
+		$attributes['checked'] = (Shopp::str_true($attributes['checked'])?true:false);
 		extract($attributes);
 		$id = "{$this->id}-".sanitize_title_with_dashes($name);
 		if (!empty($class)) $class = ' class="'.esc_attr($class).'"';
