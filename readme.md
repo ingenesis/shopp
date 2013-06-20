@@ -1,5 +1,7 @@
 ![Shopp Logo](https://shopplugin.com/logo.png)
 
+[![build status](http://ci.shopp.net/projects/1/status.png?ref=master)](http://ci.shopp.net/projects/1?ref=master)
+
 # WordPress-powered e-commerce
 A professional, high-performance e-commerce development plugin for WordPress.
 
