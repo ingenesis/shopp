@@ -638,16 +638,23 @@ abstract class ShoppCore {
 	 * @param array $format (optional) A currency format settings array
 	 * @return array Format settings array
 	 **/
-	public static function currency_format ($format=false) {
-		$default = array("cpos"=>true,"currency"=>"$","precision"=>2,"decimals"=>".","thousands" => ",","grouping"=>3);
-		$locale = shopp_setting('base_operations');
+	public static function currency_format ( array $format = array() ) {
 
-		if (!isset($locale['currency']) || !isset($locale['currency']['format'])) return $default;
-		if (empty($locale['currency']['format']['currency'])) return $default;
+		$default = array(
+			'cpos' => true,
+			'currency' => '$',
+			'precision' => 2,
+			'decimals' => '.',
+			'thousands' => ',',
+			'grouping' => 3
+		);
 
-		$f = array_merge($default,$locale['currency']['format']);
-		if ($format !== false) $f = array_merge($f,(array)$format);
-		return $f;
+		if ( ! empty($format) ) $format = array_merge($default, $format);
+		if ( ! isset($locale['currency']) || ! isset($locale['currency']['format']) ) return $format;
+		if ( empty($locale['currency']['format']['currency']) ) return $format;
+
+		return array_merge($format, $locale['currency']['format']);
+
 	}
 
 	/**
@@ -917,25 +924,24 @@ abstract class ShoppCore {
 	 * @param array $format (optional) The currency format to use for precision (defaults to the current base of operations)
 	 * @return float
 	 **/
-	public static function floatvalue ($value, $round=true, $format=false) {
+	public static function floatvalue ( $value, $round = true, $format = false ) {
 		$format = currency_format($format);
 		extract($format, EXTR_SKIP);
 
 		$float = false;
-		if (is_float($value)) $float = $value;
+		if ( is_float($value) ) $float = $value;
 
-		$value = preg_replace('/(\D\.|[^\d\,\.\-])/', '', $value); // Remove any non-numeric string data
+		$value = preg_replace('/[^\d\,\.\·\'\-]/', '', $value); // Remove any non-numeric string data
 		if ( ! empty($thousands) )
 			$value = preg_replace('/\\'.$thousands.'/', '', $value); // Remove thousands
 		$v = (float)$value;
 
-		if ( $v > 0 || '.' == $decimals ) $float = $v;
+		if ( '.' == $decimals && $v > 0 ) $float = $v;
 
 		if ( false === $float ) {
 			$value = preg_replace('/^\./', '', $value); // Remove any decimals at the beginning of the string
-			if ($precision > 0) // Don't convert decimals if not required
+			if ( $precision > 0 ) // Don't convert decimals if not required
 				$value = preg_replace('/\\'.$decimals.'/', '.', $value); // Convert decimal delimter
-
 			$float = (float)$value;
 		}
 

@@ -20,10 +20,6 @@
  **/
 class FloatValueTests extends ShoppTestCase {
 
-	function setUp () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-	}
-
     /**
      * @dataProvider dot_decimals_set
      */
@@ -105,8 +101,8 @@ class FloatValueTests extends ShoppTestCase {
 			'grouping' => array(3)
 		);
 
-		$float = floatvalue($string,false,$format);
-		$this->assertEquals($expected,$float);
+		$float = Shopp::floatvalue($string, false, $format);
+		$this->assertEquals($expected, $float);
 	}
 
 	function comma_decimals_set () {
