@@ -24,6 +24,7 @@ class CurrencyFormatting extends ShoppTestCase {
 	var $values = array (0.0123456789,0.123456789,1.234,12.345,123.456,1234.567,12345.678,123456.789,1234567.899);
 
 	function setUp() {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		parent::setUp();
 
 		$countries = Lookup::countries();

@@ -15,6 +15,10 @@
 
 class ShippingAPITests extends ShoppTestCase {
 
+	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+	}
+
 	function test_shipping_hasestimates () {
 		$Order =& ShoppOrder();
 		$Order->Cart->clear();

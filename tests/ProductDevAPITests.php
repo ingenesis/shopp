@@ -2,8 +2,11 @@
 /**
 * ProductDevAPITests - tests for the product dev api
 */
-class ProductDevAPITests extends ShoppTestCase
-{
+class ProductDevAPITests extends ShoppTestCase {
+
+	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+	}
 
 	function test_shopp_add_product () {
 		$Product = shopp_product("St. John's Bay® Color Block Windbreaker", 'name');

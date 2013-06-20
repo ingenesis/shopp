@@ -1,8 +1,8 @@
 <?php
-
 /**
 * Validate Shopp Schema file
 */
+
 class SchemaTests extends ShoppTestCase {
 
 	function test_shopp_schema () {
@@ -44,9 +44,4 @@ class SchemaTests extends ShoppTestCase {
 		$this->AssertTrue($checks);
 	}
 
-	function test_barrys_sanity() {
-		$this->assertTrue(true);
-	}
 }
-
-?>

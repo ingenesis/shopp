@@ -10,6 +10,7 @@
 class ProductAPITests extends ShoppTestCase {
 
 	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		global $Shopp;
 		parent::setUp();
 

@@ -6,6 +6,11 @@
  * @since 1.2
  **/
 class CustomerDevAPITests extends ShoppTestCase {
+
+	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+	}
+
 	function test_shopp_customer () {
 		// Lookup by email
 		$Customer = shopp_customer('shopp@shopplugin.net', 'email');

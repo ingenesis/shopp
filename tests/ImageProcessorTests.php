@@ -21,6 +21,7 @@
 class ImageProcessorTests extends ShoppTestCase {
 
 	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		parent::setUp();
 		if ( ! class_exists('ImageProcessor') ) require(SHOPP_MODEL_PATH."/Image.php");
 	}

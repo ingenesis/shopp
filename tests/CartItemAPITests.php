@@ -11,6 +11,10 @@
 
 class CartItemAPITests extends ShoppTestCase {
 
+	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+	}
+
 	// Tax config for test storefront:
 	// 10% worldwide
 	// 5% Ohio, US

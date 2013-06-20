@@ -5,6 +5,7 @@
 */
 class CartDevAPITests extends ShoppTestCase {
 	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		shopp_set_setting('tax_shipping', 'on');
 	}
 

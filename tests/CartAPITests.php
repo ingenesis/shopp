@@ -61,6 +61,8 @@ class CartAPITests extends ShoppTestCase {
 
 
 	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		parent::setUp();
 		ShoppOrder()->Shipping->country = 'US';
 

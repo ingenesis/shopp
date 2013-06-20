@@ -4,3 +4,4 @@ shipping/*
 !shipping/core/*
 storage/*
 !storage/core/*
+tests/wp-tests-config.php

@@ -19,6 +19,7 @@ class DefaultURLTests extends ShoppTestCase {
 	private $extra_permastructs = false;
 
 	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		parent::setUp();
 
 		global $wp_rewrite;

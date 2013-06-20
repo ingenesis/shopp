@@ -14,6 +14,7 @@ class PackagingTests extends ShoppTestCase {
 	 * Initialize
 	 **/
 	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		parent::setUp();
 
 		// doesn't matter... packaged alone in all models

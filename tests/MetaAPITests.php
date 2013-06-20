@@ -2,10 +2,11 @@
 /**
 *
 */
-class MetaAPITests extends ShoppTestCase
-{
+class MetaAPITests extends ShoppTestCase {
+
 
 	function test_bug1130_shopp_set_meta () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$Price = shopp_product_variant(258);
 
 		// remove all meta records of name settings for this priceline
@@ -34,6 +35,7 @@ class MetaAPITests extends ShoppTestCase
 	}
 
 	function test_shopp_set_meta () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$Price = shopp_product_variant(174);
 		$return = shopp_set_meta ( $Price->id, 'price', 'mypricesetting', 'hello world' );
 		$meta = shopp_meta ( $Price->id, 'price', 'mypricesetting');
@@ -41,6 +43,7 @@ class MetaAPITests extends ShoppTestCase
 	}
 
 	function test_shopp_meta () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$data = array(
 			'name' => "Download Product Test",
 			'single' => array(),
@@ -68,6 +71,7 @@ class MetaAPITests extends ShoppTestCase
 	}
 
 	function test_shopp_product_meta () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$Product = new Product('Smart & Sexy - Ruffle Mesh Bustier and Thong Panty Set', 'name');
 
 		$this->AssertTrue(shopp_product_has_meta($Product->id, 'options'));
@@ -77,6 +81,7 @@ class MetaAPITests extends ShoppTestCase
 	}
 
 	function test_shopp_product_meta_list () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$Product = new Product("Men's Black Stainless Steel & CZ Engraved Band", 'name');
 		$specs = shopp_product_meta_list($Product->id,'spec');
 		$this->AssertTrue(is_array($specs));
@@ -85,6 +90,7 @@ class MetaAPITests extends ShoppTestCase
 	}
 
 	function test_shopp_rmv_meta() {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$Product = new Product("Men's Black Stainless Steel & CZ Engraved Band", 'name');
 		shopp_set_product_meta($Product->id, 'Manliness Factor', 'High', 'spec');
 		$this->AssertEquals('High', shopp_product_meta($Product->id, 'Manliness Factor', 'spec'));
@@ -93,6 +99,7 @@ class MetaAPITests extends ShoppTestCase
 	}
 
 	function test_shopp_meta_exists () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		shopp_set_meta ( 11, 'testcontext', 'testname', 'testvalue', 'testtype' );
 
 		// shopp_meta_exists ( $name = false, $context = false, $type = 'meta' )
@@ -104,4 +111,3 @@ class MetaAPITests extends ShoppTestCase
 	}
 
 }
-?>

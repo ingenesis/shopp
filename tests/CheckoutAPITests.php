@@ -10,6 +10,7 @@
 class CheckoutAPITests extends ShoppTestCase {
 
 	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		parent::setUp();
 		global $Shopp;
 		$_SERVER['REQUEST_URI'] = "/store/checkout/";

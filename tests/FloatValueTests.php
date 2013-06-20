@@ -157,5 +157,3 @@ class FloatValueTests extends ShoppTestCase {
 	}
 
 } // end FloatValueTests class
-
-?>

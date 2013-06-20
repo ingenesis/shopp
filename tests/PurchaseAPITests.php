@@ -11,6 +11,7 @@
 class PurchaseAPITests extends ShoppTestCase {
 
 	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		parent::setUp();
 		$_SERVER['REQUEST_URI'] = "/";
 		ShoppPurchase( new Purchase(1) );

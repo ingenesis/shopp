@@ -15,6 +15,9 @@ class AssetDevAPITests extends ShoppTestCase {
 	protected $files;
 
 	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+
 		// Create Product
 		$data = array(
 			'name' => "AssetDevAPITests Product",

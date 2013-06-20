@@ -25,6 +25,7 @@ if ( !is_readable( SHOPP_UNITTEST_CONFIG ) )
 require_once 'PHPUnit/Autoload.php';
 require_once SHOPP_UNITTEST_CONFIG;
 
+
 // Simulate the HTTP request (since we're actually in CLI mode here)
 $_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
 $_SERVER['HTTP_HOST'] = WP_TESTS_DOMAIN;

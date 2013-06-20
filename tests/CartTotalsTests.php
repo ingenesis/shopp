@@ -20,6 +20,10 @@
  **/
 class CartTotalsTests extends ShoppTestCase {
 
+	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+	}
+
 	function test_cart_base_case () {
 		$Product = shopp_product('aion','slug');
 		$options = array('number' => true,'return' => true);

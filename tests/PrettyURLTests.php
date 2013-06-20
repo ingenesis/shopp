@@ -15,6 +15,10 @@
 
 class PrettyURLTests extends ShoppTestCase {
 
+	function setUp () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+	}
+
 	function test_cart_url () {
 
 		ob_start();
