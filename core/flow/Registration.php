@@ -208,7 +208,7 @@ class ShoppRegistration {
 		}
 
 		do_action('shopp_customer_registered', $Customer);
-        if ( apply_filters('shopp_registration_redirect', true) ) shopp_redirect( shoppurl(false, 'account') );
+        if ( apply_filters('shopp_registration_redirect', true) ) shopp_redirect( Shopp::shoppurl(false, 'account') );
 	}
 
 }

@@ -41,7 +41,7 @@
 				// 	$_[] = sprintf(__('Login name: %s','Shopp'), $user_data->user_login);
 				// $_[] = sprintf(__('Password: %s'), $password) . "\r\n";
 				// $_[] = '';
-				// $_[] = __('Click here to login:').' '.shoppurl(false,'account');
+				// $_[] = __('Click here to login:').' '.Shopp::shoppurl(false,'account');
 				// $message = apply_filters('shopp_reset_password_message',join("\r\n",$_));
 
 				// shopp_email()

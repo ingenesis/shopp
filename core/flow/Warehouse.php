@@ -635,7 +635,7 @@ class Warehouse extends AdminController {
 		} else $Product = $Shopp->Product;
 
 		$Product->slug = apply_filters('editable_slug',$Product->slug);
-		$permalink = trailingslashit(shoppurl());
+		$permalink = trailingslashit(Shopp::shoppurl());
 
 		$Price = new Price();
 

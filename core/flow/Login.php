@@ -271,11 +271,11 @@ class ShoppLogin {
 		session_commit(); // Save the session just prior to redirect
 
 		if ( isset($_POST['redirect']) && ! empty($_POST['redirect']) ) {
-			if ( ShoppPages()->exists($_POST['redirect']) ) $redirect = shoppurl(false, $_POST['redirect'], $secure);
+			if ( ShoppPages()->exists($_POST['redirect']) ) $redirect = Shopp::shoppurl(false, $_POST['redirect'], $secure);
 			else $redirect = $_POST['redirect'];
 		}
 
-		if ( ! $redirect ) $redirect = shoppurl(false,'account',$secure);
+		if ( ! $redirect ) $redirect = Shopp::shoppurl(false,'account',$secure);
 
 		shopp_safe_redirect($redirect);
 		exit();

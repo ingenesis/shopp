@@ -410,11 +410,11 @@ class PayPalStandard extends GatewayFramework implements GatewayModule {
 
 		// Options
 		if ( Shopp::str_true($this->settings['pdtverify']) )
-			$_['return']			= apply_filters( 'shopp_paypalstandard_returnurl', shoppurl(array('rmtpay'=>'PPS','utm_nooverride'=>'1'),'checkout',false) );
-		else $_['return']				= shoppurl(false,'thanks');
+			$_['return']			= apply_filters( 'shopp_paypalstandard_returnurl', Shopp::shoppurl(array('rmtpay'=>'PPS','utm_nooverride'=>'1'),'checkout',false) );
+		else $_['return']				= Shopp::shoppurl(false,'thanks');
 
-		$_['cancel_return']			= shoppurl(false,'cart');
-		$_['notify_url']			= shoppurl(array('_txnupdate'=>'PPS'),'checkout');
+		$_['cancel_return']			= Shopp::shoppurl(false,'cart');
+		$_['notify_url']			= Shopp::shoppurl(array('_txnupdate'=>'PPS'),'checkout');
 		$_['rm']					= 1; // Return with no transaction data
 
 		// Pre-populate PayPal Checkout
@@ -558,7 +558,7 @@ class PayPalStandard extends GatewayFramework implements GatewayModule {
 	function pdtpassthru ($valid) {
 		if ($valid) return $valid;
 		// If the order data validation fails, passthru to the thank you page
-		shopp_redirect( shoppurl(false,'thanks') );
+		shopp_redirect( Shopp::shoppurl(false,'thanks') );
 	}
 
 	/**
@@ -605,7 +605,7 @@ class PayPalStandard extends GatewayFramework implements GatewayModule {
 			$pdtstatus = $this->verifypdt();
 			if (!$pdtstatus) {
 				new ShoppError(__('The transaction was not verified by PayPal.','Shopp'),false,SHOPP_DEBUG_ERR);
-				shopp_redirect(shoppurl(false,'checkout',false));
+				shopp_redirect(Shopp::shoppurl(false,'checkout',false));
 			}
 			$authentic = true;
 		}
@@ -664,7 +664,7 @@ class PayPalStandard extends GatewayFramework implements GatewayModule {
 		}
 
 		ShoppOrder()->purchase = $Purchase->id;
-		shopp_redirect(shoppurl(false,'thanks',false));
+		shopp_redirect(Shopp::shoppurl(false,'thanks',false));
 	}
 
 	/**

@@ -573,7 +573,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults,$imgdefaults,$options);
 		extract($options, EXTR_SKIP);
 
-		$href = shoppurl('' != get_option('permalink_structure')?trailingslashit('000'):'000','images');
+		$href = Shopp::shoppurl('' != get_option('permalink_structure')?trailingslashit('000'):'000','images');
 		$imgsrc = add_query_string("$width,$height",$href);
 
 		$string = '<ul class="slideshow '.$fx.'-fx '.$order.'-order duration-'.$duration.' delay-'.$delay.'">';
@@ -631,7 +631,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		$namespace = get_class_property( get_class($O) ,'namespace');
 		$prettyurls = ( '' != get_option('permalink_structure') );
 
-		$url = shoppurl( $prettyurls ? "$namespace/$O->slug" : array($O->taxonomy=>$O->slug),false );
+		$url = Shopp::shoppurl( $prettyurls ? "$namespace/$O->slug" : array($O->taxonomy=>$O->slug),false );
 		if (isset($options['page'])) $url = $O->pagelink((int)$options['page']);
 		return $url;
 	}

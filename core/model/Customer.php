@@ -194,7 +194,7 @@ class Customer extends DatabaseObject {
 		$_[] = sprintf(__('E-mail: %s','Shopp'), stripslashes($this->email));
 		$_[] = sprintf(__('Password: %s'), $this->password);
 		$_[] = '';
-		$_[] = shoppurl(false,'account',$Shopp->Gateways->secure);
+		$_[] = Shopp::shoppurl(false,'account',$Shopp->Gateways->secure);
 
 		$_[] = apply_filters('shopp_new_customer_notification',$_);
 

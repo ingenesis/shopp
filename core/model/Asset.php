@@ -326,7 +326,7 @@ class ImageAsset extends FileAsset {
 			if (file_exists($this->base_dir.$path))
 				return $this->base_url.$path;
 		}
-		return add_query_string($size_query, shoppurl($this->id, 'images'));
+		return add_query_string($size_query, Shopp::shoppurl($this->id, 'images'));
 	}
 
 

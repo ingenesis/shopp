@@ -1845,7 +1845,7 @@ abstract class ShoppCore {
 		$allowed_hosts = (array) apply_filters('allowed_redirect_hosts', array($wpp['host']), isset($lp['host']) ? $lp['host'] : '');
 
 		if ( isset($lp['host']) && ( !in_array($lp['host'], $allowed_hosts) && $lp['host'] != strtolower($wpp['host'])) )
-			$location = shoppurl(false,'account');
+			$location = Shopp::shoppurl(false,'account');
 
 		wp_redirect($location, $status);
 	}
@@ -2020,7 +2020,7 @@ abstract class ShoppCore {
 					$item->depth = $depth;
 					$item->priority = $position++;
 					$result[] = $item;
-					$children = sort_tree($items, $item->id, count($result)-1, $depth);
+					$children = Shopp::sort_tree($items, $item->id, count($result)-1, $depth);
 					$result = array_merge($result,$children); // Add children in as they are found
 				}
 			}

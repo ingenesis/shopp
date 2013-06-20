@@ -284,7 +284,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 
 				$dkey = $addon->value->dkey;
 				$request = '' == get_option('permalink_structure')?"download/$dkey":array('shopp_download'=>$dkey);
-				$url = shoppurl($request,'catalog');
+				$url = Shopp::shoppurl($request,'catalog');
 
 				$link = '<a href="'.$url.'">'.$label.'</a>';
 				return esc_html($link);
@@ -325,7 +325,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 			if (isset($addon->value->download) && isset($addon->value->dkey)) {
 				$dkey = $addon->value->dkey;
 				$request = '' == get_option('permalink_structure')?array('src'=>'download','shopp_download'=>$dkey):"download/$dkey";
-				$url = shoppurl($request,'account');
+				$url = Shopp::shoppurl($request,'account');
 				$link = '<br /><a href="'.$url.'">'.$download.'</a>';
 			}
 
@@ -353,7 +353,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 		$classes = "";
 		if (isset($options['class'])) $classes = ' class="'.$options['class'].'"';
 		$request = '' == get_option('permalink_structure') ? array('src'=>'download','shopp_download'=>$item->dkey) : "download/$item->dkey";
-		$url = shoppurl($request,'account');
+		$url = Shopp::shoppurl($request,'account');
 		return '<a href="'.$url.'"'.$classes.'>'.$options['label'].'</a>';
 	}
 
@@ -581,7 +581,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 
 	static function txnid ($result, $options, $O) { return $O->txnid; }
 
-	static function url ($result, $options, $O) { return shoppurl(false,'account'); }
+	static function url ($result, $options, $O) { return Shopp::shoppurl(false,'account'); }
 
 	static function xaddress ($result, $options, $O) { return esc_html($O->xaddress); }
 

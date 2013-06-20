@@ -280,7 +280,7 @@ class ProductCollection implements Iterator {
 		$queryvars = array($this->taxonomy=>$this->uri);
 		if ($page > 1 || $alpha) $queryvars['paged'] = $page;
 
-		return apply_filters('shopp_paged_link', shoppurl($prettyurls?user_trailingslashit($prettyurl):$queryvars, false), $page );
+		return apply_filters('shopp_paged_link', Shopp::shoppurl($prettyurls?user_trailingslashit($prettyurl):$queryvars, false), $page );
 	}
 
 	// Add alpha-pagination support to category/collection pagination rules
@@ -351,7 +351,7 @@ class ProductCollection implements Iterator {
 		$Image = current($product->images);
 		if (!empty($Image)) {
 			$item['description'] .= '<td><a href="'.$item['link'].'" title="'.$product->name.'">';
-			$item['description'] .= '<img src="'.esc_attr(add_query_string($Image->resizing(75,75,0),shoppurl($Image->id,'images'))).'" alt="'.$product->name.'" width="75" height="75" />';
+			$item['description'] .= '<img src="'.esc_attr(add_query_string($Image->resizing(75,75,0),Shopp::shoppurl($Image->id,'images'))).'" alt="'.$product->name.'" width="75" height="75" />';
 			$item['description'] .= '</a></td>';
 		}
 
@@ -383,7 +383,7 @@ class ProductCollection implements Iterator {
 		// Below are Google Base specific attributes
 		// You can use the shopp_rss_item filter hook to add new item attributes or change the existing attributes
 
-		if ($Image) $item['g:image_link'] = add_query_string($Image->resizing(400,400,0),shoppurl($Image->id,'images'));
+		if ($Image) $item['g:image_link'] = add_query_string($Image->resizing(400,400,0),Shopp::shoppurl($Image->id,'images'));
 		$item['g:condition'] = 'new';
 		$item['g:availability'] = shopp_setting_enabled('inventory') && $product->outofstock?'out of stock':'in stock';
 
