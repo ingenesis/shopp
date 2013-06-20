@@ -324,7 +324,7 @@ function shopp_cart_item_addons ( $itemkey = false ) {
  */
 function shopp_cart_item_addons_count ($itemkey) {
 	if ( false === $itemkey ) {
-		shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
+		shopp_debug(__FUNCTION__ . " failed: itemkey parameter required.");
 		return false;
 	}
 	if ( ! ( $item = shopp_cart_item($itemkey) ) ) {
