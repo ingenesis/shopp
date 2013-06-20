@@ -33,6 +33,7 @@ abstract class ShoppCore {
 	 * @return boolean True if requirements are missing, false if no errors were detected
 	 **/
 	public static function unsupported () {
+		if ( defined('SHOPP_UNSUPPORTED') ) return SHOPP_UNSUPPORTED;
 		$activation = false;
 		if ( isset($_GET['action']) && isset($_GET['plugin']) ) {
 			$activation = ('activate' == $_GET['action']);
