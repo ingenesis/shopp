@@ -149,7 +149,7 @@ class ShoppCartItemThemeAPI {
 			foreach ( $qtys as $qty )
 				$result .= '<option' . ( ($qty == $O->quantity) ? ' selected="selected"' : '' ) . ' value="' . $qty . '">' . $qty . '</option>';
 			$result .= '</select>';
-		} elseif ( isset($options['input']) && valid_input($options['input']) ) {
+		} elseif ( isset($options['input']) && Shopp::valid_input($options['input']) ) {
 			if ( ! isset($options['size']) ) $options['size'] = 5;
 			if ( ! isset($options['value']) ) $options['value'] = $O->quantity;
 			$result = '<input type="' . $options['input'] . '" name="items[' . $O->_id . '][quantity]" id="items-' . $O->_id . '-quantity" ' . inputattrs($options) . '/>';
