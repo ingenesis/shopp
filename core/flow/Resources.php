@@ -233,7 +233,7 @@ class ShoppResources {
 		}
 
 		if ( apply_filters('shopp_download_forbidden', $forbidden) ) {
-			shopp_redirect(add_query_arg('downloads', '', Shopp::shoppurl(false, 'account')), true, 303);
+			shopp_redirect(add_query_arg('downloads', '', Shopp::url(false, 'account')), true, 303);
 		}
 
 		// Send the download
@@ -241,7 +241,7 @@ class ShoppResources {
 
 		if ( is_a($download,'ShoppError') ) {
 			// If the result is an error redirect to the account downloads page
-			shopp_redirect(add_query_arg('downloads', '', Shopp::shoppurl(false, 'account')), true, 303);
+			shopp_redirect(add_query_arg('downloads', '', Shopp::url(false, 'account')), true, 303);
 		} else {
 			do_action_ref_array('shopp_download_success',array($Purchased, $Purchase, $Download)); // @deprecated use shopp_download_order_event instead
 

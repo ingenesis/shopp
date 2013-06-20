@@ -86,7 +86,7 @@ var flashuploader = <?php echo ($uploader == 'flash' && !(false !== strpos(strto
 	uidir = '<?php echo SHOPP_ADMIN_URI; ?>',
 	siteurl = '<?php bloginfo('url'); ?>',
 	screenid = '<?php echo get_current_screen()->id; ?>',
-	canonurl = '<?php echo trailingslashit(Shopp::shoppurl()); ?>',
+	canonurl = '<?php echo trailingslashit(Shopp::url()); ?>',
 	adminurl = '<?php echo admin_url(); ?>',
 	sugg_url = '<?php echo wp_nonce_url(admin_url('admin-ajax.php'), "wp_ajax_shopp_storage_suggestions"); ?>',
 	tagsugg_url = '<?php echo wp_nonce_url(admin_url('admin-ajax.php'), "wp_ajax_shopp_suggestions"); ?>',

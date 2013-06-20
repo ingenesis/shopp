@@ -165,7 +165,7 @@ class Storefront extends FlowController {
 			if ( preg_match("/\[($shortcodes)\]/", $posts[0]->post_content, $matches) ) {
 				$shortcode = next($matches);
 				if ( 'catalog' == $shortcode ) $shortcode = '';
-				shopp_redirect( Shopp::shoppurl($shortcode) );
+				shopp_redirect( Shopp::url($shortcode) );
 				exit();
 			}
 		}
@@ -528,7 +528,7 @@ class Storefront extends FlowController {
 		if ( is_account_page() )	$redirect = 'account';
 
 		if ( $redirect )
-			shopp_redirect( Shopp::shoppurl($_GET, $redirect, true) );
+			shopp_redirect( Shopp::url($_GET, $redirect, true) );
 
 	}
 
@@ -833,12 +833,12 @@ class Storefront extends FlowController {
 	public function menulinks ( array $items ) {
 		foreach ( $items as &$item) {
 			switch ( strtolower($item->type) ) {
-				case ShoppPages::QUERYVAR: $item->url = Shopp::shoppurl(false,$item->object); break;
+				case ShoppPages::QUERYVAR: $item->url = Shopp::url(false,$item->object); break;
 				case SmartCollection::$taxon:
 					$namespace = get_class_property( 'SmartCollection' ,'namespace');
 					$taxonomy = get_class_property( 'SmartCollection' ,'taxon');
 					$prettyurls = ( '' != get_option('permalink_structure') );
-					$item->url = Shopp::shoppurl( $prettyurls ? "$namespace/$item->object" : array($taxonomy=>$item->object), false );
+					$item->url = Shopp::url( $prettyurls ? "$namespace/$item->object" : array($taxonomy=>$item->object), false );
 					break;
 			}
 		}
@@ -858,12 +858,12 @@ class Storefront extends FlowController {
 		if ( ! $Shopp->Gateways->secure ) return $items;
 
 		$hrefs = array(
-			'checkout' => Shopp::shoppurl(false,'checkout'),
-			'account' => Shopp::shoppurl(false,'account')
+			'checkout' => Shopp::url(false,'checkout'),
+			'account' => Shopp::url(false,'account')
 		);
 
 		if ( empty($Shopp->Gateways->active) )
-			return str_replace($hrefs['checkout'],Shopp::shoppurl(false,'cart'),$items);
+			return str_replace($hrefs['checkout'],Shopp::url(false,'cart'),$items);
 
 		foreach ($hrefs as $href) {
 			$secure_href = str_replace('http://','https://',$href);
@@ -882,11 +882,11 @@ class Storefront extends FlowController {
 	 **/
 	public function cart () {
 
-		if ( isset($_REQUEST['checkout']) ) shopp_redirect( Shopp::shoppurl(false, 'checkout', $this->security()) );
+		if ( isset($_REQUEST['checkout']) ) shopp_redirect( Shopp::url(false, 'checkout', $this->security()) );
 
 		if ( isset($_REQUEST['shopping']) && 'reset' == strtolower($_REQUEST['shopping']) ) {
 			ShoppShopping()->reset();
-			shopp_redirect( Shopp::shoppurl() );
+			shopp_redirect( Shopp::url() );
 		}
 
 		if ( empty($_REQUEST['cart']) ) return true;
@@ -902,11 +902,11 @@ class Storefront extends FlowController {
 		$redirect = false;
 		if ( isset($_REQUEST['redirect']) ) $redirect = $_REQUEST['redirect'];
 		switch ($redirect) {
-			case 'checkout': shopp_redirect( Shopp::shoppurl(false, $redirect, ShoppOrder()->security()) ); break;
+			case 'checkout': shopp_redirect( Shopp::url(false, $redirect, ShoppOrder()->security()) ); break;
 			default:
 				if ( ! empty($_REQUEST['redirect']) )
 					shopp_safe_redirect($_REQUEST['redirect']);
-				else shopp_redirect( Shopp::shoppurl(false, 'cart') );
+				else shopp_redirect( Shopp::url(false, 'cart') );
 		}
 
 		exit;

@@ -258,7 +258,7 @@ class ShoppCheckout {
 		// Catch originally free orders that get extra (shipping) costs added to them
 		if ( $wasfree && $Payments->count() > 1 && ! ( $Cart->orderisfree() && empty($Payments->selected()->cards) ) ) {
 			shopp_add_error( __('The order amount changed and requires that you select a payment method.','Shopp') );
-			shopp_redirect( Shopp::shoppurl(false,'checkout',$this->security()) );
+			shopp_redirect( Shopp::url(false,'checkout',$this->security()) );
 		}
 
 		// If using shopp_checkout_processed for a payment gateway redirect action
@@ -269,7 +269,7 @@ class ShoppCheckout {
 
 		// If the cart's total changes at all, confirm the order
 		if ( apply_filters('shopp_order_confirm_needed', $estimated != $Cart->Totals->total() || $forcedconfirm ) )
-			shopp_redirect( Shopp::shoppurl(false, 'confirm', ShoppOrder()->security()) );
+			shopp_redirect( Shopp::url(false, 'confirm', ShoppOrder()->security()) );
 		else do_action('shopp_process_order');
 	}
 

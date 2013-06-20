@@ -95,7 +95,7 @@ class ShoppCartItemThemeAPI {
 	static function type ($result, $options, $O) { return $O->type; }
 
 	static function url ($result, $options, $O) {
-		return Shopp::shoppurl( '' == get_option('permalink_structure') ? array(Product::$posttype => $O->slug ) : $O->slug, false );
+		return Shopp::url( '' == get_option('permalink_structure') ? array(Product::$posttype => $O->slug ) : $O->slug, false );
 	}
 
 	static function sku ($result, $options, $O) { return $O->sku; }
@@ -170,7 +170,7 @@ class ShoppCartItemThemeAPI {
 				    $result = '<input type="checkbox" name="remove[' . $O->_id . ']" value="' . $O->_id . '"' . $class . ' tabindex="" title="' . $label . '"/>'; break;
 			}
 		} else {
-			$result = '<a href="' . href_add_query_arg(array('cart' => 'update', 'item' => $O->_id, 'quantity' => 0), Shopp::shoppurl(false, 'cart')) . '"' . $class . '>' . $label . '</a>';
+			$result = '<a href="' . href_add_query_arg(array('cart' => 'update', 'item' => $O->_id, 'quantity' => 0), Shopp::url(false, 'cart')) . '"' . $class . '>' . $label . '</a>';
 		}
 		return $result;
 	}

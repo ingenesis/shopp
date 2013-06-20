@@ -116,13 +116,13 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 	public static function accounts ($result, $options, $O) { return shopp_setting('account_system'); }
 
-	public static function account_url ($result, $options, $O) { return Shopp::shoppurl(false,'account'); }
+	public static function account_url ($result, $options, $O) { return Shopp::url(false,'account'); }
 
 	public static function action ($result, $options, $O) {
 		$Storefront = ShoppStorefront();
 		$request = false; $id = false;
 		if (isset($Storefront->account)) extract($Storefront->account);
-		return Shopp::shoppurl(array($request=>''),'account');
+		return Shopp::url(array($request=>''),'account');
 	}
 
 	public static function billing_address ($result, $options, $O) {
@@ -252,7 +252,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if (array_key_exists('size',$options)) $string .= readableFileSize($download->size);
 		if (array_key_exists('date',$options)) $string .= _d($df,mktimestamp($download->created));
 		if (array_key_exists('url',$options))
-			$string .= Shopp::shoppurl( ('' == get_option('permalink_structure') ?
+			$string .= Shopp::url( ('' == get_option('permalink_structure') ?
 					array('src'=>'download','shopp_download'=>$download->dkey) : 'download/'.$download->dkey),
 				'account');
 		return $string;
@@ -417,7 +417,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	}
 
 	public static function order ($result, $options, $O) {
-		return Shopp::shoppurl(array('orders'=>ShoppPurchase()->id),'account');
+		return Shopp::url(array('orders'=>ShoppPurchase()->id),'account');
 	}
 
 	public static function order_lookup ($result, $options, $O) {
@@ -510,7 +510,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		return '<input type="submit" name="recover-login" id="recover-button"'.inputattrs($options).' />';
 	}
 
-	public static function recover_url ($result, $options, $O) { return add_query_arg('recover','',Shopp::shoppurl(false,'account')); }
+	public static function recover_url ($result, $options, $O) { return add_query_arg('recover','',Shopp::url(false,'account')); }
 
 	public static function register ($result, $options, $O) {
 		$defaults = array(
@@ -699,7 +699,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if (ShoppStorefront()->checkout) {
 			$id .= "-checkout";
 			$string .= '<input type="hidden" name="redirect" value="checkout" />';
-		} else $string .= '<input type="hidden" name="redirect" value="'.esc_attr(Shopp::shoppurl($request,'account',ShoppOrder()->security())).'" />';
+		} else $string .= '<input type="hidden" name="redirect" value="'.esc_attr(Shopp::url($request,'account',ShoppOrder()->security())).'" />';
 		$string .= '<input type="submit" name="submit-login" id="'.$id.'"'.inputattrs($options).' />';
 		return $string;
 	}
@@ -718,7 +718,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 	public static function url ($result, $options, $O) {
 		$Shopp = Shopp::object();
-		return Shopp::shoppurl(array('acct'=>null),'account',$Shopp->Gateways->secure);
+		return Shopp::url(array('acct'=>null),'account',$Shopp->Gateways->secure);
 	}
 
 	public static function wpuser_created ($result, $options, $O) { return $O->newuser; }

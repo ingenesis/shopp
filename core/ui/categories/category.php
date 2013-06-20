@@ -68,7 +68,7 @@ var flashuploader = <?php echo ($uploader == 'flash' && !(false !== strpos(strto
 	uidir = '<?php echo SHOPP_ADMIN_URI; ?>',
 	siteurl = '<?php bloginfo('url'); ?>',
 	adminurl = '<?php echo admin_url(); ?>',
-	canonurl = '<?php echo trailingslashit(Shopp::shoppurl( '' != get_option('permalink_structure') ? get_class_property('ProductCategory','namespace') : $Category->taxonomy.'=' )); ?>',
+	canonurl = '<?php echo trailingslashit(Shopp::url( '' != get_option('permalink_structure') ? get_class_property('ProductCategory','namespace') : $Category->taxonomy.'=' )); ?>',
 	ajaxurl = adminurl+'admin-ajax.php',
 	addcategory_url = '<?php echo wp_nonce_url(admin_url()."admin-ajax.php", "shopp-ajax_add_category"); ?>',
 	editslug_url = '<?php echo wp_nonce_url(admin_url()."admin-ajax.php", "wp_ajax_shopp_edit_slug"); ?>',

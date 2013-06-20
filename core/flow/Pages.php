@@ -414,12 +414,12 @@ class ShoppAccountPage extends ShoppPage {
 		$_[] = '';
 		$_[] = '<p>'.__('To reset your password visit the following address, otherwise just ignore this email and nothing will happen.');
 		$_[] = '';
-		$_[] = '<p>'.add_query_arg(array('rp'=>$RecoveryCustomer->activation), Shopp::shoppurl(false, 'account')).'</p>';
+		$_[] = '<p>'.add_query_arg(array('rp'=>$RecoveryCustomer->activation), Shopp::url(false, 'account')).'</p>';
 		$message = apply_filters('shopp_recover_password_message', $_);
 
 		if (!shopp_email(join("\n", $message))) {
 			new ShoppError(__('The e-mail could not be sent.'), 'password_recovery_email', SHOPP_ERR);
-			shopp_redirect(add_query_arg('acct', 'recover', Shopp::shoppurl(false, 'account')));
+			shopp_redirect(add_query_arg('acct', 'recover', Shopp::url(false, 'account')));
 		} else {
 			new ShoppError(__('Check your email address for instructions on resetting the password for your account.', 'Shopp'), 'password_recovery_email', SHOPP_ERR);
 		}
@@ -471,12 +471,12 @@ class ShoppAccountPage extends ShoppPage {
 		$_[] = '<li>'.sprintf(__('Password: %s'), $password).'</li>';
 		$_[] = '</ul>';
 		$_[] = '';
-		$_[] = '<p>'.__('Click here to login:').' '.Shopp::shoppurl(false, 'account').'</p>';
+		$_[] = '<p>'.__('Click here to login:').' '.Shopp::url(false, 'account').'</p>';
 		$message = apply_filters('shopp_reset_password_message', $_);
 
 		if (!shopp_email(join("\n", $message))) {
 			new ShoppError(__('The e-mail could not be sent.'), 'password_reset_email', SHOPP_ERR);
-			shopp_redirect(add_query_arg('acct', 'recover', Shopp::shoppurl(false, 'account')));
+			shopp_redirect(add_query_arg('acct', 'recover', Shopp::url(false, 'account')));
 		} else new ShoppError(__('Check your email address for your new password.', 'Shopp'), 'password_reset_email', SHOPP_ERR);
 
 		unset($_GET['acct']);

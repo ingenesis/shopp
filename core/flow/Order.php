@@ -545,13 +545,13 @@ class ShoppOrder {
 		Shopping::resession();
 
 		if ( false !== $this->purchase )
-			shopp_redirect( Shopp::shoppurl(false, 'thanks') );
+			shopp_redirect( Shopp::url(false, 'thanks') );
 
 	}
 
 	public function validate () {
 		if ( apply_filters('shopp_valid_order', $this->isvalid()) ) return true;
-		shopp_redirect( Shopp::shoppurl(false, 'checkout', $this->security()), true );
+		shopp_redirect( Shopp::url(false, 'checkout', $this->security()), true );
 	}
 
 	/**
@@ -621,7 +621,7 @@ class ShoppOrder {
 				if ( $Shiprates->realtime() )
 					$message = __('The order cannot be processed. The shipping rate service did not provide rates because of a problem and no other shipping is available to the address you provided. Please return to %scheckout%s and try again or contact the store administrator.', 'Shopp');
 
-				if ( ! $valid ) shopp_add_error( sprintf($message, '<a href="'.Shopp::shoppurl(false,'checkout',$this->security()).'">', '</a>'), $errlevel );
+				if ( ! $valid ) shopp_add_error( sprintf($message, '<a href="'.Shopp::url(false,'checkout',$this->security()).'">', '</a>'), $errlevel );
 			}
 
 		}

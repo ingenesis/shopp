@@ -379,7 +379,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if (empty($options['value'])) $options['value'] = __('Confirm Order','Shopp');
 
 		$button = '<input type="submit" name="confirmed" id="confirm-button" '.inputattrs($options,$submit_attrs).' />';
-		$return = '<a href="'.Shopp::shoppurl(false,'checkout',$O->security()).'"'.inputattrs($options,array('class')).'>'.
+		$return = '<a href="'.Shopp::url(false,'checkout',$O->security()).'"'.inputattrs($options,array('class')).'>'.
 						$options['errorlabel'].'</a>';
 
 		if ( ! $O->isvalid() ) $markup = $return;
@@ -838,7 +838,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	}
 
 	public static function url ($result, $options, $O) {
-		$link = Shopp::shoppurl(false,'checkout',$O->security());
+		$link = Shopp::url(false,'checkout',$O->security());
 		$Storefront = ShoppStorefront();
 
 		// Pass any arguments along

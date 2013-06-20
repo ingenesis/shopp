@@ -170,7 +170,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		$titleattr = empty($title)?'':' title="'.esc_attr($title).'"';
 		$classes = empty($class)?'':' class="'.esc_attr($class).'"';
 
-		$src = Shopp::shoppurl($img->id,'images');
+		$src = Shopp::url($img->id,'images');
 		if ('' != get_option('permalink_structure')) $src = trailingslashit($src).$img->filename;
 
 		if ($size != "original")
@@ -190,7 +190,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		$imgtag = '<img src="'.$src.'"'.$titleattr.' alt="'.$alt.'" width="'.$width_a.'" height="'.$height_a.'" '.$classes.' />';
 
 		if (Shopp::str_true($zoom))
-			return '<a href="'.Shopp::shoppurl($img->id,'images').'/'.$img->filename.'" class="'.$zoomfx.'" rel="product-'.$O->id.'"'.$titleattr.'>'.$imgtag.'</a>';
+			return '<a href="'.Shopp::url($img->id,'images').'/'.$img->filename.'" class="'.$zoomfx.'" rel="product-'.$O->id.'"'.$titleattr.'>'.$imgtag.'</a>';
 
 		return $imgtag;
 	}
@@ -220,35 +220,35 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		$Storefront = ShoppStorefront();
 
 		// Add the Store front page (aka catalog page)
-		$breadcrumb = array( $CatalogPage->title() => Shopp::shoppurl(false, 'catalog') );
+		$breadcrumb = array( $CatalogPage->title() => Shopp::url(false, 'catalog') );
 
 		if ( is_account_page() ) {
 			$Page = shopp_get_page('account');
 
-			$breadcrumb += array($Page->title() => Shopp::shoppurl(false, 'account'));
+			$breadcrumb += array($Page->title() => Shopp::url(false, 'account'));
 
 			$request = $Storefront->account['request'];
 			if (isset($Storefront->dashboard[$request]))
-				$breadcrumb += array($Storefront->dashboard[$request]->label => Shopp::shoppurl(false, 'account'));
+				$breadcrumb += array($Storefront->dashboard[$request]->label => Shopp::url(false, 'account'));
 
 		} elseif ( is_cart_page() ) {
 			$Page = shopp_get_page('cart');
-			$breadcrumb += array($Page->title() => Shopp::shoppurl(false, 'cart'));
+			$breadcrumb += array($Page->title() => Shopp::url(false, 'cart'));
 		} elseif ( is_checkout_page() ) {
 			$Cart = shopp_get_page('cart');
 			$Checkout = shopp_get_page('checkout');
-			$breadcrumb += array($Cart->title() => Shopp::shoppurl(false, 'cart'));
-			$breadcrumb += array($Checkout->title() => Shopp::shoppurl(false, 'checkout'));
+			$breadcrumb += array($Cart->title() => Shopp::url(false, 'cart'));
+			$breadcrumb += array($Checkout->title() => Shopp::url(false, 'checkout'));
 		} elseif ( is_confirm_page() ) {
 			$Cart = shopp_get_page('cart');
 			$Checkout = shopp_get_page('checkout');
 			$Confirm = shopp_get_page('confirm');
-			$breadcrumb += array($Cart->title() => Shopp::shoppurl(false, 'cart'));
-			$breadcrumb += array($Checkout->title() => Shopp::shoppurl(false, 'checkout'));
-			$breadcrumb += array($Confirm->title() => Shopp::shoppurl(false, 'confirm'));
+			$breadcrumb += array($Cart->title() => Shopp::url(false, 'cart'));
+			$breadcrumb += array($Checkout->title() => Shopp::url(false, 'checkout'));
+			$breadcrumb += array($Confirm->title() => Shopp::url(false, 'confirm'));
 		} elseif ( is_thanks_page() ) {
 			$Page = shopp_get_page('thanks');
-			$breadcrumb += array($Page->title() => Shopp::shoppurl(false, 'thanks'));
+			$breadcrumb += array($Page->title() => Shopp::url(false, 'thanks'));
 		} elseif ( is_shopp_taxonomy() ) {
 			$taxonomy = ShoppCollection()->taxonomy;
 			$ancestors = array_reverse(get_ancestors(ShoppCollection()->id, $taxonomy));
@@ -445,7 +445,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 					$namespace = get_class_property( 'SmartCollection' ,'namespace');
 					$taxonomy = get_class_property( 'SmartCollection' ,'taxon');
 					$prettyurls = ( '' != get_option('permalink_structure') );
-					$link = Shopp::shoppurl( $prettyurls ? "$namespace/{$category->slug}" : array($taxonomy=>$category->slug),false );
+					$link = Shopp::url( $prettyurls ? "$namespace/{$category->slug}" : array($taxonomy=>$category->slug),false );
 				}
 				$string .=
 					'<option value="'.$link.'">'.$padding.$category->name.$total.'</option>';
@@ -502,7 +502,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 					$namespace = get_class_property( 'SmartCollection' ,'namespace');
 					$taxonomy = get_class_property( 'SmartCollection' ,'taxon');
 					$prettyurls = ( '' != get_option('permalink_structure') );
-					$link = Shopp::shoppurl( $prettyurls ? "$namespace/{$category->slug}" : array($taxonomy=>$category->slug),false );
+					$link = Shopp::url( $prettyurls ? "$namespace/{$category->slug}" : array($taxonomy=>$category->slug),false );
 				}
 
 				$total = '';
@@ -955,7 +955,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return $markup;
 	}
 
-	static function url ($result, $options, $O) { return Shopp::shoppurl(false,'catalog'); }
+	static function url ($result, $options, $O) { return Shopp::url(false,'catalog'); }
 
 	static function views ($result, $options, $O) {
 		$Shopp = Shopp::object();
@@ -1056,7 +1056,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	static function account_menuitem ($result, $options, $O) {
 		$Storefront = ShoppStorefront();
 		$page = current($Storefront->menus);
-		if (array_key_exists('url',$options)) return add_query_arg($page->request,'',Shopp::shoppurl(false,'account'));
+		if (array_key_exists('url',$options)) return add_query_arg($page->request,'',Shopp::url(false,'account'));
 		if (array_key_exists('action',$options)) return $page->request;
 		if (array_key_exists('classes',$options)) {
 			$classes = array($page->request);

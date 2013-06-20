@@ -336,7 +336,7 @@ class Categorize extends AdminController {
 		$billPeriods = Price::periods();
 
 		// Build permalink for slug editor
-		$permalink = trailingslashit(Shopp::shoppurl())."category/";
+		$permalink = trailingslashit(Shopp::url())."category/";
 		$Category->slug = apply_filters('editable_slug',$Category->slug);
 
 		$pricerange_menu = array(

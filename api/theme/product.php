@@ -506,7 +506,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 			if ($firstPreview) { // Adds "filler" image to reserve the dimensions in the DOM
 
-				$href = Shopp::shoppurl('' != get_option('permalink_structure')?trailingslashit('000'):'000','images');
+				$href = Shopp::url('' != get_option('permalink_structure')?trailingslashit('000'):'000','images');
 				$previews .= '<li'.(($firstPreview)?' class="fill"':'').'>';
 				$previews .= '<img src="'.add_query_string("$maxwidth,$maxheight",$href).'" alt=" " width="'.$maxwidth.'" height="'.$maxheight.'" />';
 				$previews .= '</li>';
@@ -517,7 +517,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			$previews .= '<li id="preview-'.$img->id.'"'.(($firstPreview)?' class="active"':'').'>';
 
             if ($img->directly_accessible()) $href = $img->direct_url;
-			else $href = Shopp::shoppurl('' != get_option('permalink_structure')?trailingslashit($img->id).$img->filename:$img->id,'images');
+			else $href = Shopp::url('' != get_option('permalink_structure')?trailingslashit($img->id).$img->filename:$img->id,'images');
 
 			if ($p_link) $previews .= '<a href="'.$href.'" class="gallery product_'.$O->id.' '.$options['zoomfx'].'"'.(!empty($rel)?' rel="'.$rel.'"':'').''.$title.'>';
 			// else $previews .= '<a name="preview-'.$img->id.'">'; // If links are turned off, leave the <a> so we don't break layout
@@ -1061,7 +1061,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		return join(',',$types);
 	}
 
-	static function url ($result, $options, $O) { return Shopp::shoppurl( '' == get_option('permalink_structure')?array(Product::$posttype=>$O->slug):$O->slug, false ); }
+	static function url ($result, $options, $O) { return Shopp::url( '' == get_option('permalink_structure')?array(Product::$posttype=>$O->slug):$O->slug, false ); }
 
 	static function variation ($result, $options, $O) {
 		$defaults = array(

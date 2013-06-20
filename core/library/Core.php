@@ -1845,7 +1845,7 @@ abstract class ShoppCore {
 		$allowed_hosts = (array) apply_filters('allowed_redirect_hosts', array($wpp['host']), isset($lp['host']) ? $lp['host'] : '');
 
 		if ( isset($lp['host']) && ( !in_array($lp['host'], $allowed_hosts) && $lp['host'] != strtolower($wpp['host'])) )
-			$location = Shopp::shoppurl(false,'account');
+			$location = Shopp::url(false,'account');
 
 		wp_redirect($location, $status);
 	}

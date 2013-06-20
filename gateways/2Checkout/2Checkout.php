@@ -31,7 +31,7 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 
 		$this->setup('sid','verify','secret','returnurl','testmode','singlepage');
 
-		$this->settings['returnurl'] = add_query_arg('rmtpay','process',Shopp::shoppurl(false,'thanks',false));
+		$this->settings['returnurl'] = add_query_arg('rmtpay','process',Shopp::url(false,'thanks',false));
 
 		// add_action('shopp_txn_update',array(&$this,'notifications'));
 		add_action('shopp__2checkout_sale', array($this,'sale'));
@@ -125,13 +125,13 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 
 		if (Shopp::str_true($this->settings['verify']) && !$this->verify($_POST['key'])) {
 			new ShoppError(__('The order submitted to 2Checkout could not be verified.','Shopp'),'2co_validation_error',SHOPP_TRXN_ERR);
-			shopp_redirect(Shopp::shoppurl(false,'checkout'));
+			shopp_redirect(Shopp::url(false,'checkout'));
 
 		}
 
 		if (empty($_POST['order_number'])) {
 			new ShoppError(__('The order submitted by 2Checkout did not specify a transaction ID.','Shopp'),'2co_validation_error',SHOPP_TRXN_ERR);
-			shopp_redirect(Shopp::shoppurl(false,'checkout'));
+			shopp_redirect(Shopp::url(false,'checkout'));
 		}
 
 		// Create the order and begin processing it
@@ -141,7 +141,7 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 		));
 
 		ShoppOrder()->purchase = ShoppPurchase()->id;
-		shopp_redirect(Shopp::shoppurl(false,'thanks',false));
+		shopp_redirect(Shopp::url(false,'thanks',false));
 
 	}
 

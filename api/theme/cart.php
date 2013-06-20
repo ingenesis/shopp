@@ -429,6 +429,6 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	}
 
 	static function url ($result, $options, $O) {
-		return Shopp::shoppurl(false, 'cart');
+		return Shopp::url(false, 'cart');
 	}
 }

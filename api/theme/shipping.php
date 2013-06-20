@@ -192,7 +192,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 	}
 
 	static function url ($result, $options, $O) {
-		return is_shopp_page('checkout') ? Shopp::shoppurl(false, 'confirm-order') : Shopp::shoppurl(false, 'cart');
+		return is_shopp_page('checkout') ? Shopp::url(false, 'confirm-order') : Shopp::url(false, 'cart');
 	}
 
 	/**

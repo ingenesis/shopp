@@ -291,9 +291,9 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 		if (isset($this->Order->data['paypal-custom']))
 			$_['CUSTOM'] = htmlentities($this->Order->data['paypal-custom']);
 
-		$_['RETURNURL']			= Shopp::shoppurl(array('rmtpay'=>'process'),'confirm');
+		$_['RETURNURL']			= Shopp::url(array('rmtpay'=>'process'),'confirm');
 
-		$_['CANCELURL']			= Shopp::shoppurl(false,'cart');
+		$_['CANCELURL']			= Shopp::url(false,'cart');
 
 		$_ = array_merge($_,$this->PaymentRequest());
 
@@ -373,7 +373,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 		$targets = shopp_setting('target_markets');
 		if ( ! in_array($Order->Shipping->country,array_keys($targets)) ) {
 			new ShoppError(__('The location you are purchasing from is outside of our market regions. This transaction cannot be processed.','Shopp'),'paypalexpress_market',SHOPP_TRXN_ERR);
-			shopp_redirect(Shopp::shoppurl(false,'checkout'));
+			shopp_redirect(Shopp::url(false,'checkout'));
 		}
 
 	}
@@ -397,7 +397,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 		$_['TOKEN'] 							= $Order->token;
 		$_['PAYERID'] 							= $Order->payerid;
 		$_['BUTTONSOURCE']						= 'shopplugin.net[PPE]';
-		$_['PAYMENTREQUEST_0_NOTIFYURL']		= Shopp::shoppurl(array('_txnupdate'=>'PPE'),'checkout');
+		$_['PAYMENTREQUEST_0_NOTIFYURL']		= Shopp::url(array('_txnupdate'=>'PPE'),'checkout');
 
 		// Transaction
 		$_ = array_merge($_,$this->PaymentRequest());
@@ -405,7 +405,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 
 		if ( is_a($response,'ShoppError') ) {
 			new ShoppError(__('No response was received from PayPal. The order cannot be processed.','Shopp'),'paypalexpress_noresults',SHOPP_COMM_ERR);
-			shopp_redirect(Shopp::shoppurl(false,'checkout'));
+			shopp_redirect(Shopp::url(false,'checkout'));
 		}
 
 		if ( SHOPP_DEBUG && 'Success' != $response->ack ) new ShoppError('In '.__FUNCTION__.': '.$response->debuglog, 'debug'.__FUNCTION__, SHOPP_DEBUG_ERR);
@@ -414,7 +414,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 			$message = join("; ", $response->longmessages);
 			if (empty($message)) $message = __('The transaction failed for an unknown reason. PayPal did not provide any indication of why it failed.','Shopp');
 			new ShoppError($message,'paypal_express_transacton_error',SHOPP_TRXN_ERR,array('codes'=>join('; ',$response->errorcode)));
-			shopp_redirect(Shopp::shoppurl(false,'checkout'));
+			shopp_redirect(Shopp::url(false,'checkout'));
 		}
 
 		return $response;
