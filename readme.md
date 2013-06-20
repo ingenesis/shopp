@@ -13,7 +13,7 @@ A professional, high-performance e-commerce development plugin for WordPress.
 - [User Guide Documentation](https://shopplugin.com/docs/) - the official documentation for how to use and setup Shopp
 - [Knowledge Base](https://shopplugin.com/kb/) - Troubleshooting articles for the most common problems and error messages
 - [Support Help Desk](https://shopplugin.com/support/forum/help-desk) - Open a ticket with the Shopp support team
-- [WorkShopp](https:///workshopp.com/) - Tutorials and screencasts for Shopp
+- [WorkShopp](http:///workshopp.com/) - Tutorials and screencasts for Shopp
 - [API Reference](https://shopplugin.com/api/) - Online developer's reference guide
 - [Professionals](https://shopplugin.com/professionals/) - Shopp develeopers available for consulting work
 
