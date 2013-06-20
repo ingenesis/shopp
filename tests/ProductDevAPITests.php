@@ -136,7 +136,12 @@ class ProductDevAPITests extends ShoppTestCase {
 		$this->AssertEquals(19.99, $Variant->saleprice);
 		$this->AssertEquals('on', $Variant->tax);
 		$this->AssertEquals('on', $Variant->shipping);
-		$this->AssertEquals('a:4:{s:6:"weight";d:1.1000000000000001;s:6:"height";d:2;s:5:"width";d:10;s:6:"length";d:10;}',serialize($Variant->dimensions));
+		$this->AssertEquals(1.1, $Variant->dimensions['weight']);
+		$this->AssertEquals(2, $Variant->dimensions['height']);
+		$this->AssertEquals(10, $Variant->dimensions['width']);
+		$this->AssertEquals(10, $Variant->dimensions['length']);
+
+
 		$this->AssertEquals(1.5, $Variant->shipfee);
 		$this->AssertEquals('on', $Variant->inventory);
 		$this->AssertEquals(10, $Variant->stock);
