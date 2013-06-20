@@ -163,7 +163,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text);
 		$args = func_get_args(); // Handle sprintf rendering
-		return sprintf_gettext($translated, $args, 1);
+		return Shopp::sprintf_gettext($translated, $args, 1);
 
 	}
 
@@ -180,7 +180,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text);
 		$args = func_get_args(); // Handle sprintf rendering
-		echo sprintf_gettext($translated, $args, 1);
+		echo Shopp::sprintf_gettext($translated, $args, 1);
 
 	}
 
@@ -198,7 +198,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text, $context);
 		$args = func_get_args(); // Handle sprintf rendering
-		return sprintf_gettext($translated, $args, 2);
+		return Shopp::sprintf_gettext($translated, $args, 2);
 
 	}
 
@@ -215,7 +215,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text);
 		$args = func_get_args(); // Handle sprintf rendering
-		$translated = sprintf_gettext($translated, $args, 1);
+		$translated = Shopp::sprintf_gettext($translated, $args, 1);
 
 		$Markdown = new Markdownr($translated);
 		return $Markdown->html();
@@ -234,7 +234,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text);
 		$args = func_get_args();
-		$translated = sprintf_gettext($translated, $args, 1);
+		$translated = Shopp::sprintf_gettext($translated, $args, 1);
 
 		$Markdown = new Markdownr($translated);
 		$Markdown->render();
@@ -255,7 +255,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text);
 		$args = func_get_args();
-		$translated = sprintf_gettext($translated, $args, 2);
+		$translated = Shopp::sprintf_gettext($translated, $args, 2);
 
 		$Markdown = new Markdownr($translated);
 		return $Markdown->html();
@@ -275,7 +275,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text);
 		$args = func_get_args();
-		$translated = sprintf_gettext($translated, $args, 2);
+		$translated = Shopp::sprintf_gettext($translated, $args, 2);
 
 		$Markdown = new Markdownr($translated);
 		$Markdown->render();
