@@ -80,7 +80,7 @@ class ShoppCartItemThemeAPI {
 
 	static function _cartitem ($result, $options, $property, $O) {
 		if ( is_float($result) ) {
-			if ( isset($options['currency']) && !str_true($options['currency']) ) return $result;
+			if ( isset($options['currency']) && !Shopp::str_true($options['currency']) ) return $result;
 			else return money( roundprice($result) );
 		}
 		return $result;
@@ -105,7 +105,7 @@ class ShoppCartItemThemeAPI {
 	static function discount ($result, $options, $O) { return (float) $O->discount; }
 
 	static function unitprice ($result, $options, $O) {
-		$taxes = isset( $options['taxes'] ) ? str_true( $options['taxes'] ) : self::_include_tax($O);
+		$taxes = isset( $options['taxes'] ) ? Shopp::str_true( $options['taxes'] ) : self::_include_tax($O);
 		return (float) $O->unitprice + ( $taxes ? $O->unittax : 0 );
 	}
 
@@ -116,7 +116,7 @@ class ShoppCartItemThemeAPI {
 	static function tax ($result, $options, $O) { return (float) $O->tax; }
 
 	static function total ($result, $options, $O) {
-		$taxes = isset( $options['taxes'] ) ? str_true( $options['taxes'] ) : self::_include_tax($O);
+		$taxes = isset( $options['taxes'] ) ? Shopp::str_true( $options['taxes'] ) : self::_include_tax($O);
 		return (float) $O->total + ( $taxes ? ( $O->unittax * $O->quantity ) : 0 );
 	}
 
@@ -237,7 +237,7 @@ class ShoppCartItemThemeAPI {
 				case 'unitprice':
 					if ( $field === 'saleprice' ) $field = 'promoprice';
 					if ( isset($addon->$field) ) {
-						$_[] = ( isset($options['currency']) && str_true($options['currency']) ) ?
+						$_[] = ( isset($options['currency']) && Shopp::str_true($options['currency']) ) ?
 							 money($addon->$field) : $addon->$field;
 					}
 					break;
@@ -265,13 +265,13 @@ class ShoppCartItemThemeAPI {
 
 		$classes = !empty($class) ? ' class="' . esc_attr($class) . '"' : '';
 		$excludes = explode(',', $exclude);
-		$prices = str_true($prices);
-		$taxes = str_true($taxes);
+		$prices = Shopp::str_true($prices);
+		$taxes = Shopp::str_true($taxes);
 
 		$result .= $before . '<ul' . $classes . '>';
 		foreach ($O->addons as $id => $addon) {
 			if ( in_array($addon->label,$excludes) ) continue;
-			$price = ( str_true($addon->sale) ? $addon->promoprice : $addon->price );
+			$price = ( Shopp::str_true($addon->sale) ? $addon->promoprice : $addon->price );
 			if ($taxes && $O->taxrate > 0)
 				$price = $price + ( $price * $O->taxrate );
 

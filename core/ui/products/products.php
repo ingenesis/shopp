@@ -147,11 +147,11 @@
 					break;
 
 					case 'price':
-						if ( str_true($Product->sale) ) $classes[] = 'sale';
+						if ( Shopp::str_true($Product->sale) ) $classes[] = 'sale';
 					?>
 						<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><?php
 							shopp($Product,'price');
-							if ( str_true($Product->sale) ) echo '<span class="saletag">'.__('On Sale','Shopp').'</span>';
+							if ( Shopp::str_true($Product->sale) ) echo '<span class="saletag">'.__('On Sale','Shopp').'</span>';
 						?>
 						</td>
 					<?php
@@ -161,7 +161,7 @@
 					?>
 						<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
 						<?php // @todo Link inventory number to Inventory view while filtering for the product/variants
-						if ( str_true($Product->inventory) ) {
+						if ( Shopp::str_true($Product->inventory) ) {
 							$stockclass = array('stock');
 							if (!empty($Product->lowstock) && 'none' != $Product->lowstock) $stockclass[] = "lowstock $Product->lowstock";
 						 	echo '<span class="'.join(' ',$stockclass).'">'.$Product->stock.'</span>';
@@ -174,7 +174,7 @@
 					case 'featured':
 					?>
 						<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
-							<button type="button" name="feature" value="<?php echo $Product->id; ?>" class="<?php echo str_true($Product->featured) ? ' feature featured' : 'feature'; ?>">&nbsp;</button>
+							<button type="button" name="feature" value="<?php echo $Product->id; ?>" class="<?php echo Shopp::str_true($Product->featured) ? ' feature featured' : 'feature'; ?>">&nbsp;</button>
 						</td>
 					<?php
 					break;

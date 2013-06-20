@@ -673,9 +673,9 @@ class Warehouse extends AdminController {
 		// For inclusive taxes, add tax to base product price (so tax is part of the price)
 		// This has to take place outside of Product::pricing() so that the summary system
 		// doesn't cache the results causing strange/unexpected price jumps
-		if ( shopp_setting_enabled('tax_inclusive') && !str_true($Product->excludetax) ) {
+		if ( shopp_setting_enabled('tax_inclusive') && !Shopp::str_true($Product->excludetax) ) {
 			foreach ($Product->prices as &$price) {
-				if ( ! str_true($price->tax) ) continue;
+				if ( ! Shopp::str_true($price->tax) ) continue;
 				$Taxes = new CartTax();
 				$taxrate = $Taxes->rate($Product);
 				$price->price += $price->price*$taxrate;
@@ -781,7 +781,7 @@ class Warehouse extends AdminController {
 		// Update Prices
 
 		$taxrate = 0;
-		$excludetax = isset($_POST['meta']['excludetax'])?str_true($_POST['meta']['excludetax']):false;
+		$excludetax = isset($_POST['meta']['excludetax'])?Shopp::str_true($_POST['meta']['excludetax']):false;
 		if (shopp_setting_enabled('tax_inclusive')) $taxrate = shopp_taxrate(null,true,$Product);
 
 		if (!empty($_POST['price']) && is_array($_POST['price'])) {
@@ -810,7 +810,7 @@ class Warehouse extends AdminController {
 				$priceline['sortorder'] = array_search($i,$_POST['sortorder'])+1;
 
 				// Remove VAT amount to save in DB
-				if (shopp_setting_enabled('tax_inclusive') && !$excludetax && isset($priceline['tax']) && str_true($priceline['tax'])) {
+				if (shopp_setting_enabled('tax_inclusive') && !$excludetax && isset($priceline['tax']) && Shopp::str_true($priceline['tax'])) {
 					$priceline['price'] = (floatvalue($priceline['price'])/(1+$taxrate));
 					$priceline['saleprice'] = (floatvalue($priceline['saleprice'])/(1+$taxrate));
 				}

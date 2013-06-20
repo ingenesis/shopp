@@ -492,7 +492,7 @@ class Product extends WPShoppObject {
 		$this->checksum = md5($this->checksum);
 
 		if (isset($data->summed)) $this->summed = DB::mktime($data->summed);
-		if (shopp_setting_enabled('inventory') && str_true($this->inventory) && $this->stock <= 0) $this->outofstock = true;
+		if (shopp_setting_enabled('inventory') && Shopp::str_true($this->inventory) && $this->stock <= 0) $this->outofstock = true;
 	}
 
 	/**
@@ -526,7 +526,7 @@ class Product extends WPShoppObject {
 		} else $target = &$this;
 
 		// Skip calulating variant pricing when variants are not enabled for the product
-		if (!( isset($target->variants) && str_true($target->variants) ) && 'variation' == $price->context) return;
+		if (!( isset($target->variants) && Shopp::str_true($target->variants) ) && 'variation' == $price->context) return;
 
 		$target->prices[] = $price;
 
@@ -534,31 +534,31 @@ class Product extends WPShoppObject {
 		$price->price = (float)$price->price;
 		$price->saleprice = (float)$price->saleprice;
 		$price->shipfee = (float)$price->shipfee;
-		$price->promoprice = (float)str_true($price->sale)?$price->saleprice:$price->price;
+		$price->promoprice = (float)Shopp::str_true($price->sale)?$price->saleprice:$price->price;
 
 		// Build secondary lookup table using the price id as the key
 		$target->priceid[$price->id] = $price;
 
 		// Set promoprice before data aggregation
-		if (str_true($price->sale)) $price->promoprice = $price->saleprice;
+		if (Shopp::str_true($price->sale)) $price->promoprice = $price->saleprice;
 
 		// Do not count disabled price lines or addon price lines in aggregate summary stats
 		if ('N/A' == $price->type || 'addon' ==  $price->context) return;
 
 		// Simple product or variant product is on sale
-		if (str_true($price->sale)) $target->sale = $price->sale;
+		if (Shopp::str_true($price->sale)) $target->sale = $price->sale;
 
 		// Build third lookup table using the combined optionkey
 		$target->pricekey[$price->optionkey] = $price;
 
-		if (str_true($price->inventory)) {
+		if (Shopp::str_true($price->inventory)) {
 			$target->stock += $price->stock;
 			$target->inventory = $price->inventory;
 			$target->lowstock($price->stock,$price->stocked);
 		}
 
 		$freeshipping = false;
-		if (!str_true($price->shipping)) $freeshipping = true;
+		if (!Shopp::str_true($price->shipping)) $freeshipping = true;
 
 		// Calculate catalog discounts if not already calculated
 		if (!empty($price->discounts)) {
@@ -574,7 +574,7 @@ class Product extends WPShoppObject {
 
 		// Variation range index/properties
 		$varranges = array('price' => 'price','saleprice'=>'promoprice');
-		if (str_true($price->inventory)) $varranges['stock'] = 'stock';
+		if (Shopp::str_true($price->inventory)) $varranges['stock'] = 'stock';
 
 		foreach ($varranges as $name => $prop) {
 			if (!isset($price->$prop)) continue;
@@ -589,7 +589,7 @@ class Product extends WPShoppObject {
 		}
 
 		// Determine savings ranges
-		if (str_true($target->sale)) {
+		if (Shopp::str_true($target->sale)) {
 
 			if ( ! isset($target->min['saved']) || $target->min['saved'] === false ) {
 				$target->min['saved'] = $price->price;
@@ -613,7 +613,7 @@ class Product extends WPShoppObject {
 			}
 		}
 
-		if ( shopp_setting_enabled('inventory') && str_true($target->inventory) ) $target->outofstock = ($target->stock <= 0);
+		if ( shopp_setting_enabled('inventory') && Shopp::str_true($target->inventory) ) $target->outofstock = ($target->stock <= 0);
 		if ( $freeshipping ) $target->freeship = 'on';
 
 	}
@@ -672,9 +672,9 @@ class Product extends WPShoppObject {
 		if ($this->minprice === false) $this->minprice = (float)$Price->promoprice;
 		else $this->minprice = min($this->minprice,$Price->promoprice);
 
-		if (str_true($Price->sale)) $this->sale = $Price->sale;
+		if (Shopp::str_true($Price->sale)) $this->sale = $Price->sale;
 
-		if (str_true($Price->inventory)) {
+		if (Shopp::str_true($Price->inventory)) {
 			$this->inventory = $Price->inventory;
 			$this->stock += $Price->stock;
 			$this->lowstock($Price->stock,$Price->stocked);
@@ -725,8 +725,8 @@ class Product extends WPShoppObject {
 			if ($property{0} == '_') continue;
 			if (in_array($property,$ignore)) continue;
 			switch ($property) {
-				case 'minprice': $this->minprice = (float)$this->min[ str_true($this->sale)?'saleprice':'price' ]; break;
-				case 'maxprice': $this->maxprice = (float)$this->max[ str_true($this->sale)?'saleprice':'price' ]; break;
+				case 'minprice': $this->minprice = (float)$this->min[ Shopp::str_true($this->sale)?'saleprice':'price' ]; break;
+				case 'maxprice': $this->maxprice = (float)$this->max[ Shopp::str_true($this->sale)?'saleprice':'price' ]; break;
 				case 'ranges':
 					$ranges = array();
 					foreach ($minmax as $m) {

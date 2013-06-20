@@ -518,7 +518,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults,$options);
 		extract($options);
 
-		if ( str_true($O->guest) ||str_true($checked) )
+		if ( Shopp::str_true($O->guest) ||Shopp::str_true($checked) )
 			$options['checked'] = 'on';
 
 		$_ = array();
@@ -655,12 +655,12 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if (empty($options['value'])) $options['value'] = key($O->payoptions);
 
 		$_ = array();
-		if (str_true($labeling)) {
+		if (Shopp::str_true($labeling)) {
 			$_[] = '<label class="'.esc_attr($options['value']).'">';
 			if ($labelpos == "before") $_[] = $payoption->label;
 		}
 		$_[] = '<input type="'.$type.'" name="paymethod" id="paymethod-'.esc_attr($options['value']).'"'.inputattrs($options).' />';
-		if (str_true($labeling)) {
+		if (Shopp::str_true($labeling)) {
 			if ($labelpos == "after") $_[] = $payoption->label;
 			$_[] = '</label>';
 		}
@@ -762,7 +762,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults,$options);
 		extract($options);
 
-		if ( ( isset($O->Shipping->residential) && ! str_true($O->Shipping->residential) ) || ! str_true($checked) )
+		if ( ( isset($O->Shipping->residential) && ! Shopp::str_true($O->Shipping->residential) ) || ! Shopp::str_true($checked) )
 			$options['checked'] = 'off';
 
 		$_ = array();

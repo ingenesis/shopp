@@ -409,7 +409,7 @@ class PayPalStandard extends GatewayFramework implements GatewayModule {
 		$_['custom']				= $Shopping->session;
 
 		// Options
-		if ( str_true($this->settings['pdtverify']) )
+		if ( Shopp::str_true($this->settings['pdtverify']) )
 			$_['return']			= apply_filters( 'shopp_paypalstandard_returnurl', shoppurl(array('rmtpay'=>'PPS','utm_nooverride'=>'1'),'checkout',false) );
 		else $_['return']				= shoppurl(false,'thanks');
 
@@ -601,7 +601,7 @@ class PayPalStandard extends GatewayFramework implements GatewayModule {
 
 		// Verify the message is authentically from PayPal
 		$authentic = false;
-		if (str_true($this->settings['pdtverify'])) {
+		if (Shopp::str_true($this->settings['pdtverify'])) {
 			$pdtstatus = $this->verifypdt();
 			if (!$pdtstatus) {
 				new ShoppError(__('The transaction was not verified by PayPal.','Shopp'),false,SHOPP_DEBUG_ERR);
@@ -869,7 +869,7 @@ class PayPalStandard extends GatewayFramework implements GatewayModule {
 	 **/
 	function verifyipn () {
 
-		if ( str_true($this->settings['testmode']) ) return true;
+		if ( Shopp::str_true($this->settings['testmode']) ) return true;
 
 		$_ = array();
 		$_['cmd'] = "_notify-validate";

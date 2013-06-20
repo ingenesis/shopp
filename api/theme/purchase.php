@@ -187,7 +187,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 				$carriers = Lookup::shipcarriers();
 				$carrier = $carriers[$Event->carrier];
 				if ('carrier' == $name) $string = $carrier->name;
-				if ('tracking' == $name && str_true($link)) return'<a href="'.esc_url(sprintf($carrier->trackurl,$string)).'">'.esc_html($string).'</a>';
+				if ('tracking' == $name && Shopp::str_true($link)) return'<a href="'.esc_url(sprintf($carrier->trackurl,$string)).'">'.esc_html($string).'</a>';
 			}
 
 			return esc_html($string);
@@ -297,7 +297,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 
 	static function item_addons_list ($result, $options, $O) {
 		$item = current($O->purchased);
-		if (empty($item->addons) || (is_string($item->addons) && !str_true($item->addons))) return false;
+		if (empty($item->addons) || (is_string($item->addons) && !Shopp::str_true($item->addons))) return false;
 		$defaults = array(
 			'prices' => "on",
 			'download' => __('Download','Shopp'),

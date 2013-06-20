@@ -343,7 +343,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	static function has_faceted_menu ($result, $options, $O) {
 		if ( ! is_a($O, 'ProductCategory') ) return false;
 		if ( empty($O->meta) ) $O->load_meta();
-		if ( property_exists($O,'facetedmenus') && str_true($O->facetedmenus) ) {
+		if ( property_exists($O,'facetedmenus') && Shopp::str_true($O->facetedmenus) ) {
 			$O->load_facets();
 			return true;
 		}

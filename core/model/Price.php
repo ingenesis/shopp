@@ -177,7 +177,7 @@ class Price extends DatabaseObject {
 	 **/
 	function discounts () {
 		if (empty($this->discounts)) return false;
-		$pricetag = str_true($this->sale)?$this->saleprice:$this->price;
+		$pricetag = Shopp::str_true($this->sale)?$this->saleprice:$this->price;
 		$discount = Promotion::pricing($pricetag,$this->discounts);
 		$this->promoprice = $discount->pricetag;
 		if ($discount->freeship) $this->freeship = true;

@@ -1188,7 +1188,7 @@ abstract class ShoppReportExportFramework {
 
 		$settings = shopp_setting("{$report}_report_export");
 
-		$this->headings = str_true($settings['headers']);
+		$this->headings = Shopp::str_true($settings['headers']);
 		$this->selected = $settings['columns'];
 
 	}

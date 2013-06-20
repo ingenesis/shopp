@@ -91,10 +91,10 @@ class ProductCollection implements Iterator {
 		if ( ! is_array($where) ) return shopp_debug('The "where" parameter for ' . __METHOD__ .' must be formatted as an array.');
 
 		// Inventory filtering
-		if ( shopp_setting_enabled('inventory') && ((is_null($nostock) && !shopp_setting_enabled('outofstock_catalog')) || (!is_null($nostock) && !str_true($nostock))) )
+		if ( shopp_setting_enabled('inventory') && ((is_null($nostock) && !shopp_setting_enabled('outofstock_catalog')) || (!is_null($nostock) && !Shopp::str_true($nostock))) )
 			$where[] = "( s.inventory='off' OR (s.inventory='on' AND s.stock > 0) )";
 
-		if (str_true($published)) $where[] = "p.post_status='publish'";
+		if (Shopp::str_true($published)) $where[] = "p.post_status='publish'";
 
 		// Multiple taxonomy queries
 		if ( is_array($taxquery) ) {
@@ -159,7 +159,7 @@ class ProductCollection implements Iterator {
 
 		// Pagination
 		if (empty($limit)) {
-			if ($this->pagination > 0 && is_numeric($this->page) && str_true($pagination)) {
+			if ($this->pagination > 0 && is_numeric($this->page) && Shopp::str_true($pagination)) {
 				if( !$this->pagination || $this->pagination < 0 )
 					$this->pagination = $hardlimit;
 				$start = ($this->pagination * ($this->page-1));
@@ -356,7 +356,7 @@ class ProductCollection implements Iterator {
 		}
 
 		$pricing = "";
-		if (str_true($product->sale)) {
+		if (Shopp::str_true($product->sale)) {
 			if ($taxrate) $product->min['saleprice'] += $product->min['saleprice'] * $taxrate;
 			if ($product->min['saleprice'] != $product->max['saleprice'])
 				$pricing .= __("from ",'Shopp');
@@ -387,7 +387,7 @@ class ProductCollection implements Iterator {
 		$item['g:condition'] = 'new';
 		$item['g:availability'] = shopp_setting_enabled('inventory') && $product->outofstock?'out of stock':'in stock';
 
-		$price = floatvalue(str_true($product->sale)?$product->min['saleprice']:$product->min['price']);
+		$price = floatvalue(Shopp::str_true($product->sale)?$product->min['saleprice']:$product->min['price']);
 		if (!empty($price))	{
 			$item['g:price'] = $price;
 			$item['g:price_type'] = "starting";
@@ -804,7 +804,7 @@ class ProductCategory extends ProductTaxonomy {
 		$this->taxonomy = $taxonomy? $taxonomy : self::$taxon;
 		parent::__construct($id,$key);
 		if (!empty($this->id)) $this->load_meta();
-		if (isset($this->facetedmenus) && str_true($this->facetedmenus))
+		if (isset($this->facetedmenus) && Shopp::str_true($this->facetedmenus))
 			$this->filters();
 	}
 
@@ -866,7 +866,7 @@ class ProductCategory extends ProductTaxonomy {
 
 			if (isset($spec['slug'])) $slug = $spec['slug'];
 			else $slug = sanitize_title_with_dashes($spec['name']);
-			$selected = isset($_GET[$slug]) && str_true(get_query_var('s_ff')) ? $_GET[$slug] : false;
+			$selected = isset($_GET[$slug]) && Shopp::str_true(get_query_var('s_ff')) ? $_GET[$slug] : false;
 
 			$Facet = new ProductCategoryFacet();
 			$Facet->name = $spec['name'];

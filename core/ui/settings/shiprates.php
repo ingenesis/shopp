@@ -59,7 +59,7 @@
 			foreach ($shiprates as $setting => $module):
 				$shipping = shopp_setting($setting);
 				$service = $Shipping->modules[$module]->name;
-				if (str_true($shipping['fallback'])) $service = '<big title="'.__('Fallback shipping real-time rate lookup failures','Shopp').'">&#9100;</big>  '.$service;
+				if (Shopp::str_true($shipping['fallback'])) $service = '<big title="'.__('Fallback shipping real-time rate lookup failures','Shopp').'">&#9100;</big>  '.$service;
 				$destinations = array();
 
 				$min = $max = false;

@@ -405,7 +405,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		$attrs = array("accesskey","alt","checked","class","disabled","format",
 			"minlength","maxlength","readonly","size","src","tabindex",
 			"title");
-		if (str_true($options['value'])) $options['checked'] = 'checked';
+		if (Shopp::str_true($options['value'])) $options['checked'] = 'checked';
 		$input = '<input type="hidden" name="marketing" value="no" />';
 		$input .= '<input type="checkbox" name="marketing" id="marketing" value="yes" '.inputattrs($options,$attrs).' />';
 		return $input;

@@ -110,7 +110,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 * @return string The PayPal payment URL
 	 **/
 	function url ($url=false) {
-		if ( str_true($this->settings['testmode']) ) return $this->sandboxurl;
+		if ( Shopp::str_true($this->settings['testmode']) ) return $this->sandboxurl;
 		else return $this->liveurl;
 	}
 
@@ -123,7 +123,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 * @return string The PayPal API server URL
 	 **/
 	function apiurl ($url=false) {
-		if ( str_true($this->settings['testmode']) ) return $this->sandboxapi;
+		if ( Shopp::str_true($this->settings['testmode']) ) return $this->sandboxapi;
 		else return $this->liveapi;
 	}
 
@@ -622,7 +622,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 * @return boolean True for an authentic message, false otherwise
 	 **/
 	function verifyipn () {
-		if ( str_true($this->settings['testmode']) ) return true;
+		if ( Shopp::str_true($this->settings['testmode']) ) return true;
 
 		$_ = array();
 		$_['cmd'] = '_notify-validate';

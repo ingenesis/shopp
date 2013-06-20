@@ -49,7 +49,7 @@
 			<div id="export-columns" class="multiple-select">
 				<ul>
 					<li<?php $even = true; if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="checkbox" name="selectall_columns" id="selectall_columns" /><label for="selectall_columns"><strong><?php _e('Select All','Shopp'); ?></strong></label></li>
-					<li<?php if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="hidden" name="settings[<?php echo $report; ?>_report_export][headers]" value="off" /><input type="checkbox" name="settings[<?php echo $report; ?>_report_export][headers]" id="export_headers" value="on" <?php echo str_true($settings['headers'])?' checked="checked"':''; ?> /><label for="export_headers"><strong><?php _e('Include column headings','Shopp'); ?></strong></label></li>
+					<li<?php if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="hidden" name="settings[<?php echo $report; ?>_report_export][headers]" value="off" /><input type="checkbox" name="settings[<?php echo $report; ?>_report_export][headers]" id="export_headers" value="on" <?php echo Shopp::str_true($settings['headers'])?' checked="checked"':''; ?> /><label for="export_headers"><strong><?php _e('Include column headings','Shopp'); ?></strong></label></li>
 					<?php
 					$even = true;
 					foreach ($columns as $name => $label): ?>

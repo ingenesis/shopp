@@ -59,7 +59,7 @@ class Purchase extends DatabaseObject {
 		foreach ( $this->purchased as &$purchase) {
 			if (!empty($purchase->download)) $this->downloads = true;
 			if ('Shipped' == $purchase->type) $this->shipable = true;
-			if ( isset($purchase->inventory) && str_true($purchase->inventory) ) $this->stocked = true;
+			if ( isset($purchase->inventory) && Shopp::str_true($purchase->inventory) ) $this->stocked = true;
 			if ( is_string($purchase->data) ) $purchase->data = unserialize($purchase->data);
 			if ('yes' == $purchase->addons) {
 				$purchase->addons = new ObjectMeta($purchase->id,'purchased','addon');
@@ -68,7 +68,7 @@ class Purchase extends DatabaseObject {
 					$addon = $Addon->value;
 					if ( 'Download' == $addon->type ) $this->downloads = true;
 					if ( 'Shipped' == $addon->type ) $this->shipable = true;
-					if ( str_true($addon->inventory) ) $this->stocked = true;
+					if ( Shopp::str_true($addon->inventory) ) $this->stocked = true;
 				}
 			}
 		}
@@ -171,7 +171,7 @@ class Purchase extends DatabaseObject {
 		foreach ( $Purchase->purchased as $Purchased ) {
 			if ( is_a($Purchased->addons, 'ObjectMeta') && ! empty($Purchased->addons->meta) ) {
 				foreach ( $Purchased->addons->meta as $index => $Addon ) {
-					if ( ! str_true($Addon->value->inventory) ) continue;
+					if ( ! Shopp::str_true($Addon->value->inventory) ) continue;
 
 					$allocated[$Addon->value->id] = new PurchaseStockAllocation(array(
 						'purchased' => $Purchased->id,
@@ -187,7 +187,7 @@ class Purchase extends DatabaseObject {
 					);
 				}
 			}
-			if ( ! str_true($Purchased->inventory) ) continue;
+			if ( ! Shopp::str_true($Purchased->inventory) ) continue;
 
 			$allocated[$Purchased->id] = new PurchaseStockAllocation(array(
 				'purchased' => $Purchased->id,

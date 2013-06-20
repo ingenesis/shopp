@@ -97,9 +97,9 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults, $options);
 		extract($options);
 
-		if ( str_true($number) ) return $result;
-		if ( str_true($money)  ) $result = money( roundprice($result) );
-		if ( str_true($wrap)   ) return '<span class="shopp-cart cart-' . strtolower($property) . '">' . $result . '</span>';
+		if ( Shopp::str_true($number) ) return $result;
+		if ( Shopp::str_true($money)  ) $result = money( roundprice($result) );
+		if ( Shopp::str_true($wrap)   ) return '<span class="shopp-cart cart-' . strtolower($property) . '">' . $result . '</span>';
 
 		return $result;
 	}
@@ -354,7 +354,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		foreach ($markets as $iso => $country) $countries[$iso] = $country;
 		if ( ! empty($Shipping->country) ) $selected = $Shipping->country;
 		else $selected = $base['country'];
-		$postcode = ( str_true($postcode) || $O->showpostcode );
+		$postcode = ( Shopp::str_true($postcode) || $O->showpostcode );
 
 		$button = isset($button) ? esc_attr($button) : __('Estimate Shipping & Taxes', 'Shopp');
 

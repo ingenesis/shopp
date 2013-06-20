@@ -155,10 +155,10 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 		foreach ( $O as $method ) {
 			$cost = money($method->amount);
 			$delivery = false;
-			if ( str_true($times) && ! empty($method->delivery) ) {
+			if ( Shopp::str_true($times) && ! empty($method->delivery) ) {
 				$delivery = self::_delivery_format($method->delivery, $options).' ';
 			}
-			if ( $selected_option && str_true($difference) ) {
+			if ( $selected_option && Shopp::str_true($difference) ) {
 				$diff = $method->amount - $selected_option->amount;
 				$pre = $diff < 0 ? '-' : '+';
 				$cost = $pre.money(abs($diff));

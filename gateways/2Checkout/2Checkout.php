@@ -123,7 +123,7 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 
 	function returned () {
 
-		if (str_true($this->settings['verify']) && !$this->verify($_POST['key'])) {
+		if (Shopp::str_true($this->settings['verify']) && !$this->verify($_POST['key'])) {
 			new ShoppError(__('The order submitted to 2Checkout could not be verified.','Shopp'),'2co_validation_error',SHOPP_TRXN_ERR);
 			shopp_redirect(shoppurl(false,'checkout'));
 
@@ -188,7 +188,7 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 	}
 
 	function verify ($key) {
-		if ( str_true($this->settings['testmode']) ) return true;
+		if ( Shopp::str_true($this->settings['testmode']) ) return true;
 		$order = $_POST['order_number'];
 
 		$verification = strtoupper(md5($this->settings['secret'].

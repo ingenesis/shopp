@@ -48,7 +48,7 @@ function shopp_setting ( $name ) {
  **/
 function shopp_setting_enabled ( $name ) {
 	$setting = shopp_setting($name);
-	return str_true($setting);
+	return Shopp::str_true($setting);
 }
 
 /**

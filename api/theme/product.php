@@ -130,10 +130,10 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		$addon = current($O->prices);
 
 		$taxrate = shopp_taxrate($taxes,$addon->tax,$O);
-		$taxes = is_null($taxes) ? self::_include_tax($O) : str_true($taxes);
+		$taxes = is_null($taxes) ? self::_include_tax($O) : Shopp::str_true($taxes);
 		if ( ! $taxes ) $taxrate = 0;
 
-		$weightunit = str_true($units) ? shopp_setting('weight_unit') : '';
+		$weightunit = Shopp::str_true($units) ? shopp_setting('weight_unit') : '';
 
 		$_ = array();
 		if (array_key_exists('id',$options)) 		$_[] = $addon->id;
@@ -142,7 +142,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		if (array_key_exists('sku',$options)) 		$_[] = $addon->sku;
 		if (array_key_exists('price',$options)) 	$_[] = money($addon->price+($addon->price*$taxrate));
 		if (array_key_exists('saleprice',$options)) {
-			if (str_true($promos)) $_[] = money($addon->promoprice+($addon->promoprice*$taxrate));
+			if (Shopp::str_true($promos)) $_[] = money($addon->promoprice+($addon->promoprice*$taxrate));
 			else $_[] = money($addon->saleprice+($addon->saleprice*$taxrate));
 		}
 		if (array_key_exists('stock',$options)) 	$_[] = $addon->stock;
@@ -208,7 +208,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			if (!empty($before_menu)) $_[] = $before_menu;
 			$menuid = $idprefix.$O->id;
 
-			if (str_true($label)) $_[] = '<label for="'.esc_attr($menuid).'">'. __('Options','Shopp').': </label> ';
+			if (Shopp::str_true($label)) $_[] = '<label for="'.esc_attr($menuid).'">'. __('Options','Shopp').': </label> ';
 
 			$_[] = '<select name="products['.$O->id.'][price]" id="'.esc_attr($menuid).'">';
 			if (!empty($defaults)) $_[] = '<option value="">'.$defaults.'</option>';
@@ -217,11 +217,11 @@ class ShoppProductThemeAPI implements ShoppAPI {
 				if ($pricetag->context != "addon") continue;
 
 				if (!is_null($taxes))
-					$taxrate = shopp_taxrate(str_true($taxes),$pricetag->tax,$O);
+					$taxrate = shopp_taxrate(Shopp::str_true($taxes),$pricetag->tax,$O);
 				else $taxrate = shopp_taxrate($taxes,$pricetag->tax,$O);
 
-				$currently = str_true($pricetag->sale)?$pricetag->promoprice:$pricetag->price;
-				$disabled = str_true($pricetag->inventory) && $pricetag->stock == 0?' disabled="disabled"':'';
+				$currently = Shopp::str_true($pricetag->sale)?$pricetag->promoprice:$pricetag->price;
+				$disabled = Shopp::str_true($pricetag->inventory) && $pricetag->stock == 0?' disabled="disabled"':'';
 
 				if ($taxrate > 0) $currently = $currently+($currently*$taxrate);
 
@@ -249,7 +249,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			foreach ($addons as $id => $menu) {
 				if (!empty($before_menu)) $_[] = $before_menu;
 				$menuid = $idprefix.$menu['id'];
-				if (str_true($label)) $_[] = '<label for="'.esc_attr($menuid).'">'.esc_html($menu['name']).'</label> ';
+				if (Shopp::str_true($label)) $_[] = '<label for="'.esc_attr($menuid).'">'.esc_html($menu['name']).'</label> ';
 				$category_class = shopp('collection','get-slug');
 				$classes = array($class,$category_class,'addons');
 
@@ -260,10 +260,10 @@ class ShoppProductThemeAPI implements ShoppAPI {
 					$pricetag = $pricing[ $O->optionkey(array($option['id'])) ];
 
 					if (!is_null($taxes))
-						$taxrate = shopp_taxrate(str_true($taxes),$pricetag->tax,$O);
+						$taxrate = shopp_taxrate(Shopp::str_true($taxes),$pricetag->tax,$O);
 					else $taxrate = shopp_taxrate($taxes,$pricetag->tax,$O);
 
-					$currently = str_true($pricetag->sale) ? $pricetag->promoprice : $pricetag->price;
+					$currently = Shopp::str_true($pricetag->sale) ? $pricetag->promoprice : $pricetag->price;
 					if ($taxrate > 0) $currently = $currently+($currently*$taxrate);
 					$_[] = '<option value="'.$pricetag->id.'">'.$option['name'].' (+'.money($currently).')</option>';
 				}
@@ -304,7 +304,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 		$string .= '<input type="hidden" name="products['.$O->id.'][product]" value="'.$O->id.'" />';
 
-		if ( ! str_true($O->variants) && ! empty($O->prices) ) { // If variants are off, locate the default price line
+		if ( ! Shopp::str_true($O->variants) && ! empty($O->prices) ) { // If variants are off, locate the default price line
 			foreach ($O->prices as $price) {
 				if ('product' == $price->context) {
 					$default = $price; break;
@@ -394,7 +394,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 	static function free_shipping ($result, $options, $O) {
 		if (empty($O->prices)) $O->load_data(array('prices'));
-		return str_true($O->freeship);
+		return Shopp::str_true($O->freeship);
 	}
 
 	static function gallery ($result, $options, $O) {
@@ -493,7 +493,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		if ($maxwidth == 0) $maxwidth = $width;
 		if ($maxheight == 0) $maxheight = $height;
 
-		$p_link = str_true($p_link);
+		$p_link = Shopp::str_true($p_link);
 
 		// Setup preview images
 		foreach ($O->images as $img) {
@@ -576,7 +576,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 	static function has_addons ($result, $options, $O) {
 		reset($O->prices);
-		return ( str_true($O->addons) && ! empty($O->options['a']) );
+		return ( Shopp::str_true($O->addons) && ! empty($O->options['a']) );
 	}
 
 	static function has_categories ($result, $options, $O) {
@@ -602,7 +602,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	}
 
 	static function has_savings ($result, $options, $O) {
-		return ( str_true($O->sale) && $O->min['saved'] > 0 );
+		return ( Shopp::str_true($O->sale) && $O->min['saved'] > 0 );
 	}
 
 	static function has_specs ($result, $options, $O) {
@@ -631,7 +631,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 	static function has_variations ($result, $options, $O) {
 
-		if ( ! str_true($O->variants) ) return false;
+		if ( ! Shopp::str_true($O->variants) ) return false;
 
 		// Only load again if needed
 		$load = array();
@@ -752,7 +752,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	static function on_sale ($result, $options, $O) {
 		if (empty($O->prices)) $O->load_data(array('prices','summary'));
 		if (empty($O->prices)) return false;
-		return str_true($O->sale);
+		return Shopp::str_true($O->sale);
 	}
 
 	static function out_of_stock ($result, $options, $O) {
@@ -777,12 +777,12 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults, $options);
 		extract($options);
 
-		if ( ! is_null($taxes) ) $taxes = str_true($taxes);
+		if ( ! is_null($taxes) ) $taxes = Shopp::str_true($taxes);
 
-		if ( ! str_true($O->sale) ) $property = 'price';
+		if ( ! Shopp::str_true($O->sale) ) $property = 'price';
 
 		// Handle inclusive/exclusive tax presentation options (product editor setting or api option)
-		$taxes = is_null($taxes) ? self::_include_tax($O) : str_true( $taxes );
+		$taxes = is_null($taxes) ? self::_include_tax($O) : Shopp::str_true( $taxes );
 
 		$min = isset($O->min[ $property ]) ? $O->min[ $property ] : false;
 		$taxmin = isset($O->min[ $property . '_tax' ]) ? $O->min[ $property . '_tax' ] : false; // flag to apply tax to min price (from summary)
@@ -794,9 +794,9 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 		if ( ! $taxes ) $taxrate = 0;
 
-		if ( $min == $max || ! empty($starting) || str_true($low) ) {
+		if ( $min == $max || ! empty($starting) || Shopp::str_true($low) ) {
 			$prices = array($min + $mintaxrate);
-		} elseif ( str_true($high) ) {
+		} elseif ( Shopp::str_true($high) ) {
 			$prices = array($max + $maxtaxrate);
 		} else {
 			$prices = array(
@@ -806,8 +806,8 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		}
 
 		$prices = array_map('roundprice', $prices);
-		if ( str_true($number)  ) return join($separator, $prices);
-		if ( str_true($money)   ) $prices = array_map('money', $prices);
+		if ( Shopp::str_true($number)  ) return join($separator, $prices);
+		if ( Shopp::str_true($money)   ) $prices = array_map('money', $prices);
 		if ( ! empty($starting) && $min != $max ) $prices = "$starting {$prices[0]}";
 
 		if ( is_array($prices) ) return join($separator, $prices);
@@ -857,7 +857,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 		if ("before" == $labelpos) $_[] = $labeling;
 		if ("menu" == $input) {
-			if (str_true($O->inventory) && isset($O->max['stock']) && $O->max['stock'] == 0) return "";
+			if (Shopp::str_true($O->inventory) && isset($O->max['stock']) && $O->max['stock'] == 0) return "";
 
 			if (strpos($options,",") !== false) $options = explode(",",$options);
 			else $options = array($options);
@@ -873,19 +873,19 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			$_[] = '<select name="products['.$O->id.'][quantity]" id="quantity-'.$O->id.'">';
 			foreach ($qtys as $qty) {
 				$amount = $qty;
-				if ( $variation && 'Donation' == $variation->type && str_true($variation->donation['var']) ) {
+				if ( $variation && 'Donation' == $variation->type && Shopp::str_true($variation->donation['var']) ) {
 					if ($variation->donation['min'] == "on" && $amount < $variation->price) continue;
 					$amount = money($amount);
 					$value = $variation->price;
 				} else {
-					if (str_true($O->inventory) && $amount > $O->max['stock']) continue;
+					if (Shopp::str_true($O->inventory) && $amount > $O->max['stock']) continue;
 				}
 				$selected = ($qty == $value ? ' selected="selected"' : '');
 				$_[] = '<option'.$selected.' value="'.$qty.'">'.$amount.'</option>';
 			}
 			$_[] = '</select>';
 		} elseif (valid_input($input)) {
-			if (  $variation && 'Donation' == $variation->type && str_true($variation->donation['var']) ) {
+			if (  $variation && 'Donation' == $variation->type && Shopp::str_true($variation->donation['var']) ) {
 				if ($variation->donation['min']) $_options['value'] = $variation->price;
 				$_options['class'] .= " currency";
 			}
@@ -1073,12 +1073,12 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults,$options);
 		extract($options,EXTR_SKIP);
 
-		$weightunit = str_true($units) ? shopp_setting('weight_unit') : '';
+		$weightunit = Shopp::str_true($units) ? shopp_setting('weight_unit') : '';
 
 		$variation = current($O->prices);
 
 		$taxrate = shopp_taxrate($taxes,$variation->tax,$O);
-		$taxes = is_null($taxes) ? self::_include_tax($O) : str_true($taxes);
+		$taxes = is_null($taxes) ? self::_include_tax($O) : Shopp::str_true($taxes);
 		if ( ! $taxes ) $taxrate = 0;
 
 		$_ = array();
@@ -1088,16 +1088,16 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		if (array_key_exists('sku',$options))		$_[] = $variation->sku;
 		if (array_key_exists('price',$options)) 	$_[] = money($variation->price+($variation->price*$taxrate));
 		if (array_key_exists('saleprice',$options)) {
-			if (str_true($promos)) $_[] = money($variation->promoprice+($variation->promoprice*$taxrate));
+			if (Shopp::str_true($promos)) $_[] = money($variation->promoprice+($variation->promoprice*$taxrate));
 			else $_[] = money($variation->saleprice+($variation->saleprice*$taxrate));
 		}
 		if (array_key_exists('stock',$options)) 	$_[] = $variation->stock;
 		if (array_key_exists('weight',$options)) 	$_[] = round($variation->weight, 3) . ($weightunit ? " $weightunit" : false);
 		if (array_key_exists('shipfee',$options)) 	$_[] = money(floatvalue($variation->shipfee));
-		if (array_key_exists('sale',$options)) 		return str_true($variation->sale);
-		if (array_key_exists('shipping',$options))	return str_true($variation->shipping);
-		if (array_key_exists('tax',$options))		return str_true($variation->tax);
-		if (array_key_exists('inventory',$options))	return str_true($variation->inventory);
+		if (array_key_exists('sale',$options)) 		return Shopp::str_true($variation->sale);
+		if (array_key_exists('shipping',$options))	return Shopp::str_true($variation->shipping);
+		if (array_key_exists('tax',$options))		return Shopp::str_true($variation->tax);
+		if (array_key_exists('inventory',$options))	return Shopp::str_true($variation->inventory);
 
 		return join($separator,$_);
 	}
@@ -1141,7 +1141,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults,$options);
 		extract($options);
 
-		$taxes = is_null($taxes) ? self::_include_tax($O) : str_true($taxes);
+		$taxes = is_null($taxes) ? self::_include_tax($O) : Shopp::str_true($taxes);
 
 		if ('single' == $mode) {
 			if (!empty($options['before_menu'])) $string .= $options['before_menu']."\n";
@@ -1156,8 +1156,8 @@ class ShoppProductThemeAPI implements ShoppAPI {
 				$taxrate = shopp_taxrate($taxes,$pricing->tax);
 				if ( ! $taxes ) $taxrate = 0;
 
-				$currently = str_true($pricing->sale)?$pricing->promoprice:$pricing->price;
-				$disabled = str_true($pricing->inventory) && $pricing->stock == 0?' disabled="disabled"':'';
+				$currently = Shopp::str_true($pricing->sale)?$pricing->promoprice:$pricing->price;
+				$disabled = Shopp::str_true($pricing->inventory) && $pricing->stock == 0?' disabled="disabled"':'';
 
 				if ($taxes && $taxrate > 0) $currently = $currently+($currently*$taxrate);
 
@@ -1166,10 +1166,10 @@ class ShoppProductThemeAPI implements ShoppAPI {
 				if ($pricing->type != 'Donation')
 					$_->p = money($currently);
 				$_->l = $pricing->label;
-				$_->i = str_true($pricing->inventory);
+				$_->i = Shopp::str_true($pricing->inventory);
 				if ($_->i) $_->s = $pricing->stock;
 				$_->u = $pricing->sku;
-				$_->tax = str_true($pricing->tax);
+				$_->tax = Shopp::str_true($pricing->tax);
 				$_->t = $pricing->type;
 				if ($pricing->promoprice != $pricing->price)
 					$_->r = money($pricing->price);
@@ -1199,11 +1199,11 @@ class ShoppProductThemeAPI implements ShoppAPI {
 				$discount = 100-round($pricing->promoprice*100/$pricing->price);
 				$_ = new StdClass();
 				if ($pricing->type != 'Donation')
-					$_->p = (float)apply_filters('shopp_product_variant_price', (str_true($pricing->sale) ? $pricing->promoprice : $pricing->price) );
-				$_->i = str_true($pricing->inventory);
+					$_->p = (float)apply_filters('shopp_product_variant_price', (Shopp::str_true($pricing->sale) ? $pricing->promoprice : $pricing->price) );
+				$_->i = Shopp::str_true($pricing->inventory);
 				$_->s = $_->i ? (int)$pricing->stock : false;
 				$_->u = $pricing->sku;
-				$_->tax = str_true($pricing->tax);
+				$_->tax = Shopp::str_true($pricing->tax);
 				$_->t = $pricing->type;
 				if ($pricing->promoprice != $pricing->price)
 					$_->r = $pricing->price;
@@ -1303,7 +1303,7 @@ new ProductOptionsMenus(<?php printf("'select%s.product%d.options'",$collection_
 	}
 
 	static function _include_tax ($O) {
-		return ( shopp_setting_enabled('tax_inclusive') && ! str_true($O->excludetax) );
+		return ( shopp_setting_enabled('tax_inclusive') && ! Shopp::str_true($O->excludetax) );
 	}
 
 }

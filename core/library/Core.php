@@ -1011,21 +1011,21 @@ abstract class ShoppCore {
 			switch($key) {
 				case "class": $classes .= " $value"; break;
 				case "checked":
-					if (str_true($value)) $string .= ' checked="checked"';
+					if (Shopp::str_true($value)) $string .= ' checked="checked"';
 					break;
 				case "disabled":
-					if (str_true($value)) {
+					if (Shopp::str_true($value)) {
 						$classes .= " disabled";
 						$string .= ' disabled="disabled"';
 					}
 					break;
 				case "readonly":
-					if (str_true($value)) {
+					if (Shopp::str_true($value)) {
 						$classes .= " readonly";
 						$string .= ' readonly="readonly"';
 					}
 					break;
-				case "required": if (str_true($value)) $classes .= " required"; break;
+				case "required": if (Shopp::str_true($value)) $classes .= " required"; break;
 				case "minlength": $classes .= " min$value"; break;
 				case "format": $classes .= " $value"; break;
 				default:
@@ -1870,7 +1870,7 @@ abstract class ShoppCore {
 
 		if ( shopp_setting_enabled('tax_inclusive') ) $rated = true;
 		if ( ! is_null($override) ) $rated = $override;
-		if ( ! str_true($taxprice) ) $rated = false;
+		if ( ! Shopp::str_true($taxprice) ) $rated = false;
 
 		if ($rated) $taxrate = $Taxes->rate($Item);
 		return $taxrate;

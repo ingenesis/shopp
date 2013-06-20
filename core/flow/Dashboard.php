@@ -28,7 +28,7 @@ class ShoppAdminDashboard {
 	function init () {
 		$dashboard = shopp_setting('dashboard');
 
-		if ( ! ( current_user_can('shopp_financials') && str_true($dashboard) ) ) return false;
+		if ( ! ( current_user_can('shopp_financials') && Shopp::str_true($dashboard) ) ) return false;
 
 		wp_add_dashboard_widget('dashboard_shopp_stats', __('Sales Stats','Shopp'), array('ShoppAdminDashboard','stats_widget'),
 			array('all_link' => '','feed_link' => '','width' => 'half','height' => 'single')

@@ -189,7 +189,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 
 		$imgtag = '<img src="'.$src.'"'.$titleattr.' alt="'.$alt.'" width="'.$width_a.'" height="'.$height_a.'" '.$classes.' />';
 
-		if (str_true($zoom))
+		if (Shopp::str_true($zoom))
 			return '<a href="'.shoppurl($img->id,'images').'/'.$img->filename.'" class="'.$zoomfx.'" rel="product-'.$O->id.'"'.$titleattr.'>'.$imgtag.'</a>';
 
 		return $imgtag;
@@ -346,7 +346,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		if ( is_a($Storefront->Requested, 'ProductCollection') ) ShoppCollection($Storefront->Requested);
 		else ShoppCollection($reset);
 
-		if (isset($options['wrap']) && str_true($options['wrap'])) $content = Storefront::wrapper($content);
+		if (isset($options['wrap']) && Shopp::str_true($options['wrap'])) $content = Storefront::wrapper($content);
 
 		return $content;
 	}
@@ -383,7 +383,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		$termargs = array('hide_empty' => 0,'fields'=>'id=>parent','orderby'=>$orderby,'order'=>$order);
 
 		$baseparent = 0;
-		if (str_true($section)) {
+		if (Shopp::str_true($section)) {
 			if (!isset(ShoppCollection()->id)) return false;
 			$sectionterm = ShoppCollection()->id;
 			if (ShoppCollection()->parent == 0) $baseparent = $sectionterm;
@@ -407,10 +407,10 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		$levellimit = $level;
 		$exclude = explode(",",$exclude);
 		$classes = ' class="shopp-categories-menu'.(empty($class)?'':' '.$class).'"';
-		$wraplist = str_true($wraplist);
-		$hierarchy = str_true($hierarchy);
+		$wraplist = Shopp::str_true($wraplist);
+		$hierarchy = Shopp::str_true($hierarchy);
 
-		if (str_true($dropdown)) {
+		if (Shopp::str_true($dropdown)) {
 			if (!isset($default)) $default = __('Select category&hellip;','Shopp');
 			$string .= $title;
 			$string .= '<form action="/" method="get" class="category-list-menu"><select name="shopp_cats" '.$classes.'>';
@@ -424,7 +424,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 						continue;
 					}
 					if (!empty($category->id) && in_array($category->id,$exclude)) continue; // Skip excluded categories
-					if ($category->count == 0 && !isset($category->smart) && !$category->_children && ! str_true($showall)) continue; // Only show categories with products
+					if ($category->count == 0 && !isset($category->smart) && !$category->_children && ! Shopp::str_true($showall)) continue; // Only show categories with products
 					if ($levellimit && $category->level >= $levellimit) continue;
 
 					if ($hierarchy && $category->level > $level) {
@@ -439,7 +439,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 					if (is_wp_error($link)) $link = '';
 
 					$total = '';
-					if ( str_true($products) && $category->count > 0) $total = ' ('.$category->count.')';
+					if ( Shopp::str_true($products) && $category->count > 0) $total = ' ('.$category->count.')';
 				} else {
 					$category->level = 1;
 					$namespace = get_class_property( 'SmartCollection' ,'namespace');
@@ -506,7 +506,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 				}
 
 				$total = '';
-				if ( str_true($products) && $category->count > 0 ) $total = ' <span>('.$category->count.')</span>';
+				if ( Shopp::str_true($products) && $category->count > 0 ) $total = ' <span>('.$category->count.')</span>';
 
 				$classes = array();
 				if (isset($Collection->slug) && $Collection->slug == $category->slug)
@@ -520,11 +520,11 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 
 				$listing = '';
 
-				if (!empty($link) && ($category->count > 0 || isset($category->smart) || str_true($linkall)))
+				if (!empty($link) && ($category->count > 0 || isset($category->smart) || Shopp::str_true($linkall)))
 					$listing = '<a href="'.$link.'"'.$classes.'>'.esc_html($category->name).($linkcount?$total:'').'</a>'.(!$linkcount?$total:'');
 				else $listing = $category->name;
 
-				if (str_true($showall) ||
+				if (Shopp::str_true($showall) ||
 					$category->count > 0 ||
 					isset($category->smart) ||
 					$category->_children)
@@ -632,7 +632,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 
 		$_ = array();
 		$request = $_SERVER['REQUEST_URI'];
-		if ( str_true($dropdown) ) {
+		if ( Shopp::str_true($dropdown) ) {
 			$_[] = $title;
 			$_[] = '<form action="'.esc_url($request).'" method="get" id="shopp-'.$Collection->slug.'-orderby-menu">';
 			if ( '' == get_option('permalink_structure') ) {
@@ -1032,7 +1032,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 
 		// Convert strings to booleans
 		foreach ($options as $name => &$value)
-			if ( in_array($name, $booleans) ) $value = str_true($value);
+			if ( in_array($name, $booleans) ) $value = Shopp::str_true($value);
 
 		$js = 'var cbo = '.json_encode($options).';';
 		add_storefrontjs($js, true);

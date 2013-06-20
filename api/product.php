@@ -1736,7 +1736,7 @@ function shopp_product_variant_set_price ( $variant = false, $price = 0.0, $cont
 		}
 	}
 
-	if ( shopp_setting_enabled('tax_inclusive') && isset($Price->tax) && str_true($Price->tax) ) {
+	if ( shopp_setting_enabled('tax_inclusive') && isset($Price->tax) && Shopp::str_true($Price->tax) ) {
 		$Product = new Product($Price->product);
 		$taxrate = shopp_taxrate(null,true,$Product);
 		$price = ( floatvalue( $price / ( 1 + $taxrate ) ) );
@@ -1781,7 +1781,7 @@ function shopp_product_variant_set_saleprice ( $variant = false, $flag = false, 
 	if ( $flag ) {
 		$Price->sale = "on";
 
-		if ( shopp_setting_enabled('tax_inclusive') && isset($Price->tax) && str_true($Price->tax) ) {
+		if ( shopp_setting_enabled('tax_inclusive') && isset($Price->tax) && Shopp::str_true($Price->tax) ) {
 			$Product = new Product($Price->product);
 			$taxrate = shopp_taxrate(null,true,$Product);
 			$price = ( floatvalue( $price / ( 1 + $taxrate ) ) );

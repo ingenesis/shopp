@@ -92,7 +92,7 @@ class ShoppSupport {
 		$response = unserialize($response);
 		unset($updates->response);
 
-		if (isset($response->key) && !str_true($response->key)) shopp_set_setting( 'updatekey', array(0) );
+		if (isset($response->key) && !Shopp::str_true($response->key)) shopp_set_setting( 'updatekey', array(0) );
 
 		if (isset($response->addons)) {
 			$updates->response[SHOPP_PLUGINFILE.'/addons'] = $response->addons;

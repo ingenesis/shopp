@@ -758,7 +758,7 @@ class ShoppProductPage extends ShoppPage {
 		// Load product summary data, before checking inventory
 		if (!isset($Product->summed)) $Product->load_data(array('summary'));
 
-		if ( str_true($Product->inventory) && $Product->stock < 1 )
+		if ( Shopp::str_true($Product->inventory) && $Product->stock < 1 )
 			array_unshift($templates, 'product-outofstock.php');
 
 		ob_start();

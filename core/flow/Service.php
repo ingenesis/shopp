@@ -409,7 +409,7 @@ class Service extends AdminController {
 				$Purchase->message['note'] = $message;
 			}
 
-			if (!str_true($_POST['send'])) { // Force the order status
+			if (!Shopp::str_true($_POST['send'])) { // Force the order status
 				shopp_add_order_event($Purchase->id,'notice',array(
 					'user' => $user->ID,
 					'kind' => 'refunded',
@@ -453,7 +453,7 @@ class Service extends AdminController {
 			} else $message = 0;
 
 
-			if (!str_true($_POST['send'])) { // Force the order status
+			if (!Shopp::str_true($_POST['send'])) { // Force the order status
 				shopp_add_order_event($Purchase->id,'notice',array(
 					'user' => $user->ID,
 					'kind' => 'cancelled',

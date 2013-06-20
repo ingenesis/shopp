@@ -100,7 +100,7 @@ class ShoppCheckout {
 
 		// Update guest checkout flag
 		$guest = false;
-		if ( str_true($this->form('guest')) ) $guest = true;
+		if ( Shopp::str_true($this->form('guest')) ) $guest = true;
 		$Customer->guest = apply_filters('shopp_guest_checkout', $guest);
 
 		$this->Register->customer();

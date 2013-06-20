@@ -1475,7 +1475,7 @@ class ShippingPackager implements ShippingPackagingInterface {
 	 **/
 	public function add_item ( $CartItem ) {
 		$Item = new ShippingPackageItem($CartItem, $CartItem->quantity);
-		if ( str_true($Item->packaging) )
+		if ( Shopp::str_true($Item->packaging) )
 			do_action_ref_array('shopp_packager_add_piece', array($Item, $this) );
 		else do_action_ref_array('shopp_packager_add_'.$this->pack, array($Item, $this) );
 	}

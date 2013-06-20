@@ -121,7 +121,7 @@ class ShoppCartItem {
 		}
 
 		// Find single product priceline
-		if ( ! $Price && ! str_true($Product->variants) ) {
+		if ( ! $Price && ! Shopp::str_true($Product->variants) ) {
 			foreach ( $Product->prices as &$Price ) {
 				$stock = true;
 				if ( Shopp::str_true($Price->inventory) && 1 > $Price->stock ) $stock = false;
@@ -130,10 +130,10 @@ class ShoppCartItem {
 		}
 
 		// Find first available variant priceline
-		if ( ! $Price && str_true($Product->variants) ) {
+		if ( ! $Price && Shopp::str_true($Product->variants) ) {
 			foreach ( $Product->prices as &$Price ) {
 				$stock = true;
-				if ( str_true($Price->inventory) && 1 > $Price->stock ) $stock = false;
+				if ( Shopp::str_true($Price->inventory) && 1 > $Price->stock ) $stock = false;
 				if ( 'variation' == $Price->context && 'N/A' != $Price->type && $stock ) break;
 			}
 		}
@@ -170,17 +170,17 @@ class ShoppCartItem {
 		$this->unitprice = $baseprice + $this->addonsum;
 
 		if (shopp_setting_enabled('taxes')) {
-			if (str_true($Price->tax)) $this->taxable[] = $baseprice;
+			if (Shopp::str_true($Price->tax)) $this->taxable[] = $baseprice;
 			$this->istaxed = ( $this->taxable > 0 );
 			$this->includetax = shopp_setting_enabled('tax_inclusive');
-			if ( isset($Product->excludetax) && str_true($Product->excludetax) )
+			if ( isset($Product->excludetax) && Shopp::str_true($Product->excludetax) )
 				$this->includetax = false;
 		}
 
 		if ( 'Donation' == $this->type )
 			$this->donation = $Price->donation;
 
-		$this->inventory = str_true($Price->inventory) && shopp_setting_enabled('inventory');
+		$this->inventory = Shopp::str_true($Price->inventory) && shopp_setting_enabled('inventory');
 
 		$this->data = stripslashes_deep(esc_attrs($data));
 
@@ -195,7 +195,7 @@ class ShoppCartItem {
 		}
 
 		// Map out the selected menu name and option
-		if ( str_true($Product->variants) ) {
+		if ( Shopp::str_true($Product->variants) ) {
 			$selected = explode(',',$this->option->options); $s = 0;
 			$variants = isset($Product->options['v']) ? $Product->options['v'] : $Product->options;
 			foreach ( (array)$variants as $i => $menu ) {
@@ -208,7 +208,7 @@ class ShoppCartItem {
 			}
 		}
 
-		$this->packaging = str_true( shopp_product_meta($Product->id, 'packaging') );
+		$this->packaging = Shopp::str_true( shopp_product_meta($Product->id, 'packaging') );
 
 		if ( ! empty($Price->download) ) $this->download = $Price->download;
 
@@ -222,13 +222,13 @@ class ShoppCartItem {
 				'height' => 0
 			);
 
-			if ( str_true($Price->shipping) ) {
+			if ( Shopp::str_true($Price->shipping) ) {
 				$this->shipfee = $Price->shipfee;
 				if ( isset($Price->dimensions) )
 					$dimensions = array_merge($dimensions,$Price->dimensions);
 			} else $this->freeshipping = true;
 
-			if ( isset($Product->addons) && str_true($Product->addons) ) {
+			if ( isset($Product->addons) && Shopp::str_true($Product->addons) ) {
 				$this->addons($dimensions,$addons,$Product->prices,'dimensions');
 				$this->addons($this->shipfee,$addons,$Product->prices,'shipfee');
 			}
@@ -236,7 +236,7 @@ class ShoppCartItem {
 			foreach ( $dimensions as $dimension => $value ) {
 				$this->$dimension = $value;
 			}
-			if (isset($Product->processing) && str_true($Product->processing)) {
+			if (isset($Product->processing) && Shopp::str_true($Product->processing)) {
 				if (isset($Product->minprocess)) $this->processing['min'] = $Product->minprocess;
 
 				if (isset($Product->maxprocess)) $this->processing['max'] = $Product->maxprocess;
@@ -316,8 +316,8 @@ class ShoppCartItem {
 		$current = $this->quantity;
 		if ( false === $qty ) return $current;
 
-		if ( $this->type == 'Donation' && str_true($this->donation['var']) ) {
-			if ( str_true($this->donation['min']) && floatvalue($qty) < $this->unitprice )
+		if ( $this->type == 'Donation' && Shopp::str_true($this->donation['var']) ) {
+			if ( Shopp::str_true($this->donation['min']) && floatvalue($qty) < $this->unitprice )
 				$this->unitprice = $this->unitprice;
 			else $this->unitprice = floatvalue($qty,false);
 			$this->quantity = 1;
@@ -334,7 +334,7 @@ class ShoppCartItem {
 		if ( ! $this->instock($qty) ) {
 			$levels = array($this->option->stock);
 			foreach ($this->addons as $addon) // Take into account stock levels of any addons
-				if ( str_true($addon->inventory) ) $levels[] = $addon->stock;
+				if ( Shopp::str_true($addon->inventory) ) $levels[] = $addon->stock;
 
 			if ( $qty > $min = min($levels) ) {
 				new ShoppError(__('Not enough of the product is available in stock to fulfill your request.','Shopp'),'item_low_stock');
@@ -356,7 +356,7 @@ class ShoppCartItem {
 	 * @return void
 	 **/
 	public function add ( $qty ) {
-		if ( $this->type == 'Donation' && str_true($this->donation['var']) ) {
+		if ( $this->type == 'Donation' && Shopp::str_true($this->donation['var']) ) {
 			$qty = floatvalue($qty);
 			$this->quantity = $this->unitprice;
 		}
@@ -379,7 +379,7 @@ class ShoppCartItem {
 		$string = '';
 		foreach($this->variants as $option) {
 			if ($option->type == 'N/A') continue;
-			$currently = (str_true($option->sale)?$option->promoprice:$option->price)+$this->addonsum;
+			$currently = (Shopp::str_true($option->sale)?$option->promoprice:$option->price)+$this->addonsum;
 			$difference = (float)($currently+$this->unittax)-($this->unitprice+$this->unittax);
 
 			$price = '';
@@ -389,7 +389,7 @@ class ShoppCartItem {
 			$selected = '';
 			if ($selection == $option->id) $selected = ' selected="selected"';
 			$disabled = '';
-			if ( str_true($option->inventory) && $option->stock < $this->quantity )
+			if ( Shopp::str_true($option->inventory) && $option->stock < $this->quantity )
 				$disabled = ' disabled="disabled"';
 
 			$string .= '<option value="'.$option->id.'"'.$selected.$disabled.'>'.$option->label.$price.'</option>';
@@ -431,19 +431,19 @@ class ShoppCartItem {
 			if (empty($pricing) || !in_array($pricing->id,$addons)) continue;
 			if ('Shipped' == $p->type) $this->shipped = true;
 			if ($property == 'pricing') {
-				$pricing->unitprice = (str_true($p->sale)?$p->promoprice:$p->price);
+				$pricing->unitprice = (Shopp::str_true($p->sale)?$p->promoprice:$p->price);
 				$this->addons[] = $pricing;
 				$sum += $pricing->unitprice;
 
-				if (shopp_setting_enabled('taxes') && str_true($pricing->tax))
+				if (shopp_setting_enabled('taxes') && Shopp::str_true($pricing->tax))
 					$this->taxable[] = $pricing->unitprice;
 
 			} elseif ('dimensions' == $property) {
-				if ( ! str_true($p->shipping) || 'Shipped' != $p->type ) continue;
+				if ( ! Shopp::str_true($p->shipping) || 'Shipped' != $p->type ) continue;
 				foreach ($p->dimensions as $dimension => $value)
 					$sum[$dimension] += $value;
 			} elseif ('shipfee' == $property) {
-				if ( ! str_true($p->shipping) ) continue;
+				if ( ! Shopp::str_true($p->shipping) ) continue;
 				$sum += $pricing->shipfee;
 			} else {
 				if (isset($pricing->$property)) $sum += $pricing->$property;
@@ -542,7 +542,7 @@ class ShoppCartItem {
 		);
 
 		// Build Trial Label
-		if ( str_true($trial) ) {
+		if ( Shopp::str_true($trial) ) {
 			// pick untranlated label
 			$trial_label = ( $trialprice > 0 ? $term_labels['trial'][$trialperiod] : $term_labels['freetrial'][$trialperiod] );
 
@@ -560,7 +560,7 @@ class ShoppCartItem {
 		}
 
 		// pick untranslated label
-		$normal = str_true($trial) ? 'aftertrial' : 'period';
+		$normal = Shopp::str_true($trial) ? 'aftertrial' : 'period';
 		$subscription_label = $term_labels[$normal][$period];
 
 		// pick singular or plural translation
@@ -593,7 +593,7 @@ class ShoppCartItem {
 		if ( $this->inventory ) $ids[] = $this->priceline;
 		if ( ! empty($this->addons) ) {
 			foreach ($this->addons as $addon) {
-				if ( str_true($addon->inventory) )
+				if ( Shopp::str_true($addon->inventory) )
 					$ids[] = $addon->id;
 			}
 		}
@@ -614,7 +614,7 @@ class ShoppCartItem {
 		// Update
 		if ( ! empty($this->addons) ) {
 			foreach ($this->addons as &$Addon) {
-				if ( str_true($addon->inventory) ) {
+				if ( Shopp::str_true($addon->inventory) ) {
 					$Addon->stock -= $this->quantity;
 				}
 			}
@@ -641,7 +641,7 @@ class ShoppCartItem {
 
 			$addon_inventory = false;
 			foreach ($this->addons as $addon) {
-				if ( str_true($addon->inventory) )
+				if ( Shopp::str_true($addon->inventory) )
 					$addon_inventory = true;
 			}
 
@@ -673,7 +673,7 @@ class ShoppCartItem {
 
 		if ( ! empty($this->addons) ) {
 			foreach ($this->addons as $addon) {
-				if ( str_true($addon->inventory) )
+				if ( Shopp::str_true($addon->inventory) )
 					$ids[] = $addon->id;
 			}
 		}
@@ -715,7 +715,7 @@ class ShoppCartItem {
 	 **/
 	public function has_trial () {
 		$trial = false;
-		if ( $this->is_recurring() && str_true($this->option->recurring['trial']) ) $trial = true;
+		if ( $this->is_recurring() && Shopp::str_true($this->option->recurring['trial']) ) $trial = true;
 		return apply_filters('shopp_cartitem_hastrial', $trial, $this);
 	}
 

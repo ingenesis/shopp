@@ -133,7 +133,7 @@
 					'${haslocals}' => $haslocals,
 					'${localrates}' => join('',$localrates),
 					'${instructions}' => $localerror ? '<p class="error">'.$localerror.'</p>' : $instructions,
-					'${compounded}' => str_true($compound) ? 'checked="checked"' : ''
+					'${compounded}' => Shopp::str_true($compound) ? 'checked="checked"' : ''
 				));
 			}
 
@@ -200,7 +200,7 @@
 						'${haslocals}' => $haslocals,
 						'${localrates}' => join('',$localrates),
 						'${errors}' => $localerror ? '<p class="error">'.$localerror.'</p>' : '',
-						'${compounded}' => str_true($compound) ? 'checked="checked"' : '',
+						'${compounded}' => Shopp::str_true($compound) ? 'checked="checked"' : '',
 						'${cancel_href}' => $this->url
 					);
 					if ($conditions) $data['no-conditions'] = '';
