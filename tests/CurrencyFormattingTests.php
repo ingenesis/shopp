@@ -20,11 +20,10 @@
  **/
 class CurrencyFormatting extends ShoppTestCase {
 
-	var $formats = array();
-	var $values = array (0.0123456789,0.123456789,1.234,12.345,123.456,1234.567,12345.678,123456.789,1234567.899);
+	public $formats = array();
+	public $values = array (null, 0.0123456789, 0.123456789, 1.23456789, 12.3456789, 123.456789, 12345.6789, 1234567.899);
 
 	function setUp() {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		parent::setUp();
 
 		$countries = Lookup::countries();
@@ -39,7 +38,7 @@ class CurrencyFormatting extends ShoppTestCase {
 
 	function provider () {
 		return array(
-			//				0.0123456789	0.123456789		1.234			12.345			123.456			 12345.678			1234567.899
+			// 0.0123456789	0.123456789		1.234			12.345			123.456			 12345.678			1234567.899
 			array('CA',		'$0.01',		'$0.12',		'$1.23',		'$12.35',		'$123.46',		'$12,345.68',		'$1,234,567.90'),
 			array('US',		'$0.01',		'$0.12',		'$1.23',		'$12.35',		'$123.46',		'$12,345.68',		'$1,234,567.90'),
 		  array('USAF',		'$0.01',		'$0.12',		'$1.23',		'$12.35',		'$123.46',		'$12,345.68',		'$1,234,567.90'),
@@ -47,7 +46,7 @@ class CurrencyFormatting extends ShoppTestCase {
 			// 'DZ'
 			array('AR',		'$0,01',		'$0,12',		'$1,23',		'$12,35',		'$123,46',		'$12.345,68',		'$1.234.567,90'),
 			array('AW',		'ƒ0.01',		'ƒ0.12',		'ƒ1.23',		'ƒ12.35',		'ƒ123.46',		'ƒ12,345.68',		'ƒ1,234,567.90'),
-			array('AU',		'$0.01',		'$0.12',		'$1.23',		'$12.35',		'$123.46',		'$12 345.68',		'$1 234 567.90'),
+			array('AU',		'$0.01',		'$0.12',		'$1.23',		'$12.35',		'$123.46',		'$12,345.68',		'$1,234,567.90'),
 			array('AT',		'€0.01',		'€0.12',		'€1.23',		'€12.35',		'€123.46',		'€12,345.68',		'€1,234,567.90'),
 			array('BB',		'$0.01',		'$0.12',		'$1.23',		'$12.35',		'$123.46',		'$12,345.68',		'$1,234,567.90'),
 			array('BS',		'$0.01',		'$0.12',		'$1.23',		'$12.35',		'$123.46',		'$12,345.68',		'$1,234,567.90'),
@@ -75,7 +74,7 @@ class CurrencyFormatting extends ShoppTestCase {
 			array('GT',		'Q0.01',		'Q0.12',		'Q1.23',		'Q12.35',		'Q123.46',		'Q12,345.68',		'Q1,234,567.90'),
 			array('HK',		'$0.01',		'$0.12',		'$1.23',		'$12.35',		'$123.46',		'$12,345.68',		'$1,234,567.90'),
 			array('HU',		'0 Ft',			'0 Ft',			'1 Ft',			'12 Ft',		'123 Ft',		'12 346 Ft',		'1 234 568 Ft'),
-			array('IS',		'0 kr.',		'0 kr.',		'1 kr.',		'12 kr.',		'123 kr.',		'12.346 kr.',		'1.234.568 kr.'),
+			array('IS',		'0 kr',		'0 kr',		'1 kr',		'12 kr',		'123 kr',		'12.346 kr',		'1.234.568 kr'),
 			array('IN',		'₨0.01',		'₨0.12',		'₨1.23',		'₨12.35',		'₨123.46',		'₨12,345.68',		'₨12,34,567.90'),
 			array('ID',		'Rp 0,01',		'Rp 0,12',		'Rp 1,23',		'Rp 12,35',		'Rp 123,46',	'Rp 12.345,68',		'Rp 1.234.567,90'),
 			array('IE',		'€0.01',		'€0.12',		'€1.23',		'€12.35',		'€123.46',		'€12,345.68',		'€1,234,567.90'),
@@ -108,7 +107,7 @@ class CurrencyFormatting extends ShoppTestCase {
 			array('KR',		'₩0.01',		'₩0.12',		'₩1.23',		'₩12.35',		'₩123.46',		'₩12,345.68',		'₩1,234,567.90'),
 			array('ES',		'0,01 €',		'0,12 €',		'1,23 €',		'12,35 €',		'123,46 €',		'12.345,68 €',		'1.234.567,90 €'),
 			array('VC',		'EC$0.01',		'EC$0.12',		'EC$1.23',		'EC$12.35',		'EC$123.46',	'EC$12,345.68',		'EC$1,234,567.90'),
-			array('SE',		'0,01 kr',		'0,12 kr',		'1,23 kr',		'12,35 kr',		'123,46 kr',	'12 345,68 kr',		'1 234 567,90 kr'),
+			array('SE',		'0 kr',		'0 kr',		'1 kr',		'12 kr',		'123 kr',	'12 346 kr',		'1 234 568 kr'),
 			array('CH',		"CHF 0.01",		"CHF 0.12",		"CHF 1.23",		"CHF 12.35",	"CHF 123.46",	"CHF 12'345.68",	"CHF 1'234'567.90"),
 			array('TW',		'NT$0.01',		'NT$0.12',		'NT$1.23',		'NT$12.35',		'NT$123.46',	'NT$12,345.68',		'NT$1,234,567.90'),
 			array('TH',		'0.01฿',		'0.12฿',		'1.23฿',		'12.35฿',		'123.46฿',		'12,345.68฿',		'1,234,567.90฿'),
@@ -126,8 +125,10 @@ class CurrencyFormatting extends ShoppTestCase {
      * @dataProvider provider
      */
 	function test_hundredths ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
-		$expected = array_values(compact('hundredths','tenths','whole','tens','hundreds','thousands','millions'));
-		$testid = 0;
+		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
+		$testid = 1;
+		// print_r($this->values);
+		// print_r($expected);
 		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
 	}
 
@@ -135,8 +136,8 @@ class CurrencyFormatting extends ShoppTestCase {
      * @dataProvider provider
      */
 	function test_tenths ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
-		$expected = array_values(compact('hundredths','tenths','whole','tens','hundreds','thousands','millions'));
-		$testid = 1;
+		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
+		$testid = 2;
 		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
 	}
 
@@ -144,8 +145,8 @@ class CurrencyFormatting extends ShoppTestCase {
      * @dataProvider provider
      */
 	function test_whole ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
-		$expected = array_values(compact('hundredths','tenths','whole','tens','hundreds','thousands','millions'));
-		$testid = 1;
+		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
+		$testid = 3;
 		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
 	}
 
@@ -153,8 +154,8 @@ class CurrencyFormatting extends ShoppTestCase {
      * @dataProvider provider
      */
 	function test_tens ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
-		$expected = array_values(compact('hundredths','tenths','whole','tens','hundreds','thousands','millions'));
-		$testid = 1;
+		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
+		$testid = 4;
 		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
 	}
 
@@ -162,8 +163,8 @@ class CurrencyFormatting extends ShoppTestCase {
      * @dataProvider provider
      */
 	function test_hundreds ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
-		$expected = array_values(compact('hundredths','tenths','whole','tens','hundreds','thousands','millions'));
-		$testid = 1;
+		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
+		$testid = 5;
 		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
 	}
 
@@ -171,8 +172,8 @@ class CurrencyFormatting extends ShoppTestCase {
      * @dataProvider provider
      */
 	function test_thousands ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
-		$expected = array_values(compact('hundredths','tenths','whole','tens','hundreds','thousands','millions'));
-		$testid = 1;
+		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
+		$testid = 6;
 		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
 	}
 
@@ -180,18 +181,20 @@ class CurrencyFormatting extends ShoppTestCase {
      * @dataProvider provider
      */
 	function test_millions ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
-		$expected = array_values(compact('hundredths','tenths','whole','tens','hundreds','thousands','millions'));
-		$testid = 1;
+		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
+		$testid = 7;
 		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
 	}
 
 	function currency_assertions ($float,$expected,$code) {
 		$format = $this->formats[$code];
 
-		$formatted = money($float,$format);
-		$this->assertEquals($expected,$formatted,"Formatting failed for country code $code from floating point number");
-		$this->assertEquals($expected,money((string)$float,$format),"Formatting failed for country code $code from a string");
-		$this->assertEquals(round($float,$format['precision']),floatvalue($formatted,true,$format),"Float value failed for country code $code");
+		$formatted = money($float, $format);
+
+		$this->assertEquals($expected, $formatted, "Formatting floating point failed for country code $code");
+		$this->assertEquals($expected, money((string)$float, $format), "Formatting string failed for country code $code");
+
+		$this->assertEquals(round($float, $format['precision']), Shopp::floatval($formatted, true, $format), "Float value failed for country code $code");
 
 		$nf = numeric_format($float,$format['precision'],$format['decimals'],$format['thousands'],$format['grouping']);
 		$this->assertEquals(round($float,$format['precision']),floatvalue($nf,true,$format),"Float value failed to reverse the numeric format of $nf for country code $code ".serialize($format));
@@ -199,5 +202,3 @@ class CurrencyFormatting extends ShoppTestCase {
 	}
 
 } // end CurrencyFormatting class
-
-?>

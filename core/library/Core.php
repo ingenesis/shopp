@@ -931,17 +931,22 @@ abstract class ShoppCore {
 		$float = false;
 		if ( is_float($value) ) $float = $value;
 
-		$value = preg_replace('/[^\d\,\.\·\'\-]/', '', $value); // Remove any non-numeric string data
+		$value = str_replace($currency, '', $value); // Strip the currency symbol
+
 		if ( ! empty($thousands) )
-			$value = preg_replace('/\\'.$thousands.'/', '', $value); // Remove thousands
-		$v = (float)$value;
+			$value = str_replace($thousands, '', $value); // Remove thousands
 
-		if ( '.' == $decimals && $v > 0 ) $float = $v;
+		$value = preg_replace('/[^\d\,\.\·\'\-]/', '', $value); // Remove any non-numeric string data
 
-		if ( false === $float ) {
+		// If we have full-stop decimals, try casting it to skip the funky stuff
+		if ( '.' == $decimals && (float)$$value > 0 ) $float = (float)$value;
+
+		if ( false === $float ) { // Nothing else worked, time to get down and dirty
 			$value = preg_replace('/^\./', '', $value); // Remove any decimals at the beginning of the string
+
 			if ( $precision > 0 ) // Don't convert decimals if not required
 				$value = preg_replace('/\\'.$decimals.'/', '.', $value); // Convert decimal delimter
+
 			$float = (float)$value;
 		}
 
@@ -1474,8 +1479,11 @@ abstract class ShoppCore {
 
 		// Currency symbol
 		$f['cpos'] = true; // True means symbol prefixes number
-		if ( strlen($format) == $de ) $f['currency'] = substr($format, 0, $ds);
-		else {
+		if ( 0 != $ds ) { // If starting digit is not at 0, currency symbol is in front of it
+			$f['currency'] = substr($format, 0, $ds);
+			if ( '#' != substr($format, $de) )
+				$f['decimals'] = substr($format, $de);
+		} else {
 			$currency = substr($format, $de);
 			if ( in_array($currency{0}, $decimals) ) {
 				$f['decimals'] = $currency{0};
