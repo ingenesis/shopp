@@ -251,13 +251,13 @@ class ShoppAjax {
 	}
 
 	function shipping_costs () {
-		if ( ! isset($_GET['method']) ) return;
+		if ( ! isset($_GET['method']) ) die(0);
 		$Order = ShoppOrder();
 
 		$Shiprates = $Order->Shiprates;
 		$selected = $Shiprates->selected();
 
-		if ( ! $selected || $_GET['method'] == $selected->slug ) return;
+		if ( ! $selected || $_GET['method'] == $selected->slug ) die(0);
 
 		$Shiprates->selected( $_GET['method'] );
 

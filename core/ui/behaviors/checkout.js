@@ -51,16 +51,16 @@ jQuery(document).ready(function () {
 		});
 
 	}).change();
-	
+
 	// Add credit card classes to the checkout form
 	billCardtype.change(function () {
 
 		var cardtype = new String( billCardtype.val() ).toLowerCase();
-		
+
 		for (var key in paycards) {
 			if(checkoutForm.hasClass('cardtype-'+key)) checkoutForm.removeClass('cardtype-'+key);
 		}
-		
+
 		checkoutForm.addClass('cardtype-'+cardtype);
 	}).change();
 
@@ -148,48 +148,40 @@ jQuery(document).ready(function () {
 
 	}).trigger('change');
 
-	var shipMethodRequest;
-	
 	$('.shopp .shipmethod').change(function () {
-		if ( $.inArray($('#checkout #shopp-checkout-function').val(), ['process','confirmed']) ) {
+		if ( $.inArray($('#checkout #shopp-checkout-function').val(), ['process','confirmed']) != -1 ) {
 			var prefix = '.shopp-cart.cart-',
 				spans = 'span'+prefix,
 				inputs = 'input'+prefix,
 				fields = ['shipping','tax','total'],
 				selectors = [],
-				shipMethodSelect = $(this);
-
-			$.each(fields,function (i,name) { selectors.push(spans+name); });
-			if (!c_upd) c_upd = '?';
-			$(selectors.join(',')).html(c_upd);
-			if (shipMethodRequest) {
-				shipMethodRequest.abort();
-				shipMethodRequest = null;
-			}
-			
-			function shipMethodAJAX (numRetry) {
-				numRetry = typeof numRetry !== 'undefined' ? numRetry : 0;
-				currentTimestamp = new Date().getTime();
-				shipMethodRequest = $.getJSON($co.ajaxurl+"?action=shopp_ship_costs&method="+shipMethodSelect.val()+"&timestamp="+currentTimestamp,
-					function (r) {
-						
-						//Wait 1 seconds, then retry on bad requests
-						if(!r && numRetry < 3) {
-							window.setTimeout( function() {
-									shipMethodAJAX(numRetry+1);
-								}, 1000); 
-							return;
-						}
-	
-						$.each(fields,function (i,name) {
+				values = {},
+				retry = 0,
+				disableset = '.shopp .shipmethod, .payoption-button input',
+				$this = $(this),
+				send = function () {
+					$(disableset).attr('disabled',true);
+					$.getJSON($co.ajaxurl +"?action=shopp_ship_costs&method=" + $this.val(), function (r) {
+						if ( ! r && retry++ < 2 ) return setTimeout(send, 1000);
+						$(disableset).attr('disabled', false);
+						$.each(fields, function (i, name) {
+							if ( ! r || undefined == r[name] ) {
+								$(spans+name).html(values[name]);
+								return;
+							}
 							$(spans+name).html(asMoney(new Number(r[name])));
 							$(inputs+name).val(new Number(r[name]));
 						});
-	
-					}
-				);
-			};
-			shipMethodAJAX();
+					});
+				};
+
+			$.each(fields, function (i, name) {
+				selectors.push(spans + name);
+				values[name] = $(spans + name).html();
+			});
+			if (!c_upd) c_upd = '?';
+			$(selectors.join(',')).html(c_upd);
+			send();
 		} else $(this).parents('form').submit();
 	});
 

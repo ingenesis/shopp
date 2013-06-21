@@ -156,7 +156,7 @@
 				$taxrate = array_merge($defaults,$taxrate);
 				extract($taxrate);
 
-				$rate = percentage($rate,array('precision'=>4));
+				$rate = percentage($rate, array('precision'=>4));
 				$location = $countries[ $country ];
 
 				if (isset($zone) && !empty($zone))
