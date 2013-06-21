@@ -650,6 +650,9 @@ abstract class ShoppCore {
 		);
 
 		if ( ! empty($format) ) $format = array_merge($default, $format);
+
+		$locale = shopp_setting('base_operations');
+
 		if ( ! isset($locale['currency']) || ! isset($locale['currency']['format']) ) return $format;
 		if ( empty($locale['currency']['format']['currency']) ) return $format;
 
@@ -1236,7 +1239,7 @@ abstract class ShoppCore {
 	 * @param array $format The currency format to use
 	 * @return string The formatted amount
 	 **/
-	public static function money ($amount,$format=false) {
+	public static function money ($amount, $format = array()) {
 		$format = apply_filters('shopp_money_format', currency_format($format) );
 		$number = numeric_format(apply_filters('shopp_money_amount', $amount), $format['precision'], $format['decimals'], $format['thousands'], $format['grouping']);
 		if ($format['cpos']) return $format['currency'].$number;
@@ -2495,8 +2498,8 @@ function menuoptions ($list,$selected=null,$values=false,$extend=false) {
 /**
  * @deprecated Use Shopp::
  **/
-function money ($amount,$format=false) {
-	return Shopp::money($amount,$format);
+function money ($amount, $format = array()) {
+	return Shopp::money($amount, $format);
 }
 
 /**
