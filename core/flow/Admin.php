@@ -135,6 +135,7 @@ class ShoppAdmin extends FlowController {
 
 		// Filter hook for adding/modifying Shopp page definitions
 		$this->pages = apply_filters('shopp_admin_pages', $this->pages);
+		$this->caps = apply_filters('shopp_admin_caps', $this->caps);
 
 		reset($this->pages);
 		$this->mainmenu = key($this->pages);
