@@ -85,7 +85,7 @@ function shopp_add_cart_product ( $product = false, $quantity = 1, $variant = fa
 		}
 	}
 
-	$added = $Order->Cart->add($quantity, $Product, $variant, false, $data);
+	$added = $Order->Cart->additem($quantity, $Product, $variant, false, $data);
 	$Order->Cart->totals();
 	return $added;
 }
@@ -97,23 +97,33 @@ function shopp_add_cart_product ( $product = false, $quantity = 1, $variant = fa
  * @author John Dillick
  * @since 1.2
  *
- * @param int $item (required) the numeric index of the item contents array to remove ( 0 indexed )
+ * @param int|string $item (required) the numeric index or key name of the item to remove
  * @return bool true for success, false on failure
  **/
 function shopp_rmv_cart_item ( $item = false ) {
-	$Order = ShoppOrder();
+	$Cart = ShoppOrder()->Cart;
 	if ( false === $item ) {
 		shopp_debug(__FUNCTION__ . " failed: Missing item parameter.");
 		return false;
 	}
 
-	if ( 0 == $count = count($Order->Cart) ) return true;
-	if ( ! $Order->Cart->exists($item) ) {
+	if ( $Cart->count() == 0 ) return false;
+
+	if ( is_int($item) ) {
+		$items = $Cart->keys();
+
+		if ( isset( $items[ $item ]) )
+			$key = $items[ $item ];
+
+	} else $key = $item;
+
+	if ( ! $Cart->exists($key) ) {
 		shopp_debug(__FUNCTION__ . " failed: No such item $item");
 		return false;
 	}
-	$remove = $Order->Cart->rmvitem($item);
-	$Order->Cart->totals();
+
+	$remove = $Cart->rmvitem($key);
+	$Cart->totals();
 	return $remove;
 }
 
@@ -172,20 +182,28 @@ function shopp_cart_items_count () {
  * @return stdClass object with quantity, product id, variant id, and list of addons of the item.
  **/
 function shopp_cart_item ( $item = false ) {
-	$Order = ShoppOrder();
+	$Cart = ShoppOrder()->Cart;
 	if ( false === $item ) {
 		shopp_debug(__FUNCTION__ . " failed: Missing item parameter.");
 	}
 
-	if ( 'recent-cartitem' === $item ) return $Order->Cart->added();
+	if ( 'recent-cartitem' === $item ) return $Cart->added();
 
-	$items = shopp_cart_items();
+	if ( is_int($item) ) {
+		$items = $Cart->keys();
 
-	if ( ! array_key_exists($item, $items) ) {
+		if ( isset( $items[ $item ]) )
+			$key = $items[ $item ];
+
+	} else $key = $item;
+
+
+	if ( ! $Cart->exists($key) ) {
 		shopp_debug(__FUNCTION__ . " failed: No such item $item");
 		return false;
 	}
-	return $items[$item];
+
+	return $Cart->get($key);
 }
 
 /**

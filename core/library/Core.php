@@ -649,7 +649,9 @@ abstract class ShoppCore {
 			'grouping' => 3
 		);
 
-		if ( ! empty($format) ) $format = array_merge($default, $format);
+		$format = array_merge($default, $format);
+
+		if ( ! empty($format) ) return $format;
 
 		$locale = shopp_setting('base_operations');
 
@@ -1432,7 +1434,7 @@ abstract class ShoppCore {
 	 * @param array $format (optional) The formatting settings to use,
 	 * @return float The rounded float
 	 **/
-	public static function roundprice ($amount,$format=false) {
+	public static function roundprice ($amount, $format = array() ) {
 		$format = currency_format($format);
 		extract($format);
 		return round($amount, $precision);
@@ -2554,8 +2556,8 @@ function readableFileSize ($bytes,$precision=1) {
 /**
  * @deprecated Use Shopp::
  **/
-function roundprice ($amount,$format=false) {
-	return Shopp::roundprice($amount,$format);
+function roundprice ($amount, $format = array()) {
+	return Shopp::roundprice($amount, $format);
 }
 
 /**

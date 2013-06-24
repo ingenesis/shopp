@@ -415,8 +415,9 @@ abstract class OrderTotalAmount {
 	 * @return void
 	 **/
 	public function remove () {
+		$register = get_class_property(get_class($this), 'register');
 		$OrderTotals = $this->parent;
-		$OrderTotals->takeoff($this->register, $this->id);
+		$OrderTotals->takeoff($register, $this->id);
 	}
 
 	public function __toString () {
@@ -703,7 +704,7 @@ class OrderAmountCartItemQuantity extends OrderTotalAmount {
 		$this->amount = &$Item->quantity;
 		$this->id = $Item->fingerprint();
 
-		add_action('shopp_cart_remove_item',array($this,'remove'));
+		add_action('shopp_cart_remove_item', array($this, 'remove'));
 
 	}
 

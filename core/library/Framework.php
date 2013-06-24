@@ -46,7 +46,7 @@ class ListFramework implements Iterator {
 		$this->_list = array_merge($this->_list,$records);
 	}
 
-	public function sort ( callable $callback = null ) {
+	public function sort ( $callback = null ) {
 		if ( is_null($callback) ) ksort($this->_list);
 		uksort($this->_list,$callback);
 	}
@@ -76,7 +76,8 @@ class ListFramework implements Iterator {
 	}
 
 	public function exists ($key) {
-		return array_key_exists($key,$this->_list);
+		if ( ! $key ) return false;
+		return array_key_exists($key, $this->_list);
 	}
 
 	public function remove ($key) {

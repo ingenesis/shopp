@@ -288,10 +288,10 @@ class ShoppCart extends ListFramework {
 	 * @param int $item Index of the item in the Cart contents
 	 * @return boolean
 	 **/
-	public function rmvitem ( scalar $id ) {
+	public function rmvitem ( string $id ) {
 		$Item = $this->get($id);
 		do_action_ref_array('shopp_cart_remove_item',array($Item->fingerprint(),$Item));
-		$this->remove($id);
+		return $this->remove($id);
 	}
 
 	/**
