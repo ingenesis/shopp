@@ -1015,6 +1015,7 @@ class Setup extends AdminController {
 	function payments_help () {
 		$Shopp = Shopp::object();
 		$Gateways = $Shopp->Gateways;
+		$Gateways->settings();	// Load all installed gateways for help tabs
 		$Gateways->help();
 	}
 

@@ -15,7 +15,7 @@
 
 class ShoppLoader {
 
-	private static $instance;				// Singleton instance
+	private static $object;					// Singleton instance
 
 	protected static $classmap = array();	// A map of class names to files
 	protected static $basepath = '';		// Tracks the base path of files in the classmap
@@ -35,17 +35,17 @@ class ShoppLoader {
 		spl_autoload_register(array($this,'load'));
 	}
 
-	static public function &instance () {
-		if ( ! self::$instance instanceof self )
-			self::$instance = new self;
-		return self::$instance;
+	public static function &object () {
+		if ( ! self::$object instanceof self )
+			self::$object = new self;
+		return self::$object;
 	}
 
-	static public function basepath ( $path ) {
+	public static function basepath ( $path ) {
 		self::$basepath = self::sanitize($path);
 	}
 
-	static private function sanitize ( $path ) {
+	private static function sanitize ( $path ) {
 		return str_replace('\\', '/', realpath($path));
 	}
 
@@ -59,7 +59,7 @@ class ShoppLoader {
 	 * @param string $basepath The base path to use (if any). Use '' to use full paths, '.' to use paths relative to the base path of the loader instance, or pass a directory path to use as the base path
 	 * @return boolean True if successful
 	 **/
-	public function map ( $new = array(), $basepath = '.' ) {
+	public static function map ( $new = array(), $basepath = '.' ) {
 		if ( empty($new) ) return false;
 
 		if ( '.' == $basepath ) $basepath = self::$basepath;
@@ -81,7 +81,7 @@ class ShoppLoader {
 	 * @param string $filepath The full path to the file, or begin path with . to use the base path of the loader instance
 	 * @return boolean True if successful
 	 **/
-	public function add ( $classname, $filepath ) {
+	public static function add ( $classname, $filepath ) {
 		$class = strtolower($classname);
 
 		if ( empty($class) || isset(self::$classmap[ $class ]) ) return false;
@@ -264,11 +264,11 @@ class ShoppLoader {
 }
 
 function &ShoppLoader () {
-	return ShoppLoader::instance();
+	return ShoppLoader::object();
 }
 
 ShoppLoader()->basepath( dirname(dirname(__FILE__)) );
-ShoppLoader()->map(array(
+ShoppLoader::map(array(
 	'account' => '/flow/Account.php',
 	'address' => '/model/Address.php',
 	'admincontroller' => '/flow/Flow.php',
