@@ -139,7 +139,9 @@ class CartDevAPITests extends ShoppTestCase {
 
 		$this->AssertEquals(2, $Cart->total('quantity'));
 		$this->AssertEquals(34.02, $Cart->total('order'));
-		$this->AssertEquals(34.02, $Cart->total('total'));
+		$this->AssertEquals(9.87, $Cart->total('shipping'));
+		$this->AssertEquals(5.1, $Cart->total('tax'));
+		$this->AssertEquals(48.99, $Cart->total('total'));
 
 		$Product = shopp_product('galileo', 'slug');
 		shopp_add_cart_product($Product->id, 1);
@@ -157,7 +159,7 @@ class CartDevAPITests extends ShoppTestCase {
 		$this->AssertEquals(17.02, $item->total);
 
 		$this->AssertEquals(34.02 + 17.02, $Cart->total('order'));
-		$this->AssertEquals(34.02 + 17.02, $Cart->total('total'));
+		$this->AssertEquals(66.01, $Cart->total('total'));
 	}
 
 	// this test will fail if the above shopp_add_cart_product test does not run
@@ -201,7 +203,9 @@ class CartDevAPITests extends ShoppTestCase {
 		$Cart = ShoppOrder()->Cart->Totals;
 
 		$this->AssertEquals(34.02, $Cart->total('order'));
-		$this->AssertEquals(34.02, $Cart->total());
+		$this->AssertEquals(9.87, $Cart->total('shipping'));
+		$this->AssertEquals(3.40, $Cart->total('tax'));
+		$this->AssertEquals(34.02 + 9.87 + 3.40, $Cart->total());
 
 		shopp_rmv_cart_item(0);
 
