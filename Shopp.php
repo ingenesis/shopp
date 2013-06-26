@@ -320,9 +320,7 @@ class Shopp extends ShoppCore {
  		$images = array( ShoppPages()->baseslug(), 'images', '(\d+)', "?\??(.*)$" );
  		add_rewrite_rule(join('/', $images), $path.'/image.php?siid=$1&$2');
 
-		// print_r($rules + $wp_rewrite_rules);
-
- 		return $rules + $wp_rewrite_rules;
+ 		return $rules + (array)$wp_rewrite_rules;
  	}
 
 	/**

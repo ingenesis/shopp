@@ -45,7 +45,7 @@ class ShoppPages extends ListFramework {
 
 		if ( ! class_exists($StorefrontPageClass) ) return false;
 
-		$name = $StorefrontPageClass::$name;
+		$name = get_class_property($StorefrontPageClass, 'name');
 		$settings = shopp_setting('storefront_pages');
 
 		do_action('shopp_register_page', $name, $settings);

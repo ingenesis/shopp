@@ -539,7 +539,7 @@ class GatewayModules extends ModuleLoader {
 			get_current_screen()->add_help_tab( array(
 				'id'      => $class,
 				'title'   => $module->name,
-				'content' => $class::help()
+				'content' => call_user_func( array($class, 'help') )
 			));
 		}
 	}
