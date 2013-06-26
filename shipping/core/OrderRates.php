@@ -13,17 +13,19 @@
  *
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 class OrderRates extends ShippingFramework implements ShippingModule {
 
-	function methods () {
+	public function methods () {
 		return __('Flat Order Rates','Shopp');
 	}
 
-	function init () { /* Not implemented */ }
+	public function init () { /* Not implemented */ }
 
-	function calcitem ($id,$Item) { /* Not implemented */  }
+	public function calcitem ($id, $Item) { /* Not implemented */  }
 
-	function calculate (&$options,$Order) {
+	public function calculate (&$options, $Order) {
 
 		foreach ($this->methods as $slug => $method) {
 
@@ -45,7 +47,7 @@ class OrderRates extends ShippingFramework implements ShippingModule {
 		return $options;
 	}
 
-	function settings () {
+	public function settings () {
 
 		$this->ui->flatrates(0,array(
 			'table' => $this->settings['table']
@@ -54,4 +56,3 @@ class OrderRates extends ShippingFramework implements ShippingModule {
 	}
 
 } // END class OrderRates
-?>
