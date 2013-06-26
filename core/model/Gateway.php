@@ -505,7 +505,7 @@ class GatewayModules extends ModuleLoader {
 	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	function &get ($gateway) {
 		if (empty($this->active)) $this->settings();
@@ -535,7 +535,7 @@ class GatewayModules extends ModuleLoader {
 	 **/
 	function help () {
 		foreach ($this->modules as $class => &$module) {
-			if ( ! method_exists($class,'help') ) continue;
+			if ( ! method_exists($class, 'help') ) continue;
 			get_current_screen()->add_help_tab( array(
 				'id'      => $class,
 				'title'   => $module->name,
@@ -550,7 +550,7 @@ class GatewayModules extends ModuleLoader {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	function ui () {
 		foreach ($this->active as $package => &$module)

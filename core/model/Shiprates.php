@@ -250,7 +250,7 @@ class ShoppShiprates extends ListFramework {
 
 		$this->clear();
 		$this->populate($services);
-		$this->sort('self::sort');
+		// $this->sort('self::sort');
 
 	}
 
@@ -299,6 +299,7 @@ class ShoppShiprates extends ListFramework {
 	private function requested () {
 		if ( is_string($this->track) ) $request = $this->track;
 		else $request = hash('crc32b', serialize($this->track));
+
 		if ( $this->request == $request ) return true;
 		$this->request = $request;
 		return false;

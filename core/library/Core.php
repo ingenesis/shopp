@@ -1354,7 +1354,7 @@ abstract class ShoppCore {
 	 * @param array $format A specific format for the number
 	 * @return string The formatted percentage
 	 **/
-	public static function percentage ( $amount, $format = false) {
+	public static function percentage ( $amount, $format = array() ) {
 		$format = currency_format($format);
 		extract($format, EXTR_SKIP);
 		$float = floatvalue($amount, true, $format);
@@ -2395,7 +2395,7 @@ function file_mimetype ($file,$name=false) {
 /**
  * @deprecated Use Shopp::
  **/
-function floatvalue ($value, $round=true, $format=false) {
+function floatvalue ($value, $round=true, $format = array()) {
 	return Shopp::floatval($value, $round, $format);
 }
 
@@ -2528,8 +2528,8 @@ function phone ($num) {
 /**
  * @deprecated Use Shopp::
  **/
-function percentage ( $amount, $format = false) {
-	return Shopp::percentage( $amount, $format = false);
+function percentage ( $amount, $format = array() ) {
+	return Shopp::percentage( $amount, $format);
 }
 
 /**

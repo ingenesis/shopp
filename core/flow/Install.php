@@ -141,8 +141,7 @@ class ShoppInstallation extends FlowController {
 		// Install tables
 		ob_start();
 		include(SHOPP_DBSCHEMA);
-		$schema = ob_get_contents();
-		ob_end_clean();
+		$schema = ob_get_clean();
 
 		DB::loaddata($schema);
 		unset($schema);

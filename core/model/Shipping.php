@@ -66,7 +66,8 @@ class ShippingModules extends ModuleLoader {
 	public function activated () {
 		$this->activated = array();
 		$active = shopp_setting('active_shipping');
-		if (!empty($active)) $this->activated = array_keys($active);
+
+		if ( ! empty($active) ) $this->activated = array_keys($active);
 
 		return $this->activated;
 	}

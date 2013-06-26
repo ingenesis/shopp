@@ -233,8 +233,10 @@ function shopp_add_cart_promocode ($code = false) {
 	}
 
 	$Cart = ShoppOrder()->Cart;
-	$Cart->promocode = esc_attr($code);
+	$Discounts = ShoppOrder()->Discounts;
+	$Discounts->request($code);
 	$Cart->totals();
+
 }
 
 /**

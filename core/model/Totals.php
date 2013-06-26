@@ -92,6 +92,24 @@ class OrderTotals extends ListFramework {
 	}
 
 	/**
+	 * Empties a specified register
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param string $register The register to find the entry in
+	 * @return boolean True if successful
+	 **/
+	public function clear ( string $register ) {
+
+		if ( ! isset($this->register[ $register ]) ) return false;
+		$Register = &$this->register[ $register ];
+		$Register = array();
+
+		return true;
+	}
+
+	/**
 	 * Update a specific register entry
 	 *
 	 * @author Jonathan Davis

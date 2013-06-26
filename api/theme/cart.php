@@ -165,12 +165,13 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	}
 
 	static function has_promos ($result, $options, $O) {
-		ShoppOrder()->reset();
-		return (ShoppOrder()->Discounts->count() > 0);
+		$Discounts = ShoppOrder()->Discounts;
+		$Discounts->rewind();
+		return ($Discounts->count() > 0);
 	}
 
 	static function has_ship_costs ($result, $options, $O) {
-		return ($O->Totals->shipping > 0);
+		return ($O->Totals->total('shipping') > 0);
 	}
 
 	static function has_shipped ($result, $options, $O) {
@@ -183,7 +184,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	}
 
 	static function has_taxes ($result, $options, $O) {
-		return ($O->Totals->tax > 0);
+		return ($O->Totals->total('tax') > 0);
 	}
 
 	static function items ($result, $options, $O) {
@@ -201,7 +202,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	}
 
 	static function last_item ($result, $options, $O) {
-		return $O[ $O->added ];
+		return $O->added();
 	}
 
 	static function needs_shipped ($result, $options, $O) {
@@ -290,7 +291,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	static function promos_available ($result, $options, $O) {
 		if ( ! ShoppOrder()->Promotions->available() ) return false;
 		// Skip if the promo limit has been reached
-		if ( shopp_setting('promo_limit') > 0 && count($O->discounts) >= shopp_setting('promo_limit') ) return false;
+		if ( shopp_setting('promo_limit') > 0 && ShoppOrder()->Discounts->count() >= shopp_setting('promo_limit') ) return false;
 		return true;
 	}
 
@@ -409,11 +410,11 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	}
 
 	static function total_items ($result, $options, $O) {
-	 	return count($O);
+	 	return $O->count();
 	}
 
 	static function total_promos ($result, $options, $O) {
-		return count($O->discounts);
+		return ShoppOrder()->Discounts->count();
 	}
 
 	static function total_quantity ($result, $options, $O) {
@@ -431,4 +432,5 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	static function url ($result, $options, $O) {
 		return Shopp::url(false, 'cart');
 	}
+
 }

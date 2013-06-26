@@ -530,8 +530,11 @@ class sDB extends SingletonFramework {
 	 **/
 	public function loaddata ( $queries ) {
 		$queries = explode(";\n", $queries);
-		array_pop($queries);
-		foreach ($queries as $query) if ( ! empty($query) ) sDB::query($query);
+
+		foreach ($queries as $query)
+			if ( ! empty($query) )
+				sDB::query($query);
+
 		return true;
 	}
 

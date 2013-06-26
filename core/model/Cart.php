@@ -552,6 +552,25 @@ class ShoppCart extends ListFramework {
 	}
 
 	/**
+	 * Empties the cart
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return void
+	 **/
+	public function clear () {
+		parent::clear();
+
+		// Clear the item registers
+		if ( false === $this->Totals ) $this->Totals = new OrderTotals();
+		$Totals = $this->Totals;
+
+		$Totals->clear('quantity');
+		$Totals->clear('order');
+	}
+
+	/**
 	 * Determines if the current order has no cost
 	 *
 	 * @author Jonathan Davis

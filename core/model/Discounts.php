@@ -27,10 +27,13 @@ class ShoppDiscounts extends ListFramework {
 	private $codes = array();	// List of applied codes
 	private $request = false;	// Current code request
 
-	public function request () {
+	public function request ( string $request = null ) {
 
 		if ( isset($_REQUEST['promocode']) && ! empty($_REQUEST['promocode']) )
 			$this->request = trim($_REQUEST['promocode']);
+
+		// Override the request
+		if ( ! is_null($request) ) $this->request = $request;
 
 		return $this->request;
 
@@ -207,7 +210,7 @@ class ShoppDiscounts extends ListFramework {
 
 		foreach ( $rules as $rule ) {
 
-			$CodeRule = new ShoppDiscountRule($rule);
+			$CodeRule = new ShoppDiscountRule($rule, $Promo);
 
 			if ( ! $CodeRule->match() ) continue;
 
@@ -967,7 +970,7 @@ class ShoppPromotions extends ListFramework {
 		$query = DB::select( $queryargs );
 		$loaded = DB::query($query, 'array', array('ShoppPromotions', 'loader') );
 
-		if ( 0 == count($loaded) ) return;
+		if ( ! $loaded || 0 == count($loaded) ) return;
 
 		$this->populate($loaded);
 		$this->loaded = true;

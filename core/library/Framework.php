@@ -175,7 +175,7 @@ class SingletonFramework {
 
 class AutoObjectFramework {
 
-	public function __construct ( $input ) {
+	public function __construct ( $input = null ) {
 		$properties = get_object_vars($this);
 		$args = func_num_args();
 		if ( $args > 1 ) {
