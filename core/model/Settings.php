@@ -42,14 +42,14 @@ class ShoppSettings extends DatabaseObject {
 		$this->_table = $this->tablename(self::$table);
 		$this->bootup = ShoppLoader::is_activating();
 
-		if ( $this->bootup ) add_action('shopp_init', array($this, 'bootup_finished'));
+		if ( $this->bootup ) add_action('shopp_init', array($this, 'booted'));
 	}
 
 	/**
 	 * Once Shopp has init'd this will take us back out of bootup mode and allow access to the
 	 * db.
 	 */
-	public function bootup_finished () {
+	public function booted () {
 		$this->bootup = false;
 	}
 
@@ -188,7 +188,7 @@ class ShoppSettings extends DatabaseObject {
 	 * @return void
 	 **/
 	public function setup ($name,$value) {
-		if (is_null($this->get($name))) $this->add($name,$value);
+		if (is_null($this->get($name))) $this->add($name, $value);
 	}
 
 	/**
