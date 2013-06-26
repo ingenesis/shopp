@@ -117,7 +117,7 @@ class Markdownr {
 				if ( in_array($Parser, $ignore) ) continue;
 				if ( 'MarkdownrBlock' != get_parent_class($Parser) ) continue;
 
-				if ( $Parser::match($block) ) {
+				if ( call_user_func( array($Parser, 'match'), $block ) ) {
 					$Block = new $Parser($this->DOM, $block);
 					$elements[] = $Block->markup();
 					$parsed = true;
@@ -168,7 +168,7 @@ class Markdownr {
 
 			if ( false === strpos(get_parent_class($parseclass), 'MarkdownrInline') ) continue;
 
-			if ( $parseclass::match($parseclass::$marks, $search) ) {
+			if ( call_user_func( array($parseclass, 'match'), get_class_property($parseclass, $marks), $search) ) {
 
 				$Parser = $this->parser($parseclass);
 				$Parser->scan($search);
@@ -320,8 +320,10 @@ class MarkdownrBlock {
 
 	protected function unmark ( string $text ) {
 		$class = get_class($this);
-		if ( ! isset($class::$marks) ) return $text;
-		return trim( str_replace($class::$marks, '', $text) );
+		$property = get_class_property($class, $marks); 
+		
+		if ( ! isset( $property ) ) return $text;
+		return trim( str_replace($property, '', $text) );
 	}
 
 	// group by newline
@@ -610,8 +612,8 @@ class MarkdownrCode extends MarkdownrBlock {
 			// Scan for tabbed code
 			if ( ! is_array($block) ) continue;
 
-			foreach ( self::$iblocks as $Parser ) { // Skip blocks inside indent-aware parsers
-				if ( $i > 0 && $Parser::match($blocks[ $i - 1 ]) ) {
+			foreach ( get_class_property(self, $iblocks) as $Parser ) { // Skip blocks inside indent-aware parsers
+				if ( $i > 0 && call_user_func( array($Parser, 'match'), $blocks[ $i - 1 ]) ) {
 					$ignore = true;
 					break;
 				}
@@ -700,7 +702,7 @@ class MarkdownrInline {
 	public function scan ( string &$text ) {
 
 		$class = get_class($this);
-		$marks = $class::$marks;
+		$marks = get_class_property($class, $marks);
 		$token = $marks[0];
 
 		// Normalize the text to the first mark (default mark)
@@ -808,8 +810,10 @@ class MarkdownrInline {
 
 	protected function unmark ( string $text ) {
 		$class = get_class($this);
-		if ( ! isset($class::$marks) ) return $text;
-		return trim( str_replace($class::$marks, '', $text) );
+		$property = get_class_property($class, $marks);
+		
+		if ( ! isset( $property ) ) return $text;
+		return trim( str_replace($property, '', $text) );
 	}
 
 	public static function match ( array $marks, string $text ) {
@@ -926,7 +930,7 @@ class MarkdownrInlineLink extends MarkdownrInline {
 
 	public function scan ( string &$text ) {
 		$class = get_class($this);
-		$marks = $class::$marks;
+		$marks = get_class_property($class, $marks);
 
 		$start = array($marks[0],$marks[2]);
 		$end = array($marks[1], $marks[3]);
@@ -998,7 +1002,7 @@ class MarkdownrInlineLink extends MarkdownrInline {
 
 	protected function unmark ( string $text ) {
 		$class = get_class($this);
-		return trim($text, join('', $class::$marks).'"\' ' );
+		return trim($text, join('', get_class_property($class, $marks) ).'"\' ' );
 	}
 
 }
