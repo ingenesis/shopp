@@ -41,8 +41,9 @@ class ShoppLoader {
 		return self::$object;
 	}
 
-	public static function basepath ( $path ) {
-		self::$basepath = self::sanitize($path);
+	public static function basepath ( $path = null ) {
+		if ( ! is_null($path) )	self::$basepath = self::sanitize($path);
+		return self::$basepath;
 	}
 
 	private static function sanitize ( $path ) {
