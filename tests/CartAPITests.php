@@ -18,6 +18,119 @@ class CartAPITests extends ShoppTestCase {
 	function setUp () {
 		parent::setUp();
 
+		$args = array(
+			'name' => 'USS Enterprise',
+			'publish' => array('flag' => true),
+			'single' => array(
+				'type' => 'Shipped',
+				'price' => 1701,
+		        'sale' => array(
+		            'flag' => true,
+		            'price' => 17.01
+		        ),
+				'taxed'=> true,
+				'shipping' => array('flag' => true, 'fee' => 1.50, 'weight' => 52.7, 'length' => 285.9, 'width' => 125.6, 'height' => 71.5),
+				'inventory' => array(
+					'flag' => true,
+					'stock' => 1,
+					'sku' => 'NCC-1701'
+				)
+			),
+			'specs' => array(
+				'Class' => 'Constitution',
+				'Category' => 'Heavy Cruiser',
+				'Decks' => 23,
+				'Officers' => 40,
+				'Crew' => 390,
+				'Max Vistors' => 50,
+				'Max Accommodations' => 800,
+				'Phaser Force Rating' => '2.5 MW',
+				'Torpedo Force Rating' => '9.7 isotons'
+				)
+		);
+
+		shopp_add_product($args);
+
+		$args = array(
+			'name' => 'Galileo',
+			'publish' => array('flag' => true),
+			'single' => array(
+				'type' => 'Shipped',
+				'price' => 17019,
+		        'sale' => array(
+		            'flag' => true,
+		            'price' => 17.019
+		        ),
+				'taxed'=> true,
+				'shipping' => array('flag' => true, 'fee' => 0.9, 'weight' => 2.8, 'length' => 6.1, 'width' => 1.9, 'height' => 1.5),
+				'inventory' => array(
+					'flag' => true,
+					'stock' => 1,
+					'sku' => 'NCC-1701/9'
+				)
+			),
+			'specs' => array(
+				'Class' => 'Class-F',
+				'Category' => 'Shuttlecraft',
+
+				)
+		);
+
+		shopp_add_product($args);
+
+		$args = array(
+			'name' => 'Command Uniform',
+			'publish' => array('flag' => true),
+			'specs' => array(
+				'Department' => 'Command',
+				'Color' => 'Gold'
+			),
+			'variants' => array(
+				'menu' => array(
+					'Size' => array('Small','Medium','Large','Brikar')
+				),
+				0 => array(
+					'option' => array('Size' => 'Small'),
+					'type' => 'Shipped',
+					'price' => 19.99,
+					'sale' => array('flag'=>true, 'price' => 9.99),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.3, 'width' => 0.3, 'height' => 0.1),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 5,
+						'sku' => 'SFU-001-S'
+					)
+				),
+				1 => array(
+					'option' => array('Size' => 'Medium'),
+					'type' => 'Shipped',
+					'price' => 22.55,
+					'sale' => array('flag'=>true, 'price' => 19.99),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.3, 'width' => 0.3, 'height' => 0.1),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 15,
+						'sku' => 'SFU-001-M'
+					)
+				),
+				2 => array(
+					'option' => array('Size' => 'Large'),
+					'type' => 'Shipped',
+					'price' => 32.95,
+					'sale' => array('flag'=>true, 'price' => 24.95),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.3, 'width' => 0.3, 'height' => 0.1),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 1,
+						'sku' => 'SFU-001-L'
+					)
+				),
+
+			)
+		);
+
+		shopp_add_product($args);
+
 		$promos = array(
 			array(
 				'name' => '2 PC Off',
