@@ -53,10 +53,10 @@ function get_file($path) {
 }
 
 if ( ! defined('SHORTINIT')) define('SHORTINIT',true);
-require 'Loader.php';
+require dirname(dirname(__FILE__)) . '/core/library/Loader.php';
 
 if ( ! defined('ABSPATH') && $loadfile = ShoppLoader::find_wpload() )
-	define('ABSPATH',dirname($loadfile).'/');
+	define('ABSPATH', dirname($loadfile) . '/');
 
 if ( ! defined('WPINC') ) define('WPINC', 'wp-includes');
 
@@ -74,7 +74,7 @@ foreach( $load as $handle ) {
 	if ( ! isset( $ShoppScripts->registered[ $handle ] ) )
 		continue;
 
-	$path = dirname(__FILE__) . $ShoppScripts->registered[$handle]->src;
+	$path = ShoppLoader::basepath() . $ShoppScripts->registered[$handle]->src;
 	$out .= get_file($path) . "\n";
 }
 
