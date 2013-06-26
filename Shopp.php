@@ -404,3 +404,4 @@ if ( Shopp::services() || Shopp::unsupported() ) return; // Prevent loading the 
 
 /* Start the core */
 $Shopp = Shopp::object();
+add_action('shopp_loaded');

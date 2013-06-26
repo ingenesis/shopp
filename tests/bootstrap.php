@@ -62,25 +62,93 @@ foreach ( array_keys( $GLOBALS['wp_tests_options'] ) as $key ) {
 	tests_add_filter( 'pre_option_'.$key, 'wp_tests_options' );
 }
 
-// function shopp_tests_run () {
-// 	$GLOBALS['Shopp'] = new Shopp();
-// }
-
 // We want a clean Shopp installation
 function shopp_tests_install () {
 	$Installation = new ShoppInstallation;
 	$Installation->install();
 }
 
-function shopp_test_setup() {
+function shopp_tests_setup() {
+	$Installation = new ShoppInstallation;
 	$Installation->setup();
 	$Installation->images();
 	$Installation->roles();
 }
 
-// tests_add_filter('muplugins_loaded','shopp_tests_run',100);
+function shopp_tests_settings () {
+
+	// Setup Shipping
+	$args = array(
+		'label' => 'Standard',
+		'mindelivery' => '4d',
+		'maxdelivery' => '7d',
+		'fallback' => 'off',
+		'table' => array(
+			0 => array(
+				'destination' => '*',
+                'rate' => 12.34
+			),
+			1 => array(
+				'destination' => 0,
+                'rate' => 9.87
+			),
+			2 => array(
+                'destination' => '0,US,Continental US',
+                'postcode' => '*',
+                'rate' => 6.54
+			),
+			3 => array(
+                'destination' => '0,US,West US,CA',
+                'postcode' => '*',
+                'rate' => 3.21
+			)
+		)
+	);
+
+	shopp_set_setting('OrderRates-0',serialize($args));
+
+	$args = array(
+		'label' => 'Priority',
+		'mindelivery' => '1d',
+		'maxdelivery' => '1d',
+		'fallback' => 'off',
+		'table' => array(
+			0 => array(
+				'destination' => '*',
+                'rate' => 21.09
+			),
+		)
+	);
+
+	shopp_set_setting('OrderRates-1',serialize($args));
+
+	shopp_set_setting('shipping','on');
+	shopp_set_setting('active_shipping',array(
+		'OrderRates' => array( 0 => true, 1 => true )
+	));
+
+	$args = array(
+		array(
+			'rate' => '10%',
+			'compound' => 'off',
+			'country' => '*',
+			'logic' => 'any',
+			'haslocals' => false
+		)
+	);
+	shopp_set_setting('taxes','on');
+	shopp_set_setting('taxrates',serialize($args));
+
+	shopp_set_setting('shopping_cart','on');
+
+	ShoppSettings()->booted();	// Mark the system as ready
+	ShoppSettings()->load();	// Load all of the current settings
+
+}
+
 tests_add_filter('plugins_loaded','shopp_tests_install');
-tests_add_filter('shopp_init', 'shopp_tests_setup', 1);
+tests_add_filter('shopp_loaded', 'shopp_tests_setup');
+tests_add_filter('shopp_loaded', 'shopp_tests_settings');
 
 // Load WordPress
 require_once ABSPATH . '/wp-settings.php';
@@ -136,6 +204,7 @@ class WP_PHPUnit_TextUI_Command extends PHPUnit_TextUI_Command {
 	}
 }
 new WP_PHPUnit_TextUI_Command( $_SERVER['argv'] );
+
 return;
 
 // Test data
@@ -163,53 +232,7 @@ $lastyear = $lastyear->modify('-1 year')->format('Y-m-d H:i:s');
 $nextyear = new DateTime();
 $nextyear = $nextyear->modify('+1 year')->format('Y-m-d H:i:s');
 
-$promodefinitions = array(
-	array(
-		'name' => '2 PC Off',
-		'status' => 'enabled',
-		'type' => 'Percentage Off',
-		'target' => 'Cart',
-		'discount' => '2.0',
-		'search' => 'any',
-		'starts' => $lastyear,
-		'ends' => $nextyear,
-		'rules' => array(
-			1 => array(
-				'property' => 'Promo code',
-				'logic' => 'Is equal to',
-				'value' => '2Percent'
-			))
-	),
-	array(
-		'name' => '3 Dollars Off',
-		'status' => 'enabled',
-		'type' => 'Amount Off',
-		'target' => 'Cart Item',
-		'discount' => '3.0',
-		'search' => 'any',
-		'starts' => $lastyear,
-		'ends' => $nextyear,
-		'rules' => array(
-			'item' => array(
-				'property' => 'Quantity',
-                'logic' => 'Is greater than',
-                'value' => 0
-			),
-			1 => array(
-				'property' => 'Promo code',
-				'logic' => 'Is equal to',
-				'value' => '3DollarsOff'
-			))
-	)
-);
 
 foreach ($productdefinitions as $productdata) {
 	shopp_add_product($productdata);
-}
-
-foreach ($promodefinitions as $promodata) {
-	$Promotion = new Promotion();
-	$Promotion->updates($promodata);
-	$Promotion->save();
-	$Promotion->id;
 }

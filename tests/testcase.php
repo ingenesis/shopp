@@ -23,7 +23,6 @@ class ShoppTestCase extends WP_UnitTestCase {
 
 	function tearDown() {
 		parent::tearDown();
-		global $Shopp;
 		// $Shopp->Catalog = false;
 		// $Shopp->Category = false;
 		// $Shopp->Product = false;
