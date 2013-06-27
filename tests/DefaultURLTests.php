@@ -18,7 +18,12 @@ class DefaultURLTests extends ShoppTestCase {
 	private $permastruct = false;
 	private $extra_permastructs = false;
 
-	function setUp () {
+	static function setUpBeforeClass () {
+
+		global $wp_rewrite;
+		$wp_rewrite->set_permalink_structure('');
+		$wp_rewrite->flush_rules();
+
 		$HeavyCruiser = shopp_add_product_category('Heavy Cruiser');
 
 		$args = array(
@@ -72,27 +77,6 @@ class DefaultURLTests extends ShoppTestCase {
 			);
 			shopp_add_product($product);
 		}
-		parent::setUp();
-
-
-		global $wp_rewrite;
-		$this->extra_permastructs = $wp_rewrite->extra_permastructs;
-		$this->permastruct = get_option('permalink_structure');
-		update_option('permalink_structure','');
-		$wp_rewrite->extra_permastructs = array();
-		flush_rewrite_rules();
-
-	}
-
-	function tearDown() {
-
-		parent::tearDown();
-		// Set back to original (Pretty)
-		global $wp_rewrite;
-		$wp_rewrite->extra_permastructs = $this->extra_permastructs;
-		update_option('permalink_structure', $this->permastruct);
-		flush_rewrite_rules();
-		unset($this->extra_permastructs,$this->permastruct);
 
 	}
 
@@ -109,14 +93,10 @@ class DefaultURLTests extends ShoppTestCase {
 
 	function test_account_url () {
 		$actual = shopp('customer.get-accounturl');
-		ob_get_contents();
-		ob_end_clean();
-
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_page=account', $actual);
 	}
 
 	function test_product_url () {
-
 		$Product = shopp_product('uss-enterprise', 'slug');
 		ShoppProduct($Product);
 
@@ -131,12 +111,12 @@ class DefaultURLTests extends ShoppTestCase {
 
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '?shopp_category=heavy-cruiser', $actual);
 	}
+
 	function test_category_paginated_url () {
 		shopp_set_setting('catalog_pagination',10);
 		shopp('storefront.category', 'slug=heavy-cruiser&load=true');
 		shopp('collection', 'load-products'); // Load the products
 
-		$total = shopp('collection.get-total');
 		$actual = shopp('collection.get-pagination');
 
 		$markup = array(
@@ -149,7 +129,6 @@ class DefaultURLTests extends ShoppTestCase {
 
 		$this->assertTag($markup, $actual, $actual, true);
 		$this->assertValidMarkup($actual);
-
 	}
 
 	function test_category_feed_url () {
@@ -220,8 +199,8 @@ class DefaultURLTests extends ShoppTestCase {
 
 	function test_searchproducts_url () {
 		shopp('storefront.search-products','load=true&search=uss+enterprise');
-		// $actual = shopp('collection.get-url');
-		// $this->assertEquals('http://' . WP_TESTS_DOMAIN . '?shopp_collection=search&s=Star+Wars&s_cs=1',$actual);
+		$actual = shopp('collection.get-url');
+		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '?shopp_collection=search-results&s=uss+enterprise&s_cs=1',$actual);
 	}
 
 } // end DefaultURLTests class
