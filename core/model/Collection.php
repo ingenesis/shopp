@@ -267,7 +267,8 @@ class ProductCollection implements Iterator {
 	}
 
 	public function pagelink ($page) {
-		$prettyurls = ( '' != get_option('permalink_structure') );
+		global $wp_rewrite;
+		$prettyurls = $wp_rewrite->using_permalinks();
 
 		$alpha = (false !== preg_match('/([a-z]|0\-9)/',$page));
 
@@ -740,7 +741,8 @@ class ProductTaxonomy extends ProductCollection {
 	}
 
 	public function pagelink ($page) {
-		$categoryurl = get_term_link($this->slug,$this->taxonomy);
+		global $wp_rewrite;
+		$categoryurl = get_term_link($this->slug, $this->taxonomy);
 
 		$alpha = (false !== preg_match('/([A-Z]|0\-9)/',$page));
 		$prettyurl = trailingslashit($categoryurl).($page > 1 || $alpha?"page/$page":"");
@@ -748,7 +750,7 @@ class ProductTaxonomy extends ProductCollection {
 		$queryvars = array($this->taxonomy=>$this->slug);
 		if ($page > 1 || $alpha) $queryvars['paged'] = $page;
 
-		$url = ( '' == get_option('permalink_structure') ? add_query_arg($queryvars,$categoryurl) : user_trailingslashit($prettyurl) );
+		$url = $wp_rewrite->using_permalinks() ? user_trailingslashit($prettyurl) : add_query_arg($queryvars,$categoryurl);
 
 		return apply_filters('shopp_paged_link', $url, $page);
 	}
@@ -1490,8 +1492,8 @@ class SmartCollection extends ProductCollection {
 	}
 
 	public function register () {
-
-		if ( '' == get_option('permalink_structure') ) return;
+		global $wp_rewrite;
+		if ( ! $wp_rewrite->using_permalinks() ) return;
 
 		$args['rewrite'] = wp_parse_args($args['rewrite'], array(
 			'slug' => sanitize_title_with_dashes($taxonomy),
@@ -1669,7 +1671,7 @@ class SearchResults extends SmartCollection {
 
 	public function __construct ($options=array()) {
 		parent::__construct($options);
-		add_filter('shopp_themeapi_category_url', array($this, 'permalink'), 10, 3);
+		add_filter('shopp_themeapi_collection_url', array($this, 'url'), 10, 3);
 	}
 
 	public function smart ( array $options = array() ) {
@@ -1737,17 +1739,16 @@ class SearchResults extends SmartCollection {
 	}
 
 	public function pagelink ($page) {
+		var_dump(__METHOD__);die;
 		$link = parent::pagelink($page);
-
 		return add_query_arg(array('s'=>urlencode($this->search),'s_cs'=>1),$link);
 	}
 
-	public function permalink ($result, $options, $O) {
-		if (get_class($this) != get_class($O)) return $result;
-		if (!isset($this->search) || !isset($O->search)) return $result;
-		if ($this->search != $O->search) return $result;
-
-		return add_query_arg(array('s'=>urlencode($this->search),'s_cs'=>1),$result);
+	public function url ($result, $options, $O) {
+		if ( get_class($this) != get_class($O) ) return $result;
+		if ( ! isset($this->search) || ! isset($O->search) ) return $result;
+		if ( $this->search != $O->search ) return $result;
+		return add_query_arg(array('s' => urlencode($this->search), 's_cs' => 1), $result);
 	}
 
 }
@@ -1861,6 +1862,7 @@ class TagProducts extends SmartCollection {
 	}
 
 	public function pagelink ($page) {
+		global $wp_rewrite;
 		$termurl = get_term_link($this->tag,ProductTag::$taxon);
 
 		$alpha = (false !== preg_match('/([A-Z]|0\-9)/',$page));
@@ -1869,7 +1871,7 @@ class TagProducts extends SmartCollection {
 		$queryvars = array($this->taxonomy=>$this->slug);
 		if ($page > 1 || $alpha) $queryvars['paged'] = $page;
 
-		$url = ( '' == get_option('permalink_structure') ? add_query_arg($queryvars,$categoryurl) : user_trailingslashit($prettyurl) );
+		$url = $wp_rewrite->using_permalinks() ? user_trailingslashit($prettyurl) : add_query_arg($queryvars,$categoryurl);
 
 		return apply_filters('shopp_paged_link', $url, $page);
 	}

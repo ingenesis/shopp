@@ -1947,13 +1947,12 @@ abstract class ShoppCore {
 	 * @return string The final URL
 	 **/
 	public static function url ($request=false,$page='catalog',$secure=null) {
-		global $is_IIS;
+		global $wp_rewrite;
 
-		$structure = get_option('permalink_structure');
-		$prettyurls = ('' != $structure);
+		$prettyurls = $wp_rewrite->using_permalinks();
 
 		// Support IIS index.php/ prefixed permalinks
-		if ( $is_IIS && 0 === strpos($structure,'/index.php/') )
+		if ( $wp_rewrite->using_index_permalinks() )
 			$path[] = 'index.php';
 
 		$path[] = ShoppPages()->baseslug();

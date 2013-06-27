@@ -324,13 +324,14 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	}
 
 	static function feed_url ($result, $options, $O) {
+		global $wp_rewrite;
 		$url = self::url($result,$options,$O);
-		if ( '' == get_option('permalink_structure') ) return add_query_arg(array('src'=>'category_rss'),$url);
+		if ( ! $wp_rewrite->using_permalinks() ) return add_query_arg(array('src' => 'category_rss'), $url);
 
 		$query = false;
-		if (strpos($url,'?') !== false) list($url,$query) = explode('?',$url);
-		$url = trailingslashit($url)."feed";
-		if ($query) $url = "$url?$query";
+		if ( strpos($url, '?') !== false ) list($url, $query) = explode('?', $url);
+		$url = trailingslashit($url) . 'feed';
+		if ( $query ) $url = "$url?$query";
 			return $url;
 	}
 
@@ -624,14 +625,14 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	static function total ($result, $options, $O) { return $O->loaded?$O->total:false; }
 
 	static function url ($result, $options, $O) {
-		global $ShoppTaxonomies;
+		global $ShoppTaxonomies, $wp_rewrite;
 		if ( property_exists($O,'id') && $O->id && isset($O->taxonomy) && ! in_array($O->taxonomy, array_keys($ShoppTaxonomies)) )
 			return get_term_link( (int) $O->id, $O->taxonomy);
 
 		$namespace = get_class_property( get_class($O) ,'namespace');
-		$prettyurls = ( '' != get_option('permalink_structure') );
+		$prettyurls = $wp_rewrite->using_permalinks();
 
-		$url = Shopp::url( $prettyurls ? "$namespace/$O->slug" : array($O->taxonomy=>$O->slug),false );
+		$url = Shopp::url( $prettyurls ? "$namespace/$O->slug" : array($O->taxonomy => $O->slug),false );
 		if (isset($options['page'])) $url = $O->pagelink((int)$options['page']);
 		return $url;
 	}

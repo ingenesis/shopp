@@ -1061,7 +1061,10 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		return join(',',$types);
 	}
 
-	static function url ($result, $options, $O) { return Shopp::url( '' == get_option('permalink_structure')?array(Product::$posttype=>$O->slug):$O->slug, false ); }
+	static function url ($result, $options, $O) {
+		global $wp_rewrite;
+		return Shopp::url( $wp_rewrite->using_permalinks() ? $O->slug : array(Product::$posttype => $O->slug), false );
+	 }
 
 	static function variation ($result, $options, $O) {
 		$defaults = array(
