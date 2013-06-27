@@ -10,73 +10,76 @@
  **/
 class CategoryAPITests extends ShoppTestCase {
 
-	function setUp () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		parent::setUp();
-		global $Shopp;
+	static $ships = array(
+			'Constellation', 'Constitution', 'Defiant', 'Enterprise', 'Excalibur', 'Exeter', 'Farragut',
+			'Hood', 'Intrepid', 'Lexington', 'Pegasus', 'Potemkin', 'Yorktown'
+	);
 
-		if (!$Shopp->Catalog) $Shopp->Catalog = new Catalog();
+	static $HeavyCruiser;
+	static $Cheyenne;
+	static $Constitution;
 
-		shopp('catalog','category','id=3&load=true');
+	static function setUpBeforeClass() {
+		self::$HeavyCruiser = shopp_add_product_category('Heavy Cruiser', 'A large multi-purpose starship.');
+		self::$Cheyenne = shopp_add_product_category('Cheyenne', '', self::$HeavyCruiser);
+		self::$Constitution = shopp_add_product_category('Constitution', '', self::$HeavyCruiser);
+
+		foreach ( self::$ships as $ship ) {
+			$product = array(
+				'name' => $ship,
+				'publish' => array( 'flag' => true ),
+				'categories'=> array('terms' => array(self::$HeavyCruiser, self::$Constitution, self::$Cheyenne)),
+				'single' => array(
+					'type' => 'Shipped',
+					'price' => 99.99,
+				)
+			);
+			shopp_add_product($product);
+		}
+
+		shopp('storefront.category','slug=heavy-cruiser&load=true');
+
 	}
 
 	function test_category_url () {
-		ob_start();
-		shopp('category','url');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('http://shopptest/store/category/apparel/',$actual);
+		$actual = shopp('category.get-url');
+		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '?shopp_category=heavy-cruiser', $actual);
 	}
 
 	function test_category_id () {
-		ob_start();
-		shopp('category','id');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('3',$actual);
+		$term = get_term_by('name','Heavy Cruiser','shopp_category');
+		$actual = shopp('category.get-id');
+		$this->assertEquals($term->term_id, $actual );
 	}
 
 	function test_category_name () {
-		ob_start();
-		shopp('category','name');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('Apparel',$actual);
+		$actual = shopp('category.get-name');
+		$this->assertEquals('Heavy Cruiser',$actual);
 	}
 
 	function test_category_slug () {
-		ob_start();
-		shopp('category','slug');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('apparel',$actual);
+		$actual = shopp('category.get-slug');
+		$this->assertEquals('heavy-cruiser',$actual);
 	}
 
 	function test_category_description () {
-		ob_start();
-		shopp('category','description');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('',$actual);
-
+		$actual = shopp('category.get-description');
+		$this->assertEquals('A large multi-purpose starship.',$actual);
 	}
 
 	function test_category_products () {
 		ob_start();
-		if (shopp('category','has-products'))
-			while(shopp('category','products')) shopp('product','id');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('1293022456941366568',$output);
+		if ( shopp('category','has-products') )
+			while(shopp('category','products')) shopp('product','name');
+		$output = ob_get_clean();
+
+		$this->assertEquals(join('', self::$ships), $output);
 	}
 
 	function test_category_total () {
 		shopp('category','has-products');
-		ob_start();
-		shopp('category','total');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('15',$actual);
+		$actual = shopp('category.get-total');
+		$this->assertEquals('13', $actual);
 	}
 
 	function test_category_row () {
@@ -90,49 +93,46 @@ class CategoryAPITests extends ShoppTestCase {
 
 	function test_category_categories_tags () {
 		ob_start();
-		if (shopp('category','has-categories'))
-			while(shopp('category','subcategories')) shopp('subcategory','id');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('5151711719',$output);
+		if ( shopp('category','has-categories') )
+			while( shopp('category','subcategories') )
+				shopp('subcategory','name');
+		$actual = ob_get_clean();
+
+		$this->assertEquals('CheyenneConstitution', $actual);
 	}
 
 	function test_category_subcategorylist () {
 		ob_start();
 		shopp('category','subcategory-list');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = ob_get_clean();
+
 		$this->assertValidMarkup($actual);
 	}
 
 	function test_category_issubcategory () {
 		$this->assertFalse(shopp('category','is-subcategory'));
-		shopp('catalog','category','id=17&load=true');
+		shopp('storefront.get-category', 'load=true&slug=constitution');
 		$this->assertTrue(shopp('category','is-subcategory'));
 	}
 
 	function test_category_sectionlist () {
 		ob_start();
 		shopp('category','section-list');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = ob_get_clean();
+
 		$this->assertValidMarkup($actual);
 	}
 
 	function test_category_pagination () {
-		ob_start();
-		shopp('category','pagination');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('category.get-pagination');
 		$this->assertValidMarkup($actual);
 	}
 
 	function test_category_facetedmenu () {
 		ob_start();
-		if (shopp('category','has-faceted-menu'))
+		if ( shopp('category','has-faceted-menu') )
 			shopp('category','faceted-menu');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = ob_get_clean();
 		$this->assertValidMarkup($actual);
 	}
 
@@ -148,7 +148,6 @@ class CategoryAPITests extends ShoppTestCase {
 		$this->assertXmlStringEqualsXmlString('<img src="http://shopptest/store/images/691/idIconGaming.gif?96,96,3901571377" title="Games" alt="Controller Icon" width="96" height="95"/>',$actual,$actual);
 		$this->assertValidMarkup($actual);
 	}
-*/
 
 	function test_category_image_tags () {
 		ob_start();
@@ -157,7 +156,6 @@ class CategoryAPITests extends ShoppTestCase {
 		$output = ob_get_contents();
 		ob_end_clean();
 	}
+*/
 
 } // end CategoryAPITests class
-
-?>
