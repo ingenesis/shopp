@@ -19,7 +19,8 @@ class CategoryAPITests extends ShoppTestCase {
 	static $Cheyenne;
 	static $Constitution;
 
-	static function setUpBeforeClass() {
+	static function setUpBeforeClass () {
+
 		self::$HeavyCruiser = shopp_add_product_category('Heavy Cruiser', 'A large multi-purpose starship.');
 		self::$Cheyenne = shopp_add_product_category('Cheyenne', '', self::$HeavyCruiser);
 		self::$Constitution = shopp_add_product_category('Constitution', '', self::$HeavyCruiser);
@@ -34,11 +35,14 @@ class CategoryAPITests extends ShoppTestCase {
 					'price' => 99.99,
 				)
 			);
-			shopp_add_product($product);
+			$Product = shopp_add_product($product);
 		}
 
-		shopp('storefront.category','slug=heavy-cruiser&load=true');
+		shopp('storefront.category','load=true&id='.self::$HeavyCruiser);
+		shopp('category.load-products');
+	}
 
+	function tearDown () {
 	}
 
 	function test_category_url () {
@@ -47,9 +51,8 @@ class CategoryAPITests extends ShoppTestCase {
 	}
 
 	function test_category_id () {
-		$term = get_term_by('name','Heavy Cruiser','shopp_category');
 		$actual = shopp('category.get-id');
-		$this->assertEquals($term->term_id, $actual );
+		$this->assertEquals(self::$HeavyCruiser, $actual);
 	}
 
 	function test_category_name () {
@@ -77,13 +80,14 @@ class CategoryAPITests extends ShoppTestCase {
 	}
 
 	function test_category_total () {
-		shopp('category','has-products');
 		$actual = shopp('category.get-total');
 		$this->assertEquals('13', $actual);
 	}
 
 	function test_category_row () {
 		shopp('category','has-products');
+
+		// print_r(ShoppCollection());
 		for ($i = 0; $i < 3; $i++) {
 			shopp('category','products');
 			shopp('category','row');

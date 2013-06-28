@@ -715,6 +715,35 @@ class OrderAmountItemTax extends OrderAmountDebit {
 }
 OrderTotalRegisters::register('OrderAmountItemTax');
 
+/**
+ * Defines an item tax entry
+ *
+ * @author Jonathan Davis
+ * @since 1.3
+ * @package ordertotals
+ **/
+class OrderAmountShippingTax extends OrderAmountDebit {
+	static public $register = 'tax';
+
+	protected $rate = 0.0;	// The applied rate
+	protected $label = '';
+
+	public function __construct ( float $taxable ) {
+		$Tax = ShoppOrder()->Tax;
+
+		$taxes = array();
+		$Tax->rates($taxes);
+		$firstrate = reset($taxes);
+		$this->rate = $firstrate->rate;
+		$this->id = 'shipping';
+		$this->amount = $Tax->calculate($taxes, $taxable);
+		$this->label = __('Shipping Tax','Shopp');
+
+	}
+
+}
+OrderTotalRegisters::register('OrderAmountShippingTax');
+
 class OrderAmountCartItemQuantity extends OrderTotalAmount {
 	static public $register = 'quantity';
 

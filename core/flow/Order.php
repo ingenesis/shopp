@@ -675,6 +675,10 @@ class ShoppOrder {
 
 		$this->Cart->clear();
 
+		$this->Discounts->clear();
+		$this->Promotions->clear();
+		// $this->Shiprates->clear();
+
 		$this->data = array();
 		$this->inprogress = false;
 		$this->txnid = false;

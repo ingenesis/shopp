@@ -5,8 +5,7 @@
 */
 class CartDevAPITests extends ShoppTestCase {
 
-	function setUp () {
-		parent::setUp();
+	static function setUpBeforeClass () {
 
 		$args = array(
 			'name' => 'USS Enterprise',
@@ -111,7 +110,17 @@ class CartDevAPITests extends ShoppTestCase {
 
 		shopp_add_product($args);
 
-		shopp_set_setting('tax_shipping', 'on');
+	}
+
+	static function tearDownAfterClass () {
+		ShoppOrder()->clear();
+		shopp_set_setting('tax_shipping', 'off');
+
+	}
+
+	function setUp () {
+		parent::setUp();
+		self::tearDownAfterClass();
 	}
 
 	function test_shopp_empty_cart () {
@@ -140,8 +149,8 @@ class CartDevAPITests extends ShoppTestCase {
 		$this->AssertEquals(2, $Cart->total('quantity'));
 		$this->AssertEquals(34.02, $Cart->total('order'));
 		$this->AssertEquals(9.87, $Cart->total('shipping'));
-		$this->AssertEquals(5.1, $Cart->total('tax'));
-		$this->AssertEquals(48.99, $Cart->total('total'));
+		$this->AssertEquals(3.4, $Cart->total('tax'));
+		$this->AssertEquals(34.02+9.87+3.4, $Cart->total('total'));
 
 		$Product = shopp_product('galileo', 'slug');
 		shopp_add_cart_product($Product->id, 1);
@@ -164,9 +173,12 @@ class CartDevAPITests extends ShoppTestCase {
 
 	// this test will fail if the above shopp_add_cart_product test does not run
 	function test_shopp_cart_item () {
+		$Enterprise = shopp_product('uss-enterprise', 'slug');
+		shopp_add_cart_product($Enterprise->id, 2);
+		$Galileo = shopp_product('galileo', 'slug');
+		shopp_add_cart_product($Galileo->id, 1);
 
 		$item = shopp_cart_item(0);
-
 		$this->AssertEquals('USS Enterprise', $item->name);
 		$this->AssertEquals('uss-enterprise', $item->slug);
 		$this->AssertEquals(2, $item->quantity);
@@ -186,6 +198,11 @@ class CartDevAPITests extends ShoppTestCase {
 
 	// this test will fail if the above shopp_add_cart_product test does not run
 	function test_shopp_rmv_cart_item () {
+		$Enterprise = shopp_product('uss-enterprise', 'slug');
+		shopp_add_cart_product($Enterprise->id, 2);
+		$Galileo = shopp_product('galileo', 'slug');
+		shopp_add_cart_product($Galileo->id, 1);
+
 		$removal = shopp_rmv_cart_item(1);
 
 		$items = shopp_cart_items();
@@ -204,8 +221,8 @@ class CartDevAPITests extends ShoppTestCase {
 
 		$this->AssertEquals(34.02, $Cart->total('order'));
 		$this->AssertEquals(9.87, $Cart->total('shipping'));
-		$this->AssertEquals(3.40, $Cart->total('tax'));
-		$this->AssertEquals(34.02 + 9.87 + 3.40, $Cart->total());
+		$this->AssertEquals(3.4, $Cart->total('tax'));
+		$this->AssertEquals(34.02 + 9.87 + 3.4, $Cart->total());
 
 		shopp_rmv_cart_item(0);
 

@@ -89,7 +89,7 @@ function shopp_tests_settings () {
                 'rate' => 12.34
 			),
 			1 => array(
-				'destination' => 0,
+				'destination' => '0',
                 'rate' => 9.87
 			),
 			2 => array(

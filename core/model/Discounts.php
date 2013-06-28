@@ -309,6 +309,13 @@ class ShoppDiscounts extends ListFramework {
 		return isset( $this->codes[ strtolower($code) ]);
 	}
 
+	public function clear () {
+		parent::clear();
+		$this->codes = array();
+		$this->request = false;
+		ShoppOrder()->Shiprates->free(false);
+	}
+
 }
 
 /**
@@ -706,7 +713,7 @@ class ShoppOrderDiscount {
 		$Cart = ShoppOrder()->Cart->Totals;
 
 		switch ( $this->type ) {
-			case self::SHIP_FREE:	if ( self::ORDER == $this->target ) $this->shipfree(true); $this->amount = $Cart->total('shipping'); break;
+			case self::SHIP_FREE:	if ( self::ORDER == $this->target ) $this->shipfree(true); //$this->amount = $Cart->total('shipping'); break;
 			case self::AMOUNT_OFF:	$this->amount = $this->discount(); break;
 			case self::PERCENT_OFF:
 				$subtotal = $Cart->total('order') - $Cart->total('discount');
@@ -998,6 +1005,12 @@ class ShoppPromotions extends ListFramework {
 			if ( ! isset($records[ $index ]) ) $records[ $index ] = array();
 			$records[ $index ][] = $Object;
 		} else $records[ $index ] = $Object;
+	}
+
+	public function clear () {
+		parent::clear();
+		$this->promos = null;
+		$this->loaded = false;
 	}
 
 }

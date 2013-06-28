@@ -864,7 +864,6 @@ class ShoppCartItem {
 				$taxqty -= $bogof;
 
 			$Tax->rates($this->taxes, $Tax->item($this) );
-
 			$this->unittax = $Tax->calculate($this->taxes, $taxable);
 			$this->tax = $Tax->total($this->taxes, (int)$taxqty);
 

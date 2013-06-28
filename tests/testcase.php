@@ -9,8 +9,29 @@ class ShoppTestCase extends WP_UnitTestCase {
 	protected $backupGlobals = FALSE;
 	public $shopp_settings = array(); // testing settings, so tests can play nice
 
+	static function setUpBeforeClass () {
+			set_time_limit(0);
+
+			global $wpdb;
+			$wpdb->suppress_errors = false;
+			$wpdb->show_errors = true;
+			$wpdb->db_connect();
+	}
+
+	static function tearDownAfterClass () {
+		// global $wpdb;
+		// $wpdb->query( 'ROLLBACK' );
+		// remove_filter( 'dbdelta_create_queries', array( $this, '_create_temporary_tables' ) );
+		// remove_filter( 'query', array( $this, '_drop_temporary_tables' ) );
+	}
+
+
+
 	function setUp() {
-		parent::setUp();
+		ini_set('display_errors', 1 );
+		// $this->factory = new WP_UnitTest_Factory;
+		// $this->clean_up_global_scope();
+		// $this->start_transaction();
 
 		// error types taken from PHPUnit_Framework_TestResult::run
 		$this->_phpunit_err_mask = E_STRICT;
@@ -22,10 +43,6 @@ class ShoppTestCase extends WP_UnitTestCase {
 	}
 
 	function tearDown() {
-		parent::tearDown();
-		// $Shopp->Catalog = false;
-		// $Shopp->Category = false;
-		// $Shopp->Product = false;
 		unset($this->shopp_settings);
 		if (!is_null($this->_old_handler)) {
 			restore_error_handler();

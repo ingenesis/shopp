@@ -540,11 +540,19 @@ class ShoppCart extends ListFramework {
 		}
 
 		$Shipping->calculate();
-
 		$Totals->register( new OrderAmountShipping( array('id' => 'cart', 'amount' => $Shipping->amount() ) ) );
+
+		if ( shopp_setting_enabled('tax_shipping') ) {
+			$Totals->register( new OrderAmountShippingTax( $Totals->total('shipping') ) );
+		}
 
 		// Calculate discounts
 		$Totals->register( new OrderAmountDiscount( array('id' => 'cart', 'amount' => $Discounts->amount() ) ) );
+
+		if ( $Shipping->free() && $Totals->total('shipping') > 0 ) {
+			$Shipping->calculate();
+			$Totals->register( new OrderAmountShipping( array('id' => 'cart', 'amount' => $Shipping->amount() ) ) );
+		}
 
 		do_action_ref_array('shopp_cart_retotal', array(&$Totals) );
 
@@ -563,11 +571,8 @@ class ShoppCart extends ListFramework {
 		parent::clear();
 
 		// Clear the item registers
-		if ( false === $this->Totals ) $this->Totals = new OrderTotals();
-		$Totals = $this->Totals;
+		$this->Totals = new OrderTotals();
 
-		$Totals->clear('quantity');
-		$Totals->clear('order');
 	}
 
 	/**

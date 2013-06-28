@@ -360,7 +360,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	}
 
 	static function id ($result, $options, $O) {
-		if ( isset($O->term_id)) return $O->term_id;
+		if ( isset($O->term_id) ) return $O->term_id;
 		return false;
 	}
 
