@@ -784,7 +784,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		);
 		$options = array_merge($defaults,$options);
 		$options['type'] = 'billing';
-		return self::same_shipping_address($result,$options,$O);
+		return ShoppCustomerThemeAPI::same_shipping_address($result,$options,$O);
 	}
 
 	public static function shipping_name ($result, $options, $O) {
