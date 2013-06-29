@@ -90,15 +90,21 @@ class PrettyURLTests extends ShoppTestCase {
 	}
 
 	static function tearDownAfterClass () {
-		// // Set back to default urls
-		// update_option('permalink_structure', '');
+		global $wp_rewrite;
+        $wp_rewrite->init();
+		$wp_rewrite->set_permalink_structure('');
+		$wp_rewrite->flush_rules();
+
+		// update_option('permalink_structure','/%postname%/');
 		// flush_rewrite_rules();
-		// $Shopp = Shopp::object();
-		//
-		// $Shopp->pages();
-		// $Shopp->collections();
-		// $Shopp->taxonomies();
-		// $Shopp->products();
+
+		// Re-register taxonomies
+		$Shopp = Shopp::object();
+		$Shopp->pages();
+		$Shopp->collections();
+		$Shopp->taxonomies();
+		$Shopp->products();
+
 	}
 
 

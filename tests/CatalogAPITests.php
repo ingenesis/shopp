@@ -9,31 +9,44 @@
  **/
 class CatalogAPITests extends ShoppTestCase {
 
-	function setUp () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		global $Shopp;
-		parent::setUp();
+	static $HeavyCruiser;
+	static $ships = array(
+			'Constellation', 'Defiant', 'Enterprise', 'Excalibur', 'Exeter', 'Farragut',
+			'Hood', 'Intrepid', 'Lexington', 'Pegasus', 'Potemkin', 'Yorktown'
+	);
+
+	static function product ($category) {
+		return array(
+			'name' => 'NCC-'. round(rand()*1000,0),
+			'publish' => array( 'flag' => true ),
+			'categories'=> array('terms' => array($category)),
+			'single' => array(
+				'type' => 'Shipped',
+				'price' => round(rand()*10,2),
+			)
+		);
+	}
+
+	static function setUpBeforeClass () {
+
+		$Shopp = Shopp::object();
 		$Shopp->Flow->handler('Storefront');
-		$Shopp->Catalog = false;
-		$Shopp->Catalog = new Catalog();
+
+		$Product = shopp_add_product($product);
+		$category = shopp_add_product_category('Battle Cruiser');
+		$product = shopp_add_product(self::product($category));
+
+		foreach ( self::$ships as $ship ) {
+			$category = shopp_add_product_category($ship, '', self::$HeavyCruiser);
+			shopp_add_product(self::product($category));
+		}
+
 	}
 
 	function test_catalog_url () {
-		ob_start();
-		shopp('catalog','url');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('http://shopptest/store/',$actual);
+		$actual = shopp('catalog.get-url');
+		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_page=store', $actual);
 	}
-
-	// @deprecated
-	// function test_catalog_type () {
-	// 	ob_start();
-	// 	shopp('catalog','type');
-	// 	$actual = ob_get_contents();
-	// 	ob_end_clean();
-	// 	$this->assertEquals('catalog',$actual);
-	// }
 
 	// Can't get this to work yet, need better http environment emulator
 	// function test_catalog_iscatalog () {
@@ -43,20 +56,16 @@ class CatalogAPITests extends ShoppTestCase {
 	// 	$this->assertTrue(shopp('catalog','is-catalog'));
 	// }
 
-	function test_catalog_tagcloud () {
-		ob_start();
-		shopp('catalog','tagcloud');
-		$actual = ob_get_contents();
-		ob_end_clean();
-
-		$this->assertValidMarkup($actual);
-	}
+	// function test_catalog_tagcloud () {
+	// 	$actual = shopp('storefront.get-tagcloud');
+	// 	$this->assertValidMarkup($actual);
+	// }
 
 	function test_catalog_categories () {
-		global $Shopp;
-		shopp('catalog','has-categories');
-		$this->assertTrue(shopp('catalog','has-categories'));
-		$expected = 22;
+		$this->assertTrue(shopp('storefront','has-categories'));
+
+		$Shopp = Shopp::object();
+		$expected = 13;
 		$this->assertEquals($expected,count($Shopp->Catalog->categories));
 		for ($i = 0; $i < $expected; $i++)
 			$this->assertTrue(shopp('catalog','categories'));
@@ -90,7 +99,7 @@ class CatalogAPITests extends ShoppTestCase {
 	function test_catalog_orderbylist () {
 		global $Shopp;
 		$_SERVER['REQUEST_URI'] = "/";
-		$Shopp->Catalog = new Catalog();
+		$Shopp->Catalog = new ShoppCatalog();
 		$Shopp->Category = new NewProducts();
 		ob_start();
 		shopp('catalog','orderby-list');
@@ -226,9 +235,7 @@ class CatalogAPITests extends ShoppTestCase {
 		$actual = ob_get_contents();
 		ob_end_clean();
 
-		$this->assertEquals('My Account http://shopptest/store/account/?profile Downloads http://shopptest/store/account/?downloads Your Orders http://shopptest/store/account/?orders Logout http://shopptest/store/account/?logout ',$actual);
+		$this->assertEquals('My Account http://' . WP_TESTS_DOMAIN . '/?shopp_page=account&profile Downloads http://' . WP_TESTS_DOMAIN . '/?shopp_page=account&downloads Your Orders http://' . WP_TESTS_DOMAIN . '/?shopp_page=account&orders Logout http://' . WP_TESTS_DOMAIN . '/?shopp_page=account&logout ',$actual);
 	}
 
 } // end CatalogAPITests class
-
-?>

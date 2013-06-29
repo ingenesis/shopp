@@ -35,9 +35,10 @@ class ShoppCatalog {
 	 * @param boolean $results (optional) Return the raw structure of results without aggregate processing
 	 * @return boolean|object True when categories are loaded and processed, object of results when $results is set
 	 **/
-	public function load_categories ( array $loading = array(), $showsmart = false, $results = false) {
+	public function load_categories ( array $loading = array(), $showsmart = false, $results = false ) {
 
 		$terms = get_terms(ProductCategory::$taxon);
+
 		foreach ($terms as $term)
 			$this->categories[] = new ProductCategory($term);
 
