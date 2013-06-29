@@ -10,22 +10,29 @@ class ShoppTestCase extends WP_UnitTestCase {
 	public $shopp_settings = array(); // testing settings, so tests can play nice
 
 	static function setUpBeforeClass () {
-			set_time_limit(0);
+		set_time_limit(0);
 
-			global $wpdb;
-			$wpdb->suppress_errors = false;
-			$wpdb->show_errors = true;
-			$wpdb->db_connect();
+		global $wpdb;
+		$wpdb->suppress_errors = false;
+		$wpdb->show_errors = true;
+		$wpdb->db_connect();
+
+		// DB::query( 'SET autocommit = 0;' );
+		// DB::query( 'START TRANSACTION;' );
 	}
 
 	static function tearDownAfterClass () {
-		// global $wpdb;
-		// $wpdb->query( 'ROLLBACK' );
-		// remove_filter( 'dbdelta_create_queries', array( $this, '_create_temporary_tables' ) );
-		// remove_filter( 'query', array( $this, '_drop_temporary_tables' ) );
+		self::resetTables();
 	}
 
+	static function transaction () {
+		DB::query( 'SET autocommit = 0;' );
+		DB::query( 'START TRANSACTION;' );
+	}
 
+	static function rollback () {
+		DB::query( 'ROLLBACK' );
+	}
 
 	function setUp() {
 		ini_set('display_errors', 1 );
@@ -47,6 +54,24 @@ class ShoppTestCase extends WP_UnitTestCase {
 		if (!is_null($this->_old_handler)) {
 			restore_error_handler();
 		}
+	}
+
+	static function resetTables () {
+		$classes = array(
+			'Product','Promotion','ProductSummary','Price','Customer'
+		);
+		foreach ($classes as $classname) {
+			$table = DatabaseObject::tablename(get_class_property($classname,'table'));
+			DB::query('DELETE FROM '. $table);
+		}
+
+		global $wpdb;
+		$skipped = array('options');
+		foreach ($wpdb->tables as $table) {
+			if ( in_array($table, $skipped) ) continue;
+			DB::query('DELETE FROM ' . $wpdb->$table);
+		}
+
 	}
 
 	function assertValidMarkup ($string) {
@@ -120,3 +145,12 @@ class ShoppTestCase extends WP_UnitTestCase {
 	}
 
 } // end ShoppTestCase class
+
+class ShoppFactory {
+
+}
+
+
+class ShoppProductFactory {
+
+}

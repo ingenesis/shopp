@@ -90,6 +90,7 @@ class PrettyURLTests extends ShoppTestCase {
 	}
 
 	static function tearDownAfterClass () {
+		parent::tearDownAfterClass();
 		global $wp_rewrite;
         $wp_rewrite->init();
 		$wp_rewrite->set_permalink_structure('');

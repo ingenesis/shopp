@@ -49,10 +49,6 @@ class CheckoutAPITests extends ShoppTestCase {
 
 	}
 
-	function setUp () {
-		$this->go_to('http://' . WP_TESTS_DOMAIN . '?shopp_page=checkout');
-	}
-
 	public function test_checkout_url () {
 		$actual = shopp('checkout.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_page=checkout',$actual);
@@ -71,6 +67,8 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_error () {
+		$Errors = ShoppErrorStorefrontNotices::object();
+		$Errors->clear();
 		new ShoppError('Test Error');
 		$actual = shopp('checkout.get-error');
 		$this->assertEquals('<li>Test Error</li>', $actual);

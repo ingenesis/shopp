@@ -273,7 +273,7 @@ class CartTotalsTests extends ShoppTestCase {
 		ShoppOrder()->Promotions->load();
 	}
 
-	static function tearDownAfterClass () {
+	static function resetTests () {
 		ShoppOrder()->clear();
 
 		ShoppOrder()->Discounts->clear();
@@ -287,7 +287,7 @@ class CartTotalsTests extends ShoppTestCase {
 	function setUp () {
 
 		parent::setUp();
-		self::tearDownAfterClass();
+		self::resetTests();
 
 	}
 
@@ -894,6 +894,7 @@ class CartTotalsTests extends ShoppTestCase {
 		$actual = shopp('cart','total',$options);
 		$this->assertEquals($expected, $actual,'Cart grand Total assertion failed');
 
+		self::resetTests();
 	}
 
 } // end CartTotalsTests class

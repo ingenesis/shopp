@@ -7,19 +7,46 @@
  **/
 class CustomerDevAPITests extends ShoppTestCase {
 
+	static $customers;
+
+	static function setUpBeforeClass () {
+		self::$customers = array(
+			array(
+				'firstname' => 'James',
+				'lastname' => 'Kirk',
+				'phone' => '555-555-5555',
+				'email' => 'jkirk@starfleet.gov',
+				'company' => 'Starfleet Command'
+
+			)
+					//24-593 Federation Drive, San Francisco, CA
+
+		);
+
+
+		foreach ($customers as $data) {
+			$Customer = new Customer();
+			$Customer->updates($data);
+			$Customer->save();
+			print_r($Customer);
+		}
+
+	}
 	function setUp () {
         $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 	}
 
 	function test_shopp_customer () {
+
 		// Lookup by email
-		$Customer = shopp_customer('shopp@shopplugin.net', 'email');
+		$Customer = shopp_customer('jkirk@starfleet.gov', 'email');
 
 		$this->AssertFalse(!$Customer);
-		$this->AssertEquals('Jonathan', $Customer->firstname);
-		$this->AssertEquals('Davis', $Customer->lastname);
+		$this->AssertEquals('James', $Customer->firstname);
+		$this->AssertEquals('Kirk', $Customer->lastname);
 		$this->AssertEquals('555-555-5555', $Customer->phone);
-		$this->AssertEquals('Ingenesis Limited', $Customer->company);
+		$this->AssertEquals('Starfleet Command', $Customer->company);
 
 		$this->AssertFalse(!$Customer->Billing);
 		$this->AssertEquals('1 N Main Street', $Customer->Billing->address);
@@ -291,4 +318,3 @@ class CustomerDevAPITests extends ShoppTestCase {
 	}
 
 }
-?>

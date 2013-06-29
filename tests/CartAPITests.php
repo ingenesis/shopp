@@ -173,14 +173,14 @@ class CartAPITests extends ShoppTestCase {
 
 	}
 
-	static function tearDownAfterClass () {
+	static function resetTests () {
 		ShoppOrder()->clear();
 		ShoppOrder()->Discounts->clear();
 	}
 
 	function setUp () {
 		parent::setUp();
-		self::tearDownAfterClass();
+		self::resetTests();
 	}
 
 	function test_cart_url () {

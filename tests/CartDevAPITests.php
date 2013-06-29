@@ -70,21 +70,6 @@ class CartDevAPITests extends ShoppTestCase {
 		$args = array(
 			'name' => 'Command Uniform',
 			'publish' => array('flag' => true),
-			// 'single' => array(
-			// 	'type' => 'Shipped',
-			// 	'price' => 22.55,
-			// 		        'sale' => array(
-			// 		            'flag' => false,
-			// 		            'price' => 0.00
-			// 		        ),
-			// 	'taxed'=> true,
-			// 	'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.3, 'width' => 0.3, 'height' => 0.1),
-			// 	'inventory' => array(
-			// 		'flag' => true,
-			// 		'stock' => 32,
-			// 		'sku' => 'SFU-001'
-			// 	)
-			// ),
 			'specs' => array(
 				'Department' => 'Command',
 				'Color' => 'Gold'
@@ -112,15 +97,14 @@ class CartDevAPITests extends ShoppTestCase {
 
 	}
 
-	static function tearDownAfterClass () {
+	static function resetTests () {
 		ShoppOrder()->clear();
 		shopp_set_setting('tax_shipping', 'off');
-
 	}
 
 	function setUp () {
 		parent::setUp();
-		self::tearDownAfterClass();
+		self::resetTests();
 	}
 
 	function test_shopp_empty_cart () {

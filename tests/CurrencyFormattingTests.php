@@ -20,20 +20,19 @@
  **/
 class CurrencyFormatting extends ShoppTestCase {
 
-	public $formats = array();
-	public $values = array (null, 0.0123456789, 0.123456789, 1.23456789, 12.3456789, 123.456789, 12345.6789, 1234567.899);
+	static $formats = array();
+	static $values = array (null, 0.0123456789, 0.123456789, 1.23456789, 12.3456789, 123.456789, 12345.6789, 1234567.899);
 
-	function setUp() {
-		parent::setUp();
+	static function setUpBeforeClass() {
 
 		$countries = Lookup::countries();
 		foreach ($countries as $code => $country)
-			$this->formats[$code] = scan_money_format($country['currency']['format']);
+			self::$formats[$code] = scan_money_format($country['currency']['format']);
 	}
 
-	function tearDown() {
-		parent::tearDown();
-		unset($this->formats,$this->values);
+	static function tearDownAfterClass () {
+		self::$formats = array();
+		self::$values = array();
 	}
 
 	function provider () {
@@ -127,9 +126,9 @@ class CurrencyFormatting extends ShoppTestCase {
 	function test_hundredths ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
 		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
 		$testid = 1;
-		// print_r($this->values);
+		// print_r(self::$values);
 		// print_r($expected);
-		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
+		$this->currency_assertions(self::$values[$testid],$expected[$testid],$code);
 	}
 
 	/**
@@ -138,7 +137,7 @@ class CurrencyFormatting extends ShoppTestCase {
 	function test_tenths ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
 		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
 		$testid = 2;
-		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
+		$this->currency_assertions(self::$values[$testid],$expected[$testid],$code);
 	}
 
 	/**
@@ -147,7 +146,7 @@ class CurrencyFormatting extends ShoppTestCase {
 	function test_whole ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
 		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
 		$testid = 3;
-		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
+		$this->currency_assertions(self::$values[$testid],$expected[$testid],$code);
 	}
 
 	/**
@@ -156,7 +155,7 @@ class CurrencyFormatting extends ShoppTestCase {
 	function test_tens ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
 		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
 		$testid = 4;
-		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
+		$this->currency_assertions(self::$values[$testid],$expected[$testid],$code);
 	}
 
 	/**
@@ -165,7 +164,7 @@ class CurrencyFormatting extends ShoppTestCase {
 	function test_hundreds ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
 		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
 		$testid = 5;
-		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
+		$this->currency_assertions(self::$values[$testid],$expected[$testid],$code);
 	}
 
 	/**
@@ -174,7 +173,7 @@ class CurrencyFormatting extends ShoppTestCase {
 	function test_thousands ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
 		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
 		$testid = 6;
-		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
+		$this->currency_assertions(self::$values[$testid],$expected[$testid],$code);
 	}
 
 	/**
@@ -183,11 +182,11 @@ class CurrencyFormatting extends ShoppTestCase {
 	function test_millions ($code,$hundredths,$tenths,$whole,$tens,$hundreds,$thousands,$millions) {
 		$expected = array_values(compact('code','hundredths','tenths','whole','tens','hundreds','thousands','millions'));
 		$testid = 7;
-		$this->currency_assertions($this->values[$testid],$expected[$testid],$code);
+		$this->currency_assertions(self::$values[$testid],$expected[$testid],$code);
 	}
 
 	function currency_assertions ($float,$expected,$code) {
-		$format = $this->formats[$code];
+		$format = self::$formats[$code];
 
 		$formatted = money($float, $format);
 

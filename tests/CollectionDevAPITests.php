@@ -2,13 +2,54 @@
 /**
 * tests for api/collection.php
 */
-class CollectionDevAPITests extends ShoppTestCase
-{
+class CollectionDevAPITests extends ShoppTestCase {
 
-	function setUp () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+	static $category;
+
+	static function setUpBeforeClass () {
 		if ( ! ShoppStorefront() ) ShoppStorefront(new Storefront());
+
+		$starfleet = shopp_add_product_tag('Starfleet');
+		$federation = shopp_add_product_tag('Federation');
+		self::$category = shopp_add_product_category('Heavy Cruiser');
+
+		$args = array(
+			'name' => 'USS Enterprise',
+			'publish' => array('flag' => true),
+			'single' => array(
+				'type' => 'Shipped',
+				'price' => 1701,
+		        'sale' => array(
+		            'flag' => true,
+		            'price' => 17.01
+		        ),
+				'taxed'=> true,
+				'shipping' => array('flag' => true, 'fee' => 1.50, 'weight' => 52.7, 'length' => 285.9, 'width' => 125.6, 'height' => 71.5),
+				'inventory' => array(
+					'flag' => true,
+					'stock' => 1,
+					'sku' => 'NCC-1701'
+				)
+			),
+			'tags' => array('terms' => array('Starfleet', 'Federation')),
+			'categories'=> array('terms' => array(self::$category)),
+			'specs' => array(
+				'Class' => 'Constitution',
+				'Category' => 'Heavy Cruiser',
+				'Decks' => 23,
+				'Officers' => 40,
+				'Crew' => 390,
+				'Max Vistors' => 50,
+				'Max Accommodations' => 800,
+				'Phaser Force Rating' => '2.5 MW',
+				'Torpedo Force Rating' => '9.7 isotons'
+				)
+		);
+
+		$Product = shopp_add_product($args);
+
 	}
+
 
 	function test_shopp_add_product_category () {
 		global $test_shopp_add_product_category;
@@ -76,16 +117,16 @@ class CollectionDevAPITests extends ShoppTestCase
 	}
 
 	function test_shopp_product_tag() {
-		$Tag = shopp_product_tag('action');
-		$this->AssertEquals($Tag->name, 'action');
-		$this->AssertEquals($Tag->slug, 'action');
+		$Tag = shopp_product_tag('Starfleet');
+		$this->AssertEquals('Starfleet', $Tag->name);
+		$this->AssertEquals('starfleet', $Tag->slug);
 		$this->AssertTrue( ! empty($Tag->products) );
 
 		$id = $Tag->id;
 		$Tag = shopp_product_tag($id);
 
-		$this->AssertEquals($Tag->name, 'action');
-		$this->AssertEquals($Tag->slug, 'action');
+		$this->AssertEquals('Starfleet', $Tag->name);
+		$this->AssertEquals('starfleet', $Tag->slug);
 		$this->AssertTrue( ! empty($Tag->products) );
 	}
 
@@ -103,10 +144,10 @@ class CollectionDevAPITests extends ShoppTestCase
 	}
 
 	function test_shopp_product_term () {
-		$Tag = shopp_product_tag('action');
+		$Tag = shopp_product_tag('Starfleet');
 		$Term = shopp_product_term($Tag->id, ProductTag::$taxon);
-		$this->AssertEquals($Term->name, 'action');
-		$this->AssertEquals($Term->slug, 'action');
+		$this->AssertEquals('Starfleet', $Tag->name);
+		$this->AssertEquals('starfleet', $Tag->slug);
 		$this->AssertTrue( ! empty($Term->products) );
 
 		shopp_register_taxonomy('product_term_test');
@@ -123,7 +164,14 @@ class CollectionDevAPITests extends ShoppTestCase
 	}
 
 	function test_shopp_term_products() {
+		shopp_register_taxonomy('product_term_test');
+
+		$Product = shopp_add_product(array('name'=>'shopp_product_term_test', 'publish'=>array('flag'=>true)));
+		$term = shopp_add_product_term('shopp_product_term_test1', 'shopp_product_term_test');
+		shopp_product_add_terms ( $Product->id, $terms = array($term), 'shopp_product_term_test' );
+
 		$Products = shopp_term_products('shopp_product_term_test1', 'shopp_product_term_test');
+
 		$this->AssertEquals(1, count($Products));
 		$this->AssertEquals('shopp_product_term_test', reset($Products)->name);
 	}
@@ -161,79 +209,44 @@ class CollectionDevAPITests extends ShoppTestCase
 	}
 
 	function test_shopp_category_products () {
-		global $wpdb;
-		$Cat = new ProductCategory("Men's", "name");
-		$count = $Cat->count;
+		$Cat = new ProductCategory('heavy-cruiser', 'slug');
 		$Products = shopp_category_products ( (int) $Cat->id );
-
 		$this->AssertTrue(! empty($Products) );
 	}
 
 	function test_shopp_tag_products() {
-		$Products = shopp_tag_products( 'wachowski' );
+		$Products = shopp_tag_products( 'Federation' );
 		$this->AssertTrue( ! empty( $Products ) );
 	}
 
 	function test_shopp_catalog_count () {
 		$count = shopp_catalog_count();
-		$this->AssertEquals(116, $count);
+		$this->AssertEquals(3, $count);
 	}
 
 	function test_shopp_category_count () {
-		$counts = array(
-			"apparel"=>15,
-			"bathing-suites"=>0,
-			"blue-ray"=>5,
-			"books"=>29,
-			"charities"=>2,
-			"donations"=>3,
-			"dresses"=>0,
-			"entertainment"=>64,
-			"for-her"=>5,
-			"for-him"=>6,
-			"foundations"=>1,
-			"games"=>14,
-			"underwear"=>6,
-			"jeans"=>3,
-			"jewelry"=>32,
-			"mens"=>9,
-			"movies-tv"=>21,
-			"music"=>0,
-			"pendants-necklaces"=>13,
-			"rings"=>9,
-			"suits"=>1,
-			"systems"=>0,
-			"t-shirts-2"=>0,
-			"t-shirts"=>5,
-			"video-games"=>14,
-			"watches"=>11,
-			"womens"=>6
-		);
-		foreach(shopp_product_categories() as $Category) {
-			$count = shopp_category_count($Category->id);
-			if ( in_array($Category->slug, array_keys($counts)) ) $this->AssertEquals($Category->slug.$counts[$Category->slug], $Category->slug.$count);
-		}
+		$count = shopp_category_count(self::$category);
+		$this->AssertEquals(1, $count);
 	}
 
 	function test_shopp_product_categories_count () {
-		$Product = shopp_product('1/10 Carat Diamond Journey Heart Pendant in Yellow Gold', 'name');
+		$Product = shopp_product('uss-enterprise', 'slug');
 		$count = shopp_product_categories_count($Product->id);
-		$this->AssertEquals(2, $count);
+		$this->AssertEquals(1, $count);
 	}
 
 	function test_shopp_product_category () {
-		$cat = shopp_product_category(3);
-		$this->AssertEquals(15, count($cat->products));
-		$this->AssertEquals('Apparel', $cat->name);
+		$cat = shopp_product_category(self::$category);
+		$this->AssertEquals(1, count($cat->products));
+		$this->AssertEquals('Heavy Cruiser', $cat->name);
 	}
 
 	function test_shopp_subcategories () {
-		$this->AssertEquals(15, count(shopp_category_products ( 3 )));
+		$this->AssertEquals(1, count(shopp_category_products ( self::$category )));
 	}
 
 	function test_shopp_subcategory_count () {
-		$this->AssertEquals(9, shopp_subcategory_count(3));
+		$this->AssertEquals(0, shopp_subcategory_count(self::$category));
 	}
 
 }
-?>

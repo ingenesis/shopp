@@ -11,8 +11,7 @@
 
 class CartItemAPITests extends ShoppTestCase {
 
-	function setUp () {
-		parent::setUp();
+	static function setUpBeforeClass () {
 
 		$args = array(
 			'name' => 'USS Enterprise',

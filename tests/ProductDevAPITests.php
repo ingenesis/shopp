@@ -3,8 +3,8 @@
 * ProductDevAPITests - tests for the product dev api
 */
 class ProductDevAPITests extends ShoppTestCase {
-	function setUp () {
-		parent::setUp();
+
+	static function setUpBeforeClass () {
 
 		$args = array(
 			'name' => 'USS Enterprise',
@@ -38,7 +38,6 @@ class ProductDevAPITests extends ShoppTestCase {
 		);
 
 		shopp_add_product($args);
-
 	}
 
 	function test_shopp_add_product () {
