@@ -9,27 +9,57 @@
  **/
 class CheckoutAPITests extends ShoppTestCase {
 
+	static function setUpBeforeClass () {
+		$Shopp = Shopp::object();
+		$Shopp->Flow->handler('Storefront');
+
+		$args = array(
+			'name' => 'USS Enterprise',
+			'publish' => array('flag' => true),
+			'single' => array(
+				'type' => 'Shipped',
+				'price' => 1701,
+		        'sale' => array(
+		            'flag' => true,
+		            'price' => 17.01
+		        ),
+				'taxed'=> true,
+				'shipping' => array('flag' => true, 'fee' => 1.50, 'weight' => 52.7, 'length' => 285.9, 'width' => 125.6, 'height' => 71.5),
+				'inventory' => array(
+					'flag' => true,
+					'stock' => 1,
+					'sku' => 'NCC-1701'
+				)
+			),
+			'specs' => array(
+				'Class' => 'Constitution',
+				'Category' => 'Heavy Cruiser',
+				'Decks' => 23,
+				'Officers' => 40,
+				'Crew' => 390,
+				'Max Vistors' => 50,
+				'Max Accommodations' => 800,
+				'Phaser Force Rating' => '2.5 MW',
+				'Torpedo Force Rating' => '9.7 isotons'
+				)
+		);
+
+		$Product = shopp_add_product($args);
+		shopp_add_cart_product($Product->id, 1);
+
+	}
+
 	function setUp () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		parent::setUp();
-		global $Shopp;
-		$_SERVER['REQUEST_URI'] = "/store/checkout/";
-		$Shopp->Flow->Controller = new Storefront();
+		$this->go_to('http://' . WP_TESTS_DOMAIN . '?shopp_page=checkout');
 	}
 
 	public function test_checkout_url () {
-		ob_start();
-		shopp('checkout','url');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('http://shopptest/store/checkout/',$actual);
+		$actual = shopp('checkout.get-url');
+		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_page=checkout',$actual);
 	}
 
 	function test_checkout_function () {
-		ob_start();
-		shopp('checkout','function');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-function');
 
 		$expected = array(
 			'tag' => 'input',
@@ -42,26 +72,14 @@ class CheckoutAPITests extends ShoppTestCase {
 
 	function test_checkout_error () {
 		new ShoppError('Test Error');
-		ob_start();
-		shopp('checkout','error');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('<li>Test Error</li>',$actual);
+		$actual = shopp('checkout.get-error');
+		$this->assertEquals('<li>Test Error</li>', $actual);
 	}
 
 	function test_checkout_cartsummary () {
-		global $Shopp;
-		$Shopp->Order->Cart->clear();
 
-		$Product = new Product(81); $Price = false;
-		$Shopp->Order->Cart->add(1,$Product,$Price,false);
-		$Shopp->Order->Cart->totals();
-
-		ob_start();
-		shopp('checkout','cart-summary');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertTrue(!empty($actual));
+		$actual = shopp('checkout.get-cart-summary');
+		$this->assertTrue( ! empty($actual) );
 		$this->assertValidMarkup($actual);
 	}
 
@@ -70,31 +88,27 @@ class CheckoutAPITests extends ShoppTestCase {
 		ShoppOrder()->Customer = new Customer();
 		$this->assertTrue(shopp('checkout','notloggedin'));
 
-		$Login = new Login();
-		$Account = new Customer(4,'wpuser');
+		$Login = new ShoppLogin();
+		$Account = new Customer();
 		$Login->login($Account);
 
 		$this->assertFalse(shopp('checkout','notloggedin'));
 	}
 
 	function test_checkout_loggedin () {
-		global $Shopp;
 		shopp_set_setting('account_system', 'wordpress');
-		$Order =& ShoppOrder();
-		$Order->Customer = new Customer();
+
+		ShoppOrder()->Customer = new Customer();
 		$this->assertFalse(shopp('checkout','loggedin'));
 
-		$Login = new Login();
-		$Account = new Customer(4,'wpuser');
+		$Login = new ShoppLogin();
+		$Account = new Customer();
 		$Login->login($Account);
 		$this->assertTrue(shopp('checkout','loggedin'));
 	}
 
 	function test_checkout_accountlogin () {
-		ob_start();
-		shopp('checkout','account-login');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-account-login');
 
 		$expected = array(
 			'tag' => 'input',
@@ -106,10 +120,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_passwordlogin () {
-		ob_start();
-		shopp('checkout','password-login');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-password-login');
 
 		$expected = array(
 			'tag' => 'input',
@@ -121,10 +132,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_loginbutton () {
-		ob_start();
-		shopp('checkout','login-button');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-login-button');
 
 		$expected = array(
 			'tag' => 'input',
@@ -136,10 +144,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_firstname () {
-		ob_start();
-		shopp('checkout','firstname');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-firstname');
 
 		$expected = array(
 			'tag' => 'input',
@@ -150,10 +155,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_lastname () {
-		ob_start();
-		shopp('checkout','lastname');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-lastname');
 
 		$expected = array(
 			'tag' => 'input',
@@ -164,10 +166,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_email () {
-		ob_start();
-		shopp('checkout','email');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-email');
 
 		$expected = array(
 			'tag' => 'input',
@@ -178,10 +177,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_loginname () {
-		ob_start();
-		shopp('checkout','loginname');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-loginname');
 
 		$expected = array(
 			'tag' => 'input',
@@ -192,10 +188,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_password () {
-		ob_start();
-		shopp('checkout','password');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-password');
 
 		$expected = array(
 			'tag' => 'input',
@@ -206,10 +199,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_confirmpassword () {
-		ob_start();
-		shopp('checkout','confirm-password');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-confirm-password');
 
 		$expected = array(
 			'tag' => 'input',
@@ -220,10 +210,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_phone () {
-		ob_start();
-		shopp('checkout','phone');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-phone');
 
 		$expected = array(
 			'tag' => 'input',
@@ -234,10 +221,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_company () {
-		ob_start();
-		shopp('checkout','company');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-company');
 
 		$expected = array(
 			'tag' => 'input',
@@ -248,10 +232,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_customerinfo () {
-		ob_start();
-		shopp('checkout','customer-info','type=text&name=Test');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-customer-info','type=text&name=Test');
 
 		$expected = array(
 			'tag' => 'input',
@@ -267,10 +248,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	// }
 
 	function test_checkout_shipping_address () {
-		ob_start();
-		shopp('checkout','shipping-address');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-shipping-address');
 
 		$expected = array(
 			'tag' => 'input',
@@ -281,10 +259,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_shipping_xaddress () {
-		ob_start();
-		shopp('checkout','shipping-xaddress');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-shipping-xaddress');
 
 		$expected = array(
 			'tag' => 'input',
@@ -295,10 +270,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_shipping_city () {
-		ob_start();
-		shopp('checkout','shipping-city');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-shipping-city');
 
 		$expected = array(
 			'tag' => 'input',
@@ -309,10 +281,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_shipping_state () {
-		ob_start();
-		shopp('checkout','shipping-state');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-shipping-state');
 
 		$expected = array(
 			'tag' => 'select',
@@ -326,10 +295,7 @@ class CheckoutAPITests extends ShoppTestCase {
 		$this->assertTag($expected,$actual,"++ $actual",true);
 		$this->assertValidMarkup($actual);
 
-		ob_start();
-		shopp('checkout','shipping-state','type=text');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-shipping-state','type=text');
 
 		$expected = array(
 			'tag' => 'input',
@@ -340,10 +306,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_shipping_postcode () {
-		ob_start();
-		shopp('checkout','shipping-postcode');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-shipping-postcode');
 
 		$expected = array(
 			'tag' => 'input',
@@ -354,10 +317,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_shipping_country () {
-		ob_start();
-		shopp('checkout','shipping-country');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-shipping-country');
 
 		$expected = array(
 			'tag' => 'select',
@@ -368,10 +328,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_samebillingaddress () {
-		ob_start();
-		shopp('checkout','same-billing-address');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-same-billing-address');
 
 		$expected = array(
 			'tag' => 'input',
@@ -382,10 +339,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_sameshippingaddress () {
-		ob_start();
-		shopp('checkout','same-shipping-address');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-same-shipping-address');
 
 		$expected = array(
 			'tag' => 'input',
@@ -395,17 +349,12 @@ class CheckoutAPITests extends ShoppTestCase {
 		$this->assertValidMarkup($actual);
 	}
 
-	function test_checkout_billingrequired () {
-		global $Shopp;
-
-		$this->assertTrue(shopp('checkout','billing-required'));
+	function test_checkout_card_required () {
+		$this->assertFalse(shopp('checkout','card-required'));
 	}
 
 	function test_checkout_billing_address () {
-		ob_start();
-		shopp('checkout','billing-address');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-address');
 
 		$expected = array(
 			'tag' => 'input',
@@ -416,10 +365,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_billing_xaddress () {
-		ob_start();
-		shopp('checkout','billing-xaddress');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-xaddress');
 
 		$expected = array(
 			'tag' => 'input',
@@ -430,10 +376,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_billing_city () {
-		ob_start();
-		shopp('checkout','billing-city');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-city');
 
 		$expected = array(
 			'tag' => 'input',
@@ -444,10 +387,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_billing_state () {
-		ob_start();
-		shopp('checkout','billing-state');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-state');
 
 		$expected = array(
 			'tag' => 'select',
@@ -461,10 +401,7 @@ class CheckoutAPITests extends ShoppTestCase {
 		$this->assertTag($expected,$actual,"++ $actual",true);
 		$this->assertValidMarkup($actual);
 
-		ob_start();
-		shopp('checkout','billing-state','type=text');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-state','type=text');
 
 		$expected = array(
 			'tag' => 'input',
@@ -475,10 +412,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_billing_postcode () {
-		ob_start();
-		shopp('checkout','billing-postcode');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-postcode');
 
 		$expected = array(
 			'tag' => 'input',
@@ -489,10 +423,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_billing_country () {
-		ob_start();
-		shopp('checkout','billing-country');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-country');
 
 		$expected = array(
 			'tag' => 'select',
@@ -503,10 +434,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_billing_card () {
-		ob_start();
-		shopp('checkout','billing-card');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-card');
 
 		$expected = array(
 			'tag' => 'input',
@@ -517,10 +445,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_billing_cardtype () {
-		ob_start();
-		shopp('checkout','billing-cardtype');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-cardtype');
 
 		$expected = array(
 			'tag' => 'select',
@@ -531,10 +456,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_billing_cardexpires_mm () {
-		ob_start();
-		shopp('checkout','billing-cardexpires-mm');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-cardexpires-mm');
 
 		$expected = array(
 			'tag' => 'input',
@@ -545,10 +467,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_billing_cardexpires_yy () {
-		ob_start();
-		shopp('checkout','billing-cardexpires-yy');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-cardexpires-yy');
 
 		$expected = array(
 			'tag' => 'input',
@@ -559,10 +478,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_billing_cardholder () {
-		ob_start();
-		shopp('checkout','billing-cardholder');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-cardholder');
 
 		$expected = array(
 			'tag' => 'input',
@@ -573,10 +489,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_billing_cvv () {
-		ob_start();
-		shopp('checkout','billing-cvv');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-billing-cvv');
 
 		$expected = array(
 			'tag' => 'input',
@@ -587,10 +500,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_orderdata () {
-		ob_start();
-		shopp('checkout','order-data','type=text&name=Test');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-order-data','type=text&name=Test');
 
 		$expected = array(
 			'tag' => 'input',
@@ -601,10 +511,7 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_submit () {
-		ob_start();
-		shopp('checkout','submit');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-submit');
 
 		$expected = array(
 			'tag' => 'input',
@@ -615,36 +522,16 @@ class CheckoutAPITests extends ShoppTestCase {
 	}
 
 	function test_checkout_confirmbutton () {
-		ob_start();
-		shopp('checkout','confirm-button');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('checkout.get-confirm-button');
 
 		$expected = array(
 			'tag' => 'a',
-			'attributes' => array('href' => 'http://shopptest/store/checkout/'),
+			'attributes' => array('href' => 'http://' . WP_TESTS_DOMAIN . '/?shopp_page=checkout'),
 			'content' => 'Return to Checkout'
 		);
 		$this->assertTag($expected,$actual,$actual,true);
 		$this->assertValidMarkup($actual);
 
-		// global $Shopp;
-		// $Shopp->Order->Cart->clear();
-		//
-		// $Product = new Product(81); $Price = false;
-		// $Shopp->Order->Cart->add(1,$Product,$Price,false);
-		// $Shopp->Order->Cart->totals();
-		//
-		// $expected = array(
-		// 	'tag' => 'input',
-		// 	'attributes' => array('type' => 'submit','name' => 'confirmed','id' => 'confirm-button')
-		// );
-		// $this->assertTag($expected,$actual,$actual,true);
-		// $this->assertValidMarkup($actual);
-		//
-		// $Shopp->Order->Cart->clear();
 	}
 
 } // end CheckoutAPITests class
-
-?>
