@@ -91,8 +91,8 @@ class ShoppCart extends ListFramework {
 		add_action('shopp_init', array($this, 'tracking'));
 
 		// Recalculate cart based on logins (for customer type discounts)
-		add_action('shopp_login', array($this, 'total'));
-		add_action('shopp_logged_out', array($this, 'total'));
+		add_action('shopp_login', array($this, 'totals'));
+		add_action('shopp_logged_out', array($this, 'totals'));
 	}
 
 	/**
