@@ -687,5 +687,9 @@ class ShoppErrorStorefrontNotices implements Iterator {
         return isset($this->notices[ $this->position ]);
 	}
 
+	public function clear () {
+		$this->notices = array();
+	}
+
 }
 add_action('shopp_errors_init', 'ShoppErrorStorefrontNotices::object');
