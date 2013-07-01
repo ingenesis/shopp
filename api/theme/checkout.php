@@ -507,7 +507,9 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		return $output;
 	}
 
-	public static function gateway_inputs ($result, $options, $O) { return apply_filters('shopp_checkout_gateway_inputs',false); }
+	public static function gateway_inputs ($result, $options, $O) {
+		return apply_filters('shopp_checkout_gateway_inputs',false);
+	}
 
 	public static function guest ($result, $options, $O) {
 		$allowed = array('class','checked','title');
