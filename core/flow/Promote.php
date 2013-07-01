@@ -18,8 +18,7 @@
  * @author Jonathan Davis
  **/
 class Promote extends AdminController {
-
-	var $Notice = false;
+	public $Notice = false;
 
 	/**
 	 * Promote constructor
@@ -27,8 +26,10 @@ class Promote extends AdminController {
 	 * @return void
 	 * @author Jonathan Davis
 	 **/
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
+		$this->save();
+
 		if (!empty($_GET['id'])) {
 			wp_enqueue_script('postbox');
 			shopp_enqueue_script('colorbox');
@@ -48,9 +49,9 @@ class Promote extends AdminController {
 		extract($args,EXTR_SKIP);
 		if (!is_array($selected)) $selected = array($selected);
 
-		$url = add_query_arg(array_merge($_GET,array('page'=>'shopp-promotions')),admin_url('admin.php'));
-		$f = array('action','selected','s');
-		if ('shopp-promotions' == $page && ! empty($action)) {
+		$url = add_query_arg(array_merge($_GET, array('page'=>'shopp-promotions')), admin_url('admin.php'));
+		$f = array('action', 'selected', 's');
+		if ( 'shopp-promotions' == $page && ! empty($action) ) {
 			switch ( $action ) {
 				case 'enable': Promotion::enableset($selected); break;
 				case 'disable': Promotion::disableset($selected); break;
@@ -71,9 +72,9 @@ class Promote extends AdminController {
 	 * @return void
 	 * @author Jonathan Davis
 	 **/
-	function admin () {
+	public function admin () {
 		$Shopp = Shopp::object();
-		if (!empty($_GET['id'])) $this->editor();
+		if ( isset($_GET['id']) ) $this->editor();
 		else $this->promotions();
 	}
 
@@ -83,7 +84,7 @@ class Promote extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function promotions () {
+	public function promotions () {
 		$Shopp = Shopp::object();
 
 		if ( ! current_user_can('shopp_promotions') )
@@ -107,40 +108,12 @@ class Promote extends AdminController {
 		$f = array('action','selected','s');
 		$url = remove_query_arg( $f, $url );
 
-
-		if (!empty($_POST['save'])) {
-			check_admin_referer('shopp-save-promotion');
-
-			if ($_POST['id'] != "new") {
-				$Promotion = new Promotion($_POST['id']);
-			} else $Promotion = new Promotion();
-
-			if (!empty($_POST['starts']['month']) && !empty($_POST['starts']['date']) && !empty($_POST['starts']['year']))
-				$_POST['starts'] = mktime(0,0,0,$_POST['starts']['month'],$_POST['starts']['date'],$_POST['starts']['year']);
-			else $_POST['starts'] = 1;
-
-			if (!empty($_POST['ends']['month']) && !empty($_POST['ends']['date']) && !empty($_POST['ends']['year']))
-				$_POST['ends'] = mktime(23,59,59,$_POST['ends']['month'],$_POST['ends']['date'],$_POST['ends']['year']);
-			else $_POST['ends'] = 1;
-			if (isset($_POST['rules'])) $_POST['rules'] = stripslashes_deep($_POST['rules']);
-
-			$Promotion->updates($_POST);
-			$Promotion->save();
-
-			do_action_ref_array('shopp_promo_saved',array(&$Promotion));
-
-			// $Promotion->reset_discounts();
-			if ($Promotion->target == "Catalog")
-				$Promotion->catalog();
-
-		}
-
 		$pagenum = absint( $paged );
 		$start = ($per_page * ($pagenum-1));
 
 		$where = array();
-		if (!empty($s)) $where[] = "name LIKE '%$s%'";
-		if ($status) {
+		if ( ! empty($s) ) $where[] = "name LIKE '%$s%'";
+		if ( $status ) {
 			$datesql = Promotion::activedates();
 			switch (strtolower($status)) {
 				case 'active': $where[] = "status='enabled' AND $datesql"; break;
@@ -149,7 +122,7 @@ class Promote extends AdminController {
 				case 'disabled': $where[] = "status='disabled'"; break;
 			}
 		}
-		if ($type) {
+		if ( $type ) {
 			switch (strtolower($type)) {
 				case 'catalog': $where[] = "target='Catalog'"; break;
 				case 'cart': $where[] = "target='Cart'"; break;
@@ -169,7 +142,7 @@ class Promote extends AdminController {
 		$count = DB::found();
 
 		$num_pages = ceil($count / $per_page);
-		$ListTable = ShoppUI::table_set_pagination ($this->screen, $count, $num_pages, $per_page );
+		$ListTable = ShoppUI::table_set_pagination($this->screen, $count, $num_pages, $per_page );
 
 		$states = array(
 			'active' => __('Active','Shopp'),
@@ -195,13 +168,47 @@ class Promote extends AdminController {
 		include(SHOPP_PATH.'/core/ui/promotions/promotions.php');
 	}
 
+
+	protected function save() {
+		if ( ! empty($_POST['save']) ) {
+			check_admin_referer('shopp-save-promotion');
+
+			if ( 'new' !== $_POST['id'] ) {
+				$Promotion = new Promotion($_POST['id']);
+			} else $Promotion = new Promotion();
+
+			if ( ! empty($_POST['starts']['month']) && ! empty($_POST['starts']['date']) && ! empty($_POST['starts']['year']) )
+				$_POST['starts'] = mktime(0, 0, 0, $_POST['starts']['month'], $_POST['starts']['date'], $_POST['starts']['year']);
+			else $_POST['starts'] = 1;
+
+			if ( ! empty($_POST['ends']['month']) && ! empty($_POST['ends']['date']) && ! empty($_POST['ends']['year']) )
+				$_POST['ends'] = mktime(23, 59, 59, $_POST['ends']['month'], $_POST['ends']['date'], $_POST['ends']['year']);
+			else $_POST['ends'] = 1;
+			if ( isset($_POST['rules']) ) $_POST['rules'] = stripslashes_deep($_POST['rules']);
+
+			$Promotion->updates($_POST);
+			$Promotion->save();
+
+			do_action_ref_array('shopp_promo_saved',array(&$Promotion));
+
+			// $Promotion->reset_discounts();
+			if ($Promotion->target == "Catalog")
+				$Promotion->catalog();
+
+			// Stay in the editor
+			$url = add_query_arg(array('page'=>'shopp-promotions', 'id' => $Promotion->id), admin_url('admin.php'));
+			wp_redirect($url);
+			exit();
+		}
+	}
+
 	/**
 	 * Registers the column headers for the promotions list interface
 	 *
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function columns () {
+	public function columns () {
 		register_column_headers($this->screen, array(
 			'cb'=>'<input type="checkbox" />',
 			'name'=>__('Name','Shopp'),
@@ -217,33 +224,29 @@ class Promote extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function layout () {
+	public function layout () {
 		$Shopp = Shopp::object();
 		$Admin =& $Shopp->Flow->Admin;
-		include(SHOPP_PATH."/core/ui/promotions/ui.php");
+		include SHOPP_PATH . 'core/ui/promotions/ui.php' ;
 	}
 
 	/**
 	 * Interface processor for the promotion editor
-	 *
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function editor () {
+	public function editor () {
 		$Shopp = Shopp::object();
 
 		if ( ! current_user_can('shopp_promotions') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
-
-		if ($_GET['id'] != "new") {
+		if ( 'new' !== $_GET['id'] ) {
 			$Promotion = new Promotion($_GET['id']);
 		} else $Promotion = new Promotion();
 
-		include(SHOPP_PATH."/core/ui/promotions/editor.php");
+		include SHOPP_PATH . '/core/ui/promotions/editor.php';
 	}
 
 
 } // end Promote class
-
-?>

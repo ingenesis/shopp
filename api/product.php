@@ -1117,6 +1117,23 @@ function shopp_product_set_variant ( $variant = false, $data = array(), $context
 }
 
 /**
+ * Removes a variant from a product.
+ *
+ * @since 1.3
+ *
+ * @param int|Price $variant (required) id of the variant price line
+ * @return bool false on failure
+ **/
+function shopp_product_rmv_variant_option ( $variant ) {
+	$priceline = new Price($variant);
+
+	if ( $save ) {
+		return $Price->save() && shopp_set_meta ( $Price->id, 'price', 'settings', $Price->settings );
+	}
+	return $Price;
+}
+
+/**
  * shopp_product_set_addon - configure a addon priceline.
  *
  * @author John Dillick
