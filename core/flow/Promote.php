@@ -226,8 +226,6 @@ class Promote extends AdminController {
 	/**
 	 * Interface processor for the promotion editor
 	 *
-	 *
-	 *
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
