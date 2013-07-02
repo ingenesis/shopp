@@ -331,6 +331,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 	public static function has_purchases ($result, $options, $O) {
 		$Storefront = ShoppStorefront();
+
 		$filters = array();
 		if ( isset($options['daysago']) )
 			$filters['where'] = "UNIX_TIMESTAMP(o.created) > UNIX_TIMESTAMP()-".($options['daysago']*86400);
@@ -378,7 +379,9 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		return '<input type="text" name="lastname" id="lastname" '.inputattrs($options).' />';
 	}
 
-	public static function logged_in ($result, $options, $O) { return ShoppCustomer()->logged_in(); }
+	public static function logged_in ($result, $options, $O) {
+		return ShoppCustomer()->logged_in() && 'none' != shopp_setting('account_system');
+	}
 
 	public static function login_label ($result, $options, $O) {
 		$accounts = shopp_setting('account_system');
@@ -413,7 +416,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 
 	public static function not_logged_in ($result, $options, $O) {
-		return (! ShoppCustomer()->logged_in() && shopp_setting('account_system') != "none");
+		return (! ShoppCustomer()->logged_in() && 'none' != shopp_setting('account_system'));
 	}
 
 	public static function order ($result, $options, $O) {

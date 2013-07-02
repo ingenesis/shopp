@@ -263,7 +263,8 @@ class Customer extends DatabaseObject {
 		$query = "SELECT o.* FROM $orders AS o WHERE o.customer=$this->id $where ORDER BY created DESC";
 
 		$PurchaseLoader = new Purchase();
-		$Storefront->purchases = DB::query($query,'array',array($PurchaseLoader,'loader'));
+		$purchases = DB::query($query, 'array', array($PurchaseLoader, 'loader'));
+		$Storefront->purchases = (array)$purchases;
 	}
 
 	public function create_wpuser () {

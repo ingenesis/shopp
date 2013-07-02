@@ -10,24 +10,89 @@
  **/
 class CustomerAPITests extends ShoppTestCase {
 
-	function setUp () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		parent::setUp();
-		global $Shopp;
-		$Shopp->Flow->handler('Storefront');
+	public static function setUpBeforeClass () {
 
-		$_SERVER['REQUEST_URI'] = "/";
-		$Login = new Login();
-		$Account = new Customer(4,'wpuser');
-		$Login->login($Account);
+		shopp_set_setting('account_system', 'wordpress');
+
+		$Shopp = Shopp::object();
+		$Shopp->Flow->Controller = new Storefront();
+
+		// Create the WordPress account
+		$wpuser = wp_insert_user(array(
+			'user_login' => 'bones',
+			'user_pass' => 'imadoctornotanengineer',
+			'user_email' => 'mccoy@starfleet.gov',
+			'display_name' => 'Dr. Leonard McCoy',
+			'nickname' => 'Bones',
+			'first_name' => 'Leonard',
+			'last_name' => 'McCoy'
+		));
+
+		$customerid = shopp_add_customer(array(
+			'wpuser' => $wpuser,
+			'firstname' => 'Leonard',
+			'lastname' => 'McCoy',
+			'email' => 'mccoy@starfleet.gov',
+			'phone' => '999-999-1701',
+			'company' => 'Starfleet Command',
+			'marketing' => 'no',
+			'type' => 'Tax-Exempt',
+			'saddress' => '24-593 Federation Dr',
+			'sxaddress' => 'Shipping',
+			'scity' => 'San Francisco',
+			'sstate' => 'CA',
+			'scountry' => 'US',
+			'spostcode' => '94123',
+			'baddress' => '24-593 Federation Dr',
+			'bxaddress' => 'Billing',
+			'bcity' => 'San Francisco',
+			'bstate' => 'CA',
+			'bcountry' => 'US',
+			'bpostcode' => '94123',
+			'residential' => true
+		));
+
+		shopp_add_product(array(
+			'name' => 'USS Enterprise',
+			'publish' => array('flag' => true),
+			'single' => array(
+				'type' => 'Shipped',
+				'price' => 1701,
+		        'sale' => array(
+		            'flag' => true,
+		            'price' => 17.01
+		        ),
+				'taxed'=> true,
+				'shipping' => array('flag' => true, 'fee' => 1.50, 'weight' => 52.7, 'length' => 285.9, 'width' => 125.6, 'height' => 71.5),
+				'inventory' => array(
+					'flag' => true,
+					'stock' => 1,
+					'sku' => 'NCC-1701'
+				)
+			),
+			'specs' => array(
+				'Class' => 'Constitution',
+				'Category' => 'Heavy Cruiser',
+				'Decks' => 23,
+				'Officers' => 40,
+				'Crew' => 390,
+				'Max Vistors' => 50,
+				'Max Accommodations' => 800,
+				'Phaser Force Rating' => '2.5 MW',
+				'Torpedo Force Rating' => '9.7 isotons'
+				)
+		));
+	}
+
+	static function tearDownAfterClass () {
+		shopp_set_setting('account_system', 'none');
+		$Customer = shopp_customer('mccoy@starfleet.gov','email');
+		wp_delete_user( $Customer->wpuser );
 	}
 
 	function test_customer_accounturl () {
-		ob_start();
-		shopp('customer','accounturl');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('http://shopptest/store/account/',$actual);
+		$actual = shopp('customer.get-accounturl');
+		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_page=account', $actual);
 	}
 
 	function test_customer_recoverurl () {
@@ -35,7 +100,7 @@ class CustomerAPITests extends ShoppTestCase {
 		shopp('customer','recover-url');
 		$actual = ob_get_contents();
 		ob_end_clean();
-		$this->assertEquals('http://shopptest/store/account/?recover',$actual);
+		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_page=account&recover',$actual);
 	}
 
 	function test_customer_process () {
@@ -245,7 +310,7 @@ class CustomerAPITests extends ShoppTestCase {
 	}
 
 	function test_customer_info_tags () {
-		$this->assertTrue(shopp('customer','hasinfo'));
+		$this->assertFalse(shopp('customer','hasinfo'));
 		ob_start();
 		shopp('customer','info','type=text&name=Test Field');
 		$actual = ob_get_contents();
@@ -256,7 +321,7 @@ class CustomerAPITests extends ShoppTestCase {
 			'attributes' => array('type' => 'text','name' => 'info[Test Field]','id' => 'customer-info-test-field')
 		);
 
-		$this->assertTag($expected,$actual,'',true);
+		$this->assertTag($expected,$actual,$actual,true);
 		$this->assertValidMarkup($actual);
 	}
 
@@ -280,6 +345,11 @@ class CustomerAPITests extends ShoppTestCase {
 	// }
 
 	function test_customer_purchase_tags () {
+		$Customer = shopp_customer('mccoy@starfleet.gov', 'email');
+
+		$Product = shopp_product('uss-enterprise', 'slug');
+		shopp_add_cart_product ( $Product->id, 1 );
+		$Purchase = shopp_add_order($Customer->id);
 
 		ob_start();
 		if (shopp('customer','has-purchases')) {
@@ -289,9 +359,7 @@ class CustomerAPITests extends ShoppTestCase {
 		}
 		$actual = ob_get_contents();
 		ob_end_clean();
-		$this->assertEquals('http://shopptest/store/account/?orders=2',$actual);
+		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_page=account&orders=1',$actual);
 	}
 
 } // end CustomerAPITests class
-
-?>

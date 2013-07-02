@@ -8,68 +8,50 @@
 class CustomerDevAPITests extends ShoppTestCase {
 
 	static function setUpBeforeClass () {
-		self::transaction();
 
 		shopp_set_setting('account_system', 'wordpress');
 
-		$customers = array(
-			array(
-				'firstname' => 'James',
-				'lastname' => 'Kirk',
-				'loginname' => 'jimkirk',
-				'password' => 'imcaptainkirk!',
-				'phone' => '555-555-5555',
-				'email' => 'jkirk@starfleet.gov',
-				'company' => 'Starfleet Command',
-				'billing' => array(
-					'address' => '24-593 Federation Dr',
-					'xaddress' => '',
-					'city' => 'San Francisco',
-					'state' => 'CA',
-					'postcode' => '94123',
-					'country' => 'US'
-				),
-				'shipping' => array(
-					'address' => '24-593 Federation Dr',
-					'xaddress' => '',
-					'city' => 'San Francisco',
-					'state' => 'CA',
-					'postcode' => '94123',
-					'country' => 'US'
-				)
+		// Create the WordPress account
+		$wpuser = wp_insert_user(array(
+			'user_login' => 'jimkirk',
+			'user_pass' => 'imcaptainkirk!',
+			'user_email' => 'jkirk@starfleet.gov',
+			'display_name' => 'Captain James T. Kirk',
+			'nickname' => 'Jim',
+			'first_name' => 'James',
+			'last_name' => 'Kirk'
+		));
 
-			)
-
-		);
-
-
-		foreach ($customers as $data) {
-			$Customer = new Customer();
-			$Customer->updates($data);
-			$Customer->loginname = $data['loginname'];
-			$Customer->password = $data['password'];
-			$Customer->create_wpuser();
-			$Customer->save();
-
-			if ( isset($data['billing']) ) {
-				$BillingAddress = new BillingAddress();
-				$BillingAddress->updates($data['billing']);
-				$BillingAddress->customer = $Customer->id;
-				$BillingAddress->save();
-			}
-
-			if ( isset($data['shipping']) ) {
-				$ShippingAddress = new ShippingAddress();
-				$ShippingAddress->updates($data['shipping']);
-				$ShippingAddress->customer = $Customer->id;
-				$ShippingAddress->save();
-			}
-		}
+		$customerid = shopp_add_customer(array(
+			'wpuser' => $wpuser,
+			'firstname' => 'James',
+			'lastname' => 'Kirk',
+			'phone' => '555-555-5555',
+			'email' => 'jkirk@starfleet.gov',
+			'company' => 'Starfleet Command',
+			'marketing' => 'no',
+			'type' => 'Tax-Exempt',
+			'saddress' => '24-593 Federation Dr',
+			'sxaddress' => 'Shipping',
+			'scity' => 'San Francisco',
+			'sstate' => 'CA',
+			'scountry' => 'US',
+			'spostcode' => '94123',
+			'baddress' => '24-593 Federation Dr',
+			'bxaddress' => 'Billing',
+			'bcity' => 'San Francisco',
+			'bstate' => 'CA',
+			'bcountry' => 'US',
+			'bpostcode' => '94123',
+			'residential' => true
+		));
 
 	}
 
 	static function tearDownAfterClass () {
-		self::rollback();
+		shopp_set_setting('account_system', 'none');
+		$Customer = shopp_customer('jkirk@starfleet.gov','email');
+		wp_delete_user( $Customer->wpuser );
 	}
 
 	function test_customer_by_email () {
