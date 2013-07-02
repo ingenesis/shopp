@@ -50,7 +50,6 @@ class CollectionDevAPITests extends ShoppTestCase {
 
 	}
 
-
 	function test_shopp_add_product_category () {
 		global $test_shopp_add_product_category;
 

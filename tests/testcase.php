@@ -17,8 +17,6 @@ class ShoppTestCase extends WP_UnitTestCase {
 		$wpdb->show_errors = true;
 		$wpdb->db_connect();
 
-		// DB::query( 'SET autocommit = 0;' );
-		// DB::query( 'START TRANSACTION;' );
 	}
 
 	static function tearDownAfterClass () {
@@ -26,12 +24,12 @@ class ShoppTestCase extends WP_UnitTestCase {
 	}
 
 	static function transaction () {
-		DB::query( 'SET autocommit = 0;' );
-		DB::query( 'START TRANSACTION;' );
+		sDB::query( 'SET autocommit = 0;' );
+		sDB::query( 'START TRANSACTION;' );
 	}
 
 	static function rollback () {
-		DB::query( 'ROLLBACK' );
+		sDB::query( 'ROLLBACK' );
 	}
 
 	function setUp() {
@@ -62,14 +60,14 @@ class ShoppTestCase extends WP_UnitTestCase {
 		);
 		foreach ($classes as $classname) {
 			$table = DatabaseObject::tablename(get_class_property($classname,'table'));
-			DB::query('DELETE FROM '. $table);
+			sDB::query('DELETE FROM '. $table);
 		}
 
 		global $wpdb;
 		$skipped = array('options');
 		foreach ($wpdb->tables as $table) {
 			if ( in_array($table, $skipped) ) continue;
-			DB::query('DELETE FROM ' . $wpdb->$table);
+			sDB::query('DELETE FROM ' . $wpdb->$table);
 		}
 
 	}

@@ -86,9 +86,9 @@ class Account extends AdminController {
 				&& current_user_can('shopp_delete_customers')) {
 			foreach($selected as $deletion) {
 				$Customer = new Customer($deletion);
-				$Billing = new BillingAddress($Customer->id);
+				$Billing = new BillingAddress($Customer->id, 'customer');
 				$Billing->delete();
-				$Shipping = new ShippingAddress($Customer->id);
+				$Shipping = new ShippingAddress($Customer->id, 'customer');
 				$Shipping->delete();
 				$Customer->delete();
 			}
@@ -101,8 +101,8 @@ class Account extends AdminController {
 
 			if ($_POST['id'] !== 'new') {
 				$Customer = new Customer($_POST['id']);
-				$Billing = new BillingAddress($Customer->id);
-				$Shipping = new ShippingAddress($Customer->id);
+				$Billing = new BillingAddress($Customer->id, 'customer');
+				$Shipping = new ShippingAddress($Customer->id, 'customer');
 			} else $Customer = new Customer();
 
 			if (!empty($Customer->wpuser)) $user = get_user_by('id',$Customer->wpuser);
@@ -346,8 +346,8 @@ class Account extends AdminController {
 
 		if ($_GET['id'] != "new") {
 			$Customer = new Customer($_GET['id']);
-			$Customer->Billing = new BillingAddress($Customer->id);
-			$Customer->Shipping = new ShippingAddress($Customer->id);
+			$Customer->Billing = new BillingAddress($Customer->id, 'customer');
+			$Customer->Shipping = new ShippingAddress($Customer->id, 'customer');
 			if (empty($Customer->id))
 				wp_die(__('The requested customer record does not exist.','Shopp'));
 		} else $Customer = new Customer();
