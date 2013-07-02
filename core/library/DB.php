@@ -1177,7 +1177,9 @@ abstract class DatabaseObject implements Iterator {
 	 * @return void
 	 **/
 	public function __wakeup () {
-		$this->init(false);
+		$classname = get_class($this);
+		$tablename = get_class_property($classname,'table');
+		$this->init($tablename);
 	}
 
 } // END class DatabaseObject
