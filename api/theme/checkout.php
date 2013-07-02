@@ -640,7 +640,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	}
 
 	public static function payoption ($result, $options, $O) {
-		$payoption = current($O->payoptions);
+		$payoption = $O->Payments->current();
 		$defaults = array(
 			'labelpos' => 'after',
 			'labeling' => false,
@@ -649,20 +649,20 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults,$options);
 		extract($options);
 
-		if (Shopp::str_true($return)) return $payoption;
+		if ( Shopp::str_true($return) ) return $payoption;
 
 		$types = array('radio','checkbox','hidden');
-		if (!in_array($type,$types)) $type = 'hidden';
+		if ( ! in_array($type, $types) ) $type = 'hidden';
 
-		if (empty($options['value'])) $options['value'] = key($O->payoptions);
+		if ( empty($options['value']) ) $options['value'] = key($O->payoptions);
 
 		$_ = array();
-		if (Shopp::str_true($labeling)) {
+		if ( Shopp::str_true($labeling) ) {
 			$_[] = '<label class="'.esc_attr($options['value']).'">';
 			if ($labelpos == "before") $_[] = $payoption->label;
 		}
-		$_[] = '<input type="'.$type.'" name="paymethod" id="paymethod-'.esc_attr($options['value']).'"'.inputattrs($options).' />';
-		if (Shopp::str_true($labeling)) {
+		$_[] = '<input type="' . $type . '" name="paymethod" id="paymethod-' . esc_attr($options['value']) . '"' . Shopp::inputattrs($options) . ' />';
+		if ( Shopp::str_true($labeling) ) {
 			if ($labelpos == "after") $_[] = $payoption->label;
 			$_[] = '</label>';
 		}
@@ -688,11 +688,11 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		if ( $mode === 'loop' ) {
 			if ( ! isset($O->_pay_loop) ) {
-				reset($O->Payments->processors);
+				$O->Payments->rewind();
 				$O->_pay_loop = true;
-			} else next($O->Payments->processors);
+			} else $O->Payments->next();
 
-			if ( false !== current($O->Payments->processors) ) return true;
+			if ( false !== $O->Payments->current() ) return true;
 			else {
 				unset($O->_pay_loop);
 				return false;
@@ -708,7 +708,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		if (false !== $default && ! $O->Payments->userset() ) {
 			$default = sanitize_title_with_dashes($default);
-			if ( in_array($default,$payoptions) ) $paymethod = $default;
+			if ( in_array($default, $payoptions) ) $paymethod = $default;
 		}
 
 		if ( ! $O->Payments->userset() && $O->paymethod != $paymethod ) {
@@ -723,11 +723,11 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 				$output .= '<span><ul>';
 				foreach ( $payoptions as $value ) {
 					if ( in_array($value, $excludes) ) continue;
-					$payoption = $O->Payments->processors[$value];
+					$payoption = $O->Payments->get($value);
 					$options['value'] = $value;
 					$options['checked'] = ($O->paymethod == $value);
 					if ($options['checked'] === false) unset($options['checked']);
-					$output .= '<li><label><input type="radio" name="paymethod" '.Shopp::inputattrs($options).' /> '.$payoption->label.'</label></li>';
+					$output .= '<li><label><input type="radio" name="paymethod" ' . Shopp::inputattrs($options) . ' /> ' . $payoption->label . '</label></li>';
 				}
 				$output .= '</ul></span>';
 				break;
@@ -736,12 +736,12 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 				$output .= '<input type="hidden" name="paymethod"' . Shopp::inputattrs($options) . ' />';
 				break;
 			default:
-				$output .= '<select name="paymethod" ' . Shopp::inputattrs($options,$select_attrs) . '>';
+				$output .= '<select name="paymethod" ' . Shopp::inputattrs($options, $select_attrs) . '>';
 				foreach ($payoptions as $value) {
-					if (in_array($value,$excludes)) continue;
+					if (in_array($value, $excludes)) continue;
 					$payoption = $O->Payments->get($value);
-					$selected = ($O->paymethod == $value)?' selected="selected"':'';
-					$output .= '<option value="'.$value.'"'.$selected.'>'.$payoption->label.'</option>';
+					$selected = ($O->paymethod == $value) ? ' selected="selected"' : '';
+					$output .= '<option value="' . $value . '"' . $selected . '>' . $payoption->label . '</option>';
 				}
 				$output .= '</select>';
 				break;
