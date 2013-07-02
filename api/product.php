@@ -1117,20 +1117,55 @@ function shopp_product_set_variant ( $variant = false, $data = array(), $context
 }
 
 /**
- * Removes a variant from a product.
+ * Removes an option (or set of options) from a product.
  *
  * @since 1.3
  *
- * @param int|Price $variant (required) id of the variant price line
+ * @param $product id of product to be affected
+ * @param int|array $targetids (required) id (or ids, if an array is passed) of the variant options to be removed
  * @return bool false on failure
- **/
-function shopp_product_rmv_variant_option ( $variant ) {
-	$priceline = new Price($variant);
+ */
+function shopp_product_rmv_variant_option ( $product, $targetids ) {
+	$Product = shopp_product( $product );
 
-	if ( $save ) {
-		return $Price->save() && shopp_set_meta ( $Price->id, 'price', 'settings', $Price->settings );
+	if ( false === $product ) {
+		shopp_debug(__FUNCTION__ . ' failed: invalid product ID specified.');
+		return false;
 	}
-	return $Price;
+
+	$targetids = (array) $targetids;
+	$options = shopp_product_meta($Product->id, 'options');
+
+	if ( ! isset($options['v']) ) {
+		shopp_debug(__FUNCTION__ . " failed: no variant options for product {$Product->id}.");
+		return false;
+	}
+
+	foreach ( $options['v'] as $varindex => $variable ) {
+		foreach ( $variable['options'] as $optindex => $option ) {
+			if ( in_array($option['id'], $targetids) ) {
+				unset($options['v'][$varindex]['options'][$optindex]);
+			}
+		}
+		if ( empty($options['v'][$varindex]['options']) ) {
+			unset($options['v'][$varindex]);
+		}
+	}
+
+	shopp_set_product_meta($Product->id, 'options', $options);
+
+	foreach ( $Product->prices as $Price ) {
+		if ( 'variation' !== $Price->context ) continue;
+		$relates_to = explode(',', $Price->options);
+		$matches = array_intersect($relates_to, $targetids);
+		if (count($matches) > 0) {
+			$Price = new Price($Price->id);
+			$Price->delete();
+		}
+	}
+
+	$Product->resum();
+	return true;
 }
 
 /**
