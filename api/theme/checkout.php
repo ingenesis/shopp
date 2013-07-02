@@ -673,9 +673,9 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	public static function payoptions ($result, $options, $O) {
 		$select_attrs = array('title','required','class','disabled','required','size','tabindex','accesskey');
 
-		if ($O->Cart->orderisfree()) return false;
-		$payment_methods = apply_filters('shopp_payment_methods',count($O->payoptions));
-		if ($payment_methods <= 1) return false; // Skip if only one gateway is active
+		if ( $O->Cart->orderisfree() ) return false;
+		$payment_methods = apply_filters('shopp_payment_methods', $O->Payments->count() );
+		if ( $payment_methods <= 1 ) return false; // Skip if only one gateway is active
 		$defaults = array(
 			'default' => false,
 			'exclude' => false,
@@ -686,13 +686,13 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		extract($options);
 		unset($options['type']);
 
-		if ('loop' == $mode) {
-			if (!isset($O->_pay_loop)) {
-				reset($O->payoptions);
+		if ( $mode === 'loop' ) {
+			if ( ! isset($O->_pay_loop) ) {
+				reset($O->Payments->processors);
 				$O->_pay_loop = true;
-			} else next($O->payoptions);
+			} else next($O->Payments->processors);
 
-			if (current($O->payoptions) !== false) return true;
+			if ( false !== current($O->Payments->processors) ) return true;
 			else {
 				unset($O->_pay_loop);
 				return false;
@@ -700,46 +700,46 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 			return true;
 		}
 
-		$excludes = array_map('sanitize_title_with_dashes',explode(",",$exclude));
-		$payoptions = array_keys($O->payoptions);
+		$excludes = array_map('sanitize_title_with_dashes', explode(',', $exclude));
+		$payoptions = $O->Payments->keys();
 
-		$payoptions = array_diff($payoptions,$excludes);
+		$payoptions = array_diff($payoptions, $excludes);
 		$paymethod = current($payoptions);
 
-		if ($default !== false && ! $O->Payments->userset() ) {
+		if (false !== $default && ! $O->Payments->userset() ) {
 			$default = sanitize_title_with_dashes($default);
-			if (in_array($default,$payoptions)) $paymethod = $default;
+			if ( in_array($default,$payoptions) ) $paymethod = $default;
 		}
 
 		if ( ! $O->Payments->userset() && $O->paymethod != $paymethod ) {
 			$O->paymethod = $paymethod;
-			$processor = $O->payoptions[$O->paymethod]->processor;
-			if (!empty($processor)) $O->processor($processor);
+			$processor = $O->Payments->get($O->paymethod)->processor;
+			if (!empty($processor)) $O->Payments->processor($processor);
 		}
 
 		$output = '';
 		switch ($type) {
 			case "list":
 				$output .= '<span><ul>';
-				foreach ($payoptions as $value) {
-					if (in_array($value,$excludes)) continue;
-					$payoption = $O->payoptions[$value];
+				foreach ( $payoptions as $value ) {
+					if ( in_array($value, $excludes) ) continue;
+					$payoption = $O->Payments->processors[$value];
 					$options['value'] = $value;
 					$options['checked'] = ($O->paymethod == $value);
 					if ($options['checked'] === false) unset($options['checked']);
-					$output .= '<li><label><input type="radio" name="paymethod" '.inputattrs($options).' /> '.$payoption->label.'</label></li>';
+					$output .= '<li><label><input type="radio" name="paymethod" '.Shopp::inputattrs($options).' /> '.$payoption->label.'</label></li>';
 				}
 				$output .= '</ul></span>';
 				break;
 			case "hidden":
 				if (!isset($options['value']) && $default) $options['value'] = $O->paymethod;
-				$output .= '<input type="hidden" name="paymethod"'.inputattrs($options).' />';
+				$output .= '<input type="hidden" name="paymethod"' . Shopp::inputattrs($options) . ' />';
 				break;
 			default:
-				$output .= '<select name="paymethod" '.inputattrs($options,$select_attrs).'>';
+				$output .= '<select name="paymethod" ' . Shopp::inputattrs($options,$select_attrs) . '>';
 				foreach ($payoptions as $value) {
 					if (in_array($value,$excludes)) continue;
-					$payoption = $O->payoptions[$value];
+					$payoption = $O->Payments->get($value);
 					$selected = ($O->paymethod == $value)?' selected="selected"':'';
 					$output .= '<option value="'.$value.'"'.$selected.'>'.$payoption->label.'</option>';
 				}
