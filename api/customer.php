@@ -49,8 +49,8 @@ function shopp_customer ( $customer = false, $key = 'customer' ) {
 		return false;
 	}
 
-	$Customer->Billing = new BillingAddress($Customer->id);
-	$Customer->Shipping = new ShippingAddress($Customer->id);
+	$Customer->Billing = new BillingAddress($Customer->id, 'customer');
+	$Customer->Shipping = new ShippingAddress($Customer->id, 'customer');
 	if ( ! $Customer->id ) $Customer->Shipping->copydata($Customer->Billing);
 
 	return $Customer;
@@ -230,12 +230,12 @@ function shopp_add_customer_address (  $customer = false, $data = false, $type =
 	}
 
 	if ( in_array($type, array('billing','both')) ) {
-		$Billing = new BillingAddress($customer);
+		$Billing = new BillingAddress($customer, 'customer');
 		$Billing->customer = $customer;
 	}
 
 	if ( in_array($type, array('shipping','both')) ) {
-		$Shipping = new ShippingAddress($customer);
+		$Shipping = new ShippingAddress($customer, 'customer');
 		$Shipping->customer = $customer;
 	}
 
@@ -392,6 +392,7 @@ function shopp_rmv_customer_address (  $address = false ) {
 		shopp_debug(__FUNCTION__ . " failed: Missing address id parameter.");
 		return false;
 	}
+
 	$Address = new Address($address);
 
 	if ( empty($Address->id) ) {
@@ -401,5 +402,3 @@ function shopp_rmv_customer_address (  $address = false ) {
 
 	return $Address->delete();
 }
-
-?>

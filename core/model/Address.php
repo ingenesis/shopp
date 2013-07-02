@@ -33,7 +33,7 @@ class Address extends DatabaseObject {
 	 *
 	 * @return void
 	 **/
-	public function __construct ( $id = false, $key = false ) {
+	public function __construct ( $id = false, $key = 'id' ) {
 		$this->init(self::$table);
 		$this->load($id, $key);
 	}
@@ -44,16 +44,19 @@ class Address extends DatabaseObject {
 	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
-	 * @return void
+	 * @param integer $id The ID to lookup the record by
+	 * @param string $key The column to use for matching the ID against
+	 * @return boolean True if successfully loaded, false otherwise
 	 **/
-	public function load ( $id = false, $key = false ) {
-		// We want $id to be an array of the pattern [key => $key, type => $type]
-		// if it isn't already like that, then make it so
-		if ( ! empty($this->type) && ! is_array($id) && ! isset($id['type']) ) {
-			$id = array($key => $id, 'type' => $this->type);
-		}
-		parent::load($id, $key);
+	public function load ( $id = false, $key = 'id' ) {
+
+		if ( 'customer' == $key )
+			$loaded = parent::load( array('customer' => $id, 'type' => $this->type) );
+		else $loaded = parent::load($id, $key);
+
 		$this->locate();
+
+		return $loaded;
 	}
 
 	/**
@@ -135,32 +138,16 @@ class BillingAddress extends Address {
 	public $cardexpires = false;
 	public $cardholder = false;
 
-	/**
-	 * Billing constructor
-	 *
-	 * @author Jonathan Davis
-	 *
-	 * @param int $id The ID of the record
-	 * @param string $key The column name for the specified ID
-	 * @return void
-	 **/
-	function __construct ($id=false,$key='customer') {
-		$this->init(self::$table);
-		if ( ! $id ) return;
-		$this->load(array($key => $id,'type' => 'billing'));
-		$this->type = 'billing';
-	}
-
 	function exportcolumns () {
-		$prefix = "b.";
+		$prefix = 'b.';
 		return array(
-			$prefix.'address' => __('Billing Street Address','Shopp'),
-			$prefix.'xaddress' => __('Billing Street Address 2','Shopp'),
-			$prefix.'city' => __('Billing City','Shopp'),
-			$prefix.'state' => __('Billing State/Province','Shopp'),
-			$prefix.'country' => __('Billing Country','Shopp'),
-			$prefix.'postcode' => __('Billing Postal Code','Shopp'),
-			);
+			$prefix . 'address' => Shopp::__('Billing Street Address'),
+			$prefix . 'xaddress' => Shopp::__('Billing Street Address 2'),
+			$prefix . 'city' => Shopp::__('Billing City'),
+			$prefix . 'state' => Shopp::__('Billing State/Province'),
+			$prefix . 'country' => Shopp::__('Billing Country'),
+			$prefix . 'postcode' => Shopp::__('Billing Postal Code'),
+		);
 	}
 
 } // end BillingAddress class
@@ -182,22 +169,6 @@ class ShippingAddress extends Address {
 	public $residential = 'on';
 
 	/**
-	 * Shipping constructor
-	 *
-	 * @author Jonathan Davis
-	 *
-	 * @param int $id The ID of the record
-	 * @param string $key The column name for the specified ID
-	 * @return void
-	 **/
-	public function __construct ($id=false,$key='customer') {
-		$this->init(self::$table);
-		if ( ! $id ) return;
-		$this->load(array($key => $id,'type' => 'shipping'));
-		$this->type = 'shipping';
-	}
-
-	/**
 	 * Registry of supported export fields
 	 *
 	 * @author Jonathan Davis
@@ -206,14 +177,14 @@ class ShippingAddress extends Address {
 	 * @return array
 	 **/
 	public function exportcolumns () {
-		$prefix = "s.";
+		$prefix = 's.';
 		return array(
-			$prefix.'address' => __('Shipping Street Address','Shopp'),
-			$prefix.'xaddress' => __('Shipping Street Address 2','Shopp'),
-			$prefix.'city' => __('Shipping City','Shopp'),
-			$prefix.'state' => __('Shipping State/Province','Shopp'),
-			$prefix.'country' => __('Shipping Country','Shopp'),
-			$prefix.'postcode' => __('Shipping Postal Code','Shopp'),
+			$prefix . 'address' => Shopp::__('Shipping Street Address'),
+			$prefix . 'xaddress' => Shopp::__('Shipping Street Address 2'),
+			$prefix . 'city' => Shopp::__('Shipping City'),
+			$prefix . 'state' => Shopp::__('Shipping State/Province'),
+			$prefix . 'country' => Shopp::__('Shipping Country'),
+			$prefix . 'postcode' => Shopp::__('Shipping Postal Code'),
 		);
 	}
 
@@ -222,11 +193,11 @@ class ShippingAddress extends Address {
 class PostcodeMapping {
 
 	public static function uszip ($Address) {
-		PostcodeMapping::prefixcode(substr($Address->postcode,0,3),$Address);
+		PostcodeMapping::prefixcode(substr($Address->postcode, 0, 3), $Address);
 	}
 
 	public static function capost ($Address) {
-		PostcodeMapping::prefixcode(strtoupper($Address->postcode{0}),$Address);
+		PostcodeMapping::prefixcode(strtoupper($Address->postcode{0}), $Address);
 	}
 
 	/**
@@ -238,25 +209,25 @@ class PostcodeMapping {
 	 * @param string $prefix The postal code prefix
 	 * @return void
 	 **/
-	public static function prefixcode ($prefix,$Address) {
+	public static function prefixcode ($prefix, $Address) {
 		$postcodes = Lookup::postcodes();
-		if (!isset($postcodes[$Address->country])) return;
+		if ( ! isset($postcodes[ $Address->country ]) ) return;
 
-		$codemap =& $postcodes[$Address->country];
-		$state = isset($codemap[strtoupper($prefix)])?$codemap[$prefix]:false;
+		$codemap =& $postcodes[ $Address->country ];
+		$state = isset($codemap[ strtoupper($prefix) ]) ? $codemap[ $prefix ] : false;
 
 		if ( is_array($state) ) { // Handle multiple states in the same postal code prefix. Props msigley
 			if ( in_array($Address->state, $state) ) $state = false; // Don't replace current state if it is in the postcode prefix
 			else $state = $state[0];
 		}
 
-		if (!$state) return;
+		if ( ! $state) return;
 
 		$Address->state = $state;
 
 	}
 
-}
+} // class PostcodeMapping
 
 add_action('shopp_map_us_postcode',   array('PostcodeMapping', 'uszip'));
 add_action('shopp_map_usaf_postcode', array('PostcodeMapping', 'uszip'));
