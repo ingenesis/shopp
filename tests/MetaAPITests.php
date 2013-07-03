@@ -1,13 +1,64 @@
 <?php
-/**
-*
-*/
 class MetaAPITests extends ShoppTestCase {
 
+	static function setUpBeforeClass () {
+
+		shopp_add_product(array(
+			'name' => 'Command Uniform',
+			'publish' => array('flag' => true),
+			'specs' => array(
+				'Department' => 'Command',
+				'Color' => 'Gold'
+			),
+			'variants' => array(
+				'menu' => array(
+					'Size' => array('Small','Medium','Large','Brikar')
+				),
+				0 => array(
+					'option' => array('Size' => 'Small'),
+					'type' => 'Shipped',
+					'price' => 19.99,
+					'sale' => array('flag'=>true, 'price' => 9.99),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.3, 'width' => 0.3, 'height' => 0.1),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 5,
+						'sku' => 'SFU-001-S'
+					)
+				),
+				1 => array(
+					'option' => array('Size' => 'Medium'),
+					'type' => 'Shipped',
+					'price' => 22.55,
+					'sale' => array('flag'=>true, 'price' => 19.99),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.3, 'width' => 0.3, 'height' => 0.1),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 15,
+						'sku' => 'SFU-001-M'
+					)
+				),
+				2 => array(
+					'option' => array('Size' => 'Large'),
+					'type' => 'Shipped',
+					'price' => 32.95,
+					'sale' => array('flag'=>true, 'price' => 24.95),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.3, 'width' => 0.3, 'height' => 0.1),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 1,
+						'sku' => 'SFU-001-L'
+					)
+				),
+
+			)
+		));
+
+	}
 
 	function test_bug1130_shopp_set_meta () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		$Price = shopp_product_variant(258);
+		$Product = shopp_product('command-uniform', 'slug');
+		$Price = reset($Product->prices);
 
 		// remove all meta records of name settings for this priceline
 		$meta = shopp_rmv_meta ( $Price->id, 'price', 'settings');
@@ -29,21 +80,19 @@ class MetaAPITests extends ShoppTestCase {
 
 		// get all meta records for this priceline
 		$meta = shopp_meta ( $Price->id, 'price', 'settings');
-		$this->AssertEquals('a:1:{s:10:"dimensions";a:4:{s:6:"weight";d:1.1000000000000001;s:6:"height";i:2;s:5:"width";i:10;s:6:"length";i:10;}}',
-			serialize($meta));
+		$this->AssertEquals($settings, $meta);
 
 	}
 
 	function test_shopp_set_meta () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		$Price = shopp_product_variant(174);
+		$Product = shopp_product('command-uniform', 'slug');
+		$Price = reset($Product->prices);
 		$return = shopp_set_meta ( $Price->id, 'price', 'mypricesetting', 'hello world' );
 		$meta = shopp_meta ( $Price->id, 'price', 'mypricesetting');
 		$this->AssertEquals('hello world', $meta);
 	}
 
 	function test_shopp_meta () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$data = array(
 			'name' => "Download Product Test",
 			'single' => array(),
@@ -61,18 +110,18 @@ class MetaAPITests extends ShoppTestCase {
 		file_put_contents ( 'testdownload.txt' , 'my test download file' );
 		shopp_add_product_download ( $Product->id, realpath('testdownload.txt') );
 		$ProductVariant = shopp_product_variant(array('product'=>$Product->id), 'product');
+		unlink( 'testdownload.txt');
 
 		$download = shopp_meta ( $ProductVariant->id, 'price', 'testdownload.txt', 'download' );
 
 		$this->AssertTrue(is_object($download));
 		$this->AssertEquals('text/plain', $download->mime);
 		$this->AssertEquals('21', $download->size);
-		$this->AssertEquals('testdownload.txt', $download->uri);
+		$this->AssertEquals(1, $download->uri); // DBStorage asset ID of 1
 	}
 
 	function test_shopp_product_meta () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		$Product = new Product('Smart & Sexy - Ruffle Mesh Bustier and Thong Panty Set', 'name');
+		$Product = shopp_product('command-uniform', 'slug');
 
 		$this->AssertTrue(shopp_product_has_meta($Product->id, 'options'));
 
@@ -81,17 +130,15 @@ class MetaAPITests extends ShoppTestCase {
 	}
 
 	function test_shopp_product_meta_list () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		$Product = new Product("Men's Black Stainless Steel & CZ Engraved Band", 'name');
+		$Product = shopp_product('command-uniform', 'slug');
 		$specs = shopp_product_meta_list($Product->id,'spec');
 		$this->AssertTrue(is_array($specs));
-		$this->AssertEquals('9GW107', $specs['Model No.']);
-		$this->AssertEquals('Men', $specs['Gender']);
+		$this->AssertEquals('Command', $specs['Department']);
+		$this->AssertEquals('Gold', $specs['Color']);
 	}
 
 	function test_shopp_rmv_meta() {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		$Product = new Product("Men's Black Stainless Steel & CZ Engraved Band", 'name');
+		$Product = shopp_product('command-uniform', 'slug');
 		shopp_set_product_meta($Product->id, 'Manliness Factor', 'High', 'spec');
 		$this->AssertEquals('High', shopp_product_meta($Product->id, 'Manliness Factor', 'spec'));
 		shopp_rmv_product_meta($Product->id, 'Manliness Factor', 'spec');
@@ -99,7 +146,7 @@ class MetaAPITests extends ShoppTestCase {
 	}
 
 	function test_shopp_meta_exists () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$Product = shopp_product('command-uniform', 'slug');
 		shopp_set_meta ( 11, 'testcontext', 'testname', 'testvalue', 'testtype' );
 
 		// shopp_meta_exists ( $name = false, $context = false, $type = 'meta' )
