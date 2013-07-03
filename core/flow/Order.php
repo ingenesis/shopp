@@ -213,6 +213,30 @@ class ShoppOrder {
 		));
 	}
 
+
+	/**
+	 * Fires an unstock order event for a purchase to deduct stock from inventory
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2.1
+	 *
+	 * @return void
+	 **/
+	function unstock ( AuthedOrderEvent $Event ) {
+		if ( ! shopp_setting_enabled('inventory') ) return false;
+
+		$Purchase = ShoppPurchase();
+		if (!isset($Purchase->id) || empty($Purchase->id) || $Event->order != $Purchase->id)
+			$Purchase = new Purchase($Event->order);
+
+		if ( ! isset($Purchase->events) || empty($Purchase->events) ) $Purchase->load_events(); // Load purchased
+		if ( in_array('unstock', array_keys($Purchase->events)) ) return true; // Unstock already occurred, do nothing
+		if ( empty($Purchase->purchased) ) $Purchase->load_purchased();
+		if ( ! $Purchase->stocked ) return false;
+
+		shopp_add_order_event($Purchase->id,'unstock');
+	}
+
 	/**
 	 * Marks an order as captured
 	 *
@@ -379,17 +403,20 @@ class ShoppOrder {
 		// Capture early event transaction IDs
 		if ( isset($Event->txnid) ) $Purchase->txnid = $this->txnid = $Event->txnid;
 
+		$Purchase->order = 0;
 		$Purchase->copydata($this);
 		$Purchase->copydata($this->Customer);
 		$Purchase->copydata($this->Billing);
 		$Purchase->copydata($this->Shipping,'ship');
 		$Purchase->copydata($this->Cart->Totals->data());
+		$Purchase->subtotal = $Purchase->order; // Remap order to subtotal
 		$Purchase->customer = $this->Customer->id;
-		$Purchase->taxing = shopp_setting_enabled('tax_inclusive')?'inclusive':'exclusive';
+		$Purchase->taxing = shopp_setting_enabled('tax_inclusive') ? 'inclusive' : 'exclusive';
 		$Purchase->promos = $promos;
 		$Purchase->freight = $this->Cart->Totals->total('shipping');
 		$Purchase->ip = $Shopping->ip;
 		$Purchase->created = current_time('mysql');
+		unset($Purchase->order);
 		$Purchase->save();
 
 		Promotion::used(array_keys($promos));

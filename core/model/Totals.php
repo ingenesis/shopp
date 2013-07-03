@@ -205,6 +205,7 @@ class OrderTotals extends ListFramework {
 	}
 
 	public function data () {
+		$this->total();
 		return json_decode( (string)$this );
 	}
 

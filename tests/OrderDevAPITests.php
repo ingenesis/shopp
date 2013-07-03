@@ -1,60 +1,99 @@
 <?php
-
 /**
 * Tests for the order dev api
 */
+
 class OrderDevAPITests extends ShoppTestCase {
 
-	function setUp () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		shopp_empty_cart();
-		$this->_set_setting('tax_shipping', 'off');
+	static function setUpBeforeClass () {
+		shopp_add_product(array(
+			'name' => 'USS Enterprise',
+			'publish' => array('flag' => true),
+			'single' => array(
+				'type' => 'Shipped',
+				'price' => 1701,
+		        'sale' => array(
+		            'flag' => true,
+		            'price' => 17.01
+		        ),
+				'taxed'=> true,
+				'shipping' => array('flag' => true, 'fee' => 1.50, 'weight' => 52.7, 'length' => 285.9, 'width' => 125.6, 'height' => 71.5),
+				'inventory' => array(
+					'flag' => true,
+					'stock' => 1,
+					'sku' => 'NCC-1701'
+				)
+			),
+			'specs' => array(
+				'Class' => 'Constitution',
+				'Category' => 'Heavy Cruiser',
+				'Decks' => 23,
+				'Officers' => 40,
+				'Crew' => 390,
+				'Max Vistors' => 50,
+				'Max Accommodations' => 800,
+				'Phaser Force Rating' => '2.5 MW',
+				'Torpedo Force Rating' => '9.7 isotons'
+				)
+		));
+
+		// Create the WordPress account
+		$wpuser = wp_insert_user(array(
+			'user_login' => 'spock',
+			'user_pass' => 'livelongandprosper',
+			'user_email' => 'spock@starfleet.gov',
+			'display_name' => 'Commander Spock',
+			'nickname' => 'Spock',
+			'first_name' => "S'chn T'gai",
+			'last_name' => 'Spock'
+		));
+
+		$customerid = shopp_add_customer(array(
+			'wpuser' => $wpuser,
+			'firstname' => "S'chn T'gai",
+			'lastname' => 'Spock',
+			'email' => 'spock@starfleet.gov',
+			'phone' => '999-999-1701',
+			'company' => 'Starfleet Command',
+			'marketing' => 'no',
+			'type' => 'Tax-Exempt',
+			'saddress' => '24-593 Federation Dr',
+			'sxaddress' => 'Shipping',
+			'scity' => 'San Francisco',
+			'sstate' => 'CA',
+			'scountry' => 'US',
+			'spostcode' => '94123',
+			'baddress' => '24-593 Federation Dr',
+			'bxaddress' => 'Billing',
+			'bcity' => 'San Francisco',
+			'bstate' => 'CA',
+			'bcountry' => 'US',
+			'bpostcode' => '94123',
+			'residential' => true
+		));
+
 	}
 
-	function tearDown () {
-		$this->_restore_setting('tax_shipping');
+	static function tearDownAfterClass () {
+
 	}
 
 	function test_shopp_add_order () {
-		global $Shopp;
 
-		$user = get_user_by('login', 'jdillick');
-		$data = array(
-			'wpuser' => $user->ID,
-			'firstname' => "John",
-			'lastname' => "Dillick",
-			'email' => $user->user_email,
-			'phone' => '999-999-9999',
-			'company' => 'Ingenesis Limited',
-			'marketing' => 'no',
-			'type' => 'Tax-Exempt',
-			'saddress' => '1 N Main Street',
-			'sxaddress' => 'Attn: John Dillick',
-			'scity' => 'San Jose',
-			'sstate' => 'CA',
-			'scountry' => 'US',
-			'spostcode' => '95131',
-			'baddress' => '1 N Main Street',
-			'bxaddress' => 'Attn: John Dillick',
-			'bcity' => 'San Jose',
-			'bstate' => 'CA',
-			'bcountry' => 'US',
-			'bpostcode' => '95131',
-			'residential' => true
-		);
-		$cid = shopp_add_customer($data);
-
-		$Product = shopp_product('1/10 Carat Diamond Journey Heart Pendant in Yellow Gold', 'name');
+		shopp_empty_cart();
+		$Customer = shopp_customer('spock@starfleet.gov', 'email');
+		$Product = shopp_product('uss-enterprise', 'slug');
 		shopp_add_cart_product ( $Product->id, 1 );
-		$Purchase = shopp_add_order($cid);
-		$Purchase->load_purchased();
+
+		$Purchase = shopp_add_order($Customer->id);
+		$Purchase = shopp_order($Purchase->id);
 
 		$this->AssertTrue( ! empty($Purchase->id) );
-		$this->AssertEquals( $cid, $Purchase->customer );
+		$this->AssertEquals( $Customer->id, $Purchase->customer );
 		$this->AssertEquals( 1, count($Purchase->purchased) );
 
 		$Purchased = reset($Purchase->purchased);
-		$this->AssertEquals( '1/10 Carat Diamond Journey Heart Pendant in Yellow Gold', $Purchased->name );
+		$this->AssertEquals( 'USS Enterprise', $Purchased->name );
 
 		remove_action('shopp_authed_order_event',array(ShoppOrder(),'notify'));
 		remove_action('shopp_authed_order_event',array(ShoppOrder(),'accounts'));
@@ -69,9 +108,9 @@ class OrderDevAPITests extends ShoppTestCase {
 		));
 
 		// $this->AssertEquals('authed',$Purchase->txnstatus);
-		$this->AssertEquals(51.4, shopp_order_amt_balance($Purchase->id));
-		$this->AssertEquals(51.4, shopp_order_amt_invoiced($Purchase->id));
-		$this->AssertEquals(51.4, shopp_order_amt_authorized($Purchase->id));
+		$this->AssertEquals(28.58, shopp_order_amt_balance($Purchase->id));
+		$this->AssertEquals(28.58, shopp_order_amt_invoiced($Purchase->id));
+		$this->AssertEquals(28.58, shopp_order_amt_authorized($Purchase->id));
 		$this->AssertEquals(0, shopp_order_amt_captured($Purchase->id));
 		$this->AssertEquals(0, shopp_order_amt_refunded($Purchase->id));
 		$this->AssertFalse(shopp_order_is_void($Purchase->id));
@@ -84,31 +123,32 @@ class OrderDevAPITests extends ShoppTestCase {
 
 		));
 
-		$this->AssertEquals(51.4, shopp_order_amt_captured($Purchase->id));
+		$this->AssertEquals(28.58, shopp_order_amt_captured($Purchase->id));
 	}
 
 	function test_shopp_last_order() {
 		$Purchase = shopp_last_order();
+
 		$Purchased = reset($Purchase->purchased);
 
 		$this->AssertTrue( ! empty($Purchase->id) );
 		$this->AssertEquals( 1, count($Purchase->purchased) );
-		$this->AssertEquals( '1/10 Carat Diamond Journey Heart Pendant in Yellow Gold', $Purchased->name );
+		$this->AssertEquals( 'USS Enterprise', $Purchased->name );
 	}
 
-	function test_shopp_order_lines() {
+	function test_shopp_order_lines () {
 		$lines = shopp_order_lines(shopp_last_order()->id);
 		$this->AssertEquals(count($lines), shopp_order_line_count(shopp_last_order()->id));
 	}
 
-	function test_shopp_add_order_line() {
+	function test_shopp_add_order_line () {
 		$Purchase = shopp_last_order();
 		$pid = $Purchase->id;
 
-	    $this->AssertEquals( 44, $Purchase->subtotal );
-	    $this->AssertEquals( 3, $Purchase->freight );
-	    $this->AssertEquals( 4.4, $Purchase->tax );
-	    $this->AssertEquals( 51.4, $Purchase->total );
+	    $this->AssertEquals( 17.01, $Purchase->subtotal );
+	    $this->AssertEquals( 9.87, $Purchase->freight );
+	    $this->AssertEquals( 1.7, $Purchase->tax );
+	    $this->AssertEquals( 28.58, $Purchase->total );
 
 		$item = array(
 			'product' => 0, // product id of line item
@@ -129,10 +169,10 @@ class OrderDevAPITests extends ShoppTestCase {
 		$this->AssertEquals(2, shopp_order_line_count($pid));
 
 		$Purchase = shopp_last_order();
-	    $this->AssertEquals( 44 + $item['total'], $Purchase->subtotal );
-	    $this->AssertEquals( 3, $Purchase->freight );
-	    $this->AssertEquals( 4.4 + ( $item['unittax'] * $item['quantity'] ), $Purchase->tax );
-	    $this->AssertEquals( 51.4 + $item['total'] + ( $item['unittax'] * $item['quantity'] ), $Purchase->total );
+	    $this->AssertEquals( 17.01 + $item['total'], $Purchase->subtotal );
+	    $this->AssertEquals( 9.87, $Purchase->freight );
+	    $this->AssertEquals( 1.7 + ( $item['unittax'] * $item['quantity'] ), $Purchase->tax );
+	    $this->AssertEquals( 28.58 + $item['total'] + ( $item['unittax'] * $item['quantity'] ), $Purchase->total );
 	}
 
 	function test_shopp_rmv_order_line() {
@@ -142,21 +182,22 @@ class OrderDevAPITests extends ShoppTestCase {
 		$this->AssertEquals(2, shopp_order_line_count($pid));
 
 		$Purchase = shopp_last_order();
-	    $this->AssertEquals( 64, $Purchase->subtotal );
-	    $this->AssertEquals( 3, $Purchase->freight );
-	    $this->AssertEquals( 6.4, $Purchase->tax );
-	    $this->AssertEquals( 73.4, $Purchase->total );
+	    $this->AssertEquals( 37.01, $Purchase->subtotal );
+	    $this->AssertEquals( 9.87, $Purchase->freight );
+	    $this->AssertEquals( 3.7, $Purchase->tax );
+	    $this->AssertEquals( 50.58, $Purchase->total );
 
 		shopp_rmv_order_line($pid, 1);
 		$this->AssertEquals(1, shopp_order_line_count($pid));
 
 		$Purchase = shopp_last_order();
 
-	    $this->AssertEquals( 44, $Purchase->subtotal );
-	    $this->AssertEquals( 3, $Purchase->freight );
-	    $this->AssertEquals( 4.4, $Purchase->tax );
-	    $this->AssertEquals( 51.4, $Purchase->total );
+	    $this->AssertEquals( 17.01, $Purchase->subtotal );
+	    $this->AssertEquals( 9.87, $Purchase->freight );
+	    $this->AssertEquals( 1.7, $Purchase->tax );
+	    $this->AssertEquals( 28.58, $Purchase->total );
 	}
+
 
 	function test_shopp_add_order_line_download (){
 		// Create Product
@@ -179,7 +220,8 @@ class OrderDevAPITests extends ShoppTestCase {
 		shopp_add_order_line(shopp_last_order()->id, $Item );
 
 		// Add a download file after item has already be added
-		$download = shopp_add_product_download ( $DownloadProduct->id,  dirname(__FILE__).'/Assets/1.png');
+		$download = shopp_add_product_download ( $DownloadProduct->id,  dirname(__FILE__).'/data/1.png');
+
 		$this->AssertTrue(shopp_add_order_line_download ( shopp_last_order()->id, 1, $download ));
 	}
 
@@ -188,6 +230,5 @@ class OrderDevAPITests extends ShoppTestCase {
 		$this->AssertTrue(shopp_rmv_order($pid));
 		$this->AssertFalse($pid == shopp_last_order()->id);
 	}
-}
 
-?>
+}

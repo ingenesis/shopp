@@ -117,7 +117,7 @@ class MetaAPITests extends ShoppTestCase {
 		$this->AssertTrue(is_object($download));
 		$this->AssertEquals('text/plain', $download->mime);
 		$this->AssertEquals('21', $download->size);
-		$this->AssertEquals(1, $download->uri); // DBStorage asset ID of 1
+		$this->AssertTrue(is_int($download->uri));
 	}
 
 	function test_shopp_product_meta () {

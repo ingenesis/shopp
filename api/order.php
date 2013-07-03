@@ -59,8 +59,8 @@ function shopp_orders ( $from = false, $to = false, $items = true, $customers = 
 	else $limit = '';
 
 	$query = "SELECT * FROM $pt $where ORDER BY id ".('DESC' == $order ? "DESC" : "ASC").$limit;
-	$orders = DB::query($query, false, '_shopp_order_purchase');
-	if ( $items ) $orders = DB::query("SELECT * FROM $pd AS pd WHERE 0 < FIND_IN_SET(pd.purchase,'".implode(",", array_keys($orders))."')", false, '_shopp_order_purchased', $orders);
+	$orders = DB::query($query, 'array', '_shopp_order_purchase');
+	if ( $items ) $orders = DB::query("SELECT * FROM $pd AS pd WHERE 0 < FIND_IN_SET(pd.purchase,'".implode(",", array_keys($orders))."')", 'array', '_shopp_order_purchased', $orders);
 
 	return $orders;
 }
