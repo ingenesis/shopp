@@ -93,8 +93,8 @@ class ShippingModules extends ModuleLoader {
 	 * @param string $module The module class name
 	 * @return void
 	 **/
-	public function addmethods ($module) {
-		if (!isset($this->active[$module])) return;
+	public function addmethods ( $module ) {
+		if ( ! isset($this->active[ $module ]) ) return;
 
 		$active = shopp_setting('active_shipping');
 
@@ -102,13 +102,13 @@ class ShippingModules extends ModuleLoader {
 
 		if (empty($m)) return;
 
-		if ($this->active[$module]->postcode) $this->postcodes = true;
-		if ($this->active[$module]->dimensions) $this->dimensions = true;
-		if ($this->active[$module]->realtime) $this->realtime = true;
+		if ( $this->active[ $module ]->postcode ) $this->postcodes = true;
+		if ( $this->active[ $module ]->dimensions ) $this->dimensions = true;
+		if ( $this->active[ $module ]->realtime ) $this->realtime = true;
 
-		if (!is_array($m)) return $this->methods[$module] = $module;
+		if ( ! is_array($m) ) return $this->methods[$module] = $module;
 
-		foreach ($m as $index => $set) {
+		foreach ( $m as $index => $set ) {
 			$setting_name = "$module-$index";
 			$setting = shopp_setting($setting_name);
 			if (empty($setting)) continue;
@@ -1757,18 +1757,12 @@ interface ShippingPackageInterface {
 
 class ShippingPackage implements ShippingPackageInterface {
 
-	protected $wt = 0; //current weight
-
-	protected $w = 0;  //current width
-
-	protected $h = 0;  //current height
-
-	protected $l = 0;  //current length
-
-	protected $val = 0; // estimated value of package contents
-
-	protected $dims = false; // package has dimensions?
-
+	protected $wt = 0;			//current weight
+	protected $w = 0; 			//current width
+	protected $h = 0;			//current height
+	protected $l = 0;			//current length
+	protected $val = 0;			// estimated value of package contents
+	protected $dims = false;	// package has dimensions?
 	protected $boxtype = 'custom';
 
 	// limits for this package

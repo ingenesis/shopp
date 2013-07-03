@@ -13,12 +13,12 @@ class PackagingTests extends ShoppTestCase {
 	/**
 	 * Initialize
 	 **/
-	function setUp () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		parent::setUp();
 
-		// doesn't matter... packaged alone in all models
-		if ( is_a($this->prod1, 'Product') ) return;
+
+	static $products = array();
+
+	static function setUpBeforeClass () {
+
 		$data = array(
 			'name' => "Packager Test Product 1",
 			'publish' => array( 'flag' => true ),
@@ -30,7 +30,7 @@ class PackagingTests extends ShoppTestCase {
 			'price' => 41.00,
 			'shipping' => array('flag'=>true, 'fee'=>1.50, 'weight'=>1, 'length'=>1, 'width'=>1, 'height'=>1)
 		);
-		$this->prod1 = shopp_add_product($data);
+		self::$products[] = shopp_add_product($data);
 
 		// Square item 10 lbs
 		$data = array(
@@ -45,7 +45,7 @@ class PackagingTests extends ShoppTestCase {
 			// doesn't matter... packaged alone in all models
 			'shipping' => array('flag'=>true, 'fee'=>1.50, 'weight'=>10, 'length'=>5, 'width'=>5, 'height'=>5)
 		);
-		$this->prod2 = shopp_add_product($data);
+		self::$products[] = shopp_add_product($data);
 
 		// long item 15 lbs
 		$data = array(
@@ -60,7 +60,7 @@ class PackagingTests extends ShoppTestCase {
 			// doesn't matter... packaged alone in all models
 			'shipping' => array('flag'=>true, 'fee'=>1.50, 'weight'=>15, 'length'=>15, 'width'=>5, 'height'=>5)
 		);
-		$this->prod3 = shopp_add_product($data);
+		self::$products[] = shopp_add_product($data);
 
 		// tall item 50 lbs
 		$data = array(
@@ -75,27 +75,27 @@ class PackagingTests extends ShoppTestCase {
 			// doesn't matter... packaged alone in all models
 			'shipping' => array('flag'=>true, 'fee'=>1.50, 'weight'=>50, 'length'=>10, 'width'=>10, 'height'=>20)
 		);
-		$this->prod4 = shopp_add_product($data);
+		self::$products[] = shopp_add_product($data);
 
 	}
 
-	function tearDown () {
-		parent::tearDown();
-
-		unset($this->packer);
+	static function tearDownAfterClass () {
 	}
 
 	// testing packaging all items together, by mass
 	function test_package_mass () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		// return;
 		// echo "\n".__FUNCTION__." Tests:\n----------------------\n";
-		$products = array($this->prod1, $this->prod2, $this->prod3, $this->prod4);
+		$products = self::$products;
 		$items = array();
 		foreach ( $products as $i => $Product ) {
-			$items[$i] = new Item ( $Product, false );
-			$items[$i]->quantity( $i + 1 );
+			$Item = new Item ( $Product, false );
+			$Item->quantity( $i + 1 );
+			$items[ $Item->fingerprint() ] = $Item;
 		}
-		ShoppOrder()->Cart->contents = $items;
+		ShoppOrder()->Cart->populate($items);
 
 		$this->packer = new ShippingPackager(array('type'=>'mass', 'limits'=>array('wtl'=>-1,'ll'=>-1,'wl'=>-1,'hl'=>-1)),'test_package_mass');
 
@@ -133,13 +133,13 @@ class PackagingTests extends ShoppTestCase {
 		$this->AssertEquals(4, $item->quantity);
 		$this->AssertEquals('Packager Test Product 4', $item->parentItem()->name);
 
-		$products = array($this->prod1, $this->prod2, $this->prod3, $this->prod4);
 		$items = array();
 		foreach ( $products as $i => $Product ) {
-			$items[$i] = new Item ( $Product, false );
-			$items[$i]->quantity( 4 - $i );
+			$Item = new Item ( $Product, false );
+			$Item->quantity( 4 - $i );
+			$items[ $Item->fingerprint() ] = $Item;
 		}
-		ShoppOrder()->Cart->contents = $items;
+		ShoppOrder()->Cart->populate($items);
 
 		foreach ($items as $Item) {
 			$this->packer->add_item($Item);
@@ -192,19 +192,19 @@ class PackagingTests extends ShoppTestCase {
 
 	// testing packaging all like items together
 	function test_package_like () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		// return;
 		// echo "\n".__FUNCTION__." Tests:\n----------------------\n";
-		$products = array($this->prod1, $this->prod2, $this->prod3, $this->prod4);
+		$products = self::$products;
+		$quantities = array(1, 8, 6, 12);
 		$items = array();
-		for ($i = 0; $i < ( 2 * count($products) ); $i++ ) {
-			$p = $i % count($products);
-			if ( isset($items[$p]) ) $items[$p]->quantity($items[$p]->quantity + ($p + 1) * ($i % 3 + 1) );
-			else {
-				$items[$p] = new Item($products[$p], false);
-				$items[$p]->quantity($i + 1);
-			}
+		foreach ( $products as $i => $Product ) {
+			$Item = new Item ( $Product, false );
+			$Item->quantity( $quantities[$i] );
+			$items[ $Item->fingerprint() ] = $Item;
 		}
-		ShoppOrder()->Cart->contents = $items;
+		ShoppOrder()->Cart->populate($items);
 
 		$this->packer = new ShippingPackager(array('type'=>'like','limits'=>array('wtl'=>-1,'ll'=>-1,'wl'=>-1,'hl'=>-1)),'test_package_like');
 		// echo "\nItems\n";
@@ -227,8 +227,6 @@ class PackagingTests extends ShoppTestCase {
 			$pc = count($pkgs);
 			switch ( $pc ) {
 				case 1:
-				case 2:
-				case 3:
 					$this->AssertEquals( 1, count($p->contents()));
 					$this->AssertEquals( 1, $p->weight());
 					$this->AssertEquals( 1, $p->width());
@@ -236,7 +234,7 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 1, $p->height());
 					$this->AssertEquals( 41, $p->value());
 					break;
-				case 4:
+				case 2:
 					$this->AssertEquals( 1, count($p->contents()));
 					$this->AssertEquals( 80, $p->weight());
 					$this->AssertEquals( 5, $p->width());
@@ -244,7 +242,7 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 40, $p->height());
 					$this->AssertEquals( 336, $p->value());
 					break;
-				case 5:
+				case 3:
 					$this->AssertEquals( 1, count($p->contents()));
 					$this->AssertEquals( 90, $p->weight());
 					$this->AssertEquals( 5, $p->width());
@@ -252,7 +250,7 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 30, $p->height());
 					$this->AssertEquals( 252, $p->value());
 					break;
-				case 6:
+				case 4:
 					$this->AssertEquals( 1, count($p->contents()));
 					$this->AssertEquals( 600, $p->weight());
 					$this->AssertEquals( 10, $p->width());
@@ -265,20 +263,21 @@ class PackagingTests extends ShoppTestCase {
 
 	// testing packaging all items together, with dimensions
 	function test_package_all () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		// return;
 		// echo "\n".__FUNCTION__." Tests:\n----------------------\n";
 
-		$products = array($this->prod1, $this->prod2, $this->prod3, $this->prod4);
+		$products = self::$products;
+		$quantities = array(6, 4, 9, 16);
 		$items = array();
-		for ($i = 0; $i < ( 2 * count($products) ); $i++ ) {
-			$p = $i % count($products);
-			if ( isset($items[$p]) ) $items[$p]->quantity($items[$p]->quantity + ($p + 1) * ($i % 5 + 1) );
-			else {
-				$items[$p] = new Item($products[$p], false);
-				$items[$p]->quantity($i + 1);
-			}
+		foreach ( $products as $i => $Product ) {
+			$Item = new Item ( $Product, false );
+			$Item->quantity( $quantities[$i] );
+			$items[ $Item->fingerprint() ] = $Item;
 		}
-		ShoppOrder()->Cart->contents = $items;
+		ShoppOrder()->Cart->populate($items);
+
 
 		$this->packer = new ShippingPackager(array('type'=>'all','limits'=>array('wtl'=>-1,'ll'=>-1,'wl'=>-1,'hl'=>-1)),'test_package_all');
 		// echo "\nItems\n";
@@ -328,16 +327,21 @@ class PackagingTests extends ShoppTestCase {
 
 	// packaging all items in separate packages
 	function test_package_piece () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		// return;
 		// echo "\n".__FUNCTION__." Tests:\n----------------------\n";
 
-		$products = array($this->prod1, $this->prod2, $this->prod3, $this->prod4);
+		$products = self::$products;
+		$quantities = array(2, 1, 1, 3);
 		$items = array();
-		for ($i = 0; $i < count($products); $i++ ) {
-				$items[$i] = new Item($products[$i], false);
-				$items[$i]->quantity( max( 1, (6 - $i) % 4 ) );
+		foreach ( $products as $i => $Product ) {
+			$Item = new Item ( $Product, false );
+			$Item->quantity( $quantities[$i] );
+			$items[ $Item->fingerprint() ] = $Item;
 		}
-		ShoppOrder()->Cart->contents = $items;
+		ShoppOrder()->Cart->populate($items);
+
 
 		$this->packer = new ShippingPackager(array('type'=>'piece','limits'=>array('wtl'=>-1,'ll'=>-1,'wl'=>-1,'hl'=>-1)),'test_package_piece');
 
@@ -401,19 +405,21 @@ class PackagingTests extends ShoppTestCase {
 	}
 
 	function test_package_mass_limited_base () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		// return;
 		// echo "\n".__FUNCTION__." Tests:\n----------------------\n";
 
-		$products = array($this->prod2,$this->prod3,$this->prod4);
+		$products = self::$products;
+		array_shift($products);
+		$quantities = array(9, 7, 4);
 		$items = array();
-
-		$items[0] = new Item($products[0], false);
-		$items[0]->quantity(9);
-		$items[1] = new Item($products[1], false);
-		$items[1]->quantity(7);
-		$items[2] = new Item($products[2], false);
-		$items[2]->quantity(4);
-		ShoppOrder()->Cart->contents = $items;
+		foreach ( $products as $i => $product ) {
+			$Item = new Item($products[$i], false);
+			$Item->quantity($quantities[$i]);
+			$items[ $Item->fingerprint() ] = $Item;
+		}
+		ShoppOrder()->Cart->populate($items);
 
 		// set 75 lbs limit
 		$this->packer = new ShippingPackager(array('type'=>'mass', 'limits'=>array('wtl' => 75)),'test_package_mass_limited_base');
@@ -505,20 +511,20 @@ class PackagingTests extends ShoppTestCase {
 
 
 	function test_package_mass_limited () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		// return;
 		// echo "\n".__FUNCTION__." Tests:\n----------------------\n";
 
-		$products = array($this->prod1, $this->prod2, $this->prod3, $this->prod4);
+		$products = self::$products;
+		$quantities = array(3, 8, 6, 12);
 		$items = array();
-		for ($i = 0; $i < ( 2 * count($products) ); $i++ ) {
-			$p = $i % count($products);
-			if ( isset($items[$p]) ) $items[$p]->quantity($items[$p]->quantity + ($p + 1) * ($i % 3 + 1) );
-			else {
-				$items[$p] = new Item($products[$p], false);
-				$items[$p]->quantity($i + 1);
-			}
+		foreach ( $products as $i => $product ) {
+			$Item = new Item($products[$i], false);
+			$Item->quantity($quantities[$i]);
+			$items[ $Item->fingerprint() ] = $Item;
 		}
-		ShoppOrder()->Cart->contents = $items;
+		ShoppOrder()->Cart->populate($items);
 
 		// set 60 lbs limit
 		$this->packer = new ShippingPackager(array('type'=>'mass', 'limits'=>array('wtl' => 60)),'test_package_mass_limited');
@@ -628,20 +634,20 @@ class PackagingTests extends ShoppTestCase {
 	}
 
 	function test_package_like_limited () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		// return;
 		// echo "\n".__FUNCTION__." Tests:\n----------------------\n";
 
-		$products = array($this->prod1, $this->prod2, $this->prod3, $this->prod4);
+		$products = self::$products;
+		$quantites = array(3, 8, 6, 12);
 		$items = array();
-		for ($i = 0; $i < ( 2 * count($products) ); $i++ ) {
-			$p = $i % count($products);
-			if ( isset($items[$p]) ) $items[$p]->quantity($items[$p]->quantity + ($p + 1) * ($i % 3 + 1) );
-			else {
-				$items[$p] = new Item($products[$p], false);
-				$items[$p]->quantity($i + 1);
-			}
+		foreach ( $products as $i => $product ) {
+			$Item = new Item($products[$i], false);
+			$Item->quantity($quantities[$i]);
+			$items[ $Item->fingerprint() ] = $Item;
 		}
-		ShoppOrder()->Cart->contents = $items;
+		ShoppOrder()->Cart->populate($items);
 
 		// set 100 lbs limit
 		$this->packer = new ShippingPackager(array('type'=>'like', 'limits'=>array('wtl' => 100)),'test_package_like_limited');
@@ -727,20 +733,20 @@ class PackagingTests extends ShoppTestCase {
 	}
 
 	function test_package_all_limited () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		// return;
 		// echo "\n".__FUNCTION__." Tests:\n----------------------\n";
 
-		$products = array($this->prod1, $this->prod2, $this->prod3, $this->prod4);
+		$products = self::$products;
+		$quantities = array(3, 8, 6, 12);
 		$items = array();
-		for ($i = 0; $i < ( 2 * count($products) ); $i++ ) {
-			$p = $i % count($products);
-			if ( isset($items[$p]) ) $items[$p]->quantity($items[$p]->quantity + ($p + 1) * ($i % 3 + 1) );
-			else {
-				$items[$p] = new Item($products[$p], false);
-				$items[$p]->quantity($i + 1);
-			}
+		foreach ( $products as $i => $product ) {
+			$Item = new Item($products[$i], false);
+			$Item->quantity($quantities[$i]);
+			$items[ $Item->fingerprint() ] = $Item;
 		}
-		ShoppOrder()->Cart->contents = $items;
+		ShoppOrder()->Cart->populate($items);
 
 		// set 225 lbs limit
 		$this->packer = new ShippingPackager(array('type'=>'all', 'limits'=>array('wtl' => 225)),'test_package_all_limited');
@@ -838,20 +844,21 @@ class PackagingTests extends ShoppTestCase {
 	}
 
 	function test_package_like_limited_dims () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		// return;
 		// echo "\n".__FUNCTION__." Tests:\n----------------------\n";
 
-		$products = array($this->prod1, $this->prod2, $this->prod3, $this->prod4);
+		$products = self::$products;
+		$quantities = array(3, 8, 6, 12);
 		$items = array();
-		for ($i = 0; $i < ( 2 * count($products) ); $i++ ) {
-			$p = $i % count($products);
-			if ( isset($items[$p]) ) $items[$p]->quantity($items[$p]->quantity + ($p + 1) * ($i % 3 + 1) );
-			else {
-				$items[$p] = new Item($products[$p], false);
-				$items[$p]->quantity($i + 1);
-			}
+		foreach ( $products as $i => $product ) {
+			$Item = new Item($products[$i], false);
+			$Item->quantity($quantities[$i]);
+			$items[ $Item->fingerprint() ] = $Item;
 		}
-		ShoppOrder()->Cart->contents = $items;
+		ShoppOrder()->Cart->populate($items);
+
 
 		// set 150 lbs limit, and box size limited to (w x l x h) 40 x 40 x 40
 		$this->packer = new ShippingPackager(array('type'=>'like', 'limits'=>array('wtl' => 150, 'wl' => 40, 'll' => 40, 'hl' => 40)), 'test_package_like_limited_dims');
@@ -945,20 +952,20 @@ class PackagingTests extends ShoppTestCase {
 	}
 
 	function test_package_all_limited_dims () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		// return;
 		// echo "\n".__FUNCTION__." Tests:\n----------------------\n";
 
-		$products = array($this->prod1, $this->prod2, $this->prod3, $this->prod4);
+		$products = self::$products;
+		$quantities = array(3, 8, 6, 12);
 		$items = array();
-		for ($i = 0; $i < ( 2 * count($products) ); $i++ ) {
-			$p = $i % count($products);
-			if ( isset($items[$p]) ) $items[$p]->quantity($items[$p]->quantity + ($p + 1) * ($i % 3 + 1) );
-			else {
-				$items[$p] = new Item($products[$p], false);
-				$items[$p]->quantity($i + 1);
-			}
+		foreach ( $products as $i => $product ) {
+			$Item = new Item($products[$i], false);
+			$Item->quantity($quantities[$i]);
+			$items[ $Item->fingerprint() ] = $Item;
 		}
-		ShoppOrder()->Cart->contents = $items;
+		ShoppOrder()->Cart->populate($items);
 
 		// set 150 lbs limit, and box size limited to (w x l x h) 40 x 40 x 40
 		$this->packer = new ShippingPackager(array('type'=>'like', 'limits'=>array('wtl' => 150, 'wl' => 40, 'll' => 40, 'hl' => 40)), 'test_package_all_limited_dims');
@@ -1051,4 +1058,3 @@ class PackagingTests extends ShoppTestCase {
 		}
 	}
 }
-?>
