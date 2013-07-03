@@ -184,8 +184,8 @@ class CustomerDevAPITests extends ShoppTestCase {
 		// get marketing list
 		$marketing = shopp_customer_marketing_list();
 		$this->AssertFalse( ! $marketing );
-		$this->AssertTrue('yes' == $marketing[$cids[0]]->marketing);
-		$this->AssertTrue('yes' == $marketing[$cids[1]]->marketing);
+		$this->AssertTrue('yes' == $marketing[ $cids[0] ]->marketing);
+		$this->AssertTrue('yes' == $marketing[ $cids[1] ]->marketing);
 	}
 
 	function test_shopp_add_customer () {

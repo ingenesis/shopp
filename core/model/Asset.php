@@ -105,8 +105,8 @@ class FileAsset extends MetaObject {
 	 * @return void
 	 **/
 	function found ($uri=false) {
-		if (!empty($this->data)) return true;
-		if (!$uri) $uri = $this->uri;
+		if ( ! empty($this->data) ) return true;
+		if ( ! $uri ) $uri = $this->uri;
 		$Engine = $this->_engine();
 		return $Engine->exists($uri);
 	}
@@ -137,6 +137,7 @@ class FileAsset extends MetaObject {
 			$this->storage = $engine;
 			$Engine = $Shopp->Storage->active[$engine];
 		}
+
 		if ( ! empty($Engine) ) $Engine->context($this->type);
 
 		return $Engine;
