@@ -249,9 +249,9 @@ function shopp_add_product ( $data = array() ) {
 	$Product->resum();
 
 	// Calculates aggregate product stats
-	foreach ( $prices as $Price ) {
-		$Product->sumprice($Price);
-	}
+	// foreach ( $prices as $Price ) {
+	// 	$Product->sumprice($Price);
+	// }
 
 	// Skeleton summary
 	$Summary = new ProductSummary();
@@ -264,7 +264,7 @@ function shopp_add_product ( $data = array() ) {
 	// Process pricing stats
 	$records = null;
 	foreach ( $prices as $Price ) {
-		$Product->pricing($records,$Price);
+		$Product->pricing($records, $Price);
 	}
 
 	// Saves generated stats to the product summary

@@ -184,6 +184,10 @@ class Price extends DatabaseObject {
 		return true;
 	}
 
+	function disabled () {
+		return ( 'N/A' == $this->type );
+	}
+
 	/**
 	 * Returns structured product price line type values and labels
 	 *

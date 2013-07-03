@@ -9,206 +9,219 @@
  **/
 class ProductAPITests extends ShoppTestCase {
 
-	function setUp () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		global $Shopp;
-		parent::setUp();
+	static $category = false;
+	static $tag = false;
+
+	static function setUpBeforeClass () {
 
 		// capture original settings
-		$this->_set_setting('inventory','on');
-		$this->_set_setting('base_operations', unserialize('a:7:{s:4:"name";s:3:"USA";s:8:"currency";a:2:{s:4:"code";s:3:"USD";s:6:"format";a:6:{s:4:"cpos";b:1;s:8:"currency";s:1:"$";s:9:"precision";i:2;s:8:"decimals";s:1:".";s:9:"thousands";s:1:",";s:8:"grouping";a:1:{i:0;i:3;}}}s:5:"units";s:8:"imperial";s:6:"region";i:0;s:7:"country";s:2:"US";s:4:"zone";s:2:"OH";s:3:"vat";b:0;}'));
-		$this->_set_setting('taxrates',shopp_setting('taxrates'));
+		// $this->_set_setting('inventory','on');
+		// $this->_set_setting('base_operations', unserialize('a:7:{s:4:"name";s:3:"USA";s:8:"currency";a:2:{s:4:"code";s:3:"USD";s:6:"format";a:6:{s:4:"cpos";b:1;s:8:"currency";s:1:"$";s:9:"precision";i:2;s:8:"decimals";s:1:".";s:9:"thousands";s:1:",";s:8:"grouping";a:1:{i:0;i:3;}}}s:5:"units";s:8:"imperial";s:6:"region";i:0;s:7:"country";s:2:"US";s:4:"zone";s:2:"OH";s:3:"vat";b:0;}'));
+		// $this->_set_setting('taxrates',shopp_setting('taxrates'));
 
+		$Shopp = Shopp::object();
 		$Shopp->Flow->Controller = new Storefront();
-		ShoppCatalog(new Catalog());
 
-		$Product = shopp_product("Ultimate Matrix Collection", 'name');
+		self::$category = $Uniforms = shopp_add_product_category('Uniforms');
+		$CommandDivision = shopp_add_product_category('Command Division', '', $Uniforms);
+
+		$starfleet = shopp_add_product_tag('Starfleet');
+		self::$tag = $federation = shopp_add_product_tag('Federation');
+
+		$Product = shopp_add_product(array(
+			'name' => 'Command Uniform',
+			'publish' => array('flag' => true),
+			'featured' => true,
+			'summary' => 'Starfleet standard issue gold command division uniforms for your crew.',
+			'description' => "Command uniforms ranged in color depending on the type of fabric used. While they were generally described as gold, some of the darker variants had a distinct greenish hue, while the dress uniforms, and a captain's alternate tunic were clearly green.",
+			'tags' => array('terms' => array('Starfleet', 'Federation')),
+			'categories'=> array('terms' => array($Uniforms, $CommandDivision)),
+			'specs' => array(
+				'Department' => 'Command',
+				'Color' => 'Gold'
+			),
+			'variants' => array(
+				'menu' => array(
+					'Size' => array('Small','Medium','Large','Brikar')
+				),
+				0 => array(
+					'option' => array('Size' => 'Small'),
+					'type' => 'Shipped',
+					'price' => 19.99,
+					'sale' => array('flag'=>true, 'price' => 9.99),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.3, 'width' => 0.3, 'height' => 0.1),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 5,
+						'sku' => 'SFU-001-S'
+					)
+				),
+				1 => array(
+					'option' => array('Size' => 'Medium'),
+					'type' => 'Shipped',
+					'price' => 22.55,
+					'sale' => array('flag'=>true, 'price' => 19.99),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.3, 'width' => 0.3, 'height' => 0.1),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 15,
+						'sku' => 'SFU-001-M'
+					)
+				),
+				2 => array(
+					'option' => array('Size' => 'Large'),
+					'type' => 'Shipped',
+					'price' => 32.95,
+					'sale' => array('flag'=>true, 'price' => 24.95),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.3, 'width' => 0.3, 'height' => 0.1),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 1,
+						'sku' => 'SFU-001-L'
+					)
+				),
+				3 => array(
+					'option' => array('Size' => 'Brikar'),
+					'type' => 'Shipped',
+					'price' => 55.00,
+					'sale' => array('flag'=>true, 'price' => 35.00),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 2.1, 'length' => 0.3, 'width' => 0.9, 'height' => 1.1),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 1,
+						'sku' => 'SFU-001-B'
+					)
+				),
+
+			)
+		));
+
 		ShoppProduct($Product);
 	}
 
-	function tearDown () {
+	static function tearDownAfterClass () {
 		// restore original settings
-		$this->_restore_setting('inventory');
-		$this->_restore_setting('base_operations');
-		$this->_restore_setting('taxrates');
-		parent::tearDown();
+		// $this->_restore_setting('inventory');
+		// $this->_restore_setting('base_operations');
+		// $this->_restore_setting('taxrates');
+		// parent::tearDown();
 	}
 
 	function test_product_id () {
-		ob_start();
-		shopp('product','id');
-		$output = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$output = shopp('product.get-id');
 		$this->assertTrue( ! empty(ShoppProduct()->id) );
 		$this->assertEquals( ShoppProduct()->id, $output );
 	}
 
 	function test_product_name () {
-		ob_start();
-		shopp('product','name');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("Ultimate Matrix Collection",$output);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$output = shopp('product.get-name');
+		$this->assertEquals('Command Uniform', $output);
 	}
 
 	function test_product_slug () {
-		ob_start();
-		shopp('product','slug');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("ultimate-matrix-collection",$output);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$output = shopp('product.get-slug');
+		$this->assertEquals('command-uniform', $output);
 	}
 
 	function test_product_url () {
-		global $Shopp;
-		ob_start();
-		shopp('product','url');
-		$output = ob_get_contents();
-		ob_end_clean();
-		if ('' != get_option('permalink_structure')) $this->assertEquals('http://shopptest/store/ultimate-matrix-collection/',$output);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$output = shopp('product.get-url');
+		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '?shopp_product=command-uniform', $output);
 	}
 
 	function test_product_description () {
-		ob_start();
-		shopp('product','description');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("6926c1177e6a3019cabd3525dea0921c",md5($output));
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$output = shopp('product.get-description');
+		$this->assertEquals("937a005226c77e01321a3d88a276b11c", md5($output));
 	}
 
 	function test_product_summary () {
-		ob_start();
-		shopp('product','summary');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("3b31a462a3ec3b704934bdc5ae960af6",md5($output));
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$output = shopp('product.get-summary');
+		$this->assertEquals("9da1c49f90a584dd46290f690a404914",md5($output));
 	}
 
 	function test_product_found () {
-		global $Shopp;
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$this->assertTrue(shopp('product','found'));
-		$original = $Shopp->Product;
-		$Shopp->Product = new Product(-1);
+		$original = ShoppProduct();
+		ShoppProduct(new Product(-1));
 		$this->assertFalse(shopp('product','found'));
-		$Shopp->Product = $original;
+		ShoppProduct($original);
 	}
 
 	function test_product_isfeatured () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$this->assertTrue(shopp('product','isfeatured'));
 		$this->assertTrue(shopp('product','is-featured'));
 	}
 
 	function test_product_price () {
-		ob_start();
-		shopp('product','price');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("$34.86 &mdash; $129.95",$output);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$output = shopp('product.get-price');
+		$this->assertEquals("$19.99 &mdash; $55.00",$output);
 	}
 
 	function test_product_onsale () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$this->assertTrue(shopp('product','onsale'));
 	}
 
 	function test_product_saleprice () {
-		ob_start();
-		shopp('product','saleprice');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("$15.06 &mdash; $63.86",$output);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$output = shopp('product.get-saleprice');
+		$this->assertEquals("$9.99 &mdash; $35.00",$output);
 	}
 
 	function test_product_prices_withvat () {
-		global $Shopp;
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 
-		shopp_set_setting('base_operations', array(
-			'name' => 'USA',
-		    'currency' => array(
-		            'code' => 'USD',
-		            'format' => array(
-		                    'cpos' => 1,
-		                    'currency' => '$',
-		                    'precision' => 2,
-		                    'decimals' => '.',
-		                    'thousands' => ',',
-							'grouping' => 3
-		                ),
-		        ),
-		    'units' => 'imperial',
-		    'region' => 0,
-		    'country' => 'US',
-		    'zone' => 'OH',
-		    'vat' => true,
-		));
-		shopp_set_setting('taxrates', array(
-			0 => array('rate' => 15,'country'=>'*')
-		));
+		$output = shopp('product.get-price');
+		$this->assertEquals("$19.99 &mdash; $55.00",$output);
 
-		ob_start();
-		shopp('product','price');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("$34.86 &mdash; $129.95",$output);
+		$output = shopp('product.get-price','taxes=on');
+		$this->assertEquals("$21.99 &mdash; $60.50",$output);
 
-		ob_start();
-		shopp('product','price','taxes=on');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("$40.09 &mdash; $149.44",$output);
+		$output = shopp('product.get-saleprice');
+		$this->assertEquals("$9.99 &mdash; $35.00",$output);
 
-		ob_start();
-		shopp('product','saleprice');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("$15.06 &mdash; $63.86",$output);
-
-		ob_start();
-		shopp('product','saleprice','taxes=on');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("$17.32 &mdash; $73.44",$output);
+		$output = shopp('product.get-saleprice','taxes=on');
+		$this->assertEquals("$10.99 &mdash; $38.50",$output);
 	}
 
 	function test_product_hassavings () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$this->assertTrue(shopp('product','has-savings'));
 	}
 
 	function test_product_savings () {
-		ob_start();
-		shopp('product','savings');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("$19.80 &mdash; $66.09",$output);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$output = shopp('product.get-savings');
+		$this->assertEquals("$2.56 &mdash; $20.00", $output);
 
-		ob_start();
-		shopp('product','savings','show=percent');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("51% &mdash; 57%",$output);
+		$output = shopp('product.get-savings','show=percent');
+		$this->assertEquals("11% &mdash; 50%", $output);
 	}
 
 	function test_product_weight () {
-		ob_start();
-		shopp('product','weight');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals("0.2 - 1.15 lb",$output);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$output = shopp('product.get-weight');
+		$this->assertEquals("0.1 - 2.1 ", $output);
 	}
 
 	function test_product_thumbnail () {
-		ob_start();
-		shopp('product','thumbnail');
-		$output = ob_get_contents();
-		ob_end_clean();
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$output = shopp('product.get-thumbnail');
 		$this->assertXmlStringEqualsXmlString('<img src="http://shopptest/store/images/652/UlitimateMatrixBRCollections.jpg?96,96,2395623139" alt="Ultimate Matrix Collection" width="96" height="96"/>',$output);
 		$this->assertValidMarkup($output);
 	}
 
 	function test_product_gallery () {
-		ob_start();
-		shopp('product','gallery');
-		$output = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$output = shopp('product.get-gallery');
 		$this->assertValidMarkup($output);
 	}
 
@@ -241,10 +254,12 @@ class ProductAPITests extends ShoppTestCase {
 	// }
 
 	function test_product_freeshipping () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$this->assertFalse(shopp('product','freeshipping'));
 	}
 
 	function test_product_hasimages () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		global $Shopp;
 		$this->assertTrue(shopp('product','hasimages'));
 		$this->assertTrue(shopp('product','has-images'));
@@ -252,33 +267,38 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_hascategories () {
-		global $Shopp;
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$this->assertTrue(shopp('product','has-categories'));
-		$this->assertEquals(3,count($Shopp->Product->categories));
+		$this->assertEquals(2,count(ShoppProduct()->categories));
 	}
 
 	function test_product_incategory_byname () {
-		$this->assertTrue(shopp('product','in-category','name=Entertainment'));
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$this->assertTrue(shopp('product','in-category','name=Uniforms'));
 	}
 
 	function test_product_incategory_byslug () {
-		$this->assertTrue(shopp('product','in-category','slug=movies-tv'));
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$this->assertTrue(shopp('product','in-category','slug=command-division'));
 	}
 
 	function test_product_incategory_byid () {
-		$this->assertTrue(shopp('product','in-category','id=49'));
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$this->assertTrue(shopp('product','in-category','id=' . self::$category));
 	}
 
 	function test_product_category_tags () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		ob_start();
 		if (shopp('product','has-categories'))
 			while(shopp('product','categories')) shopp('product','category');
 		$output = ob_get_contents();
 		ob_end_clean();
-		$this->assertEquals('Blu-RayEntertainmentMovies & TV',$output);
+		$this->assertEquals('Command DivisionUniforms',$output);
 	}
 
 	function test_product_image_tags () {
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		ob_start();
 		if (shopp('product','has-images'))
 			while(shopp('product','images')) shopp('product','image');
@@ -289,52 +309,51 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_hastags () {
-		global $Shopp;
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$this->assertTrue(shopp('product','hastags'));
 		$this->assertTrue(shopp('product','has-tags'));
-		$this->assertEquals(6,count($Shopp->Product->tags));
+		$this->assertEquals(2, count(ShoppProduct()->tags));
 	}
 
 	function test_product_tag_tags () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		ob_start();
 		if (shopp('product','has-tags'))
 			while(shopp('product','tags')) shopp('product','tag');
 		$output = ob_get_contents();
 		ob_end_clean();
 
-		$this->assertEquals('bluraymatrixmovietrilogywachowskiwarner',$output);
+		$this->assertEquals('FederationStarfleet',$output);
 	}
 
 	function test_product_tagged_byname () {
-		$this->assertTrue(shopp('product','tagged','name=matrix'));
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$this->assertTrue(shopp('product','tagged','name=Starfleet'));
 	}
 
 	function test_product_tagged_byid () {
-		$this->assertTrue(shopp('product','tagged','id=57'));
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$this->assertTrue(shopp('product','tagged','id='.self::$tag));
 	}
 
 
 	function test_product_hasspecs () {
-		global $Shopp;
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$this->assertTrue(shopp('product','hasspecs'));
 		$this->assertTrue(shopp('product','has-specs'));
 
-		$this->assertEquals(8, count(ShoppProduct()->specs));
+		$this->assertEquals(2, count(ShoppProduct()->specs));
 	}
 
 	function test_product_spec_tags () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$output = array();
 		if (shopp('product','has-specs'))
 			while(shopp('product','specs')) $output[] = shopp('product','get-spec');
 
 		$expected = array(
-			'Rating: R Rated',
-			'Studio: Warner Home Video',
-			'Run Time (in minutes): 415',
-			'Format: Blu-Ray, DVD',
-			'Language: English',
-			'Screen Format: Widescreen',
-			'Director: The Wachowski Brothers'
+			'Department: Command',
+			'Color: Gold'
 		);
 		$this->AssertEquals(count($output), count($expected));
 		foreach ( $expected as $spec_content )
@@ -343,29 +362,26 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_spec_tags_byname () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		ob_start();
 		if (shopp('product','has-specs'))
 			while(shopp('product','specs')) shopp('product','spec','name');
 		$output = ob_get_contents();
 		ob_end_clean();
 
-		$this->assertEquals('RatingStudioRun Time (in minutes)FormatLanguageScreen FormatDirector',$output);
+		$this->assertEquals('DepartmentColor',$output);
 
 	}
 
 	function test_product_spec_tags_bycontent () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$output = array();
 		if (shopp('product','has-specs'))
 			while(shopp('product','specs')) $output[] = shopp('product','get-spec','content');
 
 		$expected = array(
-			'R Rated',
-			'Warner Home Video',
-			'415',
-			'Blu-Ray, DVD',
-			'English',
-			'Widescreen',
-			'The Wachowski Brothers'
+			'Command',
+			'Gold'
 		);
 		$this->AssertEquals(count($output), count($expected));
 		foreach ( $expected as $spec_content )
@@ -373,31 +389,28 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_outofstock () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$this->assertFalse(shopp('product','outofstock'));
 	}
 
 	function test_product_hasvariations () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$this->assertTrue(shopp('product','has-variations'));
 	}
 
 	function test_product_variations_menus () {
-		global $Shopp;
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 
-		ob_start();
-		shopp('product','variations','mode=single');
-		$output = ob_get_contents();
-		ob_end_clean();
+		$output = shopp('product.get-variations','mode=single');
 		$this->assertValidMarkup($output);
 
-		ob_start();
-		shopp('product','variations','mode=multi');
-		$output = ob_get_contents();
-		ob_end_clean();
+		$output = shopp('product.get-variations','mode=multi');
 		$this->assertValidMarkup($output);
 
 	}
 
 	function test_product_variation_tags () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		ob_start();
 		if (shopp('product','has-variations')) {
 			while(shopp('product','variations')) {
@@ -418,47 +431,43 @@ class ProductAPITests extends ShoppTestCase {
 		}
 		$output = ob_get_contents();
 		ob_end_clean();
-		$this->assertEquals('228|Blu-Ray|Shipped|BR-81|$129.95|$63.86|25|1.15 lb|$0.00|1|1|1|1|256|DVD|Shipped||$34.86|$15.06|0|0.2 lb|$0.00|1|1|1||',$output);
+		$this->assertEquals('1|Small|Shipped|SFU-001-S|$19.99|$9.99|5|0|$0.00|1|1|1|1|2|Medium|Shipped|SFU-001-M|$22.55|$19.99|15|0|$0.00|1|1|1|1|3|Large|Shipped|SFU-001-L|$32.95|$24.95|1|0|$0.00|1|1|1|1|4|Brikar|Shipped|SFU-001-B|$55.00|$35.00|1|0|$0.00|1|1|1|1|',$output);
 
 	}
 
 	function test_product_input () {
-		ob_start();
-		shopp('product','input','type=text&name=Testing');
-		$output = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$Product = shopp_product('command-uniform', 'slug');
+		$output = shopp('product.get-input','type=text&name=Testing');
 
 		$markup = array(
 			'tag' => 'input',
 			'attributes' => array(
 				'type' => 'text',
-				'name' => 'products[94][data][Testing]',
-				'id' => 'data-testing-94'
+				'name' => 'products[' . $Product->id . '][data][Testing]',
+				'id' => 'data-testing-' . $Product->id
 			)
 		);
-		$this->assertTag($markup,$output,'',true);
+		$this->assertTag($markup,$output,$output,true);
 		$this->assertValidMarkup($output);
 	}
 
 	function test_product_addtocart () {
-		global $Shopp;
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$Product = shopp_product('command-uniform', 'slug');
 
-		$Shopp->Product->outofstock = true;
-		ob_start();
-		shopp('product','addtocart');
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('<span class="outofstock">Out of stock</span>',$output);
-		$Shopp->Product->outofstock = false;
+		shopp_set_setting('inventory','on');
+		ShoppProduct()->outofstock = true;
+		$output = shopp('product.get-addtocart');
+		$this->assertEquals('<span class="outofstock">' . shopp_setting('outofstock_text') . '</span>', $output);
+		ShoppProduct()->outofstock = false;
+		shopp_set_setting('inventory','off');
 
-		ob_start();
-		shopp('product','addtocart');
-		$output = ob_get_contents();
-		ob_end_clean();
+		$output = shopp('product.get-addtocart');
 
 		$markup = array(
 			'tag' => 'input',
-			'attributes' => array('type' => 'hidden','name' => 'products[94][product]','value' => '94')
+			'attributes' => array('type' => 'hidden','name' => 'products[' . $Product->id . '][product]','value' => $Product->id)
 		);
 		$this->assertTag($markup,$output,'',true);
 
@@ -479,5 +488,3 @@ class ProductAPITests extends ShoppTestCase {
 
 
 } // end ProductAPITests class
-
-?>
