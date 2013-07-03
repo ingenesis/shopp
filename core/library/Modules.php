@@ -12,6 +12,8 @@
  * @subpackage modules
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 /**
  * ModuleLoader
  *
@@ -24,11 +26,11 @@ abstract class ModuleLoader {
 
 	protected $loader = 'ModuleFile'; // Module File load manager
 
-	var $legacy = array();		// Legacy module checksums
-	var $modules = array();		// Installed available modules
-	var $activated = array();	// List of selected modules to be activated
-	var $active = array();		// Instantiated module objects
-	var $path = false;			// Source path for target module files
+	public $legacy = array();		// Legacy module checksums
+	public $modules = array();		// Installed available modules
+	public $activated = array();	// List of selected modules to be activated
+	public $active = array();		// Instantiated module objects
+	public $path = false;			// Source path for target module files
 
 	/**
 	 * Indexes the install module files
@@ -38,7 +40,7 @@ abstract class ModuleLoader {
 	 *
 	 * @return void
 	 **/
-	function installed () {
+	public function installed () {
 		if (!is_dir($this->path)) return false;
 
 		$path = $this->path;
@@ -51,7 +53,7 @@ abstract class ModuleLoader {
 			if (!is_readable($path.$file) && !is_dir($path.$file)) continue;
 			// Add the module file to the registry
 			$Loader = $this->loader;
-			$module = new $Loader($path,$file);
+			$module = new $Loader($path, $file);
 			if ($module->addon) $this->modules[$module->subpackage] = $module;
 			else $this->legacy[] = md5_file($path.$file);
 		}
@@ -67,7 +69,7 @@ abstract class ModuleLoader {
 	 * @param boolean $all Loads all installed modules instead
 	 * @return void
 	 **/
-	function load ($all=false) {
+	public function load ($all=false) {
 		if ($all) $activate = array_keys($this->modules);
 		else $activate = $this->activated;
 
@@ -95,7 +97,7 @@ abstract class ModuleLoader {
 	 *
 	 * @return array List of checksums
 	 **/
-	function checksums () {
+	public function checksums () {
 		$hashes = array();
 		foreach ($this->modules as $module) $hashes[] = md5_file($module->file);
 		if (!empty($this->legacy)) $hashes = array_merge($hashes,$this->legacy);
@@ -138,6 +140,39 @@ abstract class ModuleLoader {
 		return false;
 	}
 
+	/**
+	 * Gets a ModuleFile entry
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param string $module The module file class/package name
+	 * @return StorageEngine or false
+	 **/
+	function module ( $module ) {
+		if ( isset($this->modules[ $module ]) )
+			return $this->modules[ $module ];
+		return false;
+	}
+
+	/**
+	 * Activates a specified module
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param string $module The module file class/package name
+	 * @return Object The activated module object or false if it failed to load
+	 **/
+	function activate ( $module ) {
+		$ModuleFile = $this->module($module);
+		if ( false === $ModuleFile ) return false;
+		ShoppLoader::add($module, $ModuleFile->file);
+		$this->active[ $module ] = $ModuleFile->load();
+		return $this->active[ $module ];
+	}
+
+
 
 } // END class ModuleLoader
 
@@ -153,14 +188,14 @@ abstract class ModuleLoader {
  **/
 class ModuleFile {
 
-	var $file = false;			// The full path to the file
-	var $filename = false;		// The name of the file
-	var $name = false;			// The proper name of the module
-	var $description = false;	// A description of the module
-	var $subpackage = false;	// The class name of the module
-	var $version = false;		// The version of the module
-	var $since = false;			// The core version required
-	var $addon = false;			// The valid addon flag
+	public $file = false;			// The full path to the file
+	public $filename = false;		// The name of the file
+	public $name = false;			// The proper name of the module
+	public $description = false;	// A description of the module
+	public $subpackage = false;	// The class name of the module
+	public $version = false;		// The version of the module
+	public $since = false;			// The core version required
+	public $addon = false;			// The valid addon flag
 
 	/**
 	 * Parses the module file meta data and validates it
@@ -172,7 +207,7 @@ class ModuleFile {
 	 * @param string $file The file name
 	 * @return void
 	 **/
-	function __construct ($path,$file) {
+	public function __construct ($path,$file) {
 		if (!is_readable($path.$file)) return;
 
 		$this->filename = $file;
@@ -209,7 +244,7 @@ class ModuleFile {
 	 *
 	 * @return void
 	 **/
-	function load () {
+	public function load () {
 		if ( ! $this->addon ) return;
 		return new $this->subpackage();
 	}
@@ -222,7 +257,7 @@ class ModuleFile {
 	 *
 	 * @return void
 	 **/
-	function valid () {
+	public function valid () {
 		if (empty($this->version) || empty($this->since) || empty($this->subpackage))
 			return new ShoppError(sprintf(
 				__('%s could not be loaded because the file descriptors are incomplete.','Shopp'),
@@ -250,7 +285,7 @@ class ModuleFile {
 	 * @param string $file The target file
 	 * @return string The meta block from the file
 	 **/
-	function readmeta ($file) {
+	public function readmeta ($file) {
 		if (!file_exists($file)) return false;
 		if (!is_readable($file)) return false;
 
@@ -285,13 +320,13 @@ class ModuleFile {
  **/
 class ModuleSettingsUI {
 
-	var $module;
-	var $name;
-	var $label;
-	var $markup = array(
+	public $module;
+	public $name;
+	public $label;
+	public $markup = array(
 		array(),array(),array()
 	);
-	var $script = '';
+	public $script = '';
 
 	/**
 	 * Registers a new module setting interface
@@ -301,14 +336,14 @@ class ModuleSettingsUI {
 	 *
 	 * @return void Description...
 	 **/
-	function __construct ($Module,$name) {
+	public function __construct ($Module,$name) {
 		$this->name = $name;
 		$this->module = $Module->module;
 		$this->id = sanitize_title_with_dashes($this->module);
 		$this->label = isset($Module->settings['label'])?$Module->settings['label']:$name;
 	}
 
-	function generate () {
+	public function generate () {
 
 		$_ = array();
 		$_[] = '<tr><td colspan="5">';
@@ -328,7 +363,7 @@ class ModuleSettingsUI {
 
 	}
 
-	function template () {
+	public function template () {
 		$_ = array('<script id="'.$this->id.'-editor" type="text/x-jquery-tmpl">');
 		$_[] = $this->generate();
 		$_[] = '</script>';
@@ -336,7 +371,7 @@ class ModuleSettingsUI {
 		echo join('',$_)."\n\n";
 	}
 
-	function ui ($markup,$column=0) {
+	public function ui ($markup,$column=0) {
 		if (!isset($this->markup[$column])) $this->markup[$column] = array();
 		$this->markup[$column][] = $markup;
 	}
@@ -352,7 +387,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function checkbox ($column=0,$attributes=array()) {
+	public function checkbox ($column=0,$attributes=array()) {
 		$defaults = array(
 			'label' => '',
 			'type' => 'checkbox',
@@ -387,7 +422,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function menu ($column=0,$attributes=array(),$options=array()) {
+	public function menu ($column=0,$attributes=array(),$options=array()) {
 		$defaults = array(
 			'label' => '',
 			'selected' => '',
@@ -425,7 +460,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function multimenu ($column=0,$attributes=array(),$options=array()) {
+	public function multimenu ($column=0,$attributes=array(),$options=array()) {
 
 		$defaults = array(
 			'label' => '',
@@ -475,7 +510,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function input ($column=0,$attributes=array()) {
+	public function input ($column=0,$attributes=array()) {
 		$defaults = array(
 			'type' => 'hidden',
 			'label' => '',
@@ -505,7 +540,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function text ($column=0,$attributes=array()) {
+	public function text ($column=0,$attributes=array()) {
 		$attributes['type'] = 'text';
 		$this->input($column,$attributes);
 	}
@@ -521,7 +556,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function password ($column=0,$attributes=array()) {
+	public function password ($column=0,$attributes=array()) {
 		$attributes['type'] = 'password';
 		$this->input($column,$attributes);
 	}
@@ -537,7 +572,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function hidden ($column=0,$attributes=array()) {
+	public function hidden ($column=0,$attributes=array()) {
 		$attributes['type'] = 'hidden';
 		$this->input($column,$attributes);
 	}
@@ -553,7 +588,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function textarea ($column=0,$attributes=array()) {
+	public function textarea ($column=0,$attributes=array()) {
 		$defaults = array(
 			'label' => '',
 			'readonly' => false,
@@ -585,7 +620,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function button ($column=0,$attributes=array()) {
+	public function button ($column=0,$attributes=array()) {
 		$defaults = array(
 			'type' => 'button',
 			'label' => '',
@@ -615,7 +650,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function p ($column=0,$attributes=array()) {
+	public function p ($column=0,$attributes=array()) {
 		$defaults = array(
 			'id' => '',
 			'label' => '',
@@ -633,7 +668,7 @@ class ModuleSettingsUI {
 		$this->ui('<div'.$id.$class.'>'.$label.$content.'</div>',$column);
 	}
 
-	function behaviors ($script) {
+	public function behaviors ($script) {
 		shopp_custom_script('shopp',$script);
 	}
 

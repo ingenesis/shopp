@@ -9,6 +9,8 @@
  * @package shopp
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 /**
  * FileAsset class
  *
@@ -22,25 +24,23 @@
  **/
 class FileAsset extends MetaObject {
 
-	var $mime;
-	var $size;
-	var $storage;
-	var $uri;
-	var $context = 'product';
-	var $type = 'asset';
-	var $_xcols = array('mime','size','storage','uri');
+	public $mime;
+	public $size;
+	public $storage;
+	public $uri;
+	public $context = 'product';
+	public $type = 'asset';
+	public $_xcols = array('mime', 'size', 'storage', 'uri');
 
-
-	function __construct ($id=false) {
+	public function __construct ( $id = false ) {
 		$this->init(self::$table);
 		$this->extensions();
-		if (!$id) return;
+		if ( ! $id ) return;
 		$this->load($id);
 
-		if (!empty($this->id))
+		if ( ! empty($this->id) )
 			$this->expopulate();
 	}
-
 
 	/**
 	 * Populate extended fields loaded from the MetaObject
@@ -50,7 +50,7 @@ class FileAsset extends MetaObject {
 	 *
 	 * @return void
 	 **/
-	function expopulate () {
+	public function expopulate () {
 		parent::expopulate();
 		$this->uri = stripslashes($this->uri);
 	}
@@ -63,9 +63,9 @@ class FileAsset extends MetaObject {
 	 *
 	 * @return void
 	 **/
-	function store ($data,$type='binary') {
-		$Engine = $this->_engine();
-		$this->uri = $Engine->save($this,$data,$type);
+	public function store ( $data, $type = 'binary' ) {
+		$Engine = $this->engine();
+		$this->uri = $Engine->save($this, $data, $type);
 		if ($this->uri === false) return false;
 		return true;
 	}
@@ -78,8 +78,8 @@ class FileAsset extends MetaObject {
 	 *
 	 * @return void
 	 **/
-	function retrieve () {
-		$Engine = $this->_engine();
+	public function retrieve () {
+		$Engine = $this->engine();
 		return $Engine->load($this->uri);
 	}
 
@@ -91,9 +91,9 @@ class FileAsset extends MetaObject {
 	 *
 	 * @return void
 	 **/
-	function readmeta () {
-		$Engine = $this->_engine();
-		list($this->size,$this->mime) = array_values($Engine->meta($this->uri,$this->name));
+	public function readmeta () {
+		$Engine = $this->engine();
+		list($this->size, $this->mime) = array_values($Engine->meta($this->uri, $this->name));
 	}
 
 	/**
@@ -104,10 +104,11 @@ class FileAsset extends MetaObject {
 	 *
 	 * @return void
 	 **/
-	function found ($uri=false) {
+	public function found ( $uri = false ) {
 		if ( ! empty($this->data) ) return true;
+		if ( ! ( $uri && $this->uri ) ) return false;
 		if ( ! $uri ) $uri = $this->uri;
-		$Engine = $this->_engine();
+		$Engine = $this->engine();
 		return $Engine->exists($uri);
 	}
 
@@ -119,26 +120,25 @@ class FileAsset extends MetaObject {
 	 *
 	 * @return void Description...
 	 **/
-	function &_engine () {
+	public function &engine () {
 		global $Shopp;
+
 		if ( ! isset($Shopp->Storage) )	$Shopp->Storage = new StorageEngines();
+		$StorageEngines = $Shopp->Storage;
 
-		if ( ! empty($this->storage) ) {
-			// Use the storage engine setting of the asset
-			if ( isset($Shopp->Storage->active[$this->storage]) ) {
-				$Engine = $Shopp->Storage->active[$this->storage];
-			} elseif ( isset($Shopp->Storage->modules[$this->storage]) ) {
-				$Module = new ModuleFile(SHOPP_STORAGE,$Shopp->Storage->modules[$this->storage]->filename);
-				$Engine = $Module->load();
-			}
-		} elseif (isset($Shopp->Storage->engines[$this->type])) {
-			// Pick storage engine from Shopp-loaded engines by type of asset
-			$engine = $Shopp->Storage->engines[$this->type];
-			$this->storage = $engine;
-			$Engine = $Shopp->Storage->active[$engine];
-		}
+		$Engine = false;
+		if ( empty($this->storage) )
+			$this->storage = $StorageEngines->type($this->type);
 
-		if ( ! empty($Engine) ) $Engine->context($this->type);
+		$Engine = $StorageEngines->get($this->storage);
+
+		if ( false === $Engine ) // If no engine found, force DBStorage (to provide a working StorageEngine to the Asset)
+			$Engine = $StorageEngines->activate('DBStorage');
+
+		if ( false === $Engine ) // If no engine is available at all, we're screwed.
+			die('No Storage Engine available. Cannot continue.');
+
+		$Engine->context($this->type);
 
 		return $Engine;
 	}
@@ -151,7 +151,9 @@ class FileAsset extends MetaObject {
 	 *
 	 * @return void
 	 **/
-	function extensions () {}
+	public function extensions () {
+		/** Not Implemented **/
+	}
 
 } // END class FileAsset
 
@@ -168,25 +170,23 @@ class FileAsset extends MetaObject {
 class ImageAsset extends FileAsset {
 
 	// Allowable settings
-	var $_scaling = array('all','matte','crop','width','height');
-	var $_sharpen = 500;
-	var $_quality = 100;
+	public $_scaling = array('all', 'matte', 'crop', 'width', 'height');
+	public $_sharpen = 500;
+	public $_quality = 100;
 
-	var $width;
-	var $height;
-	var $alt;
-	var $title;
-	var $settings;
-	var $filename;
-	var $type = 'image';
+	public $width;
+	public $height;
+	public $alt;
+	public $title;
+	public $settings;
+	public $filename;
+	public $type = 'image';
 
 	// Direct URL support
 	public $direct_url = '';
 	protected $is_directly_accessible = null;
 	protected $base_dir ='';
 	protected $base_url = '';
-
-
 
 	/**
 	 * Determines if the (original) image is directly accessible. This method must be called and a
@@ -197,7 +197,7 @@ class ImageAsset extends FileAsset {
 	 *
 	 * @return bool
 	 */
-	public function directly_accessible() {
+	public function directly_accessible () {
 		// Only determine this once then save the result
 		if ($this->is_directly_accessible === null) {
 			if (defined('SHOPP_DIRECT_IMG_MODE') && !SHOPP_DIRECT_IMG_MODE) // Direct mode can be disallowed
@@ -345,10 +345,10 @@ class ImageAsset extends FileAsset {
 	}
 
 
-	function output ($headers=true) {
+	public function output ($headers=true) {
 
-		if ($headers) {
-			$Engine = $this->_engine();
+		if ( $headers ) {
+			$Engine = $this->engine();
 			$data = $this->retrieve($this->uri);
 
 			$etag = md5($data);
@@ -381,9 +381,9 @@ class ImageAsset extends FileAsset {
 		return;
 	}
 
-	function scaled ($width,$height,$fit='all') {
-		if (preg_match('/^\d+$/',$fit))
-			$fit = $this->_scaling[$fit];
+	public function scaled ( $width, $height, $fit = 'all' ) {
+		if ( preg_match('/^\d+$/', $fit) )
+			$fit = $this->_scaling[ $fit ];
 
 		$d = array('width'=>$this->width,'height'=>$this->height);
 		switch ($fit) {
@@ -404,7 +404,7 @@ class ImageAsset extends FileAsset {
 		return $d;
 	}
 
-	function scaledWidth ($width,$height) {
+	public function scaledWidth ($width,$height) {
 		$d = array('width'=>$this->width,'height'=>$this->height);
 		$scale = $width / $this->width;
 		$d['width'] = $width;
@@ -412,7 +412,7 @@ class ImageAsset extends FileAsset {
 		return $d;
 	}
 
-	function scaledHeight ($width,$height) {
+	public function scaledHeight ($width,$height) {
 		$d = array('width'=>$this->width,'height'=>$this->height);
 		$scale = $height / $this->height;
 		$d['height'] = $height;
@@ -434,7 +434,7 @@ class ImageAsset extends FileAsset {
 	 * @param bool $fill
 	 * @return void
 	 */
-	function resizing ($width,$height,$scale=false,$sharpen=false,$quality=false,$fill=false) {
+	public function resizing ($width,$height,$scale=false,$sharpen=false,$quality=false,$fill=false) {
 		$key = (defined('SECRET_AUTH_KEY') && SECRET_AUTH_KEY != '') ? SECRET_AUTH_KEY : DB_PASSWORD;
 		$args = func_get_args();
 
@@ -447,7 +447,7 @@ class ImageAsset extends FileAsset {
 		return $message;
 	}
 
-	function extensions () {
+	public function extensions () {
 		array_push($this->_xcols,'filename','width','height','alt','title','settings');
 	}
 
@@ -459,7 +459,7 @@ class ImageAsset extends FileAsset {
 	 *
 	 * @return bool true on success, false on fail
 	 **/
-	function unique () {
+	public function unique () {
 		$Existing = new ImageAsset();
 		$Existing->uri = $this->filename;
 		$limit = 100;
@@ -489,7 +489,7 @@ class ImageAsset extends FileAsset {
  * @package shopp
  **/
 class ProductImage extends ImageAsset {
-	var $context = 'product';
+	public $context = 'product';
 
 	/**
 	 * Truncate image data when stored in a session
@@ -503,13 +503,13 @@ class ProductImage extends ImageAsset {
 	 *
 	 * @return array
 	 **/
-	function __sleep () {
-		$ignore = array('numeral','created','modified','parent');
+	public function __sleep () {
+		$ignore = array('numeral', 'created', 'modified', 'parent');
 		$properties = get_object_vars($this);
 		$session = array();
-		foreach ($properties as $property => $value) {
-			if (substr($property,0,1) == "_") continue;
-			if (in_array($property,$ignore)) continue;
+		foreach ( $properties as $property => $value ) {
+			if ( substr($property, 0, 1) == "_" ) continue;
+			if ( in_array($property,$ignore) ) continue;
 			$session[] = $property;
 		}
 		return $session;
@@ -527,7 +527,7 @@ class ProductImage extends ImageAsset {
  * @subpackage asset
  **/
 class CategoryImage extends ImageAsset {
-	var $context = 'category';
+	public $context = 'category';
 }
 
 /**
@@ -543,12 +543,12 @@ class CategoryImage extends ImageAsset {
  **/
 class DownloadAsset extends FileAsset {
 
-	var $type = 'download';
-	var $context = 'product';
-	var $etag = "";
-	var $purchased = false;
+	public $type = 'download';
+	public $context = 'product';
+	public $etag = "";
+	public $purchased = false;
 
-	function loadby_dkey ($key) {
+	public function loadby_dkey ($key) {
 		$db = &DB::get();
 		if (!class_exists('Purchased')) require(SHOPP_MODEL_PATH."/Purchased.php");
 		$pricetable = DatabaseObject::tablename(Price::$table);
@@ -575,13 +575,13 @@ class DownloadAsset extends FileAsset {
 		$this->etag = $key;
 	}
 
-	function purchased () {
+	public function purchased () {
 		if (!class_exists('Purchased')) require(SHOPP_MODEL_PATH."/Purchased.php");
 		if (!$this->purchased) return false;
 		return new Purchased($this->purchased);
 	}
 
-	function download ($dkey=false) {
+	public function download ($dkey=false) {
 		$found = $this->found();
 		if (!$found) return new ShoppError(sprintf(__('Download failed. "%s" could not be found.','Shopp'),$this->name),'false');
 
@@ -597,7 +597,7 @@ class DownloadAsset extends FileAsset {
 		@session_write_close();
 
 		// Don't want interference from the server
-		if (function_exists('apache_setenv')) @apache_setenv('no-gzip', 1);
+		if ( function_exists('apache_setenv') ) @apache_setenv('no-gzip', 1);
 		@ini_set('zlib.output_compression', 0);
 
 		set_time_limit(0);	// Don't timeout on long downloads
@@ -622,21 +622,21 @@ class DownloadAsset extends FileAsset {
 		return true;
 	}
 
-	function downloaded ($Purchased=false) {
+	public function downloaded ($Purchased=false) {
 		if (false === $Purchased) return;
 		$Purchased->downloads++;
 		$Purchased->save();
 	}
 
-	function send () {
-		$Engine = $this->_engine();
+	public function send () {
+		$Engine = $this->engine();
 		$Engine->output($this->uri,$this->etag);
 	}
 
 }
 
 class ProductDownload extends DownloadAsset {
-	var $context = 'price';
+	public $context = 'price';
 }
 
 /**
@@ -651,9 +651,9 @@ class ProductDownload extends DownloadAsset {
  **/
 class StorageEngines extends ModuleLoader {
 
-	var $engines = array();
-	var $contexts = array('image','download');
-	var $activate = false;
+	public $engines = array();
+	public $contexts = array('image', 'download');
+	public $activate = false;
 
 	/**
 	 * Initializes the shipping module loader
@@ -663,10 +663,11 @@ class StorageEngines extends ModuleLoader {
 	 *
 	 * @return void
 	 **/
-	function __construct () {
+	public function __construct () {
 		$this->path = SHOPP_STORAGE;
 
-		if(function_exists('add_action')) add_action('shopp_module_loaded',array(&$this,'actions'));
+		if ( function_exists('add_action') )
+			add_action('shopp_module_loaded', array($this, 'actions'));
 
 		$this->installed();
 		$this->activated();
@@ -681,7 +682,7 @@ class StorageEngines extends ModuleLoader {
 	 *
 	 * @return array List of module names for the activated modules
 	 **/
-	function activated () {
+	public function activated () {
 		global $Shopp;
 
 		$this->activated = array();
@@ -690,9 +691,9 @@ class StorageEngines extends ModuleLoader {
 		$systems['image'] = shopp_setting('image_storage');
 		$systems['download'] = shopp_setting('product_storage');
 
-		foreach ($systems as $system => $storage) {
-			foreach ($this->modules as $engine) {
-				if ($engine->subpackage == $storage) {
+		foreach ( $systems as $system => $storage ) {
+			foreach ( $this->modules as $engine ) {
+				if ( $engine->subpackage == $storage ) {
 					$this->activated[] = $engine->subpackage;
 					$this->engines[$system] = $engine->subpackage;
 					break; // Check for next system engine
@@ -704,19 +705,38 @@ class StorageEngines extends ModuleLoader {
 	}
 
 	/**
-	 * Get a specified shipping module
+	 * Get a specific storage engine
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
-	 * @return void Description...
+	 * @return StorageEngine or false if not able to be loaded
 	 **/
-	function &get ($module) {
-		if (empty($this->active)) $this->settings();
-		if (!isset($this->active[$module])) return false;
+	public function &get ( $module ) {
+
+		if ( empty($this->active) )
+			$this->activate($module);
+
+		if ( ! isset($this->active[ $module ]) )
+			return false;
+
 		return $this->active[$module];
 	}
 
+	/**
+	 * Gets the module name for the StorageEngine context type
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param string $type The context type
+	 * @return string The engine module name or false
+	 **/
+	public function type ( $type ) {
+		if ( ! isset($this->engines[ $type ]) ) return false;
+		return $this->engines[ $type ];
+
+	}
 
 	/**
 	 * Loads all the installed storage engine modules for the settings page
@@ -726,7 +746,7 @@ class StorageEngines extends ModuleLoader {
 	 *
 	 * @return void
 	 **/
-	function settings () {
+	public function settings () {
 		$this->load(true);
 	}
 
@@ -736,32 +756,32 @@ class StorageEngines extends ModuleLoader {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
-	function ui () {
-		foreach ($this->contexts as $context) {
-			foreach ($this->active as $package => &$module) {
+	public function ui () {
+		foreach ( $this->contexts as $context ) {
+			foreach ( $this->active as $package => &$module ) {
 				$module->context($context);
-				$module->initui($package,$context);
+				$module->initui($package, $context);
 			}
 		}
 	}
 
-	function templates () {
-		foreach ($this->active as $package => &$module)
-			$module->uitemplate($package,$this->modules[$package]->name);
+	public function templates () {
+		foreach ( $this->active as $package => &$module )
+			$module->uitemplate($package, $this->modules[ $package ]->name);
 	}
 
 
-	function actions ($module) {
-		if (!isset($this->active[$module])) return;
+	public function actions ( $module ) {
+		if ( ! isset($this->active[ $module ]) ) return;
 
 		// Register contexts the module is a handler for
-		foreach ($this->engines as $system => $handler)
-			if ($module == $handler) $this->active[$module]->contexts[] = $system;
+		foreach ( $this->engines as $system => $handler )
+			if ($module == $handler) $this->active[ $module ]->contexts[] = $system;
 
-		if (method_exists($this->active[$module],'actions'))
-			$this->active[$module]->actions();
+		if ( method_exists($this->active[ $module ], 'actions') )
+			$this->active[ $module ]->actions();
 	}
 
 }
@@ -787,7 +807,7 @@ interface StorageEngine {
 	 * @param string $uri The uniform resource indicator
 	 * @return void
 	 **/
-	public function load($uri);
+	public function load( $uri );
 
 	/**
 	 * Output the asset data of a given uri
@@ -798,7 +818,7 @@ interface StorageEngine {
 	 * @param string $uri The uniform resource indicator
 	 * @return void
 	 **/
-	public function output($uri);
+	public function output( $uri );
 
 	/**
 	 * Checks if the binary data of an asset exists
@@ -809,7 +829,7 @@ interface StorageEngine {
 	 * @param string $uri The uniform resource indicator
 	 * @return boolean
 	 **/
-	public function exists($uri);
+	public function exists( $uri );
 
 	/**
 	 * Store the data for an asset
@@ -822,7 +842,7 @@ interface StorageEngine {
 	 * @param string $type (optional) Type of data source, one of binary or file (file referring to a filepath)
 	 * @return void
 	 **/
-	public function save($asset,$data,$type='binary');
+	public function save( $asset, $data, $type = 'binary' );
 
 }
 
@@ -838,17 +858,22 @@ interface StorageEngine {
  **/
 abstract class StorageModule {
 
-	var $contexts;
-	var $settings;
+	public $contexts;
+	public $settings;
 
-	function __construct () {
+	public function __construct () {
 		global $Shopp;
 		$this->module = get_class($this);
 		$this->settings = shopp_setting($this->module);
 	}
 
-	function context ($setting) {}
-	function settings ($context) {}
+	public function context ($setting) {
+
+	}
+
+	public function settings ($context) {
+
+	}
 
 	/**
 	 * Generate the settings UI for the module
@@ -860,23 +885,23 @@ abstract class StorageModule {
 	 * @param string $name The formal name of the module
 	 * @return void
 	 **/
-	// function setupui ($module,$name) {
+	// public function setupui ($module,$name) {
 	// 	$this->ui = new StorageSettingsUI('storage',$module,$name,false,false);
 	// 	$this->settings();
 	// }
 
-	function output ($uri) {
+	public function output ( $uri ) {
 		$data = $this->load($uri);
-		header ("Content-length: ".strlen($data));
+		header ("Content-length: " . strlen($data));
 		echo $data;
 	}
 
-	function meta ($arg1=false,$arg2=false) {
+	public function meta ( $arg1 = false, $arg2 = false ) {
 		return false;
 	}
 
-	function handles ($context) {
-		return in_array($context,$this->contexts);
+	public function handles ( $context ) {
+		return in_array($context, $this->contexts);
 	}
 
 	/**
@@ -889,25 +914,25 @@ abstract class StorageModule {
 	 * @param string $name The formal name of the module
 	 * @return void
 	 **/
-	function initui ($name,$context) {
-		$label = isset($this->settings['label'])?$this->settings['label']:$name;
-		if (!isset($this->ui) || !is_array($this->ui)) $this->ui = array();
-		$this->ui[$context] = new StorageSettingsUI($this,$name);
+	public function initui ( $name, $context ) {
+		$label = isset($this->settings['label']) ? $this->settings['label'] : $name;
+		if ( ! isset($this->ui) || ! is_array($this->ui) ) $this->ui = array();
+		$this->ui[ $context ] = new StorageSettingsUI($this, $name);
 		$this->settings($context);
 	}
 
-	function uitemplate () {
+	public function uitemplate () {
 		$this->ui['image']->template();
 	}
 
-	function ui ($context) {
-		$editor = $this->ui[$context]->generate();
+	public function ui ( $context ) {
+		$editor = $this->ui[ $context ]->generate();
 
 		$data = array('${context}' => $context);
-		foreach ($this->settings as $name => $value)
-			$data['${'.$name.'}'] = $value[$context];
+		foreach ( $this->settings as $name => $value )
+			$data['${'.$name.'}'] = $value[ $context ];
 
-		return str_replace(array_keys($data),$data,$editor);
+		return str_replace(array_keys($data), $data, $editor);
 	}
 
 
@@ -915,7 +940,7 @@ abstract class StorageModule {
 
 class StorageSettingsUI extends ModuleSettingsUI {
 
-	function generate () {
+	public function generate () {
 
 		$_ = array();
 		$_[] = '<div id="'.$this->id.'-settings">';
@@ -941,7 +966,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function checkbox ($column = 0, $attributes = array()) {
+	public function checkbox ($column = 0, $attributes = array()) {
 		if (isset($attributes['name']))
 			$attributes['name'] .= '][${context}';
 		parent::checkbox($column, $attributes);
@@ -959,7 +984,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function menu ($column = 0, $attributes = array(), $options = array()) {
+	public function menu ($column = 0, $attributes = array(), $options = array()) {
 		$attributes['title'] = '${'.$attributes['name'].'}';
 		if (isset($attributes['name']))
 			$attributes['name'] .= '][${context}';
@@ -978,7 +1003,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function multimenu ($column = 0, $attributes = array(), $options = array()) {
+	public function multimenu ($column = 0, $attributes = array(), $options = array()) {
 		if (isset($attributes['name']))
 			$attributes['name'] .= '][${context}';
 		parent::multimenu($column,$attributes,$options);
@@ -995,7 +1020,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function input ($column = 0, $attributes = array()) {
+	public function input ($column = 0, $attributes = array()) {
 		if (isset($attributes['name'])) {
 			$name = $attributes['name'];
 			$attributes['value'] = '${'.$name.'}';
@@ -1016,7 +1041,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function textarea ($column=0,$attributes=array()) {
+	public function textarea ($column=0,$attributes=array()) {
 		if (isset($attributes['name'])) {
 			$name = $attributes['name'];
 			$attributes['value'] = '${'.$name.'}';
@@ -1037,7 +1062,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function button ($column=0,$attributes=array()) {
+	public function button ($column=0,$attributes=array()) {
 		if (isset($attributes['name'])) {
 			$name = $attributes['name'];
 			$attributes['value'] = '${'.$name.'}';
@@ -1046,7 +1071,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 		parent::button($column,$attributes);
 	}
 
-	function behaviors ($script) {
+	public function behaviors ($script) {
 		shopp_custom_script('system-settings',$script);
 	}
 
@@ -1061,22 +1086,22 @@ class ImageSetting extends MetaObject {
 	static $qualities = array(100,92,80,70,60);
 	static $fittings = array('all','matte','crop','width','height');
 
-	var $width;
-	var $height;
-	var $fit = 0;
-	var $quality = 100;
-	var $sharpen = 100;
-	var $bg = false;
-	var $context = 'setting';
-	var $type = 'image_setting';
-	var $_xcols = array('width','height','fit','quality','sharpen','bg');
+	public $width;
+	public $height;
+	public $fit = 0;
+	public $quality = 100;
+	public $sharpen = 100;
+	public $bg = false;
+	public $context = 'setting';
+	public $type = 'image_setting';
+	public $_xcols = array('width','height','fit','quality','sharpen','bg');
 
-	function __construct ($id=false,$key='id') {
+	public function __construct ($id=false,$key='id') {
 		$this->init(self::$table);
 		$this->load($id,$key);
 	}
 
-	function fit_menu () {
+	public function fit_menu () {
 		return array(	__('All','Shopp'),
 			__('Fill','Shopp'),
 			__('Crop','Shopp'),
@@ -1085,7 +1110,7 @@ class ImageSetting extends MetaObject {
 		);
 	}
 
-	function quality_menu () {
+	public function quality_menu () {
 		return array(	__('Highest quality, largest file size','Shopp'),
 			__('Higher quality, larger file size','Shopp'),
 			__('Balanced quality &amp; file size','Shopp'),
@@ -1094,17 +1119,17 @@ class ImageSetting extends MetaObject {
 		);
 	}
 
-	function fit_value ($value) {
+	public function fit_value ($value) {
 		if (isset(self::$fittings[$value])) return self::$fittings[$value];
 		return self::$fittings[0];
 	}
 
-	function quality_value ($value) {
+	public function quality_value ($value) {
 		if (isset(self::$qualities[$value])) return self::$qualities[$value];
 		return self::$qualities[2];
 	}
 
-	function options ($prefix='') {
+	public function options ($prefix='') {
 		$settings = array();
 		$properties = array('width','height','fit','quality','sharpen','bg');
 		foreach ($properties as $property) {
@@ -1122,7 +1147,7 @@ class ImageSettings extends ListFramework {
 
 	private static $instance;
 
-	function __construct () {
+	public function __construct () {
 		$ImageSetting = new ImageSetting();
 		$table = $ImageSetting->_table;
 		$where = array(
@@ -1143,7 +1168,9 @@ class ImageSettings extends ListFramework {
 	 *
 	 * @return void
 	 **/
-	function __clone () { trigger_error('Clone is not allowed.', E_USER_ERROR); }
+	public function __clone () {
+		trigger_error('Clone is not allowed.', E_USER_ERROR);
+	}
 
 	/**
 	 * Provides a reference to the instantiated singleton
@@ -1156,7 +1183,7 @@ class ImageSettings extends ListFramework {
 	 *
 	 * @return DB Returns a reference to the DB object
 	 **/
-	static function &__instance () {
+	public static function &__instance () {
 		if (!self::$instance instanceof self)
 			self::$instance = new self;
 		return self::$instance;

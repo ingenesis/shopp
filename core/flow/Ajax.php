@@ -617,7 +617,7 @@ class ShoppAjax {
 
 		$File = new ProductDownload();
 		$stored = false;
-		$File->_engine(); // Set engine from storage settings
+		$File->engine(); // Set engine from storage settings
 		$File->uri = sanitize_path($url);
 		$File->type = "download";
 		$File->name = $filename;

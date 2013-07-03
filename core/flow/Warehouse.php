@@ -853,7 +853,7 @@ class Warehouse extends AdminController {
 					$tmpfile = sanitize_path($priceline['downloadpath']);
 
 					$File->storage = false;
-					$Engine = $File->_engine(); // Set engine from storage settings
+					$Engine = $File->engine(); // Set engine from storage settings
 
 					$File->parent = $Price->id;
 					$File->context = "price";

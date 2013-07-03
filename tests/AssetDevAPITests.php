@@ -19,11 +19,11 @@ class AssetDevAPITests extends ShoppTestCase {
 
 		$Shopp = Shopp::object();
 
-		$Shopp->Storage->engines = array(
-			'image' => 'DBStorage',
-			'download' => 'DBStorage'
-		);
-		$Shopp->Storage->load(true);
+		// $Shopp->Storage->engines = array(
+		// 	'image' => 'DBStorage',
+		// 	'download' => 'DBStorage'
+		// );
+		// $Shopp->Storage->load(true);
 
 		// Create Product
 		$data = array(
@@ -53,8 +53,8 @@ class AssetDevAPITests extends ShoppTestCase {
 	}
 
 	public static function tearDownAfterClass () {
-		$Shopp = Shopp::object();
-		$Shopp->Storage->engines = array();
+		// $Shopp = Shopp::object();
+		// $Shopp->Storage->engines = array();
 
 		$image_path = realpath(WP_CONTENT_DIR."/".shopp_setting('image_path'));
 		$download_path = realpath(WP_CONTENT_DIR."/".shopp_setting('products_path'));
