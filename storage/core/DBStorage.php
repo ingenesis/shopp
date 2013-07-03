@@ -13,6 +13,8 @@
  * @subpackage DBStorage
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 /**
  * DBStorage
  *
@@ -22,11 +24,11 @@
  **/
 class DBStorage extends StorageModule implements StorageEngine {
 
-	var $_table = "asset";
-	var $_metatable = "meta";
-	var $_key = "id";
+	public $_table = 'asset';
+	public $_metatable = 'meta';
+	public $_key = 'id';
 
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 		$this->name = __('Database','Shopp');
 		$this->_table = DatabaseObject::tablename($this->_table);
@@ -44,22 +46,21 @@ class DBStorage extends StorageModule implements StorageEngine {
 	 * @param string $type (optional) Type of data provided - binary (default) or file
 	 * @return string|boolean A URI for the resource or false if failed
 	 **/
-	function save ($asset,$data,$type='binary') {
-		$db = &DB::get();
+	public function save ( $asset, $data, $type = 'binary' ) {
 
-		if (empty($data)) return false;
+		if ( empty($data) ) return false;
 
-		if ($type != "binary") {
-			if (!is_readable($data)) die("Could not read the file."); // Die because we can't use ShoppError
+		if ( 'binary' != $type ) {
+			if ( ! is_readable($data) ) die("Could not read the file."); // Die because we can't use ShoppError
 			$data = file_get_contents($data);
 		}
 
 		$data = @mysql_real_escape_string($data);
 
-		if (!$asset->id) $uri = $db->query("INSERT $this->_table SET data='$data'");
-		else $db->query("UPDATE $this->_table SET data='$data' WHERE $this->_key='$asset->uri'");
+		if ( ! $asset->id ) $uri = sDB::query("INSERT $this->_table SET data='$data'");
+		else sDB::query("UPDATE $this->_table SET data='$data' WHERE $this->_key='$asset->uri'");
 
-		if (isset($uri)) return $uri;
+		if ( isset($uri) ) return $uri;
 		return false;
 	}
 
@@ -73,13 +74,15 @@ class DBStorage extends StorageModule implements StorageEngine {
 	 * @param string $filename (optional) File name of the asset
 	 * @return array A named list of the stored file size and mimetype
 	 **/
-	function meta ($uri=false,$filename=false) {
-		$db = &DB::get();
+	public function meta ( $uri = false, $filename = false ) {
 		$_ = array();
-		if (empty($uri)) return $_;
-		$file = $db->query("SELECT LENGTH(data) AS size FROM $this->_table WHERE $this->_key='$uri' LIMIT 1");
-		if ($file && isset($file->size)) $_['size'] = $file->size;
-		if ($filename !== false) $_['mime'] = file_mimetype(false,$filename);
+		if ( empty($uri) ) return $_;
+
+		$file = sDB::query("SELECT LENGTH(data) AS size FROM $this->_table WHERE $this->_key='$uri' LIMIT 1");
+
+		if ( $file && isset($file->size) ) $_['size'] = $file->size;
+		if ( $filename !== false ) $_['mime'] = file_mimetype(false, $filename);
+
 		return $_;
 	}
 
@@ -92,11 +95,10 @@ class DBStorage extends StorageModule implements StorageEngine {
 	 * @param string $uri The URI for the resource
 	 * @return boolean True if the resource exists
 	 **/
-	function exists ($uri) {
-		$db = &DB::get();
-		if (strpos($uri,'.') !== false || (int)$uri == 0) return false;
-		$file = $db->query("SELECT id FROM $this->_table WHERE $this->_key='$uri' LIMIT 1");
-		return (!empty($file));
+	public function exists ( $uri ) {
+		if ( strpos($uri, '.') !== false || (int)$uri == 0 ) return false;
+		$file = sDB::query("SELECT id FROM $this->_table WHERE $this->_key='$uri' LIMIT 1");
+		return ( ! empty($file) );
 	}
 
 	/**
@@ -108,17 +110,14 @@ class DBStorage extends StorageModule implements StorageEngine {
 	 * @param string $uri The URI for the resource
 	 * @return string Binary data
 	 **/
-	function load ($uri) {
-		$db = &DB::get();
-		if (!$uri) return false;
-		$file = $db->query("SELECT * FROM $this->_table WHERE $this->_key='$uri' LIMIT 1");
-		if (empty($file)) {
- 			new ShoppError(__('The requested asset could not be loaded from the database.','Shopp'),'dbstorage_load',SHOPP_ADMIN_ERR);
+	public function load ( $uri ) {
+		if ( ! $uri ) return false;
+		$file = sDB::query("SELECT * FROM $this->_table WHERE $this->_key='$uri' LIMIT 1");
+		if ( empty($file) ) {
+			shopp_error(Shopp::__('The requested asset could not be loaded from the database.'), SHOPP_ADMIN_ERR);
 			return false;
 		}
 		return $file->data;
 	}
 
 } // END class DBStorage
-
-?>
