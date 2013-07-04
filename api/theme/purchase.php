@@ -441,7 +441,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 	}
 
 	static function items ($result, $options, $O) {
-		if (!isset($O->_items_loop)) {
+		if ( ! isset($O->_items_loop) ) {
 			reset($O->purchased);
 			$O->_items_loop = true;
 		} else next($O->purchased);

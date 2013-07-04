@@ -10,308 +10,383 @@
  **/
 class PurchaseAPITests extends ShoppTestCase {
 
-	function setUp () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		parent::setUp();
-		$_SERVER['REQUEST_URI'] = "/";
-		ShoppPurchase( new Purchase(1) );
-		ShoppPurchase()->load_purchased();
+	static $order = false;
+
+	static function setUpBeforeClass () {
+
+		shopp_set_setting('target_markets', array(
+			'US' => 'USA'
+		));
+
+		shopp_add_product(array(
+			'name' => 'USS Enterprise',
+			'publish' => array('flag' => true),
+			'single' => array(
+				'type' => 'Shipped',
+				'price' => 1701,
+		        'sale' => array(
+		            'flag' => true,
+		            'price' => 17.01
+		        ),
+				'taxed'=> true,
+				'shipping' => array('flag' => true, 'fee' => 1.50, 'weight' => 52.7, 'length' => 285.9, 'width' => 125.6, 'height' => 71.5),
+				'inventory' => array(
+					'flag' => true,
+					'stock' => 1,
+					'sku' => 'NCC-1701'
+				)
+			),
+			'specs' => array(
+				'Class' => 'Constitution',
+				'Category' => 'Heavy Cruiser',
+				'Decks' => 23,
+				'Officers' => 40,
+				'Crew' => 390,
+				'Max Vistors' => 50,
+				'Max Accommodations' => 800,
+				'Phaser Force Rating' => '2.5 MW',
+				'Torpedo Force Rating' => '9.7 isotons'
+				)
+		));
+
+		// Create the WordPress account
+		$wpuser = wp_insert_user(array(
+			'user_login' => 'spock',
+			'user_pass' => 'livelongandprosper',
+			'user_email' => 'spock@starfleet.gov',
+			'display_name' => 'Commander Spock',
+			'nickname' => 'Spock',
+			'first_name' => "S'chn T'gai",
+			'last_name' => 'Spock'
+		));
+
+		$customerid = shopp_add_customer(array(
+			'wpuser' => $wpuser,
+			'firstname' => "S'chn T'gai",
+			'lastname' => 'Spock',
+			'email' => 'spock@starfleet.gov',
+			'phone' => '999-999-1701',
+			'company' => 'Starfleet Command',
+			'marketing' => 'no',
+			'type' => 'Tax-Exempt',
+			'saddress' => '24-593 Federation Dr',
+			'sxaddress' => 'Shipping',
+			'scity' => 'San Francisco',
+			'sstate' => 'CA',
+			'scountry' => 'US',
+			'spostcode' => '94123',
+			'baddress' => '24-593 Federation Dr',
+			'bxaddress' => 'Billing',
+			'bcity' => 'San Francisco',
+			'bstate' => 'CA',
+			'bcountry' => 'US',
+			'bpostcode' => '94123',
+			'residential' => true
+		));
+
+		shopp_empty_cart();
+		$Customer = shopp_customer('spock@starfleet.gov', 'email');
+
+		// $Customer->Billing->cardtype = 'Visa';
+		// $Customer->Billing->cardexpires = '';
+		// $Customer->Billing->cardholder = 'Spock';
+
+		$Product = shopp_product('uss-enterprise', 'slug');
+		shopp_add_cart_product ( $Product->id, 1 );
+
+		$Purchase = shopp_add_order($Customer);
+		$Purchase = shopp_order($Purchase->id);
+		$Purchase->card = '1111';
+		$Purchase->cardexpires = mktime(0,0,0,12,0,2265);
+		$Purchase->cardholder = $Customer->lastname;
+
+		remove_action('shopp_authed_order_event',array(ShoppOrder(),'notify'));
+		remove_action('shopp_authed_order_event',array(ShoppOrder(),'accounts'));
+		remove_action('shopp_authed_order_event',array(ShoppOrder(),'success'));
+		shopp_add_order_event($Purchase->id, 'authed', array(
+			'txnid' => $Purchase->id.'TEST',	// Transaction ID
+			'amount' => $Purchase->total,		// Gross amount authorized
+			'gateway' => 'GatewayFramework',	// Gateway handler name (module name from @subpackage)
+			'paymethod' => 'TestSuite',			// Payment method (payment method label from payment settings)
+			'paytype' => 'visa',			// Type of payment (check, MasterCard, etc)
+			'payid' => '1111'						// Payment ID (last 4 of card or check number)
+		));
+
+		shopp_add_order_event($Purchase->id, 'captured', array(
+			'txnid' => $Purchase->id.'TEST',	// Transaction ID
+			'amount' => $Purchase->total,		// Gross amount authorized
+			'gateway' => 'GatewayFramework',	// Gateway handler name (module name from @subpackage)
+			'fees' => 0.0,						// Transaction fees taken by the gateway net revenue = amount-fees
+
+		));
+
+		ShoppPurchase( $Purchase );
+		self::$order = $Purchase;
+
 	}
 
 	function test_purchase_id () {
-		ob_start();
-		shopp('purchase','id');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('1',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-id');
+		$this->assertEquals(self::$order->id, $actual);
 	}
 
 	function test_purchase_date () {
-		ob_start();
-		shopp('purchase','date');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('December 1, 2009 1:03 am',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-date');
+		$this->assertEquals(date('F j, Y g:i a', self::$order->created), $actual);
 	}
 
 	function test_purchase_card () {
-		ob_start();
-		shopp('purchase','card');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('XXXXXXXXXXXX1111',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-card');
+		$this->assertEquals('XXXXXXXXXXXX1111', $actual);
 	}
 
 	function test_purchase_cardtype () {
-		ob_start();
-		shopp('purchase','cardtype');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('Visa',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-cardtype');
+		$this->assertEquals('api',$actual);
 	}
 
 	function test_purchase_transactionid () {
-		ob_start();
-		shopp('purchase','transactionid');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('TESTMODE',$actual);
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-transactionid');
+		$this->assertEquals(self::$order->id.'TEST', $actual);
 	}
 
 	function test_purchase_firstname () {
-		ob_start();
-		shopp('purchase','firstname');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('Jonathan',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-firstname');
+		$this->assertEquals('S&#039;chn T&#039;gai',$actual);
 	}
 
 	function test_purchase_lastname () {
-		ob_start();
-		shopp('purchase','lastname');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('Davis',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-lastname');
+		$this->assertEquals('Spock',$actual);
 	}
 
 	function test_purchase_company () {
-		ob_start();
-		shopp('purchase','company');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('Ingenesis Limited',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-company');
+		$this->assertEquals('Starfleet Command',$actual);
 	}
 
 	function test_purchase_email () {
-		ob_start();
-		shopp('purchase','email');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('jond@ingenesis.net',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-email');
+		$this->assertEquals('spock@starfleet.gov',$actual);
 	}
 
 	function test_purchase_phone () {
-		ob_start();
-		shopp('purchase','phone');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('(555) 555-5555',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-phone');
+		$this->assertEquals('999-999-1701',$actual);
 	}
 
 	function test_purchase_address () {
-		ob_start();
-		shopp('purchase','address');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('1 N Main St',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-address');
+		$this->assertEquals('24-593 Federation Dr',$actual);
 	}
 
 	function test_purchase_xaddress () {
-		ob_start();
-		shopp('purchase','xaddress');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-xaddress');
+		$this->assertEquals('Billing',$actual);
 	}
 
 	function test_purchase_city () {
-		ob_start();
-		shopp('purchase','city');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('San Jose',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-city');
+		$this->assertEquals('San Francisco',$actual);
 	}
 
 	function test_purchase_state () {
-		ob_start();
-		shopp('purchase','state');
-		$actual = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-state');
 		$this->assertEquals('California',$actual);
 	}
 
 	function test_purchase_postcode () {
-		ob_start();
-		shopp('purchase','postcode');
-		$actual = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 
-		$this->assertEquals('95131',$actual);
+		$actual = shopp('purchase.get-postcode');
+
+		$this->assertEquals('94123',$actual);
 	}
 
 	function test_purchase_country () {
-		ob_start();
-		shopp('purchase','country');
-		$actual = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-country');
 		$this->assertEquals('USA',$actual);
 	}
 
 	function test_purchase_shipaddress () {
-		ob_start();
-		shopp('purchase','shipaddress');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('1 N Main St',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-shipaddress');
+		$this->assertEquals('24-593 Federation Dr',$actual);
 	}
 
 	function test_purchase_shipxaddress () {
-		ob_start();
-		shopp('purchase','shipxaddress');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('',$actual);
+        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-shipxaddress');
+		$this->assertEquals('Shipping',$actual);
 	}
 
 	function test_purchase_shipcity () {
-		ob_start();
-		shopp('purchase','shipcity');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('San Jose',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-shipcity');
+		$this->assertEquals('San Francisco',$actual);
 	}
 
 	function test_purchase_shipstate () {
-		ob_start();
-		shopp('purchase','shipstate');
-		$actual = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-shipstate');
 		$this->assertEquals('California',$actual);
 	}
 
 	function test_purchase_shippostcode () {
-		ob_start();
-		shopp('purchase','shippostcode');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('95131',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-shippostcode');
+		$this->assertEquals('94123',$actual);
 	}
 
 	function test_purchase_shipcountry () {
-		ob_start();
-		shopp('purchase','shipcountry');
-		$actual = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-shipcountry');
 		$this->assertEquals('USA',$actual);
 	}
 
 	function test_purchase_shipmethod () {
-		ob_start();
-		shopp('purchase','shipmethod');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('Standard',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-shipmethod');
+		$this->assertEquals('', $actual);
 	}
 
 	function test_purchase_items_tags () {
-		ob_start();
-		shopp('purchase','totalitems');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('1',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-totalitems');
+		$this->assertEquals('1', $actual);
 	}
 
 	function test_purchase_item_id () {
-		shopp('purchase','items');
-		ob_start();
-		shopp('purchase','item-id');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('1',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		shopp('purchase','has-items');
+		$actual = shopp('purchase.get-item-id');
+		$this->assertEquals('1', $actual);
 	}
 
 	function test_purchase_item_product () {
-		shopp('purchase','items');
-		ob_start();
-		shopp('purchase','item-product');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('24',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$Product = shopp_product('uss-enterprise','slug');
+		shopp('purchase','has-items');
+		$actual = shopp('purchase.get-item-product');
+		$this->assertEquals($Product->id, $actual);
 	}
 
 	function test_purchase_item_price () {
-		shopp('purchase','items');
-		ob_start();
-		shopp('purchase','item-price');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('29',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		shopp('purchase','has-items');
+		$actual = shopp('purchase.get-item-price');
+		$this->assertEquals('1',$actual);
 	}
 
 	function test_purchase_item_name () {
-		shopp('purchase','items');
-		ob_start();
-		shopp('purchase','item-name');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('Aion',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		shopp('purchase','has-items');
+		$actual = shopp('purchase.get-item-name');
+		$this->assertEquals('USS Enterprise', $actual);
 	}
 
 	function test_purchase_item_description () {
-		shopp('purchase','items');
-		ob_start();
-		shopp('purchase','item-description');
-		$actual = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		shopp('purchase','has-items');
+		$actual = shopp('purchase.get-item-description');
 		$this->assertEquals('',$actual);
 	}
 
 	function test_purchase_item_options () {
-		shopp('purchase','items');
-		ob_start();
-		shopp('purchase','item-options');
-		$actual = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		shopp('purchase','has-items');
+		$actual = shopp('purchase.get-item-options');
 		$this->assertEquals('',$actual);
 	}
 
 	function test_purchase_item_sku () {
-		shopp('purchase','items');
-		ob_start();
-		shopp('purchase','item-sku');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		shopp('purchase','has-items');
+		$actual = shopp('purchase.get-item-sku');
+		$this->assertEquals('NCC-1701',$actual);
 	}
 
 	function test_purchase_item_download () {
-		shopp('purchase','items');
-		ob_start();
-		shopp('purchase','item-download');
-		$actual = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		shopp('purchase','has-items');
+		$actual = shopp('purchase.get-item-download');
 		$this->assertEquals('',$actual);
 	}
 
 	function test_purchase_item_quantity () {
-		shopp('purchase','items');
-		ob_start();
-		shopp('purchase','item-quantity');
-		$actual = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		shopp('purchase','has-items');
+		$actual = shopp('purchase.get-item-quantity');
 		$this->assertEquals('1',$actual);
 	}
 
 	function test_purchase_item_unitprice () {
-		shopp('purchase','items');
-		ob_start();
-		shopp('purchase','item-unitprice');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('$49.82',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		shopp('purchase','has-items');
+		$actual = shopp('purchase.get-item-unitprice');
+		$this->assertEquals('$17.01',$actual);
 	}
 
 	function test_purchase_item_total () {
-		shopp('purchase','items');
-		ob_start();
-		shopp('purchase','item-total');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('$49.82',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		shopp('purchase','has-items');
+		$actual = shopp('purchase.get-item-total');
+		$this->assertEquals('$17.01',$actual);
 	}
 
 	function test_purchase_item_input_tags () {
-		shopp('purchase','items');
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		shopp('purchase','has-items');
 		ob_start();
 		if (shopp('purchase','item-has-inputs'))
 			while(shopp('purchase','item-inputs'))
@@ -323,16 +398,17 @@ class PurchaseAPITests extends ShoppTestCase {
 	}
 
 	function test_purchase_item_inputs_list () {
-		shopp('purchase','items');
-		ob_start();
-		shopp('purchase','item-inputs-list');
-		$output = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		shopp('purchase','has-items');
+		$output = shopp('purchase.get-item-inputs-list');
 		$this->assertEquals('',$output);
 
 	}
 
 	function test_purchase_data_tags () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		ob_start();
 		if (shopp('purchase','hasdata'))
 			while(shopp('purchase','orderdata'))
@@ -343,69 +419,69 @@ class PurchaseAPITests extends ShoppTestCase {
 	}
 
 	function test_purchase_haspromo () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		$this->assertFalse(shopp('purchase','haspromo','name=Test'));
 	}
 
 	function test_purchase_subtotal () {
-		ob_start();
-		shopp('purchase','subtotal');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('$49.82',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-subtotal');
+		$this->assertEquals('$17.01',$actual);
 	}
 
 	function test_purchase_hasfrieght () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		$this->assertTrue(shopp('purchase','hasfreight'));
 	}
 
 	function test_purchase_freight () {
-		ob_start();
-		shopp('purchase','freight');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('$3.00',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-freight');
+		$this->assertEquals('$9.87',$actual);
 	}
 
 	function test_purchase_hasdiscount () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		$this->assertFalse(shopp('purchase','hasdiscount'));
 	}
 
 	function test_purchase_discount () {
-		ob_start();
-		shopp('purchase','discount');
-		$actual = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-discount');
 		$this->assertEquals('$0.00',$actual);
 	}
 
 	function test_purchase_hastax () {
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
 		$this->assertTrue(shopp('purchase','hastax'));
 	}
 
 	function test_purchase_tax () {
-		ob_start();
-		shopp('purchase','tax');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('$7.47',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-tax');
+		$this->assertEquals('$1.70',$actual);
 	}
 
 	function test_purchase_total () {
-		ob_start();
-		shopp('purchase','total');
-		$actual = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('$60.29',$actual);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-total');
+		$this->assertEquals('$28.58',$actual);
 	}
 
 	function test_purchase_status () {
-		ob_start();
-		shopp('purchase','status');
-		$actual = ob_get_contents();
-		ob_end_clean();
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+
+		$actual = shopp('purchase.get-status');
 		$this->assertEquals('Pending',$actual);
 	}
 
 } // end PurchaseAPITests class
-
-?>
