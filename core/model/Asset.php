@@ -106,7 +106,7 @@ class FileAsset extends MetaObject {
 	 **/
 	public function found ( $uri = false ) {
 		if ( ! empty($this->data) ) return true;
-		if ( ! ( $uri && $this->uri ) ) return false;
+		if ( ! $uri && ! $this->uri ) return false;
 		if ( ! $uri ) $uri = $this->uri;
 		$Engine = $this->engine();
 		return $Engine->exists($uri);
@@ -118,7 +118,7 @@ class FileAsset extends MetaObject {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function &engine () {
 		global $Shopp;
