@@ -142,6 +142,16 @@ class ShoppTestCase extends WP_UnitTestCase {
 		}
 	}
 
+	static function imgrequesthash ($id, $args) {
+		$key = (defined('SECRET_AUTH_KEY') && SECRET_AUTH_KEY != '') ? SECRET_AUTH_KEY : DB_PASSWORD;
+
+		if ($args[1] == 0) $args[1] = $args[0];
+
+		$message = rtrim(join(',',$args),',');
+
+		return sprintf('%u',crc32($key.$id.','.$message));
+	}
+
 } // end ShoppTestCase class
 
 class ShoppFactory {

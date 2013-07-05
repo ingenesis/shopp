@@ -11,6 +11,8 @@
 
 class CartItemAPITests extends ShoppTestCase {
 
+	static $image = false;
+
 	static function setUpBeforeClass () {
 
 		$args = array(
@@ -124,7 +126,9 @@ class CartItemAPITests extends ShoppTestCase {
 			)
 		);
 
-		shopp_add_product($args);
+		$Product = shopp_add_product($args);
+		$path = dirname(__FILE__) . '/data/';
+		self::$image = shopp_add_image ( $Product->id, 'product', $path . '1.png' );
 	}
 
 	// Tax config for test storefront:
@@ -329,45 +333,23 @@ ob_get_contents();
 		}
 
 		function test_cartitem_coverimage () {
-			$this->markTestSkipped('Images not implemented in test suite products yet.');
+			// $this->markTestSkipped('Images not implemented in test suite products yet.');
 			$Product = shopp_product('command-uniform', 'slug');
-			$Secondary = shopp_product('knowing','slug');
 
 			shopp_empty_cart();
-			shopp_add_cart_product($Product->id,1);
+			shopp_add_cart_product($Product->id, 1);
 
-			while(shopp('cart', 'items')){
-				ob_start();
-				shopp('cartitem','coverimage','class=cart-thumb&width=200&height=220');
-				$actual = ob_get_contents();
-				ob_end_clean();
+			shopp('cart', 'items');
+			$actual = shopp('cartitem.get-coverimage','class=cart-thumb&width=200&height=220');
+			$imageid = self::$image;
 
-				ob_start();
-				?><img src="http://shopptest/store/images/689/?200,220,141353768" alt="Code Is Poetry T-Shirt" width="200" height="200" class="cart-thumb" /><?php
-				$expected = ob_get_contents();
-				ob_end_clean();
+			$expected = array(
+				'tag' => 'img',
+				'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '?siid=' . $imageid . '&200,220,'. self::imgrequesthash($imageid,array(200,220)), 'alt' => 'original', 'width' => '200', 'height' => '203', 'class' => 'cart-thumb')
+			);
+			$this->assertTag($expected,$actual,$actual,true);
 
-				$this->assertEquals($expected, $actual);
-				$this->assertValidMarkup($actual);
-			}
-
-			// shopp_empty_cart();
-			// shopp_add_cart_product($Secondary->id,1);
-			//
-			// while(shopp('cart', 'items')){
-			// 	ob_start();
-			// 	shopp('cartitem','coverimage');
-			// 	$actual = ob_get_contents();
-			// 	ob_end_clean();
-			//
-			// 	ob_start();
-			// 	?><img src="http://shopptest/store/images/645/?48,48,3449720891" alt="Knowing" width="48" height="48" /><?php
-			// 	$expected = ob_get_contents();
-			// 	ob_end_clean();
-			//
-			// 	$this->assertEquals($expected, $actual);
-			// 	$this->assertValidMarkup($actual);
-			// }
+			$this->assertValidMarkup($actual);
 
 		}
 
