@@ -11,6 +11,7 @@ class ProductAPITests extends ShoppTestCase {
 
 	static $category = false;
 	static $tag = false;
+	static $image = false;
 
 	static function setUpBeforeClass () {
 
@@ -95,6 +96,9 @@ class ProductAPITests extends ShoppTestCase {
 
 			)
 		));
+
+		$path = dirname(__FILE__) . '/data/';
+		self::$image = shopp_add_image ( $Product->id, 'product', $path . '1.png' );
 
 		ShoppProduct($Product);
 	}
@@ -215,10 +219,15 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_thumbnail () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		$output = shopp('product.get-thumbnail');
-		$this->assertXmlStringEqualsXmlString('<img src="http://shopptest/store/images/652/UlitimateMatrixBRCollections.jpg?96,96,2395623139" alt="Ultimate Matrix Collection" width="96" height="96"/>',$output);
-		$this->assertValidMarkup($output);
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+		$actual = shopp('product.get-thumbnail');
+		$imageid = self::$image;
+		$expected = array(
+			'tag' => 'img',
+			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '?siid=' . $imageid . '&96,96,'. self::imgrequesthash($imageid,array(96,96)), 'alt' => 'original', 'width' => '95', 'height' => '96')
+		);
+		$this->assertTag($expected,$actual,$actual,true);
+		$this->assertValidMarkup($actual);
 	}
 
 	function test_product_gallery () {
@@ -261,11 +270,10 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_hasimages () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		global $Shopp;
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$this->assertTrue(shopp('product','hasimages'));
 		$this->assertTrue(shopp('product','has-images'));
-		$this->assertEquals(1,count($Shopp->Product->images));
+		$this->assertEquals(1,count(ShoppProduct()->images));
 	}
 
 	function test_product_hascategories () {
@@ -300,14 +308,20 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	function test_product_image_tags () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		ob_start();
 		if (shopp('product','has-images'))
 			while(shopp('product','images')) shopp('product','image');
-		$output = ob_get_contents();
+		$actual = ob_get_contents();
 		ob_end_clean();
 
-		$this->assertEquals('<img src="http://shopptest/store/images/652/UlitimateMatrixBRCollections.jpg?96,96,2395623139" alt="Ultimate Matrix Collection" width="96" height="96"  />',$output);
+		$imageid = self::$image;
+		$expected = array(
+			'tag' => 'img',
+			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '?siid=' . $imageid . '&96,96,'. self::imgrequesthash($imageid,array(96,96)), 'alt' => 'original', 'width' => '95', 'height' => '96')
+		);
+		$this->assertTag($expected,$actual,$actual,true);
+		$this->assertValidMarkup($actual);
 	}
 
 	function test_product_hastags () {

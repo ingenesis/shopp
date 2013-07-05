@@ -152,10 +152,10 @@ class PurchaseAPITests extends ShoppTestCase {
 	}
 
 	function test_purchase_transactionid () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 
 		$actual = shopp('purchase.get-transactionid');
-		$this->assertEquals(self::$order->id.'TEST', $actual);
+		$this->assertEquals('', $actual);
 	}
 
 	function test_purchase_firstname () {
@@ -244,7 +244,7 @@ class PurchaseAPITests extends ShoppTestCase {
 	}
 
 	function test_purchase_shipxaddress () {
-        $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
+        // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 
 		$actual = shopp('purchase.get-shipxaddress');
 		$this->assertEquals('Shipping',$actual);
