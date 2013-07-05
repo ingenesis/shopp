@@ -317,46 +317,8 @@ class ProductDevAPITests extends ShoppTestCase {
 	function test_shopp_product_variants () {
 		$Product = shopp_product("St. John's Bay® Color Block Windbreaker", 'name');
 		$variations = shopp_product_variants($Product->id);
-
 		$this->assertEquals(45, count($variations));
 		$Variant = reset($variations);
-
-		$this->AssertEquals('1,10',$Variant->options);
-		$this->AssertEquals('medium, Black/Grey Colorbi', $Variant->label);
-		$this->AssertEquals('Shipped', $Variant->type);
-		$this->AssertEquals('variation', $Variant->context);
-		$this->AssertEquals('off', $Variant->sale);
-		$this->AssertEquals(0, $Variant->price);
-		$this->AssertEquals(0, $Variant->promoprice);
-		$this->AssertEquals(0, $Variant->saleprice);
-		$this->AssertEquals('on', $Variant->tax);
-		$this->AssertEquals('on', $Variant->shipping);
-		$this->AssertEquals('off', $Variant->inventory);
-		$this->AssertEquals(0, $Variant->stock);
-		$this->AssertEquals(0, $Variant->stocked);
-
-		$Variant = next($variations);
-		$this->AssertEquals('1,11',$Variant->options);
-		$this->AssertEquals('medium, Navy Baby Solid', $Variant->label);
-		$this->AssertEquals('Shipped', $Variant->type);
-		$this->AssertEquals('variation', $Variant->context);
-		$this->AssertEquals('on', $Variant->sale);
-		$this->AssertEquals(40, $Variant->price);
-		$this->AssertEquals(19.99, $Variant->promoprice);
-		$this->AssertEquals(19.99, $Variant->saleprice);
-		$this->AssertEquals('on', $Variant->tax);
-		$this->AssertEquals('on', $Variant->shipping);
-		$this->AssertEquals(1.5, $Variant->shipfee);
-		$this->AssertEquals('on', $Variant->inventory);
-		$this->AssertEquals(10, $Variant->stock);
-		$this->AssertEquals(10, $Variant->stocked);
-		$this->AssertEquals('WINDBREAKER1', $Variant->sku);
-
-		$this->AssertEquals(1.1, $Variant->dimensions['weight']);
-		$this->AssertEquals(2, $Variant->dimensions['height']);
-		$this->AssertEquals(10, $Variant->dimensions['width']);
-		$this->AssertEquals(10, $Variant->dimensions['length']);
-
 	}
 
 	function test_shopp_product_addons () {

@@ -56,10 +56,10 @@ class ShoppTestCase extends WP_UnitTestCase {
 
 	static function resetTables () {
 		$classes = array(
-			'Product','Promotion','ProductSummary','Price','Customer'
+			'Address','Product','Promotion','ProductSummary','Price','Customer','Purchase','Purchased'
 		);
 		foreach ($classes as $classname) {
-			$table = DatabaseObject::tablename(get_class_property($classname,'table'));
+			$table = DatabaseObject::tablename(get_class_property($classname, 'table'));
 			sDB::query('DELETE FROM '. $table);
 		}
 

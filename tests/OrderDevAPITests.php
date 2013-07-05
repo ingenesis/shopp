@@ -80,7 +80,7 @@ class OrderDevAPITests extends ShoppTestCase {
 
 	function test_shopp_add_order () {
 
-		shopp_empty_cart();
+		ShoppOrder()->clear();
 		$Customer = shopp_customer('spock@starfleet.gov', 'email');
 		$Product = shopp_product('uss-enterprise', 'slug');
 		shopp_add_cart_product ( $Product->id, 1 );

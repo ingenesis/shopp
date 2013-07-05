@@ -51,20 +51,20 @@ class PurchaseAPITests extends ShoppTestCase {
 
 		// Create the WordPress account
 		$wpuser = wp_insert_user(array(
-			'user_login' => 'spock',
-			'user_pass' => 'livelongandprosper',
-			'user_email' => 'spock@starfleet.gov',
-			'display_name' => 'Commander Spock',
-			'nickname' => 'Spock',
-			'first_name' => "S'chn T'gai",
-			'last_name' => 'Spock'
+			'user_login' => 'sulu',
+			'user_pass' => 'OhMyy!',
+			'user_email' => 'suluk@starfleet.gov',
+			'display_name' => 'Mr Sulu',
+			'nickname' => 'Sulu',
+			'first_name' => 'Hikaru',
+			'last_name' => 'Sulu'
 		));
 
 		$customerid = shopp_add_customer(array(
 			'wpuser' => $wpuser,
-			'firstname' => "S'chn T'gai",
-			'lastname' => 'Spock',
-			'email' => 'spock@starfleet.gov',
+			'firstname' => 'Hikaru',
+			'lastname' => 'Sulu',
+			'email' => 'sulu@starfleet.gov',
 			'phone' => '999-999-1701',
 			'company' => 'Starfleet Command',
 			'marketing' => 'no',
@@ -84,18 +84,16 @@ class PurchaseAPITests extends ShoppTestCase {
 			'residential' => true
 		));
 
-		shopp_empty_cart();
-		$Customer = shopp_customer('spock@starfleet.gov', 'email');
+		ShoppOrder()->clear();
 
-		// $Customer->Billing->cardtype = 'Visa';
-		// $Customer->Billing->cardexpires = '';
-		// $Customer->Billing->cardholder = 'Spock';
+		$Customer = shopp_customer('sulu@starfleet.gov', 'email');
+		$CurrentPurchase = ShoppPurchase();
 
 		$Product = shopp_product('uss-enterprise', 'slug');
 		shopp_add_cart_product ( $Product->id, 1 );
 
-		$Purchase = shopp_add_order($Customer);
-		$Purchase = shopp_order($Purchase->id);
+		$order = shopp_add_order($Customer->id);
+		$Purchase = shopp_order($order->id);
 		$Purchase->card = '1111';
 		$Purchase->cardexpires = mktime(0,0,0,12,0,2265);
 		$Purchase->cardholder = $Customer->lastname;
@@ -164,14 +162,14 @@ class PurchaseAPITests extends ShoppTestCase {
         // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 
 		$actual = shopp('purchase.get-firstname');
-		$this->assertEquals('S&#039;chn T&#039;gai',$actual);
+		$this->assertEquals('Hikaru',$actual);
 	}
 
 	function test_purchase_lastname () {
         // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 
 		$actual = shopp('purchase.get-lastname');
-		$this->assertEquals('Spock',$actual);
+		$this->assertEquals('Sulu',$actual);
 	}
 
 	function test_purchase_company () {
@@ -185,7 +183,7 @@ class PurchaseAPITests extends ShoppTestCase {
         // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 
 		$actual = shopp('purchase.get-email');
-		$this->assertEquals('spock@starfleet.gov',$actual);
+		$this->assertEquals('sulu@starfleet.gov',$actual);
 	}
 
 	function test_purchase_phone () {
@@ -299,7 +297,8 @@ class PurchaseAPITests extends ShoppTestCase {
 
 		shopp('purchase','has-items');
 		$actual = shopp('purchase.get-item-id');
-		$this->assertEquals('1', $actual);
+		$Purchased = reset(self::$order->purchased);
+		$this->assertEquals($Purchased->id, $actual);
 	}
 
 	function test_purchase_item_product () {
@@ -316,7 +315,8 @@ class PurchaseAPITests extends ShoppTestCase {
 
 		shopp('purchase','has-items');
 		$actual = shopp('purchase.get-item-price');
-		$this->assertEquals('1',$actual);
+		$Purchased = reset(self::$order->purchased);
+		$this->assertEquals($Purchased->price,$actual);
 	}
 
 	function test_purchase_item_name () {

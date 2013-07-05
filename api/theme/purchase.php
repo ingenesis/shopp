@@ -159,7 +159,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 
 	static function date ($result, $options, $O) {
 		if (empty($options['format'])) $options['format'] = get_option('date_format').' '.get_option('time_format');
-		return _d($options['format'],is_int($O->created)?$O->created:DB::mktime($O->created));
+		return _d($options['format'], is_int($O->created) ? $O->created : sDB::mktime($O->created));
 	}
 
 	static function discount ($result, $options, $O) { return money($O->discount); }
@@ -232,6 +232,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 	}
 
 	static function has_items ($result, $options, $O) {
+		if ( ! method_exists($O, 'load_purchased') ) return false;
 		if ( empty($O->purchased) ) $O->load_purchased();
 		reset($O->purchased);
 		return (count($O->purchased) > 0);

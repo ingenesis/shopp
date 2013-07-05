@@ -100,6 +100,8 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	static function tearDownAfterClass () {
+		$Product = shopp_product('command-uniform','slug');
+		shopp_rmv_product($Product->id);
 		// restore original settings
 		// $this->_restore_setting('inventory');
 		// $this->_restore_setting('base_operations');
@@ -431,7 +433,7 @@ class ProductAPITests extends ShoppTestCase {
 		}
 		$output = ob_get_contents();
 		ob_end_clean();
-		$this->assertEquals('1|Small|Shipped|SFU-001-S|$19.99|$9.99|5|0|$0.00|1|1|1|1|2|Medium|Shipped|SFU-001-M|$22.55|$19.99|15|0|$0.00|1|1|1|1|3|Large|Shipped|SFU-001-L|$32.95|$24.95|1|0|$0.00|1|1|1|1|4|Brikar|Shipped|SFU-001-B|$55.00|$35.00|1|0|$0.00|1|1|1|1|',$output);
+		$this->assertEquals('101|Small|Shipped|SFU-001-S|$19.99|$9.99|5|0|$0.00|1|1|1|1|102|Medium|Shipped|SFU-001-M|$22.55|$19.99|15|0|$0.00|1|1|1|1|103|Large|Shipped|SFU-001-L|$32.95|$24.95|1|0|$0.00|1|1|1|1|104|Brikar|Shipped|SFU-001-B|$55.00|$35.00|1|0|$0.00|1|1|1|1|',$output);
 
 	}
 
