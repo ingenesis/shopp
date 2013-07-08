@@ -558,7 +558,7 @@ class Product extends WPShoppObject {
 		}
 
 		$freeshipping = false;
-		if (!Shopp::str_true($price->shipping)) $freeshipping = true;
+		if ( ! Shopp::str_true($price->shipping) && 'Shipped' == $price->type ) $freeshipping = true;
 
 		// Calculate catalog discounts if not already calculated
 		if (!empty($price->discounts)) {
