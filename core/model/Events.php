@@ -391,7 +391,7 @@
  		if ($locked == 1) return true;
 
  		new ShoppError(sprintf(__('Purchase authed lock for order %s failed. Could not achieve a lock.','Shopp'),$order),'order_txn_lock',SHOPP_TRXN_ERR);
- 		shopp_redirect( Shopp::url(false,'checkout',$this->security()) );
+ 		shopp_redirect( Shopp::url(false,'checkout', ShoppOrder()->security()) );
 
  	}
 
