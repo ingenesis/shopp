@@ -22,7 +22,6 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 class Service extends AdminController {
 
-	public $screen = 'toplevel_page_shopp-orders';
 	public $orders = array();
 	public $ordercount = false;
 
@@ -35,7 +34,7 @@ class Service extends AdminController {
 	public function __construct () {
 		parent::__construct();
 
-		if (isset($_GET['id'])) {
+		if ( isset($_GET['id']) ) {
 			wp_enqueue_script('postbox');
 			shopp_enqueue_script('colorbox');
 			shopp_enqueue_script('jquery-tmpl');
@@ -55,13 +54,13 @@ class Service extends AdminController {
 			shopp_enqueue_script('address');
 			shopp_custom_script( 'address', 'var regions = '.json_encode(Lookup::country_zones()).';');
 
-			add_action('load-'.$this->screen,array($this,'workflow'));
-			add_action('load-'.$this->screen,array($this,'layout'));
+			add_action('load-' . $this->screen, array($this, 'workflow'));
+			add_action('load-' . $this->screen, array($this, 'layout'));
 			do_action('shopp_order_management_scripts');
 
 		} else {
-			add_action('load-'.$this->screen,array($this,'loader'));
-			add_action('admin_print_scripts',array($this,'columns'));
+			add_action('load-' . $this->screen, array($this, 'loader'));
+			add_action('admin_print_scripts', array($this, 'columns'));
 		}
 		do_action('shopp_order_admin_scripts');
 	}
@@ -73,12 +72,12 @@ class Service extends AdminController {
 	 * @author Jonathan Davis
 	 **/
 	public function admin () {
-		if (!empty($_GET['id'])) $this->manager();
+		if ( ! empty($_GET['id']) ) $this->manager();
 		else $this->orders();
 	}
 
 	public function workflow () {
-		if (preg_match("/\d+/",$_GET['id'])) {
+		if (preg_match("/\d+/", $_GET['id'])) {
 			ShoppPurchase( new Purchase($_GET['id']) );
 			ShoppPurchase()->load_purchased();
 			ShoppPurchase()->load_events();
@@ -114,10 +113,10 @@ class Service extends AdminController {
 			'enddate' => '',
 		);
 
-		$args = array_merge($defaults,$_GET);
+		$args = array_merge($defaults, $_GET);
 		extract($args, EXTR_SKIP);
 
-		$url = add_query_arg(array_merge($_GET,array('page'=>$this->Admin->pagename('orders'))),admin_url('admin.php'));
+		$url = add_query_arg(array_merge($_GET, array('page' => $this->Admin->pagename('orders'))), admin_url('admin.php'));
 
 		if ( $page == "shopp-orders"
 						&& !empty($deleting)
