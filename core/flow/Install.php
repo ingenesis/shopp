@@ -30,18 +30,18 @@ class ShoppInstallation extends FlowController {
 	 * @return void
 	 * @author Jonathan Davis
 	 **/
-	public function __construct () {
+	function __construct () {
+		add_action('shopp_activate',array($this,'activate'));
+		add_action('shopp_deactivate',array($this,'deactivate'));
+		add_action('shopp_reinstall',array($this,'install'));
+		add_action('shopp_setup',array($this,'setup'));
+		add_action('shopp_setup',array($this,'images'));
+		add_action('shopp_setup',array($this,'roles'));
+		add_action('shopp_setup',array($this,'maintenance'));
+		add_action('shopp_autoupdate',array($this,'update'));
 
-		add_action('shopp_activate',   array($this, 'activate'));
-		add_action('shopp_deactivate', array($this, 'deactivate'));
-		add_action('shopp_reinstall',  array($this, 'install'));
-		add_action('shopp_setup',      array($this, 'setup'));
-		add_action('shopp_setup',      array($this, 'images'));
-		add_action('shopp_setup',      array($this, 'roles'));
-		add_action('shopp_autoupdate', array($this, 'update'));
-
-		self::$errors = array(
-			'header' => __('Shopp Activation Error', 'Shopp'),
+		$this->errors = array(
+			'header' => __('Shopp Activation Error','Shopp'),
 			'intro' => __('Sorry! Shopp cannot be activated for this WordPress install.'),
 			'dbprivileges' => __('Shopp cannot be installed because the database privileges do not allow Shopp to create new tables.', 'Shopp'),
 			'nodbschema-install' => sprintf(__('Could not install the Shopp database tables because the table definitions file is missing. (%s)', 'Shopp'), SHOPP_DBSCHEMA),
@@ -404,6 +404,33 @@ class ShoppInstallation extends FlowController {
 
 		$this->images(); // Setup default image settings
 
+	}
+
+	/**
+	 * Post activation maintenance
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2.6
+	 *
+	 * @return void
+	 **/
+	function maintenance () {
+		global $wpdb;
+
+		$db_version = intval(shopp_setting('db_version'));
+		if (!$db_version) $db_version = intval(ShoppSettings()->legacy('db_version'));
+
+		if ( $db_version <= 1149 ) {
+			// Set mass packaging setting to 'all' for current realtime shipping rates {@see bug #1835}
+			if ('mass' == shopp_setting('shipping_packaging'))
+				shopp_set_setting('shipping_packaging','all');
+
+			// Fix all product modified timestamps (for 1.2.6)
+			$post_type = 'shopp_product';
+			$post_modified = DB::mkdatetime( current_time('timestamp') );
+			$post_modified_gmt = DB::mkdatetime( current_time('timestamp') + (get_option( 'gmt_offset' ) * 3600) );
+			DB::query("UPDATE $wpdb->posts SET post_modified='$post_modified', post_modified_gmt='$post_modified_gmt' WHERE post_type='$post_type' AND post_modified='0000-00-00 00:00:00'");
+		}
 	}
 
 	/**
@@ -982,13 +1009,6 @@ class ShoppInstallation extends FlowController {
 			$price_table = DatabaseObject::tablename('price');
 			DB::query("UPDATE $price_table SET optionkey=(options*7001) WHERE context='addon'");
 		}
-
-		if ($db_version <= 1149) {
-			// Set mass packaging setting to 'all' for current realtime shipping rates {@see bug #1835}
-			if ('mass' == shopp_setting('shipping_packaging'))
-				shopp_set_setting('shipping_packaging', 'all');
-		}
-
 
 	}
 
