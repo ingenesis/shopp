@@ -196,8 +196,8 @@ class ImageServer {
 		$ResizedImage->context = 'image';
 		$ResizedImage->mime = "image/jpeg";
 		$ResizedImage->id = false;
-		$ResizedImage->width = $Resized->width;
-		$ResizedImage->height = $Resized->height;
+		$ResizedImage->width = $Resized->width();
+		$ResizedImage->height = $Resized->height();
 
 		foreach ($this->args as $index => $arg)
 			$ResizedImage->settings[$arg] = isset($this->parameters[$index])?intval($this->parameters[$index]):false;
