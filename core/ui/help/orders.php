@@ -30,6 +30,7 @@ ob_start(); ?>
 <tr><td><strong><?php Shopp::_e('State/Province','Shopp'); ?>:</strong></td><td>state:"new york"<br />province:ontario</td></tr>
 <tr><td><strong><?php Shopp::_e('Zip/Postal Codes','Shopp'); ?>:</strong></td><td>zip:95131<br />postcode:M1P1C0</td></tr>
 <tr><td><strong><?php Shopp::_e('Country','Shopp'); ?>:</strong></td><td>country:US</td></tr>
+<tr><td><strong><?php Shopp::_e('Product','Shopp'); ?>:</strong></td><td>product:"acme widget"<br />product:widget</td></tr>
 </table>
 <?php $table = ob_get_clean();
 

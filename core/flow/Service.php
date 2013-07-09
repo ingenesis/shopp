@@ -190,6 +190,10 @@ class Service extends AdminController {
 						case "zipcode":
 						case "postcode":	$search[] = "postcode='$keyword'"; break;
 						case "country": 	$search[] = "country='$keyword'"; break;
+						case "product":
+											$purchased = DatabaseObject::tablename(Purchased::$table);
+											$joins[$purchased] = "INNER JOIN $purchased AS p ON p.purchase = o.id";
+											$search[] = "p.name LIKE '%$keyword%' OR p.optionlabel LIKE '%$keyword%'"; break;
 					}
 				}
 				if (empty($search)) $search[] = "(id='$s' OR CONCAT(firstname,' ',lastname) LIKE '%$s%')";
@@ -202,9 +206,10 @@ class Service extends AdminController {
 
 		if (!empty($customer)) $where[] = "customer=".intval($customer);
 		$where = !empty($where) ? "WHERE ".join(' AND ',$where) : '';
+		$joins = join(' ', $joins);
 
 		$this->ordercount = DB::query("SELECT count(*) as total,SUM(IF(txnstatus IN ('authed','captured'),total,NULL)) AS sales,AVG(IF(txnstatus IN ('authed','captured'),total,NULL)) AS avgsale FROM $Purchase->_table $where ORDER BY created DESC LIMIT 1",'object');
-		$query = "SELECT * FROM $Purchase->_table $where ORDER BY created DESC LIMIT $start,$per_page";
+		$query = "SELECT o.* FROM $Purchase->_table AS o $joins $where ORDER BY created DESC LIMIT $start,$per_page";
 
 		$this->orders = DB::query($query,'array','index','id');
 
