@@ -30,13 +30,14 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-require 'core/library/Core.php';
+require 'core/library/Core.php'; // Load core function library
 
 /**
  * Shopp core plugin management class
  *
  * @author Jonathan Davis
  * @since 1.0
+ * @version 1.3
  * @package shopp
  **/
 class Shopp extends ShoppCore {
