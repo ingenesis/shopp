@@ -28,12 +28,32 @@ class ListFramework implements Iterator {
 	protected $_added = null;
 	protected $_checks = 0;
 
+	/**
+	 * Add an entry to the list
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 * @version 1.3
+	 *
+	 * @param string $key The key to add the entry to
+	 * @param mixed $entry The entry to add to the list
+	 * @return mixed Returns the entry
+	 **/
 	public function &add ( string $key, $entry ) {
 		$this->_list[$key] = $entry;
 		$this->_added = $key;
 		return $this->get($key);
 	}
 
+	/**
+	 * Set or get the last added entry
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param string $key The key to set as the added record
+	 * @return The added entry or false if no added entries
+	 **/
 	public function added ( string $key = null ) {
 		if ( ! is_null($key) && $this->exists($key) )
 			$this->_added = $key;
@@ -42,15 +62,44 @@ class ListFramework implements Iterator {
 		return false;
 	}
 
+	/**
+	 * Populate the list from a set of records
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 * @version 1.3
+	 *
+	 * @param array $records The associative array to add
+	 * @return void
+	 **/
 	public function populate ( array $records ) {
-		$this->_list = array_merge($this->_list,$records);
+		$this->_list = array_merge($this->_list, $records);
 	}
 
+	/**
+	 * Sorts the list by keys or by callback
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param callback $callback A callback function to use for sorting instead of the default key sorting
+	 * @return void
+	 **/
 	public function sort ( $callback = null ) {
 		if ( is_null($callback) ) ksort($this->_list);
 		uksort($this->_list,$callback);
 	}
 
+	/**
+	 * Updates an entry
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 * @version 1.3
+	 *
+	 * @param string $key $var Description...
+	 * @return boolean True if successful, false otherwise
+	 **/
 	public function update ( string $key, $entry ) {
 		if ( ! $this->exists($key) ) return false;
 		if ( is_array($this->_list[ $key ]) && is_array($entry) )
@@ -59,27 +108,73 @@ class ListFramework implements Iterator {
 		return true;
 	}
 
+	/**
+	 * Provides the count of records in the list
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return int The total number of records in the list
+	 **/
 	public function count () {
 		return count($this->_list);
 	}
 
+	/**
+	 * Empties the list
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return void
+	 **/
 	public function clear () {
 		$this->_list = array();
 		$this->_added = null;
 	}
 
-	public function &get ($key) {
+	/**
+	 * Gets a record by key
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 * @version 1.3
+	 *
+	 * @param string $key The key of the entry to get
+	 * @return mixed A reference to the entry, or false if not found
+	 **/
+	public function &get ( $key ) {
 		$false = false;
 		if ( $this->exists($key) )
 			return $this->_list[$key];
 		else return $false;
 	}
 
+	/**
+	 * Checks if a given entry exists
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 * @version 1.3
+	 *
+	 * @param string $key The key of the entry to check
+	 * @return boolean True if it exists, false otherwise
+	 **/
 	public function exists ($key) {
 		if ( ! $key ) return false;
 		return array_key_exists($key, $this->_list);
 	}
 
+	/**
+	 * Remove an entry from the list
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 * @version 1.3
+	 *
+	 * @param string $key The key of the entry to remove
+	 * @return boolean True if successful, false otherwise
+	 **/
 	public function remove ($key) {
 		if ( $this->exists($key) ) {
 			unset($this->_list[$key]);
@@ -88,38 +183,110 @@ class ListFramework implements Iterator {
 		return false;
 	}
 
+	/**
+	 * Gets the keys in the list
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return array An array of entry keys in the list
+	 **/
 	public function keys () {
 		return array_keys($this->_list);
 	}
 
+	/**
+	 * Gets the current entry using the internal list pointer
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @return mixed The current entry in the list
+	 **/
 	public function current () {
 		return current($this->_list);
 	}
 
+	/**
+	 * Gets the key for the current internal list pointer entry
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @return string The key for the current entry
+	 **/
 	public function key ( ) {
 		return key($this->_list);
 	}
 
+	/**
+	 * Moves the internal pointer to the next entry and returns the entry
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @return mixed The next entry in the list
+	 **/
 	public function next () {
 		return next($this->_list);
 	}
 
+	/**
+	 * Moves the internal pointer to the beginning of the list and returns the first entry
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @return mixed The first entry in the list
+	 **/
 	public function rewind () {
 		return reset($this->_list);
 	}
 
+	/**
+	 * Determines in the current entry in the list is valid
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @return boolean True if the entry exists, false otherwise
+	 **/
 	public function valid () {
 		return null !== $this->key();
 	}
 
+	/**
+	 * Encodes the list to a JSON string
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return string The JSON encoded string
+	 **/
 	public function __toString () {
 		return json_encode($this->_list);
 	}
 
+	/**
+	 * Preserves only the necessary properties when storing the object
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return void
+	 **/
 	public function __sleep () {
 		return array('_added', '_checks', '_list');
 	}
 
+	/**
+	 * Tracks when changes occur in the list
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return True if changed, false otherwise
+	 **/
 	public function changed () {
 
 		$lastcheck = $this->_checks; // Keep current checksum
@@ -130,7 +297,7 @@ class ListFramework implements Iterator {
 
 	}
 
-} // END class ListFramework
+} // class ListFramework
 
 /**
  * Implements a Singleton pattern object
@@ -173,8 +340,26 @@ class SingletonFramework {
 
 }
 
+/**
+ * Constructs an object defined by an associative array and defined object properties in the concrete class
+ *
+ * @author Jonathan Davis
+ * @since 1.2
+ * @version 1.3
+ * @package shopp
+ **/
 class AutoObjectFramework {
 
+	/**
+	 * Constructor
+	 *
+	 * Matches array keys with defined properties of the object and populates the object from the passed array
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return void
+	 **/
 	public function __construct ( $input = null ) {
 		$properties = get_object_vars($this);
 		$args = func_num_args();
@@ -192,6 +377,14 @@ class AutoObjectFramework {
 
 	}
 
+	/**
+	 * Updates the object from an associative array
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return void
+	 **/
 	public function update ( array $inputs = array() ) {
 
 		if ( empty($inputs) ) return;
@@ -203,15 +396,40 @@ class AutoObjectFramework {
 
 }
 
+/**
+ * Provides a basic message dispatch object
+ *
+ * @author Jonathan Davis
+ * @since 1.2
+ * @package shopp
+ **/
 class SubscriberFramework {
 
 	private $subscribers = array();
 
+	/**
+	 * Registers a subscriber object and callback handler
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @param Object $target The target class/object
+	 * @param string $method The callback method
+	 * @return void
+	 **/
 	public function subscribe ($target,$method) {
 		if ( ! isset($this->subscribers[get_class($target)]))
 			$this->subscribers[get_class($target)] = array(&$target,$method);
 	}
 
+	/**
+	 * Dispatches the message to all subscribers
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @return void
+	 **/
 	public function send () {
 		$args = func_get_args();
 		foreach ($this->subscribers as $callback) {
