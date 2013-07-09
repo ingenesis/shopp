@@ -11,6 +11,8 @@
  * @subpackage shopp
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 /**
  * Service
  *
@@ -20,9 +22,9 @@
  **/
 class Service extends AdminController {
 
-	var $screen = 'toplevel_page_shopp-orders';
-	var $orders = array();
-	var $ordercount = false;
+	public $screen = 'toplevel_page_shopp-orders';
+	public $orders = array();
+	public $ordercount = false;
 
 	/**
 	 * Service constructor
@@ -30,7 +32,7 @@ class Service extends AdminController {
 	 * @return void
 	 * @author Jonathan Davis
 	 **/
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 
 		if (isset($_GET['id'])) {
@@ -70,12 +72,12 @@ class Service extends AdminController {
 	 * @return void
 	 * @author Jonathan Davis
 	 **/
-	function admin () {
+	public function admin () {
 		if (!empty($_GET['id'])) $this->manager();
 		else $this->orders();
 	}
 
-	function workflow () {
+	public function workflow () {
 		if (preg_match("/\d+/",$_GET['id'])) {
 			ShoppPurchase( new Purchase($_GET['id']) );
 			ShoppPurchase()->load_purchased();
@@ -91,7 +93,7 @@ class Service extends AdminController {
 	 *
 	 * @return void
 	 **/
-	function loader () {
+	public function loader () {
 		if ( ! current_user_can('shopp_orders') ) return;
 
 		$defaults = array(
@@ -225,7 +227,7 @@ class Service extends AdminController {
 	 *
 	 * @return void
 	 **/
-	function orders () {
+	public function orders () {
 		if ( ! current_user_can('shopp_orders') )
 			wp_die(__('You do not have sufficient permissions to access this page.','Shopp'));
 
@@ -307,7 +309,7 @@ class Service extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function columns () {
+	public function columns () {
 		shopp_enqueue_script('calendar');
 		shopp_enqueue_script('daterange');
 		register_column_headers($this->screen, array(
@@ -331,7 +333,7 @@ class Service extends AdminController {
 	 * @author Jonathan Davis
 	 * @return
 	 **/
-	function layout () {
+	public function layout () {
 		$Shopp = Shopp::object();
 		$Admin =& $Shopp->Flow->Admin;
 		ShoppUI::register_column_headers($this->screen, apply_filters('shopp_order_manager_columns',array(
@@ -351,7 +353,7 @@ class Service extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function manager () {
+	public function manager () {
 		global $Shopp,$Notes;
 		global $is_IIS;
 
@@ -619,7 +621,7 @@ class Service extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function status_counts () {
+	public function status_counts () {
 		$table = DatabaseObject::tablename(Purchase::$table);
 		$labels = shopp_setting('order_status');
 
@@ -645,7 +647,7 @@ class Service extends AdminController {
 		return $status;
 	}
 
-	function addnote ($order, $message, $sent = false) {
+	public function addnote ($order, $message, $sent = false) {
 		$user = wp_get_current_user();
 		$Note = new MetaObject();
 		$Note->parent = $order;
@@ -659,4 +661,4 @@ class Service extends AdminController {
 		$Note->save();
 	}
 
-} // END class Service
+} // class Service
