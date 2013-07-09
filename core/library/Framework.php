@@ -388,8 +388,8 @@ class AutoObjectFramework {
 	public function update ( array $inputs = array() ) {
 
 		if ( empty($inputs) ) return;
-		foreach ($inputs as $name => $value)
-			if (property_exists($this,$name))
+		foreach ( $inputs as $name => $value )
+			if ( property_exists($this, $name) )
 				$this->$name = $value;
 
 	}
@@ -417,9 +417,9 @@ class SubscriberFramework {
 	 * @param string $method The callback method
 	 * @return void
 	 **/
-	public function subscribe ($target,$method) {
-		if ( ! isset($this->subscribers[get_class($target)]))
-			$this->subscribers[get_class($target)] = array(&$target,$method);
+	public function subscribe ( $target, $method) {
+		if ( ! isset($this->subscribers[ get_class($target) ]) )
+			$this->subscribers[ get_class($target) ] = array($target, $method);
 	}
 
 	/**
@@ -432,8 +432,8 @@ class SubscriberFramework {
 	 **/
 	public function send () {
 		$args = func_get_args();
-		foreach ($this->subscribers as $callback) {
-			call_user_func_array($callback,$args);
+		foreach ( $this->subscribers as $callback ) {
+			call_user_func_array($callback, $args);
 		}
 	}
 
