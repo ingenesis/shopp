@@ -336,7 +336,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	}
 
 	static function has_categories ($result, $options, $O) {
-		if ( empty($O->children) && method_exists($O, 'load_children') ) $O->load_children();
+		if ( empty($O->children) && method_exists($O, 'load_children') ) $O->load_children( $options );
 		reset($O->children);
 		return ( ! empty($O->children) );
 	}

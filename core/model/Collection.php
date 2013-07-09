@@ -1149,15 +1149,14 @@ class ProductCategory extends ProductTaxonomy {
 
 		$taxonomy = self::$taxon;
 		$categories = array(); $count = 0;
-		$args = array_merge($options,array('child_of'=>$this->id,'fields'=>'id=>parent'));
+		$args = array_merge($options, array('child_of' => $this->id, 'fields' => 'id=>parent'));
 		$terms = get_terms( $taxonomy, $args );
 		$children = _get_term_hierarchy($taxonomy);
-		ProductCategory::tree($taxonomy,$terms,$children,$count,$categories,1,0,$this->id);
-
+		ProductCategory::tree($taxonomy, $terms, $children, $count, $categories, 1, 0, $this->id);
 		$this->children = array();
 		foreach ( $categories as $id => $childterm ) {
-			$this->children[$id] = new ProductCategory($id);
-			$this->children[$id]->populate($childterm);
+			$this->children[ $id ] = new ProductCategory($id);
+			$this->children[ $id ]->populate($childterm);
 		}
 
 		return !empty($this->children);
