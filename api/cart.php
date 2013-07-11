@@ -240,25 +240,24 @@ function shopp_add_cart_promocode ($code = false) {
 }
 
 /**
- * Adds an addon to an existing cartitem. The addonkey should be the numeric ID of the addon.
+ * Adds an addon to an existing cartitem. The $addonid should be the numeric ID of the addon.
  *
  * @param mixed $itemkey
- * @param mixed $addonkey
+ * @param mixed $addonid
  * @return bool
  */
-function shopp_add_cart_item_addon ( $itemkey = false, $addonkey = false ) {
-	$Order = ShoppOrder();
-
-	if ( false === $itemkey || false === $addonkey ) {
+function shopp_add_cart_item_addon ( $itemkey = false, $addonid = false ) {
+	if ( false === $itemkey || false === $addonid ) {
 		shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
 		return false;
 	}
-	if ( ! ( $item = shopp_cart_item($itemkey) ) ) {
+	if ( ! ( $Item = shopp_cart_item($itemkey) ) ) {
 		shopp_debug(__FUNCTION__ . " failed: no such item $itemkey");
 		return false;
 	}
-	if ( ! ( $addon = shopp_product_addon($addonkey) ) ) {
-		shopp_debug(__FUNCTION__ . " failed: addon $addonkey is not available for item $itemkey");
+
+	if ( ! shopp_product_has_addon($Item->product, $addonid) ) {
+		shopp_debug(__FUNCTION__ . " failed: addon $addonid is not available for item $itemkey");
 		return false;
 	}
 
@@ -267,16 +266,17 @@ function shopp_add_cart_item_addon ( $itemkey = false, $addonkey = false ) {
 	}
 
 	foreach ($addons as $existing) {
-		if ( $existing->id == $addonkey ) {
-			shopp_debug(__FUNCTION__ . " failed: item $itemkey already includes addon $addonkey");
+		if ( $existing->id == $addonid ) {
+			shopp_debug(__FUNCTION__ . " failed: item $itemkey already includes addon $addonid");
 			return false;
 		}
 	}
 
-	$addons[] = $addon;
 	foreach ( $addons as &$addon ) $addon = $addon->id; // Convert to an array of ids
+	$addons[] = $addonid;
 
-	return $Order->Cart->change($itemkey, $item->product, (int) $item->priceline, $addons);
+	$Order = ShoppOrder();
+	return $Order->Cart->change($itemkey, $Item->product, (int) $Item->priceline, $addons);
 }
 
 /**
