@@ -304,143 +304,143 @@ ob_get_contents();
 		}
 	}
 
-		function test_cartitem_remove () {
-			$Product = shopp_product('command-uniform', 'slug');
-			shopp_empty_cart();
-			shopp_add_cart_product($Product->id, 1);
+	function test_cartitem_remove () {
+		$Product = shopp_product('command-uniform', 'slug');
+		shopp_empty_cart();
+		shopp_add_cart_product($Product->id, 1);
 
-			while( shopp('cart', 'items') ) {
-				$Item = ShoppOrder()->Cart->current();
-				$actual = shopp('cartitem.get-remove', 'input=button&label=My Label&class=myclass');
+		while( shopp('cart', 'items') ) {
+			$Item = ShoppOrder()->Cart->current();
+			$actual = shopp('cartitem.get-remove', 'input=button&label=My Label&class=myclass');
 
-				ob_start();
-				?><button type="submit" name="remove[<?php echo $Item->fingerprint(); ?>]" value="<?php echo $Item->fingerprint(); ?>" class="myclass" tabindex="">My Label</button><?php
-				$expected = ob_get_clean();
+			ob_start();
+			?><button type="submit" name="remove[<?php echo $Item->fingerprint(); ?>]" value="<?php echo $Item->fingerprint(); ?>" class="myclass" tabindex="">My Label</button><?php
+			$expected = ob_get_clean();
 
-				$this->assertEquals($expected,$actual);
-				$this->assertValidMarkup($actual);
-
-				$actual = shopp('cartitem.get-remove', 'label=My Label 2&class=myclass2');
-
-				ob_start();
-				?><a href="http://<?php echo WP_TESTS_DOMAIN ?>/?shopp_page=cart&amp;cart=update&amp;item=<?php echo $Item->fingerprint(); ?>&amp;quantity=0" class="myclass2">My Label 2</a><?php
-				$expected = ob_get_contents();
-				ob_end_clean();
-
-				$this->assertEquals($expected,$actual);
-				$this->assertValidMarkup($actual);
-			}
-		}
-
-		function test_cartitem_coverimage () {
-			// $this->markTestSkipped('Images not implemented in test suite products yet.');
-			$Product = shopp_product('command-uniform', 'slug');
-
-			shopp_empty_cart();
-			shopp_add_cart_product($Product->id, 1);
-
-			shopp('cart', 'items');
-			$actual = shopp('cartitem.get-coverimage','class=cart-thumb&width=200&height=220');
-			$imageid = self::$image;
-
-			$expected = array(
-				'tag' => 'img',
-				'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '?siid=' . $imageid . '&200,220,'. self::imgrequesthash($imageid,array(200,220)), 'alt' => 'original', 'width' => '200', 'height' => '203', 'class' => 'cart-thumb')
-			);
-			$this->assertTag($expected,$actual,$actual,true);
-
+			$this->assertEquals($expected,$actual);
 			$this->assertValidMarkup($actual);
 
+			$actual = shopp('cartitem.get-remove', 'label=My Label 2&class=myclass2');
+
+			ob_start();
+			?><a href="http://<?php echo WP_TESTS_DOMAIN ?>/?shopp_page=cart&amp;cart=update&amp;item=<?php echo $Item->fingerprint(); ?>&amp;quantity=0" class="myclass2">My Label 2</a><?php
+			$expected = ob_get_contents();
+			ob_end_clean();
+
+			$this->assertEquals($expected,$actual);
+			$this->assertValidMarkup($actual);
 		}
+	}
 
-		function test_cartitem_options (){
-			$Product = shopp_product('command-uniform', 'slug');
-			$prices = shopp_product_variants($Product->id);
+	function test_cartitem_coverimage () {
+		// $this->markTestSkipped('Images not implemented in test suite products yet.');
+		$Product = shopp_product('command-uniform', 'slug');
 
-			shopp_empty_cart();
-			shopp_add_cart_product($Product->id,1);
+		shopp_empty_cart();
+		shopp_add_cart_product($Product->id, 1);
 
-			while( shopp('cart', 'items') ){
-				$Item = ShoppOrder()->Cart->current();
-				$id = $Item->fingerprint();
-				$actual = shopp('cartitem.get-options','before=<div>&after=</div>');
+		shopp('cart', 'items');
+		$actual = shopp('cartitem.get-coverimage','class=cart-thumb&width=200&height=220');
+		$imageid = self::$image;
 
-				ob_start();
-				?><div><input type="hidden" name="items[<?php echo $id ?>][product]" value="<?php echo $Product->id; ?>"/> <select name="items[<?php echo $id ?>][price]" id="items-<?php echo $id ?>-price"><option value="<?php echo $prices[0]->id; ?>" selected="selected"><?php echo $prices[0]->label; ?></option><option value="<?php echo $prices[1]->id; ?>"><?php echo $prices[1]->label; ?>  (+$10.00)</option><option value="<?php echo $prices[2]->id; ?>"><?php echo $prices[2]->label; ?>  (+$14.96)</option><option value="<?php echo $prices[3]->id; ?>"><?php echo $prices[3]->label; ?>  (-$9.99)</option></select></div><?php
-				$expected = ob_get_contents();
-				ob_end_clean();
+		$expected = array(
+			'tag' => 'img',
+			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '?siid=' . $imageid . '&200,220,'. self::imgrequesthash($imageid,array(200,220)), 'alt' => 'original', 'width' => '200', 'height' => '203', 'class' => 'cart-thumb')
+		);
+		$this->assertTag($expected,$actual,$actual,true);
+
+		$this->assertValidMarkup($actual);
+
+	}
+
+	function test_cartitem_options (){
+		$Product = shopp_product('command-uniform', 'slug');
+		$prices = shopp_product_variants($Product->id);
+
+		shopp_empty_cart();
+		shopp_add_cart_product($Product->id,1);
+
+		while( shopp('cart', 'items') ){
+			$Item = ShoppOrder()->Cart->current();
+			$id = $Item->fingerprint();
+			$actual = shopp('cartitem.get-options','before=<div>&after=</div>');
+
+			ob_start();
+			?><div><input type="hidden" name="items[<?php echo $id ?>][product]" value="<?php echo $Product->id; ?>"/> <select name="items[<?php echo $id ?>][price]" id="items-<?php echo $id ?>-price"><option value="<?php echo $prices[0]->id; ?>" selected="selected"><?php echo $prices[0]->label; ?></option><option value="<?php echo $prices[1]->id; ?>"><?php echo $prices[1]->label; ?>  (+$10.00)</option><option value="<?php echo $prices[2]->id; ?>"><?php echo $prices[2]->label; ?>  (+$14.96)</option><option value="<?php echo $prices[3]->id; ?>"><?php echo $prices[3]->label; ?>  (-$9.99)</option></select></div><?php
+			$expected = ob_get_contents();
+			ob_end_clean();
+
+			$this->assertEquals($expected, $actual);
+			$this->assertValidMarkup($actual);
+		}
+	}
+
+	function test_cartitem_inputs (){
+		$Product = shopp_product('command-uniform', 'slug');
+		shopp_empty_cart();
+
+		$data = array('customField1' => "Custom Value1\nWith Newline", 'customField2' => 'Custom Value2');
+		shopp_add_cart_product($Product->id,1,false,$data);
+
+		while( shopp('cart', 'items') ){
+			$this->assertTrue(shopp('cartitem', 'hasinputs'));
+			while( shopp('cartitem', 'inputs') ) {
+
+				$name = shopp('cartitem.get-input', 'name');
+
+				$actual = shopp('cartitem.get-input');
+
+				$this->assertTrue(isset($name));
+				$expected = '<p>' . str_replace("\n", "<br />\n", $data[ $name ]) . '</p>' . "\n";
 
 				$this->assertEquals($expected, $actual);
-				$this->assertValidMarkup($actual);
 			}
 		}
+	}
 
-		function test_cartitem_inputs (){
-			$Product = shopp_product('command-uniform', 'slug');
-			shopp_empty_cart();
+	function test_cartitem_inputslist (){
+		$Product = shopp_product('command-uniform', 'slug');
+		shopp_empty_cart();
 
-			$data = array('customField1' => "Custom Value1\nWith Newline", 'customField2' => 'Custom Value2');
-			shopp_add_cart_product($Product->id,1,false,$data);
+		$data = array('customField1' => "Custom Value1\nWith Newline", 'customField2' => 'Custom Value2', 'merryxmas'=>'Merry Christmas');
+		shopp_add_cart_product($Product->id,1,false,$data);
 
-			while( shopp('cart', 'items') ){
-				$this->assertTrue(shopp('cartitem', 'hasinputs'));
-				while( shopp('cartitem', 'inputs') ) {
+		while( shopp('cart', 'items') ){
+			$this->assertTrue(shopp('cartitem', 'hasinputs'));
 
-					$name = shopp('cartitem.get-input', 'name');
-
-					$actual = shopp('cartitem.get-input');
-
-					$this->assertTrue(isset($name));
-					$expected = '<p>' . str_replace("\n", "<br />\n", $data[ $name ]) . '</p>' . "\n";
-
-					$this->assertEquals($expected, $actual);
-				}
-			}
-		}
-
-		function test_cartitem_inputslist (){
-			$Product = shopp_product('command-uniform', 'slug');
-			shopp_empty_cart();
-
-			$data = array('customField1' => "Custom Value1\nWith Newline", 'customField2' => 'Custom Value2', 'merryxmas'=>'Merry Christmas');
-			shopp_add_cart_product($Product->id,1,false,$data);
-
-			while( shopp('cart', 'items') ){
+			while( shopp('cartitem', 'inputs') ) {
 				$this->assertTrue(shopp('cartitem', 'hasinputs'));
 
-				while( shopp('cartitem', 'inputs') ) {
-					$this->assertTrue(shopp('cartitem', 'hasinputs'));
+				$actual = shopp('cartitem.get-inputslist');
+				$this->assertTrue( ! empty($actual) );
 
-					$actual = shopp('cartitem.get-inputslist');
-					$this->assertTrue( ! empty($actual) );
-
-					ob_start();
-					?><ul><li><strong>customField1</strong>: <p>Custom Value1<br />
+				ob_start();
+				?><ul><li><strong>customField1</strong>: <p>Custom Value1<br />
 With Newline</p>
 </li><li><strong>customField2</strong>: <p>Custom Value2</p>
 </li><li><strong>merryxmas</strong>: <p>Merry Christmas</p>
 </li></ul><?php
-					$expected = ob_get_clean();
+				$expected = ob_get_clean();
 
-					$this->assertEquals($expected, $actual, $actual);
-					$this->assertValidMarkup($actual);
+				$this->assertEquals($expected, $actual, $actual);
+				$this->assertValidMarkup($actual);
 
-					$this->assertTrue(shopp('cartitem', 'hasinputs'));
+				$this->assertTrue(shopp('cartitem', 'hasinputs'));
 
-					$actual = shopp('cartitem.get-inputslist','before=<div>&after=</div>&class=customdata&exclude=merryxmas');
-					$this->assertTrue(!empty($actual));
+				$actual = shopp('cartitem.get-inputslist','before=<div>&after=</div>&class=customdata&exclude=merryxmas');
+				$this->assertTrue(!empty($actual));
 
-					ob_start();
-					?><div><ul class="customdata"><li><strong>customField1</strong>: <p>Custom Value1<br />
+				ob_start();
+				?><div><ul class="customdata"><li><strong>customField1</strong>: <p>Custom Value1<br />
 With Newline</p>
 </li><li><strong>customField2</strong>: <p>Custom Value2</p>
 </li></ul></div><?php
-					$expected = ob_get_clean();
+				$expected = ob_get_clean();
 
-					$this->assertEquals($expected, $actual, $actual);
-					$this->assertValidMarkup($actual);
-				}
+				$this->assertEquals($expected, $actual, $actual);
+				$this->assertValidMarkup($actual);
 			}
 		}
+	}
 
 } // end CartItemAPITests class

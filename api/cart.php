@@ -265,7 +265,7 @@ function shopp_add_cart_item_addon ( $itemkey = false, $addonid = false ) {
 		return false; // Debug message will already have been generated in shopp_cart_item_addons()
 	}
 
-	foreach ($addons as $existing) {
+	foreach ( $addons as $existing ) {
 		if ( $existing->id == $addonid ) {
 			shopp_debug(__FUNCTION__ . " failed: item $itemkey already includes addon $addonid");
 			return false;

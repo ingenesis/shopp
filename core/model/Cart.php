@@ -438,7 +438,7 @@ class ShoppCart extends ListFramework {
 		foreach ($Item->addons as $addon)
 			$addons[] = $addon->options;
 
-		$UpdatedItem = new ShoppCartItem(new Product($product),$pricing,$category,$data,$addons);
+		$UpdatedItem = new ShoppCartItem(new Product($product), $pricing, $category, $data, $addons);
 		$UpdatedItem->quantity($qty);
 
 		parent::update($item,$UpdatedItem);

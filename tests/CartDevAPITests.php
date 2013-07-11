@@ -61,8 +61,33 @@ class CartDevAPITests extends ShoppTestCase {
 			'specs' => array(
 				'Class' => 'Class-F',
 				'Category' => 'Shuttlecraft',
-
+			),
+			'addons' => array(
+				'menu' => array(
+					'Luxury Fittings' => array('Champagne Holder', 'Phaser Rack', 'Map Holder')
+				),
+				0 => array(
+					'option' => array('Luxury Fittings' => 'Champagne Holder'),
+					'type' => 'Shipped',
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.3, 'width' => 0.3, 'height' => 1.0),
+					'inventory' => array('flag' => false),
+					'price' => 10.00
+				),
+				1 => array(
+					'option' => array('Luxury Fittings' => 'Phaser Rack'),
+					'type' => 'Shipped',
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 5.5, 'length' => 0.35, 'width' => 0.5, 'height' => 1),
+					'inventory' => array('flag' => false),
+					'price' => 20.00
+				),
+				2 => array(
+					'option' => array('Luxury Fittings' => 'Map Holder'),
+					'type' => 'Shipped',
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.22, 'length' => 0.3, 'width' => 0.3, 'height' => 0.3),
+					'inventory' => array('flag' => false),
+					'price' => 40.00
 				)
+			)
 		);
 
 		shopp_add_product($args);
@@ -240,4 +265,22 @@ class CartDevAPITests extends ShoppTestCase {
 		}
 	}
 
+	function test_shopp_add_cart_addon() {
+		$Product = shopp_product('galileo', 'slug');
+		shopp_add_cart_product($Product->id, 1);
+
+		$Items = shopp_cart_items();
+		$itemkey = key($Items); // Reliably obtain the itemkey
+
+		$addons = shopp_product_addons($Product->id);
+		$addon = array_shift($addons); // First available addon
+
+		$this->assertTrue( shopp_add_cart_item_addon($itemkey, $addon->id) );
+
+		$successfully_added = false;
+		foreach ( shopp_cart_item_addons($itemkey) as $existing )
+			if ( $existing->id == $addon->id ) $successfully_added = true;
+
+		$this->assertTrue($successfully_added);
+	}
 }
