@@ -635,6 +635,22 @@ function shopp_product_addons ( $product = false, $load_by = 'id' ) {
 }
 
 /**
+ * Determines if the specified addon (which should be a numeric ID) belongs to the specified product.
+ *
+ * @param bool $product
+ * @param $addon
+ * @return bool
+ */
+function shopp_product_has_addon($product = false, $addon) {
+	if ( false === ( $addons = shopp_product_addons($product) ) ) {
+		return false; // Debug message already created in shopp_product_addons()
+	}
+
+	foreach ( $addons as $Addon ) if ( (int) $addon === (int) $Addon->id ) return true;
+	return false;
+}
+
+/**
  * shopp_product_variant - get a specific Price object
  *
  * @author John Dillick
