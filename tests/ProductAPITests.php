@@ -426,27 +426,27 @@ class ProductAPITests extends ShoppTestCase {
 
 	function test_product_variation_tags () {
         // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
-		ob_start();
-		if (shopp('product','has-variations')) {
-			while(shopp('product','variations')) {
-				echo shopp('product','get-variation','id')."|";
-				echo shopp('product','get-variation','label')."|";
-				echo shopp('product','get-variation','type')."|";
-				echo shopp('product','get-variation','sku')."|";
-				echo shopp('product','get-variation','price')."|";
-				echo shopp('product','get-variation','saleprice')."|";
-				echo shopp('product','get-variation','stock')."|";
-				echo shopp('product','get-variation','weight')."|";
-				echo shopp('product','get-variation','shipfee')."|";
-				echo shopp('product','get-variation','sale')."|";
-				echo shopp('product','get-variation','shipping')."|";
-				echo shopp('product','get-variation','tax')."|";
-				echo shopp('product','get-variation','inventory')."|";
-			}
+
+		$Product = ShoppProduct();
+		$this->assertTrue( shopp('product','has-variations') );
+
+		while( shopp('product','variations') ) {
+			$Price = current($Product->prices);
+			$this->assertEquals($Price->id, shopp('product.get-variation','id'));
+			$this->assertEquals($Price->label, shopp('product.get-variation','label'));
+			$this->assertEquals($Price->type, shopp('product.get-variation','type'));
+			$this->assertEquals($Price->sku, shopp('product.get-variation','sku'));
+			$this->assertEquals(money($Price->price), shopp('product.get-variation','price'));
+			$this->assertEquals(money($Price->saleprice), shopp('product.get-variation','saleprice'));
+			$this->assertEquals($Price->stock, shopp('product.get-variation','stock'));
+			$this->assertEquals(floatval($Price->weight), shopp('product.get-variation','weight'));
+			$this->assertEquals(money($Price->shipfee), shopp('product.get-variation','shipfee'));
+			$this->assertEquals(str_true($Price->sale), shopp('product.get-variation','sale'));
+			$this->assertEquals(str_true($Price->shipping), shopp('product.get-variation','shipping'));
+			$this->assertEquals(str_true($Price->tax), shopp('product.get-variation','tax'));
+			$this->assertEquals(str_true($Price->inventory), shopp('product.get-variation','inventory'));
 		}
-		$output = ob_get_contents();
-		ob_end_clean();
-		$this->assertEquals('104|Small|Shipped|SFU-001-S|$19.99|$9.99|5|0|$0.00|1|1|1|1|105|Medium|Shipped|SFU-001-M|$22.55|$19.99|15|0|$0.00|1|1|1|1|106|Large|Shipped|SFU-001-L|$32.95|$24.95|1|0|$0.00|1|1|1|1|107|Brikar|Shipped|SFU-001-B|$55.00|$35.00|1|0|$0.00|1|1|1|1|',$output);
+
 	}
 
 	function test_product_input () {
