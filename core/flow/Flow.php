@@ -249,7 +249,7 @@ abstract class AdminController extends FlowController {
 	public $url;
 	public $screen;
 
-	private $notices = array();
+	public $notices = array();
 
 	/**
 	 * AdminController constructor
@@ -262,14 +262,15 @@ abstract class AdminController extends FlowController {
 	function __construct () {
 		// parent::__construct();
 		$Shopp = Shopp::object();
+		ShoppingObject::store('admin_notices', $this->notices);
+
 		if (!empty($Shopp->Flow->Admin)) $this->Admin = &$Shopp->Flow->Admin;
 		$screen = get_current_screen();
 
 		$this->screen = $screen->id;
-
 		$this->url = add_query_arg(array('page'=>esc_attr($_GET['page'])),admin_url('admin.php'));
 
-		add_action('shopp_admin_notices',array($this,'notices'));
+		add_action('shopp_admin_notices', array($this,'notices'));
 	}
 
 	function notice ( $message, $style='updated', $priority = 10 ) {

@@ -3,7 +3,7 @@
 		<div class="icon32"></div>
 		<h2><?php _e('Promotion Editor','Shopp'); ?> <a href="<?php echo esc_url(add_query_arg(array_merge($_GET,array('page'=>'shopp-promotions','id'=>'new')),admin_url('admin.php'))); ?>" class="add-new-h2"><?php _e('Add New','Shopp'); ?></a> </h2>
 
-		<?php do_action('shopp_admin_notice'); ?>
+		<?php do_action('shopp_admin_notices'); ?>
 
 		<div id="ajax-response"></div>
 		<form name="promotion" id="promotion" action="<?php echo add_query_arg('page','shopp-promotions',admin_url('admin.php')); ?>" method="post">

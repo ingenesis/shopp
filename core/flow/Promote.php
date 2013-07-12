@@ -198,6 +198,9 @@ class Promote extends AdminController {
 		if ($Promotion->target == "Catalog")
 			$Promotion->catalog();
 
+		// Set confirmation notice
+		$this->notice(__('Promotion has been updated!', 'Shopp'));
+
 		// Stay in the editor
 		$url = add_query_arg(array('page'=>'shopp-promotions', 'id' => $Promotion->id), admin_url('admin.php'));
 		wp_redirect($url);
@@ -212,11 +215,11 @@ class Promote extends AdminController {
 	 **/
 	public function columns () {
 		register_column_headers($this->screen, array(
-			'cb'=>'<input type="checkbox" />',
-			'name'=>__('Name','Shopp'),
-			'discount'=>__('Discount','Shopp'),
-			'applied'=>__('Type','Shopp'),
-			'eff'=>__('Status','Shopp'))
+			'cb' => '<input type="checkbox" />',
+			'name' => __('Name','Shopp'),
+			'discount' => __('Discount','Shopp'),
+			'applied' => __('Type','Shopp'),
+			'eff' => __('Status','Shopp'))
 		);
 	}
 
@@ -247,8 +250,20 @@ class Promote extends AdminController {
 			$Promotion = new Promotion($_GET['id']);
 		} else $Promotion = new Promotion();
 
+		$this->disabled_alert($Promotion);
 		include SHOPP_PATH . '/core/ui/promotions/editor.php';
 	}
 
+	/**
+	 * Add a notice to make sure the merchant is aware that the promotion is not enabled (if that happens to be the
+	 * case). If this is undesirable it can be turned off by adding some code to functions.php or another suitable
+	 * location:
+	 *
+	 *  add_filter('shopp_hide_disabled_promo_warning', function() { return true; } ); // 5.3 style
+	 */
+	protected function disabled_alert(Promotion $Promotion) {
+		if ( 'enabled' === $Promotion->status || apply_filters('shopp_hide_disabled_promo_warning', false) ) return;
+		$this->notice(__('This promotion is not currently enabled.', 'Shopp'), 'notice', 20);
+	}
 
 } // end Promote class
