@@ -27,7 +27,7 @@ class CurrencyFormatting extends ShoppTestCase {
 
 		$countries = Lookup::countries();
 		foreach ($countries as $code => $country)
-			self::$formats[$code] = scan_money_format($country['currency']['format']);
+			self::$formats[$code] = Shopp::scan_money_format($country['currency']['format']);
 	}
 
 	static function tearDownAfterClass () {

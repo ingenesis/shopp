@@ -33,7 +33,7 @@ function shopp_add_product ( $data = array() ) {
 	$problems = _validate_product_data ( $data );
 
 	if ( ! empty($problems) ) {
-		shopp_debug("Problems detected: "._object_r($problems));
+		shopp_debug("Problems detected: ".Shopp::object_r($problems));
 		return false;
 	}
 

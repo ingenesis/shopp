@@ -12,7 +12,7 @@
 <div class="tablenav"><div class=" actions">
 	<select name="id" id="payment-option-menu">
 	<option><?php _e('Add a payment system&hellip;','Shopp'); ?></option>
-	<?php echo menuoptions($installed,false,true); ?>
+	<?php echo Shopp::menuoptions($installed,false,true); ?>
 	</select>
 	<button type="submit" name="add-payment-option" id="add-payment-option" class="button-secondary hide-if-js" tabindex="9999"><?php _e('Add Payment Option','Shopp'); ?></button>
 	</div>

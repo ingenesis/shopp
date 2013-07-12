@@ -19,8 +19,8 @@
 	<?php if (current_user_can('shopp_financials')): ?>
 	<ul class="summary">
 		<li><strong><?php echo $ordercount->total; ?></strong> <span><?php _e('Orders','Shopp'); ?></span></li>
-		<li><strong><?php echo money($ordercount->sales); ?></strong> <span><?php _e('Total Sales','Shopp'); ?></span></li>
-		<li><strong><?php echo money($ordercount->avgsale); ?></strong> <span><?php _e('Average Sale','Shopp'); ?></span></li>
+		<li><strong><?php echo Shopp::money($ordercount->sales); ?></strong> <span><?php _e('Total Sales','Shopp'); ?></span></li>
+		<li><strong><?php echo Shopp::money($ordercount->avgsale); ?></strong> <span><?php _e('Average Sale','Shopp'); ?></span></li>
 	</ul>
 	<?php endif; ?>
 
@@ -30,14 +30,14 @@
 		</div>
 		<div class="alignleft actions">
 			<select name="newstatus">
-				<?php echo menuoptions($statusLabels,false,true); ?>
+				<?php echo Shopp::menuoptions($statusLabels,false,true); ?>
 			</select>
 			<button type="submit" id="update-button" name="update" value="order" class="button-secondary"><?php _e('Update','Shopp'); ?></button>
 		</div>
 		
 		<div class="alignleft actions filtering">
 				<select name="range" id="range">
-					<?php echo menuoptions($ranges,$range,true); ?>
+					<?php echo Shopp::menuoptions($ranges,$range,true); ?>
 				</select><div id="dates" class="hide-if-js"><div id="start-position" class="calendar-wrap"><input type="text" id="start" name="start" value="<?php echo $startdate; ?>" size="10" class="search-input selectall" /></div>
 					<small>to</small>
 					<div id="end-position" class="calendar-wrap"><input type="text" id="end" name="end" value="<?php echo $enddate; ?>" size="10" class="search-input selectall" /></div>

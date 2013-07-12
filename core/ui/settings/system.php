@@ -13,7 +13,7 @@
 			<tr>
 				<th scope="row" valign="top"><label for="image-storage"><?php _e('Image Storage','Shopp'); ?></label></th>
 				<td><select name="settings[image_storage]" id="image-storage">
-					<?php echo menuoptions($storage,shopp_setting('image_storage'),true); ?>
+					<?php echo Shopp::menuoptions($storage,shopp_setting('image_storage'),true); ?>
 					</select><input type="submit" name="image-settings" value="<?php _e('Settings&hellip;','Shopp'); ?>" class="button-secondary hide-if-js"/>
 					<div id="image-storage-engine" class="storage-settings"><?php if ($ImageStorage) echo $ImageStorage->ui('image'); ?></div>
 	            </td>
@@ -21,7 +21,7 @@
 			<tr>
 				<th scope="row" valign="top"><label for="download-storage"><?php _e('Product File Storage','Shopp'); ?></label></th>
 				<td><select name="settings[product_storage]" id="download-storage">
-					<?php echo menuoptions($storage,shopp_setting('product_storage'),true); ?>
+					<?php echo Shopp::menuoptions($storage,shopp_setting('product_storage'),true); ?>
 					</select><input type="submit" name="download-settings" value="<?php _e('Settings&hellip;','Shopp'); ?>" class="button-secondary hide-if-js"/>
 					<div id="download-storage-engine" class="storage-settings"><?php if ($DownloadStorage) echo $DownloadStorage->ui('download'); ?></div>
 	            </td>

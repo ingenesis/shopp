@@ -39,8 +39,8 @@ class OrderAmount extends ShippingFramework implements ShippingModule {
 			$tiers = array_reverse($tiers);
 			foreach ( $tiers as $tier ) {
 				extract($tier);
-				$amount = floatvalue($rate);			// Capture the rate amount
-				if (floatvalue($Order->Cart->Totals->subtotal) >= floatvalue($threshold)) break;
+				$amount = Shopp::floatval($rate);			// Capture the rate amount
+				if (floatvalue($Order->Cart->Totals->subtotal) >= Shopp::floatval($threshold)) break;
 			}
 
 			$rate = array(

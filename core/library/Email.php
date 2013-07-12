@@ -28,7 +28,7 @@ abstract class ShoppEmailFilters {
 	static function InlineStyles ($message) {
 
 		if ( false === strpos($message,'<html>') ) return $message;
-		$cssfile = locate_shopp_template(array('email.css'));
+		$cssfile = Shopp::locate_template(array('email.css'));
 		$stylesheet = file_get_contents($cssfile);
 
 		if (!empty($stylesheet)) {

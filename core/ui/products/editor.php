@@ -33,7 +33,7 @@
 					<div class="inside">
 						<?php if ('' != get_option('permalink_structure') && !empty($Product->id)): ?>
 							<div id="edit-slug-box"><strong><?php _e('Permalink','Shopp'); ?>:</strong>
-							<span id="sample-permalink"><?php echo $permalink; ?><span id="editable-slug" title=<?php _jse('Click to edit this part of the permalink','Shopp'); ?>><?php echo esc_attr($Product->slug); ?></span><span id="editable-slug-full"><?php echo esc_attr($Product->slug); ?></span><?php echo user_trailingslashit(""); ?></span>
+							<span id="sample-permalink"><?php echo $permalink; ?><span id="editable-slug" title=<?php Shopp::_jse('Click to edit this part of the permalink','Shopp'); ?>><?php echo esc_attr($Product->slug); ?></span><span id="editable-slug-full"><?php echo esc_attr($Product->slug); ?></span><?php echo user_trailingslashit(""); ?></span>
 							<span id="edit-slug-buttons">
 								<button type="button" class="edit button"><?php _e('Edit','Shopp'); ?></button><?php if ($Product->status == "publish"): ?><a href="<?php echo esc_url(shopp($Product,'get-url')); ?>" id="view-product" class="view button"><?php _e('View','Shopp'); ?></a><?php endif; ?></span>
 							<span id="editor-slug-buttons">

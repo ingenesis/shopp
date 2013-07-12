@@ -11,7 +11,7 @@
 	<div id="order">
 		<div class="title">
 			<div id="titlewrap">
-				<span class="date"><?php echo _d(get_option('date_format'), $Purchase->created); ?> <small><?php echo date(get_option('time_format'),$Purchase->created); ?></small>
+				<span class="date"><?php echo Shopp::_d(get_option('date_format'), $Purchase->created); ?> <small><?php echo date(get_option('time_format'),$Purchase->created); ?></small>
 
 				<div class="alignright">
 

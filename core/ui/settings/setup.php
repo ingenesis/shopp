@@ -28,15 +28,15 @@
 				<th scope="row" valign="top"><label for="base_operations"><?php _e('Base of Operations','Shopp'); ?></label></th>
 				<td><select name="settings[base_operations][country]" id="base_operations">
 					<option value="">&nbsp;</option>
-						<?php echo menuoptions($countries,$operations['country'],true); ?>
+						<?php echo Shopp::menuoptions($countries,$operations['country'],true); ?>
 					</select>
 					<select name="settings[base_operations][zone]" id="base_operations_zone"<?php if (!isset($zones)): ?>disabled="disabled" class="hide-if-no-js"<?php endif; ?>>
-						<?php echo menuoptions($zones,$operations['zone'],true); ?>
+						<?php echo Shopp::menuoptions($zones,$operations['zone'],true); ?>
 					</select>
 					<br />
 	            	<?php _e('Select your primary business location.','Shopp'); ?><br />
 					<?php if (!empty($operations['country'])): ?>
-		            <strong><?php _e('Currency','Shopp'); ?>: </strong><?php echo money(1000.00); ?>
+		            <strong><?php _e('Currency','Shopp'); ?>: </strong><?php echo Shopp::money(1000.00); ?>
 					<?php if (shopp_setting_enabled('tax_inclusive')): ?><strong>(+<?php _e('tax','Shopp'); ?>)</strong><?php endif; ?>
 					<?php endif; ?>
 				</td>

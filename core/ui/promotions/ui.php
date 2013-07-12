@@ -11,7 +11,7 @@ function save_meta_box ($Promotion) {
 	<div class="misc-pub-section misc-pub-section-last">
 
 	<div id="start-position" class="calendar-wrap"><?php
-		$dateorder = date_format_order(true);
+		$dateorder = Shopp::date_format_order(true);
 		$previous = false;
 		foreach ($dateorder as $type => $format):
 			if ($previous == "s" && $type[0] == "s") continue;

@@ -12,7 +12,7 @@
 			<img src="<?php echo SHOPP_ICONS_URI; ?>/delete.png" alt="<?php _e('Delete','Shopp'); ?>" width="16" height="16" />
 		</button>
 		<select name="settings[order_states][${id}]" id="state-${id}">
-		<?php echo menuoptions($states,'',true); ?>
+		<?php echo Shopp::menuoptions($states,'',true); ?>
 		</select>
 		<button type="button" class="add">
 			<img src="<?php echo SHOPP_ICONS_URI; ?>/add.png" alt="<?php _e('Add','Shopp'); ?>" width="16" height="16" />

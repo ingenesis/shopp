@@ -6,7 +6,7 @@
 
 	<script id="delivery-menu" type="text/x-jquery-tmpl"><?php
 		$deliverymenu = Lookup::timeframes_menu();
-		echo menuoptions($deliverymenu,false,true);
+		echo Shopp::menuoptions($deliverymenu,false,true);
 	?></script>
 
 	<?php $this->shipping_menu(); ?>
@@ -21,7 +21,7 @@
 		<div class="actions">
 			<select name="id" id="shipping-option-menu">
 			<option value=""><?php _e('Add a shipping method&hellip;','Shopp'); ?></option>
-			<?php echo menuoptions($installed,false,true); ?>
+			<?php echo Shopp::menuoptions($installed,false,true); ?>
 			</select>
 			<button type="submit" name="add-shipping-option" id="add-shipping-option" class="button-secondary hide-if-js" tabindex="9999"><?php _e('Add Shipping Option','Shopp'); ?></button>
 		</div>
@@ -39,8 +39,8 @@
 
 			if ($edit && !isset($shiprates[$edit])) {
 				$template_data = array(
-					'${mindelivery_menu}' => menuoptions($deliverymenu,false,true),
-					'${maxdelivery_menu}' => menuoptions($deliverymenu,false,true),
+					'${mindelivery_menu}' => Shopp::menuoptions($deliverymenu,false,true),
+					'${maxdelivery_menu}' => Shopp::menuoptions($deliverymenu,false,true),
 					'${cancel_href}' => $this->url
 				);
 				$editor = str_replace(array_keys($template_data),$template_data,$editor);

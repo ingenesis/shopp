@@ -26,11 +26,11 @@
 			'product-category' => __('Product in category','Shopp'),
 			'customer-type' => __('Customer type is','Shopp')
 		);
-		echo menuoptions($propertymenu,false,true);
+		echo Shopp::menuoptions($propertymenu,false,true);
 	?></script>
 
 	<script id="countries-menu" type="text/x-jquery-tmpl"><?php
-		echo menuoptions($countries,false,true);
+		echo Shopp::menuoptions($countries,false,true);
 	?></script>
 
 

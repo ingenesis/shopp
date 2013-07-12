@@ -33,8 +33,8 @@ class PercentageAmount extends ShippingFramework implements ShippingModule {
 			$tiers = array_reverse($tiers);
 			foreach ($tiers as $tier) {
 				extract($tier);
-				$amount = (floatvalue($rate)/100)* $Order->Cart->Totals->subtotal;
-				if (floatvalue($Order->Cart->Totals->subtotal) >= floatvalue($threshold)) break;
+				$amount = (Shopp::floatval($rate)/100)* $Order->Cart->Totals->subtotal;
+				if (Shopp::floatval($Order->Cart->Totals->subtotal) >= Shopp::floatval($threshold)) break;
 			}
 
 			$rate = array(

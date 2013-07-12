@@ -40,7 +40,10 @@
 					</div>
 				</div>
 				<div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
-				<?php the_editor($Category->description,'content','Description', false); ?>
+				<?php
+					$media_buttons = ( defined('SHOPP_EDITOR_MEDIA_BTNS') && SHOPP_EDITOR_MEDIA_BTNS );
+					wp_editor($Category->description, 'content', array( 'media_buttons' => $media_buttons ));
+				?>
 				<?php wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false ); ?>
 				</div>
 

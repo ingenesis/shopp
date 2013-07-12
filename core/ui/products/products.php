@@ -24,7 +24,7 @@
 		<div class="alignleft actions">
 		<select name="action" id="actions">
 			<option value="" selected="selected"><?php _e('Bulk Actions&hellip;','Shopp'); ?></option>
-			<?php echo menuoptions($actions_menu,false,true); ?>
+			<?php echo Shopp::menuoptions($actions_menu,false,true); ?>
 		</select>
 		<input type="submit" value="<?php esc_attr_e('Apply','Shopp'); ?>" name="apply" id="apply" class="button-secondary action" />
 		</div>

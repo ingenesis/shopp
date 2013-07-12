@@ -22,7 +22,7 @@
 		<?php if(current_user_can('shopp_delete_customers')): ?><button type="submit" id="delete-button" name="deleting" value="customer" class="button-secondary"><?php _e('Delete','Shopp'); ?></button><?php endif; ?>
 			<div class="filtering">
 				<select name="range" id="range">
-					<?php echo menuoptions($ranges,$range,true); ?>
+					<?php echo Shopp::menuoptions($ranges,$range,true); ?>
 				</select>
 				<div id="dates">
 					<div id="start-position" class="calendar-wrap"><input type="text" id="start" name="start" value="<?php echo $startdate; ?>" size="10" class="search-input selectall" /></div>
