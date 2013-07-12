@@ -66,6 +66,9 @@ function shopp_add_product ( $data = array() ) {
 		$Product->publish = 0;
 	}
 
+	// Allow existing Products to be updated
+	if ( ! empty( $data['id'] ) ) $Product->id = $data['id'];
+
 	// Set Product name
 	if ( empty($data['name']) ) {
 		shopp_debug(__FUNCTION__ . " failed: Missing product name.");
@@ -274,6 +277,30 @@ function shopp_add_product ( $data = array() ) {
 } // end function shopp_add_product
 
 /**
+ * Allows products to be updated using the same data structure as shopp_add_product() (which it builds on).
+ *
+ * @since 1.3
+ *
+ * @param int $id (required) product ID
+ * @param array $data (required) associative array structure containing a single product definition, see _validate_product_data for how this array is structured/validated.
+ * @return Product the created product object, or boolean false on a failure.
+ **/
+function shopp_update_product ( $id, $data = array() ) {
+	if ( empty($data) ) {
+		shopp_debug(__FUNCTION__ . " failed: revisions to the product definition must be passed.");
+		return false;
+	}
+
+	if ( ! shopp_product($id) ) {
+		shopp_debug(__FUNCTION__ . " failed: invalid product ID specified.");
+		return false;
+	}
+
+	$data['id'] = $id;
+	return shopp_add_product($data);
+}
+
+/**
  * shopp_rmv_product
  *
  * remove a product
@@ -313,6 +340,7 @@ function _validate_product_data ( $data, $types = 'data', $problems = array() ) 
 
 	// data properties needed to populate a product
 	$_data = array(
+		'id' => 'int',              // integer - product ID
 		'name' => 'string', 		// string - the product name
 		'slug' => 'string', 		// string - the product slug (optional)
 		'publish' => 'publish',		// array - flag => bool, publishtime => array(month => int, day => int, year => int, hour => int, minute => int, meridian => AM/PM)
@@ -1806,8 +1834,8 @@ function shopp_product_variant_set_price ( $variant = false, $price = 0.0, $cont
 
 	if ( shopp_setting_enabled('tax_inclusive') && isset($Price->tax) && Shopp::str_true($Price->tax) ) {
 		$Product = new Product($Price->product);
-		$taxrate = shopp_taxrate(null,true,$Product);
-		$price = ( Shopp::floatvalue( $price / ( 1 + $taxrate ) ) );
+		$taxrate = Shopp::taxrate(null,true,$Product);
+		$price = ( Shopp::floatval( $price / ( 1 + $taxrate ) ) );
 	}
 
 	$Price->price = $price;
@@ -1852,7 +1880,7 @@ function shopp_product_variant_set_saleprice ( $variant = false, $flag = false, 
 		if ( shopp_setting_enabled('tax_inclusive') && isset($Price->tax) && Shopp::str_true($Price->tax) ) {
 			$Product = new Product($Price->product);
 			$taxrate = shopp_taxrate(null,true,$Product);
-			$price = ( Shopp::floatvalue( $price / ( 1 + $taxrate ) ) );
+			$price = ( Shopp::floatval( $price / ( 1 + $taxrate ) ) );
 		}
 
 		$Price->saleprice = $price;
