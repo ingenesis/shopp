@@ -599,8 +599,6 @@ class OrderAmountCartItem extends OrderAmountDebit {
 		$this->unit = &$Item->unitprice;
 		$this->amount = &$Item->total;
 		$this->id = $Item->fingerprint();
-
-		add_action('shopp_cart_remove_item',array($this,'remove'));
 	}
 
 	/**
@@ -634,8 +632,6 @@ class OrderAmountItemDiscounts extends OrderAmountDebit {
 	public function __construct ( ShoppOrderDiscount $Discount ) {
 		$this->amount = $Discount->amount();
 		$this->id = $Discount->promo;
-
-		add_action('shopp_cart_remove_item',array($this,'remove'));
 	}
 
 	/**
@@ -644,7 +640,7 @@ class OrderAmountItemDiscounts extends OrderAmountDebit {
 	 * @author Jonathan Davis
 	 * @since 1.3
 	 *
-	 * @return strin
+	 * @return string
 	 **/
 	public function label () {
 		return __('Discounts','Shopp');
@@ -673,20 +669,11 @@ class OrderAmountItemTax extends OrderAmountDebit {
 		$this->rate = &$Tax->rate;
 		$this->id = &$Tax->label;
 		$this->amount = $this->total();
-
-		add_action('shopp_cart_remove_item',array($this,'remove'));
 	}
 
-	public function removal () {
-		list($id,$Item,) = func_get_args();
-
-		if ( empty($this->items) )
-			return parent::remove();
-
-		if ( isset($this->items[$id]) ) {
-			unset($this->items[ $id ]);
-			$this->total();
-		}
+	public function unlink ( string $itemid ) {
+		if ( isset($this->items[ $itemid ]) );
+			unset($this->items[ $itemid ]);
 	}
 
 	public function update ( OrderTotalAmount $Updates ) {
@@ -739,7 +726,6 @@ class OrderAmountShippingTax extends OrderAmountDebit {
 		$this->id = 'shipping';
 		$this->amount = $Tax->calculate($taxes, $taxable);
 		$this->label = __('Shipping Tax','Shopp');
-
 	}
 
 }
@@ -751,9 +737,6 @@ class OrderAmountCartItemQuantity extends OrderTotalAmount {
 	public function __construct ( ShoppCartItem $Item ) {
 		$this->amount = &$Item->quantity;
 		$this->id = $Item->fingerprint();
-
-		add_action('shopp_cart_remove_item', array($this, 'remove'));
-
 	}
 
 	public function label () {

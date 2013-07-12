@@ -168,7 +168,7 @@ class Markdownr {
 
 			if ( false === strpos(get_parent_class($parseclass), 'MarkdownrInline') ) continue;
 
-			if ( call_user_func( array($parseclass, 'match'), get_class_property($parseclass, $marks), $search) ) {
+			if ( call_user_func( array($parseclass, 'match'), get_class_property($parseclass, 'marks'), $search) ) {
 
 				$Parser = $this->parser($parseclass);
 				$Parser->scan($search);
@@ -243,8 +243,7 @@ class Markdownr {
 class MarkdownrBlock {
 
 	public static $pattern = '/^.*?$/';
-
-	protected static $marks = array();
+	public static $marks = array();
 
 	protected $selfnest = false;
 	protected $tag = 'div';
@@ -320,10 +319,10 @@ class MarkdownrBlock {
 
 	protected function unmark ( string $text ) {
 		$class = get_class($this);
-		$property = get_class_property($class, $marks); 
-		
-		if ( ! isset( $property ) ) return $text;
-		return trim( str_replace($property, '', $text) );
+		$marks = get_class_property($class, 'marks');
+
+		if ( empty($marks) ) return $text;
+		return trim( str_replace($class::$marks, '', $text) );
 	}
 
 	// group by newline
@@ -409,7 +408,7 @@ class MarkdownrHTML extends MarkdownrBlock {
 
 class MarkdownrHeader extends MarkdownrBlock {
 
-	protected static $marks = array('#', '=', '-');
+	public static $marks = array('#', '=', '-');
 	protected $tag = 'h1';
 
 	protected function tag () {
@@ -453,7 +452,7 @@ class MarkdownrList extends MarkdownrBlock {
 	const ORDERED_LIST = 'ol';
 	const UNORDERED_LIST = 'ul';
 
-	protected static $marks = array('-', '+', '*');
+	public static $marks = array('-', '+', '*');
 	protected $selfnest = true;
 
 	protected function tag () {
@@ -523,7 +522,7 @@ class MarkdownrList extends MarkdownrBlock {
 
 class MarkdownrRule extends MarkdownrBlock {
 
-	protected static $marks = array('*', '-');
+	public static $marks = array('*', '-');
 	protected $tag = 'hr';
 
 	public static function match ( string $text ) {
@@ -545,7 +544,7 @@ class MarkdownrRule extends MarkdownrBlock {
 
 class MarkdownrBlockquote extends MarkdownrBlock {
 
-	protected static $marks = array('>');
+	public static $marks = array('>');
 	protected $tag = 'blockquote';
 
 	public static function match ( string $text ) {
@@ -557,7 +556,7 @@ class MarkdownrBlockquote extends MarkdownrBlock {
 // @todo MarkdownrCode should focus on tab/indent code
 class MarkdownrCode extends MarkdownrBlock {
 
-	protected static $marks = array("\t");
+	public static $marks = array("\t");
 	protected static $code = array();
 	protected static $iblocks = array('MarkdownrList', 'MarkdownrHTML'); // List of block parsers with indent capability
 	protected $tag = 'pre,code';
@@ -612,7 +611,7 @@ class MarkdownrCode extends MarkdownrBlock {
 			// Scan for tabbed code
 			if ( ! is_array($block) ) continue;
 
-			foreach ( get_class_property(self, $iblocks) as $Parser ) { // Skip blocks inside indent-aware parsers
+			foreach ( self::$iblocks as $Parser ) { // Skip blocks inside indent-aware parsers
 				if ( $i > 0 && call_user_func( array($Parser, 'match'), $blocks[ $i - 1 ]) ) {
 					$ignore = true;
 					break;
@@ -635,7 +634,7 @@ class MarkdownrCode extends MarkdownrBlock {
 
 class MarkdownrFencedCode extends MarkdownrBlock {
 
-	protected static $marks = array('```', '~~~');
+	public static $marks = array('```', '~~~');
 	protected $tag = 'pre,code';
 
 	public function markup () {
@@ -702,7 +701,7 @@ class MarkdownrInline {
 	public function scan ( string &$text ) {
 
 		$class = get_class($this);
-		$marks = get_class_property($class, $marks);
+		$marks = get_class_property($class, 'marks');
 		$token = $marks[0];
 
 		// Normalize the text to the first mark (default mark)
@@ -810,10 +809,10 @@ class MarkdownrInline {
 
 	protected function unmark ( string $text ) {
 		$class = get_class($this);
-		$property = get_class_property($class, $marks);
-		
-		if ( ! isset( $property ) ) return $text;
-		return trim( str_replace($property, '', $text) );
+		$marks = get_class_property($class, 'marks');
+
+		if ( empty($marks) ) return $text;
+		return trim( str_replace($class::$marks, '', $text) );
 	}
 
 	public static function match ( array $marks, string $text ) {
@@ -930,7 +929,7 @@ class MarkdownrInlineLink extends MarkdownrInline {
 
 	public function scan ( string &$text ) {
 		$class = get_class($this);
-		$marks = get_class_property($class, $marks);
+		$marks = get_class_property($class, 'marks');
 
 		$start = array($marks[0],$marks[2]);
 		$end = array($marks[1], $marks[3]);
@@ -1002,7 +1001,7 @@ class MarkdownrInlineLink extends MarkdownrInline {
 
 	protected function unmark ( string $text ) {
 		$class = get_class($this);
-		return trim($text, join('', get_class_property($class, $marks) ).'"\' ' );
+		return trim($text, join('', get_class_property($class, 'marks') ).'"\' ' );
 	}
 
 }

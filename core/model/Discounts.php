@@ -126,6 +126,7 @@ class ShoppDiscounts extends ListFramework {
 		if ( empty($this->request) ) return;
 		if ( $this->codeapplied( $this->request ) ) return;
 		else {
+			var_dump(__METHOD__);
 			shopp_add_error( sprintf( __('%s is not a valid code.', 'Shopp'), $this->request ) );
 			$this->request = false;
 		}
