@@ -38,6 +38,48 @@ class ProductDevAPITests extends ShoppTestCase {
 		);
 
 		shopp_add_product($args);
+
+		$args = array(
+			'name' => 'Helm Console',
+			'publish' => array('flag' => true),
+			'variants' => array(
+				'menu' => array(
+					'Type' => array('Integral Chair', 'Main Screen Control')
+				),
+				0 => array(
+					'option' => array('Type' => 'Integral Chair'),
+					'type' => 'Shipped',
+					'price' => 1024.64,
+					'sale' => array('flag'=>true, 'price' => 20.01),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 10.5, 'length' => 1.1, 'width' => 1.1, 'height' => 1.5),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 15,
+						'sku' => 'CONCHAIR-095'
+					)
+				),
+				1 => array(
+					'option' => array('Type' => 'Main Screen Control'),
+					'type' => 'Shipped',
+					'price' => 2048.00,
+					'sale' => array('flag'=>true, 'price' => 55.05),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.1, 'width' => 0.1, 'height' => 0.1),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 15,
+						'sku' => 'CONCNTRL-098'
+					)
+				)
+			),
+			'specs' => array(
+				'Supports' => 'Actionscript, Java',
+				'OS' => 'RiscOS',
+				'Processor' => 'StarARM 23000',
+				'Speed' => '340 Zeframs'
+			)
+		);
+
+		shopp_add_product($args);
 	}
 
 	function test_shopp_add_product () {
