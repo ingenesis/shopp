@@ -2248,11 +2248,11 @@ if ( ! function_exists('get_class_property') ) {
 	 * @return mixed Value of the property
 	 **/
 	function get_class_property ($classname, $property) {
-	  if( ! class_exists($classname,false) ) return;
+	  if( ! class_exists($classname, false) ) return;
 	  if( ! property_exists($classname, $property) ) return;
 
 	  $vars = get_class_vars($classname);
-	  return $vars[$property];
+	  return $vars[ $property ];
 	}
 }
 
