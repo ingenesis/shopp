@@ -331,4 +331,27 @@ class CartDevAPITests extends ShoppTestCase {
 		$added = shopp_cart_item_addons($itemkey);
 		$this->assertCount(2, $added);
 	}
+
+	/**
+	 * @depends test_shopp_cart_item_addons
+	 */
+	function test_shopp_cart_item_addons_count() {
+		$Product = shopp_product('galileo', 'slug');
+		shopp_add_cart_product($Product->id, 1);
+
+		$Items = shopp_cart_items();
+		$itemkey = key($Items); // Reliably obtain the itemkey
+
+		$addons = shopp_product_addons($Product->id);
+		$addon_p = array_shift($addons); // 1st available addon
+		$addon_q = array_shift($addons); // 2nd available addon
+
+		shopp_add_cart_item_addon($itemkey, $addon_p->id);
+		$count = shopp_cart_item_addons_count($itemkey);
+		$this->assertEquals(1, $count);
+
+		shopp_add_cart_item_addon($itemkey, $addon_q->id);
+		$count = shopp_cart_item_addons_count($itemkey);
+		$this->assertEquals(2, $count);
+	}
 }
