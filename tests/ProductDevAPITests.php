@@ -44,13 +44,13 @@ class ProductDevAPITests extends ShoppTestCase {
 			'publish' => array('flag' => true),
 			'variants' => array(
 				'menu' => array(
-					'Type' => array('Integral Chair', 'Main Screen Control')
+					'Type' => array('Integral Chair', 'Main Screen Control', 'Easy Glide')
 				),
 				0 => array(
 					'option' => array('Type' => 'Integral Chair'),
 					'type' => 'Shipped',
 					'price' => 1024.64,
-					'sale' => array('flag'=>true, 'price' => 20.01),
+					'sale' => array('flag' => true, 'price' => 20.01),
 					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 10.5, 'length' => 1.1, 'width' => 1.1, 'height' => 1.5),
 					'inventory' => array(
 						'flag' => true,
@@ -62,12 +62,24 @@ class ProductDevAPITests extends ShoppTestCase {
 					'option' => array('Type' => 'Main Screen Control'),
 					'type' => 'Shipped',
 					'price' => 2048.00,
-					'sale' => array('flag'=>true, 'price' => 55.05),
+					'sale' => array('flag' => true, 'price' => 55.05),
 					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.1, 'width' => 0.1, 'height' => 0.1),
 					'inventory' => array(
 						'flag' => true,
 						'stock' => 15,
 						'sku' => 'CONCNTRL-098'
+					)
+				),
+				2 => array(
+					'option' => array('Type' => 'Easy Glide'),
+					'type' => 'Shipped',
+					'price' => 4096.00,
+					'sale' => array('flag' => true, 'price' => 255.25),
+					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 2.0, 'length' => 1.25, 'width' => 1.1, 'height' => 1.1),
+					'inventory' => array(
+						'flag' => true,
+						'stock' => 45,
+						'sku' => 'CONEASYGLIDER-106'
 					)
 				)
 			),
@@ -875,5 +887,22 @@ class ProductDevAPITests extends ShoppTestCase {
 	//
 	// }
 
+	/**
+	 * @depends test_shopp_product_variant_options
+	 */
+	function test_shopp_product_rmv_variant() {
+		$Product = shopp_product('Helm Console', 'name');
+		$options = shopp_product_variant_options($Product->id);
+		$this->assertCount(3, $options['Type']);
 
+		// Remove a single option
+		$this->assertTrue(shopp_product_rmv_variant_option($Product->id, 1));
+		$options = shopp_product_variant_options($Product->id);
+		$this->assertCount(2, $options['Type']);
+
+		// Remove multiple options
+		$this->assertTrue(shopp_product_rmv_variant_option($Product->id, array(2, 3)));
+		$options = shopp_product_variant_options($Product->id);
+		$this->assertEmpty($options);
+	}
 }
