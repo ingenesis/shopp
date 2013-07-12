@@ -16,8 +16,14 @@
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 /**
- * shopp_add_product - comprehensive product creation through product api.  This function will do everything needed for creating a product
- * except attach product images and products.  That is done in the asset api. :)  You should be able to build an importer from another system using this function.
+ * shopp_add_product - comprehensive product creation through product api.  This function will do everything needed for
+ * creating a product except attach product images and products.  That is done in the asset api. :)  You should be able
+ * to build an importer from another system using this function.
+ *
+ * It is also possible to update an existing product (by passing the existing id as part of the $data array) or else you
+ * can alternatively use shopp_update_product() for that.
+ *
+ * @todo possibly remove the capability of passing in an id to update a product
  *
  * @author John Dillick
  * @since 1.2
@@ -279,6 +285,7 @@ function shopp_add_product ( $data = array() ) {
 /**
  * Allows products to be updated using the same data structure as shopp_add_product() (which it builds on).
  *
+ * @todo consider making a standalone function that doesn't rely on shopp_add_product(), to work around issues with multiple price objects being generated
  * @since 1.3
  *
  * @param int $id (required) product ID
