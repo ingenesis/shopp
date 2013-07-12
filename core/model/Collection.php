@@ -388,7 +388,7 @@ class ProductCollection implements Iterator {
 		$item['g:condition'] = 'new';
 		$item['g:availability'] = shopp_setting_enabled('inventory') && $product->outofstock?'out of stock':'in stock';
 
-		$price = Shopp::floatvalue(Shopp::str_true($product->sale)?$product->min['saleprice']:$product->min['price']);
+		$price = Shopp::floatval(Shopp::str_true($product->sale)?$product->min['saleprice']:$product->min['price']);
 		if (!empty($price))	{
 			$item['g:price'] = $price;
 			$item['g:price_type'] = "starting";
@@ -907,7 +907,7 @@ class ProductCategory extends ProductTaxonomy {
 
 			if (!is_array($value) && preg_match('/^.*?(\d+[\.\,\d]*).*?\-.*?(\d+[\.\,\d]*).*$/',$value,$matches)) {
 				if ('price' == $Facet->slug) { // Prices require complex matching on summary prices in the main collection query
-					list(,$min,$max) = array_map('Shopp::floatvalue',$matches);
+					list(,$min,$max) = array_map('Shopp::floatval',$matches);
 					if ($min > 0) $options['where'][] = "(s.minprice >= $min)";
 					if ($max > 0) $options['where'][] = "(s.minprice > 0 AND s.minprice <= $max)";
 

@@ -396,10 +396,10 @@ class Categorize extends AdminController {
 		// Variation price templates
 		if (!empty($_POST['price']) && is_array($_POST['price'])) {
 			foreach ($_POST['price'] as &$pricing) {
-				$pricing['price'] = Shopp::floatvalue($pricing['price'],false);
-				$pricing['saleprice'] = Shopp::floatvalue($pricing['saleprice'],false);
-				$pricing['shipfee'] = Shopp::floatvalue($pricing['shipfee'],false);
-				$pricing['dimensions'] = array_map('Shopp::floatvalue',$pricing['dimensions']);
+				$pricing['price'] = Shopp::floatval($pricing['price'],false);
+				$pricing['saleprice'] = Shopp::floatval($pricing['saleprice'],false);
+				$pricing['shipfee'] = Shopp::floatval($pricing['shipfee'],false);
+				$pricing['dimensions'] = array_map('Shopp::floatval',$pricing['dimensions']);
 			}
 		}
 

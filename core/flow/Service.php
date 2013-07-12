@@ -408,7 +408,7 @@ class Service extends AdminController {
 		if (isset($_POST['order-action']) && 'refund' == $_POST['order-action']) {
 			$user = wp_get_current_user();
 			$reason = (int)$_POST['reason'];
-			$amount = Shopp::floatvalue($_POST['amount']);
+			$amount = Shopp::floatval($_POST['amount']);
 
 			if (!empty($_POST['message'])) {
 				$message = $_POST['message'];
@@ -541,17 +541,17 @@ class Service extends AdminController {
 			$Purchased = $Purchase->purchased[$purchasedid];
 			if ( $Purchased->id ) {
 
-				$override_total = ( Shopp::floatvalue($_POST['total']) != $Purchased->total ); // Override total
+				$override_total = ( Shopp::floatval($_POST['total']) != $Purchased->total ); // Override total
 
 				$Item = $Cart->contents[$purchasedid];
 				$Item->quantity($_POST['quantity']);
-				$Item->unitprice = Shopp::floatvalue($_POST['unitprice']);
+				$Item->unitprice = Shopp::floatval($_POST['unitprice']);
 				$Item->retotal();
 				$Purchased->quantity = $Item->quantity;
 				$Purchased->unitprice = $Item->unitprice;
 				$Purchased->unittax = $Item->unittax;
 				$Purchased->total = $Item->total;
-				if ( $override_total ) $Purchased->total = Shopp::floatvalue($_POST['total']);
+				if ( $override_total ) $Purchased->total = Shopp::floatval($_POST['total']);
 				$Purchased->save();
 			}
 

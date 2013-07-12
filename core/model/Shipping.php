@@ -543,7 +543,7 @@ abstract class ShippingFramework {
 		// echo '<pre>';
 		// Evaluate each destination rule
 		foreach ($table as $index => $rate) {
-			$r = Shopp::floatvalue(isset($rate['rate'])?$rate['rate']:0);
+			$r = Shopp::floatval(isset($rate['rate'])?$rate['rate']:0);
 			if (isset($rate['tiers'])) {
 				$r = $rate['tiers'];
 				usort($r,array('ShippingFramework','_sorttier'));
@@ -740,7 +740,7 @@ abstract class ShippingFramework {
 	}
 
 	static function _sorttier ($a, $b) {
-		return Shopp::floatvalue($a['threshold']) < Shopp::floatvalue($b['threshold']) ? -1 : 1;
+		return Shopp::floatval($a['threshold']) < Shopp::floatval($b['threshold']) ? -1 : 1;
 	}
 
 
@@ -1006,11 +1006,11 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 					foreach ($table['tiers'] as $index => $t) {
 						if ($t['threshold'] == 0) continue;
 						$sum['t'] += $t['threshold'];
-						$sum['r'] += Shopp::floatvalue($t['rate']);
+						$sum['r'] += Shopp::floatval($t['rate']);
 						$c++;
 
 						$max['t'] = max($max['t'],$t['threshold']);
-						$max['r'] = max($max['r'],Shopp::floatvalue($t['rate']));
+						$max['r'] = max($max['r'],Shopp::floatval($t['rate']));
 						if ($index+1 == $tier) break;
 					}
 					$mean['t'] = $sum['t']/$c;
@@ -1019,7 +1019,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 					foreach ($table['tiers'] as $index => $t) {
 						if ($t['threshold'] == 0) continue;
 						$deltas['t'] += abs($t['threshold']-$mean['t']);
-						$deltas['r'] += abs(Shopp::floatvalue($t['rate'])-$mean['r']);
+						$deltas['r'] += abs(Shopp::floatval($t['rate'])-$mean['r']);
 						if ($index+1 == $tier) break;
 					}
 					$avedev['t'] = max(round($deltas['t']/$c,0),1);

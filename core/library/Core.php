@@ -1357,7 +1357,7 @@ abstract class ShoppCore {
 	public static function percentage ( $amount, $format = array() ) {
 		$format = currency_format($format);
 		extract($format, EXTR_SKIP);
-		$float = Shopp::floatvalue($amount, true, $format);
+		$float = Shopp::floatval($amount, true, $format);
 		$percent = numeric_format($float, $precision, $decimals, $thousands, $grouping);
 		if ( false !== strpos($percent, $decimals) ) { // Only remove trailing 0's after the decimal
 			$percent = rtrim($percent, '0');
