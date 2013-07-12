@@ -283,4 +283,28 @@ class CartDevAPITests extends ShoppTestCase {
 
 		$this->assertTrue($successfully_added);
 	}
+
+	/**
+	 * @depends test_shopp_add_cart_addon
+	 */
+	function test_shopp_rmv_cart_addon() {
+		$Product = shopp_product('galileo', 'slug');
+		shopp_add_cart_product($Product->id, 1);
+
+		$Items = shopp_cart_items();
+		$itemkey = key($Items); // Reliably obtain the itemkey
+
+		$addons = shopp_product_addons($Product->id);
+		$addon = array_shift($addons); // First available addon
+
+		shopp_add_cart_item_addon($itemkey, $addon->id);
+
+		$this->assertTrue(shopp_rmv_cart_item_addon($itemkey, $addon->id));
+
+		$successfully_removed = true;
+		foreach ( shopp_cart_item_addons($itemkey) as $existing )
+			if ( $existing->id == $addon->id ) $successfully_removed = false;
+
+		$this->assertTrue($successfully_removed);
+	}
 }
