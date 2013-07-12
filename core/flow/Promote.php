@@ -170,36 +170,36 @@ class Promote extends AdminController {
 
 
 	protected function save() {
-		if ( ! empty($_POST['save']) ) {
-			check_admin_referer('shopp-save-promotion');
+		if ( empty($_POST['save']) ) return;
 
-			if ( 'new' !== $_POST['id'] ) {
-				$Promotion = new Promotion($_POST['id']);
-			} else $Promotion = new Promotion();
+		check_admin_referer('shopp-save-promotion');
 
-			if ( ! empty($_POST['starts']['month']) && ! empty($_POST['starts']['date']) && ! empty($_POST['starts']['year']) )
-				$_POST['starts'] = mktime(0, 0, 0, $_POST['starts']['month'], $_POST['starts']['date'], $_POST['starts']['year']);
-			else $_POST['starts'] = 1;
+		if ( 'new' !== $_POST['id'] ) {
+			$Promotion = new Promotion($_POST['id']);
+		} else $Promotion = new Promotion();
 
-			if ( ! empty($_POST['ends']['month']) && ! empty($_POST['ends']['date']) && ! empty($_POST['ends']['year']) )
-				$_POST['ends'] = mktime(23, 59, 59, $_POST['ends']['month'], $_POST['ends']['date'], $_POST['ends']['year']);
-			else $_POST['ends'] = 1;
-			if ( isset($_POST['rules']) ) $_POST['rules'] = stripslashes_deep($_POST['rules']);
+		if ( ! empty($_POST['starts']['month']) && ! empty($_POST['starts']['date']) && ! empty($_POST['starts']['year']) )
+			$_POST['starts'] = mktime(0, 0, 0, $_POST['starts']['month'], $_POST['starts']['date'], $_POST['starts']['year']);
+		else $_POST['starts'] = 1;
 
-			$Promotion->updates($_POST);
-			$Promotion->save();
+		if ( ! empty($_POST['ends']['month']) && ! empty($_POST['ends']['date']) && ! empty($_POST['ends']['year']) )
+			$_POST['ends'] = mktime(23, 59, 59, $_POST['ends']['month'], $_POST['ends']['date'], $_POST['ends']['year']);
+		else $_POST['ends'] = 1;
+		if ( isset($_POST['rules']) ) $_POST['rules'] = stripslashes_deep($_POST['rules']);
 
-			do_action_ref_array('shopp_promo_saved',array(&$Promotion));
+		$Promotion->updates($_POST);
+		$Promotion->save();
 
-			// $Promotion->reset_discounts();
-			if ($Promotion->target == "Catalog")
-				$Promotion->catalog();
+		do_action_ref_array('shopp_promo_saved',array(&$Promotion));
 
-			// Stay in the editor
-			$url = add_query_arg(array('page'=>'shopp-promotions', 'id' => $Promotion->id), admin_url('admin.php'));
-			wp_redirect($url);
-			exit();
-		}
+		// $Promotion->reset_discounts();
+		if ($Promotion->target == "Catalog")
+			$Promotion->catalog();
+
+		// Stay in the editor
+		$url = add_query_arg(array('page'=>'shopp-promotions', 'id' => $Promotion->id), admin_url('admin.php'));
+		wp_redirect($url);
+		exit();
 	}
 
 	/**
