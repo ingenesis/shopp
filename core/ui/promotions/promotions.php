@@ -27,11 +27,11 @@
 		<div class="alignleft actions">
 		<select name="status">
 			<option value=""><?php _e('View All Promotions','Shopp'); ?></option>
-			<?php echo menuoptions($states,$status,true); ?>
+			<?php echo Shopp::menuoptions($states,$status,true); ?>
 		</select>
 		<select name="type">
 			<option value=""><?php _e('View All Types','Shopp'); ?></option>
-			<?php echo menuoptions($types,$type,true); ?>
+			<?php echo Shopp::menuoptions($types,$type,true); ?>
 		</select>
 		<input type="submit" id="filter-button" value="<?php _e('Filter','Shopp'); ?>" class="button-secondary" />
 		</div>
@@ -80,18 +80,18 @@
 
 			</td>
 			<td class="discount column-discount<?php echo in_array('discount',$hidden)?' hidden':''; ?>"><?php
-				if ($Promotion->type == "Percentage Off") echo percentage((float)$Promotion->discount);
-				if ($Promotion->type == "Amount Off") echo money((float)$Promotion->discount);
+				if ($Promotion->type == "Percentage Off") echo Shopp::percentage((float)$Promotion->discount);
+				if ($Promotion->type == "Amount Off") echo Shopp::money((float)$Promotion->discount);
 				if ($Promotion->type == "Free Shipping") echo shopp_setting("free_shipping_text");
 				if ($Promotion->type == "Buy X Get Y Free") echo __('Buy','Shopp').' '.$Promotion->buyqty.' '.__('Get','Shopp').' '.$Promotion->getqty.' '.__('Free','Shopp');
 			?></td>
 			<td class="applied column-applied<?php echo in_array('applied',$hidden)?' hidden':''; ?>"><?php echo $Promotion->target; ?></td>
 			<td class="eff column-eff<?php echo in_array('eff',$hidden)?' hidden':''; ?>"><strong><?php echo $states[$Promotion->status]; ?></strong><?php
 				$starts = (mktimestamp($Promotion->starts) > 1) ?
-				                 _d(get_option('date_format'),mktimestamp($Promotion->starts)) :
-				                 _d(get_option('date_format'),mktimestamp($Promotion->created));
-				$ends = (mktimestamp($Promotion->ends) > 1) ?
-				               " — " . _d(get_option('date_format'),mktimestamp($Promotion->ends)) :
+				                 Shopp::_d(get_option('date_format'), Shopp::mktimestamp($Promotion->starts)) :
+				                 Shopp::_d(get_option('date_format'), Shopp::mktimestamp($Promotion->created));
+				$ends = (Shopp::mktimestamp($Promotion->ends) > 1) ?
+				               " — " . Shopp::_d(get_option('date_format'), Shopp::mktimestamp($Promotion->ends)) :
 				               ", " . __('does not expire','Shopp');
 				echo "<br />".$starts.$ends;
 			?></td>
@@ -113,10 +113,10 @@
 /* <![CDATA[ */
 jQuery(document).ready( function($) {
 	var m = {
-			none:<?php _jse('Select some promotions!','Shopp'); ?>,
-			enable:<?php _jse('Are you sure you want to enable the selected promotions?','Shopp'); ?>,
-			disable:<?php _jse('Are you sure you want to disable the selected promotions?','Shopp'); ?>,
-			delete:<?php _jse('Are you sure you want to delete the selected promotions?','Shopp'); ?>
+			none:<?php Shopp::_jse('Select some promotions!','Shopp'); ?>,
+			enable:<?php Shopp::_jse('Are you sure you want to enable the selected promotions?','Shopp'); ?>,
+			disable:<?php Shopp::_jse('Are you sure you want to disable the selected promotions?','Shopp'); ?>,
+			delete:<?php Shopp::_jse('Are you sure you want to delete the selected promotions?','Shopp'); ?>
 		},form = $('#promotions');
 
 	pagenow = 'shopp_page_shopp-promotions';
