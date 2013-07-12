@@ -441,7 +441,7 @@ class Setup extends AdminController {
 		if (!empty($_POST['save']) && empty($_POST['module']) ) {
 			check_admin_referer('shopp-settings-shipping');
 
-			$_POST['settings']['order_shipfee'] = floatvalue($_POST['settings']['order_shipfee']);
+			$_POST['settings']['order_shipfee'] = Shopp::floatvalue($_POST['settings']['order_shipfee']);
 
 			// Recount terms when this setting changes
 			if ( isset($_POST['settings']['inventory']) &&
@@ -583,11 +583,11 @@ class Setup extends AdminController {
 					// Sterilize $values
 					foreach ($_POST[$module]['table'] as $i => &$row) {
 
-						if (isset($row['rate'])) $row['rate'] = floatvalue($row['rate']);
+						if (isset($row['rate'])) $row['rate'] = Shopp::floatvalue($row['rate']);
 						if (!isset($row['tiers'])) continue;
 
 						foreach ($row['tiers'] as &$tier) {
-							if (isset($tier['rate'])) $tier['rate'] = floatvalue($tier['rate']);
+							if (isset($tier['rate'])) $tier['rate'] = Shopp::floatvalue($tier['rate']);
 						}
 
 					}

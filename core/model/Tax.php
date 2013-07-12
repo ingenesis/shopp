@@ -256,7 +256,7 @@ class ShoppTax {
 		$base = shopp_setting('base_operations');
 		$format = $base['currency']['format'];
 		$format['precision'] = 3;
-		return floatvalue($amount,true,$format);
+		return Shopp::floatvalue($amount,true,$format);
 	}
 
 	/**

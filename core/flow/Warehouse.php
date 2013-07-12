@@ -811,12 +811,12 @@ class Warehouse extends AdminController {
 
 				// Remove VAT amount to save in DB
 				if (shopp_setting_enabled('tax_inclusive') && !$excludetax && isset($priceline['tax']) && Shopp::str_true($priceline['tax'])) {
-					$priceline['price'] = (floatvalue($priceline['price'])/(1+$taxrate));
-					$priceline['saleprice'] = (floatvalue($priceline['saleprice'])/(1+$taxrate));
+					$priceline['price'] = (Shopp::floatvalue($priceline['price'])/(1+$taxrate));
+					$priceline['saleprice'] = (Shopp::floatvalue($priceline['saleprice'])/(1+$taxrate));
 				}
-				$priceline['shipfee'] = floatvalue($priceline['shipfee']);
+				$priceline['shipfee'] = Shopp::floatvalue($priceline['shipfee']);
 				if (isset($priceline['recurring']['trialprice']))
-					$priceline['recurring']['trialprice'] = floatvalue($priceline['recurring']['trialprice']);
+					$priceline['recurring']['trialprice'] = Shopp::floatvalue($priceline['recurring']['trialprice']);
 
 				if ($Price->stock != $priceline['stocked']) {
 					$priceline['stock'] = $priceline['stocked'];
@@ -826,7 +826,7 @@ class Warehouse extends AdminController {
 
 				// Save 'price' meta records after saving the price record
 				if (isset($priceline['dimensions']) && is_array($priceline['dimensions']))
-					$priceline['dimensions'] = array_map('floatvalue',$priceline['dimensions']);
+					$priceline['dimensions'] = array_map('Shopp::floatvalue',$priceline['dimensions']);
 
 				$settings = array('donation','recurring','membership','dimensions');
 

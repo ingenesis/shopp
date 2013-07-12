@@ -1,6 +1,6 @@
 <?php
 /**
- * FloatValueTests
+ * Shopp::floatvalueTests
  *
  *
  *
@@ -12,13 +12,13 @@
  **/
 
 /**
- * FloatValueTests
+ * Shopp::floatvalueTests
  *
  * @author
  * @since 1.2
  * @package shopp
  **/
-class FloatValueTests extends ShoppTestCase {
+class Shopp::floatvalueTests extends ShoppTestCase {
 
     /**
      * @dataProvider dot_decimals_set
@@ -156,4 +156,4 @@ class FloatValueTests extends ShoppTestCase {
 
 	}
 
-} // end FloatValueTests class
+} // end Shopp::floatvalueTests class

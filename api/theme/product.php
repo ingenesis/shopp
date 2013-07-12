@@ -147,7 +147,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		}
 		if (array_key_exists('stock',$options)) 	$_[] = $addon->stock;
 		if (array_key_exists('weight',$options)) 	$_[] = round($addon->weight, 3) . (false !== $weightunit ? " $weightunit" : false);
-		if (array_key_exists('shipfee',$options))	$_[] = money(floatvalue($addon->shipfee));
+		if (array_key_exists('shipfee',$options))	$_[] = money(Shopp::floatvalue($addon->shipfee));
 		if (array_key_exists('sale',$options))		return ($addon->sale == "on");
 		if (array_key_exists('shipping',$options))	return ($addon->shipping == "on");
 		if (array_key_exists('tax',$options))		return ($addon->tax == "on");
@@ -1096,7 +1096,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		}
 		if (array_key_exists('stock',$options)) 	$_[] = $variation->stock;
 		if (array_key_exists('weight',$options)) 	$_[] = round($variation->weight, 3) . ($weightunit ? " $weightunit" : false);
-		if (array_key_exists('shipfee',$options)) 	$_[] = money(floatvalue($variation->shipfee));
+		if (array_key_exists('shipfee',$options)) 	$_[] = money(Shopp::floatvalue($variation->shipfee));
 		if (array_key_exists('sale',$options)) 		return Shopp::str_true($variation->sale);
 		if (array_key_exists('shipping',$options))	return Shopp::str_true($variation->shipping);
 		if (array_key_exists('tax',$options))		return Shopp::str_true($variation->tax);

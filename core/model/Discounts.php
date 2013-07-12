@@ -518,10 +518,10 @@ class ShoppDiscountRule {
 			case 'ends with':					return $this->endswith($subject, $value);
 
 			// Numeric operations
-			case 'is greater than':				return (floatvalue($subject,false) > floatvalue($value,false));
-			case 'is greater than or equal to':	return (floatvalue($subject,false) >= floatvalue($value,false));
-			case 'is less than':				return (floatvalue($subject,false) < floatvalue($value,false));
-			case 'Is less than or equal to':	return (floatvalue($subject,false) <= floatvalue($value,false));
+			case 'is greater than':				return (Shopp::floatvalue($subject,false) > Shopp::floatvalue($value,false));
+			case 'is greater than or equal to':	return (Shopp::floatvalue($subject,false) >= Shopp::floatvalue($value,false));
+			case 'is less than':				return (Shopp::floatvalue($subject,false) < Shopp::floatvalue($value,false));
+			case 'Is less than or equal to':	return (Shopp::floatvalue($subject,false) <= Shopp::floatvalue($value,false));
 		}
 
 		return false;
@@ -541,8 +541,8 @@ class ShoppDiscountRule {
 	private function isequalto ( $subject, $value, $type = 'string' ) {
 
 		if ( 'float' == $type ) {
-			$subject = floatvalue($subject);
-			$value = floatvalue($value);
+			$subject = Shopp::floatvalue($subject);
+			$value = Shopp::floatvalue($value);
 			return ( $subject != 0 && $value != 0 && $subject == $value );
 		}
 

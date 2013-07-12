@@ -212,8 +212,8 @@ class SearchParser extends SearchTextFilters {
 		if (empty($matches)) return false;
 		$_->op = $matches[0][0][0];
 		$_->op = (in_array($_->op,array("<",">")))?$_->op:'';
-		$_->min = floatvalue($matches[0][1]);
-		$_->max = floatvalue($matches[0][4]);
+		$_->min = Shopp::floatvalue($matches[0][1]);
+		$_->max = Shopp::floatvalue($matches[0][4]);
 		$_->target = $_->min;
 		if ($_->max > 0) $_->op = "-"; // Range matching
 

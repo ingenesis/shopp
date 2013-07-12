@@ -43,8 +43,8 @@
 				<?php
 					$media_buttons = ( defined('SHOPP_EDITOR_MEDIA_BTNS') && SHOPP_EDITOR_MEDIA_BTNS );
 					wp_editor($Category->description, 'content', array( 'media_buttons' => $media_buttons ));
+					wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
 				?>
-				<?php wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false ); ?>
 				</div>
 
 			<?php

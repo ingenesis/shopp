@@ -51,7 +51,7 @@ class Promotion extends DatabaseObject {
 			foreach ($this->rules as $rule) {
 
 				if (Promotion::$values[$rule['property']] == "price")
-					$value = floatvalue($rule['value']);
+					$value = Shopp::floatvalue($rule['value']);
 				else $value = $rule['value'];
 
 				switch($rule['logic']) {
@@ -172,9 +172,9 @@ class Promotion extends DatabaseObject {
 			// String or Numeric operations
 			case "Is equal to":
 			 	if($property && Promotion::$values[$property] == 'price') {
-					return ( floatvalue($subject) != 0
-					&& floatvalue($value) != 0
-					&& floatvalue($subject) == floatvalue($value));
+					return ( Shopp::floatvalue($subject) != 0
+					&& Shopp::floatvalue($value) != 0
+					&& Shopp::floatvalue($subject) == Shopp::floatvalue($value));
 				} else {
 					if (is_array($subject)) return (in_array($value,$subject));
 					return ("$subject" === "$value");
@@ -183,9 +183,9 @@ class Promotion extends DatabaseObject {
 			case "Is not equal to":
 				if (is_array($subject)) return (!in_array($value,$subject));
 				return ("$subject" !== "$value"
-						|| (floatvalue($subject) != 0
-						&& floatvalue($value) != 0
-						&& floatvalue($subject) != floatvalue($value)));
+						|| (Shopp::floatvalue($subject) != 0
+						&& Shopp::floatvalue($value) != 0
+						&& Shopp::floatvalue($subject) != Shopp::floatvalue($value)));
 						break;
 
 			// String operations
@@ -220,16 +220,16 @@ class Promotion extends DatabaseObject {
 
 			// Numeric operations
 			case "Is greater than":
-				return (floatvalue($subject,false) > floatvalue($value,false));
+				return (Shopp::floatvalue($subject,false) > Shopp::floatvalue($value,false));
 				break;
 			case "Is greater than or equal to":
-				return (floatvalue($subject,false) >= floatvalue($value,false));
+				return (Shopp::floatvalue($subject,false) >= Shopp::floatvalue($value,false));
 				break;
 			case "Is less than":
-				return (floatvalue($subject,false) < floatvalue($value,false));
+				return (Shopp::floatvalue($subject,false) < Shopp::floatvalue($value,false));
 				break;
 			case "Is less than or equal to":
-				return (floatvalue($subject,false) <= floatvalue($value,false));
+				return (Shopp::floatvalue($subject,false) <= Shopp::floatvalue($value,false));
 				break;
 		}
 

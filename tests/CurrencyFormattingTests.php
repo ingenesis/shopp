@@ -196,7 +196,7 @@ class CurrencyFormatting extends ShoppTestCase {
 		$this->assertEquals(round($float, $format['precision']), Shopp::floatval($formatted, true, $format), "Float value failed for country code $code");
 
 		$nf = numeric_format($float,$format['precision'],$format['decimals'],$format['thousands'],$format['grouping']);
-		$this->assertEquals(round($float,$format['precision']),floatvalue($nf,true,$format),"Float value failed to reverse the numeric format of $nf for country code $code ".serialize($format));
+		$this->assertEquals(round($float,$format['precision']),Shopp::floatvalue($nf,true,$format),"Float value failed to reverse the numeric format of $nf for country code $code ".serialize($format));
 
 	}
 
