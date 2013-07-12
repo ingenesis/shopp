@@ -319,15 +319,15 @@ class CartDevAPITests extends ShoppTestCase {
 		$itemkey = key($Items); // Reliably obtain the itemkey
 
 		$addons = shopp_product_addons($Product->id);
-		$addonp = array_shift($addons); // 1st available addon
-		$addonq = array_shift($addons); // 2nd available addon
+		$addon_p = array_shift($addons); // 1st available addon
+		$addon_q = array_shift($addons); // 2nd available addon
 
-		shopp_add_cart_item_addon($itemkey, $addonp->id);
+		shopp_add_cart_item_addon($itemkey, $addon_p->id);
 		$added = shopp_cart_item_addons($itemkey);
 		$this->assertTrue(is_array($added));
 		$this->assertCount(1, $added);
 
-		shopp_add_cart_item_addon($itemkey, $addonq->id);
+		shopp_add_cart_item_addon($itemkey, $addon_q->id);
 		$added = shopp_cart_item_addons($itemkey);
 		$this->assertCount(2, $added);
 	}
