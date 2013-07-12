@@ -41,7 +41,7 @@ class ItemQuantity extends ShippingFramework implements ShippingModule {
 			$tiers = array_reverse($tiers);
 			foreach ($tiers as $tier) {
 				extract($tier);
-				$amount = floatvalue($rate);			// Capture the rate amount
+				$amount = Shopp::floatval($rate);			// Capture the rate amount
 				if ((int)$this->items >= (int)$threshold) break;
 			}
 
