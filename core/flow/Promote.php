@@ -227,7 +227,7 @@ class Promote extends AdminController {
 	public function layout () {
 		$Shopp = Shopp::object();
 		$Admin =& $Shopp->Flow->Admin;
-		include SHOPP_PATH . 'core/ui/promotions/ui.php' ;
+		include SHOPP_PATH . '/core/ui/promotions/ui.php' ;
 	}
 
 	/**
