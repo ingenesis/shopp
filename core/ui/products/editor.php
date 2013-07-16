@@ -65,7 +65,7 @@
 			?>
 			</div>
 			</div>
-
+			<div class="clear">&nbsp;</div>
 		</div> <!-- #poststuff -->
 	</form>
 </div>
