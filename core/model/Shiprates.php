@@ -24,9 +24,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 class ShoppShiprates extends ListFramework {
 
 	private $selected = false;		// The currently selected shipping method
-	private $fees = 0;				// Merchant shipping fees
-	private $shippable = 0;			// Tracks the total number of shippable items
-	private $freeitems = 0;			// Tracks the total number of shipped items that are eligible for free shipping
+	private $fees = array();		// Tracks per-item (key) merchant shipping fees (value)
+	private $shippable = array();	// Tracks the shippable item ids (key) and if they are free (value)
 	private $free = false;			// Free shipping
 	private $realtime = false;		// Flag for when realtime shipping systems are enabled
 
@@ -83,13 +82,11 @@ class ShoppShiprates extends ListFramework {
 	public function init () {
 
 		$this->fees = 0;
-		$this->shippable = 0;
-		$this->freeitems = 0;
 
 	}
 
 	/**
-	 * Adds up line item shipping properties
+	 * Add a shippable item to track properties
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.3
@@ -99,9 +96,27 @@ class ShoppShiprates extends ListFramework {
 	 **/
 	public function item ( ShoppShippableItem $Item ) {
 
-		$this->shippable++;
-		$this->fees += $Item->fees;
-		if ( $Item->shipsfree ) $this->freeitems++;
+		$this->shippable[ $Item->id ] = $Item->shipsfree;
+		$this->fees[ $Item->id ] = $Item->fees;
+
+	}
+
+	/**
+	 * Remove a line item shipping entry if it exists
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param string $id The item id to remove
+	 * @return void
+	 **/
+	public function takeoff ( string $id ) {
+
+		if ( isset($this->shippable[ $id ]) )
+			unset($this->shippable[ $id ]);
+
+		if ( isset($this->fees[ $id ]) )
+			unset($this->fees[ $id ]);
 
 	}
 
@@ -114,7 +129,7 @@ class ShoppShiprates extends ListFramework {
 	 * @return float The shipping fee amount
 	 **/
 	public function fees () {
-		return (float)shopp_setting('order_shipfee') + $this->fees;
+		return (float)shopp_setting('order_shipfee') + array_sum($this->fees);
 	}
 
 	/**
@@ -153,7 +168,7 @@ class ShoppShiprates extends ListFramework {
 		$amount = $selection->amount;				// regardless of free shipping
 
 		// Override the amount for free shipping or when all items in the order ship free
-		if ( $this->free() || $this->shippable == $this->freeitems ) $amount = 0;
+		if ( $this->free() || count($this->shippable) == array_sum($this->shippable) ) $amount = 0;
 
 		return (float)$amount;
 	}
@@ -169,7 +184,7 @@ class ShoppShiprates extends ListFramework {
 	 * @return void
 	 **/
 	public function track ( string $name, &$value ) {
-		$this->track[ $name ] = $value;
+		$this->track[ $name ] = &$value;
 	}
 
 	/**
@@ -297,6 +312,7 @@ class ShoppShiprates extends ListFramework {
 	 * @return boolean True if the current request is the same as the prior request
 	 **/
 	private function requested () {
+
 		if ( is_string($this->track) ) $request = $this->track;
 		else $request = hash('crc32b', serialize($this->track));
 
@@ -306,7 +322,7 @@ class ShoppShiprates extends ListFramework {
 	}
 
 	public function __sleep () {
-		return array('selected','fees','shippable','freeitems','free','request','_list','_added','_checks');
+		return array('selected','fees','shippable','free','request','_list','_added','_checks');
 	}
 
 }
@@ -389,6 +405,7 @@ class ShoppShippableItem {
 	private $class;
 	private $Object;
 
+	public $id = false;
 	public $fees = 0;
 	public $weight = 0;
 	public $length = 0;
@@ -411,6 +428,7 @@ class ShoppShippableItem {
 		$Item = $this->Object;
 		if ( ! $Item->shipped ) return false;
 
+		$this->id = $Item->fingerprint();
 		$this->fees = $Item->shipfee;
 		$this->weight = $Item->weight;
 		$this->length = $Item->length;

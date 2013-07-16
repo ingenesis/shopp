@@ -88,6 +88,7 @@ class ShoppCart extends ListFramework {
 		add_action('shopp_session_reset', array($this, 'clear') );
 
 		add_action('shopp_cart_item_retotal', array($this, 'processtime') );
+
 		add_action('shopp_init', array($this, 'tracking'));
 
 		// Recalculate cart based on logins (for customer type discounts)
@@ -315,7 +316,7 @@ class ShoppCart extends ListFramework {
 				$TaxTotal->unlink($id);
 		}
 
-		// $Shipping->item( $id );
+		$Shipping->takeoff( $id );
 
 		do_action_ref_array('shopp_cart_remove_item', array($Item->fingerprint(), $Item));
 		return $this->remove($id);
@@ -506,25 +507,22 @@ class ShoppCart extends ListFramework {
 	public function tracking () {
 
 		$Shopp = Shopp::object();
-		$Order = ShoppOrder();
+		$ShippingModules = $Shopp->Shipping;
 
+		$Order = ShoppOrder();
 		$ShippingAddress = $Order->Shipping;
 		$Shiprates = $Order->Shiprates;
-		$ShippingModules = $Shopp->Shipping;
 
 		// Tell Shiprates to track changes for this data...
 		$Shiprates->track('shipcountry', $ShippingAddress->country);
-		$Shiprates->track('shipstate', $ShippingAddress->Shipping->state);
-		$Shiprates->track('shippostcode', $ShippingAddress->Shipping->postcode);
+		$Shiprates->track('shipstate', $ShippingAddress->state);
+		$Shiprates->track('shippostcode', $ShippingAddress->postcode);
 
-		$shipped = $this->shipped();
-		$Shiprates->track('items', $this->shipped );
+		$Shiprates->track('items', $this->shipped() );
 
 		$Shiprates->track('modules', $ShippingModules->active);
 		$Shiprates->track('postcodes', $ShippingModules->postcodes);
 		$Shiprates->track('realtime', $ShippingModules->realtime);
-
-		add_action('shopp_cart_item_totals', array($Shiprates, 'init'));
 
 	}
 

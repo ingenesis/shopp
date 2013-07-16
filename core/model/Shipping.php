@@ -540,6 +540,9 @@ abstract class ShippingFramework {
 		// Sort table rules more specific to more generic matching
 		usort($table,array('ShippingFramework','_sorttable'));
 
+		// print_r($table);
+		// exit;
+
 		// echo '<pre>';
 		// Evaluate each destination rule
 		foreach ($table as $index => $rate) {
@@ -731,12 +734,15 @@ abstract class ShippingFramework {
 
 		foreach ($c as $id => $r) {
 			$i = strpos($r['destination'],',') !== false?count(explode(',',$r['destination'])):1;
+			if ( '*' == $r['destination'] ) $i = 0;
 			if (!empty($r['postcode']) && $r['postcode'] != '*')
 				$i += strpos($r['postcode'],'*') !== false ? 5 : 6;
 			$c[$id] = $i;
 		}
 
-		return ($c[0] < $c[1]);
+		if ( $c[0] < $c[1] ) return 1;
+		elseif ( $c[0] > $c[1] ) return -1;
+		else return 0;
 	}
 
 	static function _sorttier ($a, $b) {
