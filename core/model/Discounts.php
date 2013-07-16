@@ -29,13 +29,19 @@ class ShoppDiscounts extends ListFramework {
 
 	public function request ( string $request = null ) {
 
-		if ( isset($_REQUEST['promocode']) && ! empty($_REQUEST['promocode']) )
-			$this->request = trim($_REQUEST['promocode']);
+		$this->promocode();
 
 		// Override the request
 		if ( ! is_null($request) ) $this->request = $request;
 
 		return $this->request;
+
+	}
+
+	public function promocode () {
+
+		if ( isset($_REQUEST['promocode']) && ! empty($_REQUEST['promocode']) )
+			$this->request = trim($_REQUEST['promocode']);
 
 	}
 
@@ -126,7 +132,6 @@ class ShoppDiscounts extends ListFramework {
 		if ( empty($this->request) ) return;
 		if ( $this->codeapplied( $this->request ) ) return;
 		else {
-			var_dump(__METHOD__);
 			shopp_add_error( sprintf( __('%s is not a valid code.', 'Shopp'), $this->request ) );
 			$this->request = false;
 		}

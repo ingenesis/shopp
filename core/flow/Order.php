@@ -82,7 +82,7 @@ class ShoppOrder {
 		if ( ! defined('SHOPP_TXNLOCK_TIMEOUT')) define('SHOPP_TXNLOCK_TIMEOUT',10);
 
 		add_action('parse_request', array($this, 'request'));
-		add_action('parse_request', array($this->Discounts, 'request'));
+		add_action('parse_request', array($this->Discounts, 'promocode'));
 
 		// Order processing
 		add_action('shopp_process_order', array($this, 'validate'), 7);
