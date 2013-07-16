@@ -35,22 +35,6 @@ class ShoppTax {
 	private $Customer = false;	// The current ShoppCustomer to calculate taxes for
 
 	/**
-	 * CartTax constructor
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.1
-	 *
-	 * @return void
-	 **/
-	public function __construct () {
-
-		// $this->inclusive = shopp_setting_enabled('tax_inclusive');
-		// $this->enabled = shopp_setting_enabled('taxes');
-		// $this->shipping = shopp_setting_enabled('tax_shipping');
-
-	}
-
-	/**
 	 * Converts a provided item to a ShoppTaxableItem
 	 *
 	 * @author Jonathan Davis

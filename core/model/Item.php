@@ -848,7 +848,7 @@ class ShoppCartItem {
 
 		if ( $this->istaxed ) {
 			$Tax = ShoppOrder()->Tax;
-
+			$this->taxes = array();
 			// For all the price units (base product and any addons),
 			// distribute discounts across taxable amounts using weighted averages
    			$_ = array();
