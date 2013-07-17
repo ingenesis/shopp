@@ -46,30 +46,9 @@ function shopp_add_product ( $data = array() ) {
 	$Product = new Product();
 
 	// Set Product publish status
-	if ( isset($data['publish']) && isset($data['publish']['flag']) && $data['publish']['flag'] ) {
-		if ( isset($data['publish']['publishtime']['month'])
-			&& isset($data['publish']['publishtime']['day'])
-			&& isset($data['publish']['publishtime']['year'])
-			&& isset($data['publish']['publishtime']['hour'])
-			&& isset($data['publish']['publishtime']['minute'])
-			&& isset($data['publish']['publishtime']['meridian']) ) {
-
-			if ($data['publish']['publishtime']['meridian'] == "PM" && $data['publish']['publishtime']['hour'] < 12)
-				$data['publish']['publishtime']['hour'] += 12;
-
-			$Product->publish = mktime( $data['publish']['publishtime']['hour'],
-								$data['publish']['publishtime']['minute'],
-								0,
-								$data['publish']['publishtime']['month'],
-								$data['publish']['publishtime']['day'],
-								$data['publish']['publishtime']['year'] );
-			$Product->status = 'future';
-		} else {
-			// Auto set the publish date if not set (or more accurately, if set to an irrelevant timestamp)
-			if ($Product->publish <= 86400) $Product->publish = null;
-		}
-	} else {
-		$Product->publish = 0;
+	if ( isset($data['publish']) ) {
+		$Product->publish = _shopp_product_publish_date($data['publish']);
+		if ( $Product->publish > 0 ) $Product->status = 'future';
 	}
 
 	// Allow existing Products to be updated
@@ -2427,4 +2406,39 @@ function shopp_product_addon_set_donation ( $addon = false, $settings = array() 
  **/
 function shopp_product_addon_set_subscription ( $addon = false, $settings = array() ) {
 	return shopp_product_variant_set_subscription ( $addon, $settings, 'addon' );
+}
+
+/**
+ * Helper to assess publishtime data when creating/updating a product.
+ *
+ * @param $publish
+ * @return int|null
+ */
+function _shopp_product_publish_date($publish) {
+	if ( isset($publish) && isset($publish['flag']) && $publish['flag'] ) {
+		if ( isset($publish['publishtime']['month'])
+			&& isset($publish['publishtime']['day'])
+			&& isset($publish['publishtime']['year'])
+			&& isset($publish['publishtime']['hour'])
+			&& isset($publish['publishtime']['minute'])
+			&& isset($publish['publishtime']['meridian']) ) {
+
+			if ($publish['publishtime']['meridian'] == "PM" && $publish['publishtime']['hour'] < 12)
+				$publish['publishtime']['hour'] += 12;
+
+			$time = mktime( $publish['publishtime']['hour'],
+				$publish['publishtime']['minute'],
+				0,
+				$publish['publishtime']['month'],
+				$publish['publishtime']['day'],
+				$publish['publishtime']['year'] );
+		} else {
+			// Auto set the publish date if not set (or more accurately, if set to an irrelevant timestamp)
+			$time = null;
+		}
+	} else {
+		$time = 0;
+	}
+
+	return $time;
 }
