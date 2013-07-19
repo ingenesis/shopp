@@ -43,6 +43,9 @@ class ShoppDiscounts extends ListFramework {
 		if ( isset($_REQUEST['promocode']) && ! empty($_REQUEST['promocode']) )
 			$this->request = trim($_REQUEST['promocode']);
 
+		if ( isset($_REQUEST['removecode']) && ! empty($_REQUEST['removecode']) )
+			$this->removecode(trim($_REQUEST['removecode']));
+
 	}
 
 	/**
@@ -232,6 +235,14 @@ class ShoppDiscounts extends ListFramework {
 			$this->codes[ strtolower($rule['value']) ][] = $Promo->id;
 
 		}
+
+	}
+
+	private function removecode ( integer $id ) {
+
+		if ( ! $this->exists($id) ) return false;
+
+		$this->remove($id);
 
 	}
 

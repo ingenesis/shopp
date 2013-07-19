@@ -262,6 +262,9 @@ class ShoppCartThemeAPI implements ShoppAPI {
 			case ShoppOrderDiscount::AMOUNT_OFF: $string .= money($Discount->discount()) . $options['label']; break;
 			case ShoppOrderDiscount::BOGOF: list($buy, $get) = $Discount->discount(); $string .= sprintf(__('Buy %s get %s free', 'Shopp'), $buy, $get); break;
 		}
+
+		$string .= '&nbsp;<a href="' . Shopp::url(array('removecode' => $Discount->id()), 'cart') . '" class="shoppui-remove-sign"><span class="hidden">' . Shopp::__('Remove Discount') . '</span></a>';
+
 		if ( ! empty($options['after']) ) $string .= $options['after'];
 
 		return $string;
