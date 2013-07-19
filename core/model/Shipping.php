@@ -906,7 +906,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 					$_[] = '<th scope="col">'.__('Postal Code','Shopp').'</th>';
 					if (!$norates)
 					$_[] = '<th class="num rate" scope="col">'.__('Rate','Shopp').'</th>';
-					$_[] = '<th class="delete control" scope="col"><img src="'.SHOPP_ICONS_URI.'/clear.png" width="26" height="16" /></th>';
+					$_[] = '<th class="delete control" scope="col"><div>&nbsp;</div></th>';
 				$_[] = '</tr>';
 			$_[] = '</thead>';
 			$_[] = '<tbody>';
@@ -941,7 +941,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 			$_[] = $this->location_fields($row,$setting);
 		if (!$norates)
 			$_[] = '<td class="num rate"><input type="text" name="'.$this->module.'[table]['.$row.'][rate]" size="7" class="money selectall" value="'.$rate.'" /></td>';
-		$_[] = '<td class="delete control"><button type="submit" name="deleterow" class="delete'.($row == 0?' hidden':'').'" value="'.$row.'"><img src="'.SHOPP_ICONS_URI.'/delete.png" width="16" height="16" /></button></td>';
+		$_[] = '<td class="delete control">' . ShoppUI::button('delete', 'deleterow', array('class' => 'delete' . ($row == 0 ? ' hidden' : ''), 'value' => $row)) . '</td>';
 		$_[] = '</tr>';
 
 		return join('',$_);
@@ -1056,7 +1056,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 			$_[] = '<th scope="col">'.__('Destination','Shopp').'</th>';
 			$_[] = '<th scope="col">'.__('Postal Code','Shopp').'</th>';
 			$_[] = '<th scope="col">'.sprintf(__('Rates by %s','Shopp'),"{$unit[0]}".((isset($unit[1]) && !empty($unit[1]))?" ({$unit[1]})":'') ).'</th>';
-			$_[] = '<th class="delete control" scope="col"><img src="'.SHOPP_ICONS_URI.'/clear.png" width="26" height="16" /></th>';
+			$_[] = '<th class="delete control" scope="col"><div>&nbsp;</div></th>';
 		$_[] = '</tr>';
 		$_[] = '</thead>';
 		$_[] = '<tbody>';
@@ -1078,7 +1078,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 
 			$_[] = '</td>';
 			$_[] = '<td class="delete control">';
-			$_[] = '<button type="submit" name="deleterow" class="delete'.($row == 0?' hidden':'').'" value="'.$row.'"><img src="'.SHOPP_ICONS_URI.'/delete.png" width="16" height="16" /></button>';
+			$_[] = ShoppUI::button('delete', 'deleterow', array('class' => 'delete' . ($row == 0?' hidden':''), 'value' => $row));
 			$_[] = '</td>';
 		$_[] = '</tr>';
 		$_[] = '</tbody>';
@@ -1105,10 +1105,10 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 
 		$_ = array();
 		$_[] = '<tr>';
-			$_[] = '<td class="control"><button type="submit" name="deletetier" class="delete'.($tier == 0?' hidden':'').'" value="'.("$row,$tier").'"><img src="'.SHOPP_ICONS_URI.'/delete.png" width="16" height="16" /></button></td>';
+			$_[] = '<td class="control">' . ShoppUI::button('delete', 'deletetier', array('class' => 'delete' . ($tier == 0 ? ' hidden' : ''), 'value' => "$row,$tier")) . '</td>';
 			$_[] = '<td class="unit leftfield"><label><input type="text" name="'.$this->module.'[table]['.$row.'][tiers]['.$tier.'][threshold]" size="7" value="'.$setting['threshold'].'" class="threshold selectall '.$threshold_class.'" /> '.$unit.' '.__('and above','Shopp').'</label></td>';
 			$_[] = '<td class="rate rightfield"><input type="text" name="'.$this->module.'[table]['.$row.'][tiers]['.$tier.'][rate]" size="7" class="rate selectall '.$rate_class.'" value="'.$setting['rate'].'" /></td>';
-			$_[] = '<td class="control"><button type="submit" name="addtier" value="'."$row,$tier".'" class="add"><img src="'.SHOPP_ICONS_URI.'/add.png" width="16" height="16" /></button></td>';
+			$_[] = '<td class="control">' . ShoppUI::button('add', 'addtier') . '</td>';
 		$_[] = '</tr>';
 
 		return join('',$_);

@@ -188,7 +188,7 @@ var currencyFormat = <?php $base = shopp_setting('base_operations'); echo json_e
 		}
 
 		var cell = $('<td></td>').appendTo(row);
-		var deleteButton = $('<button type="button" class="delete"></button>').html('<img src="<?php echo SHOPP_PLUGINURI; ?>/core/ui/icons/delete.png" alt=<?php _jse('Delete','Shopp'); ?> width="16" height="16" />').appendTo(cell).click(function () { if (i > 1) $(row).remove(); }).attr('opacity',0);
+		var deleteButton = $('<?php echo ShoppUI::button('delete', 'delete', array('type' => 'button')); ?>').appendTo(cell).click(function () { if (i > 1) $(row).remove(); }).attr('opacity',0);
 
 		var properties_name = (type=='cartitem')?'rules[item]['+i+'][property]':'rules['+i+'][property]';
 		var properties = $('<select name="'+properties_name+'" class="ruleprops"></select>').appendTo(cell);
@@ -203,7 +203,7 @@ var currencyFormat = <?php $base = shopp_setting('base_operations'); echo json_e
 		var value = $('<span></span>').appendTo(cell);
 
 		var addspan = $('<span></span>').appendTo(cell);
-		$('<button type="button" class="add"></button>').html('<img src="<?php echo SHOPP_PLUGINURI; ?>/core/ui/icons/add.png" alt=<?php _jse('Add','Shopp'); ?> width="16" height="16" />').appendTo(addspan).click(function () { new Conditional(type,false,row); });
+		$('<?php echo ShoppUI::button('add', 'add', array('type' => 'button')); ?>').appendTo(addspan).click(function () { new Conditional(type,false,row); });
 
 		cell.hover(function () {
 			if (i > 1) deleteButton.css({'opacity':100,'visibility':'visible'});

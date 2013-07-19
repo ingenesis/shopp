@@ -110,14 +110,26 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		if (!$O->loaded) $O->load($options);
 		if (count($O->products) == 0) return false;
 
+		// Supported arrow styles
+		$styles = array(
+			'arrow',
+			'chevron-sign',
+			'circle-arrow',
+			'caret'
+		);
+
 		$defaults = array(
 			'imagewidth' => '96',
 			'imageheight' => '96',
 			'fit' => 'all',
-			'duration' => 500
+			'duration' => 500,
+			'style' => 'chevron-sign'
 		);
 		$options = array_merge($defaults,$options);
 		extract($options, EXTR_SKIP);
+
+		if ( ! in_array($style, $styles) )
+			$style = $defaults['style'];
 
 		$string = '<div class="carousel duration-'.$duration.'">';
 		$string .= '<div class="frame">';
@@ -129,8 +141,8 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			$string .= '</a></li>';
 		}
 		$string .= '</ul></div>';
-		$string .= '<button type="button" name="left" class="left">&nbsp;</button>';
-		$string .= '<button type="button" name="right" class="right">&nbsp;</button>';
+		$string .= '<button type="button" name="left" class="left shoppui-' . $style . '-left"><span class="hidden">' . Shopp::__('Previous Page') . '</span></button>';
+		$string .= '<button type="button" name="right" class="right shoppui-' . $style . '-right"><span class="hidden">' . Shopp::__('Next Page') . '</span></button>';
 		$string .= '</div>';
 		return $string;
 	}
@@ -294,7 +306,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 				$_[] = '<li>';
 				$_[] = '<strong>'.self::facet_name(false,false,$O).':</strong> ';
 				$_[] = self::facet_filter(false,false,$O);
-				$_[] = sprintf(' <a href="%s" class="cancel">%s</a>',self::facet_link(false,false,$O),'X');
+				$_[] = sprintf(' <a href="%s" class="shoppui-remove-sign cancel"><span class="hidden">%s</span></a>', self::facet_link(false, false, $O), Shopp::__('Remove Filter'));
 				$_[] = '</li>';
 			}
 			$_[] = '</ul>';

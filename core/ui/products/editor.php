@@ -82,7 +82,6 @@ var flashuploader = <?php echo ($uploader == 'flash' && !(false !== strpos(strto
 	priceTypes = <?php echo json_encode($priceTypes) ?>,
 	billPeriods = <?php echo json_encode($billPeriods) ?>,
 	shiprates = <?php echo json_encode($shiprates); ?>,
-	buttonrsrc = '<?php echo includes_url('images/upload.png'); ?>',
 	uidir = '<?php echo SHOPP_ADMIN_URI; ?>',
 	siteurl = '<?php bloginfo('url'); ?>',
 	screenid = '<?php echo get_current_screen()->id; ?>',

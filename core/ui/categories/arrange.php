@@ -49,7 +49,7 @@
 
 		?>
 		<tr class="<?php echo $classes; ?>" rel="<?php echo $Category->slug; ?>">
-			<td><button type="button" name="top" alt="<?php _e('Move to the top','Shopp'); ?>&hellip;" class="moveto top">&nbsp;</button><button type="button" name="bottom" alt="<?php _e('Move to the bottom','Shopp'); ?>&hellip;" class="moveto bottom">&nbsp;</button><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit','Shopp'); ?> &quot;<?php echo $CategoryName; ?>&quot;'><?php echo str_repeat("&#8212; ",$Category->depth); echo $CategoryName; ?></a>
+			<td><button type="button" name="top" alt="<?php $title = Shopp::__('Move to the top&hellip;'); echo $title; ?>" class="shoppui-step-top"><span class="hidden"><?php echo $title; ?></span></button><button type="button" name="bottom" alt="<?php $title = Shopp::__('Move to the bottom&hellip;'); echo $title; ?>" class="shoppui-step-bottom"><span class="hidden"><?php echo $title; ?></span></button><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit','Shopp'); ?> &quot;<?php echo $CategoryName; ?>&quot;'><?php echo str_repeat("&#8212; ",$Category->depth); echo $CategoryName; ?></a>
 			<input type="hidden" name="id" value="<?php echo $Category->id; ?>" /><input type='hidden' name='position[<?php echo $Category->id; ?>]' value="<?php echo $Category->priority; ?>" size="4" class="num selectall" /></td>
 			<th scope='row' width="48"><button type="button" name="collapse" class="collapsing closed">&nbsp;</button></th>
 		</tr>

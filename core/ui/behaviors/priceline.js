@@ -400,7 +400,7 @@ function Priceline (id,options,data,target,attachment) {
 	};
 
 	_.download = function (d) {
-		var hd,ui,hd2;
+		var hd,ui,hd2,fc;
 		hd = $('<th><label for="download-'+i+'">'+PRODUCT_DOWNLOAD_LABEL+'</label></th>').appendTo(headingsRow);
 		ui = $('<td width="31%"><input type="hidden" name="'+fn+'[downloadpath]" id="download_path-'+i+'"/><input type="hidden" name="'+fn+'[downloadfile]" id="download_file-'+i+'"/><div id="file-'+i+'" class="status">'+NO_DOWNLOAD+'</div></td>').appendTo(inputsRow);
 
@@ -410,8 +410,8 @@ function Priceline (id,options,data,target,attachment) {
 		_.selector = $('#file-selector-'+i).FileChooser(i,_.file);
 
 		if (d && d.id) {
-			if (d.mime) d.mime = d.mime.replace(/\//gi," ");
-			_.file.attr('class','file '+d.mime).html('<div class="icon">'+d.mime+'</div>'+d.name+'<br /><small>'+readableFileSize(d.size)+'</small>').click(function () {
+			fc = d.mime.replace('/',' ');
+			_.file.attr('class','file').html('<div class="icon shoppui-file '+fc+'"></div>'+d.name+'<br /><small>'+readableFileSize(d.size)+'</small>').click(function () {
 				window.location.href = adminurl+"admin.php?src=download&shopp_download="+d.id;
 			});
 		}
@@ -539,6 +539,7 @@ function Priceline (id,options,data,target,attachment) {
 		headingsRow.empty();
 		inputsRow.empty();
 		var ui = type.val();
+
 		if (ui == "Shipped") _.Shipped(data);
 		if (ui == "Virtual") _.Virtual(data);
 		if (ui == "Download") _.Download(data);

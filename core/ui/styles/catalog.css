@@ -24,7 +24,9 @@
 #shopp-cart ul li:before,
 #shopp-cart #shopp-cart-ajax ul li:before,
 #shopp ul.breadcrumb li:before { content: ""; }
+.widget span.hidden,
 #shopp div.hidden,
+#shopp span.hidden,
 #shopp select.hidden { display: none; }
 
 #shopp .frame { border: none; }
@@ -131,7 +133,8 @@
 	background-size: 100%;
 	background-position: bottom center;
 	background-repeat: repeat-x;
-	background-image:url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMjUuMjVweCIgaGVpZ2h0PSIyMy43NXB4IiB2aWV3Qm94PSIwIDAgMjUuMjUgMjMuNzUiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDI1LjI1IDIzLjc1IiB4bWw6c3BhY2U9InByZXNlcnZlIj48bGluZWFyR3JhZGllbnQgaWQ9IlNWR0lEXzFfIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjEyLjYyNSIgeTE9IjAiIHgyPSIxMi42MjUiIHkyPSIyNC41ODE1Ij48c3RvcCBvZmZzZXQ9IjAiIHN0eWxlPSJzdG9wLWNvbG9yOiNGRkZGRkYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0eWxlPSJzdG9wLWNvbG9yOiNGMUYwRjAiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IGZpbGw9InVybCgjU1ZHSURfMV8pIiB3aWR0aD0iMjUuMjUiIGhlaWdodD0iMjMuNzUiLz48cmVjdCB5PSIxMS44NzUiIGZpbGw9IiNFREVERUUiIHdpZHRoPSIyNS4yNSIgaGVpZ2h0PSIxMS44NzUiLz48L3N2Zz4=);
+	background: -moz-linear-gradient(top, #fff, #F7F7F7 50%, #E8E8E9 55%, #E8E8E9);
+	background: -webkit-linear-gradient(top, #fff, #F7F7F7 50%, #E8E8E9 55%, #E8E8E9);
 }
 
 #shopp .views button:active {
@@ -152,13 +155,10 @@
             box-shadow: 0 0 5px rgba(0,0,0,.3);
 	
 }
-#shopp .views button > span { display: block; width: 0.875em; height: 0.875em; background-size: cover; background-repeat: no-repeat; background-position: 50% 50%; }
-#shopp .views .grid > span { 
-	background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABaPxwLAAAAD3RSTlMA4DD9ot0E376ZASsmfn85y+MYAAAAV0lEQVR4Xn2OMQ2AQBAE7wvygeQTNFz9HpAAPmjeCUhAxQtAARLwAAXdkGuug26S3eyOjFxnGrgFmBrAoA+fUKLBAmsLj8yat27X6uCRl38G/dQ0DtN4AX4TWqV8OcvVAAAAAElFTkSuQmCC);
-	background-image:none,url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDE2IDE2IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAxNiAxNiIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHBhdGggZD0iTTYuODUyLDUuNzA1YzAsMC43ODgtMC42MTQsMS40MjctMS4zNzEsMS40MjdoLTQuMTFDMC42MTQsNy4xMzIsMCw2LjQ5MywwLDUuNzA1VjEuNDI2QzAsMC42MzksMC42MTQsMCwxLjM3MSwwaDQuMTEgYzAuNzU3LDAsMS4zNzEsMC42MzksMS4zNzEsMS40MjZWNS43MDV6Ii8+PHBhdGggZD0iTTE2LDUuNzA1YzAsMC43ODgtMC42MTQsMS40MjctMS4zNywxLjQyN2gtNC4xMTFjLTAuNzU2LDAtMS4zNy0wLjYzOS0xLjM3LTEuNDI3VjEuNDI2QzkuMTQ4LDAuNjM5LDkuNzYzLDAsMTAuNTE5LDAgaDQuMTExQzE1LjM4NiwwLDE2LDAuNjM5LDE2LDEuNDI2VjUuNzA1eiIvPjxwYXRoIGQ9Ik02Ljg1MiwxNC41NzNDNi44NTIsMTUuMzYsNi4yMzgsMTYsNS40ODEsMTZoLTQuMTFDMC42MTQsMTYsMCwxNS4zNiwwLDE0LjU3M3YtNC4yNzdjMC0wLjc4OCwwLjYxNC0xLjQyOCwxLjM3MS0xLjQyOCBoNC4xMWMwLjc1NywwLDEuMzcxLDAuNjQsMS4zNzEsMS40MjhWMTQuNTczeiIvPjxwYXRoIGQ9Ik0xNiwxNC41NzNDMTYsMTUuMzYsMTUuMzg2LDE2LDE0LjYzLDE2aC00LjExMWMtMC43NTYsMC0xLjM3LTAuNjQtMS4zNy0xLjQyN3YtNC4yNzdjMC0wLjc4OCwwLjYxNC0xLjQyOCwxLjM3LTEuNDI4IGg0LjExMWMwLjc1NiwwLDEuMzcsMC42NCwxLjM3LDEuNDI4VjE0LjU3M3oiLz48L3N2Zz4K),url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABaPxwLAAAAD3RSTlMA4DD9ot0E376ZASsmfn85y+MYAAAAV0lEQVR4Xn2OMQ2AQBAE7wvygeQTNFz9HpAAPmjeCUhAxQtAARLwAAXdkGuug26S3eyOjFxnGrgFmBrAoA+fUKLBAmsLj8yat27X6uCRl38G/dQ0DtN4AX4TWqV8OcvVAAAAAElFTkSuQmCC); }
-#shopp .views .list > span { 
-	background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAPBAMAAAAfXVIcAAAAMFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABaPxwLAAAAD3RSTlMAYICw8MDyxzSnTfn9fXQ1PMtOAAAAVElEQVR4Xj3NoQ2AQBBE0d8CDo3E4k9hKABJDVcCoQcqoBFKQFEBPYA4Ekhmk3lqxc8O8ycPOY6bpZIaW3sZ2KMpbI202NVJ4ojm5RxlcuLP3vL6D9ZjOKZV9VLjAAAAAElFTkSuQmCC);
-	background-image:none,url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE2IDE2IiB4bWw6c3BhY2U9InByZXNlcnZlIj48cGF0aCBkPSJNMTYsMS4yOTJjMCwwLjY5OC0wLjQ2MiwxLjI2NC0xLjAzMSwxLjI2NEgxLjAzMUMwLjQ2MiwyLjU1NSwwLDEuOTg5LDAsMS4yOTJsMCwwYzAtMC42OTgsMC40NjItMS4yNjQsMS4wMzEtMS4yNjRoMTMuOTM4IEMxNS41MzgsMC4wMjgsMTYsMC41OTMsMTYsMS4yOTJMMTYsMS4yOTJ6Ii8+PHBhdGggZD0iTTE2LDUuNjljMCwwLjY5OC0wLjQ2MiwxLjI2NC0xLjAzMSwxLjI2NEgxLjAzMUMwLjQ2Miw2Ljk1NCwwLDYuMzg4LDAsNS42OWwwLDBjMC0wLjY5OCwwLjQ2Mi0xLjI2NCwxLjAzMS0xLjI2NGgxMy45MzggQzE1LjUzOCw0LjQyNywxNiw0Ljk5MywxNiw1LjY5TDE2LDUuNjl6Ii8+PHBhdGggZD0iTTE2LDEwLjE4M2MwLDAuNjk4LTAuNDYyLDEuMjY0LTEuMDMxLDEuMjY0SDEuMDMxQzAuNDYyLDExLjQ0NywwLDEwLjg4MSwwLDEwLjE4M2wwLDBjMC0wLjY5OCwwLjQ2Mi0xLjI2NCwxLjAzMS0xLjI2NCBoMTMuOTM4QzE1LjUzOCw4LjkxOSwxNiw5LjQ4NSwxNiwxMC4xODNMMTYsMTAuMTgzeiIvPjxwYXRoIGQ9Ik0xNiwxNC43NjRjMCwwLjY5OC0wLjQ2MiwxLjI2NC0xLjAzMSwxLjI2NEgxLjAzMUMwLjQ2MiwxNi4wMjgsMCwxNS40NjIsMCwxNC43NjRsMCwwQzAsMTQuMDY2LDAuNDYyLDEzLjUsMS4wMzEsMTMuNSBoMTMuOTM4QzE1LjUzOCwxMy41LDE2LDE0LjA2NiwxNiwxNC43NjRMMTYsMTQuNzY0eiIvPjwvc3ZnPg==),url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAPBAMAAAAfXVIcAAAAMFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABaPxwLAAAAD3RSTlMAYICw8MDyxzSnTfn9fXQ1PMtOAAAAVElEQVR4Xj3NoQ2AQBBE0d8CDo3E4k9hKABJDVcCoQcqoBFKQFEBPYA4Ekhmk3lqxc8O8ycPOY6bpZIaW3sZ2KMpbI202NVJ4ojm5RxlcuLP3vL6D9ZjOKZV9VLjAAAAAElFTkSuQmCC); }
+
+#shopp .views button > span:before { font-family:'shopp-icons';speak:none;font-style:normal;font-weight:normal;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;}
+#shopp .views .grid > span:before { content:"\e002"; }
+#shopp .views .list > span:before { content:"\e003"; }
 
 #shopp .category section.controls { margin: 1em 0; clear: both; }
 
@@ -196,14 +196,15 @@
 
 /** Category Carousel **/
 #shopp .carousel { position: relative; margin: 0; clear: both; width: 100%; }
-#shopp .carousel .frame { position: relative; margin: 0 20px; overflow: hidden; }
+#shopp .carousel .frame { font-size: 100%; position: relative; margin: 0 2em; overflow: hidden; }
 #shopp .carousel ul { position: relative; width: 999em; }
 #shopp.catalog .carousel li { display: inline-block; vertical-align: middle;}
-#shopp .carousel button { position: absolute; bottom: 50%; cursor: pointer; border: none; width: 14px; height: 14px; background-image: url('../../../core/ui/icons/carousel.png'); background-repeat: no-repeat; background-color: transparent; }
+/*#shopp .carousel button { position: absolute; bottom: 50%; cursor: pointer; border: none; width: 14px; height: 14px; background-image: url('../../../core/ui/icons/carousel.png'); background-repeat: no-repeat; background-color: transparent; }*/
+#shopp .carousel button { position: absolute; bottom: 45%; font-family: 'shopp-icons'; border: none; cursor: pointer; background: none; font-size: 1.5em; line-height: 1; padding: 0; margin: 0;}
 #shopp .carousel button.left { left: 0; }
-#shopp .carousel button.right { right: 0; background-position: -16px 0; }
-#shopp .carousel button.left:hover { background-position: 0 -16px; }
-#shopp .carousel button.right:hover { background-position: -16px -16px; }
+#shopp .carousel button.right { right: 0; }
+#shopp .carousel button.left:hover { color: #444; }
+#shopp .carousel button.right:hover { color: #444; }
 
 /** Twenty-Ten Fixes **/
 #shopp h1,#shopp h2,#shopp h3,#shopp h4,#shopp h5,#shopp h6 { clear: none; }

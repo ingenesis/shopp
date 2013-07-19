@@ -269,7 +269,8 @@ function images_meta_box ($Product) {
 					<input type="hidden" name="imagedetails[<?php echo $i; ?>][cropping][<?php echo $cache->id; ?>]" alt="<?php echo $c; ?>" value="<?php echo $cropping; ?>" class="imagecropped" />
 				<?php endforeach; endif;?>
 			</div>
-			<button type="button" name="deleteImage" value="<?php echo $Image->id; ?>" title="<?php _e('Delete product image&hellip','Shopp'); ?>" class="deleteButton"><input type="hidden" name="ieisstupid" value="<?php echo $Image->id; ?>" /><img src="<?php echo SHOPP_PLUGINURI; ?>/core/ui/icons/delete.png" alt="-" width="16" height="16" /></button></li>
+			<?php echo ShoppUI::button('delete', 'deleteImage', array('type' => 'button', 'class' => 'delete', 'value' => $Image->id, 'title' => Shopp::__('Remove image&hellip;')) ); ?>
+			</li>
 	<?php endforeach; ?>
 	</ul>
 	<div class="clear"></div>
@@ -292,7 +293,7 @@ add_meta_box(
 
 function pricing_meta_box ($Product) {
 ?>
-<div id="prices-loading" class="updating"></div>
+<div id="prices-loading"><span class="shoppui-spinner shoppui-spinfx shoppui-spinfx-steps8"></div>
 <div id="product-pricing"></div>
 
 <div id="variations">
@@ -356,7 +357,7 @@ function pricing_meta_box ($Product) {
 
 <div id="chooser">
 	<p><label for="import-url"><?php _e('Attach file by URL','Shopp'); ?>&hellip;</label></p>
-	<p><input type="text" name="url" id="import-url" class="fileimport" /><button class="button-secondary" id="attach-file"><small><?php _e('Attach File','Shopp'); ?></small></button><br /><span><label for="import-url">file:///path/to/file.zip<?php if (!in_array('http',stream_get_wrappers())): ?>, http://server.com/file.zip<?php endif; ?></label></span></p>
+	<p><span class="fileimporter"><input type="text" name="url" id="import-url" class="fileimport" /><span class="shoppui-spin-align"><span class="status"></span></span></span><button class="button-secondary" id="attach-file"><small><?php _e('Attach File','Shopp'); ?></small></button><br /><span><label for="import-url">file:///path/to/file.zip<?php if (!in_array('http',stream_get_wrappers())): ?>, http://server.com/file.zip<?php endif; ?></label></span></p>
 	<label class="alignleft"><?php _e('Select a file from your computer','Shopp'); ?>:</label>
 	<div class=""><div id="flash-upload-file"></div><button id="ajax-upload-file" class="button-secondary"><small><?php _e('Upload File','Shopp'); ?></small></button></div>
 </div>

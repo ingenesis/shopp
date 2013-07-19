@@ -45,7 +45,7 @@
 <li class="panel subpanel ${type}">
 	<div class="label">
 		<label>${label}</label>
-		<button type="button" name="delete" class="delete"><img src="<?php echo SHOPP_PLUGINURI; ?>/core/ui/icons/delete.png" alt="-" width="16" height="16" /></button>
+		<php echo ShoppUI::button('delete','delete'); ?>
 	</div>
 	<div class="ui"></div>
 </li>

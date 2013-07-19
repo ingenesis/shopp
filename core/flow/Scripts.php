@@ -201,118 +201,121 @@ function shopp_default_scripts (&$scripts) {
 	$scripts->default_version = mktime(false,false,false,1,1,2010);
 	$scripts->default_dirs = array('/ui/behaviors/','/ui/products');
 
-	$scripts->add('shopp', '/ui/behaviors/shopp.js', array('jquery'), '20100101');
+	// Short checksum for cache control that changes with Shopp versions while masking it somewhat
+	$version = dechex(crc16(SECURE_AUTH_SALT . SHOPP_VERSION));
+
+	$scripts->add('shopp', '/ui/behaviors/shopp.js', array('jquery'), $version);
 	$scripts->add_data('shopp', 'group', 1);
 
-	$scripts->add('jquery-tmpl', '/ui/behaviors/jquery/jquery.tmpl.min.js', array('jquery'), '20110401');
+	$scripts->add('jquery-tmpl', '/ui/behaviors/jquery/jquery.tmpl.min.js', array('jquery'), $version);
 	$scripts->add_data('jquery-tmpl', 'group', 1);
 
-	$scripts->add('address', '/ui/behaviors/address.js', array('shopp'), '20100101');
+	$scripts->add('address', '/ui/behaviors/address.js', array('shopp'), $version);
 	$scripts->add_data('address', 'group', 1);
 
-	$scripts->add('cart', '/ui/behaviors/cart.js', array('jquery','shopp'), '20100101');
+	$scripts->add('cart', '/ui/behaviors/cart.js', array('jquery','shopp'), $version);
 	$scripts->add_data('cart', 'group', 1);
 
-	$scripts->add('catalog', '/ui/behaviors/catalog.js', array('jquery','shopp'), '20100101');
+	$scripts->add('catalog', '/ui/behaviors/catalog.js', array('jquery','shopp'), $version);
 	$scripts->add_data('catalog', 'group', 1);
 
-	$scripts->add('calendar', '/ui/behaviors/calendar.js', array('jquery','shopp'), '20100101');
+	$scripts->add('calendar', '/ui/behaviors/calendar.js', array('jquery','shopp'), $version);
 	$scripts->add_data('calendar', 'group', 1);
 
-	$scripts->add('daterange', '/ui/behaviors/daterange.js', array('jquery','shopp', 'calendar'), '20100101');
+	$scripts->add('daterange', '/ui/behaviors/daterange.js', array('jquery','shopp', 'calendar'), $version);
 	$scripts->add_data('daterange', 'group', 1);
 
-	$scripts->add('checkout', '/ui/behaviors/checkout.js', array('jquery','shopp'), '20100101');
+	$scripts->add('checkout', '/ui/behaviors/checkout.js', array('jquery','shopp'), $version);
 	$scripts->add_data('checkout', 'group', 1);
 
-	$scripts->add('colorbox', '/ui/behaviors/colorbox.min.js', array('jquery'), '20100101');
+	$scripts->add('colorbox', '/ui/behaviors/colorbox.min.js', array('jquery'), $version);
 	$scripts->add_data('colorbox', 'group', 1);
 
-	$scripts->add('ocupload', '/ui/behaviors/ocupload.js', array('jquery'), '20100101');
+	$scripts->add('ocupload', '/ui/behaviors/ocupload.js', array('jquery'), $version);
 	$scripts->add_data('ocupload', 'group', 1);
 
-	$scripts->add('orders', '/ui/behaviors/orders.js', array('jquery'), '20100101');
+	$scripts->add('orders', '/ui/behaviors/orders.js', array('jquery'), $version);
 	$scripts->add_data('orders', 'group', 1);
 
-	$scripts->add('scalecrop', '/ui/behaviors/scalecrop.js', array('jquery','jquery-ui-core','jquery-ui-draggable'), '20100101');
+	$scripts->add('scalecrop', '/ui/behaviors/scalecrop.js', array('jquery','jquery-ui-core','jquery-ui-draggable'), $version);
 	$scripts->add_data('scalecrop', 'group', 1);
 
-	$scripts->add('priceline', '/ui/behaviors/priceline.js', array('jquery','shopp'), '20100101');
+	$scripts->add('priceline', '/ui/behaviors/priceline.js', array('jquery','shopp'), $version);
 	$scripts->add_data('priceline', 'group', 1);
 
-	$scripts->add('editors', '/ui/behaviors/editors.js', array('jquery','jquery-ui-sortable'), '20100101');
+	$scripts->add('editors', '/ui/behaviors/editors.js', array('jquery','jquery-ui-sortable'), $version);
 	$scripts->add_data('editors', 'group', 1);
 
-	$scripts->add('product-editor', '/ui/products/editor.js', array('jquery','priceline'), '20100101');
+	$scripts->add('product-editor', '/ui/products/editor.js', array('jquery','priceline'), $version);
 	$scripts->add_data('product-editor', 'group', 1);
 
-	$scripts->add('category-editor', '/ui/categories/category.js', array('jquery','priceline'), '20100101');
+	$scripts->add('category-editor', '/ui/categories/category.js', array('jquery','priceline'), $version);
 	$scripts->add_data('category-editor', 'group', 1);
 
-	$scripts->add('category-arrange', '/ui/categories/arrange.js', array('jquery','shopp'), '20100101');
+	$scripts->add('category-arrange', '/ui/categories/arrange.js', array('jquery','shopp'), $version);
 	$scripts->add_data('category-arrange', 'group', 1);
 
-	$scripts->add('products-arrange', '/ui/categories/products.js', array('jquery'), '20100101');
+	$scripts->add('products-arrange', '/ui/categories/products.js', array('jquery'), $version);
 	$scripts->add_data('products-arrange', 'group', 1);
 
-	$scripts->add('setup', '/ui/behaviors/setup.js', array('jquery'), '20100101');
+	$scripts->add('setup', '/ui/behaviors/setup.js', array('jquery'), $version);
 	$scripts->add_data('setup', 'group', 1);
 
-	$scripts->add('pageset', '/ui/behaviors/pageset.js', array('jquery'), '20100101');
+	$scripts->add('pageset', '/ui/behaviors/pageset.js', array('jquery'), $version);
 	$scripts->add_data('pageset', 'group', 1);
 
-	$scripts->add('payments', '/ui/behaviors/payments.js', array('jquery'), '20100101');
+	$scripts->add('payments', '/ui/behaviors/payments.js', array('jquery'), $version);
 	$scripts->add_data('payments', 'group', 1);
 
-	$scripts->add('shiprates', '/ui/behaviors/shiprates.js', array('jquery'), '20100101');
+	$scripts->add('shiprates', '/ui/behaviors/shiprates.js', array('jquery'), $version);
 	$scripts->add_data('shiprates', 'group', 1);
 
-	$scripts->add('taxrates', '/ui/behaviors/taxrates.js', array('jquery'), '20110721');
+	$scripts->add('taxrates', '/ui/behaviors/taxrates.js', array('jquery'), $version);
 	$scripts->add_data('taxrates', 'group', 1);
 
-	$scripts->add('imageset', '/ui/behaviors/imageset.js', array('jquery'), '20110518');
+	$scripts->add('imageset', '/ui/behaviors/imageset.js', array('jquery'), $version);
 	$scripts->add_data('imageset', 'group', 1);
 
-	$scripts->add('system', '/ui/behaviors/system.js', array('jquery'), '20120307');
+	$scripts->add('system', '/ui/behaviors/system.js', array('jquery'), $version);
 	$scripts->add_data('system', 'group', 1);
 
-	$scripts->add('shopp-swfobject', '/ui/behaviors/swfupload/plugins/swfupload.swfobject.min.js', array(), '2202');
+	$scripts->add('shopp-swfobject', '/ui/behaviors/swfupload/plugins/swfupload.swfobject.min.js', array(), $version);
 	$scripts->add_data('shopp-swfobject', 'group', 1);
 
-	$scripts->add('shopp-swfupload-queue', '/ui/behaviors/swfupload/plugins/swfupload.queue.min.js', array(), '2202');
+	$scripts->add('shopp-swfupload-queue', '/ui/behaviors/swfupload/plugins/swfupload.queue.min.js', array(), $version);
 	$scripts->add_data('shopp-swfupload-queue', 'group', 1);
 
-	$scripts->add('spin', '/ui/behaviors/spin.js', array('jquery'), '20130101');
+	$scripts->add('spin', '/ui/behaviors/spin.js', array('jquery'), $version);
 	$scripts->add_data('spin', 'group', 1);
 
-	$scripts->add('swfupload', '/ui/behaviors/swfupload/swfupload.min.js', array('jquery','shopp-swfobject'), '2202');
+	$scripts->add('swfupload', '/ui/behaviors/swfupload/swfupload.min.js', array('jquery','shopp-swfobject'), $version);
 	$scripts->add_data('swfupload', 'group', 1);
 
-	$scripts->add('suggest', '/ui/behaviors/suggest.js', array('jquery'), '20110330');
+	$scripts->add('suggest', '/ui/behaviors/suggest.js', array('jquery'), $version);
 	$scripts->add_data('suggest', 'group', 1);
 
-	$scripts->add('search-select', '/ui/behaviors/searchselect.js', array('jquery'), '20110401');
+	$scripts->add('search-select', '/ui/behaviors/searchselect.js', array('jquery'), $version);
 	$scripts->add_data('search-select', 'group', 1);
 
-	$scripts->add('membership-editor', '/ui/memberships/editor.js', array('jquery','jquery-tmpl','search-select'), '20110401');
+	$scripts->add('membership-editor', '/ui/memberships/editor.js', array('jquery','jquery-tmpl','search-select'), $version);
 	$scripts->add_data('membership-editor', 'group', 1);
 
-	$scripts->add('labelset', '/ui/behaviors/labelset.js', array('jquery','jquery-tmpl'), '20110508');
+	$scripts->add('labelset', '/ui/behaviors/labelset.js', array('jquery','jquery-tmpl'), $version);
 	$scripts->add_data('labelset', 'group', 1);
 
-	$scripts->add('flot', '/ui/behaviors/flot/jquery.flot.min.js', array('jquery'), '20121130');
+	$scripts->add('flot', '/ui/behaviors/flot/jquery.flot.min.js', array('jquery'), $version);
 	$scripts->add_data('flot', 'group', 1);
 
-	$scripts->add('flot-grow', '/ui/behaviors/flot/jquery.flot.grow.min.js', array('flot'), '20121130');
+	$scripts->add('flot-grow', '/ui/behaviors/flot/jquery.flot.grow.min.js', array('flot'), $version);
 	$scripts->add_data('flot-grow', 'group', 1);
 
-	$scripts->add('jvectormap', '/ui/behaviors/jvectormap.min.js', array('jquery'), '20121212');
+	$scripts->add('jvectormap', '/ui/behaviors/jvectormap.min.js', array('jquery'), $version);
 	$scripts->add_data('jvectormap', 'group', 1);
 
-	$scripts->add('worldmap', '/ui/behaviors/worldmap.min.js', array('jvectormap'), '20121212');
+	$scripts->add('worldmap', '/ui/behaviors/worldmap.min.js', array('jvectormap'), $version);
 	$scripts->add_data('worldmap', 'group', 1);
 
-	$scripts->add('reports', '/ui/behaviors/reports.js', array(), '20121212');
+	$scripts->add('reports', '/ui/behaviors/reports.js', array(), $version);
 	$scripts->add_data('reports', 'group', 1);
 
 }
