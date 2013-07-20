@@ -86,6 +86,7 @@ abstract class GatewayFramework {
 	var $decimals = '.';		// Default decimal separator
 	var $thousands = '';		// Default thousands separator
 	var $settings = array();	// List of settings for the module
+	var $codes = array(200);    // List of valid response codes
 
 	/**
 	 * Setup the module for runtime
@@ -249,7 +250,7 @@ abstract class GatewayFramework {
 			return false;
 		} else extract($result);
 
-		if (200 != $response['code']) {
+		if ( ! in_array($response['code'], $this->codes) ) {
 			$error = Lookup::errors('gateway','http-'.$response['code']);
 			if (empty($error)) $error = Lookup::errors('gateway','http-unkonwn');
 			new ShoppError($this->name.": $error",'gateway_comm_err',SHOPP_COMM_ERR);

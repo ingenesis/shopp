@@ -271,6 +271,7 @@ abstract class ShippingFramework {
 	public $setting = '';		// Setting name for the shipping module setting record
 	public $destinations = '';	// Destination label for settings display
 	public $settings = array();	// Settings for the shipping module
+	public $codes = array(200);    // List of valid response codes
 
 	protected $sizes = array(
 		'length' =>	array( 'min' => 1, 'max' => false, 'unit' => 'in' ),
@@ -438,7 +439,7 @@ abstract class ShippingFramework {
 			return false;
 		} else extract($result);
 
-		if (200 != $response['code']) {
+		if ( ! in_array($response['code'], $this->codes) ) {
 			$error = Lookup::errors('shipping','http-'.$response['code']);
 			if (empty($error)) $error = Lookup::errors('shipping','http-unkonwn');
 			new ShoppError($error,'shipping_comm_error',SHOPP_COMM_ERR);
