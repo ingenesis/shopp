@@ -240,7 +240,7 @@ div.comment-item:hover .row-actions { visibility:visible; }
 .priceline select.membership { width: 100px; }
 
 .shopp .icon32,
-#icon-shopp-products { background:url('../icons/shopp32.png') no-repeat; }
+#icon-shopp-products { background:url('../icons/icon.svg') no-repeat; }
 
 .pricing-table { width:100%; }
 .pricing-table tr { background:none; }
