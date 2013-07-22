@@ -55,7 +55,7 @@ class ShoppCheckout {
 
 		add_action('shopp_confirm_order', array($this, 'confirmed'));
 
-		if ( 'process' != $action) return;
+		if ( empty($action) ) return;
 		$this->Register = new ShoppRegistration();
 
 		add_action('shopp_process_shipmethod', array($this, 'shipmethod'));
