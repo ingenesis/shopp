@@ -417,8 +417,7 @@ class ShoppInstallation extends FlowController {
 	function maintenance () {
 		global $wpdb;
 
-		$db_version = intval(shopp_setting('db_version'));
-		if (!$db_version) $db_version = intval(ShoppSettings()->legacy('db_version'));
+		$db_version = ShoppSettings::dbversion();
 
 		if ( $db_version <= 1149 ) {
 			// Set mass packaging setting to 'all' for current realtime shipping rates {@see bug #1835}
