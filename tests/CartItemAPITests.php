@@ -1,6 +1,6 @@
 <?php
 /**
- * ProductAPITests
+ * CartItemAPITests
  *
  *
  * @author John Dillick
