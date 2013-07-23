@@ -402,6 +402,7 @@ class ShoppAdmin extends FlowController {
 
 		wp_enqueue_style('shopp.colorbox',SHOPP_ADMIN_URI.'/styles/colorbox.css',array(),'20110801','screen');
 		wp_enqueue_style('shopp.admin',SHOPP_ADMIN_URI.'/styles/admin.css',array(),'20110801','screen');
+		wp_enqueue_style('shopp.icons',SHOPP_ADMIN_URI.'/styles/icons.css',array(),'20110801','screen');
 		if ( 'rtl' == get_bloginfo('text_direction') )
 			wp_enqueue_style('shopp.admin-rtl',SHOPP_ADMIN_URI.'/styles/rtl.css',array(),'20110801','all');
 
@@ -451,7 +452,7 @@ class ShoppAdmin extends FlowController {
 	 **/
 	function boxhelp ($id) {
 		$helpurl = add_query_arg(array('src'=>'help','id'=>$id),admin_url('admin.php'));
-		return apply_filters('shopp_admin_boxhelp','<a href="'.esc_url($helpurl).'" class="help"></a>');
+		return apply_filters('shopp_admin_boxhelp','<a href="'.esc_url($helpurl).'" class="shoppui-question"></a>');
 	}
 
 	/**
@@ -743,15 +744,22 @@ class ShoppAdminPage {
 
 class ShoppUI {
 
-	static function button ($type,$name,$options=array()) {
-		$types = array(
-			'add' => array('class' => 'add','imgalt' => '+', 'imgsrc' => '/add.png'),
-			'delete' => array('class' => 'delete','imgalt' => '-','imgsrc' => '/delete.png')
+	static function button ( string $button, string $name, array $options = array()) {
+		$buttons = array(
+			'add' => array('class' => 'add', 'title' => Shopp::__('Add'), 'icon' => 'shoppui-plus', 'type' => 'submit'),
+			'delete' => array('class' => 'delete', 'title' => Shopp::__('Delete'), 'icon' => 'shoppui-minus', 'type' => 'submit')
 		);
-		if (isset($types[$type]))
-			$options = array_merge($types[$type],$options);
 
-		return '<button type="submit" name="'.$name.'"'.inputattrs($options).'><img src="'.SHOPP_ICONS_URI.$options['imgsrc'].'" alt="'.$options['imgalt'].'" width="16" height="16" /></button>';
+		if ( isset($buttons[ $button ]) )
+			$options = array_merge($buttons[ $button ], $options);
+
+		$types = array('submit','button');
+		if ( ! in_array($options['type'], $types))
+			$options['type'] = 'submit';
+
+		extract($options, EXTR_SKIP);
+
+		return '<button type="' . $type . '" name="' . $name . '"' . inputattrs($options) . '><span class="' . $icon . '"><span class="hidden">' . $title . '</span></span></button>';
 	}
 
 	static function template ($ui,$data=array()) {

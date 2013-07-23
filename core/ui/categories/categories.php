@@ -94,18 +94,22 @@
 
 				case 'templates':
 					$classes[] = 'num';
+					$enabled = isset($Category->spectemplates) && Shopp::str_true($Category->spectemplates);
+					$title = $enabled ? Shopp::__('Product detail templates enabled') : '';
 				?>
 					<td width="5%" class="<?php echo esc_attr(join(' ',$classes)); ?>">
-						<div class="checkbox"><?php if (isset($Category->spectemplates) && 'on' == $Category->spectemplates): ?><div class="checked">&nbsp;</div><?php else: ?>&nbsp;<?php endif; ?></div>
+						<div class="checkbox<?php echo $enabled ? ' checked': ''; ?>" title="<?php echo $title; ?>"><span class="hidden"><?php echo $title; ?></div>
 					</td>
 				<?php
 				break;
 
 				case 'menus':
 					$classes[] = 'num';
+					$enabled = isset($Category->facetedmenus) && Shopp::str_true($Category->facetedmenus);
+					$title = $enabled ? Shopp::__('Faceted search menus enabled') : '';
 				?>
 					<td width="5%" class="<?php echo esc_attr(join(' ',$classes)); ?>">
-			<div class="checkbox"><?php if (isset($Category->facetedmenus) && 'on' == $Category->facetedmenus): ?><div class="checked">&nbsp;</div><?php else: ?>&nbsp;<?php endif; ?></div>
+						<div class="checkbox<?php echo $enabled ? ' checked': ''; ?>" title="<?php echo $title; ?>"><span class="hidden"><?php echo $title; ?></div>
 					</td>
 				<?php
 				break;

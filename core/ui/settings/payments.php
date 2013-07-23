@@ -100,17 +100,17 @@
 		<?php // @todo Add title hover labels for accessibility/instructions ?>
 		<td class="processor column-processor"><?php echo esc_html($Gateway->name); ?></td>
 		<td class="supported column-supported"><?php echo join(', ',$cards); ?></td>
-		<td class="ssl column-ssl">
-			<div class="checkbox"><?php if ($Gateway->secure): ?><div class="checked">&nbsp;</div><?php else: ?>&nbsp;<?php endif; ?></div>
+		<td class="ssl column-ssl"><?php $title = $Gateway->secure ? Shopp::__('SSL/TLS Required'): Shopp::__('No SSL/TLS Required'); ?>
+			<div class="checkbox<?php echo $Gateway->secure ? ' checked' : '';  ?>" title="<?php echo $title; ?>"><span class="hidden"><?php echo $title; ?></div>
 		</td>
-		<td class="captures column-captures">
-			<div class="checkbox"><?php if ($Gateway->captures): ?><div class="checked">&nbsp;</div><?php else: ?>&nbsp;<?php endif; ?></div>
+		<td class="captures column-captures"><?php $title = $Gateway->captures ? Shopp::__('Supports delayed payment capture') : Shopp::__('No delayed payment capture support'); ?>
+			<div class="checkbox<?php echo $Gateway->captures ? ' checked' : '';  ?>" title="<?php echo $title; ?>"><span class="hidden"><?php echo $title; ?></div>
 		</td>
-		<td class="recurring column-recurring">
-			<div class="checkbox"><?php if ($Gateway->recurring): ?><div class="checked">&nbsp;</div><?php else: ?>&nbsp;<?php endif; ?></div>
+		<td class="recurring column-recurring"><?php $title = $Gateway->captures ? Shopp::__('Supports recurring payments') : Shopp::__('No recurring payment support'); ?>
+			<div class="checkbox<?php echo $Gateway->recurring ? ' checked' : '';  ?>" title="<?php echo $title; ?>"><span class="hidden"><?php echo $title; ?></div>
 		</td>
-		<td class="refunds column-refunds">
-			<div class="checkbox"><?php if ($Gateway->refunds): ?><div class="checked">&nbsp;</div><?php else: ?>&nbsp;<?php endif; ?></div>
+		<td class="refunds column-refunds"><?php $title = $Gateway->captures ? Shopp::__('Supports refund and void processing') : Shopp::__('No refund or void support'); ?>
+			<div class="checkbox<?php echo $Gateway->refunds ? ' checked' : '';  ?>" title="<?php echo $title; ?>"><span class="hidden"><?php echo $title; ?></div>
 		</td>
 	</tr>
 	<?php endforeach; ?>

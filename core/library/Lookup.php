@@ -718,7 +718,7 @@ class Lookup {
 		$_['fedex'] = new ShippingCarrier('FedEx','http://fedex.com/','*','http://www.fedex.com/Tracking?tracknumbers=%s','/^(\d{12}|\d{15}|96\d{20}|96\d{17}|96\d{13}|96\d{10})$/');
 		$_['aramex'] = new ShippingCarrier('Aramex','http://aramex.com/','*','http://www.aramex.com/express/track_results_multiple.aspx?ShipmentNumber=%s','/\d{10}/');
 		$_['dhl'] = new ShippingCarrier('DHL','http://www.dhl.com/','*','http://track.dhl-usa.com/TrackByNbr.asp?ShipmentNumber=%s','/^([A-Z]{3}\d{7}|[A-Z]{5}\d{7})/');
-		$_['tnt'] = new ShippingCarrier('TNT','http://tnt.com/','*','http://webtracker.tnt.com/webtracker/tracking.do?requestType=GEN&searchType=CON&respLang=en&respCountry=US&sourceID=1&sourceCountry=ww&cons=%s','/^([A-Z]{2}\d{9}[A-Z]{2}|\d{9})$/');
+		$_['tnt'] = new ShippingCarrier('TNT','http://tnt.com/','*','http://parcels-row.tntpost.com/mytrackandtrace/trackandtrace.aspx?lang=en&B=%s','/^([A-Z]{2}\d{9}[A-Z]{2}|\d{9})$/');
 
 		return apply_filters('shopp_shipping_carriers',$_);
 	}

@@ -1,6 +1,6 @@
 <div class="wrap shopp">
 	<div class="icon32"></div>
-	<h2><?php printf(__('Arrange Products for "%s"','Shopp'),$CategoryProducts->name); ?></h2>
+	<h2><?php printf(Shopp::__('Arrange Products for "%s"'), $CategoryProducts->name); ?></h2>
 
 	<?php do_action('shopp_admin_notice'); ?>
 
@@ -20,36 +20,102 @@
 
 	<table id="arrange-products" class="widefat" cellspacing="0">
 		<thead>
-		<tr><?php print_column_headers('shopp_page_shopp-categories'); ?></tr>
+		<tr><?php ShoppUI::print_column_headers($this->screen); ?></tr>
 		</thead>
 		<tfoot>
-		<tr><?php print_column_headers('shopp_page_shopp-categories',false); ?></tr>
+		<tr><?php ShoppUI::print_column_headers($this->screen, false); ?></tr>
 		</tfoot>
 	<?php if (sizeof($CategoryProducts) > 0): ?>
 		<tbody id="categories-table" class="list categories">
 		<?php
-		$hidden = array();
-		$hidden = get_hidden_columns('shopp_page_shopp-categories');
+		$columns = get_column_headers($this->screen);
+		$hidden = get_hidden_columns($this->screen);
 
 		$even = false;
-		foreach ($CategoryProducts as $Product):
+		foreach ( $CategoryProducts as $Product ): ?>
+		<tr<?php if (!$even) echo " class='alternate'"; $even = !$even; ?>>
+		<?php
+		foreach ($columns as $column => $column_title) {
+			$classes = array($column, "column-$column");
+			if ( in_array($column,$hidden) ) $classes[] = 'hidden';
+
+			switch ($column) {
+				case 'name':
+				?>
+					<th scope='row' class='move-column'><button type="button" name="top" alt="<?php $title = Shopp::__('Move to the top&hellip;'); echo $title; ?>" class="moveto shoppui-step-top"><span class="hidden"><?php echo $title; ?></span></button><button type="button" name="bottom" alt="<?php $title = Shopp::__('Move to the bottom&hellip;'); echo $title; ?>" class="moveto shoppui-step-bottom"><span class="hidden"><?php echo $title; ?></span></button></th>
+				<?php
+				break;
+
+				case 'title':
+					$editurl = esc_url(esc_attr(add_query_arg(array_merge(stripslashes_deep($_GET),
+						array('page'=>$this->Admin->pagename('products'),
+								'id'=>$Product->id)),
+								admin_url('admin.php'))));
+
+					$ProductName = empty($Product->name)?'('.__('no product name','Shopp').')':$Product->name;
+				?>
+				<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($ProductName); ?>&quot;'><?php echo esc_html($ProductName); ?></a>
+				<input type="hidden" name="position[<?php echo $Product->id; ?>]" value="<?php echo $Product->priority; ?>" /></td>
+				<?php
+				break;
 
 
-		$editurl = esc_url(esc_attr(add_query_arg(array_merge(stripslashes_deep($_GET),
-			array('page'=>$this->Admin->pagename('products'),
-					'id'=>$Product->id)),
-					admin_url('admin.php'))));
+				case 'sold':
+				?>
+					<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
+						<?php echo $Product->sold; ?>
+					</td>
+				<?php
+				break;
 
-		$ProductName = empty($Product->name)?'('.__('no product name','Shopp').')':$Product->name;
+				case 'gross':
+				?>
+					<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
+						<?php echo money($Product->grossed); ?>
+					</td>
+				<?php
+				break;
 
-		$stripe = (!$even)?'alternate':''; $even = !$even;
-		$classes = (empty($stripe)?'':' '.$stripe);
+				case 'price':
+					if ( Shopp::str_true($Product->sale) ) $classes[] = 'sale';
+				?>
+					<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><?php
+						shopp($Product, 'price');
+						if ( Shopp::str_true($Product->sale) ) echo '&nbsp;<span class="shoppui-tag" title="' . Shopp::__('On Sale') . '"><span class="hidden">' . Shopp::__('On Sale') . '</span></span>';
+					?>
+					</td>
+				<?php
+				break;
 
+				case 'inventory':
+				?>
+					<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
+					<?php // @todo Link inventory number to Inventory view while filtering for the product/variants
+					if ( Shopp::str_true($Product->inventory) ) {
+						$stockclass = array('stock');
+						if (!empty($Product->lowstock) && 'none' != $Product->lowstock) $stockclass[] = "lowstock $Product->lowstock";
+					 	echo '<span class="'.join(' ',$stockclass).'">'.$Product->stock.'</span>';
+					}
+					?>
+					</td>
+				<?php
+				break;
+
+				case 'featured':
+				?>
+					<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
+						<span class="feature<?php echo Shopp::str_true($Product->featured) ? ' featured ' : ' '; ?>shoppui-star"><span class="hidden"><?php Shopp::_e('Featured'); ?></span></span>
+					</td>
+				<?php
+				break;
+
+			} // end switch ($column)
+		} // end foreach ($columns)
 		?>
-		<tr class="<?php echo $classes; ?>">
-			<th scope="row" class='move-column'><button type="button" name="top" alt="<?php _e('Move to the top','Shopp'); ?>&hellip;" class="moveto top">&nbsp;</button><button type="button" name="bottom" alt="<?php _e('Move to the bottom','Shopp'); ?>&hellip;" class="moveto bottom">&nbsp;</button></th>
+
+			<!-- <th scope="row" class='move-column'><button type="button" name="top" alt="<?php $title = Shopp::__('Move to the top&hellip;'); echo $title; ?>" class="moveto shoppui-step-top"><span class="hidden"><?php echo $title; ?></span></button><button type="button" name="bottom" alt="<?php $title = Shopp::__('Move to the bottom&hellip;'); echo $title; ?>" class="moveto shoppui-step-bottom"><span class="hidden"><?php echo $title; ?></span></button></th>
 			<td><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit','Shopp'); ?> &quot;<?php echo $ProductName; ?>&quot;'><?php echo $ProductName; ?></a>
-			<input type="hidden" name="position[<?php echo $Product->id; ?>]" value="<?php echo $Product->priority; ?>" /></td>
+			<input type="hidden" name="position[<?php echo $Product->id; ?>]" value="<?php echo $Product->priority; ?>" /></td> -->
 		</tr>
 		<?php endforeach; ?>
 		</tbody>

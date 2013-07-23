@@ -194,7 +194,7 @@ class Service extends AdminController {
 						case "product":
 											$purchased = DatabaseObject::tablename(Purchased::$table);
 											$joins[$purchased] = "INNER JOIN $purchased AS p ON p.purchase = o.id";
-											$search[] = "p.name LIKE '%$keyword%' OR p.optionlabel LIKE '%$keyword%'"; break;
+											$search[] = "p.name LIKE '%$keyword%' OR p.optionlabel LIKE '%$keyword%' OR p.sku LIKE '%$keyword%'"; break;
 					}
 				}
 				if (empty($search)) $search[] = "(id='$s' OR CONCAT(firstname,' ',lastname) LIKE '%$s%')";

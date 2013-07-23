@@ -485,10 +485,21 @@ class Categorize extends AdminController {
 	 * @return void
 	 **/
 	function products_cols () {
-		register_column_headers('shopp_page_shopp-categories', array(
-			'move'=>'<img src="'.SHOPP_ADMIN_URI.'/icons/updating.gif" alt="updating" width="16" height="16" class="hidden" />',
-			'p'=>__('Product','Shopp'))
-		);
+		register_column_headers($this->screen, array(
+			'name'      => '<div class="shoppui-spin-align"><div class="shoppui-spinner shoppui-spinfx shoppui-spinfx-steps8"></div></div>',
+			'title'     => Shopp::__('Product'),
+			'sold'      => Shopp::__('Sold'),
+			'gross'     => Shopp::__('Sales'),
+			'price'     => Shopp::__('Price'),
+			'inventory' => Shopp::__('Inventory'),
+			'featured'  => Shopp::__('Featured'),
+		));
+		add_action('manage_'.$this->screen.'_columns',array($this,'products_manage_cols'));
+	}
+
+	function products_manage_cols ($columns) {
+		unset($columns['move']);
+		return $columns;
 	}
 
 	/**

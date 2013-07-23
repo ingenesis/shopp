@@ -68,7 +68,7 @@
 			</tr>
 			<tr>
 				<th scope="row" valign="top"><label for="catalog-pagination"><?php _e('Pagination','Shopp'); ?></label></th>
-				<td><input type="text" name="settings[catalog_pagination]" id="catalog-pagination" value="<?php echo esc_attr(shopp_setting('catalog_pagination')); ?>" size="4" class="selectall" />
+				<td><input type="number" name="settings[catalog_pagination]" id="catalog-pagination" value="<?php echo esc_attr(shopp_setting('catalog_pagination')); ?>" size="4" class="selectall" />
 	            <label for="catalog-pagination"><?php _e('products per page','Shopp'); ?></label></td>
 			</tr>
 			<tr>

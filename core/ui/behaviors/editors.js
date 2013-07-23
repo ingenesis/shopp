@@ -18,7 +18,7 @@ function NestedMenu (i,target,dataname,defaultlabel,data,items,sortoptions) {
 		'<input type="hidden" name="'+dataname.replace('[','-').replace(']','-')+'-sortorder[]" value="'+i+'" class="sortorder" />'+
 		'<input type="hidden" name="'+dataname+'['+i+'][id]" class="id" />'+
 		'<input type="text" name="'+dataname+'['+i+'][name]" class="label" />'+
-		'<button type="button" class="delete"><img src="'+uidir+'/icons/delete.png" alt="Delete" width="16" height="16" /></button>'+
+		'<button type="button" class="delete"><span class="shoppui-minus"></span></button>'+
 		'</li>').appendTo($(target).children('ul'));
 
 	_.moveHandle = _.element.find('div.move');
@@ -84,7 +84,7 @@ function NestedMenuOption (i,target,dataname,defaultlabel,data) {
 	_.element = $('<li class="option"><div class="move"></div>'+
 		'<input type="hidden" name="'+dataname+'['+i+'][options]['+this.index+'][id]" class="id" />'+
 		'<input type="text" name="'+dataname+'['+i+'][options]['+this.index+'][name]" class="label" />'+
-		'<button type="button" class="delete"><img src="'+uidir+'/icons/delete.png" alt="delete" width="16" height="16" /></button>'+
+		'<button type="button" class="delete"><span class="shoppui-minus"></span></button>'+
 		'</li>').appendTo(target);
 
 	_.moveHandle = _.element.find('div.move');
@@ -163,13 +163,11 @@ function addVariationOptionsMenu (data) {
 		optionsidx++;
 		optionid = option.id.val();
 
-		option.linkIcon = $('<img src="'+uidir+'/icons/linked.png" alt="linked" width="16" height="16" class="link" />').appendTo(option.moveHandle);
-		option.linked = $('<input type="hidden" name="meta[options][v]['+menu.index+'][options]['+option.index+'][linked]" class="linked" />').appendTo(option.element).change(function () {
-			if ($(this).val() == "off")	option.linkIcon.addClass('invisible');
-			if ($(this).val() == "on") option.linkIcon.removeClass('invisible');
-		});
-		if (data.linked) option.linked.val(data.linked).change();
-		else option.linked.val('off').change();
+		option.linkIcon = $('<span class="shoppui-link"></span>').appendTo(option.moveHandle);
+		option.linked = $('<input type="hidden" name="meta[options][v]['+menu.index+'][options]['+option.index+'][linked]" class="linked" />').val(data.linked?data.linked:'off').appendTo(option.element).change(function () {
+			if ($(this).val() == "on") option.linkIcon.removeClass('hidden');
+			else option.linkIcon.addClass('hidden');
+		}).change();
 
 		option.selected = function () {
 			if (option.element.hasClass('selected')) {
@@ -789,7 +787,7 @@ function ImageUploads (id,type) {
 			targetHolder.attr({'id':'image-'+image.id});
 			this.sorting.val(image.id);
 			img = $('<img src="?siid='+image.id+'" width="96" height="96" class="handle" />').appendTo(targetHolder).hide();
-			deleteButton = $('<button type="button" name="deleteImage" value="'+image.src+'" title="Delete product image&hellip;" class="deleteButton"><img src="'+uidir+'/icons/delete.png" alt="-" width="16" height="16" /></button>').appendTo($(targetHolder)).hide();
+			deleteButton = $('<button type="button" name="deleteImage" value="'+image.src+'" class="delete"><span class="shoppui-minus"></span></button>').appendTo($(targetHolder)).hide();
 
 			$(this.progressBar).animate({'width':'76px'},250,function () {
 				$(this).parent().fadeOut(500,function() {
@@ -875,7 +873,7 @@ function ImageUploads (id,type) {
 			$.fn.colorbox({'title':IMAGE_DETAILS_TEXT,'html':ui});
 
 		});
-		enableDeleteButton($(this).find('button.deleteButton'));
+		enableDeleteButton($(this).find('button.delete'));
 	});
 
 	function swfuLoaded () {
@@ -938,7 +936,7 @@ function ImageUploads (id,type) {
 		targetHolder.attr({'id':'image-'+image.id});
 		this.sorting.val(image.id);
 		img = $('<img src="?siid='+image.id+'" width="96" height="96" class="handle" />').appendTo(targetHolder).hide();
-		deleteButton = $('<button type="button" name="deleteImage" value="'+image.id+'" title="Delete product image&hellip;" class="deleteButton"><input type="hidden" name="ieisstupid" value="'+image.id+'" /><img src="'+uidir+'/icons/delete.png" alt="-" width="16" height="16" /></button>').appendTo(targetHolder).hide();
+		deleteButton = $('<button type="button" name="deleteImage" value="'+image.id+'" class="delete"><span class="shoppui-minus"></span></button>').appendTo(targetHolder).hide();
 		sorting();
 
 		this.progressBar.animate({'width':'76px'},250,function () {
@@ -975,10 +973,12 @@ function ImageUploads (id,type) {
 
 }
 
-jQuery.fn.FileChooser = function (line,status) {
+jQuery.fn.FileChooser = function (line, status) {
 	var $ = jqnc(),
 		_ = this,
-		importurl = $('#import-url'),
+		chooser = $('#chooser'),
+		importurl = chooser.find('.fileimport'),
+		importstatus = chooser.find('.status'),
 		attach = $('#attach-file'),
 		dlpath = $('#download_path-'+line),
 		dlname = $('#download_file-'+line),
@@ -990,30 +990,32 @@ jQuery.fn.FileChooser = function (line,status) {
 	_.line = line;
 	_.status = status;
 
-	importurl.unbind('keydown').unbind('keypress').suggest(
-			sugg_url+'&action=shopp_storage_suggestions&t=download',
-			{ delay:500, minchars:3, multiple:false, onSelect:function () { importurl.change(); } }
-	).change(function () {
-		var $this = $(this);
-		$this.removeClass('warning').addClass('verifying');
+	chooser.unbind('change').on('change', '.fileimport', function (e) {
+		importstatus.attr('class','status').addClass('shoppui-spinner shoppui-spinfx shoppui-spinfx-steps8');
 		$.ajax({url:fileverify_url+'&action=shopp_verify_file&t=download',
 				type:"POST",
-				data:'url='+$this.val(),
+				data:'url='+importurl.val(),
 				timeout:10000,
 				dataType:'text',
 				success:function (results) {
-					$this.attr('class','fileimport');
-					if (results == "OK") return $this.addClass('ok');
-					if (results == "NULL") $this.attr('title',FILE_NOT_FOUND_TEXT);
-					if (results == "ISDIR") $this.attr('title',FILE_ISDIR_TEXT);
-					if (results == "READ") $this.attr('title',FILE_NOT_READ_TEXT);
-					$this.addClass("warning");
+					importstatus.attr('class','status');
+					if (results == "OK") return importstatus.addClass('shoppui-ok-sign');
+					if (results == "NULL") importstatus.attr('title',FILE_NOT_FOUND_TEXT);
+					if (results == "ISDIR") importstatus.attr('title',FILE_ISDIR_TEXT);
+					if (results == "READ") importstatus.attr('title',FILE_NOT_READ_TEXT);
+					importstatus.addClass("shoppui-warning-sign");
 				}
 		});
 	});
 
+	importurl.unbind('keydown').unbind('keypress').suggest(
+		sugg_url+'&action=shopp_storage_suggestions&t=download',
+		{ delay:500, minchars:3, multiple:false, onSelect:function () { importurl.trigger('change'); } }
+	);
+
 	$(this).click(function () {
 		fileUploads.updateLine(line,status);
+		importstatus.attr('class','status');
 
 		attach.unbind('click').click(function () {
 			$.fn.colorbox.close();
@@ -1029,7 +1031,7 @@ jQuery.fn.FileChooser = function (line,status) {
 
 				completed = function (f) {
 					if (!f.name) return $this.attr('class','');
-					file.attr('class','file '+f.mime.replace('/',' ')).html(f.name+'<br /><small>'+readableFileSize(f.size)+'</small>');
+					file.attr('class','file').html('<span class="icon shoppui-file '+f.mime.replace('/',' ')+'"></span>'+f.name+'<br /><small>'+readableFileSize(f.size)+'</small>');
 					dlpath.val(f.path); dlname.val(f.name);
 					importurl.val('').attr('class','fileimport');
 				},
@@ -1076,7 +1078,7 @@ jQuery.fn.FileChooser = function (line,status) {
 
 	});
 
-	$(this).colorbox({'title':'File Selector','innerWidth':'360','innerHeight':'140','inline':true,'href':'#chooser'});
+	$(this).colorbox({'title':'File Selector','innerWidth':'360','innerHeight':'140','inline':true,'href':chooser});
 };
 
 

@@ -150,8 +150,8 @@
 						if ( Shopp::str_true($Product->sale) ) $classes[] = 'sale';
 					?>
 						<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><?php
-							shopp($Product,'price');
-							if ( Shopp::str_true($Product->sale) ) echo '<span class="saletag">'.__('On Sale','Shopp').'</span>';
+							shopp($Product, 'price');
+							if ( Shopp::str_true($Product->sale) ) echo '&nbsp;<span class="shoppui-tag" title="' . Shopp::__('On Sale') . '"><span class="hidden">' . Shopp::__('On Sale') . '</span></span>';
 						?>
 						</td>
 					<?php
@@ -174,7 +174,7 @@
 					case 'featured':
 					?>
 						<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
-							<button type="button" name="feature" value="<?php echo $Product->id; ?>" class="<?php echo Shopp::str_true($Product->featured) ? ' feature featured' : 'feature'; ?>">&nbsp;</button>
+							<button type="button" name="feature" value="<?php echo $Product->id; ?>" class="feature<?php echo Shopp::str_true($Product->featured) ? ' featured ' : ' '; ?>shoppui-star"><span class="hidden"><?php Shopp::_e('Featured'); ?></span></button>
 						</td>
 					<?php
 					break;

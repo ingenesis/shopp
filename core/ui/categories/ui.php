@@ -60,7 +60,8 @@ function images_meta_box ($Category) {
 					<input type="hidden" name="imagedetails[<?php echo $i; ?>][cropping][<?php echo $cache->id; ?>]" alt="<?php echo $c; ?>" value="<?php echo $cropping; ?>" class="imagecropped" />
 				<?php endforeach; endif;?>
 			</div>
-				<button type="button" name="deleteImage" value="<?php echo $Image->id; ?>" title="Delete category image&hellip;" class="deleteButton"><input type="hidden" name="ieisstupid" value="<?php echo $Image->id; ?>" /><img src="<?php echo SHOPP_PLUGINURI; ?>/core/ui/icons/delete.png" alt="-" width="16" height="16" /></button></li>
+			<?php echo ShoppUI::button('delete', 'deleteImage', array('type' => 'button', 'class' => 'delete deleteButton', 'value' => $Image->id, 'title' => Shopp::__('Remove image&hellip;')) ); ?>
+			</li>
 		<?php endforeach; endif; ?>
 	</ul>
 	<div class="clear"></div>
@@ -73,7 +74,7 @@ function images_meta_box ($Category) {
 		<button type="button" name="image_upload" id="image-upload" class="button-secondary"><small><?php _e('Add New Image','Shopp'); ?></small></button><br class="clear"/>
 	</div>
 
-	<?php _e('Double-click images to edit their details. Save the product to confirm deleted images.','Shopp'); ?>
+	<p><?php _e('Double-click images to edit their details. Save the product to confirm deleted images.','Shopp'); ?></p>
 <?php
 }
 add_meta_box('category-images', __('Category Images','Shopp').$Admin->boxhelp('category-editor-images'), 'images_meta_box', 'shopp_page_shopp-category', 'normal', 'core');

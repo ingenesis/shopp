@@ -9,13 +9,12 @@
 	<li id="status-${id}">
 		<span>
 		<input type="text" name="settings[order_status][${id}]" id="status-${id}" size="14" value="${label}" /><button type="button" class="delete">
-			<img src="<?php echo SHOPP_ICONS_URI; ?>/delete.png" alt="<?php _e('Delete','Shopp'); ?>" width="16" height="16" />
-		</button>
-		<select name="settings[order_states][${id}]" id="state-${id}">
+			<span class="shoppui-minus"><span class="hidden"><?php Shopp::_e('Add'); ?></span></span>
+		</button><select name="settings[order_states][${id}]" id="state-${id}">
 		<?php echo Shopp::menuoptions($states,'',true); ?>
 		</select>
 		<button type="button" class="add">
-			<img src="<?php echo SHOPP_ICONS_URI; ?>/add.png" alt="<?php _e('Add','Shopp'); ?>" width="16" height="16" />
+			<span class="shoppui-plus"><span class="hidden"><?php Shopp::_e('Add'); ?></span></span>
 		</button>
 		</span>
 	</li>
@@ -25,10 +24,8 @@
 	<script id="reasonLabel" type="text/x-jquery-tmpl">
 	<li id="status-${id}">
 		<span>
-		<input type="text" name="settings[cancel_reasons][${id}]" id="reason-${id}" size="40" value="${label}" /><button type="button" class="delete">
-			<img src="<?php echo SHOPP_ICONS_URI; ?>/delete.png" alt="<?php _e('Delete','Shopp'); ?>" width="16" height="16" />
-		</button><button type="button" class="add">
-			<img src="<?php echo SHOPP_ICONS_URI; ?>/add.png" alt="<?php _e('Add','Shopp'); ?>" width="16" height="16" />
+		<input type="text" name="settings[cancel_reasons][${id}]" id="reason-${id}" size="40" value="${label}" /><button type="button" class="delete"><span class="shoppui-minus"><span class="hidden"><?php Shopp::_e('Add'); ?></span></span></button><button type="button" class="add">
+			<span class="shoppui-plus"><span class="hidden"><?php Shopp::_e('Add'); ?></span></span>
 		</button>
 		</span>
 	</li>
@@ -61,7 +58,7 @@
 			</tr>
 			<tr>
 				<th scope="row" valign="top"><label for="accounting-serial"><?php _e('Next Order Number','Shopp'); ?></label></th>
-				<td><input type="text" name="settings[next_order_id]" id="accounting-serial" value="<?php echo esc_attr($next_setting); ?>" size="7" class="selectall" /><br />
+				<td><input type="number" name="settings[next_order_id]" id="accounting-serial" value="<?php echo esc_attr($next_setting); ?>" size="7" class="selectall" /><br />
 					<?php _e('Set the next order number to sync with your accounting systems.','Shopp'); ?></td>
 			</tr>
 			<tr>

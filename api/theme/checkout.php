@@ -473,7 +473,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	public static function checkout_function ($result, $options, $O) {
 		$Payments = $O->Payments;
 		$defaults = array(
-			'updating' => '<img src="'.SHOPP_ADMIN_URI.'/icons/updating.gif" alt="'.__('Updating','Shopp').'" width="16" height="16" />'
+			'updating' => '<div class="shoppui-spinfx-align"><span class="shoppui-spinner shoppui-spinfx shoppui-spinfx-steps8"></span></div>'
 		);
 		$options = array_merge($defaults,$options);
 		extract($options);

@@ -58,7 +58,7 @@ jQuery(document).ready( function() {
 
 		/* Recalculate positions  */
 		function updatePositions () {
-			var updates = $('#category-id'),updating = $this.find('th.column-move img');
+			var updates = $('#category-id'),updating = $this.find('th.column-name .shoppui-spinner');
 			$this.find('tbody tr input[name^=position]').each(function (p,e) {
 				var element = $(e),position = p+1;
 				if ((element.attr('alt') != '' && position != element.attr('alt')) || element.val() == '0') {
