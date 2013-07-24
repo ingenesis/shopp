@@ -2107,10 +2107,10 @@ abstract class ShoppCore {
 		if ( is_null($parameters) ) $parameters = 1;
 
 		if ( count($args) > $parameters ) {
-		    $args = array_slice($args, $parameters);
+		    $args = array_slice($args, $parameters);return count($args).' '.$parameters;
 		  	return vsprintf($text, $args);
 		}
-
+		return count($args).' '.$parameters;
 		return $text; // Do nothing
 	}
 

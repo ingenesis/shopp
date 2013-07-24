@@ -46,4 +46,15 @@ class CoreTests extends ShoppTestCase {
 		$this->context = $context;
 		return self::TRANSLATED;
 	}
+
+	public function test_sprintf_gettext() {
+		$this->markTestSkipped('Confirm with JD expected behaviour of sprintf_gettext');
+	}
+
+	/**
+	 * @depends test_sprintf_gettext
+	 */
+	public function test___() {
+		$this->markTestSkipped('Depends on skipped test test_sprintf_gettext()');
+	}
 }
