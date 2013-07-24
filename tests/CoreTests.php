@@ -57,4 +57,13 @@ class CoreTests extends ShoppTestCase {
 	public function test___() {
 		$this->markTestSkipped('Depends on skipped test test_sprintf_gettext()');
 	}
+
+	/**
+	 * Seems ini_sets for suhosin properties will not work on all runtimes, therefore we can't really simulate failure
+	 * since we can't guarantee Suhosin being available in all test environments.
+	 */
+	public function test_suhosin_warning() {
+		$is_bool = is_bool(Shopp::suhosin_warning());
+		$this->assertTrue($is_bool);
+	}
 }
