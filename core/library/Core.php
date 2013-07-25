@@ -164,7 +164,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text);
 		$args = func_get_args(); // Handle sprintf rendering
-		return Shopp::sprintf_gettext($translated, $args, 1);
+		return vsprintf($translated, $args);
 
 	}
 
@@ -177,11 +177,11 @@ abstract class ShoppCore {
 	 * @param string $text The text to translate
 	 * @return string The translated text
 	 **/
-	public static function _e ( $text) {
+	public static function _e ( $text ) {
 
 		$translated = Shopp::translate($text);
 		$args = func_get_args(); // Handle sprintf rendering
-		echo Shopp::sprintf_gettext($translated, $args, 1);
+		echo vsprintf($translated, $args);
 
 	}
 
@@ -199,7 +199,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text, $context);
 		$args = func_get_args(); // Handle sprintf rendering
-		return Shopp::sprintf_gettext($translated, $args, 2);
+		return vsprintf($translated, $args);
 
 	}
 
@@ -216,7 +216,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text);
 		$args = func_get_args(); // Handle sprintf rendering
-		$translated = Shopp::sprintf_gettext($translated, $args, 1);
+		$translated = vsprintf($translated, $args);
 
 		$Markdown = new Markdownr($translated);
 		return $Markdown->html();
@@ -235,7 +235,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text);
 		$args = func_get_args();
-		$translated = Shopp::sprintf_gettext($translated, $args, 1);
+		$translated = vsprintf($translated, $args);
 
 		$Markdown = new Markdownr($translated);
 		$Markdown->render();
@@ -256,7 +256,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text);
 		$args = func_get_args();
-		$translated = Shopp::sprintf_gettext($translated, $args, 2);
+		$translated = vsprintf($translated, $args);
 
 		$Markdown = new Markdownr($translated);
 		return $Markdown->html();
@@ -276,7 +276,7 @@ abstract class ShoppCore {
 
 		$translated = Shopp::translate($text);
 		$args = func_get_args();
-		$translated = Shopp::sprintf_gettext($translated, $args, 2);
+		$translated = vsprintf($translated, $args);
 
 		$Markdown = new Markdownr($translated);
 		$Markdown->render();
@@ -2094,27 +2094,6 @@ abstract class ShoppCore {
 	}
 
 	/**
-	 * Variable sprintf rendering for Shopp gettext wrappers
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.3
-	 *
-	 * @param string $text The text to render with sprintf
-	 * @param array $args The argument list from the calling function
-	 * @return string The sprintf rendered string
-	 **/
-	public static function sprintf_gettext ( $text, $args, $parameters = null ) {
-		if ( is_null($parameters) ) $parameters = 1;
-
-		if ( count($args) > $parameters ) {
-		    $args = array_slice($args, $parameters);return count($args).' '.$parameters;
-		  	return vsprintf($text, $args);
-		}
-		return count($args).' '.$parameters;
-		return $text; // Do nothing
-	}
-
-	/**
 	 * Detect Suhosin enabled with problematic settings
 	 *
 	 * @author Jonathan Davis
@@ -2139,7 +2118,7 @@ abstract class ShoppCore {
 		);
 	}
 
-} // End abstract class ShoppKit
+} // End abstract class ShoppCore
 
 
 
@@ -2717,11 +2696,4 @@ function value_is_true ($value) {
 
 function valid_input ($type) {
 	return Shopp::valid_input($type);
-}
-
-/**
- * @deprecated Use Shopp::
- **/
-function sprintf_gettext ( $text, $args, $parameters = null ) {
-	return Shopp::sprintf_gettext( $text, $args, $parameters );
 }
