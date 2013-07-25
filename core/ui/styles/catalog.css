@@ -18,7 +18,7 @@
 
 #shopp { position: relative; }
 #shopp ul { list-style: none; text-indent: 0; text-align: left; padding: 0; margin: 0; }
-#shopp li { background: none !important; padding: 0; margin: 0; }
+#shopp li { background: none; padding: 0; margin: 0; }
 #shopp li:before,
 #shopp-cart:before,
 #shopp-cart ul li:before,
