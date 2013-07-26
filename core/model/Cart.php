@@ -273,7 +273,7 @@ class ShoppCart extends ListFramework {
 			$Item = $NewItem;
 		}
 
-		$Totals = $this->Totals;
+		$Totals = ( false === $this->Totals ) ? new OrderTotals() : $this->Totals;
 		$Shipping = ShoppOrder()->Shiprates;
 
 		$Totals->register( new OrderAmountCartItemQuantity($Item) );
