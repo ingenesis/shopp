@@ -210,7 +210,7 @@ class Setup extends AdminController {
 			$sitekey = ShoppSupport::key();
 			$key = $_POST['updatekey'];
 			if ($key == str_repeat('0',40)) $key = $sitekey['k'];
-			Shopp::key($_POST['activation'],$key);
+			ShoppSupport::key($_POST['activation'],$key);
 		}
 
 		$sitekey = ShoppSupport::key();
