@@ -230,11 +230,11 @@ function manage_meta_box ($Purchase) {
 	<div id="major-publishing-actions">
 		<?php if (!$Purchase->isvoid()): ?>
 		<div class="alignleft">
-			<?php if (!$Purchase->captured): ?>
+			<?php if ( current_user_can('shopp_void') && ! $Purchase->captured ): ?>
 				<input type="submit" id="cancel-order" name="cancel-order" value="<?php _e('Cancel Order','Shopp'); ?>" class="button-secondary cancel" />
 			<?php endif; ?>
 			<?php
-			if ( ('CHARGED' == $Purchase->txnstatus) || ($Purchase->authorized && $Purchase->captured && $Purchase->refunded < $Purchase->total) ): ?>
+			if ( current_user_can('shopp_refund') && ( ('CHARGED' == $Purchase->txnstatus) || ($Purchase->authorized && $Purchase->captured && $Purchase->refunded < $Purchase->total) ) ): ?>
 				<input type="submit" id="refund-button" name="refund-order" value="<?php _e('Refund','Shopp'); ?>" class="button-secondary refund" />
 			<?php endif; ?>
 		</div>
@@ -244,7 +244,7 @@ function manage_meta_box ($Purchase) {
 			<?php if ( $Purchase->shipable && 'ship-notice' != $action && is_array(shopp_setting('shipping_carriers')) ): ?>
 			<input type="submit" id="shipnote-button" name="ship-notice" value="<?php _e('Send Shipment Notice','Shopp'); ?>" class="button-primary" />
 			<?php endif; ?>
-			<?php if ( ! $Purchase->captured && $Gateway && $Gateway->captures ): ?>
+			<?php if ( current_user_can('shopp_capture') && ! $Purchase->captured && $Gateway && $Gateway->captures ): ?>
 			<input type="submit" name="charge" value="<?php _e('Charge Order','Shopp'); ?>" class="button-primary" />
 			<?php endif; ?>
 		<?php endif; ?>
