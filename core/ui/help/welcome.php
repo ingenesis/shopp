@@ -3,7 +3,7 @@
 
 	<h3><?php _e('Congratulations on choosing Shopp and WordPress for your e-commerce solution!','Shopp'); ?></h3>
 
-	<?php if(shopp_suhosin_warning()): ?>
+	<?php if (Shopp::suhosin_warning()): ?>
 		<div class="error"><p><strong><?php _e('Warning!','Shopp'); ?></strong> <?php printf(__('You have the PHP Extension Suhosin Installed. You might need to change some configuration to work with Shopp. For more information, see %s"Suhosin PHP Extension Issues"%s.','Shopp'),'<a href="'.SHOPP_DOCS.'Suhosin_PHP_Extension_Issues">','</a>'); ?></p></div>
 	<?php endif; ?>
 
