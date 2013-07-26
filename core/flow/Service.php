@@ -406,6 +406,9 @@ class Service extends AdminController {
 		}
 
 		if (isset($_POST['order-action']) && 'refund' == $_POST['order-action']) {
+			if ( ! current_user_can('shopp_refund') )
+				wp_die(__('You do not have sufficient permissions to carry out this action.','Shopp'));
+
 			$user = wp_get_current_user();
 			$reason = (int)$_POST['reason'];
 			$amount = Shopp::floatval($_POST['amount']);
@@ -448,6 +451,9 @@ class Service extends AdminController {
 		}
 
 		if (isset($_POST['order-action']) && 'cancel' == $_POST['order-action']) {
+			if ( ! current_user_can('shopp_void') )
+				wp_die(__('You do not have sufficient permissions to carry out this action.','Shopp'));
+
 			// unset($_POST['refund-order']);
 			$user = wp_get_current_user();
 			$reason = (int)$_POST['reason'];
@@ -563,6 +569,9 @@ class Service extends AdminController {
 		}
 
 		if (isset($_POST['charge']) && $Gateway && $Gateway->captures) {
+			if ( ! current_user_can('shopp_capture') )
+				wp_die(__('You do not have sufficient permissions to carry out this action.','Shopp'));
+
 			$user = wp_get_current_user();
 
 			shopp_add_order_event($Purchase->id,'capture',array(
