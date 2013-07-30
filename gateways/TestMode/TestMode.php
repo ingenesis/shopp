@@ -99,7 +99,6 @@ class TestMode extends GatewayFramework {
 			'txnorigin' => $Event->txnid,
 			'fees' => 0,
 			'paymethod' => '',
-			'payid' => '',
 			'paytype' => '',
 			'payid' => '1111',
 			'amount' => $Event->amount,
