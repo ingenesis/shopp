@@ -317,9 +317,8 @@ class ShoppCartItem {
 		if ( false === $qty ) return $current;
 
 		if ( $this->type == 'Donation' && Shopp::str_true($this->donation['var']) ) {
-			if ( Shopp::str_true($this->donation['min']) && Shopp::floatval($qty) < $this->unitprice )
-				$this->unitprice = $this->unitprice;
-			else $this->unitprice = Shopp::floatval($qty,false);
+			if ( ! ( Shopp::str_true($this->donation['min']) && Shopp::floatval($qty) < $this->unitprice ) )
+				$this->unitprice = Shopp::floatval($qty,false);
 			$this->quantity = 1;
 			$qty = 1;
 		}
