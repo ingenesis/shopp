@@ -177,7 +177,6 @@ class ShoppProductThemeAPI implements ShoppAPI {
 				$O->_addon_loop = false;
 				return false;
 			}
-			return true;
 		}
 
 		if ( shopp_setting_enabled('inventory') && $O->outofstock ) return false; // Completely out of stock, hide menus
@@ -1123,7 +1122,6 @@ class ShoppProductThemeAPI implements ShoppAPI {
 				unset($O->_prices_loop);
 				return false;
 			}
-			return false;
 		}
 
 		if ( shopp_setting_enabled('inventory') && $O->outofstock ) return false; // Completely out of stock, hide menus

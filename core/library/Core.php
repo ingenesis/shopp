@@ -119,17 +119,10 @@ abstract class ShoppCore {
 	 * @return boolean
 	 **/
 	public static function maintenance () {
-
 		$db_version = intval(shopp_setting('db_version'));
 		return ( ! ShoppSettings()->available() || $db_version != DB::$version || shopp_setting_enabled('maintenance') );
-
-		// Settings unavailable
-		if ( ! ShoppSettings()->available() || 'completed' != shopp_setting('shopp_setup') )
-			return false;
-
-		shopp_set_setting('maintenance', 'on');
-		return true;
 	}
+
 	/**
 	 * Shopp wrapper for gettext translation strings (with optional context and Markdown support)
 	 *

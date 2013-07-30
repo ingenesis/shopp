@@ -95,7 +95,6 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 *
 	 * @author John Dillick
 	 * @since 1.2
-	 *
 	 **/
 	public static function _setobject ($Object, $object) {
 		if ( is_object($Object) && is_a($Object, 'Customer') ) return $Object;
@@ -104,7 +103,6 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		else {
 			return ShoppCustomer();
 		}
-		return false;
 	}
 
 	public static function account_login ($result, $options, $O) {

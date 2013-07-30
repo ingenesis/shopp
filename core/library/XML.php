@@ -354,8 +354,6 @@ class xmlQuery {
 
 		if (count($_) == 1) return $_[0];
 		else return $_;
-
-		return false;
 	}
 
 	/**

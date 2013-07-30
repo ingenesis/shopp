@@ -697,7 +697,6 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 				unset($O->_pay_loop);
 				return false;
 			}
-			return true;
 		}
 
 		$excludes = array_map('sanitize_title_with_dashes', explode(',', $exclude));

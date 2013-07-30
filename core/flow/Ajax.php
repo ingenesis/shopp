@@ -766,7 +766,6 @@ class ShoppAjax {
 		foreach ($updates as $id => $position)
 			$db->query("UPDATE $table SET priority='$position' WHERE id='$id'");
 		die('1');
-		exit();
 	}
 
 	function products_order () {
@@ -779,7 +778,6 @@ class ShoppAjax {
 		foreach ((array)$updates as $id => $position)
 			DB::query("UPDATE $wpdb->term_relationships SET term_order='".((int)$position)."' WHERE object_id='".((int)$id)."' AND term_taxonomy_id='$category'");
 		die('1');
-		exit();
 	}
 
 	function gateway_ajax () {
