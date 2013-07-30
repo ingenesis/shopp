@@ -198,7 +198,6 @@ class ImageAsset extends FileAsset {
 	 * @return bool
 	 */
 	public function directly_accessible () {
-		return false;
 		// Only determine this once then save the result
 		if ($this->is_directly_accessible === null) {
 			if (defined('SHOPP_DIRECT_IMG_MODE') && !SHOPP_DIRECT_IMG_MODE) // Direct mode can be disallowed
