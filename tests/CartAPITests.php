@@ -333,7 +333,7 @@ class CartAPITests extends ShoppTestCase {
 		ob_start();
 		if (shopp('cart','haspromos'))
 			while(shopp('cart','promos'))
-				shopp('cart','promo-discount');
+				shopp('cart','promo-discount','remove=false');
 		$actual = ob_get_contents();
 		ob_end_clean();
 
