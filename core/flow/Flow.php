@@ -124,6 +124,7 @@ class ShoppFlow {
 		if ( ! defined('WP_ADMIN') ) return false;
 		$this->Admin = new ShoppAdmin;
 		$this->Admin->menus();
+		do_action('shopp_admin_menu');
 	}
 
 	function ajax () {
