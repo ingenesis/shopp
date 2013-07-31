@@ -83,7 +83,6 @@ function shopp_admin_add_submenu ( string $label, string $page, string $menu = n
 	if ( false === $handler ) $handler = array(Shopp::object()->Flow, 'admin');
 
 	if ( ! is_callable($handler) ) {
-		echo 'here';
 		shopp_debug(__FUNCTION__ . " failed: The specified callback handler is not valid.");
 		return false;
 	}
