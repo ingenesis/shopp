@@ -400,6 +400,7 @@ ShoppLoader::map(array(
 	'orderamountitemquantity' => '/model/Totals.php',
 	'orderamountitemtax' => '/model/Totals.php',
 	'orderamountshipping' => '/model/Totals.php',
+	'orderamountshippingtax' => '/model/Totals.php',
 	'orderamounttax' => '/model/Totals.php',
 	'orderevent' => '/model/Events.php',
 	'ordereventmessage' => '/model/Events.php',
