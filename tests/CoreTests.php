@@ -113,6 +113,17 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue( false !== strpos($representation, 'some value') );
 	}
 
+	public function test_add_query_string() {
+		$url_1 = 'http://www.gutenberg.org';
+		$url_2 = 'http://www.gutenberg.org?search=html';
+		$query = 'book=Edison%27s+Conquest+of+Mars';
+		$expected_1 = 'http://www.gutenberg.org?book=Edison%27s+Conquest+of+Mars';
+		$expected_2 = 'http://www.gutenberg.org?search=html&book=Edison%27s+Conquest+of+Mars';
+
+		$this->assertTrue( Shopp::add_query_string($query, $url_1) === $expected_1 );
+		$this->assertTrue( Shopp::add_query_string($query, $url_2) === $expected_2 );
+	}
+
 	/**
 	 * Seems ini_sets for suhosin properties will not work on all runtimes, therefore we can't really simulate failure
 	 * since we can't guarantee Suhosin being available in all test environments.
