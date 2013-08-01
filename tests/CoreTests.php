@@ -139,6 +139,14 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue( in_array('Simon Pegg', $result) );
 	}
 
+	public function test_convert_unit() {
+		$this->assertTrue( 12.7 == Shopp::convert_unit(5, 'cm', 'in') );
+		$this->assertTrue( 5 == Shopp::convert_unit(12.7, 'in', 'cm') );
+		$this->assertTrue( 99.208 < Shopp::convert_unit(45, 'lb', 'kg') );
+		$this->assertTrue( 99.209 > Shopp::convert_unit(45, 'lb', 'kg') );
+		$this->assertTrue( 0 == Shopp::convert_unit(400, 'lb', 'splargons'));
+	}
+
 	/**
 	 * Seems ini_sets for suhosin properties will not work on all runtimes, therefore we can't really simulate failure
 	 * since we can't guarantee Suhosin being available in all test environments.
