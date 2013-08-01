@@ -134,14 +134,12 @@ abstract class ShoppCore {
 	 * @return string The translated text
 	 **/
 	public static function translate ( $text, $context = null ) {
-
 		$domain = __CLASS__;
 
 		if ( is_null($context) ) $string = translate( $text, $domain );
 		else $string = translate_with_gettext_context($text, $context, $domain);
 
 		return $string;
-
 	}
 
 	/**
@@ -153,12 +151,11 @@ abstract class ShoppCore {
 	 * @param string $text The text to translate
 	 * @return string The translated text
 	 **/
-	public static function __ ( $text ) {
-
-		$translated = Shopp::translate($text);
+	public static function __ () {
 		$args = func_get_args(); // Handle sprintf rendering
+		$text = array_shift($args);
+		$translated = Shopp::translate($text);
 		return vsprintf($translated, $args);
-
 	}
 
 	/**
@@ -170,12 +167,9 @@ abstract class ShoppCore {
 	 * @param string $text The text to translate
 	 * @return string The translated text
 	 **/
-	public static function _e ( $text ) {
-
-		$translated = Shopp::translate($text);
-		$args = func_get_args(); // Handle sprintf rendering
-		echo vsprintf($translated, $args);
-
+	public static function _e () {
+		$args = func_get_args();
+		echo call_user_func_array(array(__CLASS__, '__'), $args);
 	}
 
 	/**
@@ -188,12 +182,12 @@ abstract class ShoppCore {
 	 * @param string $context An explination of how and where the text is used
 	 * @return string The translated text
 	 **/
-	public static function _x ( $text, $context ) {
-
+	public static function _x () {
+		$args = func_get_args();
+		$text = array_shift($args);
+		$context = array_shift($args);
 		$translated = Shopp::translate($text, $context);
-		$args = func_get_args(); // Handle sprintf rendering
 		return vsprintf($translated, $args);
-
 	}
 
 	/**
@@ -205,11 +199,9 @@ abstract class ShoppCore {
 	 * @param string $text The text to translate
 	 * @return string The translated Markdown-rendered HTML text
 	 **/
-	public static function _m ( $text ) {
-
-		$translated = Shopp::translate($text);
-		$args = func_get_args(); // Handle sprintf rendering
-		$translated = vsprintf($translated, $args);
+	public static function _m () {
+		$args = func_get_args();
+		$translated = call_user_func_array(array(__CLASS__, '__'), $args);
 
 		$Markdown = new Markdownr($translated);
 		return $Markdown->html();
@@ -225,14 +217,8 @@ abstract class ShoppCore {
 	 * @return void
 	 **/
 	public static function _em ( $text ) {
-
-		$translated = Shopp::translate($text);
 		$args = func_get_args();
-		$translated = vsprintf($translated, $args);
-
-		$Markdown = new Markdownr($translated);
-		$Markdown->render();
-
+		echo call_user_func_array(array(__CLASS__, '_m'), $args);
 	}
 
 	/**
@@ -246,10 +232,8 @@ abstract class ShoppCore {
 	 * @return string The translated text
 	 **/
 	public static function _mx ( $text, $context ) {
-
-		$translated = Shopp::translate($text);
 		$args = func_get_args();
-		$translated = vsprintf($translated, $args);
+		$translated = call_user_func_array(array(__CLASS__, '_x'), $args);
 
 		$Markdown = new Markdownr($translated);
 		return $Markdown->html();
@@ -266,14 +250,10 @@ abstract class ShoppCore {
 	 * @return string The translated text
 	 **/
 	public static function _emx ( $text, $context ) {
-
-		$translated = Shopp::translate($text);
 		$args = func_get_args();
-		$translated = vsprintf($translated, $args);
-
-		$Markdown = new Markdownr($translated);
-		$Markdown->render();
+		echo call_user_func_array(array(__CLASS__, '_mx'), $args);
 	}
+
 	/**
 	 * Converts timestamps to formatted localized date/time strings
 	 *
