@@ -66,6 +66,7 @@ class CoreTests extends ShoppTestCase {
 		$translation = Shopp::_x($string, $context, $part);
 		$this->assertTrue( $translation === self::TRANSLATED );
 		$this->assertTrue( $this->context === $context );
+		$this->assertTrue( $this->domain === 'ShoppCore' );
 	}
 
 	protected function setup_translation_filters() {
@@ -73,12 +74,19 @@ class CoreTests extends ShoppTestCase {
 		add_filter('gettext_with_context', array($this, 'filter_gettext_with_context'), 10, 4);
 	}
 
+	/**
+	 * Substitutes a language translation to ensure the core lib functions are reaching WP's l10n/i18n funcs.
+	 */
 	public function filter_gettext($translation, $text, $domain) {
 		remove_filter('gettext', array($this, 'filter_gettext'), 10, 3);
 		$this->domain = $domain;
 		return self::TRANSLATED;
 	}
 
+	/**
+	 * As filter_gettext() but also records the context passed to WP's l10n/i18n (ie, to help ensure it is
+	 * consistently ShoppCore that is being passed).
+	 */
 	public function filter_gettext_with_context($translation, $text, $context, $domain) {
 		remove_filter('gettext_with_context', array($this, 'filter_gettext_with_context'), 10, 4);
 		$this->domain = $domain;
