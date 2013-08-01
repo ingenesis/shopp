@@ -29,6 +29,21 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue($this->domain === 'ShoppCore');
 	}
 
+	/**
+	 * @depends test_translate
+	 */
+	public function test___() {
+		$string = 'It is the woman from Ceres. She was taken prisoner by the Martians during their last invasion of that world, and since then has been a slave in the palace of the Emperor.';
+		$this->assertTrue( (Shopp::__($string) === $string) );
+
+		$string = 'Apparently her great stature had enabled her to escape, while her %s had been %s.';
+		$part_1 = 'masters';
+		$part_2 = 'drowned';
+		$complete = 'Apparently her great stature had enabled her to escape, while her masters had been drowned.';
+
+		$this->assertTrue( (Shopp::__($string, $part_1, $part_2) === $complete) );
+	}
+
 	protected function setup_translation_filters() {
 		add_filter('gettext', array($this, 'filter_gettext'), 10, 3);
 		add_filter('gettext_with_context', array($this, 'filter_gettext_with_context'), 10, 4);
@@ -45,13 +60,6 @@ class CoreTests extends ShoppTestCase {
 		$this->domain = $domain;
 		$this->context = $context;
 		return self::TRANSLATED;
-	}
-
-	/**
-	 * @depends test_sprintf_gettext
-	 */
-	public function test___() {
-		$this->markTestSkipped('Depends on skipped test test_sprintf_gettext()');
 	}
 
 	/**
