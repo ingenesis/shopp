@@ -53,7 +53,19 @@ class CoreTests extends ShoppTestCase {
 		Shopp::_e($string, $part);
 		$result = ob_get_clean();
 
-		$this->assertTrue( ($result === $complete) );
+		$this->assertTrue( $result === $complete );
+	}
+
+	public function test__x() {
+		$this->setup_translation_filters();
+
+		$string = '"Let us take %s with us," I suggested, "and since she can speak the language of the Martians we shall probably have no difficulty in arriving at an understanding."';
+		$part = 'Aina';
+		$context = "Edison's Conquest of Mars";
+
+		$translation = Shopp::_x($string, $context, $part);
+		$this->assertTrue( $translation === self::TRANSLATED );
+		$this->assertTrue( $this->context === $context );
 	}
 
 	protected function setup_translation_filters() {
