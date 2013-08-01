@@ -44,6 +44,18 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue( (Shopp::__($string, $part_1, $part_2) === $complete) );
 	}
 
+	public function test__e() {
+		$string = 'The fleet was, accordingly, concentrated, and we rapidly approached the great %s palace.';
+		$part = 'Martian';
+		$complete = 'The fleet was, accordingly, concentrated, and we rapidly approached the great Martian palace.';
+
+		ob_start();
+		Shopp::_e($string, $part);
+		$result = ob_get_clean();
+
+		$this->assertTrue( ($result === $complete) );
+	}
+
 	protected function setup_translation_filters() {
 		add_filter('gettext', array($this, 'filter_gettext'), 10, 3);
 		add_filter('gettext_with_context', array($this, 'filter_gettext_with_context'), 10, 4);
