@@ -103,6 +103,16 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue( false !== strpos($representation, 'some value') );
 	}
 
+	public function test_var_dump() {
+		$object = new stdClass;
+		$object->some_property = 'some value';
+		$representation = Shopp::var_dump($object);
+
+		// Not testing against a string literal as presence of xdebug for instance may vary the result format
+		$this->assertTrue( false !== strpos($representation, 'some_property') );
+		$this->assertTrue( false !== strpos($representation, 'some value') );
+	}
+
 	/**
 	 * Seems ini_sets for suhosin properties will not work on all runtimes, therefore we can't really simulate failure
 	 * since we can't guarantee Suhosin being available in all test environments.
