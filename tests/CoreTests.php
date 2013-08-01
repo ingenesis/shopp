@@ -124,6 +124,21 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue( Shopp::add_query_string($query, $url_2) === $expected_2 );
 	}
 
+	public function test_array_filter_keys() {
+		$source = array(
+			'Original Captain' => 'William Shatner',
+			'Rebooted Captain' => 'Chris Pine',
+			'Original Chief Engineer' => 'James Doohan',
+			'Rebooted Chief Engineer' => 'Simon Pegg'
+		);
+
+		$mask = array('Original Captain', 'Rebooted Chief Engineer');
+		$result = Shopp::array_filter_keys($source, $mask);
+
+		$this->assertTrue( 2 === count($result) );
+		$this->assertTrue( in_array('Simon Pegg', $result) );
+	}
+
 	/**
 	 * Seems ini_sets for suhosin properties will not work on all runtimes, therefore we can't really simulate failure
 	 * since we can't guarantee Suhosin being available in all test environments.
