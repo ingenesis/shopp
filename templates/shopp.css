@@ -21,6 +21,7 @@
 
 .categories ul li a.current { font-weight: bold; }
 #shopp .category { position: relative; }
+#shopp .category-description { padding-bottom: 14px; }
 #shopp .views { display: inline; }
 /*#shopp .views button { border: 1px solid transparent; background: none; cursor: pointer; padding: 2px; margin-bottom: -3px;  }
 #shopp .views button.hover { background-color: #ebebeb; border: 1px solid #777; }*/
