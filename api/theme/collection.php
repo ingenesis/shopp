@@ -154,7 +154,20 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		return self::image($result, $options, $O);
 	}
 
-	static function description ($result, $options, $O) { return isset($O->description) ? $O->description : '';  }
+	static function description ($result, $options, $O) {
+		$defaults = array(
+			'collapse' => true,
+			'wrap' => true,
+			'before' => '<div class="category-description">',
+			'after' => '</div>'
+		);
+		$options = array_merge($defaults,$options);
+		extract($options, EXTR_SKIP);
+
+		if ( ( Shopp::str_true($collapse) && empty($O->description)) || ! isset($O->description) ) return '';
+		if ( ! Shopp::str_true($wrap) ) $before = $after = '';
+		return $before . $O->description . $after;
+	}
 
 
 	static function is_facet_filtered ($result, $options, $O) {

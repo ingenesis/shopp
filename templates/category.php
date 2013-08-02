@@ -11,6 +11,8 @@
  **/
 ?>
 
+<?php shopp('collection.description') ?>
+
 <?php if ( shopp( 'collection.hasproducts', 'load=coverimages' ) ) : ?>
 	<div class="category">
 		<section class="navigation controls">

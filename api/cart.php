@@ -255,12 +255,10 @@ function shopp_add_cart_item_addon ( $itemkey = false, $addonid = false ) {
 		shopp_debug(__FUNCTION__ . " failed: no such item $itemkey");
 		return false;
 	}
-
 	if ( ! shopp_product_has_addon($Item->product, $addonid) ) {
 		shopp_debug(__FUNCTION__ . " failed: addon $addonid is not available for item $itemkey");
 		return false;
 	}
-
 	if ( false === ( $addons = shopp_cart_item_addons($itemkey) ) ) {
 		return false; // Debug message will already have been generated in shopp_cart_item_addons()
 	}
