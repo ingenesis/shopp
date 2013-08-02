@@ -1804,7 +1804,7 @@ abstract class ShoppCore {
 	 **/
 	public static function redirect ($uri,$exit=true,$status=302) {
 		shopp_debug("Redirecting to: $uri");
-		wp_redirect($uri,$status);
+		wp_redirect($uri, $status);
 		if ($exit) exit();
 	}
 
@@ -2608,7 +2608,7 @@ function shopp_redirect ($uri,$exit=true,$status=302) {
  * @deprecated Use Shopp::
  **/
 function shopp_safe_redirect ($location, $status = 302) {
-	Shopp::shopp_safe_redirect($location, $status);
+	Shopp::safe_redirect($location, $status);
 }
 
 /**
