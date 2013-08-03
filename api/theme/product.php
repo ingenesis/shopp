@@ -22,6 +22,15 @@ add_filter('shopp_themeapi_product_spec', 'wptexturize');
 add_filter('shopp_themeapi_product_spec', 'convert_chars');
 add_filter('shopp_themeapi_product_spec', 'do_shortcode', 11);
 
+// WP auto embed support
+global $wp_embed;
+if ( ! is_object($wp_embed) ) $wp_embed = new WP_Embed;
+
+add_filter('shopp_product_spec', array($wp_embed, 'run_shortcode'), 8);
+add_filter('shopp_product_spec', array($wp_embed, 'autoembed'), 8);
+add_filter('shopp_product_description', array($wp_embed, 'run_shortcode'), 8);
+add_filter('shopp_product_description', array($wp_embed, 'autoembed'), 8);
+
 /**
  * Provides shopp('product') template API functionality
  *
