@@ -171,7 +171,7 @@ class Customer extends DatabaseObject {
 		$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
 
 		$_ = array();
-		$_[] = 'From: "'.get_option('blogname').'" <'.shopp_setting('merchant_email').'>';
+		$_[] = 'From: "'.$blogname.'" <'.shopp_setting('merchant_email').'>';
 		$_[] = 'To: '.shopp_setting('merchant_email');
 		$_[] = 'Subject: '.sprintf(__('[%s] New Customer Registration','Shopp'),$blogname);
 		$_[] = '';
