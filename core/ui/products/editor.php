@@ -3,7 +3,7 @@
 	<div class="icon32"></div>
 	<h2><?php _e('Product Editor','Shopp'); ?> <a href="<?php echo esc_url( add_query_arg(array('page'=>$this->Admin->pagename('products'),'id'=>'new'),admin_url('admin.php'))); ?>" class="add-new-h2"><?php _e('Add New','Shopp'); ?></a> </h2>
 
-	<?php do_action('shopp_admin_notice'); ?>
+	<?php do_action('shopp_admin_notices'); ?>
 
 	<div id="ajax-response"></div>
 	<form name="product" id="product" action="<?php echo esc_url($this->url); ?>" method="post">

@@ -163,7 +163,7 @@ class Warehouse extends AdminController {
 			wp_cache_delete('shopp_product_subcounts');
 			$redirect = add_query_arg($_GET,$adminurl);
 			$redirect = remove_query_arg( array('action','selected','delete_all'),$redirect);
-			shopp_redirect($redirect);
+			Shopp::redirect($redirect);
 		}
 
 		if ($duplicate) {
@@ -199,6 +199,7 @@ class Warehouse extends AdminController {
 					case 'new': $next = 'new'; break;
 					case 'next': $key = $working+1; break;
 					case 'previous': $key = $working-1; break;
+					case 'continue': $next = $id; break;
 				}
 
 				if (isset($key)) $next = isset($worklist[$key]) ? $worklist[$key] : 'close';
@@ -211,7 +212,7 @@ class Warehouse extends AdminController {
 				if ('close' == $next) { $cleanup[] = 'id'; $next = false; }
 				$redirect = remove_query_arg($cleanup, $redirect);
 				if ($next) $redirect = add_query_arg('id',$next,$redirect);
-				shopp_redirect($redirect);
+				Shopp::redirect($redirect);
 			}
 
 			if (empty($id)) $id = $Shopp->Product->id;
