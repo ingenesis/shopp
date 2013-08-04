@@ -62,12 +62,12 @@ function manage_meta_box ($Purchase) {
 				<span>
 				<select name="reason">
 					<option>&mdash; Select &mdash;</option>
-					<?php echo menuoptions(stripslashes_deep(shopp_setting('cancel_reasons')),false,true); ?>
+					<?php echo Shopp::menuoptions(stripslashes_deep(shopp_setting('cancel_reasons')), false, true); ?>
 				</select><br />
 				<label>${reason}</label>
 				</span>
 
-				<span><input type="text" name="amount" value="<?php echo money($Purchase->total); ?>" ${disable_amount} /><br />
+				<span><input type="text" name="amount" value="<?php echo Shopp::money($Purchase->total); ?>" ${disable_amount} /><br />
 				<label><?php _e('Amount','Shopp'); ?></label></span>
 			</div>
 		</div>
@@ -152,7 +152,7 @@ function manage_meta_box ($Purchase) {
 				global $carriers_menu;
 				foreach ($shipment as $id => $package) {
 					extract($package);
-					$menu = menuoptions($carriers_menu,$carrier,true);
+					$menu = Shopp::menuoptions($carriers_menu,$carrier,true);
 					$shipmentuis = ShoppUI::template($shipmentui, array('${id}' => $id,'${num}' => ($id+1),'${tracking}'=>$tracking,'${carriermenu}'=>$menu ));
 				}
 				echo ShoppUI::template($shipnotice_ui,array('${shipments}'=>$shipmentuis,'${shipmentnum}'=>count($shipment)+1));
@@ -196,8 +196,8 @@ function manage_meta_box ($Purchase) {
 						'${state}' => $Purchase->state,
 						'${postcode}' => $Purchase->postcode,
 					);
-					$data['${statemenu}'] = menuoptions($Purchase->_billing_states,$Purchase->state,true);
-					$data['${countrymenu}'] = menuoptions($Purchase->_countries,$Purchase->country,true);
+					$data['${statemenu}'] = Shopp::menuoptions($Purchase->_billing_states,$Purchase->state,true);
+					$data['${countrymenu}'] = Shopp::menuoptions($Purchase->_countries,$Purchase->country,true);
 				}
 
 				if ( isset($_POST['edit-shipping-address']) ) {
@@ -216,11 +216,11 @@ function manage_meta_box ($Purchase) {
 						'${postcode}' => $Purchase->shippostcode,
 					);
 
-					$data['${statemenu}'] = menuoptions($Purchase->_shipping_states,$Purchase->shipstate,true);
-					$data['${countrymenu}'] = menuoptions($Purchase->_countries,$Purchase->shipcountry,true);
+					$data['${statemenu}'] = Shopp::menuoptions($Purchase->_shipping_states, $Purchase->shipstate, true);
+					$data['${countrymenu}'] = Shopp::menuoptions($Purchase->_countries, $Purchase->shipcountry, true);
 				}
 				$data['${action}'] = 'update-address';
-				echo ShoppUI::template($editaddress,$data);
+				echo ShoppUI::template($editaddress, $data);
 			}
 		?>
 		</div>
@@ -315,8 +315,8 @@ function billto_meta_box ($Purchase) {
 				'${state}' => $Purchase->state,
 				'${postcode}' => $Purchase->postcode,
 				'${country}' => $Purchase->country,
-				'${statemenu}' => menuoptions($Purchase->_billing_states,$Purchase->state,true),
-				'${countrymenu}' => menuoptions($Purchase->_countries,$Purchase->country,true)
+				'${statemenu}' => Shopp::menuoptions($Purchase->_billing_states,$Purchase->state,true),
+				'${countrymenu}' => Shopp::menuoptions($Purchase->_countries,$Purchase->country,true)
 			);
 			$js = preg_replace('/\${([-\w]+)}/','$1',json_encode($address));
 			shopp_custom_script('orders','var address = []; address["billing"] = '.$js.';');
@@ -324,14 +324,14 @@ function billto_meta_box ($Purchase) {
 		</script>
 
 	<?php if ( isset($_POST['edit-billing-address']) ): ?>
-		<form action="<?php echo AdminController::url(array('page'=>$page,'id'=>$Purchase->id)); ?>" method="post" id="billing-address-editor">
-		<?php echo ShoppUI::template($editaddress,$address); ?>
+		<form action="<?php echo AdminController::url( array('page' => $page, 'id' => $Purchase->id) ); ?>" method="post" id="billing-address-editor">
+		<?php echo ShoppUI::template($editaddress, $address); ?>
 		</form>
 	<?php return; endif; ?>
 
-	<form action="<?php echo AdminController::url(array('page'=>$page,'id'=>$Purchase->id)); ?>" method="post" id="billing-address-editor"></form>
+	<form action="<?php echo AdminController::url( array('page' => $page,'id' => $Purchase->id) ); ?>" method="post" id="billing-address-editor"></form>
 	<div class="display">
-	<form action="<?php echo AdminController::url(array('page'=>$page,'id'=>$Purchase->id)); ?>" method="post"><?php
+	<form action="<?php echo AdminController::url( array('page' => $page, 'id' => $Purchase->id) ); ?>" method="post"><?php
 	$targets = shopp_setting('target_markets');
 ?>
 		<input type="hidden" id="edit-billing-address-data" value="<?php
@@ -342,15 +342,15 @@ function billto_meta_box ($Purchase) {
 
 	<address>
 	<big><?php echo esc_html("{$Purchase->firstname} {$Purchase->lastname}"); ?></big><br />
-	<?php echo !empty($Purchase->company)?esc_html($Purchase->company)."<br />":""; ?>
+	<?php echo ! empty($Purchase->company)?esc_html($Purchase->company)."<br />":""; ?>
 	<?php echo esc_html($Purchase->address); ?><br />
-	<?php if (!empty($Purchase->xaddress)) echo esc_html($Purchase->xaddress)."<br />"; ?>
-	<?php echo esc_html("{$Purchase->city}".(!empty($Purchase->shipstate)?', ':'')." {$Purchase->state} {$Purchase->postcode}") ?><br />
+	<?php if ( ! empty($Purchase->xaddress) ) echo esc_html($Purchase->xaddress)."<br />"; ?>
+	<?php echo esc_html("{$Purchase->city}" . ( ! empty($Purchase->shipstate) ? ', ' : '') . " {$Purchase->state} {$Purchase->postcode}") ?><br />
 	<?php echo $targets[$Purchase->country]; ?>
 	</address>
-	<?php if (!empty($Customer->info) && is_array($Customer->info)): ?>
+	<?php if ( ! empty($Customer->info) && is_array($Customer->info) ): ?>
 		<ul>
-			<?php foreach ($Customer->info as $name => $value): ?>
+			<?php foreach ( $Customer->info as $name => $value ): ?>
 			<li><strong><?php echo esc_html($name); ?>:</strong> <?php echo esc_html($value); ?></li>
 			<?php endforeach; ?>
 		</ul>
@@ -380,8 +380,8 @@ function shipto_meta_box ($Purchase) { ?>
 					'state' => $Purchase->shipstate,
 					'postcode' => $Purchase->shippostcode,
 					'country' => $Purchase->shipcountry,
-					'statemenu' => menuoptions($Purchase->_shipping_states,$Purchase->shipstate,true),
-					'countrymenu' => menuoptions($Purchase->_countries,$Purchase->shipcountry,true)
+					'statemenu' => Shopp::menuoptions($Purchase->_shipping_states,$Purchase->shipstate,true),
+					'countrymenu' => Shopp::menuoptions($Purchase->_countries,$Purchase->shipcountry,true)
 
 				);
 				echo esc_attr(json_encode($address));
@@ -391,7 +391,7 @@ function shipto_meta_box ($Purchase) { ?>
 
 		<address><big><?php echo esc_html($Purchase->shipname); ?></big><br />
 		<?php echo esc_html($Purchase->shipaddress); ?><br />
-		<?php if (!empty($Purchase->shipxaddress)) echo esc_html($Purchase->shipxaddress)."<br />"; ?>
+		<?php if ( ! empty($Purchase->shipxaddress) ) echo esc_html($Purchase->shipxaddress)."<br />"; ?>
 		<?php echo esc_html("{$Purchase->shipcity}".(!empty($Purchase->shipstate)?', ':'')." {$Purchase->shipstate} {$Purchase->shippostcode}") ?><br />
 		<?php echo $targets[$Purchase->shipcountry]; ?></address>
 	</div>
@@ -403,7 +403,7 @@ if (!empty(ShoppPurchase()->shipaddress))
 function contact_meta_box ($Purchase) {
 	$screen = get_current_screen();
 	$pre = 'page_';
-	$page = substr($screen->id,strpos($screen->id,$pre)+strlen($pre));
+	$page = substr($screen->id, strpos($screen->id, $pre) + strlen($pre));
 	?>
 	<script id="customer-editor" type="text/x-jquery-tmpl">
 	<?php ob_start(); ?>
