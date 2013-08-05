@@ -155,4 +155,25 @@ class CoreTests extends ShoppTestCase {
 		$is_bool = is_bool(Shopp::suhosin_warning());
 		$this->assertTrue($is_bool);
 	}
+
+	public function test_crc16() {
+		$tests = array(
+			'But among the women of Mars, we saw none of these curious, and to our eyes monstrous, differences of development.',
+			'One word of explanation may be needed concerning the failure of the Martians, with all their marvellous powers, to invent electrical ships like those of Mr. Edison and engines of destruction comparable with our disintegrators.',
+			'The entire force of the terrible engine, almost capable of destroying a fort, fell upon the Martian Emperor, and not merely blew him into a cloud of atoms, but opened a great cavity in the ground on the spot where he had stood.'
+		);
+		$checks = array();
+
+		// We broadly want to check that A) we're getting a non-empty string back and B) it is effectively unique
+		foreach ($tests as $data) {
+			$check = Shopp::crc16($data);
+			$this->assertTrue(is_string($data));
+			$this->assertFalse(empty($check));
+			$this->assertFalse(in_array($check, $checks));
+			$checks[] = $check;
+		}
+	}
+
+
+
 }
