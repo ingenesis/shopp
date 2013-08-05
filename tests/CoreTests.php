@@ -201,4 +201,26 @@ class CoreTests extends ShoppTestCase {
 		$format = Shopp::currency_format(array('currency' => $new_currency));
 		$this->assertTrue($new_currency === $format['currency']);
 	}
+
+	/**
+	 * @depends test_currency_format
+	 */
+	public function test_floatval() {
+		$format = Shopp::currency_format();
+		$symbol = $format['currency'];
+		$monetary_value = $symbol . '65.952';
+
+		$float_value = Shopp::floatval($monetary_value); // Rounding is on by default
+		$this->assertTrue(is_float($float_value));
+		$this->assertTrue(65.95 === $float_value);
+
+		$float_value = Shopp::floatval($monetary_value, false); // Turn rounding off
+		$this->assertTrue(is_float($float_value));
+		$this->assertTrue(65.952 === $float_value);
+
+		$monetary_value = $symbol . '78@456.23'; // On Mars the tradition of using an ampersat as a thousands separator persists
+		$float_value = Shopp::floatval($monetary_value, false, array('thousands' => '@'));
+		$this->assertTrue(is_float($float_value));
+		$this->assertTrue(78456.23 === $float_value);
+	}
 }
