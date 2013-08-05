@@ -39,9 +39,9 @@ class Warehouse extends AdminController {
 		if (isset($_GET['view']) && in_array($_GET['view'],$this->views))
 			$this->view = $_GET['view'];
 
-		if (!empty($_GET['id'])) {
-		 	get_current_screen()->post_type = Product::$posttype;
+	 	get_current_screen()->post_type = Product::$posttype;
 
+		if (!empty($_GET['id'])) {
 			wp_enqueue_script('jquery-ui-draggable');
 			wp_enqueue_script('postbox');
 			wp_enqueue_script('wp-lists');
@@ -163,7 +163,7 @@ class Warehouse extends AdminController {
 			wp_cache_delete('shopp_product_subcounts');
 			$redirect = add_query_arg($_GET,$adminurl);
 			$redirect = remove_query_arg( array('action','selected','delete_all'),$redirect);
-			Shopp::redirect($redirect);
+			shopp_redirect($redirect);
 		}
 
 		if ($duplicate) {
@@ -226,14 +226,17 @@ class Warehouse extends AdminController {
 
 	}
 
-	function loader ($workflow=false) {
+	function loader ( $workflow = false ) {
 
 		if ( ! current_user_can('shopp_products') ) return;
+
+		add_screen_option( 'per_page', array( 'label' => __('Products Per Page','Shopp'), 'default' => 20, 'option' => 'edit_' . Product::$posttype . '_per_page' ) );
+		$per_page_option = get_current_screen()->get_option( 'per_page' );
 
 		$defaults = array(
 			'cat' => false,
 			'paged' => 1,
-			'per_page' => 20,
+			'per_page' => $per_page_option['default'],
 			's' => '',
 			'sl' => '',
 			'matchcol' => '',
@@ -252,7 +255,9 @@ class Warehouse extends AdminController {
 		);
 
 		$args = array_merge($defaults,$_GET);
+		$args['per_page'] = get_user_option($per_page_option['option']);
 		extract($args,EXTR_SKIP);
+
 
 		$url = add_query_arg(array_merge($_GET,array('page'=>$this->Admin->pagename('products'))),admin_url('admin.php'));
 
@@ -277,6 +282,8 @@ class Warehouse extends AdminController {
 			case 'trash': $is_trash = true; break;
 			case 'bestselling': $is_bestselling = true; break;
 		}
+
+
 
 		if ($is_inventory) $per_page = 50;
 		$pagenum = absint( $paged );
