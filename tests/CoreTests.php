@@ -164,16 +164,29 @@ class CoreTests extends ShoppTestCase {
 		);
 		$checks = array();
 
-		// We broadly want to check that A) we're getting a non-empty string back and B) it is effectively unique
-		foreach ($tests as $data) {
-			$check = Shopp::crc16($data);
-			$this->assertTrue(is_string($data));
-			$this->assertFalse(empty($check));
-			$this->assertFalse(in_array($check, $checks));
-			$checks[] = $check;
+		for ($pass = 1; $pass < 3; $pass++) {
+			foreach ($tests as $data) {
+				$check = Shopp::crc16($data);
+
+				$this->assertTrue( is_string($data) && ! empty($check) ); // Non-empty string?
+				if (1 === $pass) $this->assertFalse(in_array($check, $checks)); // "Unique"?
+				if (2 === $pass) $this->assertTrue(in_array($check, $checks)); // Consistent?
+
+				$checks[] = $check;
+			}
 		}
 	}
 
+	public function test_remove_class_actions() {
+		add_action('shopp_test_action_to_remove', array($this, 'uncallable_method'));
+		add_action('shopp_test_action_to_ignore', array($this, 'uncallable_method'));
 
+		$this->assertTrue(has_action('shopp_test_action_to_remove'));
+		$this->assertTrue(has_action('shopp_test_action_to_ignore'));
+
+		Shopp::remove_class_actions('shopp_test_action_to_remove', __CLASS__);
+		$this->assertFalse(has_action('shopp_test_action_to_remove'));
+		$this->assertTrue(has_action('shopp_test_action_to_ignore'));
+	}
 
 }
