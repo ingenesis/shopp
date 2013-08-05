@@ -1670,25 +1670,25 @@ class SearchResults extends SmartCollection {
 	public static $_menu = false;
 	public $search = false;
 
-	public function __construct ($options=array()) {
+	public function __construct ( array $options = array() ) {
 		parent::__construct($options);
 		add_filter('shopp_themeapi_collection_url', array($this, 'url'), 10, 3);
 	}
 
 	public function smart ( array $options = array() ) {
-		$options['search'] = empty($options['search']) ? "" : stripslashes($options['search']);
+		$options['search'] = empty($options['search']) ? '' : stripslashes($options['search']);
 
 		// $this->loading['debug'] = true;
 		// Load search engine components
-		new SearchParser();
-		new BooleanParser();
-		new ShortwordParser();
+		new SearchParser;
+		new BooleanParser;
+		new ShortwordParser;
 
 		// Sanitize the search string
 		$search = $options['search'];
 		$this->search = $search;
 
-		if (ShoppStorefront()) ShoppStorefront()->search = $search;
+		if ( ShoppStorefront() ) ShoppStorefront()->search = $search;
 
 		// Price matching
 		$prices = SearchParser::PriceMatching($search);
@@ -1702,47 +1702,46 @@ class SearchResults extends SmartCollection {
 		}
 
 		// Boolean keyword search
-		$boolean = apply_filters('shopp_boolean_search',$search);
+		$boolean = apply_filters('shopp_boolean_search', $search);
 
 		// Exact shortword search
 		$shortwords = '';
-		if (!(defined('SHOPP_DISABLE_SHORTWORD_SEARCH') && SHOPP_DISABLE_SHORTWORD_SEARCH))
-			$shortwords = apply_filters('shopp_shortword_search',$search);
+		if ( ! (defined('SHOPP_DISABLE_SHORTWORD_SEARCH') && SHOPP_DISABLE_SHORTWORD_SEARCH) )
+			$shortwords = apply_filters('shopp_shortword_search', $search);
 
 		// Natural language search for relevance
-		$search = apply_filters('shopp_search_query',$search);
+		$search = apply_filters('shopp_search_query', $search);
 
-		if (strlen($options['search']) > 0 && empty($boolean)) $boolean = $options['search'];
+		if ( strlen($options['search'] ) > 0 && empty($boolean) ) $boolean = $options['search'];
 
 		$score = "SUM(MATCH(terms) AGAINST ('$search'))";
 		$where = "MATCH(terms) AGAINST ('$boolean' IN BOOLEAN MODE)";
-		if (!empty($shortwords)) {
-			$score = "SUM(MATCH(terms) AGAINST ('$search'))+SUM(terms REGEXP '[[:<:]](".str_replace(' ','|',$shortwords).")[[:>:]]')";
-			$where = "($where OR terms REGEXP '[[:<:]](".str_replace(' ','|',$shortwords).")[[:>:]]')";
+		if ( ! empty($shortwords) ) {
+			$score = "SUM(MATCH(terms) AGAINST ('$search'))+SUM(terms REGEXP '[[:<:]](" . str_replace(' ', '|', $shortwords) . ")[[:>:]]')";
+			$where = "($where OR terms REGEXP '[[:<:]](" . str_replace(' ','|',$shortwords) . ")[[:>:]]')";
 		}
 
 		$index = DatabaseObject::tablename(ContentIndex::$table);
 		$this->loading = array(
-			'joins'=>array($index => "INNER JOIN $index AS search ON search.product=p.ID"),
-			'columns'=> "$score AS score",
-			'where'=> array($where),
-			'groupby'=>'p.ID',
-			'order'=>'score DESC');
-		if (!empty($pricematch)) $this->loading['having'] = array($pricematch);
-		if (isset($options['show'])) $this->loading['limit'] = $options['show'];
-		if (isset($options['published'])) $this->loading['published'] = $options['published'];
-		if (isset($options['paged'])) $this->loading['paged'] = $options['paged'];
+			'joins' => array($index => "INNER JOIN $index AS search ON search.product=p.ID"),
+			'columns' => "$score AS score",
+			'where' => array($where),
+			'groupby' => 'p.ID',
+			'orderby' => 'score DESC');
+		if ( ! empty($pricematch) ) $this->loading['having'] = array($pricematch);
+		if ( isset($options['show']) ) $this->loading['limit'] = $options['show'];
+		if ( isset($options['published']) ) $this->loading['published'] = $options['published'];
+		if ( isset($options['paged']) ) $this->loading['paged'] = $options['paged'];
 
 		// No search
-		if (empty($options['search'])) $options['search'] = __('(no search terms)','Shopp');
-		$this->name = sprintf(__('Search Results for: %s','Shopp'),esc_html($options['search']));
+		if ( empty($options['search']) ) $options['search'] = __('(no search terms)', 'Shopp');
+		$this->name = sprintf(__('Search Results for: %s', 'Shopp'), esc_html($options['search']));
 
 	}
 
 	public function pagelink ($page) {
-		var_dump(__METHOD__);die;
 		$link = parent::pagelink($page);
-		return add_query_arg(array('s'=>urlencode($this->search),'s_cs'=>1),$link);
+		return add_query_arg(array('s' => urlencode($this->search), 's_cs' => 1), $link);
 	}
 
 	public function url ($result, $options, $O) {
