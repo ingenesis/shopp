@@ -189,4 +189,16 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue(has_action('shopp_test_action_to_ignore'));
 	}
 
+	public function test_currency_format() {
+		$expected = array_flip(array('cpos', 'currency', 'precision', 'decimals', 'thousands', 'grouping'));
+		$format = Shopp::currency_format();
+		$anticipated_keys = array_intersect_key($format, $expected);
+
+		$this->assertTrue(count($expected) === count($format)); // Right number of keys
+		$this->assertTrue(count($expected) === count($anticipated_keys)); // Actual key names are as anticipated
+
+		$new_currency = 'Intergalactic Talents'; // Mars has already adopted this standard
+		$format = Shopp::currency_format(array('currency' => $new_currency));
+		$this->assertTrue($new_currency === $format['currency']);
+	}
 }
