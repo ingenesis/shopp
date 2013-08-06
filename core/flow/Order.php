@@ -53,7 +53,6 @@ class ShoppOrder {
 	public function __construct () {
 
 		$this->Cart = ShoppingObject::__new( 'ShoppCart' );
-
 		$this->Customer = ShoppingObject::__new( 'Customer' );
 
 		$this->Billing = ShoppingObject::__new( 'BillingAddress' );
@@ -69,10 +68,10 @@ class ShoppOrder {
 		$this->Discounts = ShoppingObject::__new( 'ShoppDiscounts' );
 
 		// Store order custom data and post processing data
-		ShoppingObject::store('data',$this->data);
-		ShoppingObject::store('inprogress',$this->inprogress);
-		ShoppingObject::store('purchase',$this->purchase);
-		ShoppingObject::store('txnid',$this->txnid);
+		ShoppingObject::store('data', $this->data);
+		ShoppingObject::store('inprogress', $this->inprogress);
+		ShoppingObject::store('purchase', $this->purchase);
+		ShoppingObject::store('txnid', $this->txnid);
 
 		$this->Promotions = new ShoppPromotions;
 		$this->Payments = new ShoppPayments;

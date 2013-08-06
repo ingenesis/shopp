@@ -1,6 +1,6 @@
 <?php
 /**
- * Account
+ * Account.php
  *
  * Flow controller for the customer management interfaces
  *
