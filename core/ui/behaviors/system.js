@@ -53,7 +53,7 @@ jQuery(document).ready(function($) {
 
 	$('#rebuild-index').click(function () {
 		setTimeout(progress,100);
-		$.fn.colorbox({'title':$sys.indexing,
+		$.colorbox({'title':$sys.indexing,
 			'innerWidth':'250',
 			'innerHeight':'50',
 			'html':
