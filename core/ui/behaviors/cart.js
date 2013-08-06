@@ -8,25 +8,24 @@
  * Makes a request to add the selected product/product variation
  * to the shopper's cart
  **/
-function addtocart (form) {
-	var $ = jqnc(),
-		options = $(form).find('select.options'),selections=true;
+function addtocart ( form ) {
+	var $ = jqnc(), options = $(form).find('select.options'), selections=true;
 	if (options) {
-		options.each(function (i,menu) {
+		options.each(function (i, menu) {
 			if ($(menu).val() == "") return (selections = false);
 		});
 
-		if (!selections) {
-			if (!$s.opreq) $s.opreq = "You must select the options for this item before you can add it to your shopping cart.";
-			alert($s.opreq);
+		if ( ! selections ) {
+			if ( ! $s.opreq ) $s.opreq = "You must select the options for this item before you can add it to your shopping cart.";
+			alert( $s.opreq );
 			return false;
 		}
 	}
 
-	if ($(form).find('input.addtocart').hasClass('ajax-html'))
-		ShoppCartAjaxRequest(form.action,$(form).serialize(),'html');
-	else if ($(form).find('input.addtocart').hasClass('ajax'))
-		ShoppCartAjaxRequest(form.action,$(form).serialize());
+	if ( $(form).find('input.addtocart').hasClass('ajax-html') )
+		ShoppCartAjaxRequest(form, 'html');
+	else if ( $(form).find('input.addtocart').hasClass('ajax') )
+		ShoppCartAjaxRequest(form);
 	else form.submit();
 
 	return false;
@@ -37,10 +36,14 @@ function addtocart (form) {
  * Developers can recreate this function in their own
  * custom JS libraries to change the way cartajax is called.
  **/
-function ShoppCartAjaxRequest (url,data,response) {
-	if (!response) response = "json";
+function ShoppCartAjaxRequest ( form, response ) {
+	if ( ! response) response = "json";
 	var $ = jqnc(),
-		datatype = ((response == 'json')?'json':'html');
+		url = form.action,
+		$form = $(form),
+		data = $form.serialize(),
+		datatype = ( response == 'json' ? 'json' : 'html' );
+	$form.trigger('shopp_cart_ajax_request', data);
 	$.ajax({
 		type:"POST",
 		url:url,
@@ -48,7 +51,9 @@ function ShoppCartAjaxRequest (url,data,response) {
 		timeout:10000,
 		dataType:datatype,
 		success:function (cart) {
-			ShoppCartAjaxHandler(cart,response);
+			$form.trigger('shopp_cart_ajax_success', cart, response);
+			ShoppCartAjaxHandler(cart, response);
+			$form.trigger('shopp_cart_ajax_successful', cart, response);
 		},
 		error:function () { }
 	});
@@ -60,7 +65,7 @@ function ShoppCartAjaxRequest (url,data,response) {
  * custom JS libraries to change the way the cart response
  * is processed and displayed to the shopper.
  **/
-function ShoppCartAjaxHandler (cart,response) {
+function ShoppCartAjaxHandler ( cart, response ) {
 	var $ = jqnc(),label = '',Item=false,Totals=false,
 		widget = $('.widget_shoppcartwidget div.widget-all'),
 		wrapper = $('#shopp-cart-ajax'),
@@ -70,7 +75,10 @@ function ShoppCartAjaxHandler (cart,response) {
 		added = ui.find('div.added').empty().hide(), // clear any previous additions
 		item = $('<div class="added"></div>');
 
-	if (response == "html") return ui.html(cart);
+	if (response == "html") {
+		$(wrapper).trigger('shopp_cart_ajax_html', ui, cart);
+		return ui.html(cart);
+	}
 
 	if (cart.Item) Item = cart.Item;
 	if (cart.Totals) Totals = cart.Totals;
@@ -93,6 +101,9 @@ function ShoppCartAjaxHandler (cart,response) {
 
 	if (actions.size() != 1) actions = $('<ul />').appendTo(ui);
 	actions.html('<li><a href="'+cart.url+'">'+cart.label+'</a></li><li><a href="'+cart.checkouturl+'">'+cart.checkoutLabel+'</a></li>');
+
+	$(wrapper).trigger('shopp_cart_ajax_item', item, cart);
+
 	item.slideDown();
 }
 
