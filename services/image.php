@@ -126,7 +126,6 @@ class ImageServer {
 		if ($this->width == 0 && $this->height > 0) $this->width = $this->height;
 
 		$this->scale = $this->scaling[$this->scale];
-
 		// Handle clear image requests (used in product gallery to reserve DOM dimensions)
 		if ( $clearpng ) $this->clearpng();
 
@@ -243,12 +242,13 @@ class ImageServer {
 	 **/
 	function error () {
 		header("HTTP/1.1 404 Not Found");
-		$notfound = sanitize_path(dirname(__FILE__)).'/ui/icons/notfound.png';
-		if (defined('SHOPP_NOTFOUND_IMAGE') && file_exists(SHOPP_NOTFOUND_IMAGE))
+		$notfound = ImageServer::path() . '/core/ui/icons/notfound.png';
+		if ( defined('SHOPP_NOTFOUND_IMAGE') && file_exists(SHOPP_NOTFOUND_IMAGE) )
 			$notfound = SHOPP_NOTFOUND_IMAGE;
-		if (!file_exists($notfound)) die('<h1>404 Not Found</h1>');
+		if ( ! file_exists($notfound)) die('<h1>404 Image Not Found</h1>');
 		else {
-			$this->headers(basename($notfound), @strlen($notfound));
+			header( 'HTTP/1.1 404 Image Not Found' );
+			$this->headers(basename($notfound), @filesize($notfound));
 			@readfile($notfound);
 		}
 		die();
