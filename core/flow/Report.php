@@ -301,8 +301,10 @@ abstract class ShoppReportFramework {
 
 		if ( $this->periods && $this->Chart ) {
 			foreach ($this->data as $index => $record) {
-				foreach ($this->chartseries as $series => $column)
-					$this->chartdata($series,$record->period,$record->$column);
+				foreach ($this->chartseries as $series => $column) {
+					if ( isset($record->$column) )
+						$this->chartdata($series,$record->period,$record->$column);
+				}
 			}
 		} else {
 			$this->data = $loaded;
@@ -726,7 +728,7 @@ abstract class ShoppReportFramework {
 						if ( in_array($column,$hidden) ) $classes[] = 'hidden';
 
 						if ( method_exists(get_class($this),$column)): ?>
-							<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><?php echo call_user_func(array(self,$column),$data,$column,$column_title,$this->options); ?></td>
+							<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><?php echo call_user_func(array($this,$column),$data,$column,$column_title,$this->options); ?></td>
 						<?php else: ?>
 							<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
 							<?php do_action( 'shopp_manage_report_custom_column', $column, $column_title, $data );	?>
@@ -752,7 +754,7 @@ abstract class ShoppReportFramework {
 						<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
 							<?php
 								if ( method_exists(get_class($this),$column) )
-									echo call_user_func(array(self,$column),$averages,$column,$column_title,$this->options);
+									echo call_user_func(array($this,$column),$averages,$column,$column_title,$this->options);
 								else do_action( 'shopp_manage_report_custom_column_average', $column, $column_title, $data );
 							?>
 						</td>
@@ -772,7 +774,7 @@ abstract class ShoppReportFramework {
 						<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
 							<?php
 								if ( method_exists(get_class($this),$column) )
-									echo call_user_func(array(self,$column),$this->totals,$column,$column_title,$this->options);
+									echo call_user_func(array($this,$column),$this->totals,$column,$column_title,$this->options);
 								else do_action( 'shopp_manage_report_custom_column_total', $column, $column_title, $data );
 							?>
 						</td>
@@ -1162,16 +1164,16 @@ class ShoppReportChart {
  **/
 abstract class ShoppReportExportFramework {
 
-	var $ReportClass = '';
-	var $columns = array();
-	var $headings = true;
-	var $data = false;
+	public $ReportClass = '';
+	public $columns = array();
+	public $headings = true;
+	public $data = false;
 
-	var $recordstart = true;
-	var $content_type = "text/plain";
-	var $extension = "txt";
-	var $set = 0;
-	var $limit = 1024;
+	public $recordstart = true;
+	public $content_type = "text/plain";
+	public $extension = "txt";
+	public $set = 0;
+	public $limit = 1024;
 
 	function __construct ( $Report ) {
 
@@ -1260,6 +1262,7 @@ abstract class ShoppReportExportFramework {
 		// @todo Add batch export to reduce memory footprint and add scalability to report exports
 		// while (!empty($this->data)) {
 		foreach ($this->data as $key => $record) {
+			if ( ! is_array($this->selected) ) continue;
 			foreach ($this->selected as $column) {
 				$title = $this->columns[$column];
 				$columns = get_object_vars($record);
