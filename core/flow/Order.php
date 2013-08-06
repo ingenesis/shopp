@@ -100,9 +100,6 @@ class ShoppOrder {
 		add_action('shopp_authed_order_event', array($this, 'unstock'));
 		add_action('shopp_authed_order_event', array($this, 'captured'));
 
-		// Status updates @todo this does not appear to be used anymore??
-		// add_action('shopp_order_txnstatus_update',array($this, 'salestats'),10,2);
-
 		// Ensure payment card PAN is truncated after successful processing
 		add_action('shopp_authed_order_event', array($this, 'securecard'));
 
