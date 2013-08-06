@@ -252,7 +252,7 @@ class ShoppCatalogPage extends ShoppPage {
 	const FRONTPAGE = '83104111112112';
 
 	public static $name = 'catalog';
-	protected $slug = 'store';
+	protected $slug = 'shop';
 	protected $templates = array('catalog.php');
 
 	public function __construct($options = array()) {
