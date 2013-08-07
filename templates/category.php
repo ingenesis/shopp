@@ -17,11 +17,12 @@
 	<div class="category">
 		<section class="navigation controls">
 			<?php shopp( 'catalog.breadcrumb', array( 'separator' => '&nbsp;/ ' ) ); ?>
-			<?php shopp( 'collection.subcategory-list', array(	'dropdown' => true,
-															 	'hierarchy' => true,
-															 	'showall' => true,
-															 	'class' => 'subcategories',
-															 	'before' => '&nbsp;/ '	)
+			<?php shopp( 'collection.subcategory-list',
+					array(	'dropdown' => true,
+						 	'hierarchy' => true,
+						 	'showall' => true,
+						 	'class' => 'subcategories',
+						 	'before' => '&nbsp;/ '	)
 			); ?>
 
 			<div class="alignright">
