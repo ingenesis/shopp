@@ -1,12 +1,12 @@
 <?php
 /**
- * Gateway classes
+ * Gateway.php
  *
- * Generic prototype classes for local and remote payment systems
+ * Prototype classes for local and remote payment systems
  *
  * @author Jonathan Davis
  * @version 1.0
- * @copyright Ingenesis Limited, March 17, 2009
+ * @copyright Ingenesis Limited, March, 2009
  * @package shopp
  * @subpackage gateways
  **/
@@ -24,16 +24,6 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @subpackage gateways
  **/
 interface GatewayModule {
-
-	/**
-	 * Used for setting up event listeners
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.1
-	 *
-	 * @return void
-	 **/
-	public function actions();
 
 	/**
 	 * Used for rendering the gateway settings UI
@@ -60,33 +50,31 @@ interface GatewayModule {
  **/
 abstract class GatewayFramework {
 
-	var $name = false;			// The proper name of the gateway
-	var $module = false;		// The module class name of the gateway
+	public $name = false;		// The proper name of the gateway
+	public $module = false;		// The module class name of the gateway
 
 	// Supported features
-	var $cards = false;			// A list of supported payment cards
-	var $authonly = false;		// Forces auth-only order processing
-	var $saleonly = false;		// Forces sale-only order processing
-	var $captures = false;		// Supports capture separate of authorization
-	var $recurring = false;		// Supports recurring billing
-	var $refunds = false;		// Remote refund support flag
+	public $cards = false;		// A list of supported payment cards
+	public $authonly = false;	// Forces auth-only order processing
+	public $saleonly = false;	// Forces sale-only order processing
+	public $captures = false;	// Supports capture separate of authorization
+	public $recurring = false;	// Supports recurring billing
+	public $refunds = false;	// Remote refund support flag
 
 	// Config settings
-	var $xml = false;			// Flag to load and enable XML parsing
-	var $soap = false;			// Flag to load and SOAP client helper
-	var $secure = true;			// Flag for requiring encrypted checkout process
-	var $multi = false;			// Flag to enable a multi-instance gateway
+	public $secure = true;		// Flag for requiring encrypted checkout process
+	public $multi = false;		// Flag to enable a multi-instance gateway
 
 	// Loaded settings
-	var $session = false;		// The current shopping session ID
-	var $Order = false;			// The current customer's Order
-	var $baseop = false; 		// Base of operation setting
-	var $currency = false;		// The base of operations currency code
-	var $precision = 2;			// Currency precision
-	var $decimals = '.';		// Default decimal separator
-	var $thousands = '';		// Default thousands separator
-	var $settings = array();	// List of settings for the module
-	var $codes = array(200);    // List of valid response codes
+	public $session = false;	// The current shopping session ID
+	public $Order = false;		// The current customer's Order
+	public $baseop = false; 	// Base of operation setting
+	public $currency = false;	// The base of operations currency code
+	public $precision = 2;		// Currency precision
+	public $decimals = '.';		// Default decimal separator
+	public $thousands = '';		// Default thousands separator
+	public $settings = array();	// List of settings for the module
+	public $codes = array(200);	// List of valid response codes
 
 	/**
 	 * Setup the module for runtime
@@ -98,20 +86,17 @@ abstract class GatewayFramework {
 	 *
 	 * @return void
 	 **/
-	function __construct () {
+	public function __construct () {
 
-		$this->session = ShoppShopping()->session;
-		$this->Order = &ShoppOrder();
 		$this->module = get_class($this);
+		$this->session = ShoppShopping()->session;
+		$this->Order = ShoppOrder();
 
-		if ('FreeOrder' != $this->module) // There are no settings for FreeOrder
+		if ( 'FreeOrder' != $this->module ) // There are no settings for FreeOrder
 			$this->settings = shopp_setting($this->module);
 
-		if (!isset($this->settings['label']) && $this->cards)
-			$this->settings['label'] = __('Credit Card','Shopp');
-
-		if ( $this->xml && ! class_exists('xmlQuery') ) require_once(SHOPP_MODEL_PATH."/XML.php");
-		if ( $this->soap && ! class_exists('nusoap_base') ) require_once(SHOPP_MODEL_PATH."/SOAP.php");
+		if ( ! isset($this->settings['label']) && $this->cards )
+			$this->settings['label'] = __('Credit Card', 'Shopp');
 
 		$this->baseop = shopp_setting('base_operations');
 		$this->currency = $this->baseop['currency']['code'];
@@ -119,19 +104,20 @@ abstract class GatewayFramework {
 
 		$this->_loadcards();
 
-		add_action('shopp_init',array($this,'myactions'),30);
 		$gateway = sanitize_key($this->module);
-		add_action('shopp_'.$gateway.'_refunded',array($this,'cancelorder'));
 
-		if ($this->authonly)
-			add_filter('shopp_purchase_order_'.$gateway.'_processing',create_function('','return "auth";'));
-		elseif ($this->saleonly)
-			add_filter('shopp_purchase_order_'.$gateway.'_processing',create_function('','return "sale";'));
+		add_action('shopp_init', array($this, 'myactions'), 30);
+		add_action('shopp_' . $gateway . '_refunded', array($this, 'cancelorder') );
+
+		if ( $this->authonly )
+			add_filter('shopp_purchase_order_' . $gateway . '_processing', create_function('', 'return "auth";'));
+		elseif ( $this->saleonly )
+			add_filter('shopp_purchase_order_' . $gateway . '_processing', create_function('', 'return "sale";'));
 
 	}
 
-	function myactions () {
-		if ($this->myorder() && method_exists($this,'actions'))
+	public function myactions () {
+		if ( $this->myorder() && method_exists($this, 'actions') )
 			$this->actions();
 	}
 
@@ -145,11 +131,11 @@ abstract class GatewayFramework {
 	 * @param string $name... (optional) Additional setting names to initialize
 	 * @return void
 	 **/
-	function setup () {
+	public function setup () {
 		$settings = func_get_args();
-		foreach ($settings as $name)
-			if (!isset($this->settings[$name]))
-				$this->settings[$name] = false;
+		foreach ( $settings as $name )
+			if ( ! isset($this->settings[ $name ]) )
+				$this->settings[ $name ] = false;
 	}
 
 	/**
@@ -160,12 +146,8 @@ abstract class GatewayFramework {
 	 *
 	 * @return boolean
 	 **/
-	function myorder ( $mine = false ) {
-		if ( true === $mine ) {
-			$this->Order->processor($this->module);
-			return true;
-		}
-		return ($this->Order->Payments->processor() == $this->module);
+	public function myorder () {
+		return ( $this->Order->Payments->processor() == $this->module );
 	}
 
 	/**
@@ -176,7 +158,7 @@ abstract class GatewayFramework {
 	 *
 	 * @return string The currency code
 	 **/
-	function currency () {
+	public function currency () {
 		$currency = 'USD'; // Default to USD
 
 		if ( ! empty($this->baseop) && isset($this->baseop['currency']) && isset($this->baseop['currency']['code']) )
@@ -193,12 +175,12 @@ abstract class GatewayFramework {
 	 *
 	 * @return string
 	 **/
-	function txnid () {
+	public function txnid () {
 		return time();
 	}
 
-	function captured ($Order) {
-		shopp_add_order_event($Order->id,'captured',array(
+	public function captured ( $Order ) {
+		shopp_add_order_event($Order->id, 'captured', array(
 			'txnid' => $Order->txnid,				// Can be either the original transaction ID or an ID for this transaction
 			'amount' => $Order->total,				// Capture of entire order amount
 			'fees' => $Order->fees,					// Order Fees
@@ -218,7 +200,7 @@ abstract class GatewayFramework {
 	 * @param array $options
 	 * @return string Raw response
 	 **/
-	function send ($data, $url = false, $deprecated = false, $options = array()) {
+	public function send ( $data, $url = false, $deprecated = false, $options = array() ) {
 
 		$defaults = array(
 			'method' => 'POST',
@@ -269,7 +251,7 @@ abstract class GatewayFramework {
 	 * @param array $data Key/value pairs of data to encode
 	 * @return string
 	 **/
-	function encode ($data) {
+	public function encode ( array $data ) {
 		$data = stripslashes_deep($data);
 		return http_build_query($data);
 	}
@@ -283,12 +265,12 @@ abstract class GatewayFramework {
 	 * @param array $data Key/value pairs of data to format into form elements
 	 * @return string
 	 **/
-	function format ($data) {
-		$query = "";
-		foreach($data as $key => $value) {
-			if (is_array($value)) {
-				foreach($value as $item)
-					$query .= '<input type="hidden" name="'.$key.'[]" value="'.esc_attr($item).'" />';
+	public function format ( array $data ) {
+		$query = '';
+		foreach( $data as $key => $value ) {
+			if ( is_array($value) ) {
+				foreach( $value as $item )
+					$query .= '<input type="hidden" name="' . $key . '[]" value="' . esc_attr($item) . '" />';
 			} else {
 				$query .= '<input type="hidden" name="'.$key.'" value="'.esc_attr($value).'" />';
 			}
@@ -304,16 +286,20 @@ abstract class GatewayFramework {
 	 *
 	 * @return array
 	 **/
-	function cards () {
+	public function cards () {
 		$accepted = array();
-		if (!empty($this->settings['cards'])) $accepted = $this->settings['cards'];
-		if (empty($accepted) && is_array($this->cards)) $accepted = array_keys($this->cards);
+
+		if ( ! empty($this->settings['cards']) ) $accepted = $this->settings['cards'];
+		if ( empty($accepted) && is_array($this->cards) )
+			$accepted = array_keys($this->cards);
+
 		$pcs = Lookup::paycards();
 		$cards = array();
-		foreach ($accepted as $card) {
+		foreach ( $accepted as $card ) {
 			$card = strtolower($card);
-			if (isset($pcs[$card])) $cards[$card] = $pcs[$card];
+			if ( isset($pcs[ $card ]) ) $cards[ $card ] = $pcs[ $card ];
 		}
+
 		return $cards;
 	}
 
@@ -328,11 +314,11 @@ abstract class GatewayFramework {
 	 * @param string|float|int $amount The amount (or name of the amount total) to format
 	 * @return string Formatted amount
 	 **/
-	function amount ($amount,$format=array()) {
+	public function amount ( $amount, array $format = array() ) {
 
-		if (is_string($amount)) {
+		if ( is_string($amount) ) {
 			$Totals = ShoppOrder()->Cart->Totals;
-			if (!isset($Totals->$amount)) return false;
+			if ( ! isset($Totals->$amount) ) return false;
 			$amount = $Totals->$amount;
 		} elseif ( ! ( is_int($amount) || is_float($amount) ) ) return $amount;
 
@@ -341,24 +327,24 @@ abstract class GatewayFramework {
 			'decimals' => $this->decimals,
 			'thousands' => $this->thousands,
 		);
-		$format = array_merge($defaults,$format);
+		$format = array_merge($defaults, $format);
 		extract($format);
 
 		$amount = apply_filters('shopp_gateway_amount', $amount);
-		return number_format($amount,$precision,$decimals,$thousands);
+		return number_format($amount, $precision, $decimals, $thousands);
 	}
 
-	function ascii_filter ($string) {
-		return preg_replace('/[^\x20-\x7F]/','',$string);
+	public function ascii_filter ( $string ) {
+		return preg_replace('/[^\x20-\x7F]/', '', $string);
 	}
 
-	function cancelorder (RefundedOrderEvent $Refunded) {
+	public function cancelorder ( RefundedOrderEvent $Refunded ) {
 		$order = $Refunded->order;
 		$Purchase = new Purchase($order);
-		if ($Refunded->amount != $Purchase->total) return;
+		if ( $Refunded->amount != $Purchase->total ) return;
 
 		// If not a partial refund, cancel the remaining balance
-		shopp_add_order_event($order,'voided',array(
+		shopp_add_order_event($order, 'voided', array(
 			'txnorigin' => $Refunded->txnid,
 			'txnid' => '',
 			'gateway' => $this->module
@@ -374,13 +360,16 @@ abstract class GatewayFramework {
 	 * @return void
 	 **/
 	private function _loadcards () {
-		if (empty($this->settings['cards'])) $this->settings['cards'] = $this->cards;
-		if ($this->cards) {
+
+		if ( empty($this->settings['cards']) )
+			$this->settings['cards'] = $this->cards;
+
+		if ( $this->cards ) {
 			$cards = array();
 			$pcs = Lookup::paycards();
-			foreach ($this->cards as $card) {
+			foreach ( $this->cards as $card ) {
 				$card = strtolower($card);
-				if (isset($pcs[$card])) $cards[] = $pcs[$card];
+				if ( isset($pcs[ $card ]) ) $cards[] = $pcs[ $card ];
 			}
 			$this->cards = $cards;
 		}
@@ -396,26 +385,26 @@ abstract class GatewayFramework {
 	 * @param string $name The formal name of the module
 	 * @return void
 	 **/
-	function initui ($module,$name) {
-		if (!isset($this->settings['label'])) $this->settings['label'] = $name;
-		$this->ui = new GatewaySettingsUI($this,$name);
+	public function initui ( $module, $name ) {
+		if ( ! isset($this->settings['label']) ) $this->settings['label'] = $name;
+		$this->ui = new GatewaySettingsUI($this, $name);
 		$this->settings();
 	}
 
-	function uitemplate () {
+	public function uitemplate () {
 		$this->ui->template();
 	}
 
-	function ui ($id=false) {
+	public function ui ( $id = false ) {
 		$editor = $this->ui->generate($id);
 		$settings = $this->settings;
-		if (false !== $id && isset($this->settings[$id]))
-			$settings = $this->settings[$id];
+		if ( false !== $id && isset($this->settings[ $id ]) )
+			$settings = $this->settings[ $id ];
 
-		foreach ((array)$settings as $name => $value)
-			$data['{$'.$name.'}'] = $value;
+		foreach ( (array)$settings as $name => $value )
+			$data['{$' . $name . '}'] = $value;
 
-		return str_replace(array_keys($data),$data,$editor);
+		return str_replace(array_keys($data), $data, $editor);
 	}
 
 } // END class GatewayFramework
@@ -433,10 +422,10 @@ abstract class GatewayFramework {
  **/
 class GatewayModules extends ModuleLoader {
 
-	var $selected = false;		// The chosen gateway to process the order
-	var $installed = array();
-	var $secure = false;		// SSL-required flag
-	var $freeorder = false;
+	public $selected = false;		// The chosen gateway to process the order
+	public $installed = array();
+	public $secure = false;			// SSL-required flag
+	public $freeorder = false;
 
 	/**
 	 * Initializes the gateway module loader
@@ -446,18 +435,18 @@ class GatewayModules extends ModuleLoader {
 	 *
 	 * @return void Description...
 	 **/
-	function __construct () {
+	public function __construct () {
 
 		$this->path = SHOPP_GATEWAYS;
 
 		// Get hooks in place before getting things started
-		add_action('shopp_module_loaded',array(&$this,'properties'));
+		add_action('shopp_module_loaded', array($this, 'properties'));
 
 		$this->installed();
 		$this->activated();
 
-		add_action('shopp_init',array($this,'load'));
-		add_action('shopp_init',array($this,'freeorder'));
+		add_action('shopp_init', array($this, 'load'));
+		add_action('shopp_init', array($this, 'freeorder'));
 	}
 
 	/**
@@ -468,20 +457,20 @@ class GatewayModules extends ModuleLoader {
 	 *
 	 * @return array List of module names for the activated modules
 	 **/
-	function activated () {
+	public function activated () {
 		$Shopp = Shopp::object();
 		$this->activated = array();
-		$gateways = explode(",",shopp_setting('active_gateways'));
+		$gateways = explode(",", shopp_setting('active_gateways'));
 		$modules = array_keys($this->modules);
-		foreach ($gateways as $gateway) {
-			if (false !== strpos($gateway,'-')) list($gateway,$id) = explode('-',$gateway);
-			if (in_array($gateway,$modules) && !in_array($gateway,$this->activated))
-				$this->activated[] = $this->modules[$gateway]->subpackage;
+		foreach ( $gateways as $gateway ) {
+			if ( false !== strpos($gateway, '-') ) list($gateway, $id) = explode('-', $gateway);
+			if ( in_array($gateway, $modules) && !in_array($gateway, $this->activated) )
+				$this->activated[] = $this->modules[ $gateway ]->subpackage;
 		}
 		return $this->activated;
 	}
 
-	function freeorder () {
+	public function freeorder () {
 		$this->freeorder = new FreeOrder();
 	}
 
@@ -494,10 +483,10 @@ class GatewayModules extends ModuleLoader {
 	 * @param string $module Activated module class name
 	 * @return void
 	 **/
-	function properties ($module) {
-		if (!isset($this->active[$module])) return;
-		$this->active[$module]->name = $this->modules[$module]->name;
-		if ($this->active[$module]->secure) $this->secure = true;
+	public function properties ( $module ) {
+		if ( ! isset($this->active[ $module ]) ) return;
+		$this->active[ $module ]->name = $this->modules[ $module ]->name;
+		if ($this->active[ $module ]->secure) $this->secure = true;
 	}
 
 	/**
@@ -508,10 +497,10 @@ class GatewayModules extends ModuleLoader {
 	 *
 	 * @return void
 	 **/
-	function &get ($gateway) {
-		if (empty($this->active)) $this->settings();
-		if (!isset($this->active[$gateway])) return false;
-		return $this->active[$gateway];
+	public function &get ( $gateway ) {
+		if ( empty($this->active) ) $this->settings();
+		if ( ! isset($this->active[ $gateway ]) ) return false;
+		return $this->active[ $gateway ];
 	}
 
 	/**
@@ -522,7 +511,7 @@ class GatewayModules extends ModuleLoader {
 	 *
 	 * @return void
 	 **/
-	function settings () {
+	public function settings () {
 		$this->load(true);
 	}
 
@@ -534,8 +523,8 @@ class GatewayModules extends ModuleLoader {
 	 *
 	 * @return void
 	 **/
-	function help () {
-		foreach ($this->modules as $class => &$module) {
+	public function help () {
+		foreach ( $this->modules as $class => &$module ) {
 			if ( ! method_exists($class, 'help') ) continue;
 			get_current_screen()->add_help_tab( array(
 				'id'      => $class,
@@ -553,35 +542,35 @@ class GatewayModules extends ModuleLoader {
 	 *
 	 * @return void
 	 **/
-	function ui () {
-		foreach ($this->active as $package => &$module)
-			$module->initui($package,$this->modules[$package]->name);
+	public function ui () {
+		foreach ( $this->active as $package => &$module )
+			$module->initui($package, $this->modules[ $package ]->name);
 	}
 
-	function templates () {
-		foreach ($this->active as $package => &$module)
-			$module->uitemplate($package,$this->modules[$package]->name);
+	public function templates () {
+		foreach ( $this->active as $package => &$module )
+			$module->uitemplate($package, $this->modules[ $package ]->name);
 	}
 
 } // END class GatewayModules
 
 class GatewaySettingsUI extends ModuleSettingsUI {
 
-	var $multi = false;
-	var $instance = false;
+	public $multi = false;
+	public $instance = false;
 
-	function __construct ($Module,$name) {
-		parent::__construct($Module,$name);
-		if ($Module->multi) {
+	public function __construct ($Module, $name) {
+		parent::__construct($Module, $name);
+		if ( $Module->multi ) {
 			$this->multi = true;
-			shopp_custom_script('payments', '$ps[\''.strtolower($Module->module).'\'] = '.json_encode($Module->settings).";\n");
+			shopp_custom_script('payments', '$ps[\''.strtolower($Module->module).'\'] = ' . json_encode($Module->settings) . ";\n");
 		}
 	}
 
-	function generate ($id=false) {
+	public function generate ( $id = false ) {
 		$instance = false;
 		$label = $this->label;
-		if ($this->multi) {
+		if ( $this->multi ) {
 			$instance = '[${instance}]';
 			$label = '${label}';
 		}
@@ -589,15 +578,15 @@ class GatewaySettingsUI extends ModuleSettingsUI {
 		$_ = array();
 		$_[] = '<tr class="${editing_class}"><td colspan="7">';
 		$_[] = '<table class="form-table shopp-settings"><tr>';
-		$_[] = '<th scope="row" colspan="4">'.$this->name.'<input type="hidden" name="gateway" value="'.$this->module.$instance.'" /></th>';
+		$_[] = '<th scope="row" colspan="4">' . $this->name . '<input type="hidden" name="gateway" value="' . $this->module . $instance . '" /></th>';
 		$_[] = '</tr><tr>';
-		$_[] = '<td><input type="text" name="settings['.$this->module.']'.$instance.'[label]" value="'.$label.'" id="'.$this->id.'-label" size="16" class="selectall" /><br />';
-		$_[] = '<label for="'.$this->id.'-label">'.__('Option Name','Shopp').'</label></td>';
+		$_[] = '<td><input type="text" name="settings[' . $this->module . ']' . $instance . '[label]" value="' . $label . '" id="' . $this->id . '-label" size="16" class="selectall" /><br />';
+		$_[] = '<label for="' . $this->id . '-label">'.__('Option Name','Shopp').'</label></td>';
 
-		foreach ($this->markup as $markup) {
+		foreach ( $this->markup as $markup ) {
 			$_[] = '<td>';
-			if (empty($markup)) $_[] = '&nbsp;';
-			else $_[] = join("\n",$markup);
+			if ( empty($markup) ) $_[] = '&nbsp;';
+			else $_[] = join("\n", $markup);
 			$_[] = '</td>';
 		}
 
@@ -610,7 +599,7 @@ class GatewaySettingsUI extends ModuleSettingsUI {
 		$_[] = '</tr></table>';
 		$_[] = '</td></tr>';
 
-		return join("\n",$_);
+		return join("\n", $_);
 
 	}
 
@@ -626,32 +615,33 @@ class GatewaySettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	function cardmenu ($column=0,$attributes=array(),$cards=array()) {
+	public function cardmenu ( $column = 0, $attributes = array(), $cards = array() ) {
 		$options = array();
-		foreach ($cards as $card) $options[strtolower($card->symbol)] = $card->name;
-		$this->multimenu($column,$attributes,$options);
+		foreach ( $cards as $card )
+			$options[ strtolower($card->symbol) ] = $card->name;
+		$this->multimenu($column, $attributes, $options);
 	}
 
-	function input ($column=0,$attributes=array()) {
+	public function input ( $column = 0, $attributes = array() ) {
 		$this->multifield($attributes);
-		parent::input($column,$attributes);
+		parent::input($column, $attributes);
 	}
 
-	function textarea ($column=0,$attributes=array()) {
+	public function textarea ( $column = 0, $attributes = array() ) {
 		$this->multifield($attributes);
-		parent::textarea($column,$attributes);
+		parent::textarea($column, $attributes);
 	}
 
-	function multifield (&$attributes) {
+	public function multifield ( &$attributes ) {
 		if ($this->multi) {
-			$attributes['value'] = '${'.$attributes['name'].'}';
-			$attributes['name'] = '${instance}]['.$attributes['name'];
+			$attributes['value'] = '${'. $attributes['name']. '}';
+			$attributes['name'] = '${instance}]['. $attributes['name'];
 		}
 		return $attributes;
 	}
 
-	function behaviors ($script) {
-		shopp_custom_script('payments',$script);
+	public function behaviors ( $script ) {
+		shopp_custom_script('payments', $script);
 	}
 
 
@@ -668,9 +658,9 @@ class GatewaySettingsUI extends ModuleSettingsUI {
  **/
 class FreeOrder extends GatewayFramework {
 
-	var $secure = false;	// SSL not required
-	var $refunds = true;	// Supports refunds
-	var $saleonly = true;
+	public $secure = false;	// SSL not required
+	public $refunds = true;	// Supports refunds
+	public $saleonly = true;
 
 	/**
 	 * Setup the FreeOrder gateway
@@ -680,18 +670,18 @@ class FreeOrder extends GatewayFramework {
 	 *
 	 * @return void
 	 **/
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
-		$this->name = __('Free Order','Shopp');
+		$this->name = __('Free Order', 'Shopp');
 
-		add_action('shopp_freeorder_sale',array($this,'capture'));
-		add_action('shopp_freeorder_refund',array($this,'void'));
-		add_action('shopp_freeorder_void',array($this,'void'));
+		add_action('shopp_freeorder_sale', array($this, 'capture'));
+		add_action('shopp_freeorder_refund', array($this, 'void'));
+		add_action('shopp_freeorder_void', array($this, 'void'));
 	}
 
 
-	function capture (OrderEventMessage $Event) {
-		shopp_add_order_event($Event->order,'captured',array(
+	public function capture ( OrderEventMessage $Event ) {
+		shopp_add_order_event($Event->order, 'captured', array(
 			'txnid' => time(),
 			'fees' => 0,
 			'paymethod' => __('Free Order','Shopp'),
@@ -702,9 +692,9 @@ class FreeOrder extends GatewayFramework {
 		));
 	}
 
-	function void (OrderEventMessage $Event) {
+	public function void ( OrderEventMessage $Event ) {
 		$Purchase = new Purchase($Event->order);
-		shopp_add_order_event($Purchase->id,'voided',array(
+		shopp_add_order_event($Purchase->id, 'voided', array(
 			'txnorigin' =>  $Purchase->txnid,	// Original transaction ID (txnid of original Purchase record)
 			'txnid' => time(),					// Transaction ID for the VOID event
 			'gateway' => $Event->gateway		// Gateway handler name (module name from @subpackage)
@@ -727,13 +717,13 @@ class FreeOrder extends GatewayFramework {
  **/
 class PayCard {
 
-	var $name;
-	var $symbol;
-	var $pattern = false;
-	var $csc = false;
-	var $inputs = array();
+	public $name;
+	public $symbol;
+	public $pattern = false;
+	public $csc = false;
+	public $inputs = array();
 
-	function __construct ($name,$symbol,$pattern,$csc=false,$inputs=array()) {
+	public function __construct ( $name, $symbol, $pattern, $csc=false, $inputs = array() ) {
 		$this->name = $name;
 		$this->symbol = $symbol;
 		$this->pattern = $pattern;
@@ -741,28 +731,26 @@ class PayCard {
 		$this->inputs = $inputs;
 	}
 
-	function validate ( $pan ) {
+	public function validate ( $pan ) {
 		$n = preg_replace('/\D/', '', $pan);
 		if ( strlen($n) == 4 ) return true;
 		return ( $this->match($n) && $this->checksum($n) );
 	}
 
-	function match ($number) {
-		if ($this->pattern && !preg_match($this->pattern,$number)) return false;
+	public function match ( $number ) {
+		if ( $this->pattern && ! preg_match($this->pattern, $number) ) return false;
 		return true;
 	}
 
-	function checksum ($number) {
+	public function checksum ( $number ) {
 		$code = strrev($number);
-		for ($cs = $i = 0; $i < strlen($code); $i++) {
-			$d = intval($code[$i]);
-			if ($i & 1) $d *= 2;
+		for ( $cs = $i = 0; $i < strlen($code); $i++ ) {
+			$d = intval($code[ $i ]);
+			if ( $i & 1 ) $d *= 2;
 			$cs += $d % 10;
-			if ($d > 9) $cs += 1;
+			if ( $d > 9 ) $cs += 1;
 		}
-		return ($cs % 10 == 0);
+		return ( $cs % 10 == 0 );
 	}
 
 }
-
-?>
