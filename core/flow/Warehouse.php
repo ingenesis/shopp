@@ -255,7 +255,7 @@ class Warehouse extends AdminController {
 		);
 
 		$args = array_merge($defaults,$_GET);
-		$args['per_page'] = get_user_option($per_page_option['option']);
+		$args['per_page'] = ( false === ( $user_per_page = get_user_option($per_page_option['option']) ) ) ? $args['per_page'] : $user_per_page;
 		extract($args,EXTR_SKIP);
 
 
