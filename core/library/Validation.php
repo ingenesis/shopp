@@ -158,33 +158,35 @@ class ShoppFormValidation {
 
 	public static function paycard ( $result ) {
 
-		if ( apply_filters('shopp_billing_card_required', isset($_POST['billing']['card']) && empty($_POST['billing']['card'])) )
+		$fields = $_POST['billing'];
+
+		if ( apply_filters('shopp_billing_card_required', isset($fields['card']) && empty($fields['card'])) )
 			return shopp_add_error( __('You did not provide a credit card number.','Shopp') );
 
-		if ( apply_filters('shopp_billing_cardtype_required', isset($_POST['billing']['card']) && empty($_POST['billing']['cardtype'])) )
+		if ( apply_filters('shopp_billing_cardtype_required', isset($fields['card']) && empty($fields['cardtype'])) )
 			return shopp_add_error( __('You did not select a credit card type.','Shopp') );
 
-		$card = Lookup::paycard( strtolower($_POST['billing']['cardtype']) );
+		$card = Lookup::paycard( strtolower($fields['cardtype']) );
 
 		if ( apply_filters('shopp_billing_valid_cardtype', ! $card ))
 			return shopp_add_error( __('The credit card type you provided is invalid.','Shopp') );
 
-		if ( apply_filters('shopp_billing_valid_card', ! $card->validate($_POST['billing']['card']) ))
+		if ( apply_filters('shopp_billing_valid_card', ! $card->validate($fields['card']) ))
 			return shopp_add_error( __('The credit card number you provided is invalid.','Shopp') );
 
-		if ( apply_filters('shopp_billing_cardexpires_month_required',empty($_POST['billing']['cardexpires-mm'])) )
+		if ( apply_filters('shopp_billing_cardexpires_month_required', empty($fields['cardexpires-mm'])) )
 			return shopp_add_error( __('You did not enter the month the credit card expires.','Shopp') );
 
-		if ( apply_filters('shopp_billing_cardexpires_year_required',empty($_POST['billing']['cardexpires-yy'])) )
+		if ( apply_filters('shopp_billing_cardexpires_year_required', empty($fields['cardexpires-yy'])) )
 			return shopp_add_error( __('You did not enter the year the credit card expires.','Shopp') );
 
-		if ( apply_filters('shopp_billing_card_expired', intval($_POST['billing']['cardexpires-yy']) <= intval(date('y')) || intval($_POST['billing']['cardexpires-mm']) < intval(date('n')) ) )
+		if ( apply_filters('shopp_billing_card_expired',
+				intval($fields['cardexpires-yy']) < intval(date('y')) // Less than this year or equal to this year and less than this month
+				|| ( intval($fields['cardexpires-yy']) == intval(date('y')) && intval($fields['cardexpires-mm']) < intval(date('n')) )
+			) )
 			return shopp_add_error( __('The credit card expiration date you provided has already expired.','Shopp') );
 
-		if ( apply_filters('shopp_billing_cardholder_required',strlen($_POST['billing']['cardholder']) < 2) )
-			return shopp_add_error( __('You did not enter the name on the credit card you provided.','Shopp') );
-
-		if ( apply_filters('shopp_billing_cvv_required',strlen($_POST['billing']['cvv']) < 3) )
+		if ( apply_filters('shopp_billing_cvv_required',strlen($fields['cvv']) < 3) )
 			return shopp_add_error( __('You did not enter a valid security ID for the card you provided. The security ID is a 3 or 4 digit number found on the back of the credit card.','Shopp') );
 
         return ( is_a($result, 'ShoppError') ) ? $result : true;
