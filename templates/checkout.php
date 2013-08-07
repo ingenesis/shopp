@@ -147,6 +147,12 @@
 						<?php shopp( 'checkout.billing-card', 'required=true&size=30&title=' . __( 'Credit/Debit Card Number', 'Shopp' ) ); ?>
 					</span>
 					<span>
+						<label for="billing-cvv"><?php _e( 'Security ID', 'Shopp' ); ?></label>
+						<?php shopp( 'checkout.billing-cvv', 'size=7&minlength=3&maxlength=4&title=' . __( 'Card\'s security code (3-4 digits on the back of the card)', 'Shopp' ) ); ?>
+					</span>
+				</li>
+				<li class="payment">
+					<span>
 						<label for="billing-cardexpires-mm"><?php _e('MM','Shopp'); ?></label>
 						<?php shopp( 'checkout.billing-cardexpires-mm', 'size=4&required=true&minlength=2&maxlength=2&title=' . __( 'Card\'s 2-digit expiration month', 'Shopp' ) ); ?> /
 					</span>
@@ -157,16 +163,6 @@
 					<span>
 						<label for="billing-cardtype"><?php _e( 'Card Type', 'Shopp' ); ?></label>
 						<?php shopp( 'checkout.billing-cardtype', 'required=true&title=' . __( 'Card Type', 'Shopp' ) ); ?>
-					</span>
-				</li>
-				<li class="payment">
-					<span>
-						<label for="billing-cardholder"><?php _e( 'Name on Card', 'Shopp' ); ?></label>
-						<?php shopp( 'checkout.billing-cardholder', 'required=true&size=30&title=' . __( 'Card Holder\'s Name', 'Shopp' ) ); ?>
-					</span>
-					<span>
-						<label for="billing-cvv"><?php _e( 'Security ID', 'Shopp' ); ?></label>
-						<?php shopp( 'checkout.billing-cvv', 'size=7&minlength=3&maxlength=4&title=' . __( 'Card\'s security code (3-4 digits on the back of the card)', 'Shopp' ) ); ?>
 					</span>
 				</li>
 				<?php if ( shopp( 'checkout.billing-xcsc-required' ) ) : // Extra billing security fields ?>
@@ -181,6 +177,7 @@
 						</span>
 					</li>
 				<?php endif; ?>
+				
 			<?php endif; ?>
 			
 			<li>
