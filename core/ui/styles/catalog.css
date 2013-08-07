@@ -43,7 +43,7 @@
 #shopp .products .frame img { display: inline; }
 
 #shopp ul.paging { clear: none; display: inline; }
-#shopp ul.paging li { display: inline; margin-left: 5px;}
+#shopp ul.paging li { display: inline-block; margin-left: 5px;}
 
 /* Shopp Forms */
 #shopp #checkout,
@@ -94,8 +94,7 @@
 .content #shopp .views li,
 #shopp .views li { display: inline; margin: 0; padding: 0; }
 
-#shopp .views button { 
-	font-size: 100%;
+#shopp .views button { font-size: 100%;
 	display: inline-block;
 	padding: 3px;
 	overflow: hidden;
@@ -199,7 +198,6 @@
 #shopp .carousel .frame { font-size: 100%; position: relative; margin: 0 2em; overflow: hidden; }
 #shopp .carousel ul { position: relative; width: 999em; }
 #shopp.catalog .carousel li { display: inline-block; vertical-align: middle;}
-/*#shopp .carousel button { position: absolute; bottom: 50%; cursor: pointer; border: none; width: 14px; height: 14px; background-image: url('../../../core/ui/icons/carousel.png'); background-repeat: no-repeat; background-color: transparent; }*/
 #shopp .carousel button { position: absolute; bottom: 45%; font-family: 'shopp-icons'; border: none; cursor: pointer; background: none; font-size: 1.5em; line-height: 1; padding: 0; margin: 0;}
 #shopp .carousel button.left { left: 0; }
 #shopp .carousel button.right { right: 0; }
