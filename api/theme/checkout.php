@@ -151,23 +151,67 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	}
 
 	public static function billing_card_expires_mm ($result, $options, $O) {
-		if (!isset($options['mode'])) $options['mode'] = "input";
-		if ($options['mode'] == "value") return date("m",$O->Billing->cardexpires);
-		$options['class'] = isset($options['class']) ? $options['class'].' paycard':'paycard';
-		if (!isset($options['autocomplete'])) $options['autocomplete'] = "off";
-		if (!empty($O->Billing->cardexpires))
-			$options['value'] = date("m",$O->Billing->cardexpires);
-		return '<input type="text" name="billing[cardexpires-mm]" id="billing-cardexpires-mm" '.inputattrs($options).' />';
+
+		$name = 'billing[cardexpires-mm]';
+		$id = 'billing-cardexpires-mm';
+
+		$defaults = array(
+			'mode' => 'input',
+			'class' => 'paycard',
+			'autocomplete' => 'off',
+			'type' => 'menu',
+			'value' => $O->Billing->cardexpires > 0 ? date("m",$O->Billing->cardexpires) : '',
+		);
+		$options = array_merge($defaults, $options);
+
+		if ( 'value' == $options['mode'] ) return date('m', $O->Billing->cardexpires);
+
+		if ( 'text' == $options['type'] )
+			return '<input type="text" name="' . $name . '" id="' . $id . '" ' . inputattrs($options) . ' />';
+
+		$months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
+
+		$menu = array();
+		$menu[] = '<select name="' . $name . '" id="' . $id . '">';
+		$menu[] = '<option></option>';
+		$menu[] = menuoptions($months, $options['value']);
+		$menu[] = '</select>';
+
+		return join('', $menu);
 	}
 
 	public static function billing_card_expires_yy ($result, $options, $O) {
-		if (!isset($options['mode'])) $options['mode'] = "input";
-		if ($options['mode'] == "value") return date("y",$O->Billing->cardexpires);
-		$options['class'] = isset($options['class']) ? $options['class'].' paycard':'paycard';
-		if (!isset($options['autocomplete'])) $options['autocomplete'] = "off";
-		if (!empty($O->Billing->cardexpires))
-			$options['value'] = date("y",$O->Billing->cardexpires);
-		return '<input type="text" name="billing[cardexpires-yy]" id="billing-cardexpires-yy" '.inputattrs($options).' />';
+
+		$name = 'billing[cardexpires-yy]';
+		$id = 'billing-cardexpires-yy';
+
+		$defaults = array(
+			'mode' => 'input',
+			'class' => 'paycard',
+			'autocomplete' => 'off',
+			'type' => 'menu',
+			'value' => $O->Billing->cardexpires > 0 ? date('y', $O->Billing->cardexpires) : '',
+			'max' => 20
+		);
+		$options = array_merge($defaults, $options);
+
+		if ( 'value' == $options['mode'] ) return date('m', $O->Billing->cardexpires);
+
+		if ( 'text' == $options['type'] )
+			return '<input type="text" name="' . $name . '" id="' . $id . '" ' . inputattrs($options) . ' />';
+
+		$time = current_time('timestamp');
+		$thisyear = date('y', $time);
+		$years = array_map( create_function('$n','return sprintf("%02d", $n);'), range((int)$thisyear, (int)$thisyear + $options['max'] ) );
+
+		$menu = array();
+		$menu[] = '<select name="' . $name . '" id="' . $id . '">';
+		$menu[] = '<option></option>';
+		$menu[] = menuoptions($years, $options['value']);
+		$menu[] = '</select>';
+
+		return join('', $menu);
+
 	}
 
 	public static function billing_card_holder ($result, $options, $O) {
