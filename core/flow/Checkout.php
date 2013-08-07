@@ -42,7 +42,7 @@ class ShoppCheckout {
 		'data' => array()
 	);
 
-	function __construct () {
+	public function __construct () {
 
 		ShoppingObject::store('confirmed',$this->confirmed);
 
@@ -73,7 +73,6 @@ class ShoppCheckout {
 		add_filter('shopp_validate_checkout', 'ShoppFormValidation::login');
 		add_filter('shopp_validate_checkout', 'ShoppFormValidation::passwords');
 		add_filter('shopp_validate_checkout', 'ShoppFormValidation::billaddress');
-		add_filter('shopp_validate_checkout', 'ShoppFormValidation::paycard');
 
 	}
 
@@ -170,6 +169,8 @@ class ShoppCheckout {
 
 	public function payment () {
 		if ( ! $this->paycard() ) return;
+
+		add_filter('shopp_validate_checkout', 'ShoppFormValidation::paycard');
 
 		$Billing = ShoppOrder()->Billing;
 		$Payments = ShoppOrder()->Payments;
