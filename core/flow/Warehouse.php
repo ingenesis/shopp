@@ -255,9 +255,8 @@ class Warehouse extends AdminController {
 		);
 
 		$args = array_merge($defaults,$_GET);
-		$args['per_page'] = ( false === ( $user_per_page = get_user_option($per_page_option['option']) ) ) ? $args['per_page'] : $user_per_page;
+		if ( false !== ( $user_per_page = get_user_option($per_page_option['option']) ) ) $args['per_page'] = $user_per_page;
 		extract($args,EXTR_SKIP);
-
 
 		$url = add_query_arg(array_merge($_GET,array('page'=>$this->Admin->pagename('products'))),admin_url('admin.php'));
 
