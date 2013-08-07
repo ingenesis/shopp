@@ -1,6 +1,6 @@
 <?php
 /**
- * OfflinePayment.php
+ * Offline Payment
  *
  * Provides offline payment handling
  *
