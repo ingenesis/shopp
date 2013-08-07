@@ -13,6 +13,8 @@
  *
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 class OfflinePayment extends GatewayFramework implements GatewayModule {
 
 	public $secure = false;		// SSL not required
