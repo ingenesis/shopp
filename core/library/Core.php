@@ -1158,7 +1158,7 @@ abstract class ShoppCore {
 	public static function mk24hour ($hour, $meridiem) {
 		if ($hour < 12 && $meridiem == "PM") return $hour + 12;
 		if ($hour == 12 && $meridiem == "AM") return 0;
-		return $hour;
+		return (int) $hour;
 	}
 
 	/**
