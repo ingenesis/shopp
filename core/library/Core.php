@@ -1054,7 +1054,7 @@ abstract class ShoppCore {
 		$bots = array('Googlebot','TeomaAgent','Zyborg','Gulliver','Architext spider','FAST-WebCrawler','Slurp','Ask Jeeves','ia_archiver','Scooter','Mercator','crawler@fast','Crawler','InfoSeek sidewinder','Lycos_Spider_(T-Rex)','Fluffy the Spider','Ultraseek','MantraAgent','Moget','MuscatFerret','VoilaBot','Sleek Spider','KIT_Fireball','WebCrawler');
 		if (!isset($_SERVER['HTTP_USER_AGENT'])) return apply_filters('shopp_agent_is_robot', true, '');
 		foreach($bots as $bot)
-			if (strpos(strtolower($_SERVER['HTTP_USER_AGENT']),strtolower($bot))) return apply_filters('shopp_agent_is_robot', true, esc_attr($_SERVER['HTTP_USER_AGENT']));
+			if (false !== strpos(strtolower($_SERVER['HTTP_USER_AGENT']),strtolower($bot))) return apply_filters('shopp_agent_is_robot', true, esc_attr($_SERVER['HTTP_USER_AGENT']));
 		return apply_filters('shopp_agent_is_robot', false, esc_attr($_SERVER['HTTP_USER_AGENT']));
 	}
 
