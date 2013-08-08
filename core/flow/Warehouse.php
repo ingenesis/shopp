@@ -363,6 +363,7 @@ class Warehouse extends AdminController {
 			case 'sold': $ordercols = 's.sold '.$orderd; break;
 			case 'gross': $ordercols = 's.grossed '.$orderd; break;
 			case 'inventory': $ordercols = 's.stock '.$orderd; break;
+			case 'sku': $ordercols = 'pt.sku '.$orderd; break;
 		}
 
 		if (in_array($this->view,array('onsale','featured','inventory')))
@@ -391,11 +392,11 @@ class Warehouse extends AdminController {
 				'joins' => array_merge(array($pt => "LEFT JOIN $pt AS pt ON p.ID=pt.product"),$joins),
 				'where' => $where,
 				'groupby' => 'pt.id',
-				'order' => 'p.ID,pt.sortorder',
+				'orderby' => str_replace('s.', 'pt.', $ordercols),
 				'limit'=>"$start,$per_page",
 				'nostock' => true,
 				'published' => false,
-				// 'debug' => true
+				'debug' => true
 			);
 		}
 
