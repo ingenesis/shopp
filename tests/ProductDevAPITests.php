@@ -357,6 +357,29 @@ class ProductDevAPITests extends ShoppTestCase {
 		$this->AssertEquals('on', $Price->inventory);
 	}
 
+	function test_shopp_duplicate_product () {
+		$Product = shopp_product('uss-enterprise', 'slug');
+
+		$Duplicate = shopp_duplicate_product('uss-enterprise', 'slug');
+
+		$this->AssertNotEquals($Product->id, $Duplicate->id);
+
+		$this->AssertEquals($Product->name, $Duplicate->name);
+
+		$Price = reset($Duplicate->prices);
+
+		$this->AssertEquals('product', $Price->context);
+		$this->AssertEquals('Shipped', $Price->type);
+		$this->AssertEquals(1701, $Price->price);
+		$this->AssertEquals(17.01, $Price->saleprice);
+		$this->AssertEquals(17.01, $Price->promoprice);
+		$this->AssertEquals(52.7, $Price->dimensions['weight']);
+		$this->AssertEquals('on', $Price->tax);
+		$this->AssertEquals('on', $Price->shipping);
+		$this->AssertEquals('on', $Price->sale);
+		$this->AssertEquals('on', $Price->inventory);
+	}
+
 	function test_shopp_product_publish () {
 
 		$Product = shopp_product('uss-enterprise', 'slug');

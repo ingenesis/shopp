@@ -286,6 +286,39 @@ function shopp_update_product ( $id, $data = array() ) {
 	return shopp_add_product($data);
 }
 
+
+/**
+ * Duplicate a product
+ *
+ * @author Jonathan Davis
+ * @since 1.3
+ *
+ * @param mixed $product (required) the product id to load.  Also possible to specify the name or slug.  See the $load_by parameter.
+ * @param string $load_by (optional default=id) id for loading the product by id, name for loading by name, and slug for loading by slug
+ * @return Product The duplicated product object, false on failure
+ **/
+function shopp_duplicate_product ( $product = false, $load_by = 'id' ) {
+	if ( ! shopp_product($id) ) {
+		shopp_debug(__FUNCTION__ . " failed: invalid product ID specified.");
+		return false;
+	}
+
+	$Product = new Product($product, $load_by);
+	if ( empty($Product->id) ) {
+		shopp_debug(__FUNCTION__ . " failed: Unable to load product $product.");
+		return false;
+	}
+
+	$original = $Product->id;
+	$Product->duplicate();
+
+	if ( $Product->id == $original ) {
+		shopp_debug(__FUNCTION__ . " failed: Unable to duplicate product $product.");
+		return false;	}
+
+	return $Product;
+}
+
 /**
  * shopp_rmv_product
  *
