@@ -306,4 +306,18 @@ class CoreTests extends ShoppTestCase {
 		$result = Shopp::filefind('@*Nyota Uhura', '/unworkable/~path');
 		$this->assertFalse($result);
 	}
+
+	/**
+	 * We use the string-matches-format assertion here since depending on which tool is used behind
+	 * the scenes to determine the mime type there may or may not be charset information appended.
+	 */
+	public function test_file_mimetype() {
+		$css = SHOPP_UNITTEST_DIR . '/bootstrap.css';
+		$png = SHOPP_UNITTEST_DIR . '/1.png';
+		$zip = SHOPP_UNITTEST_DIR . '/archive.zip';
+
+		$this->assertStringMatchesFormat('text/css%A', Shopp::file_mimetype($css));
+		$this->assertStringMatchesFormat('image/png%A', Shopp::file_mimetype($png));
+		$this->assertStringMatchesFormat('application/zip%A', Shopp::file_mimetype($zip));
+	}
 }
