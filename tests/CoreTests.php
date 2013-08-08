@@ -267,4 +267,12 @@ class CoreTests extends ShoppTestCase {
 		$poetic_era = $era_ends->diff($era_begins); // 13,692 days
 		$this->assertTrue( (int) $poetic_era->days === (int) Shopp::duration($begin, $end));
 	}
+
+	public function test_esc_attrs() {
+		$source = array( 'nested' => array( '<child>', '<brat>' ) );
+		$target = Shopp::esc_attrs($source);
+
+		foreach ($target['nested'] as $checkval)
+			$this->assertTrue(1 < strpos($checkval, '&gt;'));
+	}
 }
