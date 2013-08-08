@@ -401,6 +401,14 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue('14' === (string) $select->option[1]['value']);
 	}
 
+	public function test_numeric_format() {
+		$this->assertTrue('9,876.54' === Shopp::numeric_format(9876.5421));
+		$this->assertTrue('9876,5421' === Shopp::numeric_format(9876.5421, 4, ',', '', array(4)));
+	}
+
+	/**
+	 * @depends test_numeric_format
+	 */
 	public function test_money() {
 		$format = array(
 			'precision' => 3,
