@@ -364,4 +364,11 @@ class CoreTests extends ShoppTestCase {
 		$path = Shopp::locate_template(array('email-reorder.php', 'email-order.php', 'email.php'));
 		$this->assertStringMatchesFormat('%Aemail-order.php%A', $path);
 	}
+
+	public function test_mktimestamp() {
+		$date = new DateTime('2063-04-05');
+		$mysql = $date->format('Y-m-d H:i:s');
+		$stamp = $date->getTimestamp();
+		$this->assertTrue($stamp === Shopp::mktimestamp($mysql));
+	}
 }
