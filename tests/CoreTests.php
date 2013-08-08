@@ -223,4 +223,16 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue(is_float($float_value));
 		$this->assertTrue(78456.23 === $float_value);
 	}
+
+	public function test_datecalc() {
+		$test = new DateTime;
+
+		$thanksgiving = Shopp::datecalc(4, 4, 11, 2013);
+		$test->setTimestamp($thanksgiving);
+		$this->assertTrue('2013-11-28' === $test->format('Y-m-d'));
+
+		$mayan_apocalypse = Shopp::datecalc(3, 5, 12, 2012);
+		$test->setTimestamp($mayan_apocalypse);
+		$this->assertTrue('2012-12-21' === $test->format('Y-m-d'));
+	}
 }
