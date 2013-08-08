@@ -814,7 +814,9 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			);
 		}
 
-		if ( 1 === count($O->prices) && 'N/A' === $O->prices[0]->type ) return $disabled; // Pricing disabled?
+		// Pricing disabled? Ensure price data has been loaded first
+		if ( empty($O->prices) ) $O->load_data( array('prices') );
+		if ( 1 === count($O->prices) && 'N/A' === $O->prices[0]->type ) return $disabled;
 
 		$prices = array_map('roundprice', $prices);
 		if ( Shopp::str_true($number)  ) return join($separator, $prices);
