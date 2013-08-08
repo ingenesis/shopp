@@ -320,4 +320,9 @@ class CoreTests extends ShoppTestCase {
 		$this->assertStringMatchesFormat('image/png%A', Shopp::file_mimetype($png));
 		$this->assertStringMatchesFormat('application/zip%A', Shopp::file_mimetype($zip));
 	}
+
+	public function test_force_ssl() {
+		$url = Shopp::force_ssl('http://shopplugin.net', true);
+		$this->assertStringMatchesFormat('https://%A', $url);
+	}
 }
