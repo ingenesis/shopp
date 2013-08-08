@@ -353,4 +353,10 @@ class CoreTests extends ShoppTestCase {
 
 		$_SERVER['HTTP_USER_AGENT'] = $restore;
 	}
+
+	public function linkencode() {
+		$source = 'Spaces and ampersats @ may constitute less than 10% of typical strings.';
+		$desired = 'Spaces%20and%20ampersats%20%40%20may%20constitute%20less%20than%2010%25%20of%20typical%20strings.';
+		$this->assertTrue($desired === Shopp::linkencode($source));
+	}
 }
