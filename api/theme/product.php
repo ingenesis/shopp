@@ -854,6 +854,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults,$options);
 		$_options = $options;
 		extract($_options);
+		$select_attrs = array('title','required','class','disabled','required','size','tabindex','accesskey');
 
 		unset($_options['label']); // Interferes with the text input value when passed to inputattrs()
 		$labeling = '<label for="quantity-'.$O->id.'">'.$label.'</label>';
@@ -889,7 +890,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 					else for ($i = $v[0]; $i < $v[1]+1; $i++) $qtys[] = $i;
 				} else $qtys[] = $v;
 			}
-			$_[] = '<select name="products['.$O->id.'][quantity]" id="quantity-'.$O->id.'">';
+			$_[] = '<select name="products['.$O->id.'][quantity]" id="quantity-'.$O->id.'"' . inputattrs($options, $select_attrs) . '>';
 			foreach ($qtys as $qty) {
 				$amount = $qty;
 				if ( $variation && 'Donation' == $variation->type && Shopp::str_true($variation->donation['var']) ) {
@@ -1176,12 +1177,13 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		extract($options);
 
 		$taxes = is_null($taxes) ? self::_include_tax($O) : Shopp::str_true($taxes);
+		$collection_class = ShoppCollection() && isset(ShoppCollection()->slug) ? 'category-' . ShoppCollection()->slug : '';
 
 		if ('single' == $mode) {
 			if (!empty($options['before_menu'])) $string .= $options['before_menu']."\n";
 			if (Shopp::str_true($options['label'])) $string .= '<label for="product-options'.$O->id.'">'. __('Options', 'Shopp').': </label> '."\n";
 
-			$string .= '<select name="products['.$O->id.'][price]" id="product-options'.$O->id.'">';
+			$string .= '<select name="products['.$O->id.'][price]" id="product-options'.$O->id.'" class="'.$collection_class.' product'.$O->id.' options">';
 			if (!empty($options['defaults'])) $string .= '<option value="">'.$options['defaults'].'</option>'."\n";
 
 			foreach ($O->prices as $pricing) {
@@ -1250,9 +1252,6 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			if ( 'hide' == $options['disabled'] ) $jsoptions['disabled'] = false;
 			if ( 'hide' == $options['pricetags'] ) $jsoptions['pricetags'] = false;
 			if ( ! empty($taxrate) ) $jsoptions['taxrate'] = $taxrate;
-
-
-			$collection_class = ShoppCollection() && isset(ShoppCollection()->slug) ? 'category-' . ShoppCollection()->slug : '';
 
 			ob_start();
 ?><?php if (!empty($options['defaults'])): ?>
