@@ -400,4 +400,17 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue('Orion' === (string) $select->option[1]);
 		$this->assertTrue('14' === (string) $select->option[1]['value']);
 	}
+
+	public function test_money() {
+		$format = array(
+			'precision' => 3,
+			'decimals' => ',',
+			'thousands' => ' ',
+			'grouping' => 3,
+			'cpos' => true,
+			'currency' => '£'
+		);
+
+		$this->assertTrue('£6 543,210' === Shopp::money(6543.21, $format));
+	}
 }

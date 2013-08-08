@@ -1231,10 +1231,10 @@ abstract class ShoppCore {
 	 * @return string The formatted amount
 	 **/
 	public static function money ($amount, $format = array()) {
-		$format = apply_filters('shopp_money_format', currency_format($format) );
-		$number = numeric_format(apply_filters('shopp_money_amount', $amount), $format['precision'], $format['decimals'], $format['thousands'], $format['grouping']);
-		if ($format['cpos']) return $format['currency'].$number;
-		else return $number.$format['currency'];
+		$format = apply_filters('shopp_money_format', Shopp::currency_format($format) );
+		$number = Shopp::numeric_format(apply_filters('shopp_money_amount', $amount), $format['precision'], $format['decimals'], $format['thousands'], $format['grouping']);
+		if ( $format['cpos'] ) return $format['currency'].$number;
+		else return $number . $format['currency'];
 	}
 
 	/**
