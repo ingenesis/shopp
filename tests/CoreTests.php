@@ -235,4 +235,25 @@ class CoreTests extends ShoppTestCase {
 		$test->setTimestamp($mayan_apocalypse);
 		$this->assertTrue('2012-12-21' === $test->format('Y-m-d'));
 	}
+
+	public function test_date_format_order() {
+		$this->force_uk_date_style();
+		$format = Shopp::date_format_order();
+		$expected = array_flip( array('day', 'month', 'year', 's0', 's1', 's2') );
+		$present = array_intersect_key($expected, $format);
+		$this->assertCount(6, $present);
+	}
+
+	/**
+	 * Shopp's toast to Wills and Kate and young boy George. Also useful to ensure date formatting functions work
+	 * as expected.
+	 */
+	protected function force_uk_date_style() {
+		add_filter('pre_option_date_format', array($this, 'use_uk_date_format') );
+	}
+
+	public function use_uk_date_format() {
+		remove_filter('pre_option_date_format', array($this, 'use_uk_date_format') );
+		return 'jS F Y';
+	}
 }
