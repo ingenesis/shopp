@@ -152,6 +152,16 @@ class BillingAddress extends Address {
 		);
 	}
 
+	public function fromshipping () {
+		$Shipping = ShoppOrder()->Shipping;
+
+		$fields = array($this->address, $this->xaddress, $this->city);
+		$address = join('', $fields);
+
+		if ( empty($address) )
+			$this->copydata($Shipping, '', array('type'));
+	}
+
 } // end BillingAddress class
 
 /**
