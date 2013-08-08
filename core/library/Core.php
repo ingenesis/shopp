@@ -988,7 +988,7 @@ abstract class ShoppCore {
 	public static function ini_size ($name) {
 		$setting = ini_get($name);
 		if (preg_match('/\d+\w+/',$setting) !== false) return $setting;
-		else readableFileSize($setting);
+		else Shopp::readableFileSize($setting);
 	}
 
 	/**

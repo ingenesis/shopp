@@ -331,4 +331,9 @@ class CoreTests extends ShoppTestCase {
 		$expected = '2Checkout/2Checkout.php';
 		$this->assertTrue($expected === Shopp::gateway_path($path));
 	}
+
+	public function test_ini_size() {
+		$size = Shopp::ini_size('upload_max_filesize');
+		$this->assertFalse( empty($size) );
+	}
 }

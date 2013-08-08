@@ -890,7 +890,7 @@ class Lookup {
 			UPLOAD_ERR_INI_SIZE => sprintf(
 				__('The uploaded file is too big for the server.%s','Shopp'),
 					sprintf(' '.__('Files must be less than %s.','Shopp')." {$_['contact']['server-manager']}",
-					ini_size('upload_max_filesize'))
+					Shopp::ini_size('upload_max_filesize'))
 			),
 			UPLOAD_ERR_FORM_SIZE => sprintf(__('The uploaded file is too big.%s','Shopp'),
 				isset($_POST['MAX_FILE_SIZE']) ? sprintf(' '.__('Files must be less than %s. Please try again with a smaller file.','Shopp'),readableFileSize($_POST['MAX_FILE_SIZE'])) : ''
