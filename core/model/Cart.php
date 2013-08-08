@@ -83,6 +83,7 @@ class ShoppCart extends ListFramework {
 	 * @return void
 	 **/
 	public function listeners () {
+
 		add_action('shopp_cart_request', array($this, 'request') );
 		add_action('shopp_cart_updated', array($this, 'totals'), 100 );
 		add_action('shopp_session_reset', array($this, 'clear') );
@@ -94,6 +95,10 @@ class ShoppCart extends ListFramework {
 		// Recalculate cart based on logins (for customer type discounts)
 		add_action('shopp_login', array($this, 'totals'));
 		add_action('shopp_logged_out', array($this, 'totals'));
+
+		// Setup totals counter
+		if ( false === $this->Totals ) $this->Totals = new OrderTotals();
+
 	}
 
 	/**
