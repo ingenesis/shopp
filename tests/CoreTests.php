@@ -372,10 +372,16 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue($stamp === Shopp::mktimestamp($mysql));
 	}
 
-	public function mkdatetime() {
+	public function test_mkdatetime() {
 		$date = new DateTime('2063-04-05');
 		$mysql = $date->format('Y-m-d H:i:s');
 		$stamp = $date->getTimestamp();
 		$this->assertTrue($mysql === Shopp::mkdatetime($stamp));
+	}
+
+	public function test_mk24hour() {
+		$this->assertTrue(0 === Shopp::mk24hour('12', 'AM'));
+		$this->assertTrue(12 === Shopp::mk24hour('12', 'PM'));
+		$this->assertTrue(16 === Shopp::mk24hour('4', 'PM'));
 	}
 }
