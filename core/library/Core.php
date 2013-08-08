@@ -785,6 +785,7 @@ abstract class ShoppCore {
 	 * @param string $directory The starting directory
 	 * @param string $root The original starting directory
 	 * @param array $found Result array that matching files are added to
+	 * @deprecated 1.3 please use filefind() instead
 	 **/
 	public static function find_filepath ($filename, $directory, $root, &$found) {
 		if (is_dir($directory)) {
@@ -793,7 +794,7 @@ abstract class ShoppCore {
 				while (( $file = $Directory->read() ) !== false) {
 					if (substr($file,0,1) == "." || substr($file,0,1) == "_") continue;				// Ignore .dot files and _directories
 					if (is_dir($directory.'/'.$file) && $directory == $root)		// Scan one deep more than root
-						find_filepath($filename,$directory.'/'.$file,$root, $found);	// but avoid recursive scans
+						self::find_filepath($filename,$directory.'/'.$file,$root, $found);	// but avoid recursive scans
 					elseif ($file == $filename)
 						$found[] = substr($directory,strlen($root)).'/'.$file;		// Add the file to the found list
 				}
@@ -801,6 +802,21 @@ abstract class ShoppCore {
 			}
 		}
 		return false;
+	}
+
+	public static function filefind($filename, $directory, array &$matches = array(), $greedy = true) {
+		if ( ! is_dir($directory) ) return false;
+
+		try {
+			foreach ( new RecursiveIteratorIterator( new RecursiveDirectoryIterator($directory) ) as $file )
+				if ( $file->getFilename() === $filename ) {
+					$matches[] = $file->getPathname();
+					if ( ! $greedy ) break;
+				}
+		}
+		catch (Exception $e) {}
+
+		return ( 1 <= count($matches) );
 	}
 
 	/**

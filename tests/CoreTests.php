@@ -275,4 +275,35 @@ class CoreTests extends ShoppTestCase {
 		foreach ($target['nested'] as $checkval)
 			$this->assertTrue(1 < strpos($checkval, '&gt;'));
 	}
+
+	/**
+	 * Shopp::filter_dotfiles operates as a callback, so matches should return false and vice versa.
+	 */
+	public function test_filter_dotfiles() {
+		foreach ( array('.', '.htaccess') as $match ) $this->assertFalse(Shopp::filter_dotfiles($match));
+		$this->assertTrue(Shopp::filter_dotfiles('image.png'));
+	}
+
+	public function test_filefind() {
+		$files = array();
+
+		// There is at least one of these
+		$result = Shopp::filefind('ball.png', ABSPATH);
+		$this->assertTrue($result);
+
+		// We can expect at least 5 of these (WP 3.5 + Shopp 1.3)
+		$result = Shopp::filefind('admin.php', ABSPATH, $files);
+		$this->assertTrue($result);
+		$this->assertGreaterThanOrEqual(5, count($files));
+
+		// We may wish it to operate efficiently and stop at the first match
+		$files = array();
+		$result = Shopp::filefind('admin.php', ABSPATH, $files, false);
+		$this->assertTrue($result);
+		$this->assertCount(1, $files);
+
+		// It should fail gracefully even when given ridiculous params
+		$result = Shopp::filefind('@*Nyota Uhura', '/unworkable/~path');
+		$this->assertFalse($result);
+	}
 }
