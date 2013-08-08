@@ -133,6 +133,8 @@ class BillingAddress extends Address {
 
 	public $type = 'billing';
 
+	public $locale = false;
+
 	public $card = false;
 	public $cardtype = false;
 	public $cardexpires = false;
