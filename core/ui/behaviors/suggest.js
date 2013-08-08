@@ -27,7 +27,7 @@
 		input = $anchor.is('input')?$anchor:$anchor.find('input');
 
 		$input = $(input).attr('autocomplete', 'off');
-		$results = $('<ul/>').appendTo(document);
+		$results = $('<ul/>').appendTo('body');
 
 		timeout = false;		// hold timeout ID for suggestion results to appear
 		prevLength = 0;			// last recorded length of $input.val()
