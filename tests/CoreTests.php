@@ -384,4 +384,20 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue(12 === Shopp::mk24hour('12', 'PM'));
 		$this->assertTrue(16 === Shopp::mk24hour('4', 'PM'));
 	}
+
+	public function test_menuoptions() {
+		$html = Shopp::menuoptions(array('13' => 'Mars', '14' => 'Orion'), '13', array('13', '14'));
+		$select = simplexml_load_string("<select> $html </select>");
+
+		$this->assertTrue(isset($select->option));
+		$this->assertTrue(2 === count($select->option));
+
+		$this->assertTrue(isset($select->option[0]['selected']));
+		$this->assertTrue('Mars' === (string) $select->option[0]);
+		$this->assertTrue('13' === (string) $select->option[0]['value']);
+
+		$this->assertFalse(isset($select->option[1]['selected']));
+		$this->assertTrue('Orion' === (string) $select->option[1]);
+		$this->assertTrue('14' === (string) $select->option[1]['value']);
+	}
 }

@@ -1201,7 +1201,7 @@ abstract class ShoppCore {
 			if (is_array($text)) {
 				$label = $value;
 				$_[] = '<optgroup label="'.esc_attr($label).'">';
-				$_[] = menuoptions($text,$selected,$values);
+				$_[] = self::menuoptions($text,$selected,$values);
 				$_[] = '</optgroup>';
 				continue;
 			}
