@@ -336,4 +336,9 @@ class CoreTests extends ShoppTestCase {
 		$size = Shopp::ini_size('upload_max_filesize');
 		$this->assertFalse( empty($size) );
 	}
+
+	public function test_input_attrs() {
+		$this->assertEquals( ' class="magical"', Shopp::inputattrs(array('class' => 'magical')) );
+		$this->assertEquals( ' class="magical &quot; onclick=&quot;alert()&quot; class=&quot;"', Shopp::inputattrs(array('class' => 'magical " onclick="alert()" class="')));
+	}
 }
