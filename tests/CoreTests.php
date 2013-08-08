@@ -256,4 +256,15 @@ class CoreTests extends ShoppTestCase {
 		remove_filter('pre_option_date_format', array($this, 'use_uk_date_format') );
 		return 'jS F Y';
 	}
+
+	public function test_duration() {
+		$era_begins = new DateTime('1759-01-25'); // Birth of Rabby Burns
+		$begin = $era_begins->getTimestamp();
+
+		$era_ends = new DateTime('1796-07-21'); // Death of Rabby Burns
+		$end = $era_ends->getTimestamp();
+
+		$poetic_era = $era_ends->diff($era_begins); // 13,692 days
+		$this->assertTrue( (int) $poetic_era->days === (int) Shopp::duration($begin, $end));
+	}
 }
