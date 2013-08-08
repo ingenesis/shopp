@@ -22,6 +22,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		'category' => 'category',
 		'collection' => 'category',
 		'categorylist' => 'category_list',
+		'currency' => 'currency',
 		'display' => 'type',
 		'errors' => 'errors',
 		'type' => 'type',
@@ -546,6 +547,12 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		break;
 	}
 
+	static function currency ($result, $options, $O) {
+		$baseop = shopp_setting('base_operations');
+		$currency = $baseop['currency']['code'];
+		return $currency;
+	}
+
 	static function errors ($result, $options, $O) {
 
 		$Errors = ShoppErrorStorefrontNotices();
@@ -945,7 +952,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 
 			$level = floor( (1 - $tag->count / $max) * $levels )+1;
 			if ( 'list' == $format ) $markup .= '<li class="level-' . $level . '">';
-			$markup .= '<a href="' . esc_url($tag->link) . '" rel="tag">' . $tag->name . '</a>';
+			$markup .= '<a href="' . esc_url($tag->link) . '">' . $tag->name . '</a>';
 			if ( 'list' == $format ) $markup .= '</li> ';
 
 		}

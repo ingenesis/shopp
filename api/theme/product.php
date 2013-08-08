@@ -44,6 +44,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		'addon' => 'addon',
 		'addons' => 'addons',
 		'addtocart' => 'add_to_cart',
+		'availability' => 'availability',
 		'buynow' => 'buy_now',
 		'categories' => 'categories',
 		'category' => 'category',
@@ -79,6 +80,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		'saleprice' => 'saleprice',
 		'relevance' => 'relevance',
 		'savings' => 'savings',
+		'schema' => 'schema',
 		'slug' => 'slug',
 		'spec' => 'spec',
 		'specs' => 'specs',
@@ -340,6 +342,10 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		}
 
 		return $string;
+	}
+
+	static function availability ( $result, $options, $O ) {
+		return ! ( shopp_setting_enabled('inventory') && $O->outofstock );
 	}
 
 	static function buy_now ($result, $options, $O) {
@@ -939,7 +945,18 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		}
 	}
 
-	static function slug ($result, $options, $O) { return $O->slug; }
+	static function schema ($result, $options, $O) {
+		$template = locate_shopp_template( array('product-' . $O->slug . '-schema.php', 'product-schema.php') );
+		if ( ! $template ) $template = SHOPP_ADMIN_PATH . '/products/schema.php';
+		ob_start();
+		include($template);
+		$result = ob_get_clean();
+		return $result;
+	}
+
+	static function slug ($result, $options, $O) {
+		return $O->slug;
+	}
 
 	static function spec ($result, $options, $O) {
 		$showname = false;
@@ -1025,7 +1042,9 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		}
 	}
 
-	static function stock ($result, $options, $O) { return (int)$O->stock; }
+	static function stock ($result, $options, $O) {
+		return (int)$O->stock;
+	}
 
 	static function summary ($result, $options, $O) { return apply_filters('shopp_product_summary',$O->summary); }
 
