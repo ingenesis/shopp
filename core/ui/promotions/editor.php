@@ -48,12 +48,11 @@
 
 jQuery(document).ready( function($) {
 
-var currencyFormat = <?php $base = shopp_setting('base_operations'); echo json_encode($base['currency']['format']); ?>,
-	suggurl = '<?php echo wp_nonce_url(admin_url('admin-ajax.php'),'wp_ajax_shopp_suggestions'); ?>',
+var suggurl = '<?php echo wp_nonce_url(admin_url('admin-ajax.php'), 'wp_ajax_shopp_suggestions'); ?>',
 	rules = <?php echo json_encode($Promotion->rules); ?>,
+	promotion = <?php echo ( ! empty($Promotion->id) ) ? $Promotion->id : 'false'; ?>,
 	ruleidx = 1,
 	itemidx = 1,
-	promotion = <?php echo (!empty($Promotion->id))?$Promotion->id:'false'; ?>,
 	loading = true,
 	titlePrompt = $('#title-prompt-text'),
 
@@ -65,112 +64,12 @@ var currencyFormat = <?php $base = shopp_setting('base_operations'); echo json_e
 		else titlePrompt.hide();
 	}),
 
-	SCOPEPROP_LANG = {
-		"Catalog":<?php _jse('price','Shopp'); ?>,
-		"Cart":<?php _jse('subtotal','Shopp'); ?>,
-		"Cart Item":<?php _jse('unit price, where:','Shopp'); ?>
-	},
-	TARGET_LANG = {
-		"Catalog":<?php _jse('product','Shopp'); ?>,
-		"Cart":<?php _jse('cart','Shopp'); ?>,
-		"Cart Item":<?php _jse('cart','Shopp'); ?>
-	},
-	RULES_LANG = {
-		"Name":<?php _jse('Name','Shopp'); ?>,
-		"Category":<?php _jse('Category','Shopp'); ?>,
-		"Variation":<?php _jse('Variation','Shopp'); ?>,
-		"Price":<?php _jse('Price','Shopp'); ?>,
-		"Sale price":<?php _jse('Sale price','Shopp'); ?>,
-		"Type":<?php _jse('Type','Shopp'); ?>,
-		"In stock":<?php _jse('In stock','Shopp'); ?>,
-
-		"Tag name":<?php _jse('Tag name','Shopp'); ?>,
-		"Unit price":<?php _jse('Unit price','Shopp'); ?>,
-		"Total price":<?php _jse('Total price','Shopp'); ?>,
-		"Input name":<?php _jse('Input name','Shopp'); ?>,
-		"Input value":<?php _jse('Input value','Shopp'); ?>,
-		"Quantity":<?php _jse('Quantity','Shopp'); ?>,
-
-		"Any item name":<?php _jse('Any item name','Shopp'); ?>,
-		"Any item amount":<?php _jse('Any item amount','Shopp'); ?>,
-		"Any item quantity":<?php _jse('Any item quantity','Shopp'); ?>,
-		"Total quantity":<?php _jse('Total quantity','Shopp'); ?>,
-		"Shipping amount":<?php _jse('Shipping amount','Shopp'); ?>,
-		"Subtotal amount":<?php _jse('Subtotal amount','Shopp'); ?>,
-		"Discount amount":<?php _jse('Discount amount','Shopp'); ?>,
-
-		"Customer type":<?php _jse('Customer type','Shopp'); ?>,
-		"Ship-to country":<?php _jse('Ship-to country','Shopp'); ?>,
-
-		"Promo code":<?php _jse('Promo code','Shopp'); ?>,
-		"Promo use count":<?php _jse('Promo use count','Shopp'); ?>,
-
-		"Is equal to":<?php _jse('Is equal to','Shopp'); ?>,
-		"Is not equal to":<?php _jse('Is not equal to','Shopp'); ?>,
-		"Contains":<?php _jse('Contains','Shopp'); ?>,
-		"Does not contain":<?php _jse('Does not contain','Shopp'); ?>,
-		"Begins with":<?php _jse('Begins with','Shopp'); ?>,
-		"Ends with":<?php _jse('Ends with','Shopp'); ?>,
-		"Is greater than":<?php _jse('Is greater than','Shopp'); ?>,
-		"Is greater than or equal to":<?php _jse('Is greater than or equal to','Shopp'); ?>,
-		"Is less than":<?php _jse('Is less than','Shopp'); ?>,
-		"Is less than or equal to":<?php _jse('Is less than or equal to','Shopp'); ?>
-
-	},
-	conditions = {
-		"Catalog":{
-			"Name":{"logic":["boolean","fuzzy"],"value":"text","source":"shopp_products"},
-			"Category":{"logic":["boolean","fuzzy"],"value":"text","source":"shopp_category"},
-			"Variation":{"logic":["boolean","fuzzy"],"value":"text"},
-			"Price":{"logic":["boolean","amount"],"value":"price"},
-			"Sale price":{"logic":["boolean","amount"],"value":"price"},
-			"Type":{"logic":["boolean"],"value":"text"},
-			"In stock":{"logic":["boolean","amount"],"value":"text"}
-		},
-		"Cart":{
-			"Any item name":{"logic":["boolean","fuzzy"],"value":"text","source":"shopp_products"},
-			"Any item quantity":{"logic":["boolean","amount"],"value":"text"},
-			"Any item amount":{"logic":["boolean","amount"],"value":"price"},
-			"Total quantity":{"logic":["boolean","amount"],"value":"text"},
-			"Shipping amount":{"logic":["boolean","amount"],"value":"price"},
-			"Subtotal amount":{"logic":["boolean","amount"],"value":"price"},
-			"Discount amount":{"logic":["boolean","amount"],"value":"price"},
-			"Customer type":{"logic":["boolean"],"value":"text","source":"shopp_customer_types"},
-			"Ship-to country":{"logic":["boolean"],"value":"text","source":"shopp_target_markets","suggest":"alt"},
-			"Promo use count":{"logic":["boolean","amount"],"value":"text"},
-			"Promo code":{"logic":["boolean"],"value":"text"}
-		},
-		"Cart Item":{
-			"Any item name":{"logic":["boolean","fuzzy"],"value":"text","source":"shopp_products"},
-			"Any item quantity":{"logic":["boolean","amount"],"value":"text"},
-			"Any item amount":{"logic":["boolean","amount"],"value":"price"},
-			"Total quantity":{"logic":["boolean","amount"],"value":"text"},
-			"Shipping amount":{"logic":["boolean","amount"],"value":"price"},
-			"Subtotal amount":{"logic":["boolean","amount"],"value":"price"},
-			"Discount amount":{"logic":["boolean","amount"],"value":"price"},
-			"Customer type":{"logic":["boolean"],"value":"text","source":"shopp_customer_types"},
-			"Ship-to country":{"logic":["boolean","fuzzy"],"value":"text","source":"shopp_target_markets"},
-			"Promo use count":{"logic":["boolean","amount"],"value":"text"},
-			"Promo code":{"logic":["boolean"],"value":"text"}
-		},
-		"Cart Item Target":{
-			"Name":{"logic":["boolean","fuzzy"],"value":"text","source":"shopp_products"},
-			"Category":{"logic":["boolean","fuzzy"],"value":"text","source":"shopp_category"},
-			"Tag name":{"logic":["boolean","fuzzy"],"value":"text","source":"shopp_tag"},
-			"Variation":{"logic":["boolean","fuzzy"],"value":"text",},
-			"Input name":{"logic":["boolean","fuzzy"],"value":"text"},
-			"Input value":{"logic":["boolean","fuzzy"],"value":"text"},
-			"Quantity":{"logic":["boolean","amount"],"value":"text"},
-			"Unit price":{"logic":["boolean","amount"],"value":"price"},
-			"Total price":{"logic":["boolean","amount"],"value":"price"},
-			"Discount amount":{"logic":["boolean","amount"],"value":"price"}
-		}
-	},
-	logic = {
-		"boolean":["Is equal to","Is not equal to"],
-		"fuzzy":["Contains","Does not contain","Begins with","Ends with"],
-		"amount":["Is greater than","Is greater than or equal to","Is less than","Is less than or equal to"]
-	},
+	SCOPEPROP_LANG = <?php Promote::scopes(); ?>,
+	TARGET_LANG = <?php Promote::targets(); ?>,
+	RULES_LANG = <?php Promote::rules(); ?>,
+	conditions = <?php Promote::conditions(); ?>,
+	logic = <?php Promote::logic(); ?>,
+	
 	Conditional = function (type,settings,location) {
 		var target = $('#promotion-target').val(),
 			row = false, i = false;
@@ -187,22 +86,23 @@ var currencyFormat = <?php $base = shopp_setting('base_operations'); echo json_e
 			else row = $('<tr></tr>').insertAfter(location);
 		}
 
-		var cell = $('<td></td>').appendTo(row);
-		var deleteButton = $('<?php echo ShoppUI::button('delete', 'delete', array('type' => 'button')); ?>').appendTo(cell).click(function () { if (i > 1) $(row).remove(); }).attr('opacity',0);
+		var cell = $('<td></td>').appendTo(row),
+			deleteButton = $('<?php echo ShoppUI::button('delete', 'delete', array('type' => 'button')); ?>').appendTo(cell).click(function () { if (i > 1) $(row).remove(); }).attr('opacity',0),
 
-		var properties_name = (type=='cartitem')?'rules[item]['+i+'][property]':'rules['+i+'][property]';
-		var properties = $('<select name="'+properties_name+'" class="ruleprops"></select>').appendTo(cell);
+			properties_name = (type=='cartitem')?'rules[item]['+i+'][property]':'rules['+i+'][property]',
+			properties = $('<select name="'+properties_name+'" class="ruleprops"></select>').appendTo(cell);
 
 		if (type == "cartitem") target = "Cart Item Target";
 		if (conditions[target])
 			for (var label in conditions[target])
 				$('<option></option>').html(RULES_LANG[label]).val(label).attr('rel',target).appendTo(properties);
 
-		var operation_name = (type=='cartitem')?'rules[item]['+i+'][logic]':'rules['+i+'][logic]';
-		var operation = $('<select name="'+operation_name+'" ></select>').appendTo(cell);
-		var value = $('<span></span>').appendTo(cell);
+		var operation_name = (type=='cartitem')?'rules[item]['+i+'][logic]':'rules['+i+'][logic]',
+			operation = $('<select name="'+operation_name+'" ></select>').appendTo(cell),
+			value = $('<span></span>').appendTo(cell),
 
-		var addspan = $('<span></span>').appendTo(cell);
+			addspan = $('<span></span>').appendTo(cell);
+			
 		$('<?php echo ShoppUI::button('add', 'add', array('type' => 'button')); ?>').appendTo(addspan).click(function () { new Conditional(type,false,row); });
 
 		cell.hover(function () {
@@ -265,12 +165,12 @@ $('.postbox a.help').click(function () {
 
 $('#discount-type').change(function () {
 	$('#discount-row').hide();
-	$('#beyget-row').hide();
+	$('#bogof-row').hide();
 	var type = $(this).val();
 
 	if (type == "Percentage Off" || type == "Amount Off") $('#discount-row').show();
 	if (type == "Buy X Get Y Free") {
-		$('#beyget-row').show();
+		$('#bogof-row').show();
 		$('#promotion-target').val('Cart Item').change();
 		$('#promotion-target option:lt(2)').attr('disabled',true);
 	} else {
@@ -290,8 +190,8 @@ $('#discount-type').change(function () {
 }).change();
 
 $('#promotion-target').change(function () {
-	var target = $(this).val();
-	var menus = $('#rules select.ruleprops');
+	var target = $(this).val(),
+		menus = $('#rules select.ruleprops');
 	$('#target-property').html(SCOPEPROP_LANG[target]);
 	$('#rule-target').html(TARGET_LANG[target]);
 	$(menus).empty().each(function (id,menu) {
@@ -327,10 +227,8 @@ $('<div id="ends-calendar" class="calendar"></div>').appendTo('#wpwrap').PopupCa
 });
 
 postboxes.add_postbox_toggles('shopp_page_shopp-promotions');
-// close postboxes that should be closed
-$('.if-js-closed').removeClass('if-js-closed').addClass('closed');
 
-if (!promotion) $('#title').focus();
+if ( ! promotion ) $('#title').focus();
 
 });
 
