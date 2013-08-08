@@ -341,4 +341,16 @@ class CoreTests extends ShoppTestCase {
 		$this->assertEquals( ' class="magical"', Shopp::inputattrs(array('class' => 'magical')) );
 		$this->assertEquals( ' class="magical &quot; onclick=&quot;alert()&quot; class=&quot;"', Shopp::inputattrs(array('class' => 'magical " onclick="alert()" class="')));
 	}
+
+	public function test_is_robot() {
+		$restore = $_SERVER['HTTP_USER_AGENT'];
+
+		$_SERVER['HTTP_USER_AGENT'] = '';
+		$this->assertFalse(Shopp::is_robot());
+
+		$_SERVER['HTTP_USER_AGENT'] = 'Googlebot';
+		$this->assertTrue(Shopp::is_robot());
+
+		$_SERVER['HTTP_USER_AGENT'] = $restore;
+	}
 }
