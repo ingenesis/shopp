@@ -396,7 +396,7 @@ class Warehouse extends AdminController {
 				'limit'=>"$start,$per_page",
 				'nostock' => true,
 				'published' => false,
-				'debug' => true
+				// 'debug' => true
 			);
 		}
 
