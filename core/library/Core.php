@@ -865,7 +865,7 @@ abstract class ShoppCore {
 
 			// images
 			case 'jpg': case 'jpeg': case 'jpe': return 'image/jpg';
-			case 'png': case 'gif': case 'bmp': case 'tiff': return 'image/'.strtolower($matches[1]);
+			case 'png': case 'gif': case 'bmp': case 'tiff': return 'image/'.strtolower($extension[1]);
 			case 'tif': return 'image/tif';
 			case 'svg': case 'svgz': return 'image/svg+xml';
 
