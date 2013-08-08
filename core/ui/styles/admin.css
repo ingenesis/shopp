@@ -452,6 +452,7 @@ span.indent { display: inline-block; width: 36px; }
 	
 /** Tags Metabox **/
 .shopp .tags-metabox .search-select input.input { width: 100px; }
+.shopp .tags-metabox .search-select input.input:focus { -webkit-box-shadow: none; box-shadow: none; }
 .search-select-results.tags { width: 266px; }
 
 #save-product .misc-pub-section { padding-left: 24px; text-indent: -18px; }
