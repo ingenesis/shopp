@@ -780,7 +780,8 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			'money' => 'on',
 			'number' => false,
 			'high' => false,
-			'low' => false
+			'low' => false,
+			'disabled' => __('Currently unavailable', 'Shopp')
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -812,6 +813,8 @@ class ShoppProductThemeAPI implements ShoppAPI {
 				$max + $maxtaxrate
 			);
 		}
+
+		if ( 1 === count($O->prices) && 'N/A' === $O->prices[0]->type ) return $disabled; // Pricing disabled?
 
 		$prices = array_map('roundprice', $prices);
 		if ( Shopp::str_true($number)  ) return join($separator, $prices);
