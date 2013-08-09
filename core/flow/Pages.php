@@ -939,10 +939,12 @@ class ShoppShortcodes {
 			$Product = new Product($atts[ $prop ], $prop);
 		}
 
-		if ( empty($Product->id) ) return '';
-
-		ShoppProduct($Product);
-
+		if ( ! empty($Product->id) ) {
+			ShoppProduct($Product);
+		} elseif ( ! isset( ShoppProduct()->id ) ) {
+			return "";
+		}
+ 
 		ob_start();
 		?>
 		<form action="<?php shopp('cart.url'); ?>" method="post" class="shopp product">
