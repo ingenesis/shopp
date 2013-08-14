@@ -1,7 +1,7 @@
 <div class="wrap shopp">
 
 	<div class="icon32"></div>
-	<h2><?php _e('Promotions','Shopp'); ?> <a href="<?php echo esc_url(add_query_arg(array_merge($_GET,array('page'=>'shopp-promotions','id'=>'new')),admin_url('admin.php'))); ?>" class="add-new-h2"><?php _e('Add New','Shopp'); ?></a></h2>
+	<h2><?php Shopp::_e('Discounts'); ?> <a href="<?php echo esc_url(add_query_arg(array_merge($_GET,array('page'=>'shopp-promotions','id'=>'new')),admin_url('admin.php'))); ?>" class="add-new-h2"><?php Shopp::_e('Add New'); ?></a></h2>
 
 	<form action="<?php echo esc_url($url); ?>" id="promotions" method="get">
 	<div>
@@ -10,7 +10,7 @@
 
 	<p id="post-search" class="search-box">
 		<input type="text" id="promotions-search-input" name="s" class="search-input" value="<?php echo esc_attr($s); ?>" />
-		<input type="submit" value="<?php _e('Search Promotions','Shopp'); ?>" class="button" />
+		<input type="submit" value="<?php _e('Search Discounts','Shopp'); ?>" class="button" />
 	</p>
 
 	<div class="tablenav">
@@ -26,7 +26,7 @@
 
 		<div class="alignleft actions">
 		<select name="status">
-			<option value=""><?php _e('View All Promotions','Shopp'); ?></option>
+			<option value=""><?php _e('View All Discounts','Shopp'); ?></option>
 			<?php echo Shopp::menuoptions($states,$status,true); ?>
 		</select>
 		<select name="type">

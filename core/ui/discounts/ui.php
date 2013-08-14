@@ -30,14 +30,14 @@ function save_meta_box ($Promotion) {
 </div>
 
 <div id="major-publishing-actions">
-	<input type="submit" class="button-primary" name="save" value="<?php _e('Save Promotion','Shopp'); ?>" />
+	<input type="submit" class="button-primary" name="save" value="<?php _e('Save','Shopp'); ?>" />
 </div>
 <?php
 }
-add_meta_box('save-promotion', __('Save','Shopp').$Admin->boxhelp('promo-editor-save'), 'save_meta_box', 'shopp_page_shopp-promotions', 'side', 'core');
+add_meta_box('save-promotion', __('Save','Shopp').$Admin->boxhelp('promo-editor-save'), 'save_meta_box', 'shopp_page_shopp-discounts', 'side', 'core');
 
 function discount_meta_box ($Promotion) {
-	$types = Promote::types(); ?>
+	$types = ShoppAdminDiscounter::types(); ?>
 <p><span>
 <select name="type" id="discount-type">
 	<?php echo menuoptions($types, $Promotion->type, true); ?>
@@ -54,7 +54,7 @@ function discount_meta_box ($Promotion) {
 
 <?php
 }
-add_meta_box('promotion-discount', __('Discount','Shopp').$Admin->boxhelp('promo-editor-discount'), 'discount_meta_box', 'shopp_page_shopp-promotions', 'normal', 'core');
+add_meta_box('promotion-discount', __('Discount','Shopp').$Admin->boxhelp('promo-editor-discount'), 'discount_meta_box', 'shopp_page_shopp-discounts', 'normal', 'core');
 
 function rules_meta_box ($Promotion) {
 	$targets = array(
@@ -83,6 +83,4 @@ function rules_meta_box ($Promotion) {
 <table class="form-table" id="rules"></table>
 <?php
 }
-add_meta_box('promotion-rules', __('Conditions','Shopp').$Admin->boxhelp('promo-editor-conditions'), 'rules_meta_box', 'shopp_page_shopp-promotions', 'normal', 'core');
-
-?>
+add_meta_box('promotion-rules', __('Conditions','Shopp').$Admin->boxhelp('promo-editor-conditions'), 'rules_meta_box', 'shopp_page_shopp-discounts', 'normal', 'core');
