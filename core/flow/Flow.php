@@ -286,7 +286,7 @@ abstract class AdminController extends FlowController {
 		$this->screen = $screen->id;
 		$this->url = add_query_arg(array('page' => esc_attr($this->page)), admin_url('admin.php'));
 
-		$pages = explode('-', $this->page);
+		$pages = explode('-', $_GET['page']);
 		$this->pagename = end($pages);
 
 		add_action('shopp_admin_notices', array($this, 'notices'));
