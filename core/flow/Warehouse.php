@@ -1,6 +1,6 @@
 <?php
 /**
- * Warehouse
+ * Warehouse.php
  *
  * Flow controller for product management interfaces
  *
@@ -11,13 +11,15 @@
  * @subpackage products
  **/
 
-class Warehouse extends AdminController {
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-	var $views = array('published','drafts','onsale','featured','bestselling','inventory','trash');
-	var $view = 'all';
-	var $worklist = array();
-	var $products = array();
-	var $subs = array();
+class ShoppAdminWarehouse extends AdminController {
+
+	public $views = array('published', 'drafts', 'onsale', 'featured', 'bestselling', 'inventory', 'trash');
+	public $view = 'all';
+	public $worklist = array();
+	public $products = array();
+	public $subs = array();
 
 	/**
 	 * Store constructor
@@ -28,7 +30,7 @@ class Warehouse extends AdminController {
 	 *
 	 * @return void
 	 **/
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 
 		ShoppingObject::store('worklist',$this->worklist);
@@ -94,7 +96,7 @@ class Warehouse extends AdminController {
 	 *
 	 * @return void
 	 **/
-	function admin () {
+	public function admin () {
 		if (!empty($_GET['id'])) $this->editor();
 		else {
 			$this->manager();
@@ -117,7 +119,7 @@ class Warehouse extends AdminController {
 	 *
 	 * @return void
 	 **/
-	function workflow () {
+	public function workflow () {
 		global $Shopp,$post;
 
 		$defaults = array(
@@ -226,7 +228,7 @@ class Warehouse extends AdminController {
 
 	}
 
-	function loader ( $workflow = false ) {
+	public function loader ( $workflow = false ) {
 
 		if ( ! current_user_can('shopp_products') ) return;
 
@@ -460,7 +462,7 @@ class Warehouse extends AdminController {
 	 * @param boolean $workflow True to get workflow data
 	 * @return void
 	 **/
-	function manager () {
+	public function manager () {
 
 		if ( ! current_user_can('shopp_products') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -570,7 +572,7 @@ class Warehouse extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function columns () {
+	public function columns () {
 
 		$headings = array(
 			'default' => array(
@@ -620,7 +622,7 @@ class Warehouse extends AdminController {
 	 * @author Jonathan Davis
 	 * @return
 	 **/
-	function layout () {
+	public function layout () {
 		$Admin = $this->Admin;
 		include(SHOPP_ADMIN_PATH."/products/ui.php");
 	}
@@ -631,7 +633,7 @@ class Warehouse extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function editor () {
+	public function editor () {
 		$Shopp = Shopp::object();
 
 		if ( ! current_user_can('shopp_products') )
@@ -714,7 +716,7 @@ class Warehouse extends AdminController {
 	 * @param Product $Product
 	 * @return void
 	 **/
-	function save (Product $Product) {
+	public function save (Product $Product) {
 		check_admin_referer('shopp-save-product');
 
 		if ( ! current_user_can('shopp_products') )
@@ -967,7 +969,7 @@ class Warehouse extends AdminController {
 	 * @author Jonathan Davis
 	 * @return string JSON encoded result with DB id, filename, type & size
 	 **/
-	function downloads () {
+	public function downloads () {
 		$error = false;
 		if (isset($_FILES['Filedata']['error'])) $error = $_FILES['Filedata']['error'];
 		// @todo Replace $this->uploadErrors with an Lookup::errors of common PHP upload errors translated into more helpful messages
@@ -1014,7 +1016,7 @@ class Warehouse extends AdminController {
 	 * @author Jonathan Davis
 	 * @return string JSON encoded result with thumbnail id and src
 	 **/
-	function images () {
+	public function images () {
 		$context = false;
 
 		$error = false;
@@ -1074,7 +1076,7 @@ class Warehouse extends AdminController {
 	 * @author Jonathan Davis
 	 * @return string HTML for a drop-down menu of categories
 	 **/
-	function category ($id) {
+	public function category ($id) {
 		global $wpdb;
 		$p = "$wpdb->posts AS p";
 		$where = array();
@@ -1098,11 +1100,9 @@ class Warehouse extends AdminController {
 		return menuoptions($products,0,true);
 	}
 
-	function index ($Product) {
+	public function index ($Product) {
 		$Indexer = new IndexProduct($Product->id);
 		$Indexer->index();
 	}
 
-} // END Warehouse class
-
-?>
+}

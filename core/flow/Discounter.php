@@ -1,27 +1,21 @@
 <?php
 /**
- * Promote.php
+ * Discounter.php
  *
- * Flow controller for promotion management interfaces
+ * Flow controller for discount management interfaces
  *
  * @author Jonathan Davis
  * @version 1.0
- * @copyright Ingenesis Limited, January 6, 2010
+ * @copyright Ingenesis Limited, January, 2010
  * @package shopp
- * @subpackage promotions
+ * @subpackage discounts
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-/**
- * Promote
- *
- * @package promotions
- * @author Jonathan Davis
- **/
-class Promote extends AdminController {
+class ShoppAdminDiscounter extends AdminController {
 
-	public $Notice = false;
+	protected $ui = 'discounts';
 
 	/**
 	 * Promote constructor
@@ -52,7 +46,7 @@ class Promote extends AdminController {
 		extract($args,EXTR_SKIP);
 		if (!is_array($selected)) $selected = array($selected);
 
-		$url = add_query_arg(array_merge($_GET, array('page'=>'shopp-promotions')), admin_url('admin.php'));
+		$url = add_query_arg(array_merge($_GET, array('page' => $this->page)), admin_url('admin.php'));
 		$f = array('action', 'selected', 's');
 		if ( 'shopp-promotions' == $page && ! empty($action) ) {
 			switch ( $action ) {
@@ -107,7 +101,7 @@ class Promote extends AdminController {
 		$args = array_merge($defaults,$_GET);
 		extract($args,EXTR_SKIP);
 
-		$url = add_query_arg(array_merge($_GET,array('page'=>'shopp-promotions')),admin_url('admin.php'));
+		$url = add_query_arg(array_merge($_GET,array('page'=>$this->page)),admin_url('admin.php'));
 		$f = array('action','selected','s');
 		$url = remove_query_arg( $f, $url );
 
@@ -155,9 +149,9 @@ class Promote extends AdminController {
 		);
 
 		$types = array(
-			'catalog' => __('Catalog Promotions','Shopp'),
-			'cart' => __('Cart Promotions','Shopp'),
-			'cartitem' => __('Cart Item Promotions','Shopp')
+			'catalog' => __('Catalog Discounts','Shopp'),
+			'cart' => __('Cart Discounts','Shopp'),
+			'cartitem' => __('Cart Item Discounts','Shopp')
 		);
 
 		$num_pages = ceil($count / $per_page);
@@ -168,7 +162,9 @@ class Promote extends AdminController {
 			'current' => $pagenum
 		));
 
-		include(SHOPP_PATH.'/core/ui/promotions/promotions.php');
+		// include(SHOPP_PATH.'/core/ui/promotions/promotions.php');
+
+		include $this->ui('discounts.php');
 	}
 
 
@@ -232,8 +228,10 @@ class Promote extends AdminController {
 	 **/
 	public function layout () {
 		$Shopp = Shopp::object();
-		$Admin =& $Shopp->Flow->Admin;
-		include SHOPP_PATH . '/core/ui/promotions/ui.php' ;
+		$Admin = $Shopp->Flow->Admin;
+
+		// include SHOPP_PATH . '/core/ui/promotions/ui.php' ;
+		include $this->ui('ui.php');
 	}
 
 	/**
@@ -242,6 +240,7 @@ class Promote extends AdminController {
 	 * @return void
 	 **/
 	public function editor () {
+
 		$Shopp = Shopp::object();
 
 		if ( ! current_user_can('shopp_promotions') )
@@ -255,7 +254,8 @@ class Promote extends AdminController {
 		$this->disabled_alert($Promotion);
 
 
-		include SHOPP_PATH . '/core/ui/promotions/editor.php';
+		// include SHOPP_PATH . '/core/ui/promotions/editor.php';
+		include $this->ui('editor.php');
 	}
 
 	/**

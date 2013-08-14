@@ -34,7 +34,6 @@ class ShoppAjax {
 
 		if (isset($_POST['action']) && 'add-menu-item' == $_POST['action']) {
 			// Boot the Admin controller to handle AJAX added WP nav menu items
-			if (!class_exists('ShoppAdmin')) require(SHOPP_FLOW_PATH."/Admin.php");
 			new ShoppAdmin();
 		}
 
@@ -100,8 +99,6 @@ class ShoppAjax {
 	function category_menu () {
 		check_admin_referer('wp_ajax_shopp_category_menu');
 
-		require(SHOPP_MODEL_PATH."/Collection.php");
-		require(SHOPP_FLOW_PATH."/Categorize.php");
 		$Categorize = new Categorize();
 		echo '<option value="">Select a category&hellip;</option>';
 		echo '<option value="catalog-products">All Products</option>';
@@ -113,7 +110,7 @@ class ShoppAjax {
 		check_admin_referer('wp_ajax_shopp_category_products');
 		if (!isset($_GET['category'])) return;
 		$category = $_GET['category'];
-		require(SHOPP_FLOW_PATH."/Warehouse.php");
+
 		$Warehouse = new Warehouse();
 		echo $Warehouse->category($category);
 		exit();
@@ -153,14 +150,12 @@ class ShoppAjax {
 	}
 
 	function upload_image () {
-		require(SHOPP_FLOW_PATH."/Warehouse.php");
 		$Warehouse = new Warehouse();
 		echo $Warehouse->images();
 		exit();
 	}
 
 	function upload_file () {
-		require(SHOPP_FLOW_PATH."/Warehouse.php");
 		$Warehouse = new Warehouse();
 		echo $Warehouse->downloads();
 		exit();
@@ -291,8 +286,7 @@ class ShoppAjax {
 	function rebuild_search_index () {
 		check_admin_referer('wp_ajax_shopp_rebuild_search_index');
 		global $wpdb;
-		if (!class_exists('ContentParser'))
-			require(SHOPP_MODEL_PATH.'/Search.php');
+
 		new ContentParser();
 
 		$set = 10;
@@ -568,7 +562,6 @@ class ShoppAjax {
 
 	function upload_local_taxes () {
 		check_admin_referer('shopp-settings-taxrates');
-		if (!class_exists('Setup')) require(SHOPP_FLOW_PATH.'/Setup.php');
 		$rates = Setup::taxrate_upload();
 		echo json_encode($rates);
 		exit();

@@ -966,7 +966,7 @@ class ShoppShortcodes {
 			<p><?php if (isset($atts['quantity'])): $quantity = (empty($atts['quantity']))?'class=selectall&input=menu':$atts['quantity']; ?>
 				<?php shopp('product', 'quantity', $quantity); ?>
 			<?php endif; ?>
-			<?php $button = empty($atts['button'])?'label='.__('Buy Now', 'Shopp'):$atts['button']; ?>
+			<?php $button = 'label=' . empty($atts['button']) ? __('Buy Now', 'Shopp') : $atts['button']; ?>
 			<?php shopp('product', 'addtocart', $button.( isset($atts['ajax']) && 'on' == $atts['ajax'] ? '&ajax=on' : '' )); ?></p>
 		</form>
 		<?php

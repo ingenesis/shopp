@@ -13,7 +13,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class Account extends AdminController {
+class ShoppAdminAccount extends AdminController {
 
 	/**
 	 * Account constructor
@@ -21,7 +21,7 @@ class Account extends AdminController {
 	 * @return void
 	 * @author Jonathan Davis
 	 **/
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 
 		if ( ! empty($_GET['id']) ) {
@@ -41,7 +41,7 @@ class Account extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function admin () {
+	public function admin () {
 		if ( ! empty($_GET['id']) ) $this->editor();
 		else $this->customers();
 	}
@@ -55,7 +55,7 @@ class Account extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function customers () {
+	public function customers () {
 		global $wpdb;
 
 		$defaults = array(
@@ -302,7 +302,7 @@ class Account extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function columns () {
+	public function columns () {
 		shopp_enqueue_script('calendar');
 		shopp_enqueue_script('daterange');
 		register_column_headers($this->screen, array(
@@ -323,7 +323,7 @@ class Account extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void Description...
 	 **/
-	function layout () {
+	public function layout () {
 		$Shopp = Shopp::object();
 		$Admin =& $Shopp->Flow->Admin;
 		include(SHOPP_ADMIN_PATH."/customers/ui.php");
@@ -338,7 +338,7 @@ class Account extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function editor () {
+	public function editor () {
 
 		if ( ! current_user_can('shopp_customers') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -380,4 +380,4 @@ class Account extends AdminController {
 	}
 
 
-} // END class Account
+}

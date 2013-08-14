@@ -1,6 +1,6 @@
 <?php
 /**
- * Service
+ * Service.php
  *
  * Flow controller for order management interfaces
  *
@@ -20,7 +20,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @since 1.1
  * @author Jonathan Davis
  **/
-class Service extends AdminController {
+class ShoppAdminService extends AdminController {
 
 	public $orders = array();
 	public $ordercount = false;

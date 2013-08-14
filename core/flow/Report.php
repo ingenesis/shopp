@@ -1,6 +1,6 @@
 <?php
 /**
- * Report
+ * Report.php
  *
  * Flow controller for report interfaces
  *
@@ -11,6 +11,8 @@
  * @subpackage shopp
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 /**
  * Report
  *
@@ -18,11 +20,10 @@
  * @since 1.3
  * @author Jonathan Davis
  **/
-class Report extends AdminController {
+class ShoppAdminReport extends AdminController {
 
-	var $screen = 'shopp_page_shopp-reports';
-	var $records = array();
-	var $count = false;
+	public $records = array();
+	public $count = false;
 
 	private $view = 'dashboard';
 
