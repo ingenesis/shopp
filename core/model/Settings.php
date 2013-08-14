@@ -301,8 +301,8 @@ class ShoppSettings extends DatabaseObject {
 	 **/
 	public function saveform () {
 		if ( empty($_POST['settings']) || ! is_array($_POST['settings']) ) return false;
-		foreach ($_POST['settings'] as $setting => $value)
-			$this->save($setting, $value);
+		foreach ( $_POST['settings'] as $setting => $value )
+			$this->save($setting, stripslashes_deep($value));
 	}
 
 	/**
