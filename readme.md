@@ -15,7 +15,7 @@ A professional, high-performance e-commerce development plugin for WordPress.
 - [Support Help Desk](https://shopplugin.com/support/forum/help-desk) - Open a ticket with the Shopp support team
 - [WorkShopp](http:///workshopp.com/) - Tutorials and screencasts for Shopp
 - [API Reference](https://shopplugin.com/api/) - Online developer's reference guide
-- [Professionals](https://shopplugin.com/professionals/) - Shopp develeopers available for consulting work
+- [Professionals](https://shopplugin.com/professionals/) - Shopp developers available for consulting work
 
 ## Contributing
 
