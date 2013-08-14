@@ -931,10 +931,13 @@ abstract class DatabaseObject implements Iterator {
 
 		$id = $this->{$this->_key};
 
-		if ( ! empty($id) )
-			return sDB::query("DELETE FROM $this->_table WHERE $this->_key='$id'");
+		if ( empty($id) ) return false;
 
-		return false;
+		$classhook = sanitize_key( get_class($this) );
+		do_action( "shopp_delete_$classhook", $this );
+
+		return sDB::query("DELETE FROM $this->_table WHERE $this->_key='$id'");
+
 	}
 
 	/**
