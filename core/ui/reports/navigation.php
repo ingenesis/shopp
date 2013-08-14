@@ -1,6 +1,6 @@
 <ul class="subsubsub">
 	<?php
-		$reports = Report::reports();
+		$reports = ShoppAdminReport::reports();
 		foreach((array)$reports as $id => $rt):
 			$this_report = isset($_GET['report']) && array_key_exists($_GET['report'],$reports)?$_GET['report']:'sales';
 			$args = array('report'=> $id);
