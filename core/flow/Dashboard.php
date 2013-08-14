@@ -13,8 +13,9 @@
  * @subpackage shopp
  **/
 
-// @todo Move widgets to self contained classes and add a registration process to ShoppAdminDashboard
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
+// @todo Move widgets to self contained classes and add a registration process to ShoppAdminDashboard
 class ShoppAdminDashboard {
 
 	/**
@@ -25,7 +26,8 @@ class ShoppAdminDashboard {
 	 *
 	 * @return void
 	 **/
-	function init () {
+	public function init () {
+
 		$dashboard = shopp_setting('dashboard');
 
 		if ( ! ( current_user_can('shopp_financials') && Shopp::str_true($dashboard) ) ) return false;
@@ -46,7 +48,6 @@ class ShoppAdminDashboard {
 
 		add_action('admin_print_styles-index.php', array('ShoppAdminDashboard', 'styles'));
 
-
 	}
 
 	/**
@@ -57,7 +58,7 @@ class ShoppAdminDashboard {
 	 *
 	 * @return void
 	 **/
-	function styles () {
+	public function styles () {
 		wp_enqueue_style('shopp.dashboard', SHOPP_ADMIN_URI . '/styles/dashboard.css', array(), SHOPP_VERSION, 'screen');
 	}
 
@@ -72,7 +73,7 @@ class ShoppAdminDashboard {
 	 *
 	 * @return void
 	 **/
-	function stats_widget ( $args = false ) {
+	public function stats_widget ( $args = false ) {
 		$Shopp = Shopp::object();
 
 		$ranges = array(
@@ -242,7 +243,7 @@ class ShoppAdminDashboard {
 	 *
 	 * @return void
 	 **/
-	function orders_widget ($args=null) {
+	public function orders_widget ($args=null) {
 		$Shopp = Shopp::object();
 		$db = DB::get();
 		$defaults = array(
@@ -300,7 +301,7 @@ class ShoppAdminDashboard {
 	 *
 	 * @return void
 	 **/
-	function inventory_widget ($args=null) {
+	public function inventory_widget ($args=null) {
 
 		$warnings = array(
 			'none' => __('OK','Shopp'),
