@@ -1,8 +1,12 @@
 <div class="wrap shopp">
-	<?php if (!empty($updated)): ?><div id="message" class="updated fade"><p><?php echo $updated; ?></p></div><?php endif; ?>
-
 	<div class="icon32"></div>
-	<h2><?php _e('Tax Settings','Shopp'); ?></h2>
+	<?php
+
+		$this->tabs();
+		do_action('shopp_admin_notices');
+
+	?>
+
 
 	<?php $this->taxes_menu(); ?>
 

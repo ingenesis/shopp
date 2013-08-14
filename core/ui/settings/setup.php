@@ -2,7 +2,13 @@
 	<?php if (!empty($updated)): ?><div id="message" class="updated fade"><p><?php echo $updated; ?></p></div><?php endif; ?>
 
 	<div class="icon32"></div>
-	<h2><?php _e('Shopp Setup','Shopp'); ?></h2>
+	<?php
+
+		$this->tabs();
+		do_action('shopp_admin_notices');
+
+	?>
+
 
 	<form name="settings" id="general" action="<?php echo $this->url; ?>" method="post">
 		<?php wp_nonce_field('shopp-settings-activation'); ?>

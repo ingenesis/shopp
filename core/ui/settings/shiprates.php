@@ -1,8 +1,12 @@
 <div class="wrap shopp">
-	<?php if (!empty($updated)): ?><div id="message" class="updated fade"><p><?php echo $updated; ?></p></div><?php endif; ?>
-
 	<div class="icon32"></div>
-	<h2><?php _e('Shipping Rates','Shopp'); ?></h2>
+	<?php
+
+		$this->tabs();
+		do_action('shopp_admin_notices');
+
+	?>
+
 
 	<script id="delivery-menu" type="text/x-jquery-tmpl"><?php
 		$deliverymenu = Lookup::timeframes_menu();

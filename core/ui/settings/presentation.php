@@ -1,10 +1,14 @@
 <div class="wrap shopp">
-	<?php if (!empty($updated)): ?><div id="message" class="updated fade"><p><?php echo $updated; ?></p></div><?php endif; ?>
 
 	<div class="icon32"></div>
-	<h2><?php _e('Presentation Settings','Shopp'); ?></h2>
+	<?php
 
-	<form name="settings" id="presentation" action="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>" method="post">
+		$this->tabs();
+		do_action('shopp_admin_notices');
+
+	?>
+
+	<form name="settings" id="presentation" action="<?php echo add_query_arg('tab', $this->tab, esc_url($this->url)); ?>" method="post">
 		<?php wp_nonce_field('shopp-settings-presentation'); ?>
 
 		<table class="form-table">

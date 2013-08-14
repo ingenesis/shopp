@@ -1,6 +1,14 @@
 <div class="wrap shopp">
+
 	<div class="icon32"></div>
-	<h2><?php _e('Image Settings','Shopp'); ?> <a href="<?php echo esc_url( add_query_arg(array('page'=>$this->Admin->pagename('settings-images'),'id'=>'new'),admin_url('admin.php'))); ?>" class="button add-new"><?php _e('Add New','Shopp'); ?></a></h2>
+	<?php
+
+		$this->tabs();
+		do_action('shopp_admin_notices');
+
+	?>
+
+	<!-- <h2><?php _e('Image Settings','Shopp'); ?> <a href="<?php echo esc_url( add_query_arg(array('page'=>$this->Admin->pagename('settings-images'),'id'=>'new'),admin_url('admin.php'))); ?>" class="button add-new"><?php _e('Add New','Shopp'); ?></a></h2> -->
 
 	<form action="<?php echo esc_url(wp_nonce_url($this->url,'shopp-settings-images')); ?>" id="images" method="post">
 	<div>
