@@ -1248,6 +1248,9 @@ class ShoppProductThemeAPI implements ShoppAPI {
 				$pricekeys[$key] = $_;
 			}
 
+			// Output a JSON object for JS manipulation
+			if ( 'json' == $options['mode'] ) return json_encode($pricekeys);
+
 			$jsoptions = array('prices'=> $pricekeys,'format' => $format);
 			if ( 'hide' == $options['disabled'] ) $jsoptions['disabled'] = false;
 			if ( 'hide' == $options['pricetags'] ) $jsoptions['pricetags'] = false;
