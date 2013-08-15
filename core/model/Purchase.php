@@ -1,38 +1,41 @@
 <?php
 /**
- * Purchase class
+ * Purchase.php
+ *
  * Order invoice logging
  *
  * @author Jonathan Davis
  * @version 1.0
- * @copyright Ingenesis Limited, 28 March, 2008
+ * @copyright Ingenesis Limited, March, 2008
  * @package shopp
+ * @subpackage purchase
  **/
 
-require('Purchased.php');
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class Purchase extends DatabaseObject {
-	static $table = "purchase";
 
-	var $purchased = array();
-	var $columns = array();
-	var $message = array();
-	var $data = array();
+	static $table = 'purchase';
+
+	public $purchased = array();
+	public $columns = array();
+	public $message = array();
+	public $data = array();
 
 	// Balances
-	var $invoiced = false;		// Amount invoiced
-	var $authorized = false;	// Amount authorized
-	var $captured = false;		// Amount captured
-	var $refunded = false;		// Amount refunded
-	var $voided = false;		// Order cancelled prior to capture
-	var $balance = 0;			// Current balance
+	public $invoiced = false;		// Amount invoiced
+	public $authorized = false;	// Amount authorized
+	public $captured = false;		// Amount captured
+	public $refunded = false;		// Amount refunded
+	public $voided = false;		// Order cancelled prior to capture
+	public $balance = 0;			// Current balance
 
-	var $downloads = false;
-	var $shipable = false;
-	var $shipped = false;
-	var $stocked = false;
+	public $downloads = false;
+	public $shipable = false;
+	public $shipped = false;
+	public $stocked = false;
 
-	function __construct ($id=false,$key=false) {
+	public function __construct ($id=false,$key=false) {
 
 		$this->init(self::$table);
 		if (!$id) return true;
@@ -41,14 +44,14 @@ class Purchase extends DatabaseObject {
 		if (!empty($this->id)) $this->listeners();
 	}
 
-	function listeners () {
+	public function listeners () {
 		// Attach the notification system to order events
 		add_action( 'shopp_order_event', array($this, 'notifications') );
 		add_action( 'shopp_order_notifications', array($this, 'success') );
 
 	}
 
-	function load_purchased () {
+	public function load_purchased () {
 
 		$table = DatabaseObject::tablename(Purchased::$table);
 		$meta = DatabaseObject::tablename(MetaObject::$table);
@@ -76,7 +79,7 @@ class Purchase extends DatabaseObject {
 		return true;
 	}
 
-	function load_events () {
+	public function load_events () {
 		$this->events = OrderEvent::instance()->events($this->id);
 		$this->invoiced = false;
 		$this->authorized = false;
@@ -120,7 +123,7 @@ class Purchase extends DatabaseObject {
 	 *
 	 * @return boolean
 	 **/
-	function isrefunded () {
+	public function isrefunded () {
 		if (empty($this->events)) $this->load_events();
 		return ($this->refunded == $this->captured);
 	}
@@ -133,7 +136,7 @@ class Purchase extends DatabaseObject {
 	 *
 	 * @return boolean
 	 **/
-	function isvoid () {
+	public function isvoid () {
 		if (empty($this->events)) $this->load_events();
 		return ($this->voided > 0 && $this->voided >= $this->invoiced);
 	}
@@ -146,7 +149,7 @@ class Purchase extends DatabaseObject {
 	 *
 	 * @return boolean
 	 **/
-	function ispaid () {
+	public function ispaid () {
 		if ( empty($this->events) ) $this->load_events();
 
 		$legacypaid = ( 0 == $this->captured && 'CHARGED' == $Purchase->txnstatus );
@@ -287,17 +290,17 @@ class Purchase extends DatabaseObject {
 		$Purchase->updates($updates);
 	}
 
-	function capturable () {
+	public function capturable () {
 		if (!$this->authorized) return 0.0;
 		return ($this->authorized - (float)$this->captured);
 	}
 
-	function refundable () {
+	public function refundable () {
 		if (!$this->captured) return 0.0;
 		return ($this->captured - (float)$this->refunded);
 	}
 
-	function gateway () {
+	public function gateway () {
 		$Shopp = Shopp::object();
 
 		$processor = $this->gateway;
@@ -322,7 +325,7 @@ class Purchase extends DatabaseObject {
 	 * @param OrderEvent $event The OrderEvent object passed by the hook
 	 * @return void
 	 **/
-	function notifications ($Event) {
+	public function notifications ($Event) {
 		if ($Event->order != $this->id) return; // Only handle notifications for events relating to this order
 
 		$defaults = array('note');
@@ -393,7 +396,7 @@ class Purchase extends DatabaseObject {
 	 *
 	 * @return void
 	 **/
-	function success ($Purchase) {
+	public function success ($Purchase) {
 		if ($Purchase->id != $this->id) return; // Only handle notifications for events relating to this order
 
 		// Set the global purchase object to enable the Theme API
@@ -437,11 +440,11 @@ class Purchase extends DatabaseObject {
 	 *
 	 * @return void
 	 **/
-	function notification ($addressee,$address,$subject,$template='order.php',$receipt='receipt.php') {
+	public function notification ($addressee,$address,$subject,$template='order.php',$receipt='receipt.php') {
 		$this->email($addressee,$address,$subject,array($template));
 	}
 
-	function email ($addressee,$address,$subject,$templates=array()) {
+	public function email ($addressee,$address,$subject,$templates=array()) {
 		global $Shopp,$is_IIS;
 
 		new ShoppError("Purchase::email(): $addressee,$address,$subject,"._object_r($templates),false,SHOPP_DEBUG_ERR);
@@ -482,17 +485,29 @@ class Purchase extends DatabaseObject {
 		return false;
 	}
 
-	function copydata ($Object,$prefix="") {
-		$ignores = array("_datatypes","_table","_key","_lists","id","created","modified");
-		foreach(get_object_vars($Object) as $property => $value) {
-			$property = $prefix.$property;
-			if (property_exists($this,$property) &&
-				!in_array($property,$ignores))
+	/**
+	 * Copy properties from a source object to this Purchase object
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.0
+	 *
+	 * @param Object $Object The object to copy properties from
+	 * @param string $prefix A prefix to use for matching source object properties
+	 * @param array $ignores A list of properties to ignore
+	 * @return void
+	 **/
+	public function copydata ( $Object, $prefix = '', $ignores = array() ) {
+
+		$ignores = array_merge(array('_datatypes', '_table', '_key', '_lists', 'id', 'created', 'modified'), $ignores);
+
+		foreach( get_object_vars($Object) as $property => $value ) {
+			$property = $prefix . $property;
+			if ( property_exists($this, $property) && ! in_array($property, $ignores) )
 				$this->{$property} = $value;
 		}
 	}
 
-	function exportcolumns () {
+	public static function exportcolumns () {
 		$prefix = "o.";
 		return array(
 			$prefix.'id' => __('Order ID','Shopp'),
@@ -538,7 +553,7 @@ class Purchase extends DatabaseObject {
 	}
 
 	// Display a sales receipt
-	function receipt ($template='receipt.php') {
+	public function receipt ($template='receipt.php') {
 		if (empty($this->purchased)) $this->load_purchased();
 
 		ob_start();
@@ -549,7 +564,7 @@ class Purchase extends DatabaseObject {
 		return apply_filters('shopp_order_receipt',$content);
 	}
 
-	function save () {
+	public function save () {
 		$new = false;
 		if (empty($this->id)) $new = true;
 
@@ -560,13 +575,13 @@ class Purchase extends DatabaseObject {
 		if ($new && !empty($this->id)) $this->listeners();
 	}
 
-	function delete () {
+	public function delete () {
 		$table = DatabaseObject::tablename(MetaObject::$table);
 		DB::query("DELETE LOW_PRIORITY FROM $table WHERE parent='$this->id' AND context='purchase'");
 		parent::delete();
 	}
 
-	function delete_purchased () {
+	public function delete_purchased () {
 		if (empty($this->purchased)) $this->load_purchased();
 		foreach ($this->purchased as $item) {
 			$Purchased = new Purchased();
@@ -580,31 +595,31 @@ class Purchase extends DatabaseObject {
 
 class PurchaseStockAllocation extends AutoObjectFramework {
 
-	var $purchased = 0; // purchased id
-	var $addon = false;	// index of addons
-	var $sku = '';		// sku
-	var $price = 0; 	// price id
-	var $quantity = 0;	// quantity
+	public $purchased = 0; // purchased id
+	public $addon = false;	// index of addons
+	public $sku = '';		// sku
+	public $price = 0; 	// price id
+	public $quantity = 0;	// quantity
 
 }
 
 class PurchasesExport {
-	var $sitename = "";
-	var $headings = false;
-	var $data = false;
-	var $defined = array();
-	var $purchase_cols = array();
-	var $purchased_cols = array();
-	var $selected = array();
-	var $recordstart = true;
-	var $content_type = "text/plain";
-	var $extension = "txt";
-	var $date_format = 'F j, Y';
-	var $time_format = 'g:i:s a';
-	var $set = 0;
-	var $limit = 1024;
+	public $sitename = "";
+	public $headings = false;
+	public $data = false;
+	public $defined = array();
+	public $purchase_cols = array();
+	public $purchased_cols = array();
+	public $selected = array();
+	public $recordstart = true;
+	public $content_type = "text/plain";
+	public $extension = "txt";
+	public $date_format = 'F j, Y';
+	public $time_format = 'g:i:s a';
+	public $set = 0;
+	public $limit = 1024;
 
-	function __construct () {
+	public function __construct () {
 		$Shopp = Shopp::object();
 
 		$this->purchase_cols = Purchase::exportcolumns();
@@ -619,7 +634,7 @@ class PurchasesExport {
 		shopp_set_setting('purchaselog_lastexport',current_time('timestamp'));
 	}
 
-	function query ($request=array()) {
+	public function query ($request=array()) {
 		$defaults = array(
 			'status' => false,
 			's' => false,
@@ -690,7 +705,7 @@ class PurchasesExport {
 	}
 
 	// Implement for exporting all the data
-	function output () {
+	public function output () {
 		if (!$this->data) $this->query();
 		if (!$this->data) shopp_redirect(add_query_arg(array_merge($_GET,array('src' => null)),admin_url('admin.php')));
 
@@ -706,15 +721,15 @@ class PurchasesExport {
 		$this->end();
 	}
 
-	function begin() {}
+	public function begin() {}
 
-	function heading () {
+	public function heading () {
 		foreach ($this->selected as $name)
 			$this->export($this->defined[$name]);
 		$this->record();
 	}
 
-	function records () {
+	public function records () {
 		while (!empty($this->data)) {
 			foreach ($this->data as $key => $record) {
 				foreach(get_object_vars($record) as $column)
@@ -726,7 +741,7 @@ class PurchasesExport {
 		}
 	}
 
-	function parse ($column) {
+	public function parse ($column) {
 		if (preg_match("/^[sibNaO](?:\:.+?\{.*\}$|\:.+;$|;$)/",$column)) {
 			$list = unserialize($column);
 			$column = "";
@@ -736,24 +751,24 @@ class PurchasesExport {
 		return $this->escape($column);
 	}
 
-	function end() {}
+	public function end() {}
 
 	// Implement for exporting a single value
-	function export ($value) {
+	public function export ($value) {
 		echo ($this->recordstart?"":"\t").$value;
 		$this->recordstart = false;
 	}
 
-	function record () {
+	public function record () {
 		echo "\n";
 		$this->recordstart = true;
 	}
 
-	function settings () {
+	public static function settings () {
 		/** Placeholder **/
 	}
 
-	function escape ($value) {
+	public function escape ($value) {
 		return $value;
 	}
 
@@ -761,12 +776,12 @@ class PurchasesExport {
 
 class PurchasesTabExport extends PurchasesExport {
 
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 		$this->output();
 	}
 
-	function escape ($value) {
+	public function escape ($value) {
 		$value = str_replace(array("\n", "\r"), ' ', $value); // No newlines
 		if ( false !== strpos($value, "\t") && false === strpos($value,'"') )	// Quote tabs
 			$value = '"' . $value . '"';
@@ -777,19 +792,19 @@ class PurchasesTabExport extends PurchasesExport {
 
 class PurchasesCSVExport extends PurchasesExport {
 
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 		$this->content_type = "text/csv";
 		$this->extension = "csv";
 		$this->output();
 	}
 
-	function export ($value) {
+	public function export ($value) {
 		echo ($this->recordstart?"":",").$value;
 		$this->recordstart = false;
 	}
 
-	function escape ($value) {
+	public function escape ($value) {
 		$value = str_replace('"','""',$value);
 		if ( preg_match('/^\s|[,"\n\r]|\s$/',$value) )
 			$value = '"'.$value.'"';
@@ -800,7 +815,7 @@ class PurchasesCSVExport extends PurchasesExport {
 
 class PurchasesXLSExport extends PurchasesExport {
 
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 		$this->content_type = "application/vnd.ms-excel";
 		$this->extension = "xls";
@@ -808,15 +823,15 @@ class PurchasesXLSExport extends PurchasesExport {
 		$this->output();
 	}
 
-	function begin () {
+	public function begin () {
 		echo pack("ssssss", 0x809, 0x8, 0x0, 0x10, 0x0, 0x0);
 	}
 
-	function end () {
+	public function end () {
 		echo pack("ss", 0x0A, 0x00);
 	}
 
-	function export ($value) {
+	public function export ($value) {
 		if (preg_match('/^[\d\.]+$/',$value)) {
 		 	echo pack("sssss", 0x203, 14, $this->r, $this->c, 0x0);
 			echo pack("d", $value);
@@ -828,14 +843,15 @@ class PurchasesXLSExport extends PurchasesExport {
 		$this->c++;
 	}
 
-	function record () {
+	public function record () {
 		$this->c = 0;
 		$this->r++;
 	}
 }
 
 class PurchasesIIFExport extends PurchasesExport {
-	function __construct () {
+
+	public function __construct () {
 		$Shopp = Shopp::object();
 		parent::__construct();
 		$this->content_type = "application/qbooks";
@@ -866,17 +882,17 @@ class PurchasesIIFExport extends PurchasesExport {
 		$this->output();
 	}
 
-	function begin () {
+	public function begin () {
 		echo "!TRNS\tDATE\tACCNT\tNAME\tCLASS\tAMOUNT\tMEMO\n!SPL\tDATE\tACCNT\tNAME\tAMOUNT\tMEMO\n!ENDTRNS";
 	}
 
-	function export ($value) {
+	public function export ($value) {
 		echo (substr($value,0,1) != "\n")?"\t".$value:$value;
 	}
 
-	function record () { }
+	public function record () { }
 
-	function settings () {
+	public static function settings () {
 		$Shopp = Shopp::object();
 		?>
 		<div id="iif-settings" class="hidden">
