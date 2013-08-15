@@ -119,8 +119,19 @@ abstract class ShoppCore {
 	 * @return boolean
 	 **/
 	public static function maintenance () {
-		$db_version = intval(shopp_setting('db_version'));
-		return ( ! ShoppSettings()->available() || $db_version != DB::$version || shopp_setting_enabled('maintenance') );
+		return ( self::upgradedb() || shopp_setting_enabled('maintenance') );
+	}
+
+	/**
+	 * Detect if a database schema upgrade is required
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return boolean
+	 **/
+	public static function upgradedb () {
+		return ( ! ShoppSettings()->available() || ShoppSettings()->dbversion() != sDB::$version );
 	}
 
 	/**

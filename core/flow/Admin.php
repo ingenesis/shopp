@@ -242,7 +242,7 @@ class ShoppAdmin extends FlowController {
 		$controller = array($Shopp->Flow, 'admin');
 		if ( shopp_setting_enabled('display_welcome') && empty($_POST['setup']) )
 			$controller = array($this, 'welcome');
-		if ( Shopp::maintenance() ) $controller = array($this, 'reactivate');
+		if ( Shopp::upgradedb() ) $controller = array($this, 'reactivate');
 
 		$menu = $Page->parent ? $Page->parent : $this->mainmenu;
 
