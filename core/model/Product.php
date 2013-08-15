@@ -12,6 +12,8 @@
  * @subpackage products
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 class Product extends WPShoppObject {
 	static $table = 'posts';
 	static $_taxonomies = array(
@@ -20,27 +22,27 @@ class Product extends WPShoppObject {
 	);
 	static $posttype = 'shopp_product';
 
-	var $prices = array();
-	var $pricekey = array();
-	var $priceid = array();
-	var $categories = array();
-	var $tags = array();
-	var $images = array();
-	var $specs = array();
-	var $specnames = array();
-	var $meta = array();
-	var $max = array();
-	var $min = array();
-	var $sale = false;
-	var $outofstock = false;
-	var $excludetax = false;
-	var $variants = 'off';
-	var $addons = 'off';
-	var $freeship = 'off';
-	var $inventory = 'off';
-	var $checksum = false;
-	var $stock = 0;
-	var $options = 0;
+	public $prices = array();
+	public $pricekey = array();
+	public $priceid = array();
+	public $categories = array();
+	public $tags = array();
+	public $images = array();
+	public $specs = array();
+	public $specnames = array();
+	public $meta = array();
+	public $max = array();
+	public $min = array();
+	public $sale = false;
+	public $outofstock = false;
+	public $excludetax = false;
+	public $variants = 'off';
+	public $addons = 'off';
+	public $freeship = 'off';
+	public $inventory = 'off';
+	public $checksum = false;
+	public $stock = 0;
+	public $options = 0;
 
 	protected $_map = array(
 		'id' => 'ID',
@@ -69,14 +71,14 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function __construct ($id=false,$key='ID') {
+	public function __construct ($id=false,$key='ID') {
 		if (isset($this->_map[$key])) $key = $this->_map[$key];
 		$this->init(self::$table,$key);
 		$this->type = self::$posttype;
 		$this->load($id,$key);
 	}
 
-	function save () {
+	public function save () {
 		if ( ! isset($this->ID) ) $this->ID = $this->id ? $this->id : null;
 		$this->post_content_filtered = $this->to_ping = $this->pinged = '';
 		$this->post_modified = current_time('timestamp');
@@ -97,7 +99,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function savepost () {
+	public function savepost () {
 		if ( empty($this->id)) return;
 		do_action('save_post', $this->id, get_post($this->id));
 	}
@@ -132,7 +134,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function load_data ($options=array('prices','specs','images','categories','tags','meta','summary'),&$products=array()) {
+	public function load_data ($options=array('prices','specs','images','categories','tags','meta','summary'),&$products=array()) {
 		// Load summary before prices to ensure summary can be overridden by fresh pricing aggregation
 		$loaders = array(
 		//  'name'      'callback_method'
@@ -173,7 +175,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function load_summary ($ids) {
+	public function load_summary ($ids) {
 		if ( empty($ids) ) return;
 		$Object = new ProductSummary();
 		DB::query("SELECT *,modified AS summed FROM $Object->_table WHERE product IN ($ids)",'array',array($this,'sumloader'));
@@ -187,7 +189,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function load_prices ($ids) {
+	public function load_prices ($ids) {
 		if ( empty($ids) ) return;
 
 		// Reset price property
@@ -204,16 +206,16 @@ class Product extends WPShoppObject {
 		$this->load_sold($ids);
 
 		$Object = new Price();
-		DB::query("SELECT * FROM $Object->_table WHERE product IN ($ids) ORDER BY product,sortorder",'array',array($this,'pricing'));
+		DB::query("SELECT * FROM $Object->_table WHERE product IN ($ids) ORDER BY product,sortorder", 'array', array($this, 'pricing'));
 
 		// Load price metadata that exists
 		if (!empty($this->priceid)) {
 			$prices = join(',',array_keys($this->priceid));
 			$Object->prices = $this->priceid;
-			$Object->products = ( isset($this->products) && !empty($this->products) )?$this->products:$this;
+			$Object->products = ( isset($this->products) && ! empty($this->products) ) ? $this->products : $this;
 			$ObjectMeta = new ObjectMeta();
 			// Sort by sort order then by the modified timestamp so the most recent changes are last and become the authoritative record
-			DB::query("SELECT * FROM $ObjectMeta->_table WHERE context='price' AND parent IN ($prices) ORDER BY sortorder,modified",'array',array($Object,'metaloader'),'parent','metatype','name',false);
+			DB::query("SELECT * FROM $ObjectMeta->_table WHERE context='price' AND parent IN ($prices) ORDER BY sortorder,modified", 'array', array($Object, 'metasetloader'), 'parent', 'metatype', 'name', false);
 		}
 
 		if ( isset($this->products) && !empty($this->products) ) {
@@ -234,17 +236,17 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function load_meta ($ids) {
+	public function load_meta ( $ids ) {
 		if ( empty($ids) ) return;
 		$table = DatabaseObject::tablename(MetaObject::$table);
 
 		$imagesort = $this->image_order();
 		$metasort = array('sortorder','sortorder ASC');
-		if (in_array($imagesort,$metasort))
-			DB::query("SELECT * FROM $table WHERE context='product' AND parent IN ($ids) ORDER BY sortorder",'array',array($this,'metaloader'),'parent','metatype','name',false);
+		if ( in_array($imagesort, $metasort) )
+			DB::query("SELECT * FROM $table WHERE context='product' AND parent IN ($ids) ORDER BY sortorder", 'array', array($this, 'metasetloader'), 'parent', 'metatype', 'name', false);
 		else { // Separate sort order for images
-			DB::query("SELECT * FROM $table WHERE context='product' AND type != 'image' AND parent IN ($ids) ORDER BY sortorder",'array',array($this,'metaloader'),'parent','metatype','name',false);
-			DB::query("SELECT * FROM $table WHERE context='product' AND type = 'image' AND parent IN ($ids) ORDER BY $imagesort",'array',array($this,'metaloader'),'parent','metatype','name',false);
+			DB::query("SELECT * FROM $table WHERE context='product' AND type != 'image' AND parent IN ($ids) ORDER BY sortorder", 'array', array($this, 'metasetloader'), 'parent', 'metatype', 'name', false);
+			DB::query("SELECT * FROM $table WHERE context='product' AND type = 'image' AND parent IN ($ids) ORDER BY $imagesort", 'array', array($this, 'metasetloader'), 'parent', 'metatype', 'name', false);
 		}
 	}
 
@@ -256,11 +258,11 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function load_coverimages ($ids) {
+	public function load_coverimages ( $ids ) {
 		if ( empty($ids) ) return;
 		$table = DatabaseObject::tablename(MetaObject::$table);
 		$sortorder = $this->image_order();
-		DB::query("SELECT * FROM ( SELECT * FROM $table WHERE context='product' AND type='image' AND parent IN ($ids) ORDER BY $sortorder ) AS img GROUP BY parent",'array',array($this,'metaloader'),'parent','metatype','name',false);
+		DB::query("SELECT * FROM ( SELECT * FROM $table WHERE context='product' AND type='image' AND parent IN ($ids) ORDER BY $sortorder ) AS img GROUP BY parent",'array',array($this, 'metasetloader'),'parent','metatype','name',false);
 	}
 
 	/**
@@ -271,7 +273,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function load_sold ($ids) {
+	public function load_sold ($ids) {
 		if ( empty($ids) ) return;
 		$purchase = DatabaseObject::tablename(Purchase::$table);
 		$purchased = DatabaseObject::tablename(Purchased::$table);
@@ -290,7 +292,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function load_taxonomies ($ids) {
+	public function load_taxonomies ($ids) {
 		global $ShoppTaxonomies;
 
 		if ( empty($ids) ) return;
@@ -338,7 +340,7 @@ class Product extends WPShoppObject {
 	 * @param object $record Result record data object
 	 * @return void
 	 **/
-	function loader (&$records,&$record,$DatabaseObject=false,$index='id',$collate=false) {
+	public function loader ( array &$records, &$record, $DatabaseObject = false, $index = 'id', $collate = false ) {
 
 		if (isset($this)) {
 			$index = $this->_key;
@@ -359,7 +361,7 @@ class Product extends WPShoppObject {
 
 		$resum = false;
 		if (isset($record->summed)) { // Loaded from the collection loader
-			$Object->sumloader($records,$record);
+			$Object->sumloader($records, $record);
 
 			$update = DB::mktime(ProductSummary::$_updates);
 			if (DB::mktime($record->summed) == $update) $resum = true; // Forced resum
@@ -386,7 +388,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function metaloader (&$records,&$record,$id='id',$property=false,$collate=true,$merge=false) {
+	public function metasetloader ( &$records, &$record, $id = 'id', $property = false, $collate = true, $merge = false ) {
 
 		if (isset($this->products) && !empty($this->products)) $products = &$this->products;
 		else $products = array();
@@ -434,13 +436,13 @@ class Product extends WPShoppObject {
 
 		if ('specs' == $property) {
 			$property = 'specnames';
-			parent::metaloader($records,$record,$products,$id,$property,$collate,$merge);
+			parent::metaloader($records, $record, $products, $id, $property, $collate, $merge);
 
 			$property = 'specs';
 			$collate = 'id';
 		}
 
-		parent::metaloader($records,$record,$products,$id,$property,$collate,$merge);
+		parent::metaloader($records, $record, $products, $id, $property, $collate, $merge);
 	}
 
 	/**
@@ -451,7 +453,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function sumloader (&$records,&$data) {
+	public function sumloader (&$records,&$data) {
 
 		$Summary = new ProductSummary();
 		$properties = array_keys($Summary->_datatypes);
@@ -504,7 +506,7 @@ class Product extends WPShoppObject {
 	 * @param array $options shopp() tag option list
 	 * @return void
 	 **/
-	function pricing (&$records,&$price,$restat=false) {
+	public function pricing (&$records,&$price,$restat=false) {
 
 		if ( isset($this->products) && !empty($this->products) ) {
 			if ( !isset($this->products[$price->product]) ) return false;
@@ -626,7 +628,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return boolean
 	 **/
-	function published () {
+	public function published () {
 		return ('publish' == $this->status && current_time('timestamp') >= $this->publish);
 	}
 
@@ -638,7 +640,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return int
 	 **/
-	function sold (&$records,&$data) {
+	public function sold (&$records,&$data) {
 
 		if (isset($this->products) && !empty($this->products)) $products = &$this->products;
 		else $products = array();
@@ -663,7 +665,7 @@ class Product extends WPShoppObject {
 	 * @param object $Price The price record to calculate against
 	 * @return void
 	 **/
-	function sumprice ($Price) {
+	public function sumprice ($Price) {
 		if ($Price->type == 'N/A' || $Price->context == 'addon') return;
 
 		if ($this->maxprice === false) $this->maxprice = (float)$Price->promoprice;
@@ -690,7 +692,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function resum () {
+	public function resum () {
 		$this->lowstock = 'none';
 		$this->sale = $this->inventory = 'off';
 		$this->stock = $this->stocked = 0;
@@ -712,7 +714,7 @@ class Product extends WPShoppObject {
 	 * @param array $stats The stat properties to update
 	 * @return void
 	 **/
-	function sumup () {
+	public function sumup () {
 		if (empty($this->id)) return;
 
 		$Summary = new ProductSummary();
@@ -773,7 +775,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function lowstock ($stock,$stocked) {
+	public function lowstock ($stock,$stocked) {
 		$lowstock_level = shopp_setting('lowstock_level');
 		if ( false === $lowstock_level ) $lowstock_level = 5;
 		$setting = ( shopp_setting('lowstock_level')/100 );
@@ -802,7 +804,7 @@ class Product extends WPShoppObject {
 	 * @param array option ids
 	 * @return int option key
 	 **/
-	function optionkey ($ids=array(),$deprecated=false) {
+	public function optionkey ($ids=array(),$deprecated=false) {
 		if ($deprecated) $factor = 101;
 		else $factor = 7001;
 		if (empty($ids)) return 0;
@@ -812,7 +814,7 @@ class Product extends WPShoppObject {
 		return $key;
 	}
 
-	function optionmap ( $variant = array(), $menus = array(), $type = 'variant', $return = 'all' ) {
+	public function optionmap ( $variant = array(), $menus = array(), $type = 'variant', $return = 'all' ) {
 		if ( empty($variant) || empty($menus) ) return;
 
 		$selection = array();
@@ -869,7 +871,7 @@ class Product extends WPShoppObject {
 	 * @param array image ids
 	 * @return void
 	 **/
-	function save_imageorder ($ordering) {
+	public function save_imageorder ($ordering) {
 		$table = DatabaseObject::tablename(ProductImage::$table);
 		foreach ($ordering as $i => $id)
 			DB::query("UPDATE LOW_PRIORITY $table SET sortorder='$i' WHERE (id='$id' AND parent='$this->id' AND context='product' AND type='image')");
@@ -883,7 +885,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return string
 	 **/
-	function image_order () {
+	public function image_order () {
 		$orderings = array('ASC','DESC','RAND');
 		$ordering = shopp_setting('product_image_order');
 		if (!in_array($ordering,$orderings)) $ordering = '';
@@ -907,7 +909,7 @@ class Product extends WPShoppObject {
 	 * @param array image record ids
 	 * @return void
 	 **/
-	function link_images ($images) {
+	public function link_images ($images) {
 		if (empty($images)) return;
 		$table = DatabaseObject::tablename(ProductImage::$table);
 		DB::query("UPDATE $table SET parent='$this->id',context='product' WHERE id IN (".join(',',$images).")");
@@ -922,7 +924,7 @@ class Product extends WPShoppObject {
 	 * @param array image record ids
  	 * @return void
 	 **/
-	function update_images ($images) {
+	public function update_images ($images) {
 		if (!is_array($images)) return;
 
 		foreach ($images as $img) {
@@ -974,7 +976,7 @@ class Product extends WPShoppObject {
 	 * delete_images()
 	 * Delete provided array of image ids, removing the source image and
 	 * all related images (small and thumbnails) */
-	function delete_images ($images) {
+	public function delete_images ($images) {
 		$db = &DB::get();
 		$imagetable = DatabaseObject::tablename(ProductImage::$table);
 		$imagesets = "";
@@ -996,7 +998,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function delete () {
+	public function delete () {
 		$id = $this->id;
 		if (empty($id)) return false;
 
@@ -1039,7 +1041,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function trash () {
+	public function trash () {
 		$id = $this->{$this->_key};
 		DB::query("UPDATE $this->_table SET post_status='trash' WHERE ID='$id'");
 	}
@@ -1053,7 +1055,7 @@ class Product extends WPShoppObject {
 	 *
 	 * @return void
 	 **/
-	function duplicate () {
+	public function duplicate () {
 
 		$original = $this->id;
 
@@ -1132,7 +1134,7 @@ class Product extends WPShoppObject {
 	 * @param array Conditional rule to match against
 	 * @return boolean Match or no match
 	 **/
-	function taxrule ($rule) {
+	public function taxrule ($rule) {
 		switch ($rule['p']) {
 			case "product-name": return ($rule['v'] == $this->name); break;
 			case "product-tags":
@@ -1197,19 +1199,26 @@ class Product extends WPShoppObject {
 
 } // END class Product
 
-// @todo Document ProductSummary class
+/**
+ * Description
+ *
+ * @author Jonathan Davis
+ * @since 1.2
+ * @package shopp
+ * @subpackage product
+ **/
 class ProductSummary extends DatabaseObject {
 	static $table = 'summary';
 	static $_ranges = array('price','saleprice','saved','savings','weight');
 	static $_updates = '0000-00-00 00:00:01';
 
-	function __construct ($id=false,$key='product') {
+	public function __construct ($id=false,$key='product') {
 		$this->init(self::$table);
 		$this->_key = 'product';
 		$this->load($id,$key);
 	}
 
-	function save () {
+	public function save () {
 		$data = DB::prepare($this,$this->_map);
 
 		$id = $this->{$this->_key};
@@ -1231,22 +1240,27 @@ class ProductSummary extends DatabaseObject {
 
 } // END class ProductSummary
 
-// @todo Document Spec class
+/**
+ * Helper class for product specs
+ *
+ * @author Jonathan Davis
+ * @since 1.0
+ * @package shopp
+ * @subpackage product
+ **/
 class Spec extends MetaObject {
 
-	function __construct ($id=false) {
+	public function __construct ($id=false) {
 		$this->init(self::$table);
 		$this->load($id);
 		$this->context = 'product';
 		$this->type = 'spec';
 	}
 
-	function updates ($data,$ignores=array()) {
-		parent::updates($data,$ignores);
-		if (preg_match('/^.*?(\d+[\.\,\d]*).*$/',$this->value))
-			$this->numeral = preg_replace('/^.*?(\d+[\.\,\d]*).*$/','$1',$this->value);
+	public function updates ( array $data, array $ignores = array() ) {
+		parent::updates($data, $ignores);
+		if ( preg_match('/^.*?(\d+[\.\,\d]*).*$/', $this->value) )
+			$this->numeral = preg_replace('/^.*?(\d+[\.\,\d]*).*$/', '$1', $this->value);
 	}
 
 } // END class Spec
-
-?>

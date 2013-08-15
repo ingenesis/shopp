@@ -88,13 +88,13 @@ class ProductCollection implements Iterator {
 		$hardlimit = apply_filters('shopp_category_products_hardlimit',1000);
 
 		// Enforce the where parameter as an array
-		if ( ! is_array($where) ) return shopp_debug('The "where" parameter for ' . __METHOD__ .' must be formatted as an array.');
+		if ( ! is_array($where) ) return shopp_debug('The "where" parameter for ' . __METHOD__ . ' must be formatted as an array.');
 
 		// Inventory filtering
-		if ( shopp_setting_enabled('inventory') && ((is_null($nostock) && !shopp_setting_enabled('outofstock_catalog')) || (!is_null($nostock) && !Shopp::str_true($nostock))) )
+		if ( shopp_setting_enabled('inventory') && ( ( is_null($nostock) && ! shopp_setting_enabled('outofstock_catalog') ) || ( ! is_null($nostock) && ! Shopp::str_true($nostock) ) ) )
 			$where[] = "( s.inventory='off' OR (s.inventory='on' AND s.stock > 0) )";
 
-		if (Shopp::str_true($published)) $where[] = "p.post_status='publish'";
+		if ( Shopp::str_true($published) ) $where[] = "p.post_status='publish'";
 
 		// Multiple taxonomy queries
 		if ( is_array($taxquery) ) {
@@ -136,7 +136,7 @@ class ProductCollection implements Iterator {
 			));
 
 			// Handle valid user browsing sort change requests
-			if ( isset($_REQUEST['sort']) && !empty($_REQUEST['sort']) && array_key_exists(strtolower($_REQUEST['sort']),$sortmethods) )
+			if ( isset($_REQUEST['sort']) && !empty($_REQUEST['sort']) && array_key_exists(strtolower($_REQUEST['sort']), $sortmethods) )
 				$Storefront->browsing['sortorder'] = strtolower($_REQUEST['sort']);
 
 			// Collect sort setting sources (Shopp admin setting, User browsing setting, programmer specified setting)
@@ -152,17 +152,17 @@ class ProductCollection implements Iterator {
 				if ( ! empty($setting) && isset($sortmethods[ strtolower($setting) ]) )
 					$sorting = strtolower($setting);
 
-			$orderby = $sortmethods[$sorting];
+			$orderby = $sortmethods[ $sorting ];
 		}
 
 		if ( empty($orderby) ) $orderby = 'p.post_title ASC';
 
 		// Pagination
-		if (empty($limit)) {
-			if ($this->pagination > 0 && is_numeric($this->page) && Shopp::str_true($pagination)) {
+		if ( empty($limit) ) {
+			if ( $this->pagination > 0 && is_numeric($this->page) && Shopp::str_true($pagination) ) {
 				if( !$this->pagination || $this->pagination < 0 )
 					$this->pagination = $hardlimit;
-				$start = ($this->pagination * ($this->page-1));
+				$start = ( $this->pagination * ($this->page - 1) );
 
 				$limit = "$start,$this->pagination";
 			} else $limit = $hardlimit;
@@ -172,133 +172,133 @@ class ProductCollection implements Iterator {
 		// Core query components
 
 		// Load core product data and product summary columns
-		$cols = array(	'p.ID','p.post_title','p.post_name','p.post_excerpt','p.post_status','p.post_date','p.post_modified',
-						's.modified AS summed','s.sold','s.grossed','s.maxprice','s.minprice','s.ranges','s.taxed',
-						's.stock','s.lowstock','s.inventory','s.featured','s.variants','s.addons','s.sale');
+		$cols = array(	'p.ID', 'p.post_title', 'p.post_name', 'p.post_excerpt', 'p.post_status', 'p.post_date', 'p.post_modified',
+						's.modified AS summed', 's.sold', 's.grossed', 's.maxprice', 's.minprice', 's.ranges', 's.taxed',
+						's.stock', 's.lowstock', 's.inventory', 's.featured', 's.variants', 's.addons', 's.sale');
 
 		if ($ids) $cols = array('p.ID');
 
-		$columns = "SQL_CALC_FOUND_ROWS ".join(',',$cols).($columns !== false?','.$columns:'');
+		$columns = "SQL_CALC_FOUND_ROWS " . join(',', $cols) . ( $columns !== false ? ','.$columns : '' );
 		$table = "$Processing->_table AS p";
-		$where[] = "p.post_type='".Product::posttype()."'";
+		$where[] = "p.post_type='" . Product::posttype() . "'";
 		$joins[$summary_table] = "LEFT OUTER JOIN $summary_table AS s ON s.product=p.ID";
-		$options = compact('columns','useindex','table','joins','where','groupby','having','limit','orderby');
+		$options = compact('columns', 'useindex', 'table', 'joins', 'where', 'groupby', 'having', 'limit', 'orderby');
 
 
 		// Alphabetic pagination
-		if ('alpha' === $pagination || preg_match('/(0\-9|[A-Z])/',$page)) {
+		if ( 'alpha' === $pagination || preg_match('/(0\-9|[A-Z])/',$page) ) {
 			// Setup Roman alphabet navigation
-			$alphanav = array_merge(array('0-9'),range('A','Z'));
-			$this->alpha = array_combine($alphanav,array_fill(0,count($alphanav),0));
+			$alphanav = array_merge(array('0-9'), range('A', 'Z'));
+			$this->alpha = array_combine($alphanav, array_fill(0, count($alphanav), 0));
 
 			// Setup alphabetized index query
 			$a = $options;
 			$a['columns'] = "count(DISTINCT p.ID) AS total,IF(LEFT(p.post_title,1) REGEXP '[0-9]',LEFT(p.post_title,1),LEFT(SOUNDEX(p.post_title),1)) AS letter";
 			$a['groupby'] = "letter";
-			$alphaquery = DB::select($a);
+			$alphaquery = sDB::select($a);
 
-			$cachehash = 'collection_alphanav_'.md5($alphaquery);
-			$cached = wp_cache_get($cachehash,'shopp_collection');
-			if ($cached) { // Load from object cache, if available
+			$cachehash = 'collection_alphanav_' . md5($alphaquery);
+			$cached = wp_cache_get($cachehash, 'shopp_collection');
+			if ($cached) { // Load from object cache,  if available
 				$this->alpha = $cached;
 				$cached = false;
 			} else { // Run query and cache results
-				$expire = apply_filters('shopp_collection_cache_expire',43200);
-				$alpha = DB::query($alphaquery,'array',array($this,'alphatable'));
-				wp_cache_set($cachehash,$alpha,'shopp_collection_alphanav');
+				$expire = apply_filters('shopp_collection_cache_expire', 43200);
+				$alpha = DB::query($alphaquery, 'array', array($this, 'alphatable'));
+				wp_cache_set($cachehash, $alpha, 'shopp_collection_alphanav');
 			}
 
 			$this->paged = true;
 			if ($this->page == 1) $this->page = '0-9';
-			$alphafilter = $this->page == "0-9"?
-				"(LEFT(p.post_title,1) REGEXP '[0-9]') = 1":
+			$alphafilter = $this->page == "0-9" ?
+				"(LEFT(p.post_title,1) REGEXP '[0-9]') = 1" :
 				"IF(LEFT(p.post_title,1) REGEXP '[0-9]',LEFT(p.post_title,1),LEFT(SOUNDEX(p.post_title),1))='$this->page'";
 			$options['where'][] = $alphafilter;
 		}
 
-		$query = DB::select( apply_filters('shopp_collection_query',$options) );
+		$query = DB::select( apply_filters('shopp_collection_query', $options) );
 
-		if ($debug) echo $query.BR.BR;
+		if ( $debug ) echo $query.BR.BR;
 
 		// Load from cached results if available, or run the query and cache the results
-		$cachehash = 'collection_'.md5($query);
-		$cached = wp_cache_get($cachehash,'shopp_collection');
-		if ($cached) {
+		$cachehash = 'collection_' . md5($query);
+		$cached = wp_cache_get($cachehash, 'shopp_collection');
+		if ( $cached ) {
 			$this->products = $cached->products;
 			$this->total = $cached->total;
 		} else {
-			$expire = apply_filters('shopp_collection_cache_expire',43200);
+			$expire = apply_filters('shopp_collection_cache_expire', 43200);
 
 			$cache = new stdClass();
 
-			if ($ids) $cache->products = $this->products = DB::query($query,'array','col','ID');
-			else $cache->products = $this->products = DB::query($query,'array',array($Processing,'loader'));
+			if ( $ids ) $cache->products = $this->products = DB::query($query, 'array', 'col', 'ID');
+			else $cache->products = $this->products = DB::query($query, 'array', array($Processing, 'loader'));
 
-			$cache->total = $this->total = DB::found();
+			$cache->total = $this->total = sDB::found();
 
 			// If running a limited set, the reported total found should not exceed the limit (but can because of SQL_CALC_FOUND_ROWS)
 			// Don't use the limit if it is offset
-			if ($limited && false === strpos($limit,',')) $cache->total = $this->total = min($limit,$this->total);
+			if ($limited && false === strpos($limit, ',')) $cache->total = $this->total = min($limit, $this->total);
 
 			wp_cache_set($cachehash,$cache,'shopp_collection');
 		}
-		if (false === $this->products) $this->products = array();
+		if ( false === $this->products ) $this->products = array();
 
-		if ($ids) return ($this->size() > 0);
+		if ( $ids ) return ( $this->size() > 0 );
 
 		// Finish up pagination construction
-		if ($this->pagination > 0 && $this->total > $this->pagination) {
+		if ( $this->pagination > 0 && $this->total > $this->pagination ) {
 			$this->pages = ceil($this->total / $this->pagination);
 			if ($this->pages > 1) $this->paged = true;
 		}
 
 		// Load all requested product meta from other data sources
-		$Processing->load_data($load,$this->products);
+		$Processing->load_data($load, $this->products);
 
 		// If products are missing summary data, resum them
-		if (isset($Processing->resum) && !empty($Processing->resum))
-			$Processing->load_data(array('prices'),$Processing->resum);
+		if ( isset($Processing->resum) && ! empty($Processing->resum) )
+			$Processing->load_data(array('prices'), $Processing->resum);
 
 		unset($Processing); // Free memory
 
 		$this->loaded = true;
 
-		return ($this->size() > 0);
+		return ( $this->size() > 0 );
 	}
 
-	public function pagelink ($page) {
+	public function pagelink ( $page ) {
 		global $wp_rewrite;
 		$prettyurls = $wp_rewrite->using_permalinks();
 
-		$alpha = (false !== preg_match('/([a-z]|0\-9)/',$page));
+		$alpha = ( false !== preg_match('/([a-z]|0\-9)/', $page) );
 
 		$namespace = get_class_property( get_class($this) ,'namespace');
-		$prettyurl = "$namespace/$this->slug".($page > 1 || $alpha?"/page/$page":"");
+		$prettyurl = "$namespace/$this->slug" . ($page > 1 || $alpha ? "/page/$page" : "");
 
 		// Handle catalog landing page category pagination
-		if (is_catalog_frontpage()) $prettyurl = ($page > 1 || $alpha?"page/$page":"");
+		if ( is_catalog_frontpage() ) $prettyurl = ($page > 1 || $alpha ? "page/$page" : "");
 
-		$queryvars = array($this->taxonomy=>$this->uri);
-		if ($page > 1 || $alpha) $queryvars['paged'] = $page;
+		$queryvars = array($this->taxonomy => $this->uri);
+		if ( $page > 1 || $alpha ) $queryvars['paged'] = $page;
 
-		return apply_filters('shopp_paged_link', Shopp::url($prettyurls?user_trailingslashit($prettyurl):$queryvars, false), $page );
+		return apply_filters('shopp_paged_link', Shopp::url($prettyurls ? user_trailingslashit($prettyurl) : $queryvars, false), $page );
 	}
 
 	// Add alpha-pagination support to category/collection pagination rules
-	public function pagerewrites ($rewrites) {
+	public function pagerewrites ( $rewrites ) {
 		$rules = array_keys($rewrites);
 		$queries = array_values($rewrites);
 
-		foreach ($rules as &$rule)
-			if (false !== strpos($rule,'/?([0-9]{1,})/?$'))
-				$rule = str_replace('[0-9]','0\-9|[A-Z0-9]',$rule);
+		foreach ( $rules as &$rule )
+			if ( false !== strpos($rule,'/?([0-9]{1,})/?$') )
+				$rule = str_replace('[0-9]','0\-9|[A-Z0-9]', $rule);
 
-		return array_combine($rules,$queries);
+		return array_combine($rules, $queries);
 	}
 
-	public function alphatable (&$records,&$record) {
-		if (is_numeric($record->letter)) $this->alpha['0-9'] += $record->total;
-		elseif (isset($this->alpha[ strtoupper($record->letter) ])) $this->alpha[ strtoupper($record->letter) ] = $record->total;
+	public function alphatable ( &$records, &$record ) {
+		if ( is_numeric($record->letter) ) $this->alpha['0-9'] += $record->total;
+		elseif ( isset($this->alpha[ strtoupper($record->letter) ]) ) $this->alpha[ strtoupper($record->letter) ] = $record->total;
 	}
 
 	/**
@@ -315,23 +315,26 @@ class ProductCollection implements Iterator {
 	 * @return string A feed item record
 	 **/
 	public function feed () {
+
 		$paged = 100; // Buffer 100 products at a time.
 		$loop = false;
 
 		$product = ShoppProduct();
-		if ($product) {
-			$loop = shopp($this,'products');
+		if ( $product ) {
+			$loop = shopp($this, 'products');
 			$product = ShoppProduct();
 		}
 
-		if (! ($product || $loop)) {
-			if (!$this->products) $page = 1;
+		if ( ! ($product || $loop) ) {
+
+			if ( ! $this->products ) $page = 1;
 			else $page = $this->page + 1;
-			if ($this->pages > 0 && $page > $this->pages) return false;
-			$this->load( array('load'=>array('prices','specs','categories','coverimages'), 'paged'=>$paged, 'page' => $page) );
-			$loop = shopp($this,'products');
+
+			if ( $this->pages > 0 && $page > $this->pages ) return false;
+			$this->load( array('load' => array('prices', 'specs', 'categories', 'coverimages'), 'paged'=>$paged, 'page' => $page) );
+			$loop = shopp($this, 'products');
 			$product = ShoppProduct();
-			if (!$product) return false; // No products, bail
+			if ( ! $product ) return false; // No products, bail
 		}
 
 	    if ( shopp_setting_enabled('tax_inclusive') ) {
@@ -340,10 +343,10 @@ class ProductCollection implements Iterator {
 	    }
 
 		$item = array();
-		$item['guid'] = shopp($product,'get-url');
+		$item['guid'] = shopp($product, 'get-url');
 		$item['title'] = $product->name;
-		$item['link'] =  shopp($product,'get-url');
-		$item['pubDate'] = date('D, d M Y H:i O',$product->publish);
+		$item['link'] =  shopp($product, 'get-url');
+		$item['pubDate'] = date('D, d M Y H:i O', $product->publish);
 
 		// Item Description
 		$item['description'] = '';
@@ -351,15 +354,15 @@ class ProductCollection implements Iterator {
 		$item['description'] .= '<table><tr>';
 		$Image = current($product->images);
 		if (!empty($Image)) {
-			$item['description'] .= '<td><a href="'.$item['link'].'" title="'.$product->name.'">';
-			$item['description'] .= '<img src="'.esc_attr(add_query_string($Image->resizing(75,75,0),Shopp::url($Image->id,'images'))).'" alt="'.$product->name.'" width="75" height="75" />';
+			$item['description'] .= '<td><a href="' . $item['link'] . '" title="' . $product->name . '">';
+			$item['description'] .= '<img src="' . esc_attr(add_query_string($Image->resizing(75, 75, 0), Shopp::url($Image->id, 'images'))) . '" alt="' . $product->name . '" width="75" height="75" />';
 			$item['description'] .= '</a></td>';
 		}
 
 		$pricing = "";
-		if (Shopp::str_true($product->sale)) {
-			if ($taxrate) $product->min['saleprice'] += $product->min['saleprice'] * $taxrate;
-			if ($product->min['saleprice'] != $product->max['saleprice'])
+		if ( Shopp::str_true($product->sale) ) {
+			if ( $taxrate ) $product->min['saleprice'] += $product->min['saleprice'] * $taxrate;
+			if ( $product->min['saleprice'] != $product->max['saleprice'] )
 				$pricing .= __("from ",'Shopp');
 			$pricing .= money($product->min['saleprice']);
 		} else {
@@ -374,9 +377,9 @@ class ProductCollection implements Iterator {
 		}
 		$item['description'] .= "<td><p><big>$pricing</big></p>";
 
-		$item['description'] .= apply_filters('shopp_rss_description',($product->summary),$product).'</td></tr></table>';
+		$item['description'] .= apply_filters('shopp_rss_description', ($product->summary), $product) . '</td></tr></table>';
 		$item['description'] =
-		 	'<![CDATA['.$item['description'].']]>';
+		 	'<![CDATA[' . $item['description'] . ']]>';
 
 		// Google Base Namespace
 		// http://www.google.com/support/merchants/bin/answer.py?hl=en&answer=188494
@@ -384,39 +387,39 @@ class ProductCollection implements Iterator {
 		// Below are Google Base specific attributes
 		// You can use the shopp_rss_item filter hook to add new item attributes or change the existing attributes
 
-		if ($Image) $item['g:image_link'] = add_query_string($Image->resizing(400,400,0),Shopp::url($Image->id,'images'));
+		if ( $Image ) $item['g:image_link'] = add_query_string($Image->resizing(400, 400, 0), Shopp::url($Image->id, 'images'));
 		$item['g:condition'] = 'new';
-		$item['g:availability'] = shopp_setting_enabled('inventory') && $product->outofstock?'out of stock':'in stock';
+		$item['g:availability'] = shopp_setting_enabled('inventory') && $product->outofstock ? 'out of stock' : 'in stock';
 
-		$price = Shopp::floatval(Shopp::str_true($product->sale)?$product->min['saleprice']:$product->min['price']);
-		if (!empty($price))	{
+		$price = Shopp::floatval(Shopp::str_true($product->sale) ? $product->min['saleprice'] : $product->min['price']);
+		if ( ! empty($price) )	{
 			$item['g:price'] = $price;
 			$item['g:price_type'] = "starting";
 		}
 
 		// Include product_type using Shopp category taxonomies
-		foreach ($product->categories as $category) {
+		foreach ( $product->categories as $category ) {
 			$ancestry = array($category->name);
-			$ancestors = get_ancestors($category->term_id,$category->taxonomy);
+			$ancestors = get_ancestors($category->term_id, $category->taxonomy);
 			foreach ((array)$ancestors as $ancestor) {
-				$term = get_term($ancestor,$category->taxonomy);
-				if ($term) array_unshift($ancestry,$term->name);
+				$term = get_term($ancestor, $category->taxonomy);
+				if ($term) array_unshift($ancestry, $term->name);
 			}
-			$item['g:product_type['.$category->term_id.']'] = join(' > ',$ancestry);
+			$item['g:product_type[' . $category->term_id . ']'] = join(' > ', $ancestry);
 		}
 
-		$brand = shopp($product,'get-spec','name=Brand');
-		if (!empty($brand)) $item['g:brand'] = $brand;
+		$brand = shopp($product, 'get-spec', 'name=Brand');
+		if ( ! empty($brand) ) $item['g:brand'] = $brand;
 
-		$gtins = array('UPC','EAN','JAN','ISBN-13','ISBN-10','ISBN');
-		foreach ($gtins as $id) {
-			$gtin = shopp($product,'get-spec','name='.$id);
-			if (!empty($gtin)) {
+		$gtins = array('UPC', 'EAN', 'JAN', 'ISBN-13', 'ISBN-10', 'ISBN');
+		foreach ( $gtins as $id ) {
+			$gtin = shopp($product, 'get-spec', 'name=' . $id);
+			if ( ! empty($gtin) ) {
 				$item['g:gtin'] = $gtin; break;
 			}
 		}
-		$mpn = shopp($product,'get-spec','name=MPN');
-		if (!empty($mpn)) $item['g:mpn'] = $mpn;
+		$mpn = shopp($product, 'get-spec', 'name=MPN');
+		if ( ! empty($mpn) ) $item['g:mpn'] = $mpn;
 
 		// Check the product specs for matching Google Base information
 		$g_props = array(
@@ -430,18 +433,18 @@ class ProductCollection implements Iterator {
 			'Google Product Category' => 'google_product_category'
 		);
 		foreach ( apply_filters('shopp_googlebase_spec_map', $g_props) as $name => $key ) {
-			$value = shopp($product,'get-spec','name='.$name);
-			if (!empty($value)) $item["g:$key"] = $value;
+			$value = shopp($product, 'get-spec', 'name=' . $name);
+			if ( ! empty($value) ) $item[ "g:$key" ] = $value;
 		}
 
-		return apply_filters('shopp_rss_item',$item,$product);
+		return apply_filters('shopp_rss_item', $item, $product);
 	}
 
-	public function feeditem ($item) {
-		foreach ($item as $key => $value) {
-			$key = preg_replace('/\[\d+\]$/','',$key); // Remove duplicate tag identifiers
+	public function feeditem ( $item ) {
+		foreach ( $item as $key => $value ) {
+			$key = preg_replace('/\[\d+\]$/', '', $key); // Remove duplicate tag identifiers
 			$attrs = '';
-			if (is_array($value)) {
+			if ( is_array($value) ) {
 				$rss = $value;
 				$value = '';
 				foreach ($rss as $name => $content) {
@@ -449,16 +452,16 @@ class ProductCollection implements Iterator {
 					else $attrs .= ' '.$name.'="'.esc_attr($content).'"';
 				}
 			}
-			if (strpos($value,'<![CDATA[') === false) $value = esc_html($value);
-			if (!empty($value)) echo "\t\t<$key$attrs>$value</$key>\n";
+			if ( false === strpos($value, '<![CDATA[') ) $value = esc_html($value);
+			if ( ! empty($value) ) echo "\t\t<$key$attrs>$value</$key>\n";
 			else echo "\t\t<$key$attrs />\n";
 		}
 	}
 
-	static private function taxquery ($sql) {
+	static private function taxquery ( $sql ) {
 		$tablename = WPShoppObject::tablename(Product::$table);
-		$sql = str_replace( $tablename.'.' ,'p.',$sql);
-		$sql = ltrim($sql,' AND ');
+		$sql = str_replace($tablename . '.', 'p.', $sql);
+		$sql = ltrim($sql, ' AND ');
 		return $sql;
 	}
 
@@ -473,7 +476,7 @@ class ProductCollection implements Iterator {
 	/** Iterator implementation **/
 
 	public function current () {
-		return $this->products[ $this->_keys[$this->_position] ];
+		return $this->products[ $this->_keys[ $this->_position ] ];
 	}
 
 	public function key () {
@@ -490,7 +493,7 @@ class ProductCollection implements Iterator {
 	}
 
 	public function valid () {
-		return isset($this->_keys[$this->_position]) && isset($this->products[ $this->_keys[$this->_position] ]);
+		return isset($this->_keys[ $this->_position ]) && isset($this->products[ $this->_keys[$this->_position] ]);
 	}
 
 }
@@ -505,6 +508,7 @@ $ShoppTaxonomies = array();
  * @package collections
  **/
 class ProductTaxonomy extends ProductCollection {
+
 	static $taxon = 'shopp_group';
 	static $namespace = 'group';
 	static $hierarchical = true;
@@ -516,26 +520,26 @@ class ProductTaxonomy extends ProductCollection {
 	public $meta = array();
 	public $images = array();
 
-	public function __construct ($id=false,$key='id') {
-		if (!$id) return;
-		if ('id' != $key) $this->loadby($id,$key);
+	public function __construct ( $id = false, $key = 'id' ) {
+		if ( ! $id ) return;
+		if ( 'id' != $key ) $this->loadby($id, $key);
 		else $this->load_term($id);
 	}
 
-	static function register ($class) {
+	static function register ( $class ) {
 		global $Shopp,$ShoppTaxonomies;
 
-		$namespace = get_class_property($class,'namespace');
-		$taxonomy = get_class_property($class,'taxon');
-		$hierarchical = get_class_property($class,'hierarchical');
-		$slug = SHOPP_NAMESPACE_TAXONOMIES ? ShoppPages()->baseslug().'/'.$namespace : $namespace;
-		register_taxonomy($taxonomy,array(Product::$posttype), array(
+		$namespace = get_class_property($class, 'namespace');
+		$taxonomy = get_class_property($class, 'taxon');
+		$hierarchical = get_class_property($class, 'hierarchical');
+		$slug = SHOPP_NAMESPACE_TAXONOMIES ? ShoppPages()->baseslug() . '/' . $namespace : $namespace;
+		register_taxonomy($taxonomy, array(Product::$posttype), array(
 			'hierarchical' => $hierarchical,
 			'labels' => call_user_func(array($class,'labels'),$class),
 			'show_ui' => true,
 			'query_var' => true,
 			'rewrite' => array( 'slug' => $slug, 'with_front' => false ),
-			'update_count_callback' => array('ProductTaxonomy','recount'),
+			'update_count_callback' => array('ProductTaxonomy', 'recount'),
 			'capabilities' => array(
 				'manage_terms' => 'shopp_categories',
 				'edit_terms'   => 'shopp_categories',
@@ -568,24 +572,25 @@ class ProductTaxonomy extends ProductCollection {
 		);
 	}
 
-	public function load ($options=array()) {
+	public function load ( array $options = array() ) {
+
 		global $wpdb;
 		$summary_table = DatabaseObject::tablename(ProductSummary::$table);
 
-		$options['joins'][$wpdb->term_relationships] = "INNER JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id AND tr.term_taxonomy_id=$this->term_taxonomy_id)";
-		$options['joins'][$wpdb->term_taxonomy] = "INNER JOIN $wpdb->term_taxonomy AS tt ON (tr.term_taxonomy_id=tt.term_taxonomy_id AND tt.term_id=$this->id)";
+		$options['joins'][ $wpdb->term_relationships ] = "INNER JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id AND tr.term_taxonomy_id=$this->term_taxonomy_id)";
+		$options['joins'][ $wpdb->term_taxonomy ] = "INNER JOIN $wpdb->term_taxonomy AS tt ON (tr.term_taxonomy_id=tt.term_taxonomy_id AND tt.term_id=$this->id)";
 
-		$loaded =  parent::load(apply_filters('shopp_taxonomy_load_options',$options));
+		$loaded =  parent::load( apply_filters('shopp_taxonomy_load_options', $options) );
 
-		$query = "SELECT (AVG(maxprice)+AVG(minprice))/2 AS average,MAX(maxprice) AS max,MIN(IF(minprice>0,minprice,NULL)) AS min FROM $summary_table ".str_replace('p.ID','product',join(' ',$options['joins']));
-		$this->pricing = DB::query($query);
+		$query = "SELECT (AVG(maxprice)+AVG(minprice))/2 AS average,MAX(maxprice) AS max,MIN(IF(minprice>0,minprice,NULL)) AS min FROM $summary_table " . str_replace('p.ID', 'product', join(' ', $options['joins']));
+		$this->pricing = sDB::query($query);
 
 		return $loaded;
 	}
 
-	public function load_term ($id) {
-		$term = get_term($id,$this->taxonomy);
-		if (empty($term->term_id)) return false;
+	public function load_term ( $id ) {
+		$term = get_term($id, $this->taxonomy);
+		if ( empty($term->term_id) ) return false;
 		$this->populate($term);
 	}
 
@@ -598,28 +603,29 @@ class ProductTaxonomy extends ProductCollection {
 	 * @param string $slug The slug name to load
 	 * @return boolean loaded successfully or not
 	 **/
-	public function loadby ($id,$key='id') {
-		$term = get_term_by($key,$id,$this->taxonomy);
+	public function loadby ( $id, $key = 'id' ) {
+		$term = get_term_by($key, $id, $this->taxonomy);
 		if (empty($term->term_id)) return false;
 		$this->populate($term);
 	}
 
-	public function populate ($data) {
+	public function populate ( $data ) {
 		foreach(get_object_vars($data) as $var => $value)
-			$this->{$var} = $value;
+			$this->$var = $value;
 
 		$this->id = $this->term_id;
 		$this->term_taxonomy_id = $this->term_taxonomy_id;
 	}
 
 	public function load_meta () {
-		if (empty($this->id)) return;
+		if ( empty($this->id) ) return;
 		$meta = DatabaseObject::tablename(MetaObject::$table);
-		DB::query("SELECT * FROM $meta WHERE parent=$this->id AND context='$this->context' AND type='meta'",'array',array($this,'metaloader'),'type');
+		DB::query("SELECT * FROM $meta WHERE parent=$this->id AND context='$this->context' AND type='meta'", 'array', array($this, 'metaloader'), 'type');
 	}
 
-	public function metaloader (&$records,&$record,$property=false) {
-		if (empty($record->name)) return;
+	public function metaloader ( &$records, &$record, $property = false ) {
+
+		if ( empty($record->name) ) return;
 
 		$metamap = array(
 			'image' => 'images',
@@ -632,17 +638,17 @@ class ProductTaxonomy extends ProductCollection {
 		);
 
 		if ('type' == $property)
-			$property = isset($metamap[$record->type])?$metamap[$record->type]:'meta';
+			$property = isset($metamap[ $record->type ]) ? $metamap[ $record->type ] : 'meta';
 
-		if (!isset($metaclass[$record->type])) $type = 'meta';
+		if ( ! isset($metaclass[ $record->type ]) ) $type = 'meta';
 
-		$ObjectClass = $metaclass[$record->type];
+		$ObjectClass = $metaclass[ $record->type ];
 		$Object = new $ObjectClass();
 		$Object->populate($record);
-		if (method_exists($Object,'expopulate'))
+		if (method_exists($Object, 'expopulate'))
 			$Object->expopulate();
 
-		$this->{$property}[$Object->id] = &$Object;
+		$this->{$property}[ $Object->id ] = &$Object;
 
 		if ('meta' == $property) {
 			if ( !isset($this->{$Object->name}) || empty($this->{$Object->name}) )
@@ -650,21 +656,22 @@ class ProductTaxonomy extends ProductCollection {
 		}
 
 		$record = $Object;
+
 	}
 
 	public function save () {
-		$properties = array('name'=>null,'slug'=>null,'description'=>null,'parent'=>null);
-		$updates = array_intersect_key(get_object_vars($this),$properties);
+		$properties = array('name' => null, 'slug' => null, 'description' => null, 'parent' => null);
+		$updates = array_intersect_key(get_object_vars($this), $properties);
 
-		remove_filter('pre_term_description','wp_filter_kses'); // Allow HTML in category descriptions
+		remove_filter('pre_term_description', 'wp_filter_kses'); // Allow HTML in category descriptions
 
-		if ($this->id) wp_update_term($this->id,$this->taxonomy,$updates);
+		if ($this->id) wp_update_term($this->id, $this->taxonomy, $updates);
 		else list($this->id, $this->term_taxonomy_id) = array_values(wp_insert_term($this->name, $this->taxonomy, $updates));
 
-		if (!$this->id) return false;
+		if ( ! $this->id ) return false;
 
 		// If the term successfully saves, save all meta data too
-		foreach ($this->meta as $name => $Meta) {
+		foreach ( $this->meta as $name => $Meta ) {
 
 			if ( $name == $Meta->id ) continue;
 
@@ -684,10 +691,10 @@ class ProductTaxonomy extends ProductCollection {
 	}
 
 	public function delete () {
-		if (!$this->id) return false;
+		if ( ! $this->id ) return false;
 
 		// Remove WP taxonomy term
-		$status = wp_delete_term($this->id,$this->taxonomy);
+		$status = wp_delete_term($this->id, $this->taxonomy);
 
 		// Remove meta data & images
 		$status = $status && shopp_rmv_meta ( $this->id, 'category' );
@@ -695,14 +702,14 @@ class ProductTaxonomy extends ProductCollection {
 
 	}
 
-	static function tree ($taxonomy,$terms,&$children,&$count,&$results = array(),$page=1,$per_page=0,$parent=0,$level=0) {
+	static function tree ( $taxonomy, $terms, &$children, &$count, &$results = array(), $page = 1, $per_page = 0, $parent = 0, $level = 0) {
 
 		$start = ($page - 1) * $per_page;
 		$end = $start + $per_page;
 
-		foreach ($terms as $id => $term_parent) {
+		foreach ( $terms as $id => $term_parent ) {
 			if ( $end > $start && $count >= $end ) break;
-			if ($term_parent != $parent ) continue;
+			if ( $term_parent != $parent ) continue;
 
 			// Render parents when pagination starts in a branch
 			if ( $start > 0 && $count == $start && $term_parent > 0 ) {
@@ -722,58 +729,58 @@ class ProductTaxonomy extends ProductCollection {
 
 				$parent_count = count($parents);
 				while ($terms_parent = array_pop($parents)) {
-					$results[$terms_parent->term_id] = $terms_parent;
-					$results[$terms_parent->term_id]->level = $level-($parent_count--);
+					$results[ $terms_parent->term_id ] = $terms_parent;
+					$results[ $terms_parent->term_id ]->level = $level - ($parent_count--);
 				}
 			}
 
-			if ($count >= $start) {
-				if (isset($results[$id])) continue;
-				$results[$id] = get_term($id,$taxonomy);
-				$results[$id]->id = $results[$id]->term_id;
-				$results[$id]->level = $level;
-				$results[$id]->_children = isset($children[$id]);
+			if ( $count >= $start ) {
+				if ( isset($results[ $id ]) ) continue;
+				$results[ $id ] = get_term($id, $taxonomy);
+				$results[ $id ]->id = $results[ $id ]->term_id;
+				$results[ $id ]->level = $level;
+				$results[ $id ]->_children = isset($children[ $id ]);
 			}
 			++$count;
-			unset($terms[$id]);
+			unset($terms[ $id ]);
 
-			if (isset($children[$id]))
-				self::tree($taxonomy,$terms,$children,$count,$results,$page,$per_page,$id,$level+1);
+			if ( isset($children[ $id ]) )
+				self::tree($taxonomy, $terms, $children, $count, $results, $page, $per_page, $id, $level + 1);
 		}
 	}
 
-	public function pagelink ($page) {
+	public function pagelink ( $page ) {
 		global $wp_rewrite;
 		$categoryurl = get_term_link($this->slug, $this->taxonomy);
 
-		$alpha = (false !== preg_match('/([A-Z]|0\-9)/',$page));
-		$prettyurl = trailingslashit($categoryurl).($page > 1 || $alpha?"page/$page":"");
+		$alpha = ( false !== preg_match('/([A-Z]|0\-9)/', $page) );
+		$prettyurl = trailingslashit($categoryurl) . ($page > 1 || $alpha ? "page/$page" : "");
 
-		$queryvars = array($this->taxonomy=>$this->slug);
-		if ($page > 1 || $alpha) $queryvars['paged'] = $page;
+		$queryvars = array($this->taxonomy => $this->slug);
+		if ( $page > 1 || $alpha ) $queryvars['paged'] = $page;
 
-		$url = $wp_rewrite->using_permalinks() ? user_trailingslashit($prettyurl) : add_query_arg($queryvars,$categoryurl);
+		$url = $wp_rewrite->using_permalinks() ? user_trailingslashit($prettyurl) : add_query_arg($queryvars, $categoryurl);
 
 		return apply_filters('shopp_paged_link', $url, $page);
 	}
 
-	static function recount ($terms, $taxonomy) {
+	static function recount ( $terms, $taxonomy ) {
 		global $wpdb;
 		$summary_table = DatabaseObject::tablename(ProductSummary::$table);
 
-		foreach ( (array) $terms as $term ) {
+		foreach ( (array)$terms as $term ) {
 			$where = array(
 				"$wpdb->posts.ID = $wpdb->term_relationships.object_id",
 				"post_status='publish'",
-				"post_type='".Product::$posttype."'"
+				"post_type='" . Product::$posttype . "'"
 			);
 
-			if ( shopp_setting_enabled('inventory') && !shopp_setting_enabled('outofstock_catalog') )
+			if ( shopp_setting_enabled('inventory') && ! shopp_setting_enabled('outofstock_catalog') )
 				$where[] = "( s.inventory='off' OR (s.inventory='on' AND s.stock > 0) )";
 
-			$where[] = "term_taxonomy_id=".(int)$term;
-			$query = "SELECT COUNT(*) AS c FROM $wpdb->term_relationships, $wpdb->posts LEFT OUTER JOIN $summary_table AS s ON s.product=$wpdb->posts.ID WHERE ".join(' AND ',$where);
-			$count = (int) DB::query($query,'auto','col','c');
+			$where[] = "term_taxonomy_id=" . (int)$term;
+			$query = "SELECT COUNT(*) AS c FROM $wpdb->term_relationships, $wpdb->posts LEFT OUTER JOIN $summary_table AS s ON s.product=$wpdb->posts.ID WHERE " . join(' AND ', $where);
+			$count = (int) sDB::query($query, 'auto', 'col', 'c');
 
 			do_action( 'edit_term_taxonomy', $term, $taxonomy );
 			$wpdb->update( $wpdb->term_taxonomy, compact( 'count' ), array( 'term_taxonomy_id' => $term ) );
@@ -792,6 +799,7 @@ class ProductTaxonomy extends ProductCollection {
  * @package collection
  **/
 class ProductCategory extends ProductTaxonomy {
+
 	static $taxon = 'shopp_category';
 	static $namespace = 'category';
 	static $hierarchical = true;
@@ -804,32 +812,32 @@ class ProductCategory extends ProductTaxonomy {
 	public $children = array();
 	public $child = false;
 
-	public function __construct ($id=false,$key='id',$taxonomy=false) {
-		$this->taxonomy = $taxonomy? $taxonomy : self::$taxon;
-		parent::__construct($id,$key);
-		if (!empty($this->id)) $this->load_meta();
-		if (isset($this->facetedmenus) && Shopp::str_true($this->facetedmenus))
+	public function __construct ( $id = false, $key = 'id', $taxonomy = false ) {
+		$this->taxonomy = $taxonomy ? $taxonomy : self::$taxon;
+		parent::__construct($id, $key);
+		if ( ! empty($this->id) ) $this->load_meta();
+		if ( isset($this->facetedmenus) && Shopp::str_true($this->facetedmenus) )
 			$this->filters();
 	}
 
-	static function labels ($class) {
+	static function labels () {
 		return array(
-			'name' => __('Catalog Categories','Shopp'),
-			'singular_name' => __('Category','Shopp'),
-			'search_items' => __('Search Categories','Shopp'),
-			'popular_items' => __('Popular','Shopp'),
-			'all_items' => __('Show All','Shopp'),
-			'parent_item' => __('Parent Category','Shopp'),
-			'parent_item_colon' => __('Parent Category:','Shopp'),
-			'edit_item' => __('Edit Category','Shopp'),
-			'update_item' => __('Update Category','Shopp'),
-			'add_new_item' => __('New Category','Shopp'),
-			'new_item_name' => __('New Category Name','Shopp'),
-			'menu_name' => __('Categories','Shopp')
+			'name' => Shopp::__('Catalog Categories'),
+			'singular_name' => Shopp::__('Category'),
+			'search_items' => Shopp::__('Search Categories'),
+			'popular_items' => Shopp::__('Popular'),
+			'all_items' => Shopp::__('Show All'),
+			'parent_item' => Shopp::__('Parent Category'),
+			'parent_item_colon' => Shopp::__('Parent Category:'),
+			'edit_item' => Shopp::__('Edit Category'),
+			'update_item' => Shopp::__('Update Category'),
+			'add_new_item' => Shopp::__('New Category'),
+			'new_item_name' => Shopp::__('New Category Name'),
+			'menu_name' => Shopp::__('Categories')
 		);
 	}
 
-	public function load ($options = array()) {
+	public function load ( array $options = array() ) {
 
 		// $options['debug'] = true;
 		if ($this->filters) add_filter('shopp_taxonomy_load_options',array($this,'facetsql'));
@@ -1416,12 +1424,12 @@ class ProductTag extends ProductTaxonomy {
 
 	public $api = 'category';
 
-	public function __construct ($id=false,$key='id',$taxonomy=false) {
-		$this->taxonomy = $taxonomy? $taxonomy : self::$taxon;
-		parent::__construct($id,$key);
+	public function __construct ( $id = false, $key = 'id', $taxonomy = false ) {
+		$this->taxonomy = $taxonomy ? $taxonomy : self::$taxon;
+		parent::__construct($id, $key);
 	}
 
-	static function labels ($class) {
+	static function labels () {
 		return array(
 			'name' => __('Catalog Tags','Shopp'),
 			'singular_name' => __('Tag','Shopp'),
@@ -1464,7 +1472,7 @@ class SmartCollection extends ProductCollection {
 	public $name = false;
 	public $loading = array();
 
-	public function __construct ( array $options = array()) {
+	public function __construct ( array $options = array() ) {
 
 		if ( isset($options['show']) )
 			$this->loading['limit'] = $options['show'];

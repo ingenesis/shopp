@@ -75,7 +75,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 			return $Object->Cart;
 		else if ( strtolower($object) != 'cart' ) return $Object; // not mine, do nothing
 
-		$Order =& ShoppOrder();
+		$Order = ShoppOrder();
 		return $Order->Cart;
 	}
 

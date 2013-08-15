@@ -751,7 +751,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	}
 
 	static function search ($result, $options, $O) {
-		$Storefront =& ShoppStorefront();
+		$Storefront = ShoppStorefront();
 		global $wp;
 
 		$defaults = array(

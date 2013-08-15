@@ -481,7 +481,7 @@ abstract class ShoppReportFramework {
 	 * @param string $scale Scale of periods (hour, day, week, month, year)
 	 * @return int The number of periods
 	 **/
-	function range ( int $starts, int $ends, $scale = 'day') {
+	function range ( integer $starts, integer $ends, $scale = 'day') {
 		$oneday = 86400;
 		$years = date('Y',$ends)-date('Y',$starts);
 		switch (strtolower($scale)) {
@@ -748,7 +748,12 @@ abstract class ShoppReportFramework {
 						if ( $first ) {
 							$averages->$column = __('Average','Shopp');
 							$first = false;
-						} else $averages->$column = ($averages->$column / $this->total);
+						} else {
+							$value = isset($averages->$column) ? $averages->$column : 0;
+							$total = isset($this->total) ? $this->total : 0;
+							if ( 0 == $total ) $averages->$column = 0;
+							else $averages->$column = ($value / $total);
+						}
 						$classes = array($column,"column-$column");
 						if ( in_array($column,$hidden) ) $classes[] = 'hidden';
 					?>
@@ -818,9 +823,14 @@ abstract class ShoppReportFramework {
 	protected static function rangefilter () { ?>
 		<select name="range" id="range">
 			<?php
-				$start = $_GET['start'];
-				$end = $_GET['end'];
-				$range = isset($_GET['range']) ? $_GET['range'] : 'all';
+				$defaults = array(
+					'start' => '',
+					'end' => '',
+					'range' => 'all'
+				);
+				$request = array_merge($defaults, $_GET);
+				extract($request, EXTR_SKIP);
+
 				$ranges = array(
 					'today' => __('Today','HelpDesk'),
 					'week' => __('This Week','HelpDesk'),
@@ -836,7 +846,7 @@ abstract class ShoppReportFramework {
 					'lastyear' => __('Last Year','HelpDesk'),
 					'custom' => __('Custom Dates','HelpDesk')
 				);
-				echo menuoptions($ranges,$range,true);
+				echo menuoptions($ranges, $range, true);
 			?>
 		</select>
 		<div id="dates" class="hide-if-js">
@@ -1125,6 +1135,7 @@ class ShoppReportChart {
 		// Setup the minimum scale for the y-axis from chart data
 		$this->options['yaxis']['min'] = (float)min($this->options['yaxis']['min'],$y);
 
+		if ( ! isset($this->datapoints) ) $this->datapoints = 0;
 		$this->datapoints = max( $this->datapoints, count($this->data[$series]['data']) );
 	}
 
@@ -1139,7 +1150,7 @@ class ShoppReportChart {
 	 * @return void
 	 **/
 	function render () {
-		if ($this->datapoints > 75) $this->options['series']['points'] = false;
+		if (isset($this->datapoints) && $this->datapoints > 75) $this->options['series']['points'] = false;
 
 		?>
 		<script type="text/javascript">

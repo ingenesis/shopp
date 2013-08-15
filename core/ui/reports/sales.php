@@ -1,4 +1,17 @@
 <?php
+/**
+ * sales.php
+ *
+ * Sales report
+ *
+ * @author Jonathan Davis
+ * @version 1.0
+ * @copyright Ingenesis Limited, June 2012
+ * @package shopp
+ * @subpackage shopp
+ **/
+
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class SalesReport extends ShoppReportFramework implements ShoppReport {
 
@@ -59,28 +72,46 @@ class SalesReport extends ShoppReportFramework implements ShoppReport {
 
 	function scores () {
 		return array(
-			__('Total','Shopp') => money($this->totals->total),
-			__('Orders','Shopp') => intval($this->totals->orders),
-			__('Average Order','Shopp') => money($this->totals->total/$this->totals->orders)
+			__('Total','Shopp') => money( isset($this->totals->total) ? $this->totals->total : 0 ),
+			__('Orders','Shopp') => intval( isset($this->totals->orders) ? $this->totals->orders : 0 ),
+			__('Average Order','Shopp') => money( isset($this->totals->total) && isset($this->totals->orders) ? $this->totals->total/$this->totals->orders : 0)
 		);
 	}
 
-	static function orders ($data) { return intval($data->orders); }
+	static function orders ($data) {
+		return intval( isset($data->orders) ? $data->orders : 0);
+	}
 
-	static function items ($data) { return intval($data->items); }
+	static function items ($data) {
+		return intval( isset($data->items) ? $data->items : 0);
+	}
 
-	static function subtotal ($data) { return money($data->subtotal); }
+	static function subtotal ($data) {
+		return money( isset($data->subtotal) ? $data->subtotal : 0 );
+	}
 
-	static function tax ($data) { return money($data->tax); }
+	static function tax ($data) {
+		return money( isset($data->tax) ? $data->tax : 0 );
+	}
 
-	static function shipping ($data) { return money($data->shipping); }
+	static function shipping ($data) {
+		return money( isset($data->shipping) ? $data->shipping : 0 );
+	}
 
-	static function discounts ($data) { return money($data->discounts); }
+	static function discounts ($data) {
+		return money( isset($data->discounts) ? $data->discounts : 0 );
+	}
 
-	static function total ($data) { return money($data->total); }
+	static function total ($data) {
+		return money( isset($data->total) ? $data->total : 0 );
+	}
 
-	static function orderavg ($data) { return money($data->orderavg); }
+	static function orderavg ($data) {
+		return money( isset($data->orderavg) ? $data->orderavg : 0 );
+	}
 
-	static function itemavg ($data) { return money($data->itemavg); }
+	static function itemavg ($data) {
+		return money( isset($data->itemavg) ? $data->itemavg : 0 );
+	}
 
 }

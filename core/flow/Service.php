@@ -171,6 +171,7 @@ class ShoppAdminService extends AdminController {
 		$start = ($per_page * ($pagenum-1));
 
 		$where = array();
+		$joins = array();
 		if (!empty($status) || $status === '0') $where[] = "status='".DB::escape($status)."'";
 		if (!empty($s)) {
 			$s = stripslashes($s);

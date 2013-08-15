@@ -391,7 +391,7 @@ abstract class ShoppCore {
 	 * @return void
 	 **/
 	public static function add_storefrontjs ($script,$global=false) {
-		$Storefront =& ShoppStorefront();
+		$Storefront = ShoppStorefront();
 		if ($Storefront === false) return;
 		if ($global) {
 			if (!isset($Storefront->behaviors['global'])) $Storefront->behaviors['global'] = array();
@@ -946,7 +946,7 @@ abstract class ShoppCore {
 		$value = preg_replace('/[^\d\,\.\·\'\-]/', '', $value); // Remove any non-numeric string data
 
 		// If we have full-stop decimals, try casting it to skip the funky stuff
-		if ( '.' == $decimals && (float)$$value > 0 ) $float = (float)$value;
+		if ( '.' == $decimals && (float)$value > 0 ) $float = (float)$value;
 
 		if ( false === $float ) { // Nothing else worked, time to get down and dirty
 			$value = preg_replace('/^\./', '', $value); // Remove any decimals at the beginning of the string
@@ -1885,7 +1885,26 @@ abstract class ShoppCore {
 	 * @param string $taxprice (optional) Supports a secondary contextual override
 	 * @return float The determined tax rate
 	 **/
-	public static function taxrate ($override=null,$taxprice=true,$Item=false) {
+	public static function taxrate ($override=null,$taxprice=true, $Item = null ) {
+
+		$Tax = new ShoppTax();
+		$Order = ShoppOrder();
+
+		$Tax->address($Order->Billing, $Order->Shipping, $Order->Cart->shipped());
+
+		$taxes = array();
+		if ( isset($Item) )
+			$Tax->rates($taxes, $Tax->item($Item) );
+		else $Tax->rates($taxes);
+
+		if ( empty($taxes) ) $taxrate = 0.0; // No rates given
+		if ( count($taxes) == 1 ) {
+			$TaxRate = current($taxes);
+			$taxrate = (float)$TaxRate->rate; // Use the given rate
+		} else $taxrate = (float)( $Tax->calculate($taxes, 100) ) / 100; // Calculate the "effective" rate
+
+		return apply_filters('shopp_taxrate', $taxrate);
+
 		$Taxes = new CartTax();
 		$rated = false;
 		$taxrate = 0;
@@ -2645,7 +2664,7 @@ function shopp_safe_redirect ($location, $status = 302) {
  * @deprecated Use Shopp::
  **/
 function shopp_taxrate ($override=null,$taxprice=true,$Item=false) {
-	return Shopp::taxrate($override,$taxprice,$Item);
+	return Shopp::taxrate($Item);
 }
 
 /**

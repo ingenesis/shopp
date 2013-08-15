@@ -42,6 +42,7 @@ class ShoppPayments extends ListFramework {
 
 		$options = array();
 		$accepted = array();
+		$processors = array();
 
 		$gateways = explode(',', shopp_setting('active_gateways'));
 
@@ -135,7 +136,7 @@ class ShoppPayments extends ListFramework {
 			$selected = $this->selected($selection);
 		}
 
-		if ( ! ($selected || $this->modules($selected->processor)) )
+		if ( ! $selected || ! $this->modules($selected->processor) )
 			$selected = $this->initial();
 
 		if ( ! $selected ) {

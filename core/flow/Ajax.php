@@ -753,7 +753,7 @@ class ShoppAjax {
 		check_admin_referer('wp_ajax_shopp_category_order');
 		if (empty($_POST['position']) || !is_array($_POST['position'])) die('0');
 
-		$db =& DB::get();
+		$db = sDB::get();
 		$table = DatabaseObject::tablename(ProductCategory::$table);
 		$updates = $_POST['position'];
 		foreach ($updates as $id => $position)

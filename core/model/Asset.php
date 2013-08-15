@@ -52,7 +52,9 @@ class FileAsset extends MetaObject {
 	 **/
 	public function expopulate () {
 		parent::expopulate();
-		$this->uri = stripslashes($this->uri);
+
+		if ( is_string($this->uri) )
+			$this->uri = stripslashes($this->uri);
 	}
 
 	/**
@@ -65,8 +67,11 @@ class FileAsset extends MetaObject {
 	 **/
 	public function store ( $data, $type = 'binary' ) {
 		$Engine = $this->engine();
-		$this->uri = $Engine->save($this, $data, $type);
-		if ($this->uri === false) return false;
+
+		$saved = $Engine->save($this, $data, $type);
+		if ( empty($saved) || is_a($saved, 'ShoppError') ) return false;
+
+		$this->uri = $saved;
 		return true;
 	}
 

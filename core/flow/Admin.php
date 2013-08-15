@@ -448,7 +448,8 @@ class ShoppAdmin extends FlowController {
 		$request = $_GET['page'];
 		if ( in_array($request, array_keys($this->pages)) ) {
 			$page = $this->pages[ $request ];
-			$pagename = end(explode('-', $request));
+			$parts = explode('-', $request);
+			$pagename = end($parts);
 		} else return;
 
 		$path = SHOPP_ADMIN_PATH . '/help';

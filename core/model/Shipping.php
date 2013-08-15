@@ -863,7 +863,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 
 	}
 
-	public function template () {
+	public function template ( $id = null ) {
 		if ($this->tables) return; // Skip table-based UI standard templates (use TemplateShippingUI)
 		$id = strtolower($this->id);
 		$_ = array('<script id="'.$id.'-editor" type="text/x-jquery-tmpl">');
@@ -873,7 +873,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 		echo join("",$_)."\n\n";
 	}
 
-	public function flatrates ($column=0,$attributes=array()) {
+	public function flatrates ( $column = 0, $attributes = array() ) {
 		$defaults = array(
 			'name' => '',
 			'classes' => '',
@@ -927,7 +927,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 		$this->ui(join('',$_),$column);
 	}
 
-	public function flatrate_row ($row=0,$setting=array(),$norates=false) {
+	public function flatrate_row ( $row = 0, $setting = array(), $norates = false ) {
 		$defaults = array(
 			'rate' => '${rate}',
 		);
@@ -948,7 +948,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 		return join('',$_);
 	}
 
-	public function tablerates ($column=0,$attributes=array()) {
+	public function tablerates ( $column = 0, $attributes = array() ) {
 		$defaults = array(
 			'class' => '',
 			'threshold_class' => '',
@@ -997,7 +997,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 		$this->ui(join('',$_),$column);
 	}
 
-	public function tablerate_row ($row=0,$attrs,$table) {
+	public function tablerate_row ( $row = 0, $attrs = array(), $table = array() ) {
 		$unit = $attrs['unit'];
 
 		// Handle adding rate tiers
@@ -1087,7 +1087,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 		return join('',$_);
 	}
 
-	public function tablerate_row_tier ($row=0,$tier=0,$attrs,$setting=array()) {
+	public function tablerate_row_tier ( $row = 0, $tier = 0, $attrs = array(), $setting = array() ) {
 		$unit = isset($attrs['unit'][1])?$attrs['unit'][1]:false;
 		$threshold_class = !empty($attrs['threshold_class'])?$attrs['threshold_class']:'';
 		$rate_class = !empty($attrs['rate_class'])?$attrs['rate_class']:'money';
@@ -1296,7 +1296,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 
 class TemplateShippingUI extends ShippingSettingsUI {
 
-	public function __construct() {
+	public function __construct () {
 		parent::__construct(false,false);
 
 		$this->template = true;
@@ -1314,7 +1314,7 @@ class TemplateShippingUI extends ShippingSettingsUI {
 		foreach ($callbacks as $callback) add_action('shopp_shipping_module_settings',array($this,$callback));
 	}
 
-	public function template ($id) {
+	public function template ( $id = null ) {
 		$_ = array('<script id="'.$id.'" type="text/x-jquery-tmpl">');
 		$_[] = $this->generate();
 		$_[] = '</script>';
@@ -1333,27 +1333,27 @@ class TemplateShippingUI extends ShippingSettingsUI {
 		$this->widget('location-fields',$markup);
 	}
 
-	public function flatrates () {
+	public function flatrates ( $column = 0, $attributes = array() ) {
 		parent::flatrates();
 		$this->template('flatrates-editor');
 	}
 
-	public function flatrate_row () {
+	public function flatrate_row ( $row = 0, $setting = array(), $norates = false ) {
 		$markup = parent::flatrate_row();
 		$this->widget('flatrate-row',$markup);
 	}
 
-	public function tablerates () {
+	public function tablerates ( $column = 0, $attributes = array() ) {
 		parent::tablerates();
 		$this->template('tablerates-editor');
 	}
 
-	public function tablerate_row () {
+	public function tablerate_row ( $row = 0, $attrs = array(), $table = array() ) {
 		$markup = parent::tablerate_row(0,array(),array());
 		$this->widget('tablerate-row',$markup);
 	}
 
-	public function tablerate_row_tier () {
+	public function tablerate_row_tier ( $row = 0, $tier = 0, $attrs = array(), $setting = array() ) {
 		$markup = parent::tablerate_row_tier(0,array(),array());
 		$this->widget('tablerate-row-tier',$markup);
 	}

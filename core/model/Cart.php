@@ -523,7 +523,8 @@ class ShoppCart extends ListFramework {
 		$Shiprates->track('shipstate', $ShippingAddress->state);
 		$Shiprates->track('shippostcode', $ShippingAddress->postcode);
 
-		$Shiprates->track('items', $this->shipped() );
+		$shipped = $this->shipped();
+		$Shiprates->track('items', $shipped);
 
 		$Shiprates->track('modules', $ShippingModules->active);
 		$Shiprates->track('postcodes', $ShippingModules->postcodes);

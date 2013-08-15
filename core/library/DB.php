@@ -1,6 +1,6 @@
 <?php
 /**
- * /library/DB.php
+ * DB.php
  *
  * Database management classes
  *

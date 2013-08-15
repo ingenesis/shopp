@@ -12,6 +12,8 @@
  * @subpackage customer
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 class Customer extends DatabaseObject {
 	static $table = 'customer';
 
@@ -352,7 +354,7 @@ class Customer extends DatabaseObject {
 
 	}
 
-	public function exportcolumns () {
+	public static function exportcolumns () {
 		$prefix = "c.";
 		return array(
 			$prefix.'firstname' => __('Customer\'s First Name','Shopp'),

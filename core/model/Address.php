@@ -140,7 +140,7 @@ class BillingAddress extends Address {
 	public $cardexpires = false;
 	public $cardholder = false;
 
-	function exportcolumns () {
+	public static function exportcolumns () {
 		$prefix = 'b.';
 		return array(
 			$prefix . 'address' => Shopp::__('Billing Street Address'),
@@ -188,7 +188,7 @@ class ShippingAddress extends Address {
 	 *
 	 * @return array
 	 **/
-	public function exportcolumns () {
+	public static function exportcolumns () {
 		$prefix = 's.';
 		return array(
 			$prefix . 'address' => Shopp::__('Shipping Street Address'),

@@ -363,7 +363,7 @@ class ModuleSettingsUI {
 
 	}
 
-	public function template () {
+	public function template ( $id = null ) {
 		$_ = array('<script id="'.$this->id.'-editor" type="text/x-jquery-tmpl">');
 		$_[] = $this->generate();
 		$_[] = '</script>';
@@ -371,9 +371,9 @@ class ModuleSettingsUI {
 		echo join('',$_)."\n\n";
 	}
 
-	public function ui ($markup,$column=0) {
-		if (!isset($this->markup[$column])) $this->markup[$column] = array();
-		$this->markup[$column][] = $markup;
+	public function ui ( $markup, $column = 0 ) {
+		if ( ! isset($this->markup[ $column ]) ) $this->markup[ $column ] = array();
+		$this->markup[ $column ][] = $markup;
 	}
 
 	/**

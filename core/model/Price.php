@@ -12,6 +12,9 @@
  * @since 1.0
  * @subpackage products
  **/
+
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 class Price extends DatabaseObject {
 
 	static $table = "price";
@@ -40,7 +43,7 @@ class Price extends DatabaseObject {
 		DB::query($query);
 	}
 
-	function metaloader (&$records,&$record,$id='id',$property=false,$collate=false,$merge=false) {
+	function metasetloader ( &$records, &$record, $id = 'id', $property = false, $collate = false, $merge = false ) {
 		if (isset($this->prices) && !empty($this->prices)) $prices = &$this->prices;
 		else $prices = array();
 
@@ -97,7 +100,6 @@ class Price extends DatabaseObject {
 			return;
 
 		}
-
 
 		parent::metaloader($records,$record,$prices,$id,$property,$collate,$merge);
 	}
@@ -162,8 +164,8 @@ class Price extends DatabaseObject {
 	 * @param array $ignores A list of properties to ignore updating
 	 * @return void
 	 **/
-	function updates($data,$ignores = array()) {
-		parent::updates($data,$ignores);
+	public function updates ( array $data, array $ignores = array() ) {
+		parent::updates($data, $ignores);
 		do_action('shopp_price_updates');
 	}
 

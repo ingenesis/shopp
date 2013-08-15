@@ -526,7 +526,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	}
 
 	public static function registration_errors ($result, $options, $O) {
-		$Errors =& ShoppErrors();
+		$Errors = ShoppErrors();
 		if (!$Errors->exist(SHOPP_ERR)) return false;
 		ob_start();
 		locate_shopp_template(array('errors.php'),true);

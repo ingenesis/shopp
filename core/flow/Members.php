@@ -13,7 +13,8 @@
  * @subpackage shopp
  **/
 
-require(SHOPP_MODEL_PATH.'/Membership.php');
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 /**
  * Members
  *
@@ -299,8 +300,9 @@ class Members extends AdminController {
 	 * @return void
 	 **/
 	function editor () {
-		global $Shopp,$ruletypes,$rulegroups;
-		$db =& DB::get();
+		global $ruletypes, $rulegroups;
+		$Shopp = Shopp::object();
+		$db = sDB::get();
 
 		if ( ! current_user_can('shopp_memberships') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -327,5 +329,3 @@ class Members extends AdminController {
 
 
 } // END class Members
-
-?>

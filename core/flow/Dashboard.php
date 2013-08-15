@@ -97,7 +97,7 @@ class ShoppAdminDashboard {
 			'widget_name' => '',
 			'after_title' => '',
 			'after_widget' => '',
-			'range' => $_GET['shopp-stats-range']
+			'range' => isset($_GET['shopp-stats-range']) ? $_GET['shopp-stats-range'] : ''
 		);
 		if (!$args) $args = array();
 		$args = array_merge($defaults,$args);

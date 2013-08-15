@@ -400,7 +400,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		// If inside the checkout form, strip the extra <form> tag so we don't break standards
 		// This is ugly, but necessary given the different markup contexts the cart summary is used in
-		$Storefront =& ShoppStorefront();
+		$Storefront = ShoppStorefront();
 		if ($Storefront !== false && $Storefront->checkout)
 			$content = preg_replace('/<\/?form.*?>/','',$content);
 

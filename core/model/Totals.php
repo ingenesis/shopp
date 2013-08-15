@@ -100,7 +100,7 @@ class OrderTotals extends ListFramework {
 	 * @param string $register The register to find the entry in
 	 * @return boolean True if successful
 	 **/
-	public function clear ( string $register ) {
+	public function reset ( string $register ) {
 
 		if ( ! isset($this->register[ $register ]) ) return false;
 		$Register = &$this->register[ $register ];
@@ -116,14 +116,18 @@ class OrderTotals extends ListFramework {
 	 * @since 1.3
 	 *
 	 * @param string $register The name of the register to update
-	 * @param string $id The id string of the entry
+	 * @param array $entry An associative array with an id and amount: array('id' => 1, 'amount' => 10.00)
 	 * @param float $amount The amount to change
 	 * @return boolean True for success, false otherwise
 	 **/
-	public function update ( string $register, string $id, float $amount ) {
+	public function update ( string $register, $entry ) {
 		if ( ! isset($this->register[ $register ]) ) return false;
 
 		$Register = &$this->register[ $register ];
+		if ( ! is_array($entry) || ! isset($entry['id']) || ! isset($entry['amount']) ) return false;
+
+		$id = $entry['id'];
+		$amount = $entry['amount'];
 
 		if ( ! isset($Register[$id]) ) return false;
 		$Entry = $Register[$id];
@@ -157,7 +161,7 @@ class OrderTotals extends ListFramework {
 		$Register = &$this->register[ $register ];
 
 		// Return the current total for the register if it hasn't changed
-		if ( ! $this->changed($register) && self::TOTAL != $register )
+		if ( ! $this->haschanged($register) && self::TOTAL != $register )
 			return (float)$Total->amount();
 
 		// Calculate a new total amount for the register
@@ -182,7 +186,7 @@ class OrderTotals extends ListFramework {
 		else $GrandTotal[ $register ]->amount($Total->amount()); // Update the existing entry amount with the new total
 
 		// If the total register did change, re-calculate the total register
-		if ( $this->changed('total') ) $this->total();
+		if ( $this->haschanged('total') ) $this->total();
 
 		// Return the newly calculated amount
 		return apply_filters( "shopp_ordertotals_{$register}_total", $Total->amount(), $Register );
@@ -197,7 +201,7 @@ class OrderTotals extends ListFramework {
 	 * @param string $register The name of the register to check
 	 * @return boolean True when the register has changed
 	 **/
-	public function changed ( string $register ) {
+	public function haschanged ( string $register ) {
 		$check = isset($this->checks[ $register ]) ? $this->checks[$register] : 0;
 		$this->checks[$register] = hash('crc32b', serialize($this->register[$register]) );
 		if ( 0 == $check ) return true;
@@ -260,9 +264,8 @@ class OrderTotalRegisters {
 	 * @return void
 	 **/
  	static public function register ( string $class ) {
- 		$_this = self::instance();
-		$register = get_class_property($class,'register');
- 		$_this->handlers[ $register ] = $class;
+		$register = get_class_property($class, 'register');
+ 		self::$handlers[ $register ] = $class;
  	}
 
 	/**
@@ -275,9 +278,8 @@ class OrderTotalRegisters {
 	 * @return string The class name of the handler
 	 **/
  	static private function handler ( string $register ) {
- 		$_this = self::instance();
- 		if ( isset($_this->handlers[ $register ]) )
- 			return $_this->handlers[ $register ];
+ 		if ( isset(self::$handlers[ $register ]) )
+ 			return self::$handlers[ $register ];
 		return false;
  	}
 
@@ -292,8 +294,7 @@ class OrderTotalRegisters {
 	 * @return OrderTotalAmount An constructed OrderTotalAmount object
 	 **/
  	static public function add ( OrderTotals $Totals, string $register, array $options = array() ) {
- 		$_this = self::instance();
-		$RegisterClass = $_this->handler($register);
+		$RegisterClass = self::handler($register);
 
  		if ( false === $RegisterClass )
  			return trigger_error(__CLASS__ . ' register "' . $register . '" does not exist.', E_USER_ERROR);
