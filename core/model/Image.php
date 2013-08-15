@@ -209,7 +209,7 @@ class ImageProcessor {
 	 * @version 2.1.1
 	 * @copyright Torstein Hansi <thoensi_at_netcom_dot_no>, July 2003
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function UnsharpMask ( $amount = 50, $radius = 0.5, $threshold = 3 ) {
 		if ( ! isset($this->processed) ) $image =& $this->src->image;

@@ -183,7 +183,7 @@ class ShoppErrors {
 	 * @since 1.0
 	 *
 	 * @param int $level The maximum level to look for errors in
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function exist ( integer $level = null ) {
 		if ( is_null($level) ) $level = SHOPP_DEBUG_ERR;
@@ -275,7 +275,7 @@ class ShoppError {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function __construct ( $message = '', $code = '', $level = SHOPP_ERR, $data = '' ) {
 		$Errors = ShoppErrors();

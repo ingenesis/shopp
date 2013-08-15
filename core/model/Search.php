@@ -38,7 +38,7 @@ class IndexProduct {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	function __construct ($id) {
 		$this->Product = new Product($id);

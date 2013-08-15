@@ -132,7 +132,7 @@ function ShoppShopping() {
  * @author Jonathan Davis
  * @since 1.0
  *
- * @return void Description...
+ * @return void
  **/
 function ShoppErrors () {
 	return ShoppErrors::object();

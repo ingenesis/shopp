@@ -771,7 +771,7 @@ class Product extends WPShoppObject {
 	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	function lowstock ($stock,$stocked) {
 		$lowstock_level = shopp_setting('lowstock_level');

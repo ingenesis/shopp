@@ -261,7 +261,7 @@ class Members extends AdminController {
 	 * Builds the interface layout for the customer editor
 	 *
 	 * @author Jonathan Davis
-	 * @return void Description...
+	 * @return void
 	 **/
 	function layout () {
 		global $Shopp,$ruletypes,$rulegroups;

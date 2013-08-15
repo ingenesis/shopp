@@ -150,7 +150,7 @@ abstract class MetasetObject extends DatabaseObject {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	function save ($op='update') {
 		$db = &DB::get();

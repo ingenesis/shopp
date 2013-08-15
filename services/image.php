@@ -263,7 +263,7 @@ class ImageServer {
 	 * @author Jonathan Davis
 	 * @since 1.1.7
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	function clearpng () {
 		$max = 1920;

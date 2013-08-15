@@ -692,7 +692,7 @@ class Storefront extends FlowController {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function header () {
 		$canonurl = $this->canonurls(false);
@@ -714,7 +714,7 @@ class Storefront extends FlowController {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function catalogcss () {
 		if ( ! isset($row_products) ) $row_products = 3;
@@ -736,7 +736,7 @@ class Storefront extends FlowController {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function footer () {
 
@@ -879,7 +879,7 @@ class Storefront extends FlowController {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function cart () {
 

@@ -607,7 +607,7 @@ class OrderAmountCartItem extends OrderAmountDebit {
 	 * @author Jonathan Davis
 	 * @since 1.3
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function label () {
 		return __('Subtotal','Shopp');

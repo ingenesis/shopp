@@ -653,7 +653,7 @@ abstract class ShoppReportFramework {
 	 * @author Jonathan Davis
 	 * @since 1.3
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	function scores () {
 		return array();
@@ -1331,7 +1331,7 @@ abstract class ShoppReportExportFramework {
 	 * @author Jonathan Davis
 	 * @since
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	function record () {
 		echo "\n";

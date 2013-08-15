@@ -334,7 +334,7 @@ class ModuleSettingsUI {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function __construct ($Module,$name) {
 		$this->name = $name;

@@ -38,7 +38,7 @@ class ShoppShiprates extends ListFramework {
 	 * @author Jonathan Davis
 	 * @since 1.3
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function disabled () {
 

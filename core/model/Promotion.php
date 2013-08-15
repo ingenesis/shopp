@@ -327,7 +327,7 @@ class Promotion extends DatabaseObject {
 	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	static function pricing ($pricetag,$ids) {
 		$discount = new StdClass();

@@ -320,7 +320,7 @@ class TextifyTag {
 	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	static function whitespace ($text) {
 		return preg_replace('/\s+/', ' ', $text);

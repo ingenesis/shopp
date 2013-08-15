@@ -321,7 +321,7 @@ class ShoppAdminAccount extends AdminController {
 	 * Builds the interface layout for the customer editor
 	 *
 	 * @author Jonathan Davis
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function layout () {
 		$Shopp = Shopp::object();

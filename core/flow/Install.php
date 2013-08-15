@@ -99,7 +99,7 @@ class ShoppInstallation extends FlowController {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function deactivate () {
 		$Shopp = Shopp::object();
@@ -1695,7 +1695,7 @@ class Shopp_Upgrader_Skin extends Plugin_Upgrader_Skin {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function header() {
 		if ( $this->done_header )

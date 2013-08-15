@@ -166,7 +166,7 @@ function shopp_cart_items () {
  * @author John Dillick
  * @since 1.2
  *
- * @return void Description...
+ * @return void
  **/
 function shopp_cart_items_count () {
 	return ShoppOrder()->Cart->count();
