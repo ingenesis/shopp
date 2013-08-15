@@ -415,7 +415,7 @@ class ShoppAdmin extends FlowController {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function styles () {
 
@@ -425,11 +425,13 @@ class ShoppAdmin extends FlowController {
 			if (!in_array($taxonomy, $taxonomies)) return;
 		}
 
-		wp_enqueue_style('shopp.colorbox',SHOPP_ADMIN_URI.'/styles/colorbox.css',array(),'20110801','screen');
-		wp_enqueue_style('shopp.admin',SHOPP_ADMIN_URI.'/styles/admin.css',array(),'20110801','screen');
-		wp_enqueue_style('shopp.icons',SHOPP_ADMIN_URI.'/styles/icons.css',array(),'20110801','screen');
+		$uri = SHOPP_ADMIN_URI . '/styles';
+		$version = dechex(crc16(SECURE_AUTH_SALT . SHOPP_VERSION));
+		wp_enqueue_style('shopp.colorbox', "$uri/colorbox.css", array(), $version, 'screen');
+		wp_enqueue_style('shopp.admin', "$uri/admin.css", array(), $version, 'screen');
+		wp_enqueue_style('shopp.icons', "$uri/icons.css", array(), $version, 'screen');
 		if ( 'rtl' == get_bloginfo('text_direction') )
-			wp_enqueue_style('shopp.admin-rtl',SHOPP_ADMIN_URI.'/styles/rtl.css',array(),'20110801','all');
+			wp_enqueue_style('shopp.admin-rtl', "$uri/rtl.css", array(), $version, 'all');
 
 	}
 
@@ -443,25 +445,38 @@ class ShoppAdmin extends FlowController {
 	 **/
 	public function help () {
 
-		$screen = get_current_screen();
-		$pagename = array_search($screen->id, $this->menus);
+		$request = $_GET['page'];
+		if ( in_array($request, array_keys($this->pages)) ) {
+			$page = $this->pages[ $request ];
+			$pagename = end(explode('-', $request));
+		} else return;
 
-		$prefix = $this->pagename('');
-		if ( false === strpos($pagename, $prefix) )
-			$pagename = $this->pagename($pagename);
-
-		if ( ! isset($this->pages[ $pagename ]) ) return;
-
-		$page = $this->pages[ $pagename ];
-		$screenname = $page->name;
-
-		if ( file_exists(SHOPP_PATH . "/core/ui/help/$screenname.php") )
-			return include SHOPP_PATH . "/core/ui/help/$screenname.php";
+		$path = SHOPP_ADMIN_PATH . '/help';
+		if ( file_exists("$path/$pagename.php") )
+			return include "$path/$pagename.php";
 
 		get_current_screen()->add_help_tab(array(
 			'id' => 'shopp-help',
 			'title' => __('Help'),
-			'content' => $content
+			'content' => Shopp::_mx('Help is not yet available for this screen.')
+		));
+
+		get_current_screen()->set_help_sidebar(Shopp::_mx('**For more information:**
+
+[Shopp User Guide](%s)
+
+[Community Forums](%s)
+
+[Shopp Support Help Desk](%s)',
+
+// Translators context
+'Generic help tab (sidebar)',
+
+			// URL replacements
+			ShoppSupport::DOCS,
+			ShoppSupport::FORUMS,
+			ShoppSupport::SUPPORT
+
 		));
 
 	}
@@ -585,7 +600,7 @@ class ShoppAdmin extends FlowController {
 	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public function tinymce () {
 		if (!current_user_can('edit_posts') && !current_user_can('edit_pages')) return;
@@ -843,7 +858,7 @@ class ShoppUI {
 	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
-	 * @return void Description...
+	 * @return void
 	 **/
 	public static function shopp_collections_meta_box () {
 		global $_nav_menu_placeholder, $nav_menu_selected_id;
