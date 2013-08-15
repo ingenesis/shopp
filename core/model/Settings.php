@@ -326,7 +326,7 @@ class ShoppSettings extends DatabaseObject {
 		// Try again using the legacy table
 		if ( false === $version && false === $legacy ) $version = self::dbversion('legacy');
 
-	 	ShoppSettings()->registry[$name] = (int)$version;
+	 	ShoppSettings()->registry['db_version'] = (int)$version;
 		return (int)$version;
 	}
 
