@@ -198,7 +198,9 @@ abstract class ShoppCore {
 		$text = array_shift($args);
 		$context = array_shift($args);
 		$translated = Shopp::translate($text, $context);
-		return vsprintf($translated, $args);
+
+		if ( 0 == count($args) ) return $translated;
+		else return vsprintf($translated, $args);
 	}
 
 	/**
@@ -213,9 +215,9 @@ abstract class ShoppCore {
 	public static function _m () {
 		$args = func_get_args();
 		$translated = call_user_func_array(array(__CLASS__, '__'), $args);
+		if ( false === $translated ) return '';
 
-		$Markdown = new Markdownr($translated);
-		return $Markdown->html();
+		return new MarkdownText($translated);
 	}
 
 	/**
@@ -245,9 +247,9 @@ abstract class ShoppCore {
 	public static function _mx ( $text, $context ) {
 		$args = func_get_args();
 		$translated = call_user_func_array(array(__CLASS__, '_x'), $args);
+		if ( false === $translated ) return '';
 
-		$Markdown = new Markdownr($translated);
-		return $Markdown->html();
+		return new MarkdownText($translated);
 	}
 
 	/**
