@@ -1965,7 +1965,8 @@ abstract class ShoppCore {
 			if ('confirm-order' == $page) $page = 'confirm'; // For compatibility with 1.1 addons
 			if (false !== $page) {
 				$Page = ShoppPages()->get($page);
-				$page_slug = $Page->slug();
+				if ( method_exists($Page, 'slug') )
+					$page_slug = $Page->slug();
 			}
 			if ($page != 'catalog') {
 				if (!empty($page_slug)) $path[] = $page_slug;
