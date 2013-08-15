@@ -52,7 +52,7 @@ class ShoppAdminSystem extends AdminController {
 					$this->taxrate_ui();
 
 				break;
-			case 'develop':
+			case 'advanced':
 				shopp_enqueue_script('system');
 				break;
 			case 'storage':
@@ -110,7 +110,7 @@ class ShoppAdminSystem extends AdminController {
 			case 'shipping': 		$this->shipping(); break;
 			case 'taxes': 			$this->taxes(); break;
 			case 'storage': 		$this->storage(); break;
-			case 'develop': 		$this->system(); break;
+			case 'advanced': 		$this->advanced(); break;
 			default:				$this->payments();
 		}
 	}
@@ -726,7 +726,7 @@ class ShoppAdminSystem extends AdminController {
 		));
 	}
 
-	public function system () {
+	public function advanced () {
 		if ( ! current_user_can('shopp_settings_system') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
