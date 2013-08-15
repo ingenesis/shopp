@@ -297,12 +297,12 @@ class ShoppAdminSetup extends AdminController {
 		if ($next->id > $next_setting) $next_setting = $next->id;
 
 		if (!empty($_POST['save'])) {
-			check_admin_referer('shopp-settings-preferences');
+			check_admin_referer('shopp-setup-management');
 
 			$next_order_id = $_POST['settings']['next_order_id'] = intval($_POST['settings']['next_order_id']);
 
 			if ($next_order_id >= $next->id) {
-				if ($db->query("ALTER TABLE $purchasetable AUTO_INCREMENT=".$db->escape($next_order_id)))
+				if ( sDB::query("ALTER TABLE $purchasetable AUTO_INCREMENT=" . sDB::escape($next_order_id) ) )
 					$next_setting = $next_order_id;
 			}
 
