@@ -71,7 +71,6 @@ class ShoppFlow {
 		if ( defined('WP_ADMIN') ) {
 			if ( ! isset($_GET['page']) ) return;
 			if ( false === $this->Admin) {
-				require(SHOPP_FLOW_PATH.'/Admin.php');
 				$this->Admin = new ShoppAdmin();
 			}
 			$controller = $this->Admin->controller(strtolower($request['page']));
@@ -91,7 +90,7 @@ class ShoppFlow {
 	public function handler ($controller) {
 		if ( ! $controller ) return false;
 		if ( is_a($this->Controller,$controller) ) return true; // Already initialized
-		if ( ! class_exists($controller) ) require(SHOPP_FLOW_PATH."/$controller.php");
+		if ( ! class_exists($controller) ) return false;
 
 		$this->Controller = new $controller();
 		do_action('shopp_' . sanitize_key($controller) . '_init');
@@ -267,48 +266,70 @@ abstract class AdminController extends FlowController {
 	 **/
 	public function __construct () {
 
+		$Admin = ShoppAdmin();
+		if ( ! empty($Admin) ) $this->Admin = $Admin;
+
 		global $plugin_page;
 		$this->page = $plugin_page;
+		$this->url = add_query_arg('page', esc_attr($_GET['page']), admin_url('admin.php'));
 
-		$Shopp = Shopp::object();
-		ShoppingObject::store('admin_notices', $this->notices);
-
-		if (!empty($Shopp->Flow->Admin)) $this->Admin = &$Shopp->Flow->Admin;
 		$screen = get_current_screen();
 		$this->screen = $screen->id;
 
-		$tabs = $this->Admin->tabs($plugin_page);
+		$pages = explode('-', $_GET['page']);
+		$this->pagename = end($pages);
+
+		$tabs = $this->Admin->tabs($this->page);
 		if ( ! empty($tabs) ) {
 			foreach ($tabs as $tab)
 				$this->addtab($this->Admin->pagename($tab->name), $tab->label);
 		}
 
-		$this->screen = $screen->id;
-		$this->url = add_query_arg(array('page' => esc_attr($this->page)), admin_url('admin.php'));
-
-		$pages = explode('-', $_GET['page']);
-		$this->pagename = end($pages);
-
+		ShoppingObject::store('admin_notices', $this->notices);
 		add_action('shopp_admin_notices', array($this, 'notices'));
+
+		$this->maintenance();
+
 	}
 
-	public function notice ( $message, $style='updated', $priority = 10 ) {
+	public function notice ( $message, $style = 'updated', $priority = 10 ) {
+
+		$styles = array('updated', 'error');
+
 		$notice = new StdClass();
 		$notice->message = $message;
-		$notice->style = $style;
-		array_splice($this->notices,$priority,0,array($notice));
+		$notice->style = in_array($style, $styles) ? $style : $styles[0];
+
+		// Prevent duplicates
+		$notices = array_map('md5', $this->notices);
+		if ( in_array(md5($notice), $notices) ) return;
+
+		array_splice($this->notices, $priority, 0, array($notice));
 	}
 
 	public function notices () {
-		if (empty($this->notices)) return;
+
+		if ( empty($this->notices) ) return;
 		$markup = array();
-		foreach ($this->notices as $notice) {
-			$markup[] = '<div class="'.$notice->style.' below-h2">';
-			$markup[] = '<p>'.$notice->message.'</p>';
+		foreach ( $this->notices as $notice ) {
+			$markup[] = '<div class="' . $notice->style . '">';
+			$markup[] = '<p>' . $notice->message . '</p>';
 			$markup[] = '</div>';
 		}
-		if ( ! empty($markup) ) echo join('',$markup);
+		if ( ! empty($markup) ) echo join('', $markup);
 		$this->notices = array(); // Reset output buffer
+
+	}
+
+	private function maintenance () {
+		if ( Shopp::maintenance() ) {
+			if ( isset($_GET['_wpnonce']) && wp_verify_nonce($_GET['_wpnonce'], 'shopp_disable_maintenance') ) {
+				shopp_set_setting('maintenance', 'off');
+			} else {
+				$url = wp_nonce_url(add_query_arg('page', $this->Admin->pagename('setup-management'), admin_url('admin.php')), 'shopp_disable_maintenance');
+				$this->notice(Shopp::__('Shopp is currently in maintenance mode. %sDisable Maintenance Mode%s', '<a href="' . $url . '" class="button">', '</a>'), 'error', 1);
+			}
+		}
 	}
 
 	static function url ( $args = array() ) {
@@ -358,15 +379,17 @@ abstract class AdminController extends FlowController {
  * @return Storefront|false
  **/
 function &ShoppStorefront () {
+	$false = false;
 	$Shopp = Shopp::object();
-	if (!isset($Shopp->Flow) || !is_object($Shopp->Flow->Controller)) return false;
-	if (get_class($Shopp->Flow->Controller) != "Storefront") return false;
+	if ( ! isset($Shopp->Flow) || ! is_object($Shopp->Flow->Controller) ) return $false;
+	if ( get_class($Shopp->Flow->Controller) != 'Storefront' ) return $false;
 	return $Shopp->Flow->Controller;
 }
 
 function &ShoppAdmin() {
+	$false = false;
 	$Shopp = Shopp::object();
-	if ( ! isset($Shopp->Flow) || ! isset($Shopp->Flow->Admin) || empty($Shopp->Flow->Admin) ) return false;
+	if ( ! isset($Shopp->Flow) || ! isset($Shopp->Flow->Admin) || empty($Shopp->Flow->Admin) ) return $false;
 	return $Shopp->Flow->Admin;
 }
 

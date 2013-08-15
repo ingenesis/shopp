@@ -1,9 +1,9 @@
 <div class="wrap shopp">
 
-	<?php if (!empty($updated)): ?><div id="message" class="updated fade"><p><?php echo $updated; ?></p></div><?php endif; ?>
-
 	<div class="icon32"></div>
 	<h2><?php _e('Customers','Shopp'); ?> <a href="<?php echo esc_url( add_query_arg('id','new', $action) ); ?>" class="add-new-h2"><?php _e('Add New','Shopp'); ?></a></h2>
+
+	<?php do_action('shopp_admin_notices'); ?>
 
 	<form action="<?php echo esc_url($action); ?>" id="orders-list" method="get">
 	<div>

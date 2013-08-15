@@ -3,6 +3,8 @@
 	<div class="icon32"></div>
 	<h2><?php Shopp::_e('Discounts'); ?> <a href="<?php echo esc_url(add_query_arg(array_merge($_GET,array('page'=>'shopp-promotions','id'=>'new')),admin_url('admin.php'))); ?>" class="add-new-h2"><?php Shopp::_e('Add New'); ?></a></h2>
 
+	<?php do_action('shopp_admin_notices'); ?>
+
 	<form action="<?php echo esc_url($url); ?>" id="promotions" method="get">
 	<div>
 		<input type="hidden" name="page" value="shopp-promotions" />
