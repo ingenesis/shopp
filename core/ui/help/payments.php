@@ -71,10 +71,10 @@ get_current_screen()->set_help_sidebar( Shopp::_mx(
 
 
 // Translator context
-'Reports help tab (sidebar)',
+'Payments help tab (sidebar)',
 
 // Sidebar URL replacements
-ShoppSupport::DOCS . 'reports/',
+ShoppSupport::DOCS . 'payment-processing/',
 ShoppSupport::FORUMS,
 ShoppSupport::SUPPORT,
 ShoppSupport::DOCS . 'payment-processing/offsite-onsite-payments/',
