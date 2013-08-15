@@ -1,26 +1,30 @@
 <?php
 /**
- * Purchased class
+ * Purchased.php
+ *
  * Purchased line items for orders
  *
  * @author Jonathan Davis
  * @version 1.0
- * @copyright Ingenesis Limited, 28 March, 2008
+ * @copyright Ingenesis Limited, March 2008
  * @package shopp
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 class Purchased extends DatabaseObject {
-	static $table = "purchased";
+
+	static $table = 'purchased';
 
 	public $inventory = false;
 
-	function Purchased ($id=false,$key=false) {
+	public function __construct ( $id = false, $key = false ) {
 		$this->init(self::$table);
-		if ($this->load($id,$key)) return true;
+		if ( $this->load($id, $key) ) return true;
 		else return false;
 	}
 
-	function copydata ($Item) {
+	public function copydata ($Item, $prefix = '', $ignores = array() ) {
 		parent::copydata ($Item);
 		if ( isset($Item->option->label) )
 			$this->optionlabel = $Item->option->label;
@@ -75,7 +79,7 @@ class Purchased extends DatabaseObject {
 		$this->addons = $addons;
 	}
 
-	function save () {
+	public function save () {
 		$addons = $this->addons;					// Save current addons model
 		if (!empty($addons) && is_array($addons)) $this->addons = 'yes';	// convert property to usable flag
 		parent::save();
@@ -95,13 +99,13 @@ class Purchased extends DatabaseObject {
 		$this->addons = $addons; // restore addons model
 	}
 
-	function delete () {
+	public function delete () {
 		$table = DatabaseObject::tablename(MetaObject::$table);
 		DB::query("DELETE LOW_PRIORITY FROM $table WHERE parent='$this->id' AND context='purchased'");
 		parent::delete();
 	}
 
-	function keygen () {
+	public function keygen () {
 		$message = ShoppCustomer()->email.serialize($this).current_time('mysql');
 		$key = sha1($message);
 
@@ -115,7 +119,7 @@ class Purchased extends DatabaseObject {
 		do_action_ref_array('shopp_download_keygen',array(&$this));
 	}
 
-	function exportcolumns () {
+	public static function exportcolumns () {
 		$prefix = "p.";
 		return array(
 			$prefix.'id' => __('Line Item ID','Shopp'),
@@ -131,6 +135,4 @@ class Purchased extends DatabaseObject {
 			);
 	}
 
-} // end Purchased class
-
-?>
+}
