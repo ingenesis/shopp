@@ -206,7 +206,7 @@ class ImageAsset extends FileAsset {
 		// Only determine this once then save the result
 		if ($this->is_directly_accessible === null) {
 			if (defined('SHOPP_DIRECT_IMG_MODE') && !SHOPP_DIRECT_IMG_MODE) // Direct mode can be disallowed
-				$this->is_directly_accessible = false;
+				return $this->is_directly_accessible = false;
 
 			if ($this->determine_base_url()) {
 				$this->set_direct_url();
