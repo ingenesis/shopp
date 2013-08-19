@@ -94,6 +94,17 @@
 	<?php endif; ?>
 	</table>
 
+
+	<table class="form-table">
+		<tr>
+			<th scope="row" valign="top"><label for="maintenance-toggle"><?php _e('Maintenance Mode','Shopp'); ?></label></th>
+			<td><input type="hidden" name="settings[maintenance]" value="off" /><input type="checkbox" name="settings[maintenance]" value="on" id="maintenance-toggle"<?php if ( shopp_setting_enabled('maintenance') ) echo ' checked="checked"'?> /><label for="maintenance-toggle"> <?php _e('Enable Mainteance Mode','Shopp'); ?></label><br />
+            <?php _e('All storefront pages will display a maintenance mode message.','Shopp'); ?></td>
+		</tr>
+	</table>
+	
+	<p class="submit"><input type="submit" class="button-primary" name="save" value="<?php _e('Save Changes','Shopp'); ?>" /></p>
+	
 	</form>
 </div>
 <script type="text/javascript">

@@ -41,11 +41,6 @@
 
 		<table class="form-table">
 			<tr>
-				<th scope="row" valign="top"><label for="dashboard-toggle"><?php _e('Maintenance Mode','Shopp'); ?></label></th>
-				<td><input type="hidden" name="settings[maintenance]" value="off" /><input type="checkbox" name="settings[maintenance]" value="on" id="dashboard-toggle"<?php if ( shopp_setting_enabled('maintenance') ) echo ' checked="checked"'?> /><label for="dashboard-toggle"> <?php _e('Enable Mainteance Mode','Shopp'); ?></label><br />
-	            <?php _e('All storefront pages will display a maintenance mode message.','Shopp'); ?></td>
-			</tr>
-			<tr>
 				<th scope="row" valign="top"><label for="dashboard-toggle"><?php _e('Dashboard Widgets','Shopp'); ?></label></th>
 				<td><input type="hidden" name="settings[dashboard]" value="off" /><input type="checkbox" name="settings[dashboard]" value="on" id="dashboard-toggle"<?php if (shopp_setting('dashboard') == "on") echo ' checked="checked"'?> /><label for="dashboard-toggle"> <?php _e('Enabled','Shopp'); ?></label><br />
 	            <?php _e('Check this to display store performance metrics and more on the WordPress Dashboard.','Shopp'); ?></td>
