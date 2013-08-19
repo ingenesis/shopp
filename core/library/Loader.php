@@ -485,6 +485,7 @@ ShoppLoader::map(array(
 	'shoppadminsetup' => '/flow/Setup.php',
 	'shoppadminsystem' => '/flow/System.php',
 	'shoppadminwarehouse' => '/flow/Warehouse.php',
+	'shoppadminwelcome' => '/flow/Welcome.php',
 	'shoppajax' => '/flow/Ajax.php',
 	'shoppapi' => '/library/API.php',
 	'shoppapifile' => '/library/API.php',

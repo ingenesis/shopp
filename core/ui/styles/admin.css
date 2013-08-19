@@ -70,11 +70,6 @@ span.lowstock.warning { background: #C60; }
 .shopp span.upload.success { color: #50BC5C; }
 .shopp span.upload.failure { color: #DEB129; }
 
-
-/** Welcome screen **/
-#welcome ul { padding-left:20px;list-style-type:square; }
-#welcome ul li { margin-top:18px; }
-
 /** List managers **/
 h2 a.add-new { font-style: normal; margin: 0px 6px; position: relative; top: -3px; font-family:'Lucida Grande',Verdana,Arial,'Bitstream Vera Sans',sans-serif;text-transform:none;}
 .row-actions { visibility:hidden;padding:2px 0 0; }

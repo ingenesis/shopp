@@ -41,18 +41,18 @@ class ShoppFlow {
 		register_activation_hook( SHOPP_PLUGINFILE, array($this, 'activate') );
 
 		// Handle AJAX requests
-		add_action( 'admin_init', array($this,'ajax') );
+		add_action( 'admin_init', array($this, 'ajax') );
 
 		// Boot up the menus & admin bar
-		add_action( 'admin_menu', array($this,'menu'), 50 );
+		add_action( 'admin_menu', array($this, 'menu'), 50 );
 		add_action( 'admin_bar_menu', array($this, 'adminbar'), 50 );
 
 		// Handle automatic updates
-		add_action('update-custom_shopp',array($this,'update'));
+		add_action('update-custom_shopp', array($this, 'update'));
 
 		// Parse the request
-		if ( defined('WP_ADMIN') ) add_action( 'current_screen', array($this,'parse') );
-		else add_action( 'parse_request', array($this,'parse') );
+		if ( defined('WP_ADMIN') ) add_action( 'current_screen', array($this, 'parse') );
+		else add_action( 'parse_request', array($this, 'parse') );
 	}
 
 	/**
@@ -70,12 +70,11 @@ class ShoppFlow {
 
 		if ( defined('WP_ADMIN') ) {
 			if ( ! isset($_GET['page']) ) return;
-			if ( false === $this->Admin) {
+			if ( false === $this->Admin )
 				$this->Admin = new ShoppAdmin();
-			}
-			$controller = $this->Admin->controller(strtolower($request['page']));
 
-			if ( ! empty($controller) ) $this->handler($controller);
+			$this->handler();
+
 		} else $this->handler('Storefront');
 	}
 
@@ -87,13 +86,19 @@ class ShoppFlow {
 	 * @param string $controller The base name of the controller file
 	 * @return void
 	 **/
-	public function handler ($controller) {
+	public function handler ( $controller = null ) {
+		if ( is_null($controller) && isset($_GET['page']) )
+			$controller = $this->Admin->controller($_GET['page']);
+
 		if ( ! $controller ) return false;
-		if ( is_a($this->Controller,$controller) ) return true; // Already initialized
+		if ( is_a($this->Controller, $controller) ) return true; // Already initialized
 		if ( ! class_exists($controller) ) return false;
+
+		if ( ShoppFlow::welcome() ) $controller = 'ShoppAdminWelcome';
 
 		$this->Controller = new $controller();
 		do_action('shopp_' . sanitize_key($controller) . '_init');
+
 		return true;
 	}
 
@@ -102,14 +107,17 @@ class ShoppFlow {
 	 *
 	 * @author Jonathan Davis
 	 *
-	 * @return void
+	 * @return boolean
 	 **/
 	public function admin () {
 		if ( ! defined('WP_ADMIN') ) return false;
-		$controller = $this->Admin->controller($_GET['page']);
-		$this->handler($controller);
-		$this->Controller->admin();
-		return true;
+
+		if ( $this->handler() ) {
+			$this->Controller->admin();
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -131,8 +139,8 @@ class ShoppFlow {
 		$this->Ajax = new ShoppAjax;
 	}
 
-	public function resources ($request) {
-		$this->Controller = new ShoppResources($request);
+	public function resources ( $request ) {
+		$this->Controller = new ShoppResources( $request );
 	}
 
 	/**
@@ -161,7 +169,7 @@ class ShoppFlow {
 		if ( false !== $this->Installer ) return;
 
 		if ( ! $this->Installer )
-			$this->Installer = new ShoppInstallation();
+			$this->Installer = new ShoppInstallation;
 	}
 
 	public function update () {
@@ -199,7 +207,18 @@ class ShoppFlow {
 
 	}
 
-} // End class Flow
+	/**
+	 * Displays the welcome screen
+	 *
+	 * @return boolean
+	 * @author Jonathan Davis
+	 **/
+	public static function welcome () {
+		return shopp_setting_enabled('display_welcome') && empty($_POST['setup']);
+	}
+
+
+} // End class ShoppFlow
 
 /**
  * FlowController
@@ -221,15 +240,9 @@ abstract class FlowController  {
 	 * @return void
 	 **/
 	public function __construct () {
-		// if (defined('WP_ADMIN')) {
-		// 	add_action('admin_init',array(&$this,'settings'));
-		// 	$this->settings();
-		// } else add_action('shopp_loaded',array(&$this,'settings'));
+		/* Implemented in concrete classes */
 	}
 
-	// function settings () {
-	// 	ShoppSettings();
-	// }
 
 } // END class FlowController
 
@@ -292,6 +305,10 @@ abstract class AdminController extends FlowController {
 
 	}
 
+	public function admin () {
+		/* Implemented in the concrete classes */
+	}
+
 	public function notice ( $message, $style = 'updated', $priority = 10 ) {
 
 		$styles = array('updated', 'error');
@@ -326,7 +343,7 @@ abstract class AdminController extends FlowController {
 			if ( isset($_GET['_wpnonce']) && wp_verify_nonce($_GET['_wpnonce'], 'shopp_disable_maintenance') ) {
 				shopp_set_setting('maintenance', 'off');
 			} else {
-				$url = wp_nonce_url(add_query_arg('page', $this->Admin->pagename('setup-management'), admin_url('admin.php')), 'shopp_disable_maintenance');
+				$url = wp_nonce_url(add_query_arg('page', $this->Admin->pagename('setup-pages'), admin_url('admin.php')), 'shopp_disable_maintenance');
 				$this->notice(Shopp::__('Shopp is currently in maintenance mode. %sDisable Maintenance Mode%s', '<a href="' . $url . '" class="button">', '</a>'), 'error', 1);
 			}
 		}
@@ -341,20 +358,21 @@ abstract class AdminController extends FlowController {
 		$this->tabs[ $pagehook ] = $title;
 	}
 
-	protected function tabs () {
+	protected function tabs ( array $tabs = array() ) {
 		global $plugin_page;
-		$tabs = array();
 
+		$markup = array();
+		if ( empty($tabs) ) $tabs = $this->tabs;
 		$default = key($this->tabs);
 
-		foreach ( $this->tabs as $tab => $title ) {
+		foreach ( $tabs as $tab => $title ) {
 			$classes = array('nav-tab');
 			if ( (! isset($this->tabs[ $plugin_page ]) && $default == $tab) || $plugin_page == $tab )
 				$classes[] = 'nav-tab-active';
-			$tabs[] = '<a href="' . add_query_arg(array('page' => $tab), admin_url('admin.php')) . '" class="' . join(' ', $classes) . '">' . $title . '</a>';
+			$markup[] = '<a href="' . add_query_arg(array('page' => $tab), admin_url('admin.php')) . '" class="' . join(' ', $classes) . '">' . $title . '</a>';
 		}
 
-		echo '<h2 class="nav-tab-wrapper">' . join('', apply_filters('shopp_admin_' . $pagehook . '_screen_tabs', $tabs)) . '</h2>';
+		echo '<h2 class="nav-tab-wrapper">' . join('', apply_filters('shopp_admin_' . $pagehook . '_screen_tabs', $markup)) . '</h2>';
 	}
 
 	protected function ui ( string $file ) {

@@ -1091,8 +1091,8 @@ class ShoppReportChart {
 	 * @param array $options Associative array of setting options
 	 * @return void
 	 **/
-	function series ( $label, $options=array() ) {
-		if ( count($this->data) > $this->options['series']['limit']) return;
+	function series ( $label, array $options = array() ) {
+		if ( count($this->data) > $this->options['series']['limit'] ) return;
 		$defaults = array(
 			'label' => $label,
 			'data' => array(),
@@ -1150,7 +1150,7 @@ class ShoppReportChart {
 	 * @return void
 	 **/
 	function render () {
-		if (isset($this->datapoints) && $this->datapoints > 75) $this->options['series']['points'] = false;
+		if ( isset($this->datapoints) && $this->datapoints > 75 ) $this->options['series']['points'] = false;
 
 		?>
 		<script type="text/javascript">

@@ -57,6 +57,8 @@ class ShoppAdmin extends FlowController {
 		'setup-checkout' => 'shopp_settings_checkout',				// shopp_products
 		'setup-downloads' => 'shopp_settings_checkout',				// shopp_products
 		'setup-images' => 'shopp_settings_presentation',    	  	// shopp_categories
+		'welcome' => 'shopp_menu',  						  	  	// shopp_categories
+		'credits' => 'shopp_menu',    	  							// shopp_categories
 	);
 
 	/**
@@ -147,6 +149,10 @@ class ShoppAdmin extends FlowController {
 			$this->addpage($pagehook, $t->labels->menu_name, 'ShoppAdminCategorize',  'products');
 		}
 		$this->addpage('discounts', Shopp::__('Discounts'), 'ShoppAdminDiscounter', 'products');
+
+
+		$this->addpage('welcome', Shopp::__('Welcome'), 'ShoppAdminWelcome', 'welcome');
+		$this->addpage('credits', Shopp::__('Credits'), 'ShoppAdminWelcome', 'credits');
 
 		// Filter hook for adding/modifying Shopp page definitions
 		$this->pages = apply_filters('shopp_admin_pages', $this->pages);
@@ -240,8 +246,8 @@ class ShoppAdmin extends FlowController {
 
 		// Set controller (callback handler)
 		$controller = array($Shopp->Flow, 'admin');
-		if ( shopp_setting_enabled('display_welcome') && empty($_POST['setup']) )
-			$controller = array($this, 'welcome');
+		// if ( shopp_setting_enabled('display_welcome') && empty($_POST['setup']) )
+		// 	$controller = array($this, 'welcome');
 		if ( Shopp::upgradedb() ) $controller = array($this, 'reactivate');
 
 		$menu = $Page->parent ? $Page->parent : $this->mainmenu;
@@ -398,13 +404,13 @@ class ShoppAdmin extends FlowController {
 	 * @return void
 	 **/
 	public function behaviors () {
-		global $wp_version,$hook_suffix;
+		global $wp_version, $hook_suffix;
 		if ( ! in_array($hook_suffix, $this->menus)) return;
 		$this->styles();
 
 		shopp_enqueue_script('shopp');
 
-		$settings = array_filter(array_keys($this->pages), array($this,'get_settings_pages'));
+		$settings = array_filter(array_keys($this->pages), array($this, 'get_settings_pages'));
 		if ( in_array($this->Page->page, $settings) ) shopp_enqueue_script('settings');
 
 	}
@@ -422,7 +428,7 @@ class ShoppAdmin extends FlowController {
 		global $taxonomy;
 		if ( isset($taxonomy) ) { // Prevent loading styles if not on Shopp taxonomy editor
 			$taxonomies = get_object_taxonomies(Product::$posttype);
-			if (!in_array($taxonomy, $taxonomies)) return;
+			if ( ! in_array($taxonomy, $taxonomies)) return;
 		}
 
 		$uri = SHOPP_ADMIN_URI . '/styles';
@@ -430,6 +436,12 @@ class ShoppAdmin extends FlowController {
 		wp_enqueue_style('shopp.colorbox', "$uri/colorbox.css", array(), $version, 'screen');
 		wp_enqueue_style('shopp.admin', "$uri/admin.css", array(), $version, 'screen');
 		wp_enqueue_style('shopp.icons', "$uri/icons.css", array(), $version, 'screen');
+
+
+		$page = isset($_GET['page']) ? $_GET['page'] : '';
+		$pageparts = explode('-', $page);
+		$pagename = sanitize_key(end($pageparts));
+
 		if ( 'rtl' == get_bloginfo('text_direction') )
 			wp_enqueue_style('shopp.admin-rtl', "$uri/rtl.css", array(), $version, 'all');
 
@@ -452,33 +464,11 @@ class ShoppAdmin extends FlowController {
 			$pagename = end($parts);
 		} else return;
 
+		if ( in_array($pagename, array('welcome', 'credits')) ) return false;
+
 		$path = SHOPP_ADMIN_PATH . '/help';
 		if ( file_exists("$path/$pagename.php") )
 			return include "$path/$pagename.php";
-
-		get_current_screen()->add_help_tab(array(
-			'id' => 'shopp-help',
-			'title' => __('Help'),
-			'content' => Shopp::_mx('Help is not yet available for this screen.')
-		));
-
-		get_current_screen()->set_help_sidebar(Shopp::_mx('**For more information:**
-
-[Shopp User Guide](%s)
-
-[Community Forums](%s)
-
-[Shopp Support Help Desk](%s)',
-
-// Translators context
-'Generic help tab (sidebar)',
-
-			// URL replacements
-			ShoppSupport::DOCS,
-			ShoppSupport::FORUMS,
-			ShoppSupport::SUPPORT
-
-		));
 
 	}
 
@@ -491,24 +481,9 @@ class ShoppAdmin extends FlowController {
 	 * @param string $id The ID of the help resource
 	 * @return string The anchor tag for the help link
 	 **/
-	public function boxhelp ($id) {
+	public function boxhelp ( $id ) {
 		$helpurl = add_query_arg(array('src'=>'help','id'=>$id),admin_url('admin.php'));
 		return apply_filters('shopp_admin_boxhelp','<a href="'.esc_url($helpurl).'" class="shoppui-question"></a>');
-	}
-
-	/**
-	 * Displays the welcome screen
-	 *
-	 * @return boolean
-	 * @author Jonathan Davis
-	 **/
-	public function welcome () {
-		$Shopp = Shopp::object();
-		if (shopp_setting('display_welcome') == "on" && empty($_POST['setup'])) {
-			include(SHOPP_ADMIN_PATH."/help/welcome.php");
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -519,7 +494,7 @@ class ShoppAdmin extends FlowController {
 	 **/
 	public function reactivate () {
 		$Shopp = Shopp::object();
-		include(SHOPP_ADMIN_PATH."/help/reactivate.php");
+		include( SHOPP_ADMIN_PATH . '/help/reactivate.php');
 	}
 
 	/**
@@ -787,10 +762,13 @@ class ShoppAdminPage {
 
 } // END class ShoppAdminPage
 
-
 class ShoppUI {
 
-	static function button ( string $button, string $name, array $options = array()) {
+	public static function cacheversion () {
+		return dechex(crc16(SECURE_AUTH_SALT . SHOPP_VERSION));
+	}
+
+	public static function button ( string $button, string $name, array $options = array() ) {
 		$buttons = array(
 			'add' => array('class' => 'add', 'title' => Shopp::__('Add'), 'icon' => 'shoppui-plus', 'type' => 'submit'),
 			'delete' => array('class' => 'delete', 'title' => Shopp::__('Delete'), 'icon' => 'shoppui-minus', 'type' => 'submit')
@@ -808,7 +786,7 @@ class ShoppUI {
 		return '<button type="' . $type . '" name="' . $name . '"' . inputattrs($options) . '><span class="' . $icon . '"><span class="hidden">' . $title . '</span></span></button>';
 	}
 
-	static function template ($ui,$data=array()) {
+	public static function template ($ui,$data=array()) {
 		$ui = str_replace(array_keys($data),$data,$ui);
 		return preg_replace('/\${[-\w]+}/','',$ui);
 	}
@@ -825,7 +803,7 @@ class ShoppUI {
 	 * @param array $columns An array of columns with column IDs as the keys and translated column names as the values
 	 * @see get_column_headers(), print_column_headers(), get_hidden_columns()
 	 */
-	static function register_column_headers($screen, $columns) {
+	public static function register_column_headers ($screen, $columns) {
 		$wp_list_table = new ShoppAdminListTable($screen, $columns);
 	}
 
@@ -834,13 +812,13 @@ class ShoppUI {
 	 *
 	 * @since 1.2
 	 */
-	static function print_column_headers($screen, $id = true) {
+	public static function print_column_headers ($screen, $id = true) {
 		$wp_list_table = new ShoppAdminListTable($screen);
 
 		$wp_list_table->print_column_headers($id);
 	}
 
-	static function table_set_pagination ($screen, $total_items, $total_pages, $per_page ) {
+	public static function table_set_pagination ($screen, $total_items, $total_pages, $per_page ) {
 		$wp_list_table = new ShoppAdminListTable($screen);
 
 		$wp_list_table->set_pagination_args( array(

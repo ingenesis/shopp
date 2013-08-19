@@ -165,6 +165,7 @@ class ShoppSupport {
 		$plugin_slug = strtolower($plugin_name);
 		$store_url = ShoppSupport::STORE;
 		$account_url = "$store_url/account/";
+		$style = '<style type="text/css">#shopp th, #shopp td { border-bottom: 0; }</style>';
 
 		if ( ! empty($core)	// Core update available
 				&& isset($core->new_version)	// New version info available
@@ -188,18 +189,18 @@ class ShoppSupport {
 				);
 			}
 
-			echo '<tr class="plugin-update-tr"><td colspan="3" class="plugin-update"><div class="update-message">'.$message.'</div></td></tr>';
+			echo '<tr class="plugin-update-tr"><td colspan="3" class="plugin-update"><div class="update-message">'.$message.$style.'</div></td></tr>';
 
 			return;
 		}
 
 		if ( ! $activated ) { // No update available, key not active
 			$message = Shopp::__(
-				'Please activate a valid %1$s access key for automatic updates and official support services. %2$s Find your %1$s access key %4$s or %3$s purchase a new key at the Shopp Store. %4$s',
+				'Please activate a valid %1$s support key for automatic updates and official support services. %2$s Find your %1$s support key %4$s or %3$s purchase a new key at the Shopp Store. %4$s',
 				$plugin_name, '<a href="'.$account_url.'" target="_blank">', '<a href="'.$store_url.'" target="_blank">', '</a>'
 			);
 
-			echo '<tr class="plugin-update-tr"><td colspan="3" class="plugin-update"><div class="update-message">'.$message.'</div></td></tr>';
+			echo '<tr class="plugin-update-tr"><td colspan="3" class="plugin-update"><div class="update-message">'.$message.$style.'</div></td></tr>';
 			shopp_set_setting('updates', false);
 
 			return;
@@ -215,7 +216,7 @@ class ShoppSupport {
 					esc_html($addon->name), '<a href="'.$details_url.'" class="thickbox" title="'.esc_attr($addon->name).'">', '<a href="'.esc_url($update_url).'">', '</a>', esc_html($addon->new_version)
 				);
 
-				echo '<tr class="plugin-update-tr"><td colspan="3" class="plugin-update"><div class="update-message">'.$message.'</div></td></tr>';
+				echo '<tr class="plugin-update-tr"><td colspan="3" class="plugin-update"><div class="update-message">'.$message.$style.'</div></td></tr>';
 			}
 		}
 

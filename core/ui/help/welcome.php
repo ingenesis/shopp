@@ -1,33 +1,95 @@
-<div id="welcome" class="wrap">
-	<h2><img src="<?php echo SHOPP_ICONS_URI; ?>/shopp32.png" alt="Shopp logo" width="32" height="32"/> <?php _e('Welcome to Shopp','Shopp'); ?></h2>
+<div class="wrap about-wrap">
 
-	<h3><?php _e('Congratulations on choosing Shopp and WordPress for your e-commerce solution!','Shopp'); ?></h3>
+<?php $this->heading(); ?>
 
-	<?php if (Shopp::suhosin_warning()): ?>
-		<div class="error"><p><strong><?php _e('Warning!','Shopp'); ?></strong> <?php printf(__('You have the PHP Extension Suhosin Installed. You might need to change some configuration to work with Shopp. For more information, see %s"Suhosin PHP Extension Issues"%s.','Shopp'),'<a href="'.SHOPP_DOCS.'Suhosin_PHP_Extension_Issues">','</a>'); ?></p></div>
+<div class="changelog">
+	<h3><?php _e( 'Reports' ); ?></h3>
+
+	<div class="feature-section col two-col">
+		<div>
+			<h4><?php _e( 'Keep Score' ); ?></h4>
+			<p><?php _e( 'Track your sales over time with the all new report system. Gorgeous charts make it easy to visualize performance for better decision making. Exports allow you to take your data and remix it in your own system to uncover hidden opportunities.' ); ?></p>
+		</div>
+		<div class="last-feature">
+			<h4><?php _e( 'Global Scale' ); ?></h4>
+			<p><?php _e( 'The new Locations report shows sales performance across global markets in an easy to digest interactive heat map. Find out where business is on fire, and where things are cooling off so you can adjust marketing strategies.' ); ?></p>
+		</div>
+	</div>
+</div>
+
+<div class="changelog">
+	<h3><?php _e( 'Simpler Admin Menus' ); ?></h3>
+
+	<div class="feature-section col two-col">
+		<div>
+			<h4><?php _e( 'System & Setup' ); ?></h4>
+			<p><?php _e( 'The menus have been simplified to organize features across Shopp into System integrations and Setup configurations.' ); ?></p>
+		</div>
+		<div class="last-feature">
+			<h4><?php _e( 'Discounts' ); ?></h4>
+			<p><?php _e( 'The Promotions system has been rebranded as simply "Discounts" for better clarity.' ); ?></p>
+		</div>
+	</div>
+</div>
+
+<div class="changelog">
+	<h3><?php _e( 'Retina Ready' ); ?></h3>
+
+	<div class="feature-section images-stagger-right">
+		<h4><?php _e( 'So Sharp You Can&#8217;t See the Pixels' ); ?></h4>
+		<p><?php _e( 'Following in the footsteps of WordPress, the Shopp admin and storefront features have been painstakingly polished to look beautiful on high-resolution screens like those found on the iPad, Kindle Fire HD, Nexus 10, and MacBook Pro with Retina Display. Icons and other visual elements are crystal clear.' ); ?></p>
+	</div>
+</div>
+
+
+<div class="changelog">
+	<h3><?php _e( 'Customer Editing in Orders' ); ?></h3>
+
+	<div class="feature-section images-stagger-right">
+		<h4><?php _e( 'Improved Order Management' ); ?></h4>
+		<p><?php _e( 'More order information is editable with the ability to update billing and shipping address. You can even edit customer details or assign an order to a different customer altogether.' ); ?></p>
+	</div>
+</div>
+<div class="changelog">
+	<h3><?php _e( 'Under the Hood' ); ?></h3>
+
+	<div class="feature-section col three-col">
+		<div>
+			<h4><?php _e( 'Shopping Cold Storage' ); ?></h4>
+			<p><?php _e( 'Shopping sessions no longer expire in a couple hours but are instead put into cold storage so that if a shopper returns, they can pick up where they left off.' ); ?></p>
+		</div>
+		<div>
+			<h4><?php _e( 'Smart Loading' ); ?></h4>
+			<p><?php _e( 'Shopp implements the PHP autoload features to vastly reduce the amount of memory used.' ); ?></p>
+		</div>
+		<div class="last-feature">
+			<h4><?php _e( 'Order Totals' ); ?></h4>
+			<p><?php _e( 'Introducing an all new order total calculator to more accurately tally totals and allow for custom fees to be registered and calculated.' ); ?></p>
+		</div>
+	</div>
+
+	<div class="feature-section col three-col">
+		<div>
+			<h4><?php _e( 'Compound Taxes' ); ?></h4>
+			<p><?php _e( 'Taxes can be layered and compounded for tax jursidictions that require it.' ); ?></p>
+		</div>
+		<div>
+			<h4><?php _e( 'schema.org' ); ?></h4>
+			<p><?php printf( __( 'Products and categories now sport customizable schema.org microdata markup to improve search engine understanding of your web store.' ) ); ?></p>
+		</div>
+		<div class="last-feature">
+			<h4><?php _e( 'API Improvements' ); ?></h4>
+			<p><?php _e( 'New improvements to the API make it easier than ever to extend the Shopp admin screens, taxes, and discounts.' ); ?></p>
+		</div>
+	</div>
+</div>
+
+<div class="return-to-dashboard">
+	<?php if ( current_user_can( 'shopp_settings' ) ) : ?>
+	<a href="<?php echo esc_url( add_query_arg('page', 'shopp-setup', admin_url( 'admin.php' )) ); ?>"><?php Shopp::_e('Continue to Shopp Setup'); ?></a> |
 	<?php endif; ?>
+	<a href="<?php echo esc_url( self_admin_url() ); ?>"><?php
+		is_blog_admin() ? _e( 'Go to Dashboard &rarr; Home' ) : _e( 'Go to Dashboard' ); ?></a>
+</div>
 
-	<p><?php _e('Before you dive in to setup, here are a few things to keep in mind:','Shopp'); ?></p>
-
-	<ul>
-		<li><strong><?php _e('Shopp has lots of easy to find help built-in.','Shopp'); ?></strong><br />
-			<?php printf(__('Click the %sHelp menu%s to access help articles about the screen you are using, directly from the %sofficial documentation%s.','Shopp'),'<strong>','</strong>','<a href="http://docs.shopplugin.net" target="_blank">','</a>'); ?>
-			<ul>
-				<li><?php printf(__('You can also get community help from the community %sSupport Forums%s','Shopp'),'<a href="http://forums.shopplugin.net">','</a>'); ?></li>
-				<li><?php printf(__('Or, get official interactive support from the Shopp %sHelp Desk%s','Shopp'),'<a href="http://forums.shopplugin.net/forum/help-desk">','</a>'); ?></li>
-				<li><?php printf(__('For guaranteed fast response from the Shopp Support Team, %spurchase a priority support credit%s.','Shopp'),'<a href="https://shopplugin.net/store/category/priority-support/" target="_blank">','</a>'); ?></li>
-				<li><?php _e('Find qualified Shopp professionals you can hire as consultant contractors for customization work.','Shopp'); ?></li>
-			</ul>
-			</li>
-		<li><strong><?php _e('Easy setup in just a few steps.','Shopp'); ?></strong><br /><?php _e('Setup is simple and takes about 10-15 minutes.  Just jump through each of the settings screens to configure your store.','Shopp'); ?></li>
-		<li><strong><?php _e('Don\'t forget to activate your key!','Shopp'); ?></strong><br /><?php printf(__('Be sure to activate your key on the %sShopp%s &rarr; %sSettings%s screen so you can get trouble-free, automated updates.','Shopp'),'<strong>','</strong>','<strong>','</strong>'); ?></li>
-		<li><strong><?php _e('Show It Off','Shopp')?></strong><br /><?php printf(__('Once you\'re up and running, drop by the Shopp website and %ssubmit your site%s to be included in the showcase of Shopp-powered websites.','Shopp'),'<a href="http://shopplugin.net/showcase">','</a>'); ?></li>
-	</ul>
-	<br />
-
-	<form action="<?php echo add_query_arg(array('page'=>'shopp-settings'),admin_url('admin.php')); ?>" method="post">
-	<div class="alignright"><input type="submit" name="setup" value="<?php _e('Continue to Shopp Setup','Shopp'); ?>&hellip;" class="button-primary" /></div>
-
-	<p><input type="hidden" name="settings[show_welcome]" value="off" /><input type="checkbox" name="settings[show_welcome]" id="welcome-toggle" value="on" <?php echo (shopp_setting('show_welcome') == "on")?' checked="checked"':''; ?> /><label for="welcome-toggle"> <small><?php _e('Show this screen every time after activating Shopp','Shopp'); ?></small></label></p>
-	</form>
 </div>
