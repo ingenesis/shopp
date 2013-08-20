@@ -267,6 +267,26 @@ abstract class ShoppCore {
 		echo call_user_func_array(array(__CLASS__, '_mx'), $args);
 	}
 
+	public static function esc_attr__ ( $text ) {
+		$args = func_get_args();
+		return esc_attr(call_user_func_array(array(__CLASS__, '__'), $args));
+	}
+
+	public static function esc_attr_e ( $text ) {
+		$args = func_get_args();
+		echo esc_attr(call_user_func_array(array(__CLASS__, '__'), $args));
+	}
+
+	public static function esc_html__ ( $text ) {
+		$args = func_get_args();
+		return esc_html(call_user_func_array(array(__CLASS__, '__'), $args));
+	}
+
+	public static function esc_html_e ( $text ) {
+		$args = func_get_args();
+		echo esc_html(call_user_func_array(array(__CLASS__, '__'), $args));
+	}
+
 	/**
 	 * Converts timestamps to formatted localized date/time strings
 	 *
@@ -280,26 +300,26 @@ abstract class ShoppCore {
 	public static function _d ( string $format, integer $timestamp = null ) {
 
 		$tokens = array(
-			'D' => array('Mon' => Shopp::__('Mon'),'Tue' => Shopp::__('Tue'),
-						'Wed' => Shopp::__('Wed'),'Thu' => Shopp::__('Thu'),
-						'Fri' => Shopp::__('Fri'),'Sat' => Shopp::__('Sat'),
+			'D' => array('Mon' => Shopp::__('Mon'), 'Tue' => Shopp::__('Tue'),
+						'Wed' => Shopp::__('Wed'), 'Thu' => Shopp::__('Thu'),
+						'Fri' => Shopp::__('Fri'), 'Sat' => Shopp::__('Sat'),
 						'Sun' => Shopp::__('Sun')),
-			'l' => array('Monday' => Shopp::__('Monday'),'Tuesday' => Shopp::__('Tuesday'),
-						'Wednesday' => Shopp::__('Wednesday'),'Thursday' => Shopp::__('Thursday'),
-						'Friday' => Shopp::__('Friday'),'Saturday' => Shopp::__('Saturday'),
+			'l' => array('Monday' => Shopp::__('Monday'), 'Tuesday' => Shopp::__('Tuesday'),
+						'Wednesday' => Shopp::__('Wednesday'), 'Thursday' => Shopp::__('Thursday'),
+						'Friday' => Shopp::__('Friday'), 'Saturday' => Shopp::__('Saturday'),
 						'Sunday' => Shopp::__('Sunday')),
-			'F' => array('January' => Shopp::__('January'),'February' => Shopp::__('February'),
-						'March' => Shopp::__('March'),'April' => Shopp::__('April'),
-						'May' => Shopp::__('May'),'June' => Shopp::__('June'),
-						'July' => Shopp::__('July'),'August' => Shopp::__('August'),
-						'September' => Shopp::__('September'),'October' => Shopp::__('October'),
-						'November' => Shopp::__('November'),'December' => Shopp::__('December')),
-			'M' => array('Jan' => Shopp::__('Jan'),'Feb' => Shopp::__('Feb'),
-						'Mar' => Shopp::__('Mar'),'Apr' => Shopp::__('Apr'),
-						'May' => Shopp::__('May'),'Jun' => Shopp::__('Jun'),
-						'Jul' => Shopp::__('Jul'),'Aug' => Shopp::__('Aug'),
-						'Sep' => Shopp::__('Sep'),'Oct' => Shopp::__('Oct'),
-						'Nov' => Shopp::__('Nov'),'Dec' => Shopp::__('Dec'))
+			'F' => array('January' => Shopp::__('January'), 'February' => Shopp::__('February'),
+						'March' => Shopp::__('March'), 'April' => Shopp::__('April'),
+						'May' => Shopp::__('May'), 'June' => Shopp::__('June'),
+						'July' => Shopp::__('July'), 'August' => Shopp::__('August'),
+						'September' => Shopp::__('September'), 'October' => Shopp::__('October'),
+						'November' => Shopp::__('November'), 'December' => Shopp::__('December')),
+			'M' => array('Jan' => Shopp::__('Jan'), 'Feb' => Shopp::__('Feb'),
+						'Mar' => Shopp::__('Mar'), 'Apr' => Shopp::__('Apr'),
+						'May' => Shopp::__('May'), 'Jun' => Shopp::__('Jun'),
+						'Jul' => Shopp::__('Jul'), 'Aug' => Shopp::__('Aug'),
+						'Sep' => Shopp::__('Sep'), 'Oct' => Shopp::__('Oct'),
+						'Nov' => Shopp::__('Nov'), 'Dec' => Shopp::__('Dec'))
 		);
 
 		if ( is_null($timestamp) ) $date = date($format);
@@ -321,12 +341,10 @@ abstract class ShoppCore {
 	 * @since 1.1.7
 	 *
 	 * @param string $text Text to translate
-	 * @param string $domain Optional. Domain to retrieve the translated text
 	 * @return void
 	 **/
-	public static function _jse ( string $text, string $domain = null ) {
-		if ( is_null($domain) ) $domain = 'default';
-		echo json_encode(translate( $text, $domain ));
+	public static function _jse ( string $text) {
+		echo json_encode(Shopp::translate($text));
 	}
 
 	/**
