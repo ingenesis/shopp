@@ -1853,7 +1853,7 @@ function shopp_product_variant_set_price ( $variant = false, $price = 0.0, $cont
 
 	if ( shopp_setting_enabled('tax_inclusive') && isset($Price->tax) && Shopp::str_true($Price->tax) ) {
 		$Product = new Product($Price->product);
-		$taxrate = Shopp::taxrate(null,true,$Product);
+		$taxrate = Shopp::taxrate($Product);
 		$price = ( Shopp::floatval( $price / ( 1 + $taxrate ) ) );
 	}
 
