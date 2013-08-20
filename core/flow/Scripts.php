@@ -267,6 +267,9 @@ function shopp_default_scripts (&$scripts) {
 	$scripts->add('payments', '/ui/behaviors/payments.js', array('jquery'), $version);
 	$scripts->add_data('payments', 'group', 1);
 
+	$scripts->add('storage', '/ui/behaviors/storage.js', array('jquery'), $version);
+	$scripts->add_data('storage', 'group', 1);
+
 	$scripts->add('shiprates', '/ui/behaviors/shiprates.js', array('jquery'), $version);
 	$scripts->add_data('shiprates', 'group', 1);
 

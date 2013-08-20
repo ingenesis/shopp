@@ -318,8 +318,8 @@ abstract class AdminController extends FlowController {
 		$notice->style = in_array($style, $styles) ? $style : $styles[0];
 
 		// Prevent duplicates
-		$notices = array_map('md5', $this->notices);
-		if ( in_array(md5($notice), $notices) ) return;
+		$notices = array_map('md5', array_map('json_encode', $this->notices));
+		if ( in_array(md5(json_encode($notice)), $notices) ) return;
 
 		array_splice($this->notices, $priority, 0, array($notice));
 	}
@@ -360,6 +360,8 @@ abstract class AdminController extends FlowController {
 
 	protected function tabs ( array $tabs = array() ) {
 		global $plugin_page;
+
+		$pagehook = sanitize_key($plugin_page);
 
 		$markup = array();
 		if ( empty($tabs) ) $tabs = $this->tabs;

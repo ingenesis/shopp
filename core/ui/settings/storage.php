@@ -31,19 +31,6 @@
 					<div id="download-storage-engine" class="storage-settings"><?php if ($DownloadStorage) echo $DownloadStorage->ui('download'); ?></div>
 	            </td>
 			</tr>
-
-			<tr>
-				<th scope="row" valign="top"><label for="rebuild-index"><?php _e('Search Index','Shopp'); ?></label></th>
-				<td><button type="button" id="rebuild-index" name="rebuild" class="button-secondary"><?php _e('Rebuild Product Search Index','Shopp'); ?></button><br />
-	            <?php _e('Update search indexes for all the products in the catalog.','Shopp'); ?></td>
-			</tr>
-
-			<tr>
-				<th scope="row" valign="top"><label for="image-cache"><?php _e('Image Cache','Shopp'); ?></label></th>
-				<td><button type="submit" id="image-cache" name="rebuild" value="true" class="button-secondary"><?php _e('Delete Cached Images','Shopp'); ?></button><br />
-	            <?php _e('Removes all cached images so that they will be recreated.','Shopp'); ?></td>
-			</tr>
-
 		</table>
 		<p class="submit"><input type="submit" class="button-primary" name="save" value="<?php _e('Save Changes','Shopp'); ?>" /></p>
 	</form>

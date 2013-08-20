@@ -1208,9 +1208,11 @@ class Product extends WPShoppObject {
  * @subpackage product
  **/
 class ProductSummary extends DatabaseObject {
+	const RECALCULATE = '0000-00-00 00:00:01';
+
 	static $table = 'summary';
 	static $_ranges = array('price','saleprice','saved','savings','weight');
-	static $_updates = '0000-00-00 00:00:01';
+	static $_updates = self::RECALCULATE;
 
 	public function __construct ($id=false,$key='product') {
 		$this->init(self::$table);
