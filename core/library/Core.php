@@ -1891,49 +1891,82 @@ abstract class ShoppCore {
 	}
 
 	/**
-	 * Determines the current taxrate from the store settings and provided options
-	 *
-	 * Contextually works out if the tax rate applies or not based on storefront
-	 * settings and the provided override options
+	 * Determines the effective tax rate (a single rate) for the store or an item based
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.0
+	 * @version 1.3
 	 *
-	 * @param string $override (optional) Specifies whether to override the default taxrate behavior
-	 * @param string $taxprice (optional) Supports a secondary contextual override
+	 * @param Object $Item (optional) The ShoppProduct, ShoppCartItem or ShoppPurchased object to find tax rates for
 	 * @return float The determined tax rate
 	 **/
-	public static function taxrate ($override=null,$taxprice=true, $Item = null ) {
+	public static function taxrate ( $Item = null ) {
 
-		$Tax = new ShoppTax();
-		$Order = ShoppOrder();
-
-		$Tax->address($Order->Billing, $Order->Shipping, $Order->Cart->shipped());
-
-		$taxes = array();
-		if ( isset($Item) )
-			$Tax->rates($taxes, $Tax->item($Item) );
-		else $Tax->rates($taxes);
+		$taxes = self::taxrates($Item);
 
 		if ( empty($taxes) ) $taxrate = 0.0; // No rates given
 		if ( count($taxes) == 1 ) {
 			$TaxRate = current($taxes);
 			$taxrate = (float)$TaxRate->rate; // Use the given rate
-		} else $taxrate = (float)( $Tax->calculate($taxes, 100) ) / 100; // Calculate the "effective" rate
+		} else $taxrate = (float)( ShoppTax::calculate($taxes, 100) ) / 100; // Calculate the "effective" rate (note: won't work with compound taxes)
 
 		return apply_filters('shopp_taxrate', $taxrate);
 
-		$Taxes = new CartTax();
-		$rated = false;
-		$taxrate = 0;
-
-		if ( shopp_setting_enabled('tax_inclusive') ) $rated = true;
-		if ( ! is_null($override) ) $rated = $override;
-		if ( ! Shopp::str_true($taxprice) ) $rated = false;
-
-		if ($rated) $taxrate = $Taxes->rate($Item);
-		return $taxrate;
 	}
+
+	/**
+	 * Determines all applicable tax rates for the store or an item
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.0
+	 * @version 1.3
+	 *
+	 * @param Object $Item (optional) The ShoppProduct, ShoppCartItem or ShoppPurchased object to find tax rates for
+	 * @return float The determined tax rate
+	 **/
+	public static function taxrates ( $Item = null ) {
+
+		$Tax = new ShoppTax();
+
+		$Order = ShoppOrder(); // Setup taxable address
+		$Tax->address($Order->Billing, $Order->Shipping, $Order->Cart->shipped());
+
+		$taxes = array();
+		if ( is_null($Item) ) $Tax->rates($taxes);
+		else $Tax->rates($taxes, $Tax->item($Item));
+
+		return apply_filters('shopp_taxrates', $taxes);
+
+	}
+
+	/**
+	 * Applies applicable tax rates to a taxable amount
+	 *
+	 * This is a helper for the Theme API tags to contextually determine when it
+	 * is appropriate to add taxes to the price display of a taxable amount
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return float
+	 **/
+	public static function applytax ( float $amount, array $rates, $taxable = true, $override = null ) {
+
+		if ( is_string($taxable) ) $taxable = self::str_true($taxable);
+		if ( is_string($override) ) $override = self::str_true($override);
+
+		if ( false === $taxable ) return $amount;
+
+		$inclusive = shopp_setting_enabled('tax_inclusive');
+
+		$tax = 0;
+		if ( true === $override || (is_null($override) && $inclusive) )
+			$tax = ShoppTax::calculate($rates, $amount);
+
+		return floatval($amount + $tax);
+
+	}
+
 
 	/**
 	 * Helper to prefix theme template file names
@@ -1944,7 +1977,7 @@ abstract class ShoppCore {
 	 * @param string $name The name of the template file
 	 * @return string Prefixed template file
 	 **/
-	public static function template_prefix ($name) {
+	public static function template_prefix ( string $name ) {
 		return apply_filters('shopp_template_directory','shopp').'/'.$name;
 	}
 
