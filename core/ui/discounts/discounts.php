@@ -1,41 +1,41 @@
 <div class="wrap shopp">
 
 	<div class="icon32"></div>
-	<h2><?php Shopp::_e('Discounts'); ?> <a href="<?php echo esc_url(add_query_arg(array_merge($_GET,array('page'=>'shopp-promotions','id'=>'new')),admin_url('admin.php'))); ?>" class="add-new-h2"><?php Shopp::_e('Add New'); ?></a></h2>
+	<h2><?php Shopp::_e('Discounts'); ?> <a href="<?php echo esc_url(add_query_arg(array_merge($_GET, array('id'=>'new')), $this->url)); ?>" class="add-new-h2"><?php Shopp::_e('Add New'); ?></a></h2>
 
 	<?php do_action('shopp_admin_notices'); ?>
 
-	<form action="<?php echo esc_url($url); ?>" id="promotions" method="get">
+	<form action="<?php echo esc_url($url); ?>" id="discounts" method="get">
 	<div>
-		<input type="hidden" name="page" value="shopp-promotions" />
+		<input type="hidden" name="page" value="<?php echo esc_attr($this->page); ?>" />
 	</div>
 
 	<p id="post-search" class="search-box">
-		<input type="text" id="promotions-search-input" name="s" class="search-input" value="<?php echo esc_attr($s); ?>" />
-		<input type="submit" value="<?php _e('Search Discounts','Shopp'); ?>" class="button" />
+		<input type="text" id="discounts-search-input" name="s" class="search-input" value="<?php echo esc_attr($s); ?>" />
+		<input type="submit" value="<?php Shopp::esc_attr_e('Search Discounts'); ?>" class="button" />
 	</p>
 
 	<div class="tablenav">
 		<div class="alignleft actions">
 			<select name="action" id="actions">
-				<option value="" selected="selected"><?php _e('Bulk Actions&hellip;','Shopp'); ?></option>
-				<option value="enable"><?php _e('Enable','Shopp'); ?></option>
-				<option value="disable"><?php _e('Disable','Shopp'); ?></option>
-				<option value="delete"><?php _e('Delete','Shopp'); ?></option>
+				<option value="" selected="selected"><?php Shopp::esc_html_e('Bulk Actions&hellip;'); ?></option>
+				<option value="enable"><?php Shopp::esc_html_e('Enable'); ?></option>
+				<option value="disable"><?php Shopp::esc_html_e('Disable'); ?></option>
+				<option value="delete"><?php Shopp::esc_html_e('Delete'); ?></option>
 			</select>
-			<input type="submit" value="<?php esc_attr_e('Apply','Shopp'); ?>" name="apply" id="apply" class="button-secondary action" />
+			<input type="submit" value="<?php Shopp::esc_attr_e('Apply','Shopp'); ?>" name="apply" id="apply" class="button-secondary action" />
 		</div>
 
 		<div class="alignleft actions">
 		<select name="status">
-			<option value=""><?php _e('View All Discounts','Shopp'); ?></option>
-			<?php echo Shopp::menuoptions($states,$status,true); ?>
+			<option value=""><?php esc_html(Shopp::_e('View All Discounts')); ?></option>
+			<?php echo Shopp::menuoptions($states, $status, true); ?>
 		</select>
 		<select name="type">
-			<option value=""><?php _e('View All Types','Shopp'); ?></option>
-			<?php echo Shopp::menuoptions($types,$type,true); ?>
+			<option value=""><?php Shopp::esc_html_e('View All Types'); ?></option>
+			<?php echo Shopp::menuoptions($types, $type, true); ?>
 		</select>
-		<input type="submit" id="filter-button" value="<?php _e('Filter','Shopp'); ?>" class="button-secondary" />
+		<input type="submit" id="filter-button" value="<?php Shopp::esc_attr_e('Filter'); ?>" class="button-secondary" />
 		</div>
 
 		<?php $ListTable->pagination('top'); ?>
@@ -48,20 +48,20 @@
 		<tr><?php print_column_headers($this->screen); ?></tr>
 		</thead>
 		<tfoot>
-		<tr><?php print_column_headers($this->screen,false); ?></tr>
+		<tr><?php print_column_headers($this->screen, false); ?></tr>
 		</tfoot>
-	<?php if (sizeof($Promotions) > 0): ?>
-		<tbody class="list promotions">
+	<?php if ( sizeof($Promotions) > 0 ): ?>
+		<tbody class="list discounts">
 		<?php
 			$hidden = get_hidden_columns($this->screen);
 
 			$even = false;
-			foreach ($Promotions as $Promotion):
-			$editurl = add_query_arg(array('id'=>$Promotion->id),$url);
-			$deleteurl = add_query_arg(array('selected'=>$Promotion->id,'action'=>'delete'),$url);
-			$duplicateurl = add_query_arg(array('selected'=>$Promotion->id,'action'=>'duplicate'),$url);
-			$enableurl = add_query_arg(array('selected'=>$Promotion->id,'action'=>'enable'),$url);
-			$disableurl = add_query_arg(array('selected'=>$Promotion->id,'action'=>'disable'),$url);
+			foreach ( $Promotions as $Promotion ):
+			$editurl = add_query_arg(array('id' => $Promotion->id), $url);
+			$deleteurl = add_query_arg(array('selected' => $Promotion->id, 'action' => 'delete'), $url);
+			$duplicateurl = add_query_arg(array('selected' => $Promotion->id, 'action' => 'duplicate'), $url);
+			$enableurl = add_query_arg(array('selected' => $Promotion->id, 'action' => 'enable'), $url);
+			$disableurl = add_query_arg(array('selected' => $Promotion->id, 'action' => 'disable'), $url);
 
 			$PromotionName = empty($Promotion->name)?'('.__('no promotion name').')':$Promotion->name;
 		?>
@@ -81,11 +81,11 @@
 				</div>
 
 			</td>
-			<td class="discount column-discount<?php echo in_array('discount',$hidden)?' hidden':''; ?>"><?php
+			<td class="discount column-discount<?php echo in_array('discount', $hidden) ? ' hidden' : ''; ?>"><?php
 				if ($Promotion->type == "Percentage Off") echo Shopp::percentage((float)$Promotion->discount);
 				if ($Promotion->type == "Amount Off") echo Shopp::money((float)$Promotion->discount);
 				if ($Promotion->type == "Free Shipping") echo shopp_setting("free_shipping_text");
-				if ($Promotion->type == "Buy X Get Y Free") echo __('Buy','Shopp').' '.$Promotion->buyqty.' '.__('Get','Shopp').' '.$Promotion->getqty.' '.__('Free','Shopp');
+				if ($Promotion->type == "Buy X Get Y Free") Shopp::esc_html_e('Buy %s Get %s Free', $Promotion->buyqty, $Promotion->getqty);
 			?></td>
 			<td class="applied column-applied<?php echo in_array('applied',$hidden)?' hidden':''; ?>"><?php echo $Promotion->target; ?></td>
 			<td class="eff column-eff<?php echo in_array('eff',$hidden)?' hidden':''; ?>"><strong><?php echo $states[$Promotion->status]; ?></strong><?php
@@ -101,7 +101,7 @@
 		<?php endforeach; ?>
 		</tbody>
 	<?php else: ?>
-		<tbody><tr><td colspan="5"><?php _e('No promotions found.','Shopp'); ?></td></tr></tbody>
+		<tbody><tr><td colspan="5"><?php Shop::esc_html_e('No discounts found.'); ?></td></tr></tbody>
 	<?php endif; ?>
 	</table>
 	</form>
@@ -115,13 +115,12 @@
 /* <![CDATA[ */
 jQuery(document).ready( function($) {
 	var m = {
-			none:<?php Shopp::_jse('Select some promotions!','Shopp'); ?>,
-			enable:<?php Shopp::_jse('Are you sure you want to enable the selected promotions?','Shopp'); ?>,
-			disable:<?php Shopp::_jse('Are you sure you want to disable the selected promotions?','Shopp'); ?>,
-			delete:<?php Shopp::_jse('Are you sure you want to delete the selected promotions?','Shopp'); ?>
-		},form = $('#promotions');
+			none:<?php Shopp::_jse('Select some discounts!','Shopp'); ?>,
+			enable:<?php Shopp::_jse('Are you sure you want to enable the selected discounts?','Shopp'); ?>,
+			disable:<?php Shopp::_jse('Are you sure you want to disable the selected discounts?','Shopp'); ?>,
+			delete:<?php Shopp::_jse('Are you sure you want to delete the selected discounts?','Shopp'); ?>
+		},form = $('#discounts');
 
-	pagenow = 'shopp_page_shopp-promotions';
 	columns.init(pagenow);
 
 	$('#selectall').change(function() {
