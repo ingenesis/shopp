@@ -868,4 +868,42 @@ class ShoppAdminSystem extends AdminController {
 			shopp_set_setting($setting,stripslashes_deep($value));
 	}
 
+	public static function reindex () {
+
+		check_admin_referer('wp_ajax_shopp_rebuild_search_index');
+
+		shopp_empty_search_index();
+
+		add_action('shopp_rebuild_search_index_init', array('ShoppAdminSystem', 'reindex_init'), 10, 3);
+		add_action('shopp_rebuild_search_index_progress', array('ShoppAdminSystem', 'reindex_progress'), 10, 3);
+		add_action('shopp_rebuild_search_index_completed', array('ShoppAdminSystem', 'reindex_completed'), 10, 3);
+
+		shopp_rebuild_search_index();
+
+		exit;
+
+	}
+
+	public static function reindex_init ( $indexed, $total, $start ) {
+		echo str_pad('<html><body><script type="text/javascript">var indexProgress = 0;</script>' . "\n", 2048, ' ');
+		@ob_flush();
+		@flush();
+	}
+
+	public static function reindex_progress ( $indexed, $total, $start ) {
+		if ( $total == 0 ) return;
+		echo str_pad('<script type="text/javascript">indexProgress = '.$indexed/(int)$total.';</script>'."\n", 2048, ' ');
+		if ( ob_get_length() ) {
+			@ob_flush();
+			@flush();
+		}
+	}
+
+	public static function reindex_completed ( $indexed, $total, $start ) {
+		echo str_pad('</body><html>'."\n",2048,' ');
+		if ( ob_get_length() )
+			@ob_end_flush();
+	}
+
+
 } // END class System

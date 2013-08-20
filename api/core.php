@@ -427,3 +427,43 @@ function shopp_debug ( string $message, $backtrace = false ) {
 	if ( $backtrace ) $callstack = debug_caller();
 	return shopp_add_error( $message . $backtrace, SHOPP_DEBUG_ERR );
 }
+
+function shopp_rebuild_search_index () {
+
+	global $wpdb;
+
+	new ContentParser();
+
+	$set = 10; // Process 10 at a time
+	$index_table = DatabaseObject::tablename(ContentIndex::$table);
+
+	$total = DB::query("SELECT count(*) AS products,now() as start FROM $wpdb->posts WHERE post_type='" . Product::$posttype . "'");
+	if ( empty($total->products) ) false;
+
+	set_time_limit(0); // Prevent timeouts
+
+	$indexed = 0;
+	do_action_ref_array('shopp_rebuild_search_index_init', array($indexed, $total->products, $total->start));
+	for ( $i = 0; $i * $set < $total->products; $i++ ) { // Outer loop to support buffering
+		$products = sDB::query("SELECT ID FROM $wpdb->posts WHERE post_type='" . Product::$posttype . "' LIMIT " . ($i * $set) . ",$set", 'array', 'col', 'ID');
+		foreach ( $products as $id ) {
+			$Indexer = new IndexProduct($id);
+			$Indexer->index();
+			$indexed++;
+			do_action_ref_array('shopp_rebuild_search_index_progress', array($indexed, $total->products, $total->start));
+		}
+	}
+
+	do_action_ref_array('shopp_rebuild_search_index_completed', array($indexed, $total->products, $total->start));
+	return true;
+
+}
+
+function shopp_empty_search_index () {
+
+	$index_table = DatabaseObject::tablename(ContentIndex::$table);
+	if ( sDB::query("DELETE FROM $index_table") ) return true;
+
+	return false;
+
+}

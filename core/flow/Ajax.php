@@ -63,7 +63,7 @@ class ShoppAjax {
 		add_action('wp_ajax_shopp_order_note_message',array($this,'order_note_message'));
 		add_action('wp_ajax_shopp_activate_key',array($this,'activate_key'));
 		add_action('wp_ajax_shopp_deactivate_key',array($this,'deactivate_key'));
-		add_action('wp_ajax_shopp_rebuild_search_index',array($this,'rebuild_search_index'));
+		add_action('wp_ajax_shopp_rebuild_search_index', array('ShoppAdminSystem', 'reindex'));
 		add_action('wp_ajax_shopp_upload_local_taxes',array($this,'upload_local_taxes'));
 		add_action('wp_ajax_shopp_feature_product',array($this,'feature_product'));
 		add_action('wp_ajax_shopp_update_inventory',array($this,'update_inventory'));
@@ -282,42 +282,6 @@ class ShoppAjax {
 		echo ShoppSupport::deactivate($key);
 		exit();
 	}
-
-	function rebuild_search_index () {
-		check_admin_referer('wp_ajax_shopp_rebuild_search_index');
-		global $wpdb;
-
-		new ContentParser();
-
-		$set = 10;
-		$index_table = DatabaseObject::tablename(ContentIndex::$table);
-
-		$total = DB::query("SELECT count(*) AS products,now() as start FROM $wpdb->posts WHERE post_type='".Product::$posttype."'");
-		if (empty($total->products)) die('-1');
-
-		echo str_pad('<html><body><script type="text/javascript">var indexProgress = 0;</script>'."\n",2048,' ');
-		@ob_flush();
-		@flush();
-		set_time_limit(0); // Prevent timeouts
-		$indexed = 0;
-		for ($i = 0; $i*$set < $total->products; $i++) {
-			$products = DB::query("SELECT ID FROM $wpdb->posts WHERE post_type='".Product::$posttype."' LIMIT ".($i*$set).",$set",'array','col','ID');
-			foreach ($products as $id) {
-				$Indexer = new IndexProduct($id);
-				$Indexer->index();
-				$indexed++;
-				echo str_pad('<script type="text/javascript">indexProgress = '.$indexed/(int)$total->products.';</script>'."\n",2048,' ');
-				if ( ob_get_length() ) {
-					@ob_flush();
-					@flush();
-				}
-			}
-			echo str_pad('</body><html>'."\n",2048,' ');
-			if ( ob_get_length() ) @ob_end_flush();
-		}
-		exit();
-	}
-
 
 	function suggestions () {
 		check_admin_referer('wp_ajax_shopp_suggestions');
