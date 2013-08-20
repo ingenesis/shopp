@@ -53,11 +53,16 @@ class ShoppAdminSystem extends AdminController {
 
 				break;
 			case 'advanced':
+				shopp_enqueue_script('colorbox');
 				shopp_enqueue_script('system');
+				shopp_localize_script( 'system', '$sys', array(
+					'indexing' => __('Product Indexing','Shopp'),
+					'indexurl' => wp_nonce_url(add_query_arg('action','shopp_rebuild_search_index',admin_url('admin-ajax.php')),'wp_ajax_shopp_rebuild_search_index')
+				));
 				break;
 			case 'storage':
 				shopp_enqueue_script('jquery-tmpl');
-				shopp_enqueue_script('system');
+				shopp_enqueue_script('storage');
 				break;
 
 			case 'shipping':
@@ -111,6 +116,7 @@ class ShoppAdminSystem extends AdminController {
 			case 'taxes': 			$this->taxes(); break;
 			case 'storage': 		$this->storage(); break;
 			case 'advanced': 		$this->advanced(); break;
+			case 'log': 			$this->log(); break;
 			default:				$this->payments();
 		}
 	}
@@ -186,7 +192,7 @@ class ShoppAdminSystem extends AdminController {
 		$lowstock = shopp_setting('lowstock_level');
 		if (empty($lowstock)) $lowstock = 0;
 
-		include(SHOPP_ADMIN_PATH.'/settings/shipping.php');
+		include $this->ui('shipping.php');
 	}
 
 	public function shiprates () {
@@ -291,7 +297,7 @@ class ShoppAdminSystem extends AdminController {
 					if (!array_key_exists($module,$active)) $active[$module] = array();
 					$active[$module][(int)$id] = true;
 					shopp_set_setting('active_shipping',$active);
-					$updated = __('Shipping settings saved.','Shopp');
+					$this->notice(Shopp::__('Shipping settings saved.'));
 				}
 
 			}
@@ -388,7 +394,7 @@ class ShoppAdminSystem extends AdminController {
 
 		$ShippingTemplates = new TemplateShippingUI();
 		add_action('shopp_shipping_module_settings',array($Shipping,'templates'));
-		include(SHOPP_ADMIN_PATH.'/settings/shiprates.php');
+		include $this->ui('shiprates.php');
 
 	}
 
@@ -430,7 +436,7 @@ class ShoppAdminSystem extends AdminController {
 		// Handle ship rates UI
 		if ('rates' == $sub && 'on' == shopp_setting('taxes')) return $this->taxrates();
 
-		include(SHOPP_ADMIN_PATH.'/settings/taxes.php');
+		include $this->ui('taxes.php');
 	}
 
 	public function taxes_menu () {
@@ -503,14 +509,14 @@ class ShoppAdminSystem extends AdminController {
 			$rates = stripslashes_deep($rates);
 			shopp_set_setting('taxrates',$rates);
 		}
-		if (isset($_POST['addrate'])) $edit = count($rates);
+		if (isset($_POST['addrate'])) $_POSTedit = count($rates);
 		if (isset($_POST['submit'])) $edit = false;
 
 		$base = shopp_setting('base_operations');
 		$countries = array_merge(array('*' => __('All Markets','Shopp')),(array)shopp_setting('target_markets'));
 		$zones = Lookup::country_zones();
 
-		include(SHOPP_ADMIN_PATH.'/settings/taxrates.php');
+		include $this->ui('taxrates.php');
 	}
 
 	/**
@@ -705,7 +711,7 @@ class ShoppAdminSystem extends AdminController {
 		}
 
 		add_action('shopp_gateway_module_settings',array($Gateways,'templates'));
-		include(SHOPP_ADMIN_PATH.'/settings/payments.php');
+		include $this->ui('payments.php');
 	}
 	public function payments_help () {
 		$Shopp = Shopp::object();
@@ -732,32 +738,34 @@ class ShoppAdminSystem extends AdminController {
 
 
 		if ( ! empty($_POST['save']) ) {
-			check_admin_referer('shopp-settings-system');
+			check_admin_referer('shopp-system-advanced');
 
 			if ( ! isset($_POST['settings']['error_notifications']) )
 				$_POST['settings']['error_notifications'] = array();
 
-			$this->settings_save();
+			shopp_set_formsettings();
 
 			// Reinitialize Error System
 			ShoppErrors()->reporting( (int)shopp_setting('error_logging') );
 			ShoppErrorLogging()->loglevel( (int)shopp_setting('error_logging') );
 			ShoppErrorNotification()->setup();
 
-			// Re-initialize Storage Engines with new settings
-			$Storage->settings();
+			$this->notice(Shopp::__('Advanced settings saved.'));
 
-			$updated = __('Shopp system settings saved.','Shopp');
-		} elseif (!empty($_POST['rebuild'])) {
+		} elseif ( ! empty($_POST['rebuild']) ) {
+			check_admin_referer('shopp-system-advanced');
 			$assets = DatabaseObject::tablename(ProductImage::$table);
 			$query = "DELETE FROM $assets WHERE context='image' AND type='image'";
-			if (DB::query($query))
-				$updated = __('All cached images have been cleared.','Shopp');
-		}
+			if ( sDB::query($query) )
+				$this->notice(Shopp::__('All cached images have been cleared.'));
 
-		if (isset($_POST['resetlog'])) {
-			check_admin_referer('shopp-settings-system');
-			ShoppErrorLogging()->reset();
+		} elseif ( ! empty($_POST['resum']) ) {
+			check_admin_referer('shopp-system-advanced');
+			$summaries = DatabaseObject::tablename(ProductSummary::$table);
+			$query = "UPDATE $summaries SET modified='" . ProductSummary::RECALCULATE . "'";
+			if ( sDB::query($query) )
+				$this->notice(Shopp::__('Product summaries are set to recalculate.'));
+
 		}
 
 		$notifications = shopp_setting('error_notifications');
@@ -788,7 +796,17 @@ class ShoppAdminSystem extends AdminController {
 
 		$loading = array('shopp' => __('Load on Shopp-pages only','Shopp'),'all' => __('Load on entire site','Shopp'));
 
-		include(SHOPP_ADMIN_PATH.'/settings/system.php');
+		include $this->ui('advanced.php');
+	}
+
+	public function log () {
+		if ( isset($_POST['resetlog']) ) {
+			check_admin_referer('shopp-system-log');
+			ShoppErrorLogging()->reset();
+			$this->notice(Shopp::__('The log file has been reset.'));
+		}
+
+		include $this->ui('log.php');
 	}
 
 	public function storage () {
@@ -800,7 +818,7 @@ class ShoppAdminSystem extends AdminController {
 		if ( ! empty($_POST['save']) ) {
 			check_admin_referer('shopp-system-storage');
 
-			$this->settings_save();
+			shopp_set_formsettings();
 
 			// Re-initialize Storage Engines with new settings
 			$Storage->settings();
@@ -834,7 +852,7 @@ class ShoppAdminSystem extends AdminController {
 
 		add_action('shopp_storage_engine_settings',array($Storage,'templates'));
 
-		include(SHOPP_ADMIN_PATH.'/settings/storage.php');
+		include $this->ui('storage.php');
 	}
 
 	public function storage_ui () {

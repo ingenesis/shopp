@@ -737,11 +737,10 @@ div.storage-settings { clear:both;margin-top:8px; }
 .suggest-results .suggest-select .suggest-match { background: none; }
 
 
-#logviewer { background:white;height:300px;width:100%;overflow:auto;border:1px solid #dfdfdf;padding:1px; }
+#logviewer { background:white;min-height:80%;width:100%;overflow:auto;border:1px solid #ccc;padding:1px;border-top:none;box-sizing:border-box;-moz-box-sizing:border-box; }
 #error_notify li { width:200px;display:inline-block; }
 
 #error-page.shopp-update { margin-top:20px;margin-bottom:20px;width:540px; }
-
 
 /** Inline editors **/
 tr.inline-edit-row td  { padding: 10px; }

@@ -787,6 +787,7 @@ class ShoppAjax {
 		check_admin_referer('wp_ajax_shopp_debuglog'); ?>
 		<html>
 		<head>
+		<meta http-equiv="refresh" content="10">
 		<style type="text/css">
 		body { margin: 0; padding: 0; font-family:monospace;font-size:1em;line-height:1em;}
 		ol { list-style:decimal;padding-left:5em;background:#ececec;margin-left:0; margin-bottom: 1px; }
@@ -801,7 +802,10 @@ class ShoppAjax {
 					echo '<li'.($n+1 == $size?' id="bottom"':'').'>'.$line.'</li>';
 				}
 
-		?></ol></body></html><?php exit();
+		?></ol>
+		<script type="text/javascript">
+		document.getElementById('bottom').scrollIntoView();
+		</script></body></html><?php exit();
 	}
 
 } // END class ShoppAjax

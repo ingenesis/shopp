@@ -49,6 +49,7 @@ class ShoppAdmin extends FlowController {
 		'system-taxes' => 'shopp_settings_taxes',            	  	// shopp_financials					shopp-merchant
 		'system-advanced' => 'shopp_settings_system',              	// shopp_financials					shopp-merchant
 		'system-storage' => 'shopp_settings_system',              	// shopp_financials					shopp-merchant
+		'system-log' => 'shopp_settings_system',              	// shopp_financials					shopp-merchant
 		'setup' => 'shopp_settings',                   		       	// shopp_settings_taxes
 		'setup-core' => 'shopp_settings',                          	// shopp_settings_taxes
 		'setup-management' => 'shopp_settings',            		  	// shopp_settings_presentation
@@ -127,6 +128,9 @@ class ShoppAdmin extends FlowController {
 		$this->addpage('system-taxes',			Shopp::__('Taxes'),			'ShoppAdminSystem',	'system');
 		$this->addpage('system-storage',		Shopp::__('Storage'),		'ShoppAdminSystem',	'system');
 		$this->addpage('system-advanced',		Shopp::__('Advanced'),		'ShoppAdminSystem',	'system');
+		if ( count(ShoppErrorLogging()->tail(2)) > 1 )
+			$this->addpage('system-log',		Shopp::__('Log'),			'ShoppAdminSystem',	'system');
+
 
 		// Setup tabs
 		$this->addpage('setup', 				Shopp::__('Setup'),			'ShoppAdminSetup');
