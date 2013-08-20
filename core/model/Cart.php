@@ -561,7 +561,7 @@ class ShoppCart extends ListFramework {
 		$Shipping->calculate();
 		$Totals->register( new OrderAmountShipping( array('id' => 'cart', 'amount' => $Shipping->amount() ) ) );
 
-		if ( shopp_setting_enabled('tax_shipping') ) {
+		if ( apply_filters( 'shopp_tax_shipping', shopp_setting_enabled('tax_shipping') ) ) {
 			$Totals->register( new OrderAmountShippingTax( $Totals->total('shipping') ) );
 		}
 
