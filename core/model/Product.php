@@ -1026,6 +1026,10 @@ class Product extends WPShoppObject {
 		$table = DatabaseObject::tablename(ProductSummary::$table);
 		DB::query("DELETE FROM $table WHERE product='$id'");
 
+		// Delete product search index
+		$table = DatabaseObject::tablename(ContentIndex::$table);
+		DB::query("DELETE FROM $table WHERE product='$id'");
+
 		// Delete record
 		DB::query("DELETE FROM $this->_table WHERE ID='$id'");
 
