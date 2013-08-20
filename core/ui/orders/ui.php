@@ -439,8 +439,8 @@ function contact_meta_box ($Purchase) {
 		</p>
 		<?php endif; ?>
 		<div>
-			<input type="submit" id="cancel-edit-customer" name="cancel-edit-customer" value="<?php _e('Cancel','Shopp'); ?>" class="button-secondary" />
-			<input type="submit" name="save" value="${savelabel}" class="button-primary alignright" />
+			<input type="submit" id="cancel-edit-customer" name="cancel-edit-customer" value="<?php Shopp::esc_attr_e('Cancel'); ?>" class="button-secondary" />
+			<input type="submit" name="save" value="<?php Shopp::esc_attr_e('Save Customer'); ?>" class="button-primary alignright" />
 		</div>
 		<?php if ( ! isset($_POST['select-customer']) ): ?>
 		<p class="change-button"><br class="clear" /><input type="submit" id="change-customer" name="change-customer" value="<?php _e('Change Customer','Shopp'); ?>" class="button-secondary" /></p>
@@ -456,7 +456,6 @@ function contact_meta_box ($Purchase) {
 		'${email}' => $Purchase->email,
 		'${phone}' => $Purchase->phone,
 		'${marketing}' => $Purchase->marketing,
-		'${savelabel}' => __('Save Customer','Shopp'),
 		'${login}' => 'wordpress' == shopp_setting('account_system')
 	);
 	$js = preg_replace('/\${([-\w]+)}/','$1',json_encode($customer));
@@ -529,7 +528,7 @@ function contact_meta_box ($Purchase) {
 		</form>
 	<?php
 
-	$avatar = get_avatar( $Purchase->email, 48 );
+	$avatar = get_avatar( $Purchase->email, 64 );
 
 	$customer_url = add_query_arg(array('page'=>'shopp-customers','id'=>$Purchase->customer),admin_url('admin.php'));
 	$customer_url = apply_filters('shopp_order_customer_url',$customer_url);
@@ -545,6 +544,7 @@ function contact_meta_box ($Purchase) {
 
 	if ( 'wordpress' == $accounts ) {
 		$Customer = new Customer($Purchase->customer);
+		$WPUser = get_userdata($Customer->wpuser);
 
 		$edituser_url = add_query_arg('user_id',$Customer->wpuser,admin_url('user-edit.php'));
 		$edituser_url = apply_filters('shopp_order_customer_wpuser_url',$edituser_url);
@@ -553,6 +553,7 @@ function contact_meta_box ($Purchase) {
 	<div class="alignleft"><?php echo $avatar; ?></div>
 	<div class="alignleft">
 	<span class="fn"><a href="<?php echo esc_url($customer_url); ?>"><?php echo esc_html("{$Purchase->firstname} {$Purchase->lastname}"); ?></a></span>
+	<?php if  ( 'wordpress' == $accounts && ! empty($WPUser->user_login) ): ?><br /><span class="wplogin"><a href="<?php echo esc_attr($edituser_url); ?>"><?php echo esc_html($WPUser->user_login); ?></a></span><?php endif; ?>
 	<?php if ( ! empty($Purchase->company) ) echo '<br /> <div class="org">'.esc_html($Purchase->company).'</div>'; ?>
 	<?php if ( ! empty($Purchase->email) ) echo '<br /><span class="email"><a href="'.esc_url($email_url).'">'.esc_html($Purchase->email).'</a></span>'; ?>
 	<?php if ( ! empty($Purchase->phone) ) echo '<br /><span class="phone"><a href="'.esc_attr($phone_url).'">'.esc_html($Purchase->phone).'</a></span>'; ?>

@@ -113,7 +113,7 @@
 					<?php if (!empty($Purchase->promos)): ?>
 					<ul class="promos">
 					<?php foreach ($Purchase->promos as $pid => $promo): ?>
-						<li><small><a href="?page=shopp-promotions&amp;id=<?php echo $pid; ?>"><?php echo $promo; ?></a></small></li>
+						<li><small><a href="<?php echo esc_url( add_query_args(array('page' => $this->Admin->pagename('discounts'), 'id' => $pid), admin_url('admin.php'))); ?>"><?php echo $promo; ?></a></small></li>
 					<?php endforeach; ?>
 					</ul>
 					<?php endif; ?>
@@ -260,11 +260,6 @@
 				?>
 				<?php endforeach; ?>
 			<?php endif; ?>
-			<tr>
-				<td colspan="<?php echo ($colspan)+1; ?>">
-				<input type="text" name="search" value="" id="search" placeholder="Search for product or set line item description..." size="40" />
-				</td>
-			</tr>
 		</table>
 		</form>
 

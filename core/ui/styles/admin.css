@@ -569,7 +569,7 @@ p.controls { position:absolute;top:0;right:0;margin:0; }
 
 #order .meta-boxes address { white-space: normal; width: inherit; }
 #order-contact a { text-decoration: none; }
-#order-contact .fn { font-weight: bold; font-size: 1.125em; }
+#order-contact .fn { font-weight: bold; font-size: 1.25em; line-height: 2.5em; }
 #order-contact .org { white-space: nowrap; }
 #order-contact .nomarketing { background-position: -8px -164px; }
 
