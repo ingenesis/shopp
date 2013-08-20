@@ -725,7 +725,7 @@ class OrderAmountShippingTax extends OrderAmountDebit {
 		$firstrate = reset($taxes);
 		$this->rate = $firstrate->rate;
 		$this->id = 'shipping';
-		$this->amount = $Tax->calculate($taxes, $taxable);
+		$this->amount = ShoppTax::calculate($taxes, $taxable);
 		$this->label = __('Shipping Tax','Shopp');
 	}
 

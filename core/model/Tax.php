@@ -73,7 +73,7 @@ class ShoppTax {
 				'rules' => array(),
 				'localrate' => 0,
 				'compound' => false,
-				'label' => __('Tax','Shopp')
+				'label' => Shopp::__('Tax')
 
 			);
 			$setting = array_merge($defaults,$setting);
@@ -251,7 +251,7 @@ class ShoppTax {
 	 *
 	 * @return void
 	 **/
-	public function calculate ( array &$rates, float $taxable ) {
+	public static function calculate ( array &$rates, float $taxable ) {
 
 		$compound = 0;
 		$total = 0;
