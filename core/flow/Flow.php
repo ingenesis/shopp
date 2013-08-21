@@ -87,7 +87,7 @@ class ShoppFlow {
 	 * @return void
 	 **/
 	public function handler ( $controller = null ) {
-		if ( is_null($controller) && isset($_GET['page']) )
+		if ( defined('WP_ADMIN') && is_null($controller) && isset($_GET['page']) )
 			$controller = $this->Admin->controller($_GET['page']);
 
 		if ( ! $controller ) return false;
