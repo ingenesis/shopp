@@ -414,7 +414,7 @@ class ShoppAdminCategorize extends AdminController {
 		}
 
 		if (empty($_POST['meta']['options'])
-			|| (count($_POST['meta']['options']['v']) == 1 && !isset($_POST['meta']['options']['v'][1]['options'])) {
+			|| (count($_POST['meta']['options']['v']) == 1 && !isset($_POST['meta']['options']['v'][1]['options']) ) ) {
 				$_POST['options'] = $Category->options = array();
 				$_POST['prices'] = $Category->prices = array();
 		}
