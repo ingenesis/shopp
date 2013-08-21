@@ -24,27 +24,41 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 class ShoppDiscounts extends ListFramework {
 
+	private $removed = array(); // List of removed discounts
 	private $codes = array();	// List of applied codes
 	private $request = false;	// Current code request
 
+	/**
+	 * Get or set the current request
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param string $request The request string to set
+	 * @return string The current request
+	 **/
 	public function request ( string $request = null ) {
 
-		$this->promocode();
-
-		// Override the request
-		if ( ! is_null($request) ) $this->request = $request;
-
+		if ( isset($request) ) $this->request = $request;
 		return $this->request;
 
 	}
 
-	public function promocode () {
+	/**
+	 * Handle parsing and routing discount code related requests
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return void
+	 **/
+	public function requests () {
 
 		if ( isset($_REQUEST['promocode']) && ! empty($_REQUEST['promocode']) )
-			$this->request = trim($_REQUEST['promocode']);
+			$this->request( trim($_REQUEST['promocode']) );
 
 		if ( isset($_REQUEST['removecode']) && ! empty($_REQUEST['removecode']) )
-			$this->removecode(trim($_REQUEST['removecode']));
+			$this->undiscount(trim($_REQUEST['removecode']));
 
 	}
 
@@ -58,15 +72,29 @@ class ShoppDiscounts extends ListFramework {
 	 **/
 	public function amount () {
 
+		do_action('shopp_calculate_discounts');
+
 		$this->match();
 
-		do_action('shopp_reset_item_discounts');
-
+		$deferred = array();
 		$discounts = array();
 		foreach ( $this as $Discount ) {
+
+			if ( ShoppOrderDiscount::ORDER == $Discount->target() && ShoppOrderDiscount::PERCENT_OFF == $Discount->type() ) {
+				$deferred[] = $Discount;
+				continue;
+			}
+
 			$Discount->calculate();
 			$discounts[] = $Discount->amount();
 		}
+
+		foreach ( $deferred as $Discount ) {
+			$amount = array_sum($discounts);
+			$Discount->calculate($amount);
+			$discounts[] = $Discount->amount();
+		}
+
 		$amount = array_sum($discounts);
 
 		$Cart = ShoppOrder()->Cart->Totals;
@@ -100,15 +128,17 @@ class ShoppDiscounts extends ListFramework {
 		foreach ( $Promotions as $Promo ) {
 			$apply = false;
 
-			// If the applied promos max out the limit, matching promos
-			if ( $this->promosmaxed($Promo) ) break;
+			if ( $this->removed($Promo) ) break;
+
+			// Cancel matching if max number of discounts reached
+			if ( $this->maxed($Promo) ) break;
 
 			$matches = 0;
 			$total = 0;
 
 			// Match the promo rules against the cart properties
 			foreach ($Promo->rules as $index => $rule) {
-				if ( $index === 'item' ) continue;
+				if ( 'item' === $index ) continue;
 
 				$total++; // Count the total 'non-item' rules
 
@@ -126,19 +156,18 @@ class ShoppDiscounts extends ListFramework {
 			// The matches tally must equal to total 'non-item' rules in order to apply
 			if ( 'all' == $Promo->search && $matches == $total ) $apply = true;
 
-			if ( $apply ) $this->apply($Promo);
+			if ( apply_filters('shopp_apply_discount', $apply, $Promo) ) $this->apply($Promo); // Add the Promo as a new discount
 			else $this->reset($Promo);
 
 		} // End promos loop
 
 		// Check for failed promo codes
-		if ( empty($this->request) ) return;
-		if ( $this->codeapplied( $this->request ) ) return;
+
+		if ( empty($this->request) || $this->codeapplied( $this->request ) ) return;
 		else {
-			shopp_add_error( sprintf( __('%s is not a valid code.', 'Shopp'), $this->request ) );
+			shopp_add_error( Shopp::__('"%s" is not a valid code.', $this->request) );
 			$this->request = false;
 		}
-
 	}
 
 	/**
@@ -159,7 +188,7 @@ class ShoppDiscounts extends ListFramework {
 		// Match line item discount targets
 		if ( isset($Promo->rules['item']) ) {
 			$this->items($Promo, $Discount);
-		} else $Promo->applied = $discount;
+		} //else $Promo->applied = $Discount;
 
 		$this->applycode($Promo);
 
@@ -232,18 +261,52 @@ class ShoppDiscounts extends ListFramework {
 			if ( ! $this->codeapplied( $rule['value'] ) )
 				$this->codes[ strtolower($rule['value']) ] = array();
 
-			$this->codes[ strtolower($rule['value']) ][] = $Promo->id;
+			$this->codes[ strtolower($rule['value']) ] = $Promo->id;
 
 		}
 
 	}
 
-	private function removecode ( integer $id ) {
+	/**
+	 * Remove an applied discount
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param integer $id The discount ID to remove
+	 * @return void
+	 **/
+	private function undiscount ( integer $id ) {
 
 		if ( ! $this->exists($id) ) return false;
 
+		$Discount = $this->get($id);
+
+		$_REQUEST['cart'] = true;
+
 		$this->remove($id);
 
+		if ( isset($this->codes[ $Discount->code() ]) ) {
+			unset($this->codes[ $Discount->code() ]);
+			return;
+		}
+
+		// If no code was found, block the discount from being auto-applied again
+		$this->removed[ $id ] = true;
+
+	}
+
+	/**
+	 * Determines if a give ShoppOrderPromo has been previously removed
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param ShoppOrderPromo $Promo The promo object to check
+	 * @return boolean True if removed, false otherwise
+	 **/
+	private function removed ( ShoppOrderPromo $Promo ) {
+		return isset($this->removed[ $Promo->id ]);
 	}
 
 	/**
@@ -270,7 +333,7 @@ class ShoppDiscounts extends ListFramework {
 	 * @param ShoppOrderPromo $Promo A promotion object
 	 * @return boolean True if the max was reached, false otherwise
 	 **/
-	private function promosmaxed ( ShoppOrderPromo $Promo ) {
+	private function maxed ( ShoppOrderPromo $Promo ) {
 
 		$promolimit = (int)shopp_setting('promo_limit');
 
@@ -278,7 +341,7 @@ class ShoppDiscounts extends ListFramework {
 		// not already applied as a cart discount, cancel the loop
 		if ( $promolimit && ( $this->count() + 1 ) > $promolimit && ! $this->exists($Promo->id) ) {
 			if ( ! empty($this->request) )
-				shopp_add_error( __('No additional codes can be applied.', 'Shopp') );
+				shopp_add_error(Shopp::__('No additional codes can be applied.'));
 			return true;
 		}
 
@@ -296,8 +359,8 @@ class ShoppDiscounts extends ListFramework {
 	 *
 	 * @return integer
 	 **/
-	public function sortapplied ($a,$b) {
-		return $this->exists($a->id) && ! $this->exists($b->id) ? -1 : 1;
+	public function sortapplied ( $a, $b ) {
+		return $this->exists($a) && ! $this->exists($b) ? -1 : 1;
 	}
 
 	/**
@@ -322,7 +385,7 @@ class ShoppDiscounts extends ListFramework {
 	 * @param string $code The code to check
 	 * @return boolean True if the code is applied, false otherwise
 	 **/
-	public function codeapplied( string $code ) {
+	public function codeapplied ( string $code ) {
 		return isset( $this->codes[ strtolower($code) ]);
 	}
 
@@ -332,6 +395,19 @@ class ShoppDiscounts extends ListFramework {
 		$this->request = false;
 		ShoppOrder()->Shiprates->free(false);
 	}
+
+	/**
+	 * Preserves only the necessary properties when storing the object
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return void
+	 **/
+	public function __sleep () {
+		return array('codes', 'removed', '_added', '_checks', '_list');
+	}
+
 
 }
 
@@ -445,18 +521,17 @@ class ShoppDiscountRule {
 	 * @return boolean True if match, false for no match
 	 **/
 	private function code () {
+		$value = strtolower($this->value);
+		// Match previously applied codes
 		$Discounts = ShoppOrder()->Discounts;
+		if ( $Discounts->codeapplied($value) ) return true;
+
+		// Match new codes
 		$request = strtolower($Discounts->request());
 
 		// No code provided, nothing will match
 		if ( empty($request) ) return false;
 
-		$this->value = strtolower($this->value);
-
-		// Match previously applied codes
-		if ( $Discounts->codeapplied($this->value) ) return true;
-
-		// Match new codes
 		return $this->evaluate($request);
 	}
 
@@ -726,7 +801,7 @@ class ShoppOrderDiscount {
 		return (float)$this->amount;
 	}
 
-	public function calculate () {
+	public function calculate ( $discounts = 0 ) {
 		$Items = ShoppOrder()->Cart;
 		$Cart = ShoppOrder()->Cart->Totals;
 
@@ -734,7 +809,9 @@ class ShoppOrderDiscount {
 			case self::SHIP_FREE:	if ( self::ORDER == $this->target ) $this->shipfree(true); //$this->amount = $Cart->total('shipping'); break;
 			case self::AMOUNT_OFF:	$this->amount = $this->discount(); break;
 			case self::PERCENT_OFF:
-				$subtotal = $Cart->total('order') - $Cart->total('discount');
+				$subtotal = $Cart->total('order');
+				if ( $discounts > 0 ) $subtotal -= $discounts;
+				// $subtotal = $Cart->total('order') - $Cart->total('discount');
 				$this->amount = $subtotal * ($this->discount() / 100);
 				break;
 		}
@@ -1014,7 +1091,7 @@ class ShoppPromotions extends ListFramework {
 	 * @param boolean $collate Flag to collect/group records with matching index columns
 	 * @return void
 	 **/
-	public function loader ( &$records, &$record, $DatabaseObject = false, $index = 'id', $collate = false ) {
+	public static function loader ( &$records, &$record, $DatabaseObject = false, $index = 'id', $collate = false ) {
 		$index = isset($record->$index) ? $record->$index : '!NO_INDEX!';
 
 		$Object = new ShoppOrderPromo($record);
@@ -1046,6 +1123,11 @@ class ShoppOrderPromo {
 		$properties = get_object_vars($record);
 		foreach ( $properties as $name => $value )
 			$this->$name = maybe_unserialize($value);
+
+		foreach( $this->rules as $rule ) // Capture code
+			if ( isset($rule['property']) && 'Promo code' == $rule['property'] )
+				$this->code = $rule['value'];
+
 	}
 
 }
