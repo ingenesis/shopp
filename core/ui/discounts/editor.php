@@ -6,8 +6,9 @@
 		<?php do_action('shopp_admin_notices'); ?>
 
 		<div id="ajax-response"></div>
-		<form name="promotion" id="promotion" action="<?php echo add_query_arg('page','shopp-promotions',admin_url('admin.php')); ?>" method="post">
-			<?php wp_nonce_field('shopp-save-promotion'); ?>
+
+		<form name="promotion" id="promotion" action="<?php echo esc_url($this->url); ?>" method="post">
+			<?php wp_nonce_field('shopp-save-discount'); ?>
 
 			<div class="hidden"><input type="hidden" name="id" value="<?php echo $Promotion->id; ?>" /></div>
 

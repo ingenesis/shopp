@@ -25,17 +25,23 @@ class ShoppAdminDiscounter extends AdminController {
 	 **/
 	public function __construct () {
 		parent::__construct();
+
 		$this->save();
 
-		if (!empty($_GET['id'])) {
+		if ( ! empty($_GET['id']) ) {
+
 			wp_enqueue_script('postbox');
 			shopp_enqueue_script('colorbox');
 			shopp_enqueue_script('calendar');
 			shopp_enqueue_script('suggest');
+
 			do_action('shopp_promo_editor_scripts');
-			add_action('admin_head',array(&$this,'layout'));
-		} else add_action('admin_print_scripts',array(&$this,'columns'));
-		do_action('shopp_promo_admin_scripts');
+			add_action('admin_head',array($this, 'layout'));
+
+		} else add_action('admin_print_scripts', array($this, 'columns'));
+
+		do_action('shopp_promo_admin_scripts'); // @deprecated
+		do_action('shopp_admin_discount_scripts');
 
 		$defaults = array(
 			'page' => false,
@@ -48,7 +54,8 @@ class ShoppAdminDiscounter extends AdminController {
 
 		$url = add_query_arg(array_merge($_GET, array('page' => $this->page)), admin_url('admin.php'));
 		$f = array('action', 'selected', 's');
-		if ( 'shopp-promotions' == $page && ! empty($action) ) {
+
+		if ( $this->page == $page && ! empty($action) ) {
 			switch ( $action ) {
 				case 'enable': Promotion::enableset($selected); break;
 				case 'disable': Promotion::disableset($selected); break;
@@ -70,7 +77,6 @@ class ShoppAdminDiscounter extends AdminController {
 	 * @author Jonathan Davis
 	 **/
 	public function admin () {
-		$Shopp = Shopp::object();
 		if ( isset($_GET['id']) ) $this->editor();
 		else $this->promotions();
 	}
@@ -82,7 +88,6 @@ class ShoppAdminDiscounter extends AdminController {
 	 * @return void
 	 **/
 	public function promotions () {
-		$Shopp = Shopp::object();
 
 		if ( ! current_user_can('shopp_promotions') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -101,9 +106,9 @@ class ShoppAdminDiscounter extends AdminController {
 		$args = array_merge($defaults,$_GET);
 		extract($args,EXTR_SKIP);
 
-		$url = add_query_arg(array_merge($_GET,array('page'=>$this->page)),admin_url('admin.php'));
+		$url = add_query_arg(array_merge($_GET, array('page'=>$this->page)), admin_url('admin.php'));
 		$f = array('action','selected','s');
-		$url = remove_query_arg( $f, $url );
+		$url = remove_query_arg($f, $url);
 
 		$pagenum = absint( $paged );
 		$start = ($per_page * ($pagenum-1));
@@ -162,16 +167,14 @@ class ShoppAdminDiscounter extends AdminController {
 			'current' => $pagenum
 		));
 
-		// include(SHOPP_PATH.'/core/ui/promotions/promotions.php');
-
 		include $this->ui('discounts.php');
 	}
 
 
-	protected function save() {
+	protected function save () {
 		if ( empty($_POST['save']) ) return;
 
-		check_admin_referer('shopp-save-promotion');
+		check_admin_referer('shopp-save-discount');
 
 		if ( 'new' !== $_POST['id'] ) {
 			$Promotion = new Promotion($_POST['id']);
@@ -189,17 +192,17 @@ class ShoppAdminDiscounter extends AdminController {
 		$Promotion->updates($_POST);
 		$Promotion->save();
 
-		do_action_ref_array('shopp_promo_saved',array(&$Promotion));
+		do_action_ref_array('shopp_promo_saved', array(&$Promotion));
 
 		// $Promotion->reset_discounts();
-		if ($Promotion->target == "Catalog")
+		if ( 'Catalog' == $Promotion->target )
 			$Promotion->catalog();
 
 		// Set confirmation notice
-		$this->notice(__('Promotion has been updated!', 'Shopp'));
+		$this->notice(Shopp::__('Promotion has been updated!'));
 
 		// Stay in the editor
-		$url = add_query_arg(array('page'=>'shopp-promotions', 'id' => $Promotion->id), admin_url('admin.php'));
+		$url = add_query_arg('id', $Promotion->id, $this->url);
 		wp_redirect($url);
 		exit();
 	}
@@ -230,7 +233,6 @@ class ShoppAdminDiscounter extends AdminController {
 		$Shopp = Shopp::object();
 		$Admin = $Shopp->Flow->Admin;
 
-		// include SHOPP_PATH . '/core/ui/promotions/ui.php' ;
 		include $this->ui('ui.php');
 	}
 
@@ -253,8 +255,6 @@ class ShoppAdminDiscounter extends AdminController {
 
 		$this->disabled_alert($Promotion);
 
-
-		// include SHOPP_PATH . '/core/ui/promotions/editor.php';
 		include $this->ui('editor.php');
 	}
 
@@ -265,9 +265,9 @@ class ShoppAdminDiscounter extends AdminController {
 	 *
 	 *  add_filter('shopp_hide_disabled_promo_warning', function() { return true; } ); // 5.3 style
 	 */
-	protected function disabled_alert(Promotion $Promotion) {
+	protected function disabled_alert ( Promotion $Promotion ) {
 		if ( 'enabled' === $Promotion->status || apply_filters('shopp_hide_disabled_promo_warning', false) ) return;
-		$this->notice(__('This promotion is not currently enabled.', 'Shopp'), 'notice', 20);
+		$this->notice(Shopp::__('This promotion is not currently enabled.'), 'notice', 20);
 	}
 
 	public static function types () {
@@ -326,8 +326,8 @@ class ShoppAdminDiscounter extends AdminController {
 			'Customer type' => Shopp::__('Customer type'),
 			'Ship-to country' => Shopp::__('Ship-to country'),
 
-			'Promo code' => Shopp::__('Promo code'),
-			'Promo use count' => Shopp::__('Promo use count'),
+			'Promo code' => Shopp::__('Discount code'),
+			'Promo use count' => Shopp::__('Discount use count'),
 
 			'Is equal to' => Shopp::__('Is equal to'),
 			'Is not equal to' => Shopp::__('Is not equal to'),
