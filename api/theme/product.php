@@ -738,45 +738,54 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			'name' => false,
 			'value' => ''
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 
 		// Ensure we have a title attribute (catalog.js depends on this)
-		$options['title'] = ($options['name'] !== false)
-			? $options['name']
-			: __('product input field', 'Shopp');
+		$options['title'] = ($options['name'] !== false) ? $options['name'] : Shopp::__('product input field');
 
-		extract($options,EXTR_SKIP);
+		extract($options, EXTR_SKIP);
 
-		$select_attrs = array('title','required','class','disabled','required','size','tabindex','accesskey');
-		$submit_attrs = array('title','class','value','disabled','tabindex','accesskey');
+		$select_attrs = array('title', 'required', 'class', 'disabled', 'required', 'size', 'tabindex', 'accesskey');
+		$submit_attrs = array('title', 'class', 'value', 'disabled', 'tabindex', 'accesskey');
 
-		if (empty($type) || (!in_array($type,array('menu','textarea')) && !Shopp::valid_input($options['type'])) ) $type = $defaults['type'];
+		if ( empty($type) || ( ! in_array($type,array('menu', 'textarea') ) && ! Shopp::valid_input($options['type'])) )
+			$type = $defaults['type'];
 
-
-		if (empty($name)) return '';
+		if ( empty($name) ) return '';
 		$slug = sanitize_title_with_dashes($name);
 		$id = "data-$slug-{$O->id}";
 
-		if ('menu' == $type) {
-			$result = '<select name="products['.$O->id.'][data]['.$name.']" id="'.$id.'"'.inputattrs($options,$select_attrs).'>';
-			if (isset($options['options']))
-				$menuoptions = preg_split('/,(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/',$options['options']);
-			if (is_array($menuoptions)) {
-				foreach($menuoptions as $option) {
+		if ( 'menu' == $type ) {
+			$result = '<select name="products[' . (int)$O->id . '][data][' . esc_attr($name) . ']" id="' . esc_attr($id) . '"' . inputattrs($options, $select_attrs) . '>';
+			if ( isset($options['options']) )
+				$menuoptions = preg_split('/,(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/', $options['options']);
+			if ( is_array($menuoptions) ) {
+				foreach( $menuoptions as $option ) {
 					$selected = "";
-					$option = trim($option,'"');
-					if (isset($options['default']) && $options['default'] == $option)
+					$option = trim($option, '"');
+					if ( isset($options['default']) && $options['default'] == $option )
 						$selected = ' selected="selected"';
-					$result .= '<option value="'.$option.'"'.$selected.'>'.$option.'</option>';
+					$result .= '<option value="' . esc_attr($option) . '"' . $selected . '>' . esc_html($option) . '</option>';
 				}
 			}
 			$result .= '</select>';
-		} elseif ('textarea' == $type) {
-			if (isset($options['cols'])) $cols = ' cols="'.$options['cols'].'"';
-			if (isset($options['rows'])) $rows = ' rows="'.$options['rows'].'"';
-			$result .= '<textarea name="products['.$O->id.'][data]['.$name.']" id="'.$id.'"'.$cols.$rows.inputattrs($options).'>'.esc_html($value).'</textarea>';
+		} elseif ( 'textarea' == $type ) {
+
+			if ( isset($options['cols']) ) $cols = ' cols="' . (int)$options['cols'] . '"';
+			if ( isset($options['rows']) ) $rows = ' rows="' . (int)$options['rows'] . '"';
+
+			$result .= '<textarea name="products[' . (int)$O->id . '][data][' . esc_attr($name) . ']" id="'.$id.'"'.$cols.$rows.inputattrs($options).'>'.esc_html($value).'</textarea>';
+
 		} else {
-			$result = '<input type="'.$type.'" name="products['.$O->id.'][data]['.$name.']" id="'.$id.'"'.inputattrs($options).' />';
+
+			if ( in_array($type, array('checkbox', 'radio')) && false !== strpos($name, '[]') ) {
+				$nametext = substr($name, 0, -2);
+				$options['title'] = $nametext;
+				$name = '[' . esc_attr($nametext) . '][]';
+			} else $name = '[' . esc_attr($name) . ']';
+
+			$result = '<input type="' . esc_attr($type) . '" name="products[' . (int)$O->id . '][data]' . $name . '" id="' . esc_attr($id) . '"' . inputattrs($options) . ' />';
+
 		}
 
 		return $result;
