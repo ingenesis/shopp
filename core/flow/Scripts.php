@@ -202,7 +202,7 @@ function shopp_default_scripts (&$scripts) {
 	$scripts->default_dirs = array('/ui/behaviors/','/ui/products');
 
 	// Short checksum for cache control that changes with Shopp versions while masking it somewhat
-	$version = dechex(crc16(SECURE_AUTH_SALT . SHOPP_VERSION));
+	$version = dechex(crc16(SECURE_AUTH_SALT . Shopp::VERSION));
 
 	$scripts->add('shopp', '/ui/behaviors/shopp.js', array('jquery'), $version);
 	$scripts->add_data('shopp', 'group', 1);

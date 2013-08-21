@@ -95,7 +95,7 @@ class ShoppAdmin extends FlowController {
 
 		$this->pages();
 
-		wp_enqueue_style('shopp.menu',SHOPP_ADMIN_URI.'/styles/menu.css',array(),SHOPP_VERSION,'screen');
+		wp_enqueue_style('shopp.menu',SHOPP_ADMIN_URI.'/styles/menu.css',array(),Shopp::VERSION,'screen');
 
 		// Set the currently requested page and menu
 		if ( isset($_GET['page']) && false !== strpos($_GET['page'], basename(SHOPP_PATH)) ) $page = $_GET['page'];
@@ -436,7 +436,7 @@ class ShoppAdmin extends FlowController {
 		}
 
 		$uri = SHOPP_ADMIN_URI . '/styles';
-		$version = dechex(crc16(SECURE_AUTH_SALT . SHOPP_VERSION));
+		$version = dechex(crc16(SECURE_AUTH_SALT . Shopp::VERSION));
 		wp_enqueue_style('shopp.colorbox', "$uri/colorbox.css", array(), $version, 'screen');
 		wp_enqueue_style('shopp.admin', "$uri/admin.css", array(), $version, 'screen');
 		wp_enqueue_style('shopp.icons', "$uri/icons.css", array(), $version, 'screen');
@@ -769,7 +769,7 @@ class ShoppAdminPage {
 class ShoppUI {
 
 	public static function cacheversion () {
-		return dechex(crc16(SECURE_AUTH_SALT . SHOPP_VERSION));
+		return dechex(crc16(SECURE_AUTH_SALT . Shopp::VERSION));
 	}
 
 	public static function button ( string $button, string $name, array $options = array() ) {

@@ -73,7 +73,7 @@ class ShoppSupport {
 		 * none of it is linked to personally identifiable information.
 		 **/
 		$data = array(
-			'core' => SHOPP_VERSION,
+			'core' => Shopp::VERSION,
 			'addons' => join("-", $addons),
 			'site' => get_bloginfo('url'),
 			'wp' => get_bloginfo('version').(is_multisite()?' (multisite)':''),
@@ -169,7 +169,7 @@ class ShoppSupport {
 
 		if ( ! empty($core)	// Core update available
 				&& isset($core->new_version)	// New version info available
-				&& version_compare($core->new_version, SHOPP_VERSION, '>') // New version is greater than current version
+				&& version_compare($core->new_version, Shopp::VERSION, '>') // New version is greater than current version
 			) {
 			$details_url = admin_url('plugin-install.php?tab=plugin-information&plugin=' . $plugin_slug . '&core=' . $core->new_version . '&TB_iframe=true&width=600&height=800');
 			$update_url = wp_nonce_url('update.php?action=shopp&plugin=' . SHOPP_PLUGINFILE, 'upgrade-plugin_shopp');

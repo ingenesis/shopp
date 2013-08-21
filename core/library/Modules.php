@@ -264,9 +264,9 @@ class ModuleFile {
 				basename($this->file)),
 				'addon_missing_meta',SHOPP_ADDON_ERR);
 
-		if (!defined('SHOPP_VERSION')) return true;
+		if (!defined('Shopp::VERSION')) return true;
 		$coreversion = '/^([\d\.])\b.*?$/';
-		$shopp = preg_replace($coreversion,"$1",SHOPP_VERSION);
+		$shopp = preg_replace($coreversion,"$1",Shopp::VERSION);
 		$since = preg_replace($coreversion,"$1",$this->since);
 		if (version_compare($shopp,$since) == -1)
 			return new ShoppError(sprintf(

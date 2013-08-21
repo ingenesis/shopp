@@ -10,7 +10,7 @@ class ShoppAdminWelcome extends AdminController {
 		parent::__construct();
 
 		$uri = SHOPP_ADMIN_URI . '/styles';
-		$version = dechex(crc16(SECURE_AUTH_SALT . SHOPP_VERSION));
+		$version = dechex(crc16(SECURE_AUTH_SALT . Shopp::VERSION));
 		wp_enqueue_style('shopp.welcome', "$uri/welcome.css", array(), $version, 'screen');
 	}
 

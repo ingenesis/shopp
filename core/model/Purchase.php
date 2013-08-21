@@ -711,7 +711,7 @@ class PurchasesExport {
 
 		header("Content-type: $this->content_type; charset=UTF-8");
 		header("Content-Disposition: attachment; filename=\"$this->sitename Purchase Log.$this->extension\"");
-		header("Content-Description: Delivered by WordPress/Shopp ".SHOPP_VERSION);
+		header("Content-Description: Delivered by WordPress/Shopp ".Shopp::VERSION);
 		header("Cache-Control: maxage=1");
 		header("Pragma: public");
 

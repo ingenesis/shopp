@@ -614,7 +614,7 @@ class DownloadAsset extends FileAsset {
 		header('Content-type: application/octet-stream');
 		header("Content-Transfer-Encoding: binary");
 		header('Content-Disposition: attachment; filename="'.$this->name.'"');
-		header('Content-Description: Delivered by WordPress/Shopp '.SHOPP_VERSION);
+		header('Content-Description: Delivered by WordPress/Shopp '.Shopp::VERSION);
 
 		ignore_user_abort(true);
 		ob_end_flush(); // Don't use the PHP output buffer
