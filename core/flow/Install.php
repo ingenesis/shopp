@@ -403,7 +403,7 @@ class ShoppInstallation extends FlowController {
 		// Pre-inits
 		$Settings->setup('active_catalog_promos', '');
 
-		$Settings->setup('version', SHOPP_VERSION);
+		$Settings->setup('version', Shopp::VERSION);
 
 		$this->images(); // Setup default image settings
 
@@ -1127,7 +1127,7 @@ class Shopp_Upgrader extends Plugin_Upgrader {
 
 		$key = ShoppSupport::key();
 		$vars = array('VERSION', 'KEY', 'URL');
-		$values = array(urlencode(SHOPP_VERSION), urlencode($key['k']), urlencode(get_bloginfo('siteurl')));
+		$values = array(urlencode(Shopp::VERSION), urlencode($key['k']), urlencode(get_bloginfo('siteurl')));
 		$package = str_replace($vars, $values, $package);
 
 		$download_file = $this->download_url($package);
