@@ -257,7 +257,6 @@ abstract class FlowController  {
  **/
 abstract class AdminController extends FlowController {
 
-
 	public $Admin = false;
 	public $url;
 	public $screen;
@@ -286,8 +285,10 @@ abstract class AdminController extends FlowController {
 		$this->page = $plugin_page;
 		$this->url = add_query_arg('page', esc_attr($_GET['page']), admin_url('admin.php'));
 
-		$screen = get_current_screen();
-		$this->screen = $screen->id;
+		if ( function_exists('get_current_screen') ) {
+			$screen = get_current_screen();
+			$this->screen = $screen->id;
+		}
 
 		$pages = explode('-', $_GET['page']);
 		$this->pagename = end($pages);
