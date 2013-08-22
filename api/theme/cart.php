@@ -63,7 +63,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		'promos' => 'discounts',
 		'promosavailable' => 'discounts_available',
 		'promodiscount' => 'discount_applied',
-		'promoname' => 'promo_name',
+		'promoname' => 'discount_name',
 		'totalpromos' => 'total_discounts',
 	);
 
@@ -117,7 +117,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		$submit_attrs = array('title','value','disabled','tabindex','accesskey','class');
 
 		// Skip if discounts are not available
-		if ( ! self::discounts_available() ) return false;
+		if ( ! self::discounts_available(false, false, $O) ) return false;
 
 		if ( ! isset($options['value']) ) $options['value'] = __('Apply Discount', 'Shopp');
 
@@ -151,7 +151,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		if ( $Discount->amount() == 0 && ! $Discount->shipfree() ) return false;
 
 		$defaults = array(
-			'label' => Shopp::esc_html__('%s Off!'),
+			'label' => __('%s Off!', 'Shopp'),
 			'before' => '',
 			'after' => '',
 			'remove' => 'on'

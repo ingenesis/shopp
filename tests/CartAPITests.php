@@ -316,27 +316,41 @@ class CartAPITests extends ShoppTestCase {
 
 	}
 
-	function test_cart_promo_name () {
+	function test_cart_discount_name () {
 		shopp_set_setting('promo_limit', 0);
 
 		$Product = shopp_product('uss-enterprise','slug');
 		shopp_add_cart_product($Product->id, 1);
 		shopp_add_cart_discount_code('3DollarsOff');
 
+		/* Test deprecated tags */
 		ob_start();
 		if ( shopp('cart','haspromos') )
 			while( shopp('cart','promos') )
 				shopp('cart','promo-name');
 		$actual = ob_get_clean();
-
 		$this->assertEquals('3 Dollars Off', $actual);
 
 		ob_start();
+		if ( shopp('cart.has-discounts') )
+			while( shopp('cart.discounts') )
+				shopp('cart.discount-name');
+		$actual = ob_get_clean();
+
+		$this->assertEquals('3 Dollars Off', $actual);
+
+		/* Test deprecated tags */
+		ob_start();
 		if (shopp('cart','haspromos'))
 			while(shopp('cart','promos'))
-				shopp('cart','promo-discount','remove=off');
-		$actual = ob_get_contents();
-		ob_end_clean();
+				shopp('cart','promo-discount', 'remove=off');
+		$actual = ob_get_clean();
+
+		ob_start();
+		if ( shopp('cart.has-discounts') )
+			while( shopp('cart.discounts') )
+				shopp('cart.discount-applied', 'remove=off');
+		$actual = ob_get_clean();
 
 		$this->assertEquals('$3.00 Off!',$actual);
 	}
@@ -438,12 +452,16 @@ class CartAPITests extends ShoppTestCase {
 
 		$actual = shopp('cart.get-discount');
 
+		// Expected value here is $3.28 not $3.35 because cart percent off discounts
+		// are always applied after all other discounts to prevent overly large
+		// discounts {@see http://bug.shopp.net/2067}
+
 		$expected = array(
 			'tag' => 'span',
 			'attributes' => array('class' => 'shopp-cart cart-discount'),
-			'content' => '$3.35'
+			'content' => '$3.28'
 		);
-		$this->assertTag($expected,$actual,$actual,true);
+		$this->assertTag($expected, $actual, $actual, true);
 		$this->assertValidMarkup($actual);
 
 	}
@@ -463,21 +481,21 @@ class CartAPITests extends ShoppTestCase {
 
 	}
 
-	function test_cart_promocode () {
-		$actual = shopp('cart.get-promo-code');
+	function test_cart_applycode () {
+		$actual = shopp('cart.get-applycode');
 
 		$expected = array(
 			'tag' => 'input',
-			'attributes' => array('type' => 'text','name' => 'promocode','id' => 'promocode')
+			'attributes' => array('type' => 'text', 'name' => 'discountcode', 'id' => 'discount-code')
 		);
 
-		$this->assertTag($expected,$actual,$actual,true);
+		$this->assertTag($expected, $actual, $actual, true);
 
 		$expected = array(
 			'tag' => 'input',
-			'attributes' => array('type' => 'submit','name' => 'update','id' => 'apply-code')
+			'attributes' => array('type' => 'submit', 'name' => 'update', 'id' => 'apply-code')
 		);
-		$this->assertTag($expected,$actual,$actual,true);
+		$this->assertTag($expected, $actual, $actual, true);
 
 		$this->assertValidMarkup($actual);
 	}
