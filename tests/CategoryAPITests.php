@@ -64,7 +64,7 @@ class CategoryAPITests extends ShoppTestCase {
 
 	function test_category_description () {
 		$actual = shopp('category.get-description');
-		$this->assertEquals('A large multi-purpose starship.',$actual);
+		$this->assertEquals('<div class="category-description">A large multi-purpose starship.</div>', $actual);
 	}
 
 	function test_category_products () {
