@@ -457,15 +457,34 @@ class CheckoutAPITests extends ShoppTestCase {
 		$actual = shopp('checkout.get-billing-cardexpires-mm');
 
 		$expected = array(
+			'tag' => 'select',
+			'attributes' => array('name' => 'billing[cardexpires-mm]','id' => 'billing-cardexpires-mm')
+		);
+		$this->assertTag($expected,$actual,"++ $actual",true);
+		$this->assertValidMarkup($actual);
+
+		$actual = shopp('checkout.get-billing-cardexpires-mm','type=text');
+
+		$expected = array(
 			'tag' => 'input',
 			'attributes' => array('type' => 'text','name' => 'billing[cardexpires-mm]','id' => 'billing-cardexpires-mm')
 		);
 		$this->assertTag($expected,$actual,"++ $actual",true);
 		$this->assertValidMarkup($actual);
+
 	}
 
 	function test_checkout_billing_cardexpires_yy () {
 		$actual = shopp('checkout.get-billing-cardexpires-yy');
+
+		$expected = array(
+			'tag' => 'select',
+			'attributes' => array('name' => 'billing[cardexpires-yy]','id' => 'billing-cardexpires-yy')
+		);
+		$this->assertTag($expected,$actual,"++ $actual",true);
+		$this->assertValidMarkup($actual);
+
+		$actual = shopp('checkout.get-billing-cardexpires-yy','type=text');
 
 		$expected = array(
 			'tag' => 'input',
