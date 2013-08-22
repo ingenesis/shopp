@@ -579,6 +579,24 @@ class ShoppCart extends ListFramework {
 	}
 
 	/**
+	 * Get a Cart register total amount
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param string $register The name of the register to get an amount for
+	 * @return float The total amount for the register
+	 **/
+	public function total ( string $register ) {
+
+		// Setup totals counter
+		if ( false === $this->Totals ) $this->Totals = new OrderTotals();
+		$Totals = $this->Totals;
+
+		return $Totals->total($register);
+	}
+
+	/**
 	 * Empties the cart
 	 *
 	 * @author Jonathan Davis
