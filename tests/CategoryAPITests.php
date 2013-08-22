@@ -146,7 +146,7 @@ class CategoryAPITests extends ShoppTestCase {
 		$actual = ob_get_contents();
 		ob_end_clean();
 
-		$this->assertXmlStringEqualsXmlString('<img src="http://shopptest/store/images/691/idIconGaming.gif?96,96,3901571377" title="Games" alt="Controller Icon" width="96" height="95"/>',$actual,$actual);
+		$this->assertXmlStringEqualsXmlString('<img src="http://shopptest/shop/images/691/idIconGaming.gif?96,96,3901571377" title="Games" alt="Controller Icon" width="96" height="95"/>',$actual,$actual);
 		$this->assertValidMarkup($actual);
 	}
 

@@ -140,7 +140,7 @@ class DefaultURLTests extends ShoppTestCase {
 
 	function test_catalog_url () {
 		$actual = shopp('catalog.get-url');
-		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_page=store', $actual);
+		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_page=shop', $actual);
 	}
 
 	function test_catalogproducts_url () {
