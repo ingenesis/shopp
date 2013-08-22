@@ -251,7 +251,16 @@ function shopp_empty_cart () {
 }
 
 /**
- * Apply a promocode to the cart
+ * @deprecated Use shopp_add_cart_discount_code
+ **/
+function shopp_add_cart_promocode ($code = false) {
+	shopp_debug(__FUNCTION__ . " deprecated: Use shopp_add_cart_discount_code() instead.");
+	return shopp_add_cart_discount_code($code);
+}
+
+
+/**
+ * Apply a discount code to the cart
  *
  * @author Jonathan Davis
  * @since 1.2
@@ -259,8 +268,8 @@ function shopp_empty_cart () {
  * @param string $code The promotion code to apply
  * @return void
  **/
-function shopp_add_cart_promocode ($code = false) {
-	if ( false === $code || empty($code) ) {
+function shopp_add_cart_discount_code( string $code = null ) {
+	if ( null === $code || empty($code) ) {
 		shopp_debug(__FUNCTION__ . " failed: Missing code parameter.");
 	}
 
@@ -268,6 +277,7 @@ function shopp_add_cart_promocode ($code = false) {
 	$Discounts = ShoppOrder()->Discounts;
 	$Discounts->request($code);
 	$Cart->totals();
+
 
 }
 
