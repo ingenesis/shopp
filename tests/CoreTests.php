@@ -284,11 +284,11 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue(Shopp::filter_dotfiles('image.png'));
 	}
 
-	public function test_filefind() {
+	public function test_filefind () {
 		$files = array();
 
 		// There is at least one of these
-		$result = Shopp::filefind('ball.png', ABSPATH);
+		$result = Shopp::filefind('ball.png', SHOPP_PATH);
 		$this->assertTrue($result);
 
 		// We can expect at least 5 of these (WP 3.5 + Shopp 1.3)
