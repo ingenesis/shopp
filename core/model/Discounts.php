@@ -143,7 +143,6 @@ class ShoppDiscounts extends ListFramework {
 				$total++; // Count the total 'non-item' rules
 
 				$Rule = new ShoppDiscountRule($rule, $Promo);
-
 				if ( $match = $Rule->match() ) {
 					if ( 'any' == $Promo->search ) {
 						$apply = true; // Stop matching rules once **any** of them apply
@@ -182,7 +181,6 @@ class ShoppDiscounts extends ListFramework {
 	 * @return void
 	 **/
 	private function apply ( ShoppOrderPromo $Promo ) {
-
 		$Discount = new ShoppOrderDiscount($Promo);
 
 		// Match line item discount targets
@@ -521,10 +519,10 @@ class ShoppDiscountRule {
 	 * @return boolean True if match, false for no match
 	 **/
 	private function code () {
-		$value = strtolower($this->value);
+		$this->value = strtolower($this->value);
 		// Match previously applied codes
 		$Discounts = ShoppOrder()->Discounts;
-		if ( $Discounts->codeapplied($value) ) return true;
+		if ( $Discounts->codeapplied($this->value) ) return true;
 
 		// Match new codes
 		$request = strtolower($Discounts->request());

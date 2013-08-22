@@ -141,7 +141,7 @@ class CartAPITests extends ShoppTestCase {
 				'discount' => '2.0',
 				'search' => 'any',
 				'rules' => array(
-					1 => array(
+					0 => array(
 						'property' => 'Promo code',
 						'logic' => 'Is equal to',
 						'value' => '2percent'
@@ -157,7 +157,7 @@ class CartAPITests extends ShoppTestCase {
 				'discount' => '3.0',
 				'search' => 'any',
 				'rules' => array(
-					1 => array(
+					0 => array(
 						'property' => 'Promo code',
 						'logic' => 'Is equal to',
 						'value' => '3DollarsOff'
@@ -181,6 +181,7 @@ class CartAPITests extends ShoppTestCase {
 	function setUp () {
 		parent::setUp();
 		self::resetTests();
+		ShoppOrder()->Promotions->load();
 	}
 
 	function test_cart_url () {
@@ -286,15 +287,15 @@ class CartAPITests extends ShoppTestCase {
 		$Product = shopp_product('uss-enterprise','slug');
 		shopp_add_cart_product($Product->id, 1);
 
-		$this->assertFalse(shopp('cart','haspromos'));
+		$this->assertFalse(shopp('cart.haspromos'));
 
 		$_REQUEST['promocode'] = '2percent';
 
-		$Discounts->request();
+		$Discounts->requests();
 		$Cart->totals();
 		unset($_REQUEST['promocode']);
 
-		$this->assertTrue(shopp('cart','haspromos'));
+		$this->assertTrue(shopp('cart.haspromos'));
 	}
 
 	function test_cart_totalpromos () {
@@ -316,11 +317,11 @@ class CartAPITests extends ShoppTestCase {
 	}
 
 	function test_cart_promo_name () {
-		shopp_set_setting('promo_limit',0);
+		shopp_set_setting('promo_limit', 0);
 
 		$Product = shopp_product('uss-enterprise','slug');
-		shopp_add_cart_product($Product->id,1);
-		shopp_add_cart_promocode('3DollarsOff');
+		shopp_add_cart_product($Product->id, 1);
+		shopp_add_cart_discount_code('3DollarsOff');
 
 		ob_start();
 		if ( shopp('cart','haspromos') )
@@ -333,7 +334,7 @@ class CartAPITests extends ShoppTestCase {
 		ob_start();
 		if (shopp('cart','haspromos'))
 			while(shopp('cart','promos'))
-				shopp('cart','promo-discount','remove=false');
+				shopp('cart','promo-discount','remove=off');
 		$actual = ob_get_contents();
 		ob_end_clean();
 
@@ -410,7 +411,7 @@ class CartAPITests extends ShoppTestCase {
 		$Product = shopp_product('uss-enterprise','slug');
 		shopp_add_cart_product($Product->id,1);
 
-		shopp_add_cart_promocode('2percent');
+		shopp_add_cart_discount_code('2percent');
 
 		$this->assertTrue(shopp('cart','hasdiscount'));
 	}
