@@ -214,7 +214,7 @@ class ShoppFlow {
 	 * @author Jonathan Davis
 	 **/
 	public static function welcome () {
-		return shopp_setting_enabled('display_welcome') && empty($_POST['setup']);
+		return defined('WP_ADMIN') && shopp_setting_enabled('display_welcome') && empty($_POST['setup']);
 	}
 
 
@@ -277,7 +277,7 @@ abstract class AdminController extends FlowController {
 	 * @return void
 	 **/
 	public function __construct () {
-
+		error_log(debug_caller());
 		$Admin = ShoppAdmin();
 		if ( ! empty($Admin) ) $this->Admin = $Admin;
 
