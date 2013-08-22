@@ -90,7 +90,6 @@ function shopp_add_cart_product ( $product = false, $quantity = 1, $variant = fa
 	return $added;
 }
 
-
 /**
  * shopp_rmv_cart_item - remove a specific item from the cart
  *
@@ -131,9 +130,11 @@ function shopp_rmv_cart_item ( $item = false ) {
  * Update the quantity of a specific product (in the cart)
  *
  * @author Hiranthi Molhoek-Herlaar, Jonathan Davis
+ * @since 1.3
  *
  * @param int $item Index of the item in Cart contents
  * @param int $quantity New quantity to update the item to, defaults to 1
+ * @return bool true for success, false on failure
  **/
 function shopp_set_cart_item_quantity ( $item = false, $quantity = 1 ) {
 	if ( false === $item ) {
@@ -144,6 +145,37 @@ function shopp_set_cart_item_quantity ( $item = false, $quantity = 1 ) {
     $Order = ShoppOrder();
     return $Order->Cart->setitem($item, $quantity);
 }
+
+/**
+ * Change the selected variant of an item in the cart
+ *
+ * @author Jonathan Davis
+ * @since 1.3
+ *
+ * @param string $item The item fingerprint index identifier
+ * @return bool true for success, false on failure
+ **/
+function shopp_set_cart_item_variant ( string $item = null, int $variant = null ) {
+
+	if ( null === $item ) {
+		shopp_debug(__FUNCTION__ . ' failed: Missing item parameter.');
+		return false;
+	}
+
+	if ( null === $variant ) {
+		shopp_debug(__FUNCTION__ . ' failed: Missing variant parameter.');
+		return false;
+	}
+
+	if ( ! $Cart->exists($item) ) {
+		shopp_debug(__FUNCTION__ . " failed: No such item $item");
+		return false;
+	}
+
+	$Item = $Cart->get($item);
+	return ShoppOrder()->Cart->change($item, $Item->product, $variant);
+}
+
 
 /**
  * shopp_cart_items - get a list of the items in the cart

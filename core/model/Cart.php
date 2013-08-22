@@ -337,7 +337,7 @@ class ShoppCart extends ListFramework {
 	 * @param int $quantity New quantity to update the item to
 	 * @return boolean
 	 **/
-	public function setitem ($item,$quantity) {
+	public function setitem ( $item, $quantity) {
 
 		if ( 0 == $this->count() ) return false;
 		if ( 0 == $quantity ) return $this->remove($item);
@@ -474,7 +474,7 @@ class ShoppCart extends ListFramework {
 		$UpdatedItem = new ShoppCartItem(new Product($product), $pricing, $category, $data, $addons);
 		$UpdatedItem->quantity($qty);
 
-		parent::update($item,$UpdatedItem);
+		parent::update($item, $UpdatedItem);
 
 		return true;
 	}
