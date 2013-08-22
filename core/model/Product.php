@@ -1110,6 +1110,7 @@ class Product extends WPShoppObject {
 
 		$metadata = array('specs','images','settings','meta');
 		foreach ($metadata as $metaset) {
+			if ( ! property_exists($this->$metaset) || ! is_array($this->$metaset) ) continue;
 			foreach ($this->$metaset as $meta) {
 				$ObjectClass = get_class($meta);
 				$Meta = new $ObjectClass();
