@@ -298,8 +298,8 @@ function shopp_update_product ( $id, $data = array() ) {
  * @return Product The duplicated product object, false on failure
  **/
 function shopp_duplicate_product ( $product = false, $load_by = 'id' ) {
-	if ( ! shopp_product($id) ) {
-		shopp_debug(__FUNCTION__ . " failed: invalid product ID specified.");
+	if ( false === $product ) {
+		shopp_debug(__FUNCTION__ . " failed: Product id required.");
 		return false;
 	}
 
@@ -314,7 +314,8 @@ function shopp_duplicate_product ( $product = false, $load_by = 'id' ) {
 
 	if ( $Product->id == $original ) {
 		shopp_debug(__FUNCTION__ . " failed: Unable to duplicate product $product.");
-		return false;	}
+		return false;
+	}
 
 	return $Product;
 }

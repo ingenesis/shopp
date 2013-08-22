@@ -364,7 +364,7 @@ class ProductDevAPITests extends ShoppTestCase {
 
 		$this->AssertNotEquals($Product->id, $Duplicate->id);
 
-		$this->AssertEquals($Product->name, $Duplicate->name);
+		$this->AssertEquals("$Product->name copy", $Duplicate->name);
 
 		$Price = reset($Duplicate->prices);
 
