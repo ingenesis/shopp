@@ -229,7 +229,7 @@ function categories () {
 
 		// Load category variation option templates
 		$.getJSON(opttemp_url+'&action=shopp_options_template&category='+id,function (t) {
-			if ( ! (t && (t.options && t.prices) && (t.options.length > 0 || t.prices.length > 0))) return true;
+			if ( ! (t && (t.options && t.prices) && ( Object.keys(t.options).length > 0 || Object.keys(t.prices).length > 0 ))) return true;
 
 			var variant_setting = $('#variations-setting'),
 				options = !t.options.v?t.options:t.options.v,
