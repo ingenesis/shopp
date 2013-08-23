@@ -10,8 +10,9 @@
  * @since 1.2
  * @subpackage PayPalStandard
  *
- * $Id$
  **/
+
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class PayPalStandard extends GatewayFramework implements GatewayModule {
 

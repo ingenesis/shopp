@@ -54,9 +54,9 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 
 	);
 
-	static function _apicontext () { return 'storefront'; }
+	public static function _apicontext () { return 'storefront'; }
 
-	static function _context_name ( $name ) {
+	public static function _context_name ( $name ) {
 		switch ( $name ) {
 			case 'storefront':
 			case 'catalog':
@@ -73,7 +73,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	 * @since 1.2
 	 *
 	 **/
-	static function _setobject ($Object, $object) {
+	public static function _setobject ( $Object, $object ) {
 		if ( is_object($Object) && is_a($Object, 'ShoppCatalog') ) return $Object;
 
 		switch ( strtolower($object) ) {
@@ -86,7 +86,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return $Object; // not mine, do nothing
 	}
 
-	static function image ($result, $options, $O) {
+	public static function image ( $result, $options, $O ) {
 		// Compatibility defaults
 		$_size = 96;
 		$_width = shopp_setting('gallery_thumbnail_width');
@@ -196,7 +196,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return $imgtag;
 	}
 
-	static function breadcrumb ($result, $options, $O) {
+	public static function breadcrumb ( $result, $options, $O ) {
 		$Shopp = Shopp::object();
 
 		$defaults = array(
@@ -284,11 +284,11 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return $wrap.$trail.$endwrap;
 	}
 
-	static function business_name ($result, $options, $O) { return esc_html(shopp_setting('business_name')); }
+	public static function business_name ( $result, $options, $O ) { return esc_html(shopp_setting('business_name')); }
 
-	static function business_address ($result, $options, $O) { return esc_html(shopp_setting('business_address')); }
+	public static function business_address ( $result, $options, $O ) { return esc_html(shopp_setting('business_address')); }
 
-	static function categories ($result, $options, $O) {
+	public static function categories ( $result, $options, $O ) {
 		$null = null;
 		if (!isset($O->_category_loop)) {
 			reset($O->categories);
@@ -308,7 +308,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		}
 	}
 
-	static function category ($result, $options, $O) {
+	public static function category ( $result, $options, $O ) {
 		$Shopp = Shopp::object();
 		$Storefront = ShoppStorefront();
 		$reset = null;
@@ -352,7 +352,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return $content;
 	}
 
-	static function category_list ($result, $options, $O) {
+	public static function category_list ( $result, $options, $O ) {
 		$defaults = array(
 			'title' => '',
 			'before' => '',
@@ -547,13 +547,13 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		break;
 	}
 
-	static function currency ($result, $options, $O) {
+	public static function currency ( $result, $options, $O ) {
 		$baseop = shopp_setting('base_operations');
 		$currency = $baseop['currency']['code'];
 		return $currency;
 	}
 
-	static function errors ($result, $options, $O) {
+	public static function errors ( $result, $options, $O ) {
 
 		$Errors = ShoppErrorStorefrontNotices();
 		if ( ! $Errors->exist() ) return false;
@@ -572,9 +572,9 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return $result;
 	}
 
-	static function type ($result, $options, $O) { return $O->type; }
+	public static function type ( $result, $options, $O ) { return $O->type; }
 
-	static function has_categories ($result, $options, $O) {
+	public static function has_categories ( $result, $options, $O ) {
 		$showsmart = isset($options['showsmart'])?$options['showsmart']:false;
 		if ( empty($O->categories) ) $O->load_categories(array('where'=>'true'),$showsmart);
 		else { // Make sure each entry is a valid ProductCollection to prevent fatal errors @bug #2017
@@ -591,23 +591,23 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return ( count($O->categories) > 0 );
 	}
 
-	static function is_account ($result, $options, $O) { return is_account_page(); }
+	public static function is_account ( $result, $options, $O ) { return is_account_page(); }
 
-	static function is_cart ($result, $options, $O) { return is_cart_page(); }
+	public static function is_cart ( $result, $options, $O ) { return is_cart_page(); }
 
-	static function is_catalog ($result, $options, $O) { return is_catalog_page(); }
+	public static function is_catalog ( $result, $options, $O ) { return is_catalog_page(); }
 
-	static function is_checkout ($result, $options, $O) { return is_checkout_page(); }
+	public static function is_checkout ( $result, $options, $O ) { return is_checkout_page(); }
 
-	static function is_collection ($result, $options, $O) { return is_shopp_collection(); }
+	public static function is_collection ( $result, $options, $O ) { return is_shopp_collection(); }
 
-	static function is_frontpage ($result, $options, $O) { return is_catalog_frontpage(); }
+	public static function is_frontpage ( $result, $options, $O ) { return is_catalog_frontpage(); }
 
-	static function is_product ($result, $options, $O) { return is_shopp_product(); }
+	public static function is_product ( $result, $options, $O ) { return is_shopp_product(); }
 
-	static function is_taxonomy ($result, $options, $O) { return is_shopp_taxonomy(); }
+	public static function is_taxonomy ( $result, $options, $O ) { return is_shopp_taxonomy(); }
 
-	static function orderby_list ($result, $options, $O) {
+	public static function orderby_list ( $result, $options, $O ) {
 
 		$Collection = ShoppCollection();
 		$Storefront = ShoppStorefront();
@@ -661,7 +661,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return join('',$_);
 	}
 
-	static function product ($result, $options, $O) {
+	public static function product ( $result, $options, $O ) {
 		$Shopp = Shopp::object();
 		$Storefront = ShoppStorefront();
 
@@ -712,7 +712,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return $content;
 	}
 
-	static function recent_shoppers ($result, $options, $O) {
+	public static function recent_shoppers ( $result, $options, $O ) {
 		$defaults = array(
 			'abbr' => 'firstname',
 			'city' => true,
@@ -750,7 +750,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return join('',$_);
 	}
 
-	static function search ($result, $options, $O) {
+	public static function search ( $result, $options, $O ) {
 		$Storefront = ShoppStorefront();
 		global $wp;
 
@@ -813,7 +813,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return $before.$input.$after;
 	}
 
-	static function search_form ($result, $options, $O) {
+	public static function search_form ( $result, $options, $O ) {
 		ob_start();
 		get_search_form();
 		$content = ob_get_contents();
@@ -832,7 +832,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return join('',$markup);
 	}
 
-	static function side_product ($result, $options, $O) {
+	public static function side_product ( $result, $options, $O ) {
 		$Shopp = Shopp::object();
 
 		$content = false;
@@ -900,12 +900,12 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return $content;
 	}
 
-	static function tag_products ($result, $options, $O) {
+	public static function tag_products ( $result, $options, $O ) {
 		ShoppCollection( new TagProducts($options) );
-		return self::category($result, $options, $O);
+		return self::category( $result, $options, $O );
 	}
 
-	static function tag_cloud ($result, $options, $O) {
+	public static function tag_cloud ( $result, $options, $O ) {
 		$defaults = array(
 			'orderby' => 'name',
 			'order' => false,
@@ -962,9 +962,9 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return $markup;
 	}
 
-	static function url ($result, $options, $O) { return Shopp::url(false,'catalog'); }
+	public static function url ( $result, $options, $O ) { return Shopp::url(false,'catalog'); }
 
-	static function views ($result, $options, $O) {
+	public static function views ( $result, $options, $O ) {
 		$Shopp = Shopp::object();
 		if (isset($Shopp->Category->controls)) return false;
 		$string = "";
@@ -976,7 +976,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		return $string;
 	}
 
-	static function zoom_options ($result, $options, $O) {
+	public static function zoom_options ( $result, $options, $O ) {
 		$defaults = array(				// Colorbox 1.3.15
 			'transition' => 'elastic',	// The transition type. Can be set to 'elastic', 'fade', or 'none'.
 			'speed' => 350,				// Sets the speed of the fade and elastic transitions, in milliseconds.
@@ -1045,7 +1045,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		add_storefrontjs($js, true);
 	}
 
-	static function account_menu ($result, $options, $O) {
+	public static function account_menu ( $result, $options, $O ) {
 		$Storefront = ShoppStorefront();
 		if (!isset($Storefront->_menu_looping)) {
 			reset($Storefront->menus);
@@ -1060,7 +1060,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		}
 	}
 
-	static function account_menuitem ($result, $options, $O) {
+	public static function account_menuitem ( $result, $options, $O ) {
 		$Storefront = ShoppStorefront();
 		$page = current($Storefront->menus);
 		if (array_key_exists('url',$options)) return add_query_arg($page->request,'',Shopp::url(false,'account'));

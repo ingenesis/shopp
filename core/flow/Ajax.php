@@ -30,56 +30,56 @@ class ShoppAjax {
 	 *
 	 * @return void
 	 **/
-	function __construct () {
+	public function __construct () {
 
-		if (isset($_POST['action']) && 'add-menu-item' == $_POST['action']) {
+		if ( isset($_POST['action']) && 'add-menu-item' == $_POST['action'] ) {
 			// Boot the Admin controller to handle AJAX added WP nav menu items
 			new ShoppAdmin();
 		}
 
 		// Flash uploads require unprivileged access
-		add_action('wp_ajax_nopriv_shopp_upload_image',array($this,'upload_image'));
-		add_action('wp_ajax_nopriv_shopp_upload_file',array($this,'upload_file'));
-		add_action('wp_ajax_shopp_upload_image',array($this,'upload_image'));
-		add_action('wp_ajax_shopp_upload_file',array($this,'upload_file'));
+		add_action('wp_ajax_nopriv_shopp_upload_image', array($this, 'upload_image'));
+		add_action('wp_ajax_nopriv_shopp_upload_file', array($this, 'upload_file'));
+		add_action('wp_ajax_shopp_upload_image', array($this, 'upload_image'));
+		add_action('wp_ajax_shopp_upload_file', array($this, 'upload_file'));
 
 		// Actions that can happen on front end whether or not logged in
-		add_action('wp_ajax_nopriv_shopp_ship_costs',array($this,'shipping_costs'));
-		add_action('wp_ajax_shopp_ship_costs',array($this,'shipping_costs'));
+		add_action('wp_ajax_nopriv_shopp_ship_costs', array($this, 'shipping_costs'));
+		add_action('wp_ajax_shopp_ship_costs', array($this, 'shipping_costs'));
 
 		// Below this line must have nonce protection (all admin ajax go below)
 		if (!isset($_REQUEST['_wpnonce'])) return;
 
-		add_action('wp_ajax_shopp_category_products',array($this,'category_products'));
-		add_action('wp_ajax_shopp_order_receipt',array($this,'receipt'));
-		add_action('wp_ajax_shopp_category_children',array($this,'category_children'));
-		add_action('wp_ajax_shopp_category_order',array($this,'category_order'));
-		add_action('wp_ajax_shopp_category_products_order',array($this,'products_order'));
-		add_action('wp_ajax_shopp_country_zones',array($this,'country_zones'));
-		add_action('wp_ajax_shopp_spec_template',array($this,'load_spec_template'));
-		add_action('wp_ajax_shopp_options_template',array($this,'load_options_template'));
-		add_action('wp_ajax_shopp_add_category',array($this,'add_category'));
-		add_action('wp_ajax_shopp_edit_slug',array($this,'edit_slug'));
-		add_action('wp_ajax_shopp_order_note_message',array($this,'order_note_message'));
-		add_action('wp_ajax_shopp_activate_key',array($this,'activate_key'));
-		add_action('wp_ajax_shopp_deactivate_key',array($this,'deactivate_key'));
+		add_action('wp_ajax_shopp_category_products', array($this, 'category_products'));
+		add_action('wp_ajax_shopp_order_receipt', array($this, 'receipt'));
+		add_action('wp_ajax_shopp_category_children', array($this, 'category_children'));
+		add_action('wp_ajax_shopp_category_order', array($this, 'category_order'));
+		add_action('wp_ajax_shopp_category_products_order', array($this, 'products_order'));
+		add_action('wp_ajax_shopp_country_zones', array($this, 'country_zones'));
+		add_action('wp_ajax_shopp_spec_template', array($this, 'load_spec_template'));
+		add_action('wp_ajax_shopp_options_template', array($this, 'load_options_template'));
+		add_action('wp_ajax_shopp_add_category', array($this, 'add_category'));
+		add_action('wp_ajax_shopp_edit_slug', array($this, 'edit_slug'));
+		add_action('wp_ajax_shopp_order_note_message', array($this, 'order_note_message'));
+		add_action('wp_ajax_shopp_activate_key', array($this, 'activate_key'));
+		add_action('wp_ajax_shopp_deactivate_key', array($this, 'deactivate_key'));
 		add_action('wp_ajax_shopp_rebuild_search_index', array('ShoppAdminSystem', 'reindex'));
-		add_action('wp_ajax_shopp_upload_local_taxes',array($this,'upload_local_taxes'));
-		add_action('wp_ajax_shopp_feature_product',array($this,'feature_product'));
-		add_action('wp_ajax_shopp_update_inventory',array($this,'update_inventory'));
-		add_action('wp_ajax_shopp_import_file',array($this,'import_file'));
-		add_action('wp_ajax_shopp_storage_suggestions',array($this,'storage_suggestions'),11);
-		add_action('wp_ajax_shopp_select_customer',array($this,'select_customer'));
-		add_action('wp_ajax_shopp_suggestions',array($this,'suggestions'));
-		add_action('wp_ajax_shopp_verify_file',array($this,'verify_file'));
-		add_action('wp_ajax_shopp_gateway',array($this,'gateway_ajax'));
-		add_action('wp_ajax_shopp_debuglog',array($this,'logviewer'));
+		add_action('wp_ajax_shopp_upload_local_taxes', array($this, 'upload_local_taxes'));
+		add_action('wp_ajax_shopp_feature_product', array($this, 'feature_product'));
+		add_action('wp_ajax_shopp_update_inventory', array($this, 'update_inventory'));
+		add_action('wp_ajax_shopp_import_file', array($this, 'import_file'));
+		add_action('wp_ajax_shopp_storage_suggestions', array($this, 'storage_suggestions'), 11);
+		add_action('wp_ajax_shopp_select_customer', array($this, 'select_customer'));
+		add_action('wp_ajax_shopp_suggestions', array($this, 'suggestions'));
+		add_action('wp_ajax_shopp_verify_file', array($this, 'verify_file'));
+		add_action('wp_ajax_shopp_gateway', array($this, 'gateway_ajax'));
+		add_action('wp_ajax_shopp_debuglog', array($this, 'logviewer'));
 
 	}
 
-	function receipt () {
+	public function receipt () {
 		check_admin_referer('wp_ajax_shopp_order_receipt');
-		if (0 == intval($_GET['id'])) die('-1');
+		if ( 0 == intval($_GET['id']) ) die('-1');
 
 		ShoppPurchase( new Purchase((int)$_GET['id']));
 
@@ -96,19 +96,19 @@ class ShoppAjax {
 		exit();
 	}
 
-	function category_menu () {
+	public function category_menu () {
 		check_admin_referer('wp_ajax_shopp_category_menu');
 
 		$Categorize = new Categorize();
-		echo '<option value="">Select a category&hellip;</option>';
-		echo '<option value="catalog-products">All Products</option>';
+		echo '<option value="">' . Shopp::esc_attr__('Select a category&hellip;') . '</option>';
+		echo '<option value="catalog-products">' . Shopp::esc_attr__('All Products') . '</option>';
 		echo $Categorize->menu();
 		exit();
 	}
 
-	function category_products () {
+	public function category_products () {
 		check_admin_referer('wp_ajax_shopp_category_products');
-		if (!isset($_GET['category'])) return;
+		if ( ! isset($_GET['category']) ) return;
 		$category = $_GET['category'];
 
 		$Warehouse = new Warehouse();
@@ -116,16 +116,16 @@ class ShoppAjax {
 		exit();
 	}
 
-	function country_zones () {
+	public function country_zones () {
 		check_admin_referer('wp_ajax_shopp_country_zones');
 		$zones = Lookup::country_zones();
-		if (isset($_GET['country']) && isset($zones[$_GET['country']]))
+		if ( isset($_GET['country']) && isset($zones[$_GET['country']]))
 			echo json_encode($zones[$_GET['country']]);
 		else echo json_encode(false);
 		exit();
 	}
 
-	function load_spec_template () {
+	public function load_spec_template () {
 		check_admin_referer('wp_ajax_shopp_spec_template');
 
 		$Category = new ProductCategory((int)$_GET['category']);
@@ -135,7 +135,7 @@ class ShoppAjax {
 		exit();
 	}
 
-	function load_options_template() {
+	public function load_options_template() {
 		check_admin_referer('wp_ajax_shopp_options_template');
 
 		$Category = new ProductCategory((int)$_GET['category']);
@@ -149,19 +149,19 @@ class ShoppAjax {
 		exit();
 	}
 
-	function upload_image () {
+	public function upload_image () {
 		$Warehouse = new Warehouse();
 		echo $Warehouse->images();
 		exit();
 	}
 
-	function upload_file () {
+	public function upload_file () {
 		$Warehouse = new Warehouse();
 		echo $Warehouse->downloads();
 		exit();
 	}
 
-	function add_category () {
+	public function add_category () {
 		// Add a category in the product editor
 		check_admin_referer('wp_ajax_shopp_add_category');
 		if (empty($_GET['name'])) die(0);
@@ -207,7 +207,7 @@ class ShoppAjax {
 	 *
 	 * @return void
 	 **/
-	function edit_slug () {
+	public function edit_slug () {
 		check_admin_referer('wp_ajax_shopp_edit_slug');
 
 		$defaults = array(
@@ -245,7 +245,7 @@ class ShoppAjax {
 		exit;
 	}
 
-	function shipping_costs () {
+	public function shipping_costs () {
 		if ( ! isset($_GET['method']) ) die(0);
 		$Order = ShoppOrder();
 
@@ -261,7 +261,7 @@ class ShoppAjax {
 		exit();
 	}
 
-	function order_note_message () {
+	public function order_note_message () {
 		check_admin_referer('wp_ajax_shopp_order_note_message');
 		if (!isset($_GET['id'])) die('1');
 
@@ -269,13 +269,13 @@ class ShoppAjax {
 		die($Note->value->message);
 	}
 
-	function activate_key () {
+	public function activate_key () {
 		check_admin_referer('wp_ajax_shopp_activate_key');
 		echo ShoppSupport::activate($_GET['key']);
 		exit();
 	}
 
-	function deactivate_key () {
+	public function deactivate_key () {
 		check_admin_referer('wp_ajax_shopp_deactivate_key');
 		$sitekey = ShoppSupport::key();
 		$key = $sitekey['k'];
@@ -283,7 +283,7 @@ class ShoppAjax {
 		exit();
 	}
 
-	function suggestions () {
+	public function suggestions () {
 		check_admin_referer('wp_ajax_shopp_suggestions');
 
 		if (isset($_GET['t'])) { // @legacy
@@ -423,7 +423,7 @@ class ShoppAjax {
 
 	}
 
-	function select_customer () {
+	public function select_customer () {
 		// check_admin_referer('wp_ajax_shopp_select_customer');
 		$defaults = array(
 			'page' => false,
@@ -524,14 +524,14 @@ class ShoppAjax {
 		exit();
 	}
 
-	function upload_local_taxes () {
+	public function upload_local_taxes () {
 		check_admin_referer('shopp-settings-taxrates');
 		$rates = Setup::taxrate_upload();
 		echo json_encode($rates);
 		exit();
 	}
 
-	function feature_product () {
+	public function feature_product () {
 		check_admin_referer('wp_ajax_shopp_feature_product');
 
 		if (empty($_GET['feature'])) die('0');
@@ -543,7 +543,7 @@ class ShoppAjax {
 		exit();
 	}
 
-	function update_inventory () {
+	public function update_inventory () {
 		check_admin_referer('wp_ajax_shopp_update_inventory');
 		$Priceline = new Price($_GET['id']);
 		if ( empty($Priceline->id) ) die('0');
@@ -557,7 +557,7 @@ class ShoppAjax {
 		exit();
 	}
 
-	function import_file () {
+	public function import_file () {
 		check_admin_referer('wp_ajax_shopp_import_file');
 		$Shopp = Shopp::object();
 		$Engine =& $Shopp->Storage->engines['download'];
@@ -658,9 +658,9 @@ class ShoppAjax {
 		exit();
 	}
 
-	function storage_suggestions () { exit(); }
+	public function storage_suggestions () { exit(); }
 
-	function verify_file () {
+	public function verify_file () {
 		check_admin_referer('wp_ajax_shopp_verify_file');
 		$Settings = &ShoppSettings();
 		chdir(WP_CONTENT_DIR); // relative file system path context for realpath
@@ -688,7 +688,7 @@ class ShoppAjax {
 
 	}
 
-	function category_children () {
+	public function category_children () {
 		check_admin_referer('wp_ajax_shopp_category_children');
 
 		if (empty($_GET['parent'])) die('0');
@@ -713,7 +713,7 @@ class ShoppAjax {
 		die(json_encode($Catalog->categories));
 	}
 
-	function category_order () {
+	public function category_order () {
 		check_admin_referer('wp_ajax_shopp_category_order');
 		if (empty($_POST['position']) || !is_array($_POST['position'])) die('0');
 
@@ -725,7 +725,7 @@ class ShoppAjax {
 		die('1');
 	}
 
-	function products_order () {
+	public function products_order () {
 		check_admin_referer('wp_ajax_shopp_category_products_order');
 		if (empty($_POST['category']) || empty($_POST['position']) || !is_array($_POST['position'])) die('0');
 
@@ -737,7 +737,7 @@ class ShoppAjax {
 		die('1');
 	}
 
-	function gateway_ajax () {
+	public function gateway_ajax () {
 		check_admin_referer('wp_ajax_shopp_gateway');
 		if (isset($_POST['pid'])) {
 			$Purchase = new Purchase($_POST['pid']);
@@ -747,7 +747,7 @@ class ShoppAjax {
 	}
 
 	// @todo Investigate if it is possible to inject a formatted error log message as an XSS vector
-	function logviewer () {
+	public function logviewer () {
 		check_admin_referer('wp_ajax_shopp_debuglog'); ?>
 		<html>
 		<head>
@@ -772,4 +772,4 @@ class ShoppAjax {
 		</script></body></html><?php exit();
 	}
 
-} // END class ShoppAjax
+}

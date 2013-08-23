@@ -94,8 +94,8 @@ class ShoppResources {
 	public function export_reports () {
 		if ( ! current_user_can('shopp_financials') || ! current_user_can('shopp_export_orders') ) exit();
 
-		$reports = Report::reports();
-		$Report = Report::load();
+		$reports = ShoppAdminReport::reports();
+		$Report = ShoppAdminReport::load();
 
 		if ( ! isset($_POST['settings']["{$report}_report_export"]) ) {
 			$_POST['settings']["{$report}_report_export"]['columns'] = array_keys($Report->columns);

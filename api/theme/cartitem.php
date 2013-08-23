@@ -55,7 +55,7 @@ class ShoppCartItemThemeAPI {
 		'thumbnail' => 'coverimage'
 	);
 
-	static function _apicontext () { return 'cartitem'; }
+	public static function _apicontext () { return 'cartitem'; }
 
 	/**
 	 * _setobject - returns the global context object used in the shopp('cartitem) call
@@ -64,7 +64,7 @@ class ShoppCartItemThemeAPI {
 	 * @since 1.2
 	 *
 	 **/
-	static function _setobject ( $Object, $object ) {
+	public static function _setobject ( $Object, $object ) {
 		if ( is_object($Object) && is_a($Object, 'Item') ) return $Object;
 
 		if (strtolower($object) != 'cartitem') return $Object; // not mine, do nothing
@@ -78,7 +78,7 @@ class ShoppCartItemThemeAPI {
 		}
 	}
 
-	static function _cartitem ($result, $options, $property, $O) {
+	public static function _cartitem ( $result, $options, $property, $O ) {
 		if ( is_float($result) ) {
 			if ( isset($options['currency']) && !Shopp::str_true($options['currency']) ) return $result;
 			else return money( roundprice($result) );
@@ -86,45 +86,45 @@ class ShoppCartItemThemeAPI {
 		return $result;
 	}
 
-	static function id ($result, $options, $O) { return $O->_id; }
+	public static function id ( $result, $options, $O ) { return $O->_id; }
 
-	static function product ($result, $options, $O) { return $O->product; }
+	public static function product ( $result, $options, $O ) { return $O->product; }
 
-	static function name ($result, $options, $O) { return $O->name; }
+	public static function name ( $result, $options, $O ) { return $O->name; }
 
-	static function type ($result, $options, $O) { return $O->type; }
+	public static function type ( $result, $options, $O ) { return $O->type; }
 
-	static function url ($result, $options, $O) {
+	public static function url ( $result, $options, $O ) {
 		return Shopp::url( '' == get_option('permalink_structure') ? array(Product::$posttype => $O->slug ) : $O->slug, false );
 	}
 
-	static function sku ($result, $options, $O) { return $O->sku; }
+	public static function sku ( $result, $options, $O ) { return $O->sku; }
 
-	static function description ($result, $options, $O) { return $O->description; }
+	public static function description ( $result, $options, $O ) { return $O->description; }
 
-	static function discount ($result, $options, $O) { return (float) $O->discount; }
+	public static function discount ( $result, $options, $O ) { return (float) $O->discount; }
 
-	static function unitprice ($result, $options, $O) {
+	public static function unitprice ( $result, $options, $O ) {
 		$taxes = isset( $options['taxes'] ) ? Shopp::str_true( $options['taxes'] ) : self::_include_tax($O);
 		return (float) $O->unitprice + ( $taxes ? $O->unittax : 0 );
 	}
 
-	static function unittax ($result, $options, $O) { return (float) $O->unittax; }
+	public static function unittax ( $result, $options, $O ) { return (float) $O->unittax; }
 
-	static function discounts ($result, $options, $O) { return (float) $O->discounts; }
+	public static function discounts ( $result, $options, $O ) { return (float) $O->discounts; }
 
-	static function tax ($result, $options, $O) { return (float) $O->tax; }
+	public static function tax ( $result, $options, $O ) { return (float) $O->tax; }
 
-	static function total ($result, $options, $O) {
+	public static function total ( $result, $options, $O ) {
 		$taxes = isset( $options['taxes'] ) ? Shopp::str_true( $options['taxes'] ) : self::_include_tax($O);
 		return (float) $O->total + ( $taxes ? ( $O->unittax * $O->quantity ) : 0 );
 	}
 
-	static function taxrate ($result, $options, $O) {
+	public static function taxrate ( $result, $options, $O ) {
 		return percentage( $O->taxrate * 100, array( 'precision' => 1 ) );
 	}
 
-	static function quantity ($result, $options, $O) {
+	public static function quantity ( $result, $options, $O ) {
 		$result = $O->quantity;
 		if ( 'Donation' === $O->type && 'on' === $O->donation['var'] ) return $result;
 		if ( 'Subscription' === $O->type || 'Membership' === $O->type ) return $result;
@@ -157,7 +157,7 @@ class ShoppCartItemThemeAPI {
 		return $result;
 	}
 
-	static function remove ($result, $options, $O) {
+	public static function remove ( $result, $options, $O ) {
 		$label = __('Remove', 'Shopp');
 		if ( isset($options['label']) ) $label = $options['label'];
 		if ( isset($options['class']) ) $class = ' class="'.$options['class'].'"';
@@ -175,9 +175,9 @@ class ShoppCartItemThemeAPI {
 		return $result;
 	}
 
-	static function option_label ($result, $options, $O) { return $O->option->label; }
+	public static function option_label ( $result, $options, $O ) { return $O->option->label; }
 
-	static function options ($result, $options, $O) {
+	public static function options ( $result, $options, $O ) {
 		$class = "";
 		if ( ! isset($options['before']) ) $options['before'] = '';
 		if ( ! isset($options['after']) ) $options['after'] = '';
@@ -195,12 +195,12 @@ class ShoppCartItemThemeAPI {
 		return $result;
 	}
 
-	static function has_addons ($result, $options, $O) {
+	public static function has_addons ( $result, $options, $O ) {
 		reset($O->addons);
 		return (count($O->addons) > 0);
 	}
 
-	static function addons ($result, $options, $O) {
+	public static function addons ( $result, $options, $O ) {
 		if ( ! isset($O->_addons_loop) ) {
 			reset($O->addons);
 			$O->_addons_loop = true;
@@ -213,7 +213,7 @@ class ShoppCartItemThemeAPI {
 		return false;
 	}
 
-	static function addon ($result, $options, $O) {
+	public static function addon ( $result, $options, $O ) {
 		if ( empty($O->addons) ) return false;
 		$addon = current($O->addons);
 		$defaults = array(
@@ -250,7 +250,7 @@ class ShoppCartItemThemeAPI {
 		return join($options['separator'],$_);
 	}
 
-	static function addons_list ($result, $options, $O) {
+	public static function addons_list ( $result, $options, $O ) {
 		if ( empty($O->addons) ) return false;
 		$defaults = array(
 			'before' => '',
@@ -282,12 +282,12 @@ class ShoppCartItemThemeAPI {
 		return $result;
 	}
 
-	static function has_inputs ($result, $options, $O) {
+	public static function has_inputs ( $result, $options, $O ) {
 		reset($O->data);
 		return (count($O->data) > 0);
 	}
 
-	static function in_category ($result, $options, $O) {
+	public static function in_category ( $result, $options, $O ) {
 		if ( empty($O->categories) ) return false;
 		if ( isset($options['id']) ) $field = "id";
 		if ( isset($options['name']) ) $field = "name";
@@ -300,7 +300,7 @@ class ShoppCartItemThemeAPI {
 		return false;
 	}
 
-	static function inputs ($result, $options, $O) {
+	public static function inputs ( $result, $options, $O ) {
 		if ( ! isset($O->_data_loop) ) {
 			reset($O->data);
 			$O->_data_loop = true;
@@ -313,14 +313,14 @@ class ShoppCartItemThemeAPI {
 		return false;
 	}
 
-	static function input ($result, $options, $O) {
+	public static function input ( $result, $options, $O ) {
 		$data = current($O->data);
 		$name = key($O->data);
 		if ( isset($options['name']) ) return $name;
 		return apply_filters('shopp_cartitem_input_data', $data);
 	}
 
-	static function inputs_list ($result, $options, $O) {
+	public static function inputs_list ( $result, $options, $O ) {
 		if ( empty($O->data) ) return false;
 		$defaults = array(
 			'class' => '',
@@ -347,14 +347,14 @@ class ShoppCartItemThemeAPI {
 		return $result;
 	}
 
-	static function coverimage ($result, $options, $O) {
+	public static function coverimage ( $result, $options, $O ) {
 		if ( false === $O->image ) return false;
 		$O->images = array($O->image);
 		$options['index'] = 0;
-		return ShoppStorefrontThemeAPI::image($result, $options, $O);
+		return ShoppStorefrontThemeAPI::image( $result, $options, $O );
 	}
 
-	static function _include_tax ($O) {
+	public static function _include_tax ( $O ) {
 		return (
 			shopp_setting_enabled('tax_inclusive') &&
 			$O->istaxed &&

@@ -15,6 +15,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class ShoppAdminAccount extends AdminController {
 
+	protected $ui = 'customers';
+
 	/**
 	 * Account constructor
 	 *
@@ -25,13 +27,19 @@ class ShoppAdminAccount extends AdminController {
 		parent::__construct();
 
 		if ( ! empty($_GET['id']) ) {
+
 			wp_enqueue_script('postbox');
 			wp_enqueue_script('password-strength-meter');
+
 			shopp_enqueue_script('suggest');
 			shopp_enqueue_script('colorbox');
+
 			do_action('shopp_customer_editor_scripts');
-			add_action('admin_head',array(&$this,'layout'));
-		} else add_action('admin_print_scripts',array(&$this,'columns'));
+
+			add_action('admin_head', array($this, 'layout'));
+
+		} else add_action('admin_print_scripts', array($this, 'columns'));
+
 		do_action('shopp_customer_admin_scripts');
 	}
 
@@ -292,8 +300,7 @@ class ShoppAdminAccount extends AdminController {
 
 		$action = add_query_arg( array('page'=>$this->Admin->pagename('customers') ),admin_url('admin.php'));
 
-		include(SHOPP_ADMIN_PATH."/customers/customers.php");
-
+		include $this->ui('customers.php');
 	}
 
 	/**
@@ -326,7 +333,8 @@ class ShoppAdminAccount extends AdminController {
 	public function layout () {
 		$Shopp = Shopp::object();
 		$Admin =& $Shopp->Flow->Admin;
-		include(SHOPP_ADMIN_PATH."/customers/ui.php");
+
+		include $this->ui('ui.php');
 	}
 
 	/**
@@ -376,7 +384,7 @@ class ShoppAdminAccount extends AdminController {
 		$Customer->billing_states = array_merge(array(''=>'&nbsp;'),(array)$regions[$Customer->Billing->country]);
 		$Customer->shipping_states = array_merge(array(''=>'&nbsp;'),(array)$regions[$Customer->Shipping->country]);
 
-		include(SHOPP_ADMIN_PATH."/customers/editor.php");
+		include $this->ui('editor.php');
 	}
 
 

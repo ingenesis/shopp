@@ -13,6 +13,8 @@
  *
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 class ItemRates extends ShippingFramework implements ShippingModule {
 
 	function methods () {
@@ -23,13 +25,13 @@ class ItemRates extends ShippingFramework implements ShippingModule {
 		$this->items = 0;
 	}
 
-	function calcitem ($id,$Item) {
-		if (!$Item->freeshipping) $this->items += $Item->quantity;
+	function calcitem ( $id, $Item ) {
+		if ( ! $Item->freeshipping ) $this->items += $Item->quantity;
 	}
 
-	function calculate (&$options,$Order) {
+	function calculate ( &$options, $Order ) {
 
-		foreach ($this->methods as $slug => $method) {
+		foreach ( $this->methods as $slug => $method ) {
 
 			$amount = $this->tablerate($method['table']);
 			if ($amount === false) continue; // Skip methods that don't match at all
@@ -41,7 +43,7 @@ class ItemRates extends ShippingFramework implements ShippingModule {
 				'items' => $this->items
 			);
 
-			$options[$slug] = new ShippingOption($rate);
+			$options[ $slug ] = new ShippingOption($rate);
 
 		}
 
@@ -49,10 +51,9 @@ class ItemRates extends ShippingFramework implements ShippingModule {
 	}
 
 	function settings () {
-		$this->ui->flatrates(0,array(
+		$this->ui->flatrates(0, array(
 			'table' => $this->settings['table']
 		));
 	}
 
-} // END class OrderRates
-?>
+}

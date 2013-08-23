@@ -30,7 +30,7 @@ if ( ! class_exists('WP_Scripts') ) {
 
 class ShoppScripts extends WP_Scripts {
 
-	function __construct() {
+	public function __construct() {
 		do_action_ref_array( 'shopp_default_scripts', array(&$this) );
 
 		add_action('wp_enqueue_scripts', array(&$this,'wp_dependencies'),1);
@@ -43,12 +43,12 @@ class ShoppScripts extends WP_Scripts {
 
 	}
 
-	function do_item( $handle, $group = false ) {
+	public function do_item( $handle, $group = false ) {
 		if(parent::do_item($handle,$group))
 			$this->print_code .= $this->print_script_custom($handle);
 	}
 
-	function print_head_scripts() {
+	public function print_head_scripts() {
 		global $concatenate_scripts;
 
 		if ( ! did_action('shopp_print_scripts') )
@@ -65,7 +65,7 @@ class ShoppScripts extends WP_Scripts {
 		return $this->done;
 	}
 
-	function print_footer_scripts() {
+	public function print_footer_scripts() {
 		global $concatenate_scripts;
 
 		if ( ! did_action('shopp_print_footer_scripts') )
@@ -83,7 +83,7 @@ class ShoppScripts extends WP_Scripts {
 		return $this->done;
 	}
 
-	function print_script_request () {
+	public function print_script_request () {
 		global $compress_scripts;
 
 		$zip = $compress_scripts ? 1 : 0;
@@ -111,7 +111,7 @@ class ShoppScripts extends WP_Scripts {
 			echo $this->print_html;
 	}
 
-	function print_scripts_l10n( $handle, $echo = true ) {
+	public function print_scripts_l10n( $handle, $echo = true ) {
 		if ( empty($this->registered[$handle]->extra['l10n']) || empty($this->registered[$handle]->extra['l10n'][0]) || !is_array($this->registered[$handle]->extra['l10n'][1]) )
 			return false;
 
@@ -143,14 +143,14 @@ class ShoppScripts extends WP_Scripts {
 	}
 
 
-	function all_deps ( $handles, $recursion = false, $group = false ) {
+	public function all_deps ( $handles, $recursion = false, $group = false ) {
 		$r = parent::all_deps( $handles, $recursion );
 		if ( !$recursion )
 			$this->to_do = apply_filters( 'shopp_print_scripts_array', $this->to_do );
 		return $r;
 	}
 
-	function add ( $handle, $src, $deps = array(), $ver = false, $args = null ) {
+	public function add ( $handle, $src, $deps = array(), $ver = false, $args = null ) {
 
 		$debug = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG;	// Determine if we are debugging the scripts
 		$extension = '.js';									// Use .js extension for script files
@@ -163,7 +163,7 @@ class ShoppScripts extends WP_Scripts {
 		return parent::add( $handle, $src, $deps, $ver, $args);
 	}
 
-	function wp_dependencies () {
+	public function wp_dependencies () {
 		global $wp_scripts;
 
 		if ( !is_a($wp_scripts, 'WP_Scripts') )
@@ -183,7 +183,7 @@ class ShoppScripts extends WP_Scripts {
 
 	}
 
-	function print_script_custom ($handle) {
+	public function print_script_custom ($handle) {
 		return !empty($this->registered[$handle]->extra['code'])?$this->registered[$handle]->extra['code']:false;
 	}
 

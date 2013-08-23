@@ -11,21 +11,22 @@
  * @since 1.2
  * @subpackage FreeOption
  *
- * $Id: FreeOption.php 510 2009-09-22 14:14:09Z jond $
  **/
+
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class FreeOption extends ShippingFramework implements ShippingModule {
 
-	function methods () {
-		return __('Free Option','Shopp');
+	public function methods () {
+		return Shopp::__('Free Option');
 	}
 
-	function init () {}
-	function calcitem ($id,$Item) {}
+	public function init () {}
+	public function calcitem ( $id, $Item ) {}
 
-	function calculate (&$options,$Order) {
+	public function calculate ( &$options, $Order ) {
 
-		foreach ($this->methods as $slug => $method) {
+		foreach ( $this->methods as $slug => $method ) {
 			$amount = $this->tablerate($method['table']);
 			if ($amount === false) continue; // Skip methods that don't match at all
 			$rate = array(
@@ -35,19 +36,18 @@ class FreeOption extends ShippingFramework implements ShippingModule {
 				'delivery' => $this->delivery($method),
 				'items' => false
 			);
-			$options[$slug] = new ShippingOption($rate,false);
+			$options[ $slug ] = new ShippingOption($rate, false);
 		}
 		return $options;
 	}
 
-	function settings () {
-		$this->ui->flatrates(0,array(
+	public function settings () {
+
+		$this->ui->flatrates(0, array(
 			'norates' => true,
 			'table' => $this->settings['table']
 		));
 
 	}
 
-} // END class FreeOption
-
-?>
+}

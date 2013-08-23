@@ -55,4 +55,4 @@ class OrderRates extends ShippingFramework implements ShippingModule {
 
 	}
 
-} // END class OrderRates
+}

@@ -37,7 +37,7 @@ class ShoppAdminReport extends AdminController {
 	 * @return void
 	 * @author Jonathan Davis
 	 **/
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 
 		shopp_enqueue_script('calendar');
@@ -166,7 +166,7 @@ class ShoppAdminReport extends AdminController {
 	 *
 	 * @return void
 	 **/
-	function loader () {
+	public function loader () {
 		if ( ! current_user_can('shopp_financials') ) return;
 		$this->options = self::request();
 		$this->Report = self::load();
@@ -180,7 +180,7 @@ class ShoppAdminReport extends AdminController {
 	 *
 	 * @return void
 	 **/
-	function admin () {
+	public function admin () {
 		if ( ! current_user_can('shopp_financials') )
 			wp_die(__('You do not have sufficient permissions to access this page.','Shopp'));
 
@@ -270,7 +270,7 @@ abstract class ShoppReportFramework {
 	public $pages = 1;				// Number of pages for the report
 	public $daterange = false;
 
-	function __construct ($request = array()) {
+	public function __construct ($request = array()) {
 		$this->options = $request;
 		$this->screen = $this->options['screen'];
 		$this->totals = new StdClass();
@@ -288,7 +288,7 @@ abstract class ShoppReportFramework {
 	 *
 	 * @return void
 	 **/
-	function load () {
+	public function load () {
 		extract($this->options);
 
 		// Map out time period based reports with index matching keys and period values
@@ -324,7 +324,7 @@ abstract class ShoppReportFramework {
 	 * @param object $record Loaded record from the query
 	 * @return void
 	 **/
-	function process (&$records,&$record,$Object=false,$index='id',$collate=false) {
+	public function process (&$records,&$record,$Object=false,$index='id',$collate=false) {
 		$index = isset($record->$index) ? $record->$index : '!NO_INDEX!';
 
 		$columns = get_object_vars($record);
@@ -362,7 +362,7 @@ abstract class ShoppReportFramework {
 	 *
 	 * @return void
 	 **/
-	function pagination () {
+	public function pagination () {
 		extract($this->options,EXTR_SKIP);
 		$this->pages = ceil($this->total / $per_page);
 		$_GET['paged'] = $this->options['paged'] = min($paged,$this->pages);
@@ -381,7 +381,7 @@ abstract class ShoppReportFramework {
 	 * @param string $scale Scale of periods (hour, day, week, month, year)
 	 * @return void
 	 **/
-	function timereport ($starts,$ends,$scale) {
+	public function timereport ($starts,$ends,$scale) {
 		$this->total = $this->range($starts,$ends,$scale);
 		$i = 0;
 		while ($i < $this->total) {
@@ -443,7 +443,7 @@ abstract class ShoppReportFramework {
 	 *
 	 * @return string Date index column SQL statement
 	 **/
-	function timecolumn ( string $column ) {
+	public function timecolumn ( string $column ) {
 		$tzoffset = date('Z')/3600;
 		$column = "CONVERT_TZ($column,'+00:00','".($tzoffset>=0?'+':'-')."$tzoffset:00')";
 		switch (strtolower($this->options['scale'])) {
@@ -481,7 +481,7 @@ abstract class ShoppReportFramework {
 	 * @param string $scale Scale of periods (hour, day, week, month, year)
 	 * @return int The number of periods
 	 **/
-	function range ( integer $starts, integer $ends, $scale = 'day') {
+	public function range ( integer $starts, integer $ends, $scale = 'day') {
 		$oneday = 86400;
 		$years = date('Y',$ends)-date('Y',$starts);
 		switch (strtolower($scale)) {
@@ -598,7 +598,7 @@ abstract class ShoppReportFramework {
 	 *
 	 * @return array The list of column keys and column title labels
 	 **/
-	function columns () { return array(); }
+	public function columns () { return array(); }
 
 	/**
 	 * Registers the report columns to the WP screen
@@ -608,7 +608,7 @@ abstract class ShoppReportFramework {
 	 *
 	 * @return void
 	 **/
-	function screencolumns () { ShoppUI::register_column_headers($this->screen,$this->columns()); }
+	public function screencolumns () { ShoppUI::register_column_headers($this->screen,$this->columns()); }
 
 	/**
 	 * Specifies columns that are sortable
@@ -625,7 +625,7 @@ abstract class ShoppReportFramework {
 	 *
 	 * @return array The list of column keys identifying sortable columns
 	 **/
-	function sortcolumns () { return array(); }
+	public function sortcolumns () { return array(); }
 
 	/**
 	 * Default column value renderer
@@ -636,7 +636,7 @@ abstract class ShoppReportFramework {
 	 * @param string $value The value to be rendered
 	 * @return void
 	 **/
-	function value ($value) {
+	public function value ($value) {
 		echo trim($value);
 	}
 
@@ -655,7 +655,7 @@ abstract class ShoppReportFramework {
 	 *
 	 * @return void
 	 **/
-	function scores () {
+	public function scores () {
 		return array();
 	}
 
@@ -667,7 +667,7 @@ abstract class ShoppReportFramework {
 	 *
 	 * @return void
 	 **/
-	function scoreboard () {
+	public function scoreboard () {
 		$scores = $this->scores();
 		?>
 		<table class="scoreboard">
@@ -683,7 +683,7 @@ abstract class ShoppReportFramework {
 		<?php
 	}
 
-	function chart () {
+	public function chart () {
 		if ( $this->Chart ) $this->Chart->render();
 	}
 
@@ -695,7 +695,7 @@ abstract class ShoppReportFramework {
 	 *
 	 * @return void
 	 **/
-	function table () {
+	public function table () {
 		extract($this->options,EXTR_SKIP);
 
 		// Get only the records for this page
@@ -806,7 +806,7 @@ abstract class ShoppReportFramework {
 	 *
 	 * @return void
 	 **/
-	function filters () {
+	public function filters () {
 		self::rangefilter();
 		self::scalefilter();
 		self::filterbutton();
@@ -970,7 +970,7 @@ class ShoppReportChart {
 
 	private $data = array();
 
-	var $options = array(
+	public $options = array(
 		'series' => array(
 			'limit' => 20,	// Limit the number of series
 			'lines' => array('show' => true,'fill'=>true,'lineWidth'=>3),
@@ -1016,7 +1016,7 @@ class ShoppReportChart {
 	 *
 	 * @return void
 	 **/
-	function __construct () {
+	public function __construct () {
 		shopp_enqueue_script('flot');
 		shopp_enqueue_script('flot-grow');
 	}
@@ -1030,7 +1030,7 @@ class ShoppReportChart {
 	 * @param array $options An associative array of the options to set
 	 * @return void
 	 **/
-	function settings ($options) {
+	public function settings ($options) {
 		foreach ($options as $setting => $settings)
 			$this->options[$setting] = wp_parse_args($settings,$this->options[$setting]);
 	}
@@ -1046,7 +1046,7 @@ class ShoppReportChart {
 	 * @param string $scale Scale of periods (hour, day, week, month, year)
 	 * @return void
 	 **/
-	function timeaxis ($axis,$range,$scale='day') {
+	public function timeaxis ($axis,$range,$scale='day') {
 		if ( ! isset($this->options[ $axis ])) return;
 
 		$options = array();
@@ -1091,7 +1091,7 @@ class ShoppReportChart {
 	 * @param array $options Associative array of setting options
 	 * @return void
 	 **/
-	function series ( $label, array $options = array() ) {
+	public function series ( $label, array $options = array() ) {
 		if ( count($this->data) > $this->options['series']['limit'] ) return;
 		$defaults = array(
 			'label' => $label,
@@ -1122,7 +1122,7 @@ class ShoppReportChart {
 	 * @param boolean $periods Settings flag for specified time period data
 	 * @return void
 	 **/
-	function data ($series,$x,$y,$periods=false) {
+	public function data ($series,$x,$y,$periods=false) {
 		if ( ! isset($this->data[$series]) ) return;
 
 		if ( $periods ) {
@@ -1149,7 +1149,7 @@ class ShoppReportChart {
 	 *
 	 * @return void
 	 **/
-	function render () {
+	public function render () {
 		if ( isset($this->datapoints) && $this->datapoints > 75 ) $this->options['series']['points'] = false;
 
 		?>
@@ -1187,7 +1187,7 @@ abstract class ShoppReportExportFramework {
 	public $set = 0;
 	public $limit = 1024;
 
-	function __construct ( $Report ) {
+	public function __construct ( $Report ) {
 
 		$this->ReportClass = get_class($Report);
 		$this->options = $Report->options;
@@ -1215,12 +1215,12 @@ abstract class ShoppReportExportFramework {
 	 *
 	 * @return void
 	 **/
-	function output () {
+	public function output () {
 		if ( empty($this->data) ) shopp_redirect(add_query_arg(array_merge($_GET,array('src' => null)),admin_url('admin.php')));
 
 		$sitename = get_bloginfo('name');
 		$report = $this->options['report'];
-		$reports = Report::reports();
+		$reports = ShoppAdminReport::reports();
 		$name = $reports[$report]['name'];
 
 		header("Content-type: $this->content_type; charset=UTF-8");
@@ -1245,7 +1245,7 @@ abstract class ShoppReportExportFramework {
 	 *
 	 * @return void
 	 **/
-	function begin () { }
+	public function begin () { }
 
 	/**
 	 * Outputs the column headers when enabled
@@ -1255,7 +1255,7 @@ abstract class ShoppReportExportFramework {
 	 *
 	 * @return void
 	 **/
-	function heading () {
+	public function heading () {
 		foreach ($this->selected as $name)
 			$this->export($this->columns[$name]);
 		$this->record();
@@ -1269,7 +1269,7 @@ abstract class ShoppReportExportFramework {
 	 *
 	 * @return void
 	 **/
-	function records () {
+	public function records () {
 		$options = array('scale' => $this->scale);
 		// @todo Add batch export to reduce memory footprint and add scalability to report exports
 		// while (!empty($this->data)) {
@@ -1321,7 +1321,7 @@ abstract class ShoppReportExportFramework {
 	 *
 	 * @return void
 	 **/
-	function end () { }
+	public function end () { }
 
 	/**
 	 * Outputs each individual value in a record
@@ -1331,7 +1331,7 @@ abstract class ShoppReportExportFramework {
 	 *
 	 * @return void
 	 **/
-	function export ($value) {
+	public function export ($value) {
 		echo ($this->recordstart?"":"\t").$value;
 		$this->recordstart = false;
 	}
@@ -1344,7 +1344,7 @@ abstract class ShoppReportExportFramework {
 	 *
 	 * @return void
 	 **/
-	function record () {
+	public function record () {
 		echo "\n";
 		$this->recordstart = true;
 	}
@@ -1363,7 +1363,7 @@ abstract class ShoppReportExportFramework {
  **/
 class ShoppReportTabExport extends ShoppReportExportFramework {
 
-	function __construct( $Report ) {
+	public function __construct( $Report ) {
 		parent::__construct( $Report );
 		$this->output();
 	}
@@ -1381,14 +1381,14 @@ class ShoppReportTabExport extends ShoppReportExportFramework {
  **/
 class ShoppReportCSVExport extends ShoppReportExportFramework {
 
-	function __construct ($Report) {
+	public function __construct ($Report) {
 		parent::__construct($Report);
 		$this->content_type = "text/csv";
 		$this->extension = "csv";
 		$this->output();
 	}
 
-	function export ($value) {
+	public function export ($value) {
 		$value = str_replace('"','""',$value);
 		if (preg_match('/^\s|[,"\n\r]|\s$/',$value)) $value = '"'.$value.'"';
 		echo ($this->recordstart?"":",").$value;
@@ -1408,7 +1408,7 @@ class ShoppReportCSVExport extends ShoppReportExportFramework {
  **/
 class ShoppReportXLSExport extends ShoppReportExportFramework {
 
-	function __construct ($Report) {
+	public function __construct ($Report) {
 		parent::__construct($Report);
 		$this->content_type = "application/vnd.ms-excel";
 		$this->extension = "xls";
@@ -1416,15 +1416,15 @@ class ShoppReportXLSExport extends ShoppReportExportFramework {
 		$this->output();
 	}
 
-	function begin () {
+	public function begin () {
 		echo pack("ssssss", 0x809, 0x8, 0x0, 0x10, 0x0, 0x0);
 	}
 
-	function end () {
+	public function end () {
 		echo pack("ss", 0x0A, 0x00);
 	}
 
-	function export ($value) {
+	public function export ($value) {
 		if (preg_match('/^[\d\.]+$/',$value)) {
 		 	echo pack("sssss", 0x203, 14, $this->r, $this->c, 0x0);
 			echo pack("d", $value);
@@ -1436,7 +1436,7 @@ class ShoppReportXLSExport extends ShoppReportExportFramework {
 		$this->c++;
 	}
 
-	function record () {
+	public function record () {
 		$this->c = 0;
 		$this->r++;
 	}

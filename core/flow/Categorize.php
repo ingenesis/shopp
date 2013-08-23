@@ -16,6 +16,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 class ShoppAdminCategorize extends AdminController {
 
 	public $worklist = array();
+	protected $ui = 'categories';
 
 	/**
 	 * Categorize constructor
@@ -23,13 +24,13 @@ class ShoppAdminCategorize extends AdminController {
 	 * @return void
 	 * @author Jonathan Davis
 	 **/
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 
-		ShoppingObject::store('worklist',$this->worklist);
+		ShoppingObject::store('worklist', $this->worklist);
 
 		if ('shopp-tags' == $_GET['page']) {
-			wp_redirect(add_query_arg(array('taxonomy'=>ProductTag::$taxon),admin_url('edit-tags.php')));
+			wp_redirect(add_query_arg(array('taxonomy'=>ProductTag::$taxon), admin_url('edit-tags.php')));
 			return;
 		}
 
@@ -51,16 +52,16 @@ class ShoppAdminCategorize extends AdminController {
 			shopp_enqueue_script('shopp-swfupload-queue');
 
 			do_action('shopp_category_editor_scripts');
-			add_action('admin_head',array(&$this,'layout'));
+			add_action('admin_head',array($this,'layout'));
 		} elseif (!empty($_GET['a']) && $_GET['a'] == 'arrange') {
 			shopp_enqueue_script('category-arrange');
 			do_action('shopp_category_arrange_scripts');
-			add_action('admin_print_scripts',array(&$this,'arrange_cols'));
+			add_action('admin_print_scripts',array($this,'arrange_cols'));
 		} elseif (!empty($_GET['a']) && $_GET['a'] == 'products') {
 			shopp_enqueue_script('products-arrange');
 			do_action('shopp_category_products_arrange_scripts');
-			add_action('admin_print_scripts',array(&$this,'products_cols'));
-		} else add_action('admin_print_scripts',array(&$this,'columns'));
+			add_action('admin_print_scripts',array($this,'products_cols'));
+		} else add_action('admin_print_scripts',array($this,'columns'));
 		do_action('shopp_category_admin_scripts');
 
 		add_action('load-' . $this->screen, array($this, 'workflow'));
@@ -73,7 +74,7 @@ class ShoppAdminCategorize extends AdminController {
 	 * @since 1.0
 	 * @return void
 	 **/
-	function admin () {
+	public function admin () {
 		if ('shopp-tags' == $_GET['page']) return;
 
 		if (!empty($_GET['id']) && !isset($_GET['a'])) $this->editor();
@@ -94,7 +95,7 @@ class ShoppAdminCategorize extends AdminController {
 	 * @since 1.0
 	 * @return void
 	 **/
-	function workflow () {
+	public function workflow () {
 		$Shopp = Shopp::object();
 
 		$defaults = array(
@@ -168,7 +169,7 @@ class ShoppAdminCategorize extends AdminController {
 
 	}
 
-	function load_category ($term,$taxonomy) {
+	public function load_category ($term,$taxonomy) {
 		$Category = new ProductCategory();
 		$Category->populate($term);
 
@@ -181,7 +182,7 @@ class ShoppAdminCategorize extends AdminController {
 	 * @since 1.0
 	 * @return void
 	 **/
-	function categories ($workflow=false) {
+	public function categories ($workflow=false) {
 
 		if ( ! current_user_can('shopp_categories') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -209,7 +210,7 @@ class ShoppAdminCategorize extends AdminController {
 		$taxonomy = 'shopp_category';
 
 		$filters = array('hide_empty' => 0,'fields'=>'id=>parent');
-		add_filter('get_shopp_category',array(&$this,'load_category'),10,2);
+		add_filter('get_shopp_category',array($this,'load_category'),10,2);
 
 		// $filters['limit'] = "$start,$per_page";
 		if (!empty($s)) $filters['search'] = $s;
@@ -249,10 +250,10 @@ class ShoppAdminCategorize extends AdminController {
 		// 	return;
 		// }
 
-		include(SHOPP_ADMIN_PATH."/categories/categories.php");
+		include $this->ui('categories.php');
 	}
 
-	function metaloader (&$records,&$record) {
+	public function metaloader (&$records,&$record) {
 		if (empty($this->categories)) return;
 		if (empty($record->name)) return;
 
@@ -275,15 +276,15 @@ class ShoppAdminCategorize extends AdminController {
 	 * @since 1.0
 	 * @return void
 	 **/
-	function columns () {
+	public function columns () {
 		ShoppUI::register_column_headers($this->screen, array(
-			'cb'=>'<input type="checkbox" />',
-			'name'=>__('Name','Shopp'),
-			'slug'=>__('Slug','Shopp'),
-			'products'=>__('Products','Shopp'),
-			'templates'=>__('Templates','Shopp'),
-			'menus'=>__('Menus','Shopp'))
-		);
+			'cb' => '<input type="checkbox" />',
+			'name' => Shopp::__('Name'),
+			'slug' => Shopp::__('Slug'),
+			'products' => Shopp::__('Products'),
+			'templates' => Shopp::__('Templates'),
+			'menus' => Shopp::__('Menus')
+		));
 	}
 
 	/**
@@ -293,10 +294,10 @@ class ShoppAdminCategorize extends AdminController {
 	 * @since 1.0
 	 * @return void
 	 **/
-	function layout () {
+	public function layout () {
 		$Shopp = Shopp::object();
 		$Admin =& $Shopp->Flow->Admin;
-		include(SHOPP_ADMIN_PATH."/categories/ui.php");
+		include $this->ui('ui.php');
 	}
 
 	/**
@@ -306,10 +307,10 @@ class ShoppAdminCategorize extends AdminController {
 	 * @since 1.0
 	 * @return void
 	 **/
-	function arrange_cols () {
+	public function arrange_cols () {
 		register_column_headers('shopp_page_shopp-categories', array(
-			'cat'=>__('Category','Shopp'),
-			'move'=>'<div class="move">&nbsp;</div>')
+			'cat' => Shopp::__('Category'),
+			'move' => '<div class="move">&nbsp;</div>')
 		);
 	}
 
@@ -320,7 +321,7 @@ class ShoppAdminCategorize extends AdminController {
 	 * @since 1.0
 	 * @return void
 	 **/
-	function editor () {
+	public function editor () {
 		global $Shopp,$CategoryImages;
 
 		if ( ! current_user_can('shopp_categories') )
@@ -363,7 +364,7 @@ class ShoppAdminCategorize extends AdminController {
 		do_action('do_meta_boxes', ProductCategory::$taxon, 'advanced', $Category);
 		do_action('do_meta_boxes', ProductCategory::$taxon, 'side', $Category);
 
-		include(SHOPP_ADMIN_PATH."/categories/category.php");
+		include $this->ui('category.php');
 	}
 
 	/**
@@ -373,7 +374,7 @@ class ShoppAdminCategorize extends AdminController {
 	 * @since 1.0
 	 * @return void
 	 **/
-	function save ($Category) {
+	public function save ( $Category ) {
 		$Shopp = Shopp::object();
 		$db = DB::get();
 		check_admin_referer('shopp-save-category');
@@ -434,7 +435,7 @@ class ShoppAdminCategorize extends AdminController {
 
 		if (!empty($_POST['deleteImages'])) {
 			$deletes = array();
-			if (strpos($_POST['deleteImages'],","))	$deletes = explode(',',$_POST['deleteImages']);
+			if (strpos($_POST['deleteImages'],","))	$deletes = explode(',', $_POST['deleteImages']);
 			else $deletes = array($_POST['deleteImages']);
 			$Category->delete_images($deletes);
 		}
@@ -452,9 +453,9 @@ class ShoppAdminCategorize extends AdminController {
 			}
 		}
 
-		do_action_ref_array('shopp_category_saved',array(&$Category));
+		do_action_ref_array('shopp_category_saved', array($Category));
 
-		$updated = '<strong>'.$Category->name.'</strong> '.__('category saved.','Shopp');
+		$this->notice(Shopp::__('%s category saved.', '<strong>' . $Category->name . '</strong>'));
 
 	}
 
@@ -466,7 +467,7 @@ class ShoppAdminCategorize extends AdminController {
 	 *
 	 * @return void
 	 **/
-	function init_positions () {
+	public function init_positions () {
 		// Load the entire catalog structure and update the category positions
 		$Catalog = new ShoppCatalog();
 		$Catalog->outofstock = true;
@@ -488,7 +489,7 @@ class ShoppAdminCategorize extends AdminController {
 	 * @since 1.0
 	 * @return void
 	 **/
-	function products_cols () {
+	public function products_cols () {
 		register_column_headers($this->screen, array(
 			'name'      => '<div class="shoppui-spin-align"><div class="shoppui-spinner shoppui-spinfx shoppui-spinfx-steps8"></div></div>',
 			'title'     => Shopp::__('Product'),
@@ -498,10 +499,10 @@ class ShoppAdminCategorize extends AdminController {
 			'inventory' => Shopp::__('Inventory'),
 			'featured'  => Shopp::__('Featured'),
 		));
-		add_action('manage_'.$this->screen.'_columns',array($this,'products_manage_cols'));
+		add_action('manage_' . $this->screen . '_columns', array($this, 'products_manage_cols'));
 	}
 
-	function products_manage_cols ($columns) {
+	public function products_manage_cols ( $columns ) {
 		unset($columns['move']);
 		return $columns;
 	}
@@ -512,7 +513,7 @@ class ShoppAdminCategorize extends AdminController {
 	 * @author Jonathan Davis
 	 * @return void
 	 **/
-	function products ($workflow=false) {
+	public function products ( $workflow = false ) {
 		$Shopp = Shopp::object();
 		$db = DB::get();
 
@@ -524,7 +525,7 @@ class ShoppAdminCategorize extends AdminController {
 			'per_page' => 500,
 			'id' => 0,
 			's' => ''
-			);
+		);
 		$args = array_merge($defaults,$_GET);
 		extract($args,EXTR_SKIP);
 
@@ -553,8 +554,7 @@ class ShoppAdminCategorize extends AdminController {
 			)
 		);
 
-		include(SHOPP_ADMIN_PATH."/categories/products.php");
+		include $this->ui('products.php');
 	}
 
-
-} // END class Categorize
+}

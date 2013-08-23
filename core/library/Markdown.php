@@ -35,6 +35,8 @@
  *
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 class MarkdownText extends ArrayObject {
     /**
      * Flag indicating that object has been passed through filters.

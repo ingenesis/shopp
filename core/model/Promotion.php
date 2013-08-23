@@ -9,6 +9,8 @@
  * @package shopp
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 class Promotion extends DatabaseObject {
 	static $table = "promo";
 

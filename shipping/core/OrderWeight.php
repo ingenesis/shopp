@@ -11,8 +11,9 @@
  * @since 1.2
  * @subpackage OrderWeight
  *
- * $Id$
  **/
+
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class OrderWeight extends ShippingFramework implements ShippingModule {
 
@@ -69,6 +70,4 @@ class OrderWeight extends ShippingFramework implements ShippingModule {
 
 	}
 
-} // end flatrates class
-
-?>
+}

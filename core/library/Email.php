@@ -13,6 +13,8 @@
  * @subpackage email
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 class ShoppEmailDefaultFilters extends ShoppEmailFilters {
 
 	function __construct () {
@@ -67,7 +69,7 @@ class Textify {
 	private $markup = false;
 	private $DOM = false;
 
-	function __construct ($markup) {
+	public function __construct ($markup) {
 		$this->markup = $markup;
         $DOM = new DOMDocument();
         $DOM->loadHTML($markup);
@@ -75,7 +77,7 @@ class Textify {
 		$this->DOM = $DOM;
 	}
 
-	function render () {
+	public function render () {
 		$node = $this->DOM->documentElement;
 		$HTML = new TextifyTag($node);
 		return $HTML->render();
@@ -126,7 +128,7 @@ class TextifyTag {
 	protected $borders = array('top'=>0,'right'=>0,'bottom'=>0,'left'=>0);
 	protected $margins = array('top'=>0,'right'=>0,'bottom'=>0,'left'=>0);
 
-	function __construct (&$tag) {
+	public function __construct (&$tag) {
 		$this->node = $tag;
 		$this->tag = $tag->tagName;
 
@@ -148,7 +150,7 @@ class TextifyTag {
 	 * @param DOMNode $node The DOMNode to render out
 	 * @return string The rendered content
 	 **/
-	function render ($node = false) {
+	public function render ($node = false) {
 
 		if ( !$node ) {
 			$node = $this->node;
@@ -187,7 +189,7 @@ class TextifyTag {
 	 *
 	 * @return string The final assembled content for the element
 	 **/
-	function layout () {
+	public function layout () {
 		// Follows box model standards
 
 		$this->prepend( $this->before() );	// Add before content
@@ -205,7 +207,7 @@ class TextifyTag {
  	}
 
 
-	function append ($content,$block=false) {
+	public function append ($content,$block=false) {
 		$lines = array_filter($this->lines($content));
 		if (empty($lines)) return;
 
@@ -224,7 +226,7 @@ class TextifyTag {
 		$this->content = array_merge($this->content,$lines);
 	}
 
-	function prepend ($content) {
+	public function prepend ($content) {
 		$lines = array_filter($this->lines($content));
 		if (empty($lines)) return;
 
@@ -237,7 +239,7 @@ class TextifyTag {
 		$this->content = array_merge($lines,$this->content);
 	}
 
-	function lines ($content) {
+	public function lines ($content) {
 		if (is_array($content)) $content = join('',$content);
 
 		if (empty($content)) return array();
@@ -275,27 +277,27 @@ class TextifyTag {
 	 * @param string $content The content to calculate
 	 * @return void
 	 **/
-	function dimensions () {
+	public function dimensions () {
 		$this->lines(join(TextifyTag::NEWLINE,$this->content));
 	}
 
-	function before () {
+	public function before () {
 		// if (TextifyTag::DEBUG) return "&lt;$this->tag&gt;";
 	}
 
-	function format ($text) {
+	public function format ($text) {
 		return TextifyTag::whitespace($text);
 	}
 
-	function after () {
+	public function after () {
 		// if (TextifyTag::DEBUG) return "&lt;/$this->tag&gt;";
 	}
 
-	function padding () { /* placeholder */ }
+	public function padding () { /* placeholder */ }
 
-	function borders () { /* placeholder */ }
+	public function borders () { /* placeholder */ }
 
-	function margins () { /* placeholder */ }
+	public function margins () { /* placeholder */ }
 
 
 	/**
@@ -306,11 +308,11 @@ class TextifyTag {
 	 *
 	 * @return string
 	 **/
-	function marks ($repeat = 1) {
+	public function marks ($repeat = 1) {
 		return str_repeat($this->marks['inline'],$repeat);
 	}
 
-	function linebreak () {
+	public function linebreak () {
 		return self::NEWLINE;
 	}
 
@@ -326,7 +328,7 @@ class TextifyTag {
 		return preg_replace('/\s+/', ' ', $text);
 	}
 
-	function renderer ($tag) {
+	public function renderer ($tag) {
 		if (isset($tag->Renderer)) {
 			$tag->Renderer->content = array();
 			return $tag->Renderer;
@@ -340,11 +342,11 @@ class TextifyTag {
 		return $tag->Renderer;
 	}
 
-	function parent () {
+	public function parent () {
 		return $this->node->parentNode->Renderer;
 	}
 
-	function styles ($string) {
+	public function styles ($string) {
 
 	}
 
@@ -352,19 +354,19 @@ class TextifyTag {
 
 class TextifyInlineElement extends TextifyTag {
 
-	function before () { return $this->marks(); }
+	public function before () { return $this->marks(); }
 
-	function after () { return $this->marks(); }
+	public function after () { return $this->marks(); }
 
 }
 
 class TextifyA extends TextifyInlineElement {
 
-	function before () {
+	public function before () {
 		return '<';
 	}
 
-	function after () {
+	public function after () {
 		$string = '';
 		if (isset($this->attrs['href']) && !empty($this->attrs['href'])) {
 			$href = $this->attrs['href'];
@@ -396,7 +398,7 @@ class TextifyCode extends TextifyInlineElement {
 
 class TextifyBr extends TextifyInlineElement {
 
-	function layout () {
+	public function layout () {
 		$this->content = array(' ',' ');
 		return parent::layout();
 	}
@@ -411,11 +413,11 @@ class TextifyBlockElement extends TextifyTag {
 	protected $borders = array('top' => 0,'right' => 0,'bottom' => 0,'left' => 0);
 	protected $padding = array('top' => 0,'right' => 0,'bottom' => 0,'left' => 0);
 
-	function width () {
+	public function width () {
 		return $this->width['max'];
 	}
 
-	function box (&$lines,$type='margins') {
+	public function box (&$lines,$type='margins') {
 		if (!isset($this->marks[$type])) return;
 
 		$size = 0;
@@ -452,19 +454,19 @@ class TextifyBlockElement extends TextifyTag {
 
 	}
 
-	function padding () {
+	public function padding () {
 		$this->box($this->content,'padding');
 	}
 
-	function borders () {
+	public function borders () {
 		$this->box($this->content,'borders');
 	}
 
-	function margins () {
+	public function margins () {
 		$this->box($this->content,'margins');
 	}
 
-	function legend ($string) {
+	public function legend ($string) {
 		if (TextifyTag::DEBUG) $legend = $this->tag;
 		else $legend = $this->legend;
 
@@ -482,13 +484,13 @@ class TextifyHeader extends TextifyBlockElement {
 	var $marks = array('inline' => '#');
 	var $margins = array('top' => 1,'right' => 0,'bottom' => 1,'left' => 0);
 
-	function before () {
+	public function before () {
 		$text = parent::before();
 		$text .= $this->marks($this->level).' ';
 		return $text;
 	}
 
-	function after () {
+	public function after () {
 		$text = ' '.$this->marks($this->level);
 		$text .= parent::after();
 		return $text;
@@ -499,14 +501,14 @@ class TextifyHeader extends TextifyBlockElement {
 class TextifyH1 extends TextifyHeader {
 	var $marks = array('inline' => '=');
 
-	function before () {}
+	public function before () {}
 
-	function format ($text) {
+	public function format ($text) {
 		$marks = $this->marks(strlen($text));
 		return "$text\n$marks";
 	}
 
-	function after () {}
+	public function after () {}
 }
 
 class TextifyH2 extends TextifyH1 {
@@ -536,12 +538,12 @@ class TextifyP extends TextifyBlockElement {
 
 class TextifyBlockquote extends TextifyBlockElement {
 
-	function layout () {
+	public function layout () {
 		$this->content = array_map(array($this,'quote'),$this->content);
 		return parent::layout();
  	}
 
-	function quote ($line) {
+	public function quote ($line) {
 		return "> $line";
 	}
 
@@ -551,7 +553,7 @@ class TextifyListContainer extends TextifyBlockElement {
 	var $margins = array('top' => 0,'right' => 0,'bottom' => 1,'left' => 4);
 	var $counter = 0;
 
-	function additem () {
+	public function additem () {
 		return ++$this->counter;
 	}
 
@@ -581,14 +583,14 @@ class TextifyLi extends TextifyBlockElement {
 	var $margins = array('top' => 0,'right' => 0,'bottom' => 0,'left' => 0);
 	var $num = false;
 
-	function __construct(&$tag) {
+	public function __construct(&$tag) {
 		parent::__construct($tag);
 		$parent = $this->parent();
 		if ($parent && method_exists($parent,'additem'))
 			$this->num = $parent->additem();
 	}
 
-	function before () {
+	public function before () {
 		if ('TextifyOl' == get_class($this->parent())) return $this->num.'. ';
 		else return '* ';
 	}
@@ -600,7 +602,7 @@ class TextifyHr extends TextifyBlockElement {
 	var $margins = array('top' => 1,'right' => 0,'bottom' => 1,'left' => 0);
 	var $marks = array('inline' => '-');
 
-	function layout () {
+	public function layout () {
 		$this->content = array($this->marks(75));
 		return parent::layout();
 	}
@@ -626,7 +628,7 @@ class TextifyTable extends TextifyBlockElement {
 	 * @param DOMNode $node The DOMNode to render out
 	 * @return string The rendered content
 	 **/
-	function render ($node = false) {
+	public function render ($node = false) {
 
 		if ( !$node ) {
 			$node = $this->node;
@@ -663,7 +665,7 @@ class TextifyTable extends TextifyBlockElement {
 
 	}
 
-	function append ($content,$block=true) {
+	public function append ($content,$block=true) {
 		$lines = array_filter($this->lines($content));
 		if (empty($lines)) return;
 
@@ -679,14 +681,14 @@ class TextifyTable extends TextifyBlockElement {
 		$this->content = array_merge($this->content,$lines);
 	}
 
-	function borders () { /* disabled */ }
+	public function borders () { /* disabled */ }
 
-	function addrow () {
+	public function addrow () {
 		$this->layout[$this->rows] = array();
 		return $this->rows++;
 	}
 
-	function addrowcolumn ($row = 0) {
+	public function addrowcolumn ($row = 0) {
 		$col = false;
 		if (isset($this->layout[$row])) {
 			$col = count($this->layout[$row]);
@@ -695,7 +697,7 @@ class TextifyTable extends TextifyBlockElement {
 		return $col;
 	}
 
-	function colwidth ($column,$width=false) {
+	public function colwidth ($column,$width=false) {
 		if ( ! isset($this->colwidths[$column]) ) $this->colwidths[$column] = 0;
 		if (false !== $width)
 			$this->colwidths[$column] = max($this->colwidths[$column],$width);
@@ -708,7 +710,7 @@ class TextifyTableTag extends TextifyBlockElement {
 
 	protected $table = false; // Parent table layout
 
-	function __construct ($tag) {
+	public function __construct ($tag) {
 		parent::__construct($tag);
 
 		$tablenode = $this->tablenode();
@@ -725,7 +727,7 @@ class TextifyTableTag extends TextifyBlockElement {
 	 *
 	 * @return DOMNode
 	 **/
-	function tablenode () {
+	public function tablenode () {
 		$path = $this->node->getNodePath();
 		if (false === strpos($path,'table')) return false;
 
@@ -743,13 +745,13 @@ class TextifyTr extends TextifyTableTag {
 	private $row = 0;
 	private $cols = 0;
 
-	function __construct ($tag) {
+	public function __construct ($tag) {
 		parent::__construct($tag);
 
 		$this->row = $this->table->addrow();
 	}
 
-	function layout () {
+	public function layout () {
 		$_ = array();
 		$lines = array();
 		foreach ($this->content as $cells) {
@@ -777,23 +779,23 @@ class TextifyTr extends TextifyTableTag {
 		return join('',$_);
 	}
 
-	function append ($content,$block=true) {
+	public function append ($content,$block=true) {
 		$this->content[] = $content;
 	}
 
-	function format ($text) { /* disabled */ }
+	public function format ($text) { /* disabled */ }
 
-	function addcolumn ($column = 0) {
+	public function addcolumn ($column = 0) {
 		$id = $this->table->addrowcolumn($this->row);
 		$this->cols++;
 		return $id;
 	}
 
-	function tablerow () {
+	public function tablerow () {
 		return $this->row;
 	}
 
-	function padding () { /* Disabled */ }
+	public function padding () { /* Disabled */ }
 
 }
 
@@ -806,7 +808,7 @@ class TextifyTd extends TextifyTableTag {
 
 	private $reported = false;
 
-	function __construct ($tag) {
+	public function __construct ($tag) {
 		parent::__construct($tag);
 
 		$row = $this->getrow();
@@ -814,20 +816,20 @@ class TextifyTd extends TextifyTableTag {
 		$this->col = $row->addcolumn();
 	}
 
-	function margins () { /* disabled */ }
+	public function margins () { /* disabled */ }
 
-	function dimensions () {
+	public function dimensions () {
 		parent::dimensions();
 		if ($this->reported) return;
 		$this->table->colwidth($this->col,$this->width['max']);
 		$this->reported = true;
 	}
 
-	function width () {
+	public function width () {
 		return $this->table->colwidth($this->col);
 	}
 
-	function getrow () {
+	public function getrow () {
 		return $this->node->parentNode->Renderer;
 	}
 
@@ -835,8 +837,8 @@ class TextifyTd extends TextifyTableTag {
 
 class TextifyTh extends TextifyTd {
 
-	function before () { return '['; }
-	function after () { return ']'; }
+	public function before () { return '['; }
+	public function after () { return ']'; }
 
 }
 
@@ -846,7 +848,7 @@ class TextifyFieldset extends TextifyBlockElement {
 
 class TextifyLegend extends TextifyBlockElement {
 
-	function format ($text) {
+	public function format ($text) {
 		$this->legend = $text;
 		if (!$this->borders['top']) return '['.$text.']';
 	}

@@ -13,6 +13,8 @@
  *
  **/
 
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
+
 class PercentageAmount extends ShippingFramework implements ShippingModule {
 
 	function init () { /* Not implemented */ }
@@ -63,6 +65,4 @@ class PercentageAmount extends ShippingFramework implements ShippingModule {
 
 	}
 
-} // end flatrates class
-
-?>
+}

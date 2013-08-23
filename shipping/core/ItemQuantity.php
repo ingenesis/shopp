@@ -11,35 +11,36 @@
  * @since 1.2
  * @subpackage ItemQuantity
  *
- * $Id$
  **/
+
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class ItemQuantity extends ShippingFramework implements ShippingModule {
 
-	var $items = 0;
+	public $items = 0;
 
 	function methods () {
-		return __('Item Quantity Tiers','Shopp');
+		return Shopp::__('Item Quantity Tiers');
 	}
 
 	function init () {
 		$this->items = 0;
 	}
 
-	function calcitem ($id,$Item) {
+	function calcitem ( $id, $Item ) {
 		$this->items += $Item->quantity;
 	}
 
-	function calculate (&$options,$Order) {
+	function calculate ( &$options, $Order ) {
 
-		foreach ($this->methods as $slug => $method) {
+		foreach ( $this->methods as $slug => $method ) {
 
 			$tiers = $this->tablerate($method['table']);
-			if ($tiers === false) continue; // Skip methods that don't match at all
+			if ( $tiers === false ) continue; // Skip methods that don't match at all
 
 			$amount = 0;
 			$tiers = array_reverse($tiers);
-			foreach ($tiers as $tier) {
+			foreach ( $tiers as $tier ) {
 				extract($tier);
 				$amount = Shopp::floatval($rate);			// Capture the rate amount
 				if ((int)$this->items >= (int)$threshold) break;
@@ -53,7 +54,7 @@ class ItemQuantity extends ShippingFramework implements ShippingModule {
 				'items' => false
 			);
 
-			$options[$slug] = new ShippingOption($rate);
+			$options[ $slug ] = new ShippingOption($rate);
 
 		}
 
@@ -61,14 +62,11 @@ class ItemQuantity extends ShippingFramework implements ShippingModule {
 	}
 
 	function settings () {
-		$this->ui->tablerates(0,array(
-			'unit' => array(__('Item Quantity','Shopp'),__('items','Shopp')),
+		$this->ui->tablerates(0, array(
+			'unit' => array(Shopp::__('Item Quantity'), Shopp::__('items')),
 			'table' => $this->settings['table'],
 			'rate_class' => 'money'
-
 		));
 	}
 
-} // end FlatRates class
-
-?>
+}

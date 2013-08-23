@@ -45,7 +45,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 	'updatebutton' => 'update_button'
 	);
 
-	static function _apicontext () { return 'shipping'; }
+	public static function _apicontext () { return 'shipping'; }
 
 	/**
 	 * _setobject - returns the global context object used in the shopp('cart') call
@@ -55,7 +55,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 	 * @version 1.3
 	 *
 	 **/
-	static function _setobject ($Object, $object) {
+	public static function _setobject ( $Object, $object ) {
 		if ( is_object($Object) && is_a($Object, 'Order') && isset($Object->Shiprates) && 'shipping' == strtolower($object) )
 			return $Object->Shiprates;
 		else if ( strtolower($object) != 'shipping' ) return $Object; // not mine, do nothing
@@ -63,12 +63,12 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 		return ShoppOrder()->Shiprates;
 	}
 
-	static function has_options ($result, $options, $O) {
+	public static function has_options ( $result, $options, $O ) {
 		$Shiprates = ShoppOrder()->Shiprates;
 		return apply_filters('shopp_shipping_hasestimates', $Shiprates->exist(), $Shiprates );
 	}
 
-	static function option_selector ($result, $options, $O) {
+	public static function option_selector ( $result, $options, $O ) {
 
 		$checked = '';
 		$selected = $O->selected();
@@ -81,29 +81,29 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 		return $result;
 	}
 
-	static function option_selected ($result, $options, $O) {
+	public static function option_selected ( $result, $options, $O ) {
 		$option = $O->current();
 		$selected = $O->selected();
 		return ( $selected->slug == $option->slug );
 	}
 
-	static function option_slug ($result, $options, $O) {
+	public static function option_slug ( $result, $options, $O ) {
 		$option = $O->current();
 		return $option->slug;
 	}
 
-	static function option_cost ($result, $options, $O) {
+	public static function option_cost ( $result, $options, $O ) {
 		$option = $O->current();
 		return money($option->amount);
 	}
 
-	static function option_delivery ($result, $options, $O) {
+	public static function option_delivery ( $result, $options, $O ) {
 		$option = $O->current();
 		if ( ! $option->delivery ) return "";
 		return self::_delivery_format($option->delivery, $options);
 	}
 
-	static function _delivery_format( $estimate, $options = array() ) {
+	public static function _delivery_format( $estimate, $options = array() ) {
 		$periods = array("h"=>3600,"d"=>86400,"w"=>604800,"m"=>2592000);
 		$defaults = array(
 			'dateformat' => get_option('date_format'),
@@ -130,7 +130,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 		return $result;
 	}
 
-	static function option_menu ($result, $options, $O) {
+	public static function option_menu ( $result, $options, $O ) {
 		$Order = ShoppOrder();
 		$Shiprates = $Order->Shiprates;
 
@@ -172,12 +172,12 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 		return join("",$_);
 	}
 
-	static function option_name ($result, $options, $O) {
+	public static function option_name ( $result, $options, $O ) {
 		$option = $O->current();
 		return $option->name;
 	}
 
-	static function options ($result, $options, $O) {
+	public static function options ( $result, $options, $O ) {
 		if ( ! isset($O->_looping) ) {
 			$O->rewind();
 			$O->_looping = true;
@@ -191,7 +191,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 		}
 	}
 
-	static function url ($result, $options, $O) {
+	public static function url ( $result, $options, $O ) {
 		return is_shopp_page('checkout') ? Shopp::url(false, 'confirm-order') : Shopp::url(false, 'cart');
 	}
 
@@ -203,7 +203,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 	 *
 	 * @return void
 	 **/
-	static function update_button ($result, $options, $O) {
+	public static function update_button ( $result, $options, $O ) {
 		$submit_attrs = array('title','value','disabled','tabindex','accesskey','class');
 		$stdclasses = 'update-button hide-if-js';
 		$defaults = array(

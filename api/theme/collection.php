@@ -76,7 +76,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		'facetoptioncount' => 'facet_option_count'
 	);
 
-	static function _context_name ( $name ) {
+	public static function _context_name ( $name ) {
 		switch ( $name ) {
 			case 'collection':
 			case 'category':
@@ -87,7 +87,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		return $name;
 	}
 
-	static function _setobject ($Object, $context) {
+	public static function _setobject ( $Object, $context ) {
 		if( is_object($Object) && is_a($Object, 'ProductCollection') ) return $Object;
 
 		switch ( $context ) {
@@ -103,9 +103,9 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		return $Object;
 	}
 
-	static function _apicontext () { return 'collection'; }
+	public static function _apicontext () { return 'collection'; }
 
-	static function carousel ($result, $options, $O) {
+	public static function carousel ( $result, $options, $O ) {
 		$options['load'] = array('images');
 		if (!$O->loaded) $O->load($options);
 		if (count($O->products) == 0) return false;
@@ -147,14 +147,14 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		return $string;
 	}
 
-	static function coverimage ($result, $options, $O) {
+	public static function coverimage ( $result, $options, $O ) {
 		// Force select the first loaded image
 		unset($options['id']);
 		$options['index'] = 0;
-		return self::image($result, $options, $O);
+		return self::image( $result, $options, $O );
 	}
 
-	static function description ($result, $options, $O) {
+	public static function description ( $result, $options, $O ) {
 		$defaults = array(
 			'collapse' => true,
 			'wrap' => true,
@@ -170,11 +170,11 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	}
 
 
-	static function is_facet_filtered ($result, $options, $O) {
+	public static function is_facet_filtered ( $result, $options, $O ) {
 		return (count($O->filters) > 0);
 	}
 
-	static function facet_filters ($result, $options, $O) {
+	public static function facet_filters ( $result, $options, $O ) {
 		if (!isset($O->_filters_loop)) {
 			reset($O->filters);
 			$O->_filters_loop = true;
@@ -192,12 +192,12 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 
 	}
 
-	static function facet_filter ($result, $options, $O) {
+	public static function facet_filter ( $result, $options, $O ) {
 		if (!isset($O->_filters_loop)) return false;
 		return ProductCategoryFacet::range_labels($O->facet->selected);
 	}
 
-	static function facet_menus ($result, $options, $O) {
+	public static function facet_menus ( $result, $options, $O ) {
 		if (!isset($O->_facets_loop)) {
 			reset($O->facets);
 			$O->_facets_loop = true;
@@ -210,35 +210,35 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		}
 	}
 
-	static function facet_name ($result, $options, $O) {
+	public static function facet_name ( $result, $options, $O ) {
 		if (isset($O->_filters_loop)) $facet = $O->facet;
 		else $facet = current($O->facets);
 		return $facet->name;
 	}
 
-	static function facet_slug ($result, $options, $O) {
+	public static function facet_slug ( $result, $options, $O ) {
 		$facet = current($O->facets);
 		return $facet->slug;
 	}
 
-	static function facet_link ($result, $options, $O) {
+	public static function facet_link ( $result, $options, $O ) {
 		if (isset($O->_filters_loop)) $facet = $O->facet;
 		else $facet = current($O->facets);
 		return $facet->link;
 	}
 
-	static function facet_filtered ($result, $options, $O) {
+	public static function facet_filtered ( $result, $options, $O ) {
 		if (isset($O->_filters_loop)) $facet = $O->facet;
 		else $facet = current($O->facets);
 		return !empty($facet->selected);
 	}
 
-	static function facet_menu_has_options ($result, $options, $O) {
+	public static function facet_menu_has_options ( $result, $options, $O ) {
 		$facet = current($O->facets);
 		return (count($facet->filters) > 0);
 	}
 
-	static function facet_options   ($result, $options, $O) {
+	public static function facet_options   ( $result, $options, $O ) {
 		$facet = current($O->facets);
 
 		if (!isset($O->_facetoptions_loop)) {
@@ -254,31 +254,31 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 
 	}
 
-	static function facet_option_link  ($result, $options, $O) {
+	public static function facet_option_link  ( $result, $options, $O ) {
 		$facet = current($O->facets);
 		$option = current($facet->filters);
 		return add_query_arg(urlencode($facet->slug),$option->param,$facet->link);
 	}
 
-	static function facet_option_label  ($result, $options, $O) {
+	public static function facet_option_label  ( $result, $options, $O ) {
 		$facet = current($O->facets);
 		$option = current($facet->filters);
 		return $option->label;
 	}
 
-	static function facet_option_value  ($result, $options, $O) {
+	public static function facet_option_value  ( $result, $options, $O ) {
 		$facet = current($O->facets);
 		$option = current($facet->filters);
 		return $option->param;
 	}
 
-	static function facet_option_count  ($result, $options, $O) {
+	public static function facet_option_count  ( $result, $options, $O ) {
 		$facet = current($O->facets);
 		$option = current($facet->filters);
 		return $option->count;
 	}
 
-	static function facet_option_input  ($result, $options, $O) {
+	public static function facet_option_input  ( $result, $options, $O ) {
 		$facet = current($O->facets);
 		$option = current($facet->filters);
 
@@ -300,7 +300,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		return join('',$_);
 	}
 
-	static function faceted_menu ($result, $options, $O) {
+	public static function faceted_menu ( $result, $options, $O ) {
 		$_ = array();
 
 		// Use a template if available
@@ -348,7 +348,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		return join('',$_);
 	}
 
-	static function feed_url ($result, $options, $O) {
+	public static function feed_url ( $result, $options, $O ) {
 		global $wp_rewrite;
 		$url = self::url($result,$options,$O);
 		if ( ! $wp_rewrite->using_permalinks() ) return add_query_arg(array('src' => 'category_rss'), $url);
@@ -360,13 +360,13 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			return $url;
 	}
 
-	static function has_categories ($result, $options, $O) {
+	public static function has_categories ( $result, $options, $O ) {
 		if ( empty($O->children) && method_exists($O, 'load_children') ) $O->load_children( $options );
 		reset($O->children);
 		return ( ! empty($O->children) );
 	}
 
-	static function has_faceted_menu ($result, $options, $O) {
+	public static function has_faceted_menu ( $result, $options, $O ) {
 		if ( ! is_a($O, 'ProductCategory') ) return false;
 		if ( empty($O->meta) ) $O->load_meta();
 		if ( property_exists($O,'facetedmenus') && Shopp::str_true($O->facetedmenus) ) {
@@ -376,7 +376,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		return false;
 	}
 
-	static function has_images ($result, $options, $O) {
+	public static function has_images ( $result, $options, $O ) {
 		if ( ! is_a($O, 'ProductCategory') ) return false;
 		if ( empty($O->images) ) $O->load_images();
 		reset($O->images);
@@ -384,7 +384,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		return true;
 	}
 
-	static function id ($result, $options, $O) {
+	public static function id ( $result, $options, $O ) {
 		if ( isset($O->term_id) ) return $O->term_id;
 		return false;
 	}
@@ -398,12 +398,12 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 *
 	 * @return string
 	 **/
-	static function image ($result, $options, $O) {
-		if (!self::has_images($result, $options, $O)) return '';
-		return ShoppStorefrontThemeAPI::image($result, $options, $O);
+	public static function image ( $result, $options, $O ) {
+		if (!self::has_images( $result, $options, $O )) return '';
+		return ShoppStorefrontThemeAPI::image( $result, $options, $O );
 	}
 
-	static function images ($result, $options, $O) {
+	public static function images ( $result, $options, $O ) {
 		if (!isset($O->_images_loop)) {
 			reset($O->images);
 			$O->_images_loop = true;
@@ -416,12 +416,12 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		}
 	}
 
-	static function is_subcategory ($result, $options, $O) {
+	public static function is_subcategory ( $result, $options, $O ) {
 		if (isset($options['id'])) return ($this->parent == $options['id']);
 		return ($O->parent != 0);
 	}
 
-	static function load_products ($result, $options, $O) {
+	public static function load_products ( $result, $options, $O ) {
 		if (empty($O->id) && empty($O->slug)) return false;
 		if (isset($options['load'])) {
 			$dataset = explode(",",$options['load']);
@@ -438,9 +438,9 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		if (count($O->products) > 0) return true; else return false;
 	}
 
-	static function name ($result, $options, $O) { return $O->name; }
+	public static function name ( $result, $options, $O ) { return $O->name; }
 
-	static function pagination ($result, $options, $O) {
+	public static function pagination ( $result, $options, $O ) {
 		if (!$O->paged) return "";
 
 		$defaults = array(
@@ -531,9 +531,9 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		return join("\n",$_);
 	}
 
-	static function parent ($result, $options, $O) { return isset($O->parent) ? $O->parent : false;  }
+	public static function parent ( $result, $options, $O ) { return isset($O->parent) ? $O->parent : false;  }
 
-	static function products ($result, $options, $O) {
+	public static function products ( $result, $options, $O ) {
 		if ( isset($options['looping']) ) return isset($O->_product_loop);
 
 		$null = null;
@@ -559,7 +559,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		}
 	}
 
-	static function row ($result, $options, $O) {
+	public static function row ( $result, $options, $O ) {
 		$Shopp = Shopp::object();
 		if (!isset($O->_rindex) || $O->_rindex === false) $O->_rindex = 0;
 		else $O->_rindex++;
@@ -568,13 +568,13 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		else return false;
 	}
 
-	static function section_list ($result, $options, $O) {
+	public static function section_list ( $result, $options, $O ) {
 		if (!isset($O->id) || empty($O->id)) return false;
 		$options['section'] = true;
-		return ShoppStorefrontThemeAPI::category_list($result, $options, $O);
+		return ShoppStorefrontThemeAPI::category_list( $result, $options, $O );
 	}
 
-	static function slideshow ($result, $options, $O) {
+	public static function slideshow ( $result, $options, $O ) {
 		$options['load'] = array('images');
 		if (!$O->loaded) $O->load($options);
 		if (count($O->products) == 0) return false;
@@ -615,12 +615,12 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		return $string;
 	}
 
-	static function slug ($result, $options, $O) {
+	public static function slug ( $result, $options, $O ) {
 		if (isset($O->slug)) return urldecode($O->slug);
 		return false;
 	}
 
-	static function subcategories ($result, $options, $O) {
+	public static function subcategories ( $result, $options, $O ) {
 		if (!isset($O->_children_loop)) {
 			reset($O->children);
 			$O->child = current($O->children);
@@ -640,16 +640,16 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		}
 	}
 
-	static function subcategory_list ($result, $options, $O) {
+	public static function subcategory_list ( $result, $options, $O ) {
 		if (!isset($O->id) || empty($O->id)) return false;
 		$options['childof'] = $O->id;
 		$options['default'] = __('Select a sub-category&hellip;','Shopp');
-		return ShoppStorefrontThemeAPI::category_list($result, $options, $O);
+		return ShoppStorefrontThemeAPI::category_list( $result, $options, $O );
 	}
 
-	static function total ($result, $options, $O) { return $O->loaded?$O->total:false; }
+	public static function total ( $result, $options, $O ) { return $O->loaded?$O->total:false; }
 
-	static function url ($result, $options, $O) {
+	public static function url ( $result, $options, $O ) {
 		global $ShoppTaxonomies, $wp_rewrite;
 		if ( property_exists($O,'id') && $O->id && isset($O->taxonomy) && ! in_array($O->taxonomy, array_keys($ShoppTaxonomies)) )
 			return get_term_link( (int) $O->id, $O->taxonomy);

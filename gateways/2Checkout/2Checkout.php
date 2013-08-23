@@ -10,8 +10,9 @@
  * @since 1.1
  * @subpackage _2Checkout
  *
- * $Id$
  **/
+
+defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class _2Checkout extends GatewayFramework implements GatewayModule {
 
