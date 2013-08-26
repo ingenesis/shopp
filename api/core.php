@@ -413,16 +413,16 @@ function is_shopp_product ( $wp_query = false ) {
 	return (bool) $product;
 }
 
-function shopp_add_error ( string $message, integer $level = null ) {
+function shopp_add_error ( $message, $level = null ) {
 	if ( is_null($level) ) $level = SHOPP_ERR;
 	return new ShoppError( $message, false, $level );
 }
 
-function shopp_add_notice ( string $message ) {
+function shopp_add_notice ( $message ) {
 	return shopp_add_error($message,SHOPP_ERR);
 }
 
-function shopp_debug ( string $message, $backtrace = false ) {
+function shopp_debug ( $message, $backtrace = false ) {
 	if ( ! SHOPP_DEBUG ) return false;
 	if ( $backtrace ) $callstack = debug_caller();
 	return shopp_add_error( $message . $backtrace, SHOPP_DEBUG_ERR );

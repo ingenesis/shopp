@@ -835,7 +835,7 @@ abstract class ShoppCore {
 		return false;
 	}
 
-	public static function filefind ($filename, $directory, array &$matches = array(), $greedy = true) {
+	public static function findfile ( $filename, $directory, array &$matches = array(), $greedy = true ) {
 		if ( ! is_dir($directory) ) return false;
 
 		try {

@@ -422,6 +422,9 @@ abstract class GatewayFramework {
  **/
 class GatewayModules extends ModuleLoader {
 
+	protected $interface = 'GatewayModule';
+	protected $paths =  array(SHOPP_GATEWAYS, SHOPP_ADDONS);
+
 	public $selected = false;		// The chosen gateway to process the order
 	public $installed = array();
 	public $secure = false;			// SSL-required flag
@@ -436,8 +439,6 @@ class GatewayModules extends ModuleLoader {
 	 * @return void
 	 **/
 	public function __construct () {
-
-		$this->path = SHOPP_GATEWAYS;
 
 		// Get hooks in place before getting things started
 		add_action('shopp_module_loaded', array($this, 'properties'));
@@ -465,7 +466,7 @@ class GatewayModules extends ModuleLoader {
 		foreach ( $gateways as $gateway ) {
 			if ( false !== strpos($gateway, '-') ) list($gateway, $id) = explode('-', $gateway);
 			if ( in_array($gateway, $modules) && !in_array($gateway, $this->activated) )
-				$this->activated[] = $this->modules[ $gateway ]->subpackage;
+				$this->activated[] = $this->modules[ $gateway ]->classname;
 		}
 		return $this->activated;
 	}

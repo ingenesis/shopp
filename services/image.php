@@ -311,6 +311,8 @@ class ImageServer {
 			define('SHOPP_PATH', self::path() );
 		if ( ! defined('SHOPP_STORAGE') )
 			define('SHOPP_STORAGE', SHOPP_PATH . '/storage');
+		if ( ! defined('SHOPP_ADDONS') )
+			define('SHOPP_ADDONS', WP_CONTENT_DIR . '/shopp-addons');
 
 		$Shopp->Storage = new StorageEngines();
 

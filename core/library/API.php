@@ -1,6 +1,6 @@
 <?php
 /**
- * API
+ * API.php
  *
  * Shopp's Application Programming Interface library manager
  *
@@ -10,7 +10,6 @@
  * @license GNU GPL version 3 (or later) {@see license.txt}
  * @package shopp
  * @since 1.0
- * @subpackage shopp
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -63,6 +62,9 @@ class ShoppAPIModules extends ModuleLoader {
 
 	protected $loader = 'ShoppAPIFile';
 
+	protected $interface = 'ShoppAPI';
+	protected $paths = array(SHOPP_THEME_APIS);
+
 	/**
 	 * API constructor
 	 *
@@ -71,7 +73,6 @@ class ShoppAPIModules extends ModuleLoader {
 	 * @return void
 	 **/
 	public function __construct () {
-		$this->path = SHOPP_THEME_APIS;
 
 		$this->installed(); // Find modules
 		$this->load(true);  // Load all
@@ -107,15 +108,15 @@ class ShoppAPIFile extends ModuleFile {
 
 	public function register () {
 		// Hook _context
-		$api = $this->subpackage;
-		$apicontext = call_user_func(array($api,'_apicontext'));
+		$api = $this->classname;
+		$apicontext = call_user_func(array($api, '_apicontext'));
 
-		$setobject_call = method_exists($api,'_setobject')?array($api, '_setobject'):array($this,'setobject');
+		$setobject_call = method_exists($api,'_setobject') ? array($api, '_setobject') : array($this, 'setobject');
 		add_filter('shopp_themeapi_object', $setobject_call, 10, 2);
 
 		// Define a static $map property as an associative array or tag => member function names.
 		// Without the tag key, it will be registered as a general purpose filter for all tags in this context
-		$register = get_class_property($api,'register');
+		$register = get_class_property($api, 'register');
 		if (!empty($register)) {
 			foreach ( $register as $tag => $method ) {
 				if ( strpos($method, '::') !== false ) list($apiclass, $method) = explode('::', $method);
@@ -137,11 +138,11 @@ class ShoppAPIFile extends ModuleFile {
 
 	}
 
-	public function setobject ($Object,$context) {
+	public function setobject ($Object, $context) {
 		if ( is_object($Object) ) return $Object;  // always use if first argument is an object
 
-		$api = $this->subpackage;
-		$apicontext = call_user_func(array($api,'_apicontext'));
+		$api = $this->classname;
+		$apicontext = call_user_func(array($api, '_apicontext'));
 
 		if (strtolower($context) != strtolower($apicontext)) return $Object; // do nothing
 

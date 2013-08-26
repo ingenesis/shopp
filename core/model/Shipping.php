@@ -28,6 +28,9 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 class ShippingModules extends ModuleLoader {
 
+	protected $interface = 'ShippingModule';
+	protected $paths =  array(SHOPP_SHIPPING, SHOPP_ADDONS);
+
 	public $dimensions = false;	// Flags when a module requires product dimensions
 	public $postcodes = false;		// Flags when a module requires a post code for shipping estimates
 	public $realtime = false;		// Flags when a module provides realtime rates
@@ -43,11 +46,9 @@ class ShippingModules extends ModuleLoader {
 	 **/
 	public function __construct () {
 
-		$this->path = SHOPP_SHIPPING;
-
 		// Get hooks in place before getting things started
-		add_action('shopp_module_loaded',array(&$this,'addmethods'));
-		add_action('shopp_settings_shipping_ui',array(&$this,'ui'));
+		add_action('shopp_module_loaded', array($this,'addmethods'));
+		add_action('shopp_settings_shipping_ui', array($this,'ui'));
 
 		$this->installed();
 		$this->activated();

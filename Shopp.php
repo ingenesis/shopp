@@ -160,6 +160,7 @@ class Shopp extends ShoppCore {
 		if ( ! defined('SHOPP_GATEWAY_TIMEOUT') )		define('SHOPP_GATEWAY_TIMEOUT', 10);				// Gateway connections timeout after 10 seconds
 		if ( ! defined('SHOPP_SHIPPING_TIMEOUT') )		define('SHOPP_SHIPPING_TIMEOUT', 10);			// Shipping provider connections timeout after 10 seconds
 		if ( ! defined('SHOPP_TEMP_PATH') )				define('SHOPP_TEMP_PATH', sys_get_temp_dir());	// Use the system defined temporary directory
+		if ( ! defined('SHOPP_ADDONS') )				define('SHOPP_ADDONS', WP_CONTENT_DIR . '/shopp-addons');	// A configurable directory to keep Shopp addons
 		if ( ! defined('SHOPP_NAMESPACE_TAXONOMIES') )	define('SHOPP_NAMESPACE_TAXONOMIES', true);		// Add taxonomy namespacing for permalinks /shop/category/category-name, /shopp/tag/tag-name
 	}
 

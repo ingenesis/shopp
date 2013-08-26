@@ -5,9 +5,9 @@
  * @author Jonathan Davis
  * @version 1.2
  * @copyright Ingenesis Limited, July 2011
- * @package Shopp
  * @since 1.1
- * @subpackage TestMode
+ * @package shopp/gateway
+ * @uses TestMode
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access

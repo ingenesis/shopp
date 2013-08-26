@@ -1,12 +1,14 @@
 <?php
 /**
- * Asset class
- * Catalog product assets (metadata, images, downloads)
+ * Asset.php
+ *
+ * Catalog assets classes (metadata, images, downloads)
  *
  * @author Jonathan Davis
  * @version 1.0
  * @copyright Ingenesis Limited, 28 March, 2008
  * @package shopp
+ * @subpackage assets
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -656,6 +658,9 @@ class ProductDownload extends DownloadAsset {
  **/
 class StorageEngines extends ModuleLoader {
 
+	protected $interface = 'StorageEngine';
+	protected $paths =  array(SHOPP_STORAGE, SHOPP_ADDONS);
+
 	public $engines = array();
 	public $contexts = array('image', 'download');
 	public $activate = false;
@@ -669,7 +674,6 @@ class StorageEngines extends ModuleLoader {
 	 * @return void
 	 **/
 	public function __construct () {
-		$this->path = SHOPP_STORAGE;
 
 		if ( function_exists('add_action') )
 			add_action('shopp_module_loaded', array($this, 'actions'));
@@ -698,9 +702,9 @@ class StorageEngines extends ModuleLoader {
 
 		foreach ( $systems as $system => $storage ) {
 			foreach ( $this->modules as $engine ) {
-				if ( $engine->subpackage == $storage ) {
-					$this->activated[] = $engine->subpackage;
-					$this->engines[$system] = $engine->subpackage;
+				if ( $engine->classname == $storage ) {
+					$this->activated[] = $engine->classname;
+					$this->engines[ $system ] = $engine->classname;
 					break; // Check for next system engine
 				}
 			}

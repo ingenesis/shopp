@@ -2,10 +2,10 @@
 /**
 * ShoppCartThemeAPI - Provided theme api tags.
 *
+* @api
 * @version 1.0
 * @since 1.2
 * @package shopp
-* @subpackage ShoppCartThemeAPI
 *
 **/
 

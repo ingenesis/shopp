@@ -1,44 +1,45 @@
 <?php
 /**
  * PayPal Standard
- * @class PayPalStandard
+ *
+ *
  *
  * @author Jonathan Davis, John Dillick
- * @version 1.2.2
  * @copyright Ingenesis Limited, 27 May, 2009
- * @package Shopp
+ * @version 1.2.2
  * @since 1.2
- * @subpackage PayPalStandard
+ * @package shopp/gateway
+ * @uses ShoppGatewayPayPalStandard
  *
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class PayPalStandard extends GatewayFramework implements GatewayModule {
+class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModule {
 
 	// Settings
-	var $secure = false; // do not require SSL or session encryption
-	var $saleonly = true; // force sale event on processing (no auth)
-	var $recurring = true; // support for recurring payment
+	public $secure = false; // do not require SSL or session encryption
+	public $saleonly = true; // force sale event on processing (no auth)
+	public $recurring = true; // support for recurring payment
 
 	// URLs
-	var $buttonurl = 'http://www.paypal.com/%s/i/btn/btn_xpressCheckout.gif';
-	var $sandboxurl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
-	var $checkouturl = 'https://www.paypal.com/cgi-bin/webscr';
+	public $buttonurl = 'http://www.paypal.com/%s/i/btn/btn_xpressCheckout.gif';
+	public $sandboxurl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+	public $checkouturl = 'https://www.paypal.com/cgi-bin/webscr';
 
 	// Internals
-	var $baseop = array();
-	var $currencies = array("USD", "AUD", "BRL", "CAD", "CZK", "DKK", "EUR", "HKD", "HUF",
-	 						"ILS", "JPY", "MYR", "MXN", "NOK", "NZD", "PHP", "PLN", "GBP",
-	 						"SGD", "SEK", "CHF", "TWD", "THB");
-	var $locales = array("AT" => "de_DE", "AU" => "en_AU", "BE" => "en_US", "CA" => "en_US",
-							"CH" => "de_DE", "CN" => "zh_CN", "DE" => "de_DE", "ES" => "es_ES",
-							"FR" => "fr_FR", "GB" => "en_GB", "GF" => "fr_FR", "GI" => "en_US",
-							"GP" => "fr_FR", "IE" => "en_US", "IT" => "it_IT", "JP" => "ja_JP",
-							"MQ" => "fr_FR", "NL" => "nl_NL", "PL" => "pl_PL", "RE" => "fr_FR",
-							"US" => "en_US");
+	public $baseop = array();
+	public $currencies = array('USD', 'AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF',
+	 						'ILS', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'GBP',
+	 						'SGD', 'SEK', 'CHF', 'TWD', 'THB');
+	public $locales = array('AT' => 'de_DE', 'AU' => 'en_AU', 'BE' => 'en_US', 'CA' => 'en_US',
+							'CH' => 'de_DE', 'CN' => 'zh_CN', 'DE' => 'de_DE', 'ES' => 'es_ES',
+							'FR' => 'fr_FR', 'GB' => 'en_GB', 'GF' => 'fr_FR', 'GI' => 'en_US',
+							'GP' => 'fr_FR', 'IE' => 'en_US', 'IT' => 'it_IT', 'JP' => 'ja_JP',
+							'MQ' => 'fr_FR', 'NL' => 'nl_NL', 'PL' => 'pl_PL', 'RE' => 'fr_FR',
+							'US' => 'en_US');
 	// status to event mapping
-	var $events = array(
+	public $events = array(
 		'Voided' => 'voided',
 		'Denied' => 'voided',
 		'Expired' => 'voided',
@@ -53,10 +54,10 @@ class PayPalStandard extends GatewayFramework implements GatewayModule {
 		);
 
 
-	var $pending_reasons = array();
-	var $eligibility = array();
-	var $reversals = array();
-	var $txn_types = array();
+	public $pending_reasons = array();
+	public $eligibility = array();
+	public $reversals = array();
+	public $txn_types = array();
 
 	function __construct () {
 		parent::__construct();
@@ -73,7 +74,7 @@ class PayPalStandard extends GatewayFramework implements GatewayModule {
 
 		$this->buttonurl = sprintf(force_ssl($this->buttonurl), $this->settings['locale']);
 
-		if (!isset($this->settings['label'])) $this->settings['label'] = "PayPal";
+		if (!isset($this->settings['label'])) $this->settings['label'] = 'PayPal';
 
 		$this->pending_reasons = array(
 			'address' => __('The customer did not include a confirmed shipping address.', 'Shopp'),

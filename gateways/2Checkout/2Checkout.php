@@ -1,33 +1,31 @@
 <?php
 /**
  * 2Checkout.com
- * @class _2Checkout
  *
  * @author Jonathan Davis
- * @version 1.1.5
  * @copyright Ingenesis Limited, 27 May, 2009
- * @package shopp
+ * @version 1.3
  * @since 1.1
- * @subpackage _2Checkout
- *
+ * @package shopp/gateway
+ * @uses ShoppGateway2Checkout
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class _2Checkout extends GatewayFramework implements GatewayModule {
+class ShoppGateway2Checkout extends GatewayFramework implements GatewayModule {
 
 	// Settings
-	var $secure = false;
-	var $saleonly = true;
-	var $precision = 2;
-	var $decimals = '.';
-	var $thousands = '';
+	public $secure = false;
+	public $saleonly = true;
+	public $precision = 2;
+	public $decimals = '.';
+	public $thousands = '';
 
 	// URLs
-	var $url = 'https://www.2checkout.com/checkout/purchase';	// Multi-page checkout
-	var $surl = 'https://www.2checkout.com/checkout/spurchase'; // Single-page, CC-only checkout
+	public $url = 'https://www.2checkout.com/checkout/purchase';	// Multi-page checkout
+	public $surl = 'https://www.2checkout.com/checkout/spurchase'; // Single-page, CC-only checkout
 
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 
 		$this->setup('sid','verify','secret','returnurl','testmode','singlepage');
@@ -39,7 +37,7 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 
 	}
 
-	function actions () {
+	public function actions () {
 		add_action('shopp_process_checkout', array(&$this,'checkout'),9);
 		add_action('shopp_init_checkout',array(&$this,'init'));
 
@@ -47,21 +45,21 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 		add_action('shopp_remote_payment',array(&$this,'returned'));
 	}
 
-	function confirmation () {
+	public function confirmation () {
 		add_filter('shopp_confirm_url',array(&$this,'url'));
 		add_filter('shopp_confirm_form',array(&$this,'form'));
 	}
 
-	function checkout () {
+	public function checkout () {
 		$this->Order->confirm = true;
 	}
 
-	function url ($url) {
+	public function url ($url) {
 		if ($this->settings['singlepage'] == "on") return $this->surl;
 		return $this->url;
 	}
 
-	function form ($form) {
+	public function form ($form) {
 
 		$purchasetable = DatabaseObject::tablename(Purchase::$table);
 		$next = DB::query("SELECT IF ((MAX(id)) > 0,(MAX(id)+1),1) AS id FROM $purchasetable LIMIT 1");
@@ -122,7 +120,7 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 		return $form.$this->format($_);
 	}
 
-	function returned () {
+	public function returned () {
 
 		if (Shopp::str_true($this->settings['verify']) && !$this->verify($_POST['key'])) {
 			new ShoppError(__('The order submitted to 2Checkout could not be verified.','Shopp'),'2co_validation_error',SHOPP_TRXN_ERR);
@@ -146,7 +144,7 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 
 	}
 
-	function sale ($Event) {
+	public function sale ($Event) {
 
 		$Paymethod = $this->Order->paymethod();
 		$Billing = $this->Order->Billing;
@@ -163,32 +161,11 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 
 	}
 
-	// function process () {
-	// 	$Shopp = Shopp::object();
-	//
-	// 	if ($this->settings['verify'] == "on" && !$this->verify($_POST['key'])) {
-	// 		new ShoppError(__('The order submitted to 2Checkout could not be verified.','Shopp'),'2co_validation_error',SHOPP_TRXN_ERR);
-	// 		shopp_redirect(shoppurl(false,'checkout'));
-	// 	}
-	//
-	// 	if (empty($_POST['order_number'])) {
-	// 		new ShoppError(__('The order submitted by 2Checkout did not specify a transaction ID.','Shopp'),'2co_validation_error',SHOPP_TRXN_ERR);
-	// 		shopp_redirect(shoppurl(false,'checkout'));
-	// 	}
-	//
-	// 	$txnid = $_POST['order_number'];
-	// 	$txnstatus = $_POST['credit_card_processed'] == "Y"?'CHARGED':'PENDING';
-	//
-	// 	$Shopp->Order->transaction($txnid,$txnstatus);
-	//
-	//
-	// }
-
-	function notification () {
+	public function notification () {
 		// INS updates not implemented
 	}
 
-	function verify ($key) {
+	public function verify ($key) {
 		if ( Shopp::str_true($this->settings['testmode']) ) return true;
 		$order = $_POST['order_number'];
 
@@ -201,7 +178,7 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 		return ($verification == $key);
 	}
 
-	function settings () {
+	public function settings () {
 
 		$this->ui->text(0,array(
 			'name' => 'sid',
@@ -256,7 +233,7 @@ class _2Checkout extends GatewayFramework implements GatewayModule {
 		$this->ui->behaviors( $this->secretjs() );
 	}
 
-	function secretjs () {
+	public function secretjs () {
 		ob_start(); ?>
 jQuery(document).bind('_2checkoutSettings',function () {
 	var $=jqnc(),p='#_2checkout-',v=$(p+'verify'),s=$(p+'secret');
@@ -267,6 +244,4 @@ jQuery(document).bind('_2checkoutSettings',function () {
 		return $script;
 	}
 
-} // END class _2Checkout
-
-?>
+}

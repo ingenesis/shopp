@@ -24,13 +24,15 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 abstract class ModuleLoader {
 
-	protected $loader = 'ModuleFile'; // Module File load manager
+	// Module File load manager
+	protected $loader = 'ModuleFile';
+	protected $interface = false;
+	protected $paths = array();		// Source paths to search for module files
 
 	public $legacy = array();		// Legacy module checksums
 	public $modules = array();		// Installed available modules
 	public $activated = array();	// List of selected modules to be activated
 	public $active = array();		// Instantiated module objects
-	public $path = false;			// Source path for target module files
 
 	/**
 	 * Indexes the install module files
@@ -41,22 +43,39 @@ abstract class ModuleLoader {
 	 * @return void
 	 **/
 	public function installed () {
-		if (!is_dir($this->path)) return false;
 
-		$path = $this->path;
+		$cachekey = sanitize_key($this->interface);
+		if ( $cached = wp_cache_get($cachekey, 'shopp-addons') )
+			$this->modules = $cached;
+
+		$legacy_cachekey = sanitize_key($this->interface);
+		if ( $legacy = wp_cache_get($legacy_cachekey, 'shopp-legacy-addons') )
+			$this->legacy = $legacy;
+
+		if ( ! empty($this->modules) || ! empty($this->legacy) ) return;
+
 		$files = array();
-		self::find_files('.php',$path,$path,$files);
-		if (empty($files)) return $files;
+		$found = self::files('.php', $this->paths, $files);
 
-		foreach ($files as $file) {
+		if ( ! $found || empty($files) ) return $files;
+
+		foreach ( $files as $file ) {
 			// Skip if the file can't be read or isn't a real file at all
-			if (!is_readable($path.$file) && !is_dir($path.$file)) continue;
+			if ( ! is_readable($file) || is_dir($file) ) continue;
+
 			// Add the module file to the registry
 			$Loader = $this->loader;
-			$module = new $Loader($path, $file);
-			if ($module->addon) $this->modules[$module->subpackage] = $module;
-			else $this->legacy[] = md5_file($path.$file);
+			$Module = new $Loader($file);
+
+			if ( $this->interface != $Module->interface ) continue;
+
+			if ( $Module->addon ) $this->modules[ $Module->classname ] = $Module;
+			else $this->legacy[] = md5_file($file);
+
 		}
+
+		wp_cache_set($cachekey, $this->modules, 'shopp-addons');
+		wp_cache_set($legacy_cachekey, $this->legacy, 'shopp-legacy-addons');
 
 	}
 
@@ -69,11 +88,11 @@ abstract class ModuleLoader {
 	 * @param boolean $all Loads all installed modules instead
 	 * @return void
 	 **/
-	public function load ($all=false) {
-		if ($all) $activate = array_keys($this->modules);
+	public function load ( $all = false ) {
+		if ( $all ) $activate = array_keys($this->modules);
 		else $activate = $this->activated;
 
-		foreach ($activate as $module) {
+		foreach ( $activate as $module ) {
 			// Module isn't available, skip it
 			if ( ! isset($this->modules[ $module ]) ) continue;
 
@@ -141,6 +160,43 @@ abstract class ModuleLoader {
 	}
 
 	/**
+	 * Find files of a specific extension
+	 *
+	 * @author Barry Hughes, Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param string $extension File extension to search for (beginning with a '.')
+	 * @param string $directory Starting directory
+	 * @param string &$matches List of files found
+	 * @param boolean $greedy (optional: default true) Find more than one file
+	 * @return boolean True if files were found, false otherwise
+	 **/
+	public static function files ( $extension, $paths, array &$matches = array(), $greedy = true ) {
+		$ignores = array('_'); // Ignor _directories
+
+		try {
+			foreach ( $paths as $directory ) {
+				if ( ! is_dir($directory) ) continue;
+				$files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS | FilesystemIterator::FOLLOW_SYMLINKS) );
+				foreach ( $files as $file ) {
+					$filename = $file->getFilename();
+					if ( in_array($filename{0}, $ignores) ) continue;
+
+					if ( substr($filename, strlen($extension) * -1) == $extension ) {
+						$matches[] = $file->getPathname();
+						if ( ! $greedy ) break;
+					}
+
+				}
+			}
+		} catch ( Exception $e ) {
+			shopp_debug('An error occured wile search for file ' . $filename . ': ' . $e->getMessage());
+		}
+
+		return ( 1 <= count($matches) );
+	}
+
+	/**
 	 * Gets a ModuleFile entry
 	 *
 	 * @author Jonathan Davis
@@ -188,14 +244,15 @@ abstract class ModuleLoader {
  **/
 class ModuleFile {
 
-	public $file = false;			// The full path to the file
-	public $filename = false;		// The name of the file
-	public $name = false;			// The proper name of the module
-	public $description = false;	// A description of the module
-	public $subpackage = false;	// The class name of the module
-	public $version = false;		// The version of the module
-	public $since = false;			// The core version required
-	public $addon = false;			// The valid addon flag
+	public $name;			// The proper name of the module
+	public $file;			// The full path to the file
+	public $filename;		// The name of the file
+	public $classname;		// The class name of the module
+	public $framework;		// The framework the module uses
+	public $interface;		// The interface the module implements
+	public $version;		// The version of the module
+	public $since;			// The core version required
+	public $addon = false;	// The valid addon flag
 
 	/**
 	 * Parses the module file meta data and validates it
@@ -207,31 +264,50 @@ class ModuleFile {
 	 * @param string $file The file name
 	 * @return void
 	 **/
-	public function __construct ($path,$file) {
-		if (!is_readable($path.$file)) return;
+	public function __construct ( $file ) {
 
-		$this->filename = $file;
-		$this->file = $path.$file;
-		$meta = $this->readmeta($this->file);
+		if ( ! is_readable($file) ) return;
 
-		if ($meta) {
-			$meta = preg_replace('/\r\n/',"\n",$meta); // Normalize line endings
-			$lines = explode("\n",substr($meta,1));
-			foreach($lines as $line) {
-				preg_match("/^(?:[\s\*]*?\b([^@\*\/]*))/",$line,$match);
-				if (!empty($match[1])) $data[] = $match[1];
+		$this->filename = basename($file);
+		$this->file = $file;
 
-				preg_match("/^(?:[\s\*]*?@([^\*\/]+?)\s(.+))/",$line,$match);
-				if (!empty($match[1]) && !empty($match[2])) $tags[$match[1]] = $match[2];
+		$meta = self::docblock($file);
+
+		if ( $meta ) {
+
+			$linetrim = create_function('$line', 'return ltrim($line, " *");');
+
+			$meta = str_replace("\r\n", "\n", $meta); // Normalize line endings
+			$meta = str_replace(array('/*','*/'), '', $meta);
+
+			$lines = explode("\n", substr($meta, 1));
+			$lines = array_map($linetrim, $lines);
+			$lines = array_filter($lines);
+
+			$this->name = array_shift($lines);
+
+			// Parse class declaration
+			$keyword = strtok(array_pop($lines), ' ');
+			while ( $value = strtok(' ') ) {
+				switch ( $keyword ) {
+					case 'class': $this->classname = $value; break;
+					case 'extends': $this->framework = $value; break;
+					case 'implements': $this->interface = $value; break;
+				}
+				$keyword = strtok(' ');
 			}
 
-			$this->name = $data[0];
-			$this->description = (!empty($data[1]))?$data[1]:"";
+			foreach ( $lines as $line ) {
+				$property = strtok($line, '@ ');
+				$value = strtok('');
+				if ( property_exists($this, $property) && is_null($this->$property) )
+					$this->$property = $value;
+			}
 
-			foreach ($tags as $tag => $value)
-				$this->{$tag} = trim($value);
+
 		}
-		if ($this->valid() !== true) return;
+
+		if ( $this->valid() !== true ) return;
 		$this->addon = true;
 
 	}
@@ -246,7 +322,7 @@ class ModuleFile {
 	 **/
 	public function load () {
 		if ( ! $this->addon ) return;
-		return new $this->subpackage();
+		return new $this->classname();
 	}
 
 	/**
@@ -255,25 +331,31 @@ class ModuleFile {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return void
+	 * @return boolean True if the addon validates, false otherwise
 	 **/
 	public function valid () {
-		if (empty($this->version) || empty($this->since) || empty($this->subpackage))
-			return new ShoppError(sprintf(
-				__('%s could not be loaded because the file descriptors are incomplete.','Shopp'),
-				basename($this->file)),
-				'addon_missing_meta',SHOPP_ADDON_ERR);
 
-		if (!defined('Shopp::VERSION')) return true;
-		$coreversion = '/^([\d\.])\b.*?$/';
-		$shopp = preg_replace($coreversion,"$1",Shopp::VERSION);
-		$since = preg_replace($coreversion,"$1",$this->since);
-		if (version_compare($shopp,$since) == -1)
-			return new ShoppError(sprintf(
-				__('%s could not be loaded because it requires version %s (or higher) of Shopp.','Shopp'),
-				$this->name, $this->since),
-				'addon_core_version',SHOPP_ADDON_ERR);
+		if ( ! defined('Shopp::VERSION') ) return false; // Something funky is going on
+
+		$error = false;
+
+		if ( empty($this->classname) && empty($this->interface) )
+			$error = true;
+		elseif ( empty($this->version) )
+			$error = shopp_debug(sprintf('%s could not be loaded because no @version property was set in the addon header comments.', $this->filename));
+		elseif ( empty($this->since) )
+			$error = shopp_debug(sprintf('%s could not be loaded because no @since property was set in the addon header comments.', $this->filename));
+		elseif ( version_compare(self::baseversion(Shopp::VERSION), self::baseversion($this->since)) == -1 ) {
+			$error = shopp_debug(sprintf('%s could not be loaded because it requires version %s (or higher) of Shopp.', $this->name, $this->since));
+		}
+
+		if ( $error ) return false;
 		return true;
+	}
+
+	public static function baseversion ( $version ) {
+		preg_match('/^[\d\.]+/', $version, $baseversion);
+		return $baseversion[0];
 	}
 
 	/**
@@ -285,22 +367,22 @@ class ModuleFile {
 	 * @param string $file The target file
 	 * @return string The meta block from the file
 	 **/
-	public function readmeta ($file) {
-		if (!file_exists($file)) return false;
-		if (!is_readable($file)) return false;
+	public static function docblock ( $file ) {
+
+		if ( ! file_exists($file) || ! is_readable($file) ) return false;
+
+		$f = @fopen($file, 'r');
+		if ( ! $f ) return false;
 
 		$meta = false;
-		$string = "";
+		$string = '';
 
-		$f = @fopen($file, "r");
-		if (!$f) return false;
-		while (!feof($f)) {
-			$buffer = fgets($f,80);
-			if (preg_match("/\/\*/",$buffer)) $meta = true;
-			if ($meta) $string .= $buffer;
-			if (preg_match("/\*\//",$buffer)) break;
+		while ( ! feof($f) ) {
+			$buffer = fgets($f, 80);
+			if ( false !== strpos($buffer, '/*') ) $meta = true;
+			if ( $meta ) $string .= $buffer;
+			if ( false !== strpos($buffer, 'class ') && false !== strpos($buffer, ' implements ')) break;
 		}
-		fclose($f);
 
 		return $string;
 	}
