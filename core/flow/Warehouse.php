@@ -647,7 +647,7 @@ class ShoppAdminWarehouse extends AdminController {
 		$Product->slug = apply_filters('editable_slug',$Product->slug);
 		$permalink = trailingslashit(Shopp::url());
 
-		$Price = new Price();
+		$Price = new ShoppPrice();
 
 		$priceTypes = Price::types();
 		$billPeriods = Price::periods();
@@ -803,7 +803,7 @@ class ShoppAdminWarehouse extends AdminController {
 				else $deletes = array($_POST['deletePrices']);
 
 				foreach($deletes as $option) {
-					$Price = new Price($option);
+					$Price = new ShoppPrice($option);
 					$Price->delete();
 				}
 			}
@@ -813,9 +813,9 @@ class ShoppAdminWarehouse extends AdminController {
 			// Save prices that there are updates for
 			foreach($_POST['price'] as $i => $priceline) {
 				if (empty($priceline['id'])) {
-					$Price = new Price();
+					$Price = new ShoppPrice();
 					$priceline['product'] = $Product->id;
-				} else $Price = new Price($priceline['id']);
+				} else $Price = new ShoppPrice($priceline['id']);
 
 				$priceline['sortorder'] = array_search($i,$_POST['sortorder'])+1;
 
@@ -902,7 +902,7 @@ class ShoppAdminWarehouse extends AdminController {
 				if ($priceline->optionkey == 0) continue;
 				if ((empty($_POST['meta']['options']['v']) && $priceline->context == "variation")
 					|| (empty($_POST['meta']['options']['a']) && $priceline->context == "addon")) {
-						$Price = new Price($priceline->id);
+						$Price = new ShoppPrice($priceline->id);
 						$Price->delete();
 				}
 			}

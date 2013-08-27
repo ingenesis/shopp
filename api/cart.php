@@ -33,7 +33,7 @@ function shopp_add_cart_variant ( $variant = false, $quantity = 1, $key = 'id') 
 	if (!in_array($key,$keys)) {
 		shopp_debug(__FUNCTION__ . " failed: Variant key $key invalid.");
 	}
-	$Price = new Price( $variant, $key);
+	$Price = new ShoppPrice( $variant, $key);
 	if ( empty($Price->id) ) {
 		shopp_debug(__FUNCTION__ . " failed: Product variant $variant invalid.");
 		return false;
@@ -71,7 +71,7 @@ function shopp_add_cart_product ( $product = false, $quantity = 1, $variant = fa
 
 
 	if ( false !== $variant ) {
-		$Price = new Price( $variant );
+		$Price = new ShoppPrice( $variant );
 		if ( empty($Price->id) || $Price->product != $product) {
 			shopp_debug(__FUNCTION__ . " failed: Product variant $variant invalid.");
 			return false;

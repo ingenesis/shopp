@@ -921,7 +921,7 @@ class ProductDevAPITests extends ShoppTestCase {
 		$this->AssertEquals(8, $dims['height']);
 
 		$shipping = array('weight'=>50, 'length'=>60, 'width'=>70, 'height'=>80);
-		$Price = shopp_product_variant_set_shipping( new Price($priceid), true, $shipping, 'product');
+		$Price = shopp_product_variant_set_shipping( new ShoppPrice($priceid), true, $shipping, 'product');
 
 		$this->AssertTrue( is_object($Price) && is_a($Price, 'Price') );
 		$this->AssertTrue(!empty($Price->settings) && !empty($Price->settings['dimensions']));

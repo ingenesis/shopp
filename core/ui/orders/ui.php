@@ -602,7 +602,7 @@ function downloads_meta_box ($Purchase) {
 ?>
 	<ul>
 	<?php foreach ($Purchase->purchased as $Item): ?>
-		<?php $price = new Price($Item->price); if ($price->type == 'Download'): ?>
+		<?php $price = new ShoppPrice($Item->price); if ($price->type == 'Download'): ?>
 		<li><strong><?php echo $Item->name; ?></strong>: <?php echo $Item->downloads.' '.__('Downloads','Shopp'); ?></li>
 		<?php endif; ?>
 	<?php endforeach; ?>

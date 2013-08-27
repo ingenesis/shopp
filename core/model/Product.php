@@ -205,7 +205,7 @@ class ShoppProduct extends WPShoppObject {
 		// Must come before pricing so that the summary updates will include new sold/grossed amounts
 		$this->load_sold($ids);
 
-		$Object = new Price();
+		$Object = new ShoppPrice();
 		DB::query("SELECT * FROM $Object->_table WHERE product IN ($ids) ORDER BY product,sortorder", 'array', array($this, 'pricing'));
 
 		// Load price metadata that exists
@@ -1077,7 +1077,7 @@ class ShoppProduct extends WPShoppObject {
 		// Copy prices
 		foreach ($this->prices as $price) {
 
-			$Price = new Price();
+			$Price = new ShoppPrice();
 			$Price->copydata($price);
 			$Price->product = $this->id;
 			$Price->save();

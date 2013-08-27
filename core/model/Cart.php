@@ -256,7 +256,7 @@ class ShoppCart extends ListFramework {
 	 *
 	 * @param int $quantity The quantity of the item to add to the cart
 	 * @param ShoppProduct $Product Product object to add to the cart
-	 * @param Price $Price Price object to add to the cart
+	 * @param ShoppPrice $Price Price object to add to the cart
 	 * @param int $category The id of the category navigated to find the product
 	 * @param array $data Any custom item data to carry through
 	 * @return boolean

@@ -545,7 +545,7 @@ class ShoppAjax {
 
 	public function update_inventory () {
 		check_admin_referer('wp_ajax_shopp_update_inventory');
-		$Priceline = new Price($_GET['id']);
+		$Priceline = new ShoppPrice($_GET['id']);
 		if ( empty($Priceline->id) ) die('0');
 		if ( ! Shopp::str_true($Priceline->inventory) ) die('0');
 		if ( (int)$_GET['stock'] < 0 ) die('0');

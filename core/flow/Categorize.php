@@ -332,7 +332,7 @@ class ShoppAdminCategorize extends AdminController {
 		$Category->load_meta();
 		$Category->load_images();
 
-		$Price = new Price();
+		$Price = new ShoppPrice();
 		$priceTypes = Price::types();
 		$billPeriods = Price::periods();
 

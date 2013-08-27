@@ -31,3 +31,7 @@ if ( ! class_exists('Cart', false) ) {
 		public function retotal () {}
 	}
 }
+
+if ( ! class_exists('Price', false) ) {
+	class Price extends ShoppPrice {}
+}
