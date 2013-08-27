@@ -415,6 +415,16 @@ class ProductDevAPITests extends ShoppTestCase {
 		$Variant = reset($variations);
 	}
 
+	function test_shopp_product_weights () {
+		$Product = shopp_product('helm-console', 'slug');
+		$this->assertInstanceOf('Product', $Product);
+
+		$weights = shopp_product_weights($Product);
+		$this->assertTrue(is_array($weights));
+		$this->assertCount(3, $weights);
+		$this->assertContains(2, $weights);
+	}
+
 	function test_shopp_product_addons () {
 		$Product = shopp_product("St. John's Bay® Color Block Windbreaker", 'name');
 
