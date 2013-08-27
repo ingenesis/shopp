@@ -152,7 +152,8 @@ class ContentIndex extends DatabaseObject {
 	 * @param string $content The content to index
 	 * @return void
 	 **/
-	function save ($content) {
+	function save () {
+		list($content,) = func_get_args();
 		if (empty($this->product) || empty($this->type) || empty($content))
 			return false;
 
