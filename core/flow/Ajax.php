@@ -111,7 +111,7 @@ class ShoppAjax {
 		if ( ! isset($_GET['category']) ) return;
 		$category = $_GET['category'];
 
-		$Warehouse = new Warehouse();
+		$Warehouse = new ShoppAdminWarehouse;
 		echo $Warehouse->category($category);
 		exit();
 	}
@@ -150,13 +150,13 @@ class ShoppAjax {
 	}
 
 	public function upload_image () {
-		$Warehouse = new Warehouse();
+		$Warehouse = new ShoppAdminWarehouse;
 		echo $Warehouse->images();
 		exit();
 	}
 
 	public function upload_file () {
-		$Warehouse = new Warehouse();
+		$Warehouse = new ShoppAdminWarehouse;
 		echo $Warehouse->downloads();
 		exit();
 	}
