@@ -229,18 +229,18 @@ class PostcodeMapping {
 		foreach ( $postcodes[$Address->country] as $state => $ranges ) {
 			$ranges = (array) $ranges; // One or more ranges may be provided
 
-			foreach ($ranges as $range) {
+			foreach ( $ranges as $range ) {
 				list($min, $max) = explode('-', $range);
-				if ($postcode >= $min && $postcode <= $max) {
+				if ( $postcode >= $min && $postcode <= $max ) {
 					$match = $state;
 					break;
 				}
 			}
 
-			if (isset($match)) break;
+			if ( isset($match) ) break;
 		}
 
-		if (isset($match)) $Address->state = $match;
+		if ( isset($match) ) $Address->state = $match;
 	}
 
 	/**
