@@ -284,26 +284,26 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue(Shopp::filter_dotfiles('image.png'));
 	}
 
-	public function test_filefind () {
+	public function test_findfile () {
 		$files = array();
 
 		// There is at least one of these
-		$result = Shopp::filefind('ball.png', SHOPP_PATH);
+		$result = Shopp::findfile('ball.png', SHOPP_PATH);
 		$this->assertTrue($result);
 
 		// We can expect at least 5 of these (WP 3.5 + Shopp 1.3)
-		$result = Shopp::filefind('admin.php', ABSPATH, $files);
+		$result = Shopp::findfile('admin.php', ABSPATH, $files);
 		$this->assertTrue($result);
 		$this->assertGreaterThanOrEqual(5, count($files));
 
 		// We may wish it to operate efficiently and stop at the first match
 		$files = array();
-		$result = Shopp::filefind('admin.php', ABSPATH, $files, false);
+		$result = Shopp::findfile('admin.php', ABSPATH, $files, false);
 		$this->assertTrue($result);
 		$this->assertCount(1, $files);
 
 		// It should fail gracefully even when given ridiculous params
-		$result = Shopp::filefind('@*Nyota Uhura', '/unworkable/~path');
+		$result = Shopp::findfile('@*Nyota Uhura', '/unworkable/~path');
 		$this->assertFalse($result);
 	}
 
@@ -420,5 +420,14 @@ class CoreTests extends ShoppTestCase {
 		);
 
 		$this->assertTrue('£6 543,210' === Shopp::money(6543.21, $format));
+	}
+
+	public function test_parse_phone() {
+		$phone = Shopp::parse_phone('(100) 700 9000');
+		$this->assertCount(4, $phone);
+		$this->assertEquals('100', $phone['area']);
+		$this->assertEquals('700', $phone['prefix']);
+		$this->assertEquals('9000', $phone['exchange']);
+		$this->assertEquals('1007009000', $phone['raw']);
 	}
 }
