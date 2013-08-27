@@ -563,7 +563,7 @@ class DownloadAsset extends FileAsset {
 		$Purchased = new Purchased($key,'dkey');
 		if (!empty($Purchased->id)) {
 			// Handle purchased line-item downloads
-			$Purchase = new Purchase($Purchased->purchase);
+			$Purchase = new ShoppPurchase($Purchased->purchase);
 			$record = $db->query("SELECT download.* FROM $this->_table AS download INNER JOIN $pricetable AS pricing ON pricing.id=download.parent WHERE pricing.id=$Purchased->price AND download.context='price' AND download.type='download' ORDER BY modified DESC LIMIT 1");
 			$this->populate($record);
 			$this->expopulate();

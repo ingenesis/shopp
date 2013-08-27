@@ -104,7 +104,7 @@ class ShoppAdminDashboard {
 		if (!empty($args)) extract( $args, EXTR_SKIP );
 
 		if ( ! $range || !isset($ranges[ strtolower($range) ]) ) $range = 'last30';
-		$purchasetable = DatabaseObject::tablename(Purchase::$table);
+		$purchasetable = DatabaseObject::tablename(ShoppPurchase::$table);
 
 		$now = current_time('timestamp');
 		$offset = get_option( 'gmt_offset' ) * 3600;
@@ -264,7 +264,7 @@ class ShoppAdminDashboard {
 		echo $widget_name;
 		echo $after_title;
 
-		$purchasetable = DatabaseObject::tablename(Purchase::$table);
+		$purchasetable = DatabaseObject::tablename(ShoppPurchase::$table);
 		$purchasedtable = DatabaseObject::tablename(Purchased::$table);
 
 		$Orders = $db->query("SELECT p.*,count(i.id) as items FROM $purchasetable AS p LEFT JOIN $purchasedtable AS i ON i.purchase=p.id GROUP BY i.purchase ORDER BY created DESC LIMIT 6",'array');

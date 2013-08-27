@@ -410,7 +410,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	public static function completed ($result, $options, $O) {
 		if ( $O->purchase === false ) return false;
 		if ( ! ShoppPurchase() || empty(ShoppPurchase()->id) ) {
-			ShoppPurchase(new Purchase($O->purchase));
+			ShoppPurchase(new ShoppPurchase($O->purchase));
 			ShoppPurchase()->load_purchased();
 		}
 		return (!empty(ShoppPurchase()->id));

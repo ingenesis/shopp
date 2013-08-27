@@ -81,7 +81,7 @@ class ShoppAjax {
 		check_admin_referer('wp_ajax_shopp_order_receipt');
 		if ( 0 == intval($_GET['id']) ) die('-1');
 
-		ShoppPurchase( new Purchase((int)$_GET['id']));
+		ShoppPurchase( new ShoppPurchase((int)$_GET['id']));
 
 		echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 			\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
@@ -740,7 +740,7 @@ class ShoppAjax {
 	public function gateway_ajax () {
 		check_admin_referer('wp_ajax_shopp_gateway');
 		if (isset($_POST['pid'])) {
-			$Purchase = new Purchase($_POST['pid']);
+			$Purchase = new ShoppPurchase($_POST['pid']);
 			if ($Purchase->gateway) do_action('shopp_gateway_ajax_'.sanitize_title_with_dashes($Purchase->gateway), $Purchase);
 		}
 		exit();

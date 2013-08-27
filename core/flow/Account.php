@@ -204,7 +204,7 @@ class ShoppAdminAccount extends AdminController {
 
 		$customer_table = DatabaseObject::tablename(Customer::$table);
 		$billing_table = DatabaseObject::tablename(BillingAddress::$table);
-		$purchase_table = DatabaseObject::tablename(Purchase::$table);
+		$purchase_table = DatabaseObject::tablename(ShoppPurchase::$table);
 		$users_table = $wpdb->users;
 
 		$where = array();
@@ -363,7 +363,7 @@ class ShoppAdminAccount extends AdminController {
 		if (empty($Customer->info->meta)) remove_meta_box('customer-info','shopp_page_shopp-customers','normal');
 
 		if ($Customer->id > 0) {
-			$purchase_table = DatabaseObject::tablename(Purchase::$table);
+			$purchase_table = DatabaseObject::tablename(ShoppPurchase::$table);
 			$r = DB::query("SELECT count(id) AS purchases,SUM(total) AS total FROM $purchase_table WHERE customer='$Customer->id' LIMIT 1");
 
 			$Customer->orders = $r->purchases;

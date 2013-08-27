@@ -78,10 +78,10 @@ class ShoppAdminService extends AdminController {
 
 	public function workflow () {
 		if (preg_match("/\d+/", $_GET['id'])) {
-			ShoppPurchase( new Purchase($_GET['id']) );
+			ShoppPurchase( new ShoppPurchase($_GET['id']) );
 			ShoppPurchase()->load_purchased();
 			ShoppPurchase()->load_events();
-		} else ShoppPurchase( new Purchase() );
+		} else ShoppPurchase( new ShoppPurchase() );
 	}
 
 	/**
@@ -124,7 +124,7 @@ class ShoppAdminService extends AdminController {
 						&& is_array($selected)
 						&& current_user_can('shopp_delete_orders')) {
 			foreach($selected as $selection) {
-				$Purchase = new Purchase($selection);
+				$Purchase = new ShoppPurchase($selection);
 				$Purchase->load_purchased();
 				foreach ($Purchase->purchased as $purchased) {
 					$Purchased = new Purchased($purchased->id);
@@ -144,7 +144,7 @@ class ShoppAdminService extends AdminController {
 						&& !empty($selected)
 						&& is_array($selected)) {
 			foreach($selected as $selection) {
-				$Purchase = new Purchase($selection);
+				$Purchase = new ShoppPurchase($selection);
 				$Purchase->status = $newstatus;
 				$Purchase->save();
 			}
@@ -152,7 +152,7 @@ class ShoppAdminService extends AdminController {
 			else $this->notice(sprintf(__('%d orders updated.','Shopp'),count($selected)));
 		}
 
-		$Purchase = new Purchase();
+		$Purchase = new ShoppPurchase();
 
 		$offset = get_option( 'gmt_offset' ) * 3600;
 
@@ -255,7 +255,7 @@ class ShoppAdminService extends AdminController {
 		if (empty($statusLabels)) $statusLabels = array('');
 		$txnstatus_labels = Lookup::txnstatus_labels();
 
-		$Purchase = new Purchase();
+		$Purchase = new ShoppPurchase();
 
 		$Orders = $this->orders;
 		$ordercount = $this->ordercount;

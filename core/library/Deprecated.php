@@ -35,3 +35,7 @@ if ( ! class_exists('Cart', false) ) {
 if ( ! class_exists('Price', false) ) {
 	class Price extends ShoppPrice {}
 }
+
+if ( ! class_exists('Purchase', false) ) {
+	class Purchase extends ShoppPurchase {}
+}

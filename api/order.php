@@ -73,7 +73,7 @@ function shopp_orders ( $from = false, $to = false, $items = true, $customers = 
  *
  **/
 function _shopp_order_purchase ( &$records, &$record ) {
-	$records[$record->id] = new Purchase();
+	$records[$record->id] = new ShoppPurchase();
 	$records[$record->id]->populate($record);
 }
 
@@ -203,7 +203,7 @@ function shopp_recent_customer_orders ($customer = false, $time = 1, $period = '
  * @author John Dillick
  * @since 1.2
  *
- * @return Purchase object or false on failure
+ * @return ShoppPurchase object or false on failure
  **/
 function shopp_last_order () {
 	$orders = shopp_orders ( false, false, true, array(), 1);
@@ -219,7 +219,7 @@ function shopp_last_order () {
  * @since 1.2
  *
  * @param int $customer (required) the customer id to load the order for
- * @return Purchase object or false on failure
+ * @return ShoppPurchase object or false on failure
  **/
 function shopp_last_customer_order ( $customer = false ) {
 	if ( ! $customer || ! shopp_customer_exists($customer) ) {
@@ -240,7 +240,7 @@ function shopp_last_customer_order ( $customer = false ) {
  *
  * @param int $id the order id, or the transaction id
  * @param string $by (optional default:id) lookup by 'id', or 'trans'
- * @return Purchase or false on failure
+ * @return ShoppPurchase or false on failure
  **/
 function shopp_order ( $id = false, $by = 'id' ) {
 	if ( ! $id || ! $Purchase = shopp_order_exists($id, $by) ) {
@@ -372,7 +372,7 @@ function shopp_order_is_void ( $id = false, $by = 'id' ) {
  * @return Purchase|bool Purchase object returned if the order exists, else returns false
  **/
 function shopp_order_exists ( $id = false, $by = 'id' ) {
-	$Purchase = new Purchase();
+	$Purchase = new ShoppPurchase();
 
 	if ( $by == 'trans' ) {
 		$Purchase->load($id,'txnid');
@@ -391,7 +391,7 @@ function shopp_order_exists ( $id = false, $by = 'id' ) {
  * @since 1.2
  *
  * @param int $customer the customer that the order will be created for
- * @return bool|Purchase false on failure, Purchase object of recently created order on success
+ * @return bool|ShoppPurchase false on failure, Purchase object of recently created order on success
  **/
 function shopp_add_order ( $customer = false ) {
 	// check customer

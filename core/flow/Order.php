@@ -224,7 +224,7 @@ class ShoppOrder {
 
 		$Purchase = ShoppPurchase();
 		if (!isset($Purchase->id) || empty($Purchase->id) || $Event->order != $Purchase->id)
-			$Purchase = new Purchase($Event->order);
+			$Purchase = new ShoppPurchase($Event->order);
 
 		if ( ! isset($Purchase->events) || empty($Purchase->events) ) $Purchase->load_events(); // Load purchased
 		if ( in_array('unstock', array_keys($Purchase->events)) ) return true; // Unstock already occurred, do nothing
@@ -390,10 +390,10 @@ class ShoppOrder {
 		}
 
 		if (empty($this->inprogress)) {
-			$Purchase = new Purchase();	// Create a new order
+			$Purchase = new ShoppPurchase();	// Create a new order
 		} else { // Handle updates to an existing order from checkout reprocessing
 			if ( !empty(ShoppPurchase()->id) ) $Purchase = ShoppPurchase();	// Update existing order
-			else $Purchase = new Purchase($this->inprogress);
+			else $Purchase = new ShoppPurchase($this->inprogress);
 			$changed = $this->Cart->changed(); // Detect changes to the cart
 		}
 
@@ -497,7 +497,7 @@ class ShoppOrder {
 			$Purchase = ShoppPurchase();
 
 			if ($Purchase->id != $Event->order)
-				$Purchase = new Purchase($Event->order);
+				$Purchase = new ShoppPurchase($Event->order);
 
 			$Purchase->customer = $this->Customer->id;
 			$Purchase->billing = $this->Billing->id;
@@ -516,7 +516,7 @@ class ShoppOrder {
 	 * @since 1.2
 	 *
 	 * @param string $status New transaction status being set
-	 * @param Purchase $Purchase The affected Purchase object
+	 * @param ShoppPurchase $Purchase The affected Purchase object
 	 * @return void
 	 **/
 	// public function salestats ($status, &$Purchase) {
@@ -546,7 +546,7 @@ class ShoppOrder {
 	public function notify ($Event) {
 		$Purchase = ShoppPurchase();
 		if ( empty($Purchase) || empty($Purchase->id) )
-			$Purchase = new Purchase($Event->order); // Load the order if not already loaded
+			$Purchase = new ShoppPurchase($Event->order); // Load the order if not already loaded
 
 		do_action('shopp_order_notifications',$Purchase);
 	}

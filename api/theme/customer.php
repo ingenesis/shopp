@@ -423,7 +423,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 	public static function order_lookup ($result, $options, $O) {
 		if (!empty($_POST['vieworder']) && !empty($_POST['purchaseid'])) {
-			ShoppPurchase( new Purchase((int)$_POST['purchaseid']) );
+			ShoppPurchase( new ShoppPurchase((int)$_POST['purchaseid']) );
 			if (ShoppPurchase()->email == $_POST['email']) {
 				ShoppPurchase()->load_purchased();
 				ob_start();

@@ -127,7 +127,7 @@ class Customer extends DatabaseObject {
 
 		if (!empty($_POST['vieworder']) && !empty($_POST['purchaseid'])) {
 
-			$Purchase = new Purchase($_POST['purchaseid']);
+			$Purchase = new ShoppPurchase($_POST['purchaseid']);
 			if ($Purchase->email == $_POST['email']) {
 				$Shopp->Purchase = $Purchase;
 				$Purchase->load_purchased();
@@ -149,7 +149,7 @@ class Customer extends DatabaseObject {
 		}
 
 		if ($this->logged_in() && 'order' == $request && false !== $id) {
-			$Purchase = new Purchase((int)$id);
+			$Purchase = new ShoppPurchase((int)$id);
 			if ($Purchase->customer == $this->id) {
 				ShoppPurchase($Purchase);
 				$Purchase->load_purchased();
@@ -208,7 +208,7 @@ class Customer extends DatabaseObject {
 	public function load_downloads () {
 		$Storefront = ShoppStorefront();
 		if (empty($this->id)) return false;
-		$orders = DatabaseObject::tablename(Purchase::$table);
+		$orders = DatabaseObject::tablename(ShoppPurchase::$table);
 		$purchases = DatabaseObject::tablename(Purchased::$table);
 		$asset = DatabaseObject::tablename(ProductDownload::$table);
 		$query = "(SELECT p.dkey AS dkey,p.id,p.purchase,p.download as download,p.name AS name,p.optionlabel,p.downloads,o.total,o.created,f.id as download,f.name as filename,f.value AS filedata
@@ -246,7 +246,7 @@ class Customer extends DatabaseObject {
 		}
 
 		if ($this->logged_in() && 'orders' == $request && !empty($id)) {
-			$Purchase = new Purchase((int)$id);
+			$Purchase = new ShoppPurchase((int)$id);
 			if ($Purchase->customer == $this->id) {
 				ShoppPurchase($Purchase);
 				$Purchase->load_purchased();
@@ -260,11 +260,11 @@ class Customer extends DatabaseObject {
 
 		$where = '';
 		if (isset($filters['where'])) $where = " AND {$filters['where']}";
-		$orders = DatabaseObject::tablename(Purchase::$table);
+		$orders = DatabaseObject::tablename(ShoppPurchase::$table);
 		$purchases = DatabaseObject::tablename(Purchased::$table);
 		$query = "SELECT o.* FROM $orders AS o WHERE o.customer=$this->id $where ORDER BY created DESC";
 
-		$PurchaseLoader = new Purchase();
+		$PurchaseLoader = new ShoppPurchase();
 		$purchases = DB::query($query, 'array', array($PurchaseLoader, 'loader'));
 		$Storefront->purchases = (array)$purchases;
 	}

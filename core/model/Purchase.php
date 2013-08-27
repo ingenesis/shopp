@@ -13,7 +13,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class Purchase extends DatabaseObject {
+class ShoppPurchase extends DatabaseObject {
 
 	static $table = 'purchase';
 
@@ -163,7 +163,7 @@ class Purchase extends DatabaseObject {
 		// If global purchase context is not a loaded Purchase object, load the purchase associated with the order
 		$Purchase = ShoppPurchase();
 		if (!isset($Purchase->id) || empty($Purchase->id) || $Event->order != $Purchase->id) {
-			$Purchase = new Purchase($Event->order);
+			$Purchase = new ShoppPurchase($Event->order);
 		}
 
 		if ( empty($Purchase->purchased) ) $Purchase->load_purchased();
@@ -239,7 +239,7 @@ class Purchase extends DatabaseObject {
 
 		// If global purchase context is not a loaded Purchase object, load the purchase associated with the order
 		$Purchase = ShoppPurchase();
-		if (!isset($Purchase->id) || empty($Purchase->id)) $Purchase = new Purchase($Event->order);
+		if (!isset($Purchase->id) || empty($Purchase->id)) $Purchase = new ShoppPurchase($Event->order);
 
 		// Loaded Purchase does not match the one for the event
 		if ($Purchase->id != $Event->order) return new ShoppError('Cannot update. Loaded purchase does not match the purchase for the event.',false,SHOPP_DEBUG_ERR);
@@ -447,7 +447,7 @@ class Purchase extends DatabaseObject {
 	public function email ($addressee,$address,$subject,$templates=array()) {
 		global $Shopp,$is_IIS;
 
-		new ShoppError("Purchase::email(): $addressee,$address,$subject,"._object_r($templates),false,SHOPP_DEBUG_ERR);
+		new ShoppError("ShoppPurchase::email(): $addressee,$address,$subject,"._object_r($templates),false,SHOPP_DEBUG_ERR);
 
 		// Build the e-mail message data
 		$_ = array();
@@ -922,7 +922,7 @@ class PurchasesIIFExport extends PurchasesExport {
 // Automatically update the orders from order events
 $updates = array('invoiced','authed','captured','shipped','refunded','voided');
 foreach ($updates as $event) // Scheduled before default actions so updates are reflected in later actions
-	add_action( 'shopp_'.$event.'_order_event', array('Purchase','status_event'), 5 );
+	add_action( 'shopp_'.$event.'_order_event', array('ShoppPurchase','status_event'), 5 );
 
 // Handle unstock event
-add_action('shopp_unstock_order_event', array('Purchase','unstock'));
+add_action('shopp_unstock_order_event', array('ShoppPurchase','unstock'));

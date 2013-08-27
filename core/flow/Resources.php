@@ -63,7 +63,7 @@ class ShoppResources {
 		if ( ! current_user_can('shopp_financials') || ! current_user_can('shopp_export_orders') ) exit();
 
 		if ( ! isset($_POST['settings']['purchaselog_columns']) ) {
-			$Purchase = Purchase::exportcolumns();
+			$Purchase = ShoppPurchase::exportcolumns();
 			$Purchased = Purchased::exportcolumns();
 			$_POST['settings']['purchaselog_columns'] = array_keys(array_merge($Purchase, $Purchased));
 			$_POST['settings']['purchaselog_headers'] = 'on';
@@ -174,7 +174,7 @@ class ShoppResources {
 
 			$Purchased = $Download->purchased();
 
-			$Purchase = new Purchase($Purchased->purchase);
+			$Purchase = new ShoppPurchase($Purchased->purchase);
 			$Purchase->load_events();
 
 			$name = $Purchased->name.(!empty($Purchased->optionlabel)?' ('.$Purchased->optionlabel.')':'');

@@ -628,7 +628,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 		// Attempt to load a previous order from the transaction ID
 		// This can happen when IPN async messages are received before
 		// the customer returns to the storefront
-		$Purchase = new Purchase($tx,'txnid');
+		$Purchase = new ShoppPurchase($tx,'txnid');
 
 		// create new purchase on PDT if necessary
 		if ( empty($Purchase->id) ) {
@@ -748,7 +748,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 
 		shopp_debug('IPN to response protocol: '._object_r($this->response));
 
-		$Purchase = new Purchase( $txnid, 'txnid' );
+		$Purchase = new ShoppPurchase( $txnid, 'txnid' );
 		// create new purchase by IPN
 		if ( empty($Purchase->id) ) {
 			if ( 'voided' == $event ) return; // the transaction is void of the starting gate. Don't create a purchase.

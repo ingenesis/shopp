@@ -340,7 +340,7 @@ abstract class GatewayFramework {
 
 	public function cancelorder ( RefundedOrderEvent $Refunded ) {
 		$order = $Refunded->order;
-		$Purchase = new Purchase($order);
+		$Purchase = new ShoppPurchase($order);
 		if ( $Refunded->amount != $Purchase->total ) return;
 
 		// If not a partial refund, cancel the remaining balance
@@ -694,7 +694,7 @@ class FreeOrder extends GatewayFramework {
 	}
 
 	public function void ( OrderEventMessage $Event ) {
-		$Purchase = new Purchase($Event->order);
+		$Purchase = new ShoppPurchase($Event->order);
 		shopp_add_order_event($Purchase->id, 'voided', array(
 			'txnorigin' =>  $Purchase->txnid,	// Original transaction ID (txnid of original Purchase record)
 			'txnid' => time(),					// Transaction ID for the VOID event

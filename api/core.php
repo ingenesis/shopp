@@ -84,7 +84,7 @@ function ShoppCatalog ( ShoppCatalog $Object = null ) {
  * @author John Dillick
  * @since 1.2
  *
- * @param Purchase (optional) $Object the Catalog object to set to the global context.
+ * @param ShoppPurchase (optional) $Object the Catalog object to set to the global context.
  * @return mixed if the global Purchase context isn't set, bool false will be returned, otherwise the global Purchase object will be returned
  **/
 function ShoppPurchase ( $Object = false ) {
