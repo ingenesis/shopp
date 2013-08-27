@@ -712,8 +712,8 @@ abstract class ShippingFramework {
 		$min = shopp_setting('order_processing_min');
  		$max = shopp_setting('order_processing_max');
 
-		$earliest = ShippingFramework::daytimes($min,$cart['min'],$data['mindelivery']);
-		$latest = ShippingFramework::daytimes($max,$cart['max'],$data['maxdelivery']);
+		$earliest = apply_filters('shopp_mindelivery_estimate', ShippingFramework::daytimes($min, $cart['min'], $data['mindelivery']), $data, $this);
+		$latest = apply_filters('shopp_maxdelivery_estimate', ShippingFramework::daytimes($max, $cart['max'], $data['maxdelivery']), $data, $this);
 
 		return $earliest.'-'.$latest;
 	}
