@@ -767,6 +767,13 @@ class ShoppAdminPage {
 } // END class ShoppAdminPage
 
 class ShoppUI {
+	/**
+	 * Container for metabox callback methods. Pattern: [ id => callback , ... ]
+	 *
+	 * @var array
+	 */
+	protected static $metaboxes = array();
+
 
 	public static function cacheversion () {
 		return dechex(crc16(SECURE_AUTH_SALT . Shopp::VERSION));
@@ -1006,7 +1013,37 @@ class ShoppUI {
 
 	}
 
+	/**
+	 * Registers a new metabox for use within Shopp admin screens.
+	 *
+	 * @param string $id
+	 * @param string $title
+	 * @param $callback callable function
+	 * @param string $posttype
+	 * @param string $context [optional]
+	 * @param string $priority [optional]
+	 * @param array $args [optional]
+	 */
+	public static function addmetabox(string $id, string $title, $callback, string $posttype, $context = 'advanced', $priority = 'default', array $args = null) {
+		self::$metaboxes[$id] = $callback;
+		$args = (array) $args;
+		array_unshift($args, $id);
+		add_meta_box($id, $title, array(__CLASS__, 'metabox'), $posttype, $context, $priority, $args);
+	}
 
+	/**
+	 * Handles metabox callbacks - this allows additional output to be appended and prepended by devs using
+	 * the shopp_metabox_before_{id} and shopp_metabox_after_{id} actions.
+	 */
+	public static function metabox($object, $args) {
+		$id = array_shift($args['args']);
+		$callback = isset(self::$metaboxes[$id]) ? self::$metaboxes[$id] : false;
+
+		if (false === $callback) return;
+		do_action('shopp_metabox_before' . $id);
+		call_user_func($callback, $object, $args);
+		do_action('shopp_metabox_after' . $id);
+	}
 } // END class ShoppUI
 
 
