@@ -136,7 +136,7 @@ class ShoppFlow {
 
 	public function ajax () {
 		if ( ! isset($_REQUEST['action']) || ! defined('DOING_AJAX') ) return;
-		$this->Ajax = new ShoppAjax;
+		new ShoppAjax;
 	}
 
 	public function resources ( $request ) {
@@ -277,21 +277,25 @@ abstract class AdminController extends FlowController {
 	 * @return void
 	 **/
 	public function __construct () {
-		error_log(debug_caller());
+
+		$request = isset($_GET['page']) ? $_GET['page'] : null;
+
 		$Admin = ShoppAdmin();
 		if ( ! empty($Admin) ) $this->Admin = $Admin;
 
+		if ( is_null($request) ) return;
+
 		global $plugin_page;
 		$this->page = $plugin_page;
-		$this->url = add_query_arg('page', esc_attr($_GET['page']), admin_url('admin.php'));
+		$this->url = add_query_arg('page', $request, admin_url('admin.php'));
 
-		if ( function_exists('get_current_screen') ) {
-			$screen = get_current_screen();
+		if ( function_exists('get_current_screen') && $screen = get_current_screen() )
 			$this->screen = $screen->id;
-		}
 
-		$pages = explode('-', $_GET['page']);
-		$this->pagename = end($pages);
+		if ( false !== strpos($request, '-') ) {
+			$pages = explode('-', $_GET['page']);
+			$this->pagename = end($pages);
+		}
 
 		$tabs = $this->Admin->tabs($this->page);
 		if ( ! empty($tabs) ) {
