@@ -49,7 +49,7 @@ function save_meta_box ($Product) {
 	</div>
 <?php
 }
-add_meta_box(
+ShoppUI::addmetabox(
 	'save-product',
 	__('Save','Shopp').$Admin->boxhelp('product-editor-save'),
 	'save_meta_box',
@@ -156,8 +156,8 @@ foreach ( get_object_taxonomies(Product::$posttype) as $taxonomy_name ) {
 	$taxonomy = get_taxonomy($taxonomy_name);
 	$label = $taxonomy->labels->name;
 	if ( is_taxonomy_hierarchical($taxonomy_name) )
-		add_meta_box($taxonomy_name.'-box', $label.$Admin->boxhelp('product-editor-categories'), 'shopp_categories_meta_box', Product::$posttype, 'side', 'core', array( 'taxonomy' => $taxonomy_name ));
-	else add_meta_box($taxonomy_name.'-box', $label.$Admin->boxhelp('product-editor-tags'), 'shopp_tags_meta_box', Product::$posttype, 'side', 'core', array( 'taxonomy' => $taxonomy_name ));
+		ShoppUI::addmetabox($taxonomy_name.'-box', $label.$Admin->boxhelp('product-editor-categories'), 'shopp_categories_meta_box', Product::$posttype, 'side', 'core', array( 'taxonomy' => $taxonomy_name ));
+	else ShoppUI::addmetabox($taxonomy_name.'-box', $label.$Admin->boxhelp('product-editor-tags'), 'shopp_tags_meta_box', Product::$posttype, 'side', 'core', array( 'taxonomy' => $taxonomy_name ));
 
 }
 
@@ -194,7 +194,7 @@ function settings_meta_box ($Product) {
 
 <?php
 }
-add_meta_box(
+ShoppUI::addmetabox(
 	'product-settings',
 	__('Settings','Shopp').$Admin->boxhelp('product-editor-settings'),
 	'settings_meta_box',
@@ -209,7 +209,7 @@ function summary_meta_box ($Product) {
     <label for="summary"><?php _e('A brief description of the product to draw the customer\'s attention.','Shopp'); ?></label>
 <?php
 }
-add_meta_box(
+ShoppUI::addmetabox(
 	'product-summary',
 	__('Summary','Shopp').$Admin->boxhelp('product-editor-summary'),
 	'summary_meta_box',
@@ -235,7 +235,7 @@ function details_meta_box ($Product) {
 	</div>
 <?php
 }
-add_meta_box(
+ShoppUI::addmetabox(
 	'product-details-box',
 	__('Details &amp; Specs','Shopp').$Admin->boxhelp('product-editor-details'),
 	'details_meta_box',
@@ -282,7 +282,7 @@ function images_meta_box ($Product) {
 	</div>
 <?php
 }
-add_meta_box(
+ShoppUI::addmetabox(
 	'product-images',
 	 __('Product Images','Shopp').$Admin->boxhelp('product-editor-images'),
 	'images_meta_box',
@@ -364,7 +364,7 @@ function pricing_meta_box ($Product) {
 
 <?php
 }
-add_meta_box(
+ShoppUI::addmetabox(
 	'product-pricing-box',
 	__('Pricing','Shopp').$Admin->boxhelp('product-editor-pricing'),
 	'pricing_meta_box',
@@ -379,5 +379,3 @@ function priceline_ui () {
 
 }
 add_action('shopp_product_editor_templates','priceline_ui');
-
-?>

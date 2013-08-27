@@ -6,7 +6,7 @@ function save_meta_box ($MemberPlan) {
 	</div>
 <?php
 }
-add_meta_box('save-membership', __('Save','Shopp').$Admin->boxhelp('membership-editor-save'), 'save_meta_box', 'shopp_page_shopp-memberships', 'side', 'core');
+ShoppUI::addmetabox('save-membership', __('Save','Shopp').$Admin->boxhelp('membership-editor-save'), 'save_meta_box', 'shopp_page_shopp-memberships', 'side', 'core');
 
 function settings_meta_box ($MemberPlan) {
 ?>
@@ -20,7 +20,7 @@ function settings_meta_box ($MemberPlan) {
 
 <?php
 }
-add_meta_box('membership-settings', __('Settings','Shopp').$Admin->boxhelp('membership-editor-settings'), 'settings_meta_box', 'shopp_page_shopp-memberships', 'side', 'core');
+ShoppUI::addmetabox('membership-settings', __('Settings','Shopp').$Admin->boxhelp('membership-editor-settings'), 'settings_meta_box', 'shopp_page_shopp-memberships', 'side', 'core');
 
 function sources_meta_box ($MemberPlan) {
 ?>
@@ -28,7 +28,7 @@ function sources_meta_box ($MemberPlan) {
 <p>Show list of content sources...</p>
 <?php
 }
-add_meta_box('membership-sources', __('Content','Shopp').$Admin->boxhelp('membership-editor-sources'), 'sources_meta_box', 'shopp_page_shopp-memberships', 'side', 'core');
+ShoppUI::addmetabox('membership-sources', __('Content','Shopp').$Admin->boxhelp('membership-editor-sources'), 'sources_meta_box', 'shopp_page_shopp-memberships', 'side', 'core');
 
 function rules_meta_box ($MemberPlan) {
 ?>
@@ -36,5 +36,4 @@ function rules_meta_box ($MemberPlan) {
 <input type="button" id="add-stage" name="add-stage" value="<?php _e('Add Step','Shopp'); ?>" class="button-secondary" />
 <?php
 }
-add_meta_box('membership-rules', __('Access','Shopp').$Admin->boxhelp('membership-editor-rules'), 'rules_meta_box', 'shopp_page_shopp-memberships', 'normal', 'core');
-?>
+ShoppUI::addmetabox('membership-rules', __('Access','Shopp').$Admin->boxhelp('membership-editor-rules'), 'rules_meta_box', 'shopp_page_shopp-memberships', 'normal', 'core');

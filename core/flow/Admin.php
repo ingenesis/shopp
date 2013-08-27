@@ -1040,9 +1040,9 @@ class ShoppUI {
 		$callback = isset(self::$metaboxes[$id]) ? self::$metaboxes[$id] : false;
 
 		if (false === $callback) return;
-		do_action('shopp_metabox_before' . $id);
+		do_action('shopp_metabox_before_' . $id);
 		call_user_func($callback, $object, $args);
-		do_action('shopp_metabox_after' . $id);
+		do_action('shopp_metabox_after_' . $id);
 	}
 } // END class ShoppUI
 
