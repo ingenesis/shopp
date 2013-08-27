@@ -417,7 +417,7 @@ class ProductDevAPITests extends ShoppTestCase {
 
 	function test_shopp_product_weights () {
 		$Product = shopp_product('helm-console', 'slug');
-		$this->assertInstanceOf('Product', $Product);
+		$this->assertInstanceOf('ShoppProduct', $Product);
 
 		$weights = shopp_product_weights($Product);
 		$this->assertTrue(is_array($weights));

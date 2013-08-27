@@ -608,7 +608,7 @@ function shopp_subcategory_count ( $category = 0 ) {
  * @return int count of categories
  **/
 function shopp_product_categories_count ( $product ) {
-	$Product = new Product( $product );
+	$Product = new ShoppProduct( $product );
 	if ( empty($Product->id) ) {
 		shopp_debug(__FUNCTION__ . " failed: Invalid product $product.");
 		return false;

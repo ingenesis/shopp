@@ -1,0 +1,19 @@
+<?php
+/**
+ * Deprecated.php
+ *
+ * Deprecated class definitions.
+ *
+ * @author Barry Hughes
+ * @version 1.3
+ * @copyright Ingenesis Limited, 27 August 2013
+ * @license GNU GPL version 3 (or later) {@see license.txt}
+ * @package shopp
+ * @since 1.3
+ **/
+
+if ( defined('SHOPP_DISALLOW_DEPRECATED_CLASSES') && SHOPP_DISALLOW_DEPRECATED_CLASSES ) return;
+
+if ( ! class_exists('Product', false) ) {
+	class Product extends ShoppProduct {}
+}

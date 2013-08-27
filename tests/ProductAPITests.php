@@ -154,7 +154,7 @@ class ProductAPITests extends ShoppTestCase {
         // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$this->assertTrue(shopp('product','found'));
 		$original = ShoppProduct();
-		ShoppProduct(new Product(-1));
+		ShoppProduct(new ShoppProduct(-1));
 		$this->assertFalse(shopp('product','found'));
 		ShoppProduct($original);
 	}

@@ -39,7 +39,7 @@ add_filter('shopp_product_description', array($wp_embed, 'autoembed'), 8);
  *
  **/
 class ShoppProductThemeAPI implements ShoppAPI {
-	static $context = 'Product';
+	static $context = 'ShoppProduct';
 	static $register = array(
 		'addon' => 'addon',
 		'addons' => 'addons',
@@ -107,7 +107,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	 *
 	 **/
 	public static function _setobject ($Object, $object) {
-		if ( is_object($Object) && is_a($Object, 'Product') ) return $Object;
+		if ( is_object($Object) && is_a($Object, 'ShoppProduct') ) return $Object;
 
 		if ( strtolower($object) != 'product' ) return $Object; // not mine, do nothing
 		else {

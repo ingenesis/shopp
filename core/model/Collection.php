@@ -46,7 +46,7 @@ class ProductCollection implements Iterator {
 
 		$Storefront = ShoppStorefront();
 		$Shopping = ShoppShopping();
-		$Processing = new Product();
+		$Processing = new ShoppProduct();
 		$summary_table = DatabaseObject::tablename(ProductSummary::$table);
 
 		$defaults = array(
@@ -338,7 +338,7 @@ class ProductCollection implements Iterator {
 		}
 
 	    if ( shopp_setting_enabled('tax_inclusive') ) {
-			$TaxProduct = new Product($product->id);
+			$TaxProduct = new ShoppProduct($product->id);
 	        $taxrate = shopp_taxrate(null, true, $TaxProduct);
 	    }
 
@@ -1267,7 +1267,7 @@ class ProductCategory extends ProductTaxonomy {
 
 		reset($this->products);
 		$product = key($this->products);
-		return new Product($product);
+		return new ShoppProduct($product);
 	}
 
 	/**
@@ -1918,11 +1918,11 @@ class RelatedProducts extends SmartCollection {
 		// Or load a product specified
 		if ( isset($options['product']) ) {
 			if ( 'recent-cartitem' == $options['product'] ) {			// Use most recently added item in the cart
-				$this->product = new Product($Cart->added()->product);
+				$this->product = new ShoppProduct($Cart->added()->product);
 			} elseif ( intval($options['product']) > 0 ) { 	// Load by specified id
-				$this->product = new Product( intval($options['product']) );
+				$this->product = new ShoppProduct( intval($options['product']) );
 			} else {
-				$this->product = new Product($options['product'],'slug'); // Load by specified slug
+				$this->product = new ShoppProduct($options['product'],'slug'); // Load by specified slug
 			}
 		}
 
@@ -2001,11 +2001,11 @@ class AlsoBoughtProducts extends SmartCollection {
 		// Or load a product specified
 		if (isset($options['product'])) {
 			if ($options['product'] == "recent-cartitem") { 			// Use most recently added item in the cart
-				$this->product = new Product($Cart->added()->product);
+				$this->product = new ShoppProduct($Cart->added()->product);
 			} elseif (preg_match('/^[\d+]$/',$options['product'])) {	// Load by specified id
-				$this->product = new Product($options['product']);
+				$this->product = new ShoppProduct($options['product']);
 			} else {
-				$this->product = new Product($options['product'],'slug'); // Load by specified slug
+				$this->product = new ShoppProduct($options['product'],'slug'); // Load by specified slug
 			}
 		}
 

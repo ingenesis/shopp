@@ -41,7 +41,7 @@ class ShoppAdminWarehouse extends AdminController {
 		if (isset($_GET['view']) && in_array($_GET['view'],$this->views))
 			$this->view = $_GET['view'];
 
-	 	get_current_screen()->post_type = Product::$posttype;
+	 	get_current_screen()->post_type = ShoppProduct::$posttype;
 
 		if (!empty($_GET['id'])) {
 			wp_enqueue_script('jquery-ui-draggable');
@@ -153,13 +153,13 @@ class ShoppAdminWarehouse extends AdminController {
 				case 'trash': 		Product::publishset($selected,'trash'); break;
 				case 'delete':
 					foreach ($selected as $id) {
-						$P = new Product($id); $P->delete();
+						$P = new ShoppProduct($id); $P->delete();
 					} break;
 				case 'emptytrash':
-					$Template = new Product();
+					$Template = new ShoppProduct();
 					$trash = DB::query("SELECT ID FROM $Template->_table WHERE post_status='trash' AND post_type='".Product::posttype()."'",'array','col','ID');
 					foreach ($trash as $id) {
-						$P = new Product($id); $P->delete();
+						$P = new ShoppProduct($id); $P->delete();
 					} break;
 			}
 			wp_cache_delete('shopp_product_subcounts');
@@ -169,21 +169,21 @@ class ShoppAdminWarehouse extends AdminController {
 		}
 
 		if ($duplicate) {
-			$Product = new Product($duplicate);
+			$Product = new ShoppProduct($duplicate);
 			$Product->duplicate();
 			$this->index($Product);
 			shopp_redirect(add_query_arg(array('page' => $this->Admin->pagename('products'), 'paged' => $_REQUEST['paged']),$adminurl));
 		}
 
 		if (isset($id) && $id != "new") {
-			$Shopp->Product = new Product($id);
+			$Shopp->Product = new ShoppProduct($id);
 			$Shopp->Product->load_data();
 
 			// Adds CPT compatibility support for third-party plugins/themes
 			global $post;
 			if( is_null($post) ) $post = get_post($Shopp->Product->id);
 
-		} else $Shopp->Product = new Product();
+		} else $Shopp->Product = new ShoppProduct();
 
 		if ($save) {
 			wp_cache_delete('shopp_product_subcounts');
@@ -218,7 +218,7 @@ class ShoppAdminWarehouse extends AdminController {
 			}
 
 			if (empty($id)) $id = $Shopp->Product->id;
-			$Shopp->Product = new Product($id);
+			$Shopp->Product = new ShoppProduct($id);
 			$Shopp->Product->load_data();
 		}
 
@@ -232,7 +232,7 @@ class ShoppAdminWarehouse extends AdminController {
 
 		if ( ! current_user_can('shopp_products') ) return;
 
-		add_screen_option( 'per_page', array( 'label' => __('Products Per Page','Shopp'), 'default' => 20, 'option' => 'edit_' . Product::$posttype . '_per_page' ) );
+		add_screen_option( 'per_page', array( 'label' => __('Products Per Page','Shopp'), 'default' => 20, 'option' => 'edit_' . ShoppProduct::$posttype . '_per_page' ) );
 		$per_page_option = get_current_screen()->get_option( 'per_page' );
 
 		$defaults = array(
@@ -640,7 +640,7 @@ class ShoppAdminWarehouse extends AdminController {
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		if (empty($Shopp->Product)) {
-			$Product = new Product();
+			$Product = new ShoppProduct();
 			$Product->status = "publish";
 		} else $Product = $Shopp->Product;
 
@@ -678,7 +678,7 @@ class ShoppAdminWarehouse extends AdminController {
 
 		$process = (!empty($Product->id)?$Product->id:'new');
 		$_POST['action'] = add_query_arg(array_merge($_GET,array('page'=>$this->Admin->pagename('products'))),admin_url('admin.php'));
-		$post_type = Product::posttype();
+		$post_type = ShoppProduct::posttype();
 
 		// For inclusive taxes, add tax to base product price (so tax is part of the price)
 		// This has to take place outside of Product::pricing() so that the summary system
@@ -693,12 +693,12 @@ class ShoppAdminWarehouse extends AdminController {
 			}
 		}
 
-		do_action('add_meta_boxes', Product::$posttype, $Product);
-		do_action('add_meta_boxes_'.Product::$posttype, $Product);
+		do_action('add_meta_boxes', ShoppProduct::$posttype, $Product);
+		do_action('add_meta_boxes_'.ShoppProduct::$posttype, $Product);
 
-		do_action('do_meta_boxes', Product::$posttype, 'normal', $Product);
-		do_action('do_meta_boxes', Product::$posttype, 'advanced', $Product);
-		do_action('do_meta_boxes', Product::$posttype, 'side', $Product);
+		do_action('do_meta_boxes', ShoppProduct::$posttype, 'normal', $Product);
+		do_action('do_meta_boxes', ShoppProduct::$posttype, 'advanced', $Product);
+		do_action('do_meta_boxes', ShoppProduct::$posttype, 'side', $Product);
 
 		include(SHOPP_ADMIN_PATH."/products/editor.php");
 	}
@@ -748,7 +748,7 @@ class ShoppAdminWarehouse extends AdminController {
 
 		// Set a unique product slug
 		if (empty($Product->slug)) $Product->slug = sanitize_title_with_dashes($_POST['name']);
-		$Product->slug = wp_unique_post_slug($Product->slug, $Product->id, $Product->status, Product::posttype(), 0);
+		$Product->slug = wp_unique_post_slug($Product->slug, $Product->id, $Product->status, ShoppProduct::posttype(), 0);
 
 		$Product->featured = 'off';
 

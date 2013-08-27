@@ -233,13 +233,13 @@ class ShoppAjax {
 				echo apply_filters('editable_slug',$Category->slug);
 				break;
 			case 'product':
-				$Product = new Product($_POST['id']);
+				$Product = new ShoppProduct($_POST['id']);
 				if ($slug == $Product->slug) die('-1'); // Same as before? Nothing to do so bail
-				$Product->slug = wp_unique_post_slug(sanitize_title_with_dashes($title), $Product->id, $Product->status, Product::posttype(), 0);
+				$Product->slug = wp_unique_post_slug(sanitize_title_with_dashes($title), $Product->id, $Product->status, ShoppProduct::posttype(), 0);
 				if ($slug == $Product->slug) die('-1'); // Same as before? Nothing to do so bail
-				elseif ( $slug ) $Product->slug = wp_unique_term_slug(sanitize_title_with_dashes($slug),$term);
+				elseif ( $slug ) $Product->slug = wp_unique_term_slug(sanitize_title_with_dashes($slug), $term);
 				$Product->save();
-				echo apply_filters('editable_slug',$Product->slug);
+				echo apply_filters('editable_slug', $Product->slug);
 				break;
 		}
 		exit;

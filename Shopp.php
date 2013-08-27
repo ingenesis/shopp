@@ -269,7 +269,7 @@ class Shopp extends ShoppCore {
 	 * @return void
 	 **/
 	public function products () {
-		WPShoppObject::register( 'Product', ShoppPages()->baseslug() );
+		WPShoppObject::register( 'ShoppProduct', ShoppPages()->baseslug() );
 	}
 
 	/**

@@ -180,7 +180,7 @@
 										<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
 											<a href="<?php echo add_query_arg(array('page' => 'shopp-products','id' => $Item->product),admin_url('admin.php')); ?>">
                                                 <?php
-                                                $Product = new Product($Item->product);
+                                                $Product = new ShoppProduct($Item->product);
                                                 $Product->load_data( array('images') );
                                                 $Image = reset($Product->images);
 

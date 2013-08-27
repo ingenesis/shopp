@@ -184,7 +184,7 @@ class ShoppCart extends ListFramework {
 
 		if ( '0' == $quantity ) return;
 
-		$Product = new Product( (int)$product );
+		$Product = new ShoppProduct( (int) $product );
 		if ( isset($options[0]) && ! empty($options[0]) ) $price = $options;
 
 		if ( ! empty($Product->id) ) {
@@ -255,7 +255,7 @@ class ShoppCart extends ListFramework {
 	 * @since 1.0
 	 *
 	 * @param int $quantity The quantity of the item to add to the cart
-	 * @param Product $Product Product object to add to the cart
+	 * @param ShoppProduct $Product Product object to add to the cart
 	 * @param Price $Price Price object to add to the cart
 	 * @param int $category The id of the category navigated to find the product
 	 * @param array $data Any custom item data to carry through
@@ -441,7 +441,7 @@ class ShoppCart extends ListFramework {
 	 *
 	 * @fixme foreach over iterable items prevents addons from being added via cart API
 	 * @param int $item Index of the item to change
-	 * @param Product $Product Product object to change to
+	 * @param ShoppProduct $Product Product object to change to
 	 * @param int|array|Price $pricing Price record ID or an array of pricing record IDs or a Price object
 	 * @return boolean
 	 **/
@@ -471,7 +471,7 @@ class ShoppCart extends ListFramework {
 		foreach ($Item->addons as $addon)
 			$addons[] = $addon->options;
 
-		$UpdatedItem = new ShoppCartItem(new Product($product), $pricing, $category, $data, $addons);
+		$UpdatedItem = new ShoppCartItem(new ShoppProduct($product), $pricing, $category, $data, $addons);
 		$UpdatedItem->quantity($qty);
 
 		parent::update($item, $UpdatedItem);

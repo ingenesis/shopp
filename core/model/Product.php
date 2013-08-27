@@ -14,7 +14,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class Product extends WPShoppObject {
+class ShoppProduct extends WPShoppObject {
 	static $table = 'posts';
 	static $_taxonomies = array(
 		'shopp_category' => 'categories',

@@ -553,7 +553,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		else {
 			unset($O->_product_loop);
 			ShoppProduct($null);
-			if ( is_a(ShoppStorefront()->Requested, 'Product') ) ShoppProduct(ShoppStorefront()->Requested);
+			if ( is_a(ShoppStorefront()->Requested, 'ShoppProduct') ) ShoppProduct(ShoppStorefront()->Requested);
 			$O->_pindex = 0;
 			return false;
 		}

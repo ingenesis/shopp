@@ -63,7 +63,7 @@ function shopp_add_cart_product ( $product = false, $quantity = 1, $variant = fa
 		return false;
 	}
 
-	$Product = new Product( $product );
+	$Product = new ShoppProduct( $product );
 	if ( empty($Product->id) ) {
 		shopp_debug(__FUNCTION__ . " failed: Product $product invalid");
 		return false;

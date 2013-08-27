@@ -24,7 +24,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @param Product (optional) $Object the product object to set to the global context.
  * @return mixed if the global Product context isn't set, bool false will be returned, otherwise the global Product object will be returned
  **/
-function ShoppProduct ( Product $Object = null ) {
+function ShoppProduct ( ShoppProduct $Object = null ) {
 	$Shopp = Shopp::object();
 	if ( isset($Object) )
 		$Shopp->Product = $Object;
@@ -305,7 +305,7 @@ function is_shopp_page ( $page = false, $wp_query = false ) {
 
 	if ( false === $page ) { // Check if the current request is a shopp page request
 		// Product and collection pages are considered a Shopp page request
-		if ( is_shopp_product($wp_query) || $wp_query->get('post_type') == Product::$posttype ) $is_shopp_page = true;
+		if ( is_shopp_product($wp_query) || $wp_query->get('post_type') == ShoppProduct::$posttype ) $is_shopp_page = true;
 		if ( is_shopp_collection($wp_query) ) $is_shopp_page = true;
 		if ( false !== $Page ) $is_shopp_page = true;
 
@@ -437,7 +437,7 @@ function shopp_rebuild_search_index () {
 	$set = 10; // Process 10 at a time
 	$index_table = DatabaseObject::tablename(ContentIndex::$table);
 
-	$total = DB::query("SELECT count(*) AS products,now() as start FROM $wpdb->posts WHERE post_type='" . Product::$posttype . "'");
+	$total = DB::query("SELECT count(*) AS products,now() as start FROM $wpdb->posts WHERE post_type='" . ShoppProduct::$posttype . "'");
 	if ( empty($total->products) ) false;
 
 	set_time_limit(0); // Prevent timeouts
@@ -445,7 +445,7 @@ function shopp_rebuild_search_index () {
 	$indexed = 0;
 	do_action_ref_array('shopp_rebuild_search_index_init', array($indexed, $total->products, $total->start));
 	for ( $i = 0; $i * $set < $total->products; $i++ ) { // Outer loop to support buffering
-		$products = sDB::query("SELECT ID FROM $wpdb->posts WHERE post_type='" . Product::$posttype . "' LIMIT " . ($i * $set) . ",$set", 'array', 'col', 'ID');
+		$products = sDB::query("SELECT ID FROM $wpdb->posts WHERE post_type='" . ShoppProduct::$posttype . "' LIMIT " . ($i * $set) . ",$set", 'array', 'col', 'ID');
 		foreach ( $products as $id ) {
 			$Indexer = new IndexProduct($id);
 			$Indexer->index();

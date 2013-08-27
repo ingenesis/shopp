@@ -665,12 +665,12 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		$Shopp = Shopp::object();
 		$Storefront = ShoppStorefront();
 
-		if (isset($options['name'])) ShoppProduct(new Product($options['name'],'name'));
-		else if (isset($options['slug'])) ShoppProduct(new Product($options['slug'],'slug'));
-		else if (isset($options['id'])) ShoppProduct(new Product($options['id']));
+		if (isset($options['name'])) ShoppProduct(new ShoppProduct($options['name'],'name'));
+		else if (isset($options['slug'])) ShoppProduct(new ShoppProduct($options['slug'],'slug'));
+		else if (isset($options['id'])) ShoppProduct(new ShoppProduct($options['id']));
 
 		if (isset($options['reset']))
-			return ( $Storefront->Requested && is_a($Storefront->Requested, 'Product') ? ShoppProduct($Storefront->Requested) : false );
+			return ( $Storefront->Requested && is_a($Storefront->Requested, 'ShoppProduct') ? ShoppProduct($Storefront->Requested) : false );
 
 		if (isset(ShoppProduct()->id) && isset($Shopp->Category->slug)) {
 			$Category = clone($Shopp->Category);
@@ -846,8 +846,8 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 				$product = trim($product);
 				if (empty($product)) continue;
 				if (preg_match('/^\d+$/',$product))
-					$Shopp->Product = new Product($product);
-				else $Shopp->Product = new Product($product,'slug');
+					$Shopp->Product = new ShoppProduct($product);
+				else $Shopp->Product = new ShoppProduct($product,'slug');
 
 				if (empty($Shopp->Product->id)) continue;
 				if (isset($options['load'])) return true;

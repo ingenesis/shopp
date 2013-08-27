@@ -248,7 +248,7 @@ class ShoppCartItem {
 
 	public function load_purchased ( $Purchased ) {
 
-		$this->load(new Product($Purchased->product),$Purchased->price,false);
+		$this->load(new ShoppProduct($Purchased->product),$Purchased->price,false);
 
 		// Copy matching properties
 		$properties = get_object_vars($Purchased);

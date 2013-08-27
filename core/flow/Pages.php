@@ -936,7 +936,7 @@ class ShoppShortcodes {
 		$properties = array('name', 'slug', 'id');
 		foreach ( $properties as $prop ) {
 			if ( ! isset($atts[ $prop ]) ) continue;
-			$Product = new Product($atts[ $prop ], $prop);
+			$Product = new ShoppProduct($atts[ $prop ], $prop);
 		}
 
 		if ( ! empty($Product->id) ) {

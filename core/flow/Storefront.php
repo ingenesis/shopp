@@ -187,7 +187,7 @@ class Storefront extends FlowController {
 
 		$page	 	= $wp_query->get( ShoppPages::QUERYVAR );
 		$posttype 	= $wp_query->get( 'post_type' );
-		$product 	= $wp_query->get( Product::$posttype );
+		$product 	= $wp_query->get( ShoppProduct::$posttype );
 		$collection = $wp_query->get( 'shopp_collection' );
 		$searching 	= $wp_query->get( 's_cs' );
 		$search 	= $wp_query->get( 's' );
@@ -198,7 +198,7 @@ class Storefront extends FlowController {
 		$catalog = ShoppPages()->baseslug();
 
 		// Detect catalog page requests
-		if ( is_archive() && $posttype == Product::$posttype && '' == $product . $collection . $page . $search ) {
+		if ( is_archive() && $posttype == ShoppProduct::$posttype && '' == $product . $collection . $page . $search ) {
 			$page = $catalog;
 			$wp_query->set( ShoppPages::QUERYVAR, $page );
 		}
@@ -291,7 +291,7 @@ class Storefront extends FlowController {
 		$object = $wp_the_query->get_queried_object();
 
 		// Populate so we don't have to req-uery
-		$Product = new Product();
+		$Product = new ShoppProduct();
 		$Product->populate($object);
 		ShoppProduct($Product);
 		$this->Requested = $Product;

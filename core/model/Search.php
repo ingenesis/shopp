@@ -41,7 +41,7 @@ class IndexProduct {
 	 * @return void
 	 **/
 	function __construct ($id) {
-		$this->Product = new Product($id);
+		$this->Product = new ShoppProduct($id);
 		$this->Product->load_data(array('prices','specs','categories','tags'));
 	}
 

@@ -39,7 +39,7 @@ function shopp_add_image ( $id, $context, $file ) {
 	}
 
 	if ( 'product' == $context ) {
-		$Object = new Product($id);
+		$Object = new ShoppProduct($id);
 		$Image = new ProductImage();
 	} else if ( 'category' == $context ) {
 		$Object = new ProductCategory($id);
@@ -199,7 +199,7 @@ function shopp_add_product_download ( $product, $file, $variant = false ) {
 		return false;
 	}
 
-	$Product = new Product($product);
+	$Product = new ShoppProduct($product);
 	if ( empty($Product->id) ) {
 		shopp_debug(__FUNCTION__ . " failed for file $file: No such product with id $product.");
 		return false;
