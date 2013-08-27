@@ -861,7 +861,7 @@ class Lookup {
 					break;
 				}
 			}
-			$min = 0 === $min ? ++$min : $min; // Increase the min number of units to one after the first loop (allow 0 days but not 0 weeks)
+			$min = (0 === $min) ? ++$min : $min; // Increase the min number of units to one after the first loop (allow 0 days but not 0 weeks)
 		}
 
 		return apply_filters('shopp_timeframes_menu',$_);

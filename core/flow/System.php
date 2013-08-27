@@ -283,20 +283,21 @@ class ShoppAdminSystem extends AdminController {
 
 					// Sterilize $values
 					foreach ($_POST[$module]['table'] as $i => &$row) {
-
 						if (isset($row['rate'])) $row['rate'] = Shopp::floatval($row['rate']);
 						if (!isset($row['tiers'])) continue;
 
 						foreach ($row['tiers'] as &$tier) {
 							if (isset($tier['rate'])) $tier['rate'] = Shopp::floatval($tier['rate']);
 						}
-
 					}
 
-					shopp_set_setting($Shipper->setting,$_POST[$module]);
-					if (!array_key_exists($module,$active)) $active[$module] = array();
-					$active[$module][(int)$id] = true;
-					shopp_set_setting('active_shipping',$active);
+					// Delivery estimates: ensure max equals or exceeds min
+					ShippingFramework::sensibleestimates($_POST[$module]['mindelivery'], $_POST[$module]['maxdelivery']);
+
+					shopp_set_setting($Shipper->setting, $_POST[$module]);
+					if (!array_key_exists($module, $active)) $active[$module] = array();
+					$active[$module][(int) $id] = true;
+					shopp_set_setting('active_shipping', $active);
 					$this->notice(Shopp::__('Shipping settings saved.'));
 				}
 
@@ -395,7 +396,6 @@ class ShoppAdminSystem extends AdminController {
 		$ShippingTemplates = new TemplateShippingUI();
 		add_action('shopp_shipping_module_settings',array($Shipping,'templates'));
 		include $this->ui('shiprates.php');
-
 	}
 
 	public function shipping_menu () {
