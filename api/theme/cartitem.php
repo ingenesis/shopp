@@ -1,12 +1,14 @@
 <?php
 /**
-* ShoppCartItemThemeAPI - Provided theme api tags.
+* ShoppCartItemThemeAPI
 *
+* Provides Cart Item Theme API tags
+*
+* @api
+* @copyright Ingenesis Limited, 2012
+* @package shopp
 * @version 1.0
 * @since 1.2
-* @package shopp
-* @subpackage ShoppCartItemThemeAPI
-*
 **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -20,7 +22,7 @@ add_filter('shopp_cartitem_input_data', 'wpautop');
  * @since 1.2
  *
  **/
-class ShoppCartItemThemeAPI {
+class ShoppCartItemThemeAPI implements ShoppAPI {
 	static $register = array(
 		'_cartitem',
 		'id' => 'id',
@@ -90,7 +92,9 @@ class ShoppCartItemThemeAPI {
 
 	public static function product ( $result, $options, $O ) { return $O->product; }
 
-	public static function name ( $result, $options, $O ) { return $O->name; }
+	public static function name ( $result, $options, $O ) {
+		return $O->name;
+	}
 
 	public static function type ( $result, $options, $O ) { return $O->type; }
 
