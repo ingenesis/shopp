@@ -253,7 +253,7 @@ function manage_meta_box ($Purchase) {
 </form>
 <?php
 }
-add_meta_box('order-manage', __('Management','Shopp').$Admin->boxhelp('order-manager-manage'), 'manage_meta_box', 'toplevel_page_shopp-orders', 'normal', 'core',2);
+ShoppUI::addmetabox('order-manage', __('Management','Shopp').$Admin->boxhelp('order-manager-manage'), 'manage_meta_box', 'toplevel_page_shopp-orders', 'normal', 'core',2);
 
 function billto_meta_box ($Purchase) {
 	?>
@@ -358,7 +358,7 @@ function billto_meta_box ($Purchase) {
 	</div>
 <?php
 }
-add_meta_box('order-billing', __('Billing Address','Shopp').$Admin->boxhelp('order-manager-billing'), 'billto_meta_box', 'toplevel_page_shopp-orders', 'side', 'core');
+ShoppUI::addmetabox('order-billing', __('Billing Address','Shopp').$Admin->boxhelp('order-manager-billing'), 'billto_meta_box', 'toplevel_page_shopp-orders', 'side', 'core');
 
 function shipto_meta_box ($Purchase) { ?>
 	<form action="<?php echo AdminController::url(array('id'=>$Purchase->id)); ?>" method="post" id="shipping-address-editor"></form>
@@ -398,7 +398,7 @@ function shipto_meta_box ($Purchase) { ?>
 <?php
 }
 if (!empty(ShoppPurchase()->shipaddress))
-	add_meta_box('order-shipping', __('Shipping Address','Shopp').$Admin->boxhelp('order-manager-shipto'), 'shipto_meta_box', 'toplevel_page_shopp-orders', 'side', 'core');
+	ShoppUI::addmetabox('order-shipping', __('Shipping Address','Shopp').$Admin->boxhelp('order-manager-shipto'), 'shipto_meta_box', 'toplevel_page_shopp-orders', 'side', 'core');
 
 function contact_meta_box ($Purchase) {
 	$screen = get_current_screen();
@@ -563,7 +563,7 @@ function contact_meta_box ($Purchase) {
 	</div>
 	<?php
 }
-add_meta_box('order-contact', __('Customer','Shopp').$Admin->boxhelp('order-manager-contact'), 'contact_meta_box', 'toplevel_page_shopp-orders', 'side', 'core');
+ShoppUI::addmetabox('order-contact', __('Customer','Shopp').$Admin->boxhelp('order-manager-contact'), 'contact_meta_box', 'toplevel_page_shopp-orders', 'side', 'core');
 
 function orderdata_meta_box ($Purchase) {
 	$_[] = '<ul>';
@@ -581,7 +581,7 @@ function orderdata_meta_box ($Purchase) {
 }
 if (!empty(ShoppPurchase()->data) && is_array(ShoppPurchase()->data) && join("",ShoppPurchase()->data) != ""
 		|| apply_filters('shopp_orderui_show_orderdata',false)) {
-			add_meta_box('order-data', __('Details','Shopp').$Admin->boxhelp('order-manager-details'), 'orderdata_meta_box', 'toplevel_page_shopp-orders', 'normal', 'core');
+			ShoppUI::addmetabox('order-data', __('Details','Shopp').$Admin->boxhelp('order-manager-details'), 'orderdata_meta_box', 'toplevel_page_shopp-orders', 'normal', 'core');
 		}
 
 function history_meta_box ($Purchase) {
@@ -596,7 +596,7 @@ function history_meta_box ($Purchase) {
 	echo '</table>';
 }
 if (count(ShoppPurchase()->events) > 0)
-	add_meta_box('order-history', __('Order History','Shopp').$Admin->boxhelp('order-manager-history'), 'history_meta_box', 'toplevel_page_shopp-orders', 'normal', 'core');
+	ShoppUI::addmetabox('order-history', __('Order History','Shopp').$Admin->boxhelp('order-manager-history'), 'history_meta_box', 'toplevel_page_shopp-orders', 'normal', 'core');
 
 function downloads_meta_box ($Purchase) {
 ?>
@@ -610,7 +610,7 @@ function downloads_meta_box ($Purchase) {
 <?php
 }
 // if (ShoppPurchase()->downloads !== false)
-// 	add_meta_box('order-downloads', __('Downloads','Shopp').$Admin->boxhelp('order-manager-downloads'), 'downloads_meta_box', 'toplevel_page_shopp-orders', 'normal', 'core');
+// 	ShoppUI::addmetabox('order-downloads', __('Downloads','Shopp').$Admin->boxhelp('order-manager-downloads'), 'downloads_meta_box', 'toplevel_page_shopp-orders', 'normal', 'core');
 
 function notes_meta_box ($Purchase) {
 	global $Notes;
@@ -670,4 +670,4 @@ function notes_meta_box ($Purchase) {
 	<br class="clear" />
 <?php
 }
-add_meta_box('order-notes', __('Notes','Shopp').$Admin->boxhelp('order-manager-notes'), 'notes_meta_box', 'toplevel_page_shopp-orders', 'normal', 'core');
+ShoppUI::addmetabox('order-notes', __('Notes','Shopp').$Admin->boxhelp('order-manager-notes'), 'notes_meta_box', 'toplevel_page_shopp-orders', 'normal', 'core');

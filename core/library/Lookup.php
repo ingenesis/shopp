@@ -565,7 +565,16 @@ class Lookup {
 
 		$_ = array();
 
-		$_['AU'] = array();
+		$_['AU'] = array(
+			'ACT' => array('0200-0299', '2600-2618', '2900-2920'),
+			'NSW' => array('1000-2599', '2619-2898', '2921-2999'),
+			'NT' => array('0800-0999'),
+			'QLD' => array('4000-4999', '9000-9999'),
+			'SA' => array('5000-5799', '5800-5999'),
+			'TAS' => array('7000-7999'),
+			'VIC' => array('3000-3999', '8000-8999'),
+			'WA' => array('6000-6797', '6800-6999'),
+		);
 
 		$_['CA'] = array('Y'=>'YT', 'X'=>array('NT','NU'), 'V'=>'BC', 'T'=>'AB', 'S'=>'SK', 'R'=>'MB', 'K'=>'ON', 'L'=>'ON', 'M'=>'ON', 'N'=>'ON', 'P'=>'ON', 'G'=>'QC', 'H'=>'QC', 'J'=>'QC', 'E'=>'NB', 'C'=>'PE', 'B'=>'NS', 'A'=>'NL');
 
@@ -850,9 +859,10 @@ class Lookup {
 	static function timeframes_menu () {
 		$units = array( 'd' => 11, 'w' => 7, 'm' => 4 );
 		$_ = array();
+		$min = 0;
 
 		foreach ( $units as $u => $count ) {
-			for ( $i = 1; $i < $count; $i++ ) {
+			for ( $i = $min; $i < $count; $i++ ) {
 				switch ($u) {
 					case 'd': $_[$i.$u] = sprintf(_n('%d day','%d days',$i,'Shopp'), $i); break;
 					case 'w': $_[$i.$u] = sprintf(_n('%d week','%d weeks',$i,'Shopp'), $i); break;
@@ -860,6 +870,7 @@ class Lookup {
 					break;
 				}
 			}
+			$min = (0 === $min) ? ++$min : $min; // Increase the min number of units to one after the first loop (allow 0 days but not 0 weeks)
 		}
 
 		return apply_filters('shopp_timeframes_menu',$_);

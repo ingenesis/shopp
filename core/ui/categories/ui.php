@@ -20,7 +20,7 @@ function save_meta_box ($Category) {
 	</div>
 <?php
 }
-add_meta_box('save-category', __('Save','Shopp').$Admin->boxhelp('category-editor-save'), 'save_meta_box', 'shopp_page_shopp-category', 'side', 'core');
+ShoppUI::addmetabox('save-category', __('Save','Shopp').$Admin->boxhelp('category-editor-save'), 'save_meta_box', 'shopp_page_shopp-category', 'side', 'core');
 
 function settings_meta_box ($Category) {
 	$Shopp = Shopp::object();
@@ -39,7 +39,7 @@ function settings_meta_box ($Category) {
 
 	<?php
 }
-add_meta_box('category-settings', __('Settings','Shopp').$Admin->boxhelp('category-editor-settings'), 'settings_meta_box', 'shopp_page_shopp-category', 'side', 'core');
+Shopp::addmetabox('category-settings', __('Settings','Shopp').$Admin->boxhelp('category-editor-settings'), 'settings_meta_box', 'shopp_page_shopp-category', 'side', 'core');
 
 function images_meta_box ($Category) {
 ?>
@@ -77,7 +77,7 @@ function images_meta_box ($Category) {
 	<p><?php _e('Double-click images to edit their details. Save the product to confirm deleted images.','Shopp'); ?></p>
 <?php
 }
-add_meta_box('category-images', __('Category Images','Shopp').$Admin->boxhelp('category-editor-images'), 'images_meta_box', 'shopp_page_shopp-category', 'normal', 'core');
+ShoppUI::addmetabox('category-images', __('Category Images','Shopp').$Admin->boxhelp('category-editor-images'), 'images_meta_box', 'shopp_page_shopp-category', 'normal', 'core');
 
 function templates_meta_box ($Category) {
 	$pricerange_menu = array(
@@ -175,6 +175,6 @@ function templates_meta_box ($Category) {
 
 <?php
 }
-add_meta_box('templates_menus', __('Product Templates &amp; Menus','Shopp').$Admin->boxhelp('category-editor-templates'), 'templates_meta_box', 'shopp_page_shopp-category', 'advanced', 'core');
+ShoppUI::addmetabox('templates_menus', __('Product Templates &amp; Menus','Shopp').$Admin->boxhelp('category-editor-templates'), 'templates_meta_box', 'shopp_page_shopp-category', 'advanced', 'core');
 
 ?>

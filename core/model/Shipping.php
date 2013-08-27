@@ -712,15 +712,15 @@ abstract class ShippingFramework {
 		$min = shopp_setting('order_processing_min');
  		$max = shopp_setting('order_processing_max');
 
-		$earliest = ShippingFramework::daytimes($min,$cart['min'],$data['mindelivery']);
-		$latest = ShippingFramework::daytimes($max,$cart['max'],$data['maxdelivery']);
+		$earliest = apply_filters('shopp_mindelivery_estimate', ShippingFramework::daytimes($min, $cart['min'], $data['mindelivery']), $data, $this);
+		$latest = apply_filters('shopp_maxdelivery_estimate', ShippingFramework::daytimes($max, $cart['max'], $data['maxdelivery']), $data, $this);
 
 		return $earliest.'-'.$latest;
 	}
 
-	static function daytimes () {
+	public static function daytimes () {
 		$args = func_get_args();
-		$periods = array("h"=>3600,"d"=>86400,"w"=>604800,"m"=>2592000);
+		$periods = array('h' =>3600, 'd' => 86400, 'w' => 604800, 'm' => 2592000);
 
 		$total = 0;
 		foreach ($args as $timeframe) {
@@ -729,6 +729,19 @@ abstract class ShippingFramework {
 			$total += $i*$periods[$p];
 		}
 		return ceil($total/$periods['d']).'d';
+	}
+
+	/**
+	 * If the minimum delivery time exceeds the maximum it is changed to be equal instead.
+	 *
+	 * @param &$min
+	 * @param &$max
+	 */
+	public static function sensibleestimates (&$min, &$max) {
+		$minval = (int) str_replace('d', '', ShippingFramework::daytimes($min));
+		$maxval = (int) str_replace('d', '', ShippingFramework::daytimes($max));
+
+		if ($minval > $maxval) $min = $max;
 	}
 
 	static function _sorttable ($a, $b) {

@@ -13,7 +13,7 @@ function save_meta_box ($Customer) {
 </div>
 <?php
 }
-add_meta_box('save-customer', __('Save','Shopp').$Admin->boxhelp('customer-editor-save'), 'save_meta_box', 'shopp_page_shopp-customers', 'side', 'core');
+ShoppUI::addmetabox('save-customer', __('Save','Shopp').$Admin->boxhelp('customer-editor-save'), 'save_meta_box', 'shopp_page_shopp-customers', 'side', 'core');
 
 function settings_meta_box ($Customer) {
 ?>
@@ -35,7 +35,7 @@ function settings_meta_box ($Customer) {
 	<?php do_action('shopp_customer_editor_settings',$Customer); ?>
 <?php
 }
-add_meta_box('customer-settings', __('Settings','Shopp').$Admin->boxhelp('customer-editor-settings'), 'settings_meta_box', 'shopp_page_shopp-customers', 'side', 'core');
+ShoppUI::addmetabox('customer-settings', __('Settings','Shopp').$Admin->boxhelp('customer-editor-settings'), 'settings_meta_box', 'shopp_page_shopp-customers', 'side', 'core');
 
 function login_meta_box ($Customer) {
 	$wp_user = get_userdata($Customer->wpuser);
@@ -70,7 +70,7 @@ function login_meta_box ($Customer) {
 <br class="clear" />
 <?php
 }
-add_meta_box('customer-login', __('Login &amp; Password','Shopp').$Admin->boxhelp('customer-editor-password'), 'login_meta_box', 'shopp_page_shopp-customers', 'side', 'core');
+ShoppUI::addmetabox('customer-login', __('Login &amp; Password','Shopp').$Admin->boxhelp('customer-editor-password'), 'login_meta_box', 'shopp_page_shopp-customers', 'side', 'core');
 
 
 function profile_meta_box ($Customer) {
@@ -104,7 +104,7 @@ function profile_meta_box ($Customer) {
 
 <?php
 }
-add_meta_box('customer-profile', __('Profile','Shopp').$Admin->boxhelp('customer-editor-profile'), 'profile_meta_box', 'shopp_page_shopp-customers', 'normal', 'core');
+ShoppUI::addmetabox('customer-profile', __('Profile','Shopp').$Admin->boxhelp('customer-editor-profile'), 'profile_meta_box', 'shopp_page_shopp-customers', 'normal', 'core');
 
 function info_meta_box ($Customer) {
 ?>
@@ -119,7 +119,7 @@ function info_meta_box ($Customer) {
 
 <?php
 }
-add_meta_box('customer-info', __('Details','Shopp').$Admin->boxhelp('customer-editor-details'), 'info_meta_box', 'shopp_page_shopp-customers', 'normal', 'core');
+ShoppUI::addmetabox('customer-info', __('Details','Shopp').$Admin->boxhelp('customer-editor-details'), 'info_meta_box', 'shopp_page_shopp-customers', 'normal', 'core');
 
 
 function billing_meta_box ($Customer) {
@@ -158,7 +158,7 @@ function billing_meta_box ($Customer) {
 <br class="clear" />
 <?php
 }
-add_meta_box('customer-billing', __('Billing Address','Shopp').$Admin->boxhelp('customer-editor-billing'), 'billing_meta_box', 'shopp_page_shopp-customers', 'normal', 'core');
+ShoppUI::addmetabox('customer-billing', __('Billing Address','Shopp').$Admin->boxhelp('customer-editor-billing'), 'billing_meta_box', 'shopp_page_shopp-customers', 'normal', 'core');
 
 function shipping_meta_box ($Customer) {
 ?>
@@ -196,6 +196,6 @@ function shipping_meta_box ($Customer) {
 <br class="clear" />
 <?php
 }
-add_meta_box('customer-shipping', __('Shipping Address','Shopp').$Admin->boxhelp('customer-editor-shipping'), 'shipping_meta_box', 'shopp_page_shopp-customers', 'normal', 'core');
+ShoppUI::addmetabox('customer-shipping', __('Shipping Address','Shopp').$Admin->boxhelp('customer-editor-shipping'), 'shipping_meta_box', 'shopp_page_shopp-customers', 'normal', 'core');
 
 ?>

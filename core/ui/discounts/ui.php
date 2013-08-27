@@ -34,7 +34,7 @@ function save_meta_box ($Promotion) {
 </div>
 <?php
 }
-add_meta_box('save-promotion', __('Save','Shopp').$Admin->boxhelp('promo-editor-save'), 'save_meta_box', 'shopp_page_shopp-discounts', 'side', 'core');
+ShoppUI::addmetabox('save-promotion', __('Save','Shopp').$Admin->boxhelp('promo-editor-save'), 'save_meta_box', 'shopp_page_shopp-discounts', 'side', 'core');
 
 function discount_meta_box ($Promotion) {
 	$types = ShoppAdminDiscounter::types(); ?>
@@ -54,7 +54,7 @@ function discount_meta_box ($Promotion) {
 
 <?php
 }
-add_meta_box('promotion-discount', __('Discount','Shopp').$Admin->boxhelp('promo-editor-discount'), 'discount_meta_box', 'shopp_page_shopp-discounts', 'normal', 'core');
+ShoppUI::addmetabox('promotion-discount', __('Discount','Shopp').$Admin->boxhelp('promo-editor-discount'), 'discount_meta_box', 'shopp_page_shopp-discounts', 'normal', 'core');
 
 function rules_meta_box ($Promotion) {
 	$targets = array(
@@ -83,4 +83,4 @@ function rules_meta_box ($Promotion) {
 <table class="form-table" id="rules"></table>
 <?php
 }
-add_meta_box('promotion-rules', __('Conditions','Shopp').$Admin->boxhelp('promo-editor-conditions'), 'rules_meta_box', 'shopp_page_shopp-discounts', 'normal', 'core');
+ShoppUI::addmetabox('promotion-rules', __('Conditions','Shopp').$Admin->boxhelp('promo-editor-conditions'), 'rules_meta_box', 'shopp_page_shopp-discounts', 'normal', 'core');
