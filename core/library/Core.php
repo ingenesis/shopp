@@ -1375,10 +1375,10 @@ abstract class ShoppCore {
 	 * @return string The formatted percentage
 	 **/
 	public static function percentage ( $amount, $format = array() ) {
-		$format = currency_format($format);
+		$format = Shopp::currency_format($format);
 		extract($format, EXTR_SKIP);
 		$float = Shopp::floatval($amount, true, $format);
-		$percent = numeric_format($float, $precision, $decimals, $thousands, $grouping);
+		$percent = Shopp::numeric_format($float, $precision, $decimals, $thousands, $grouping);
 		if ( false !== strpos($percent, $decimals) ) { // Only remove trailing 0's after the decimal
 			$percent = rtrim($percent, '0');
 			$percent = rtrim($percent, $decimals);

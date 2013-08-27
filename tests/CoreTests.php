@@ -436,4 +436,11 @@ class CoreTests extends ShoppTestCase {
 		$this->assertEquals($correct, Shopp::phone('9876543210'));
 		$this->assertEquals($correct, Shopp::phone('+987-654 x3210'));
 	}
+
+	public function test_percentage() {
+		$this->assertEquals('3.1416%', Shopp::percentage(M_PI, array('precision' => 4)));
+		$this->assertEquals('3,1415927%', Shopp::percentage(M_PI, array('precision' => 7, 'decimals' => ',')));
+		$this->assertEquals('2,718.28%', Shopp::percentage(M_E * 1000, array('precision' => 2)));
+		$this->assertEquals('2 718.28%', Shopp::percentage(M_E * 1000, array('precision' => 2, 'thousands' => ' ')));
+	}
 }
