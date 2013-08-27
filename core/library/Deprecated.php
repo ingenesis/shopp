@@ -17,3 +17,17 @@ if ( defined('SHOPP_DISALLOW_DEPRECATED_CLASSES') && SHOPP_DISALLOW_DEPRECATED_C
 if ( ! class_exists('Product', false) ) {
 	class Product extends ShoppProduct {}
 }
+
+if ( ! class_exists('Cart', false) ) {
+	class Cart extends ShoppCart {
+		/**
+		 * @deprecated Stubbed for backwards-compatibility
+		 **/
+		public function changed ( $changed = false ) {}
+
+		/**
+		 * @deprecated Stubbed for backwards-compatibility
+		 **/
+		public function retotal () {}
+	}
+}

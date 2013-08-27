@@ -291,7 +291,7 @@ ShoppLoader::map(array(
 	'capturefailordereventrenderer' => '/ui/orders/events.php',
 	'captureorderevent' => '/model/Events.php',
 	'captureordereventrenderer' => '/ui/orders/events.php',
-	'cart' => '/model/Cart.php',
+	'cart' => '/library/Deprecated.php',
 	'cartdiscounts' => '/model/Cart.php',
 	'cartpromotions' => '/model/Cart.php',
 	'cartshipping' => '/model/Cart.php',
