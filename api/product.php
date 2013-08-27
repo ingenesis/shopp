@@ -2443,6 +2443,34 @@ function shopp_product_addon_set_subscription ( $addon = false, $settings = arra
 }
 
 /**
+ * Returns an array containing one or more values representing possible product weight (this might be one or multiple
+ * weights if for instance the product has variants). The returned array is indexed on the variant ID where appropriate.
+ * If there are no variants the actual product weight will have a zero index.
+ *
+ * @param $product ID or existing product object
+ * @return array
+ */
+function shopp_product_weights ( $product ) {
+	if ( ! is_a($product, 'Product') ) $product = shopp_product($product);
+
+	if ( false === $product ) {
+		shopp_debug(__FUNCTION__ . ' failed:  a valid product object or product ID must be specified.');
+		return false;
+	}
+
+	$weights = array();
+
+	foreach ( $product->prices as $price ) {
+		$weight = isset($price->dimensions['weight']) ? $price->dimensions['weight'] : 0;
+		if ( 'product' === $price->context ) $weights[0] = $weight;
+		if ( 'variation' === $price->context ) $weights[$price->id] = $weight;
+	}
+
+	if ( count($weights) > 1 ) unset($weights[0]); // Do not return the 'base' weight if there are variants
+	return $weights;
+}
+
+/**
  * Helper to assess publishtime data when creating/updating a product.
  *
  * @param $publish
