@@ -212,6 +212,37 @@ class PostcodeMapping {
 		PostcodeMapping::prefixcode(strtoupper($Address->postcode{0}), $Address);
 	}
 
+	public static function aupost ($Address) {
+		PostcodeMapping::numericrange($Address);
+	}
+
+	/**
+	 * Lookup and determine the state/region based on numeric postcode ranges.
+	 *
+	 * @param Address $Address
+	 */
+	public static function numericrange (Address $Address) {
+		$postcode = $Address->postcode;
+		$postcodes = Lookup::postcodes();
+		if ( ! isset($postcodes[$Address->country]) ) return;
+
+		foreach ( $postcodes[$Address->country] as $state => $ranges ) {
+			$ranges = (array) $ranges; // One or more ranges may be provided
+
+			foreach ($ranges as $range) {
+				list($min, $max) = explode('-', $range);
+				if ($postcode >= $min && $postcode <= $max) {
+					$match = $state;
+					break;
+				}
+			}
+
+			if (isset($match)) break;
+		}
+
+		if (isset($match)) $Address->state = $match;
+	}
+
 	/**
 	 * Lookup country state/province by postal code prefix
 	 *
@@ -219,9 +250,10 @@ class PostcodeMapping {
 	 * @since 1.2
 	 *
 	 * @param string $prefix The postal code prefix
+	 * @param Address $Address
 	 * @return void
 	 **/
-	public static function prefixcode ($prefix, $Address) {
+	public static function prefixcode ($prefix, Address $Address) {
 		$postcodes = Lookup::postcodes();
 		if ( ! isset($postcodes[ $Address->country ]) ) return;
 
@@ -241,6 +273,7 @@ class PostcodeMapping {
 
 } // class PostcodeMapping
 
+add_action('shopp_map_au_postcode',   array('PostcodeMapping', 'aupost'));
 add_action('shopp_map_us_postcode',   array('PostcodeMapping', 'uszip'));
 add_action('shopp_map_usaf_postcode', array('PostcodeMapping', 'uszip'));
 add_action('shopp_map_usat_postcode', array('PostcodeMapping', 'uszip'));
