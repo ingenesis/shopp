@@ -118,12 +118,12 @@ class ImageServer {
 		$parameters = array_pad($args, count($this->args), '');
 		$this->parameters = apply_filters('shopp_imageserver_parameters', array_combine($this->args, $parameters) );
 
+		// Drop empty parameters
+		$this->parameters = array_filter($this->parameters, array('self', 'notempty'));
+
 		// Setup properties
 		foreach ( $this->parameters as $property => $value )
 			if ( property_exists($this, $property) ) $this->$property = intval($value);
-
-		// Drop empty parameters
-		$this->parameters = array_filter($this->parameters, array('self', 'notempty'));
 
 		if ( $this->height == 0 && $this->width > 0 ) $this->height = $this->width;
 		if ( $this->width == 0 && $this->height > 0 ) $this->width = $this->height;
@@ -211,6 +211,7 @@ class ImageServer {
 		$ResizedImage->settings = $this->parameters;
 
 		do_action('shopp_imageserver_processed', $ResizedImage, $this->parameters);
+
 
 		$ResizedImage->data = $Resized->imagefile($this->quality);
 
