@@ -59,6 +59,7 @@ abstract class ModuleLoader {
 
 		if ( ! $found || empty($files) ) return $files;
 
+		$keyinterface = sanitize_key($this->interface);
 		foreach ( $files as $file ) {
 			// Skip if the file can't be read or isn't a real file at all
 			if ( ! is_readable($file) || is_dir($file) ) continue;
@@ -67,10 +68,10 @@ abstract class ModuleLoader {
 			$Loader = $this->loader;
 			$Module = new $Loader($file);
 
-			if ( $this->interface != $Module->interface ) continue;
-
-			if ( $Module->addon ) $this->modules[ $Module->classname ] = $Module;
-			else $this->legacy[] = md5_file($file);
+			if ( apply_filters("shopp_modules_valid_$keyinterface", ( $this->interface == $Module->interface ), $Module) ) {
+				if ( $Module->addon ) $this->modules[ $Module->classname ] = $Module;
+				else $this->legacy[] = md5_file($file);
+			}
 
 		}
 
@@ -121,42 +122,6 @@ abstract class ModuleLoader {
 		foreach ($this->modules as $module) $hashes[] = md5_file($module->file);
 		if (!empty($this->legacy)) $hashes = array_merge($hashes,$this->legacy);
 		return $hashes;
-	}
-
-	/**
-	 * Finds files of a specific extension
-	 *
-	 * Recursively searches directories and one-level deep of sub-directories for
-	 * files with a specific extension
-	 *
-	 * NOTE: Files are saved to the $found parameter, an array passed by
-	 * reference, not a returned value
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.0
-	 *
-	 * @param string $extension File extension to search for
-	 * @param string $directory Starting directory
-	 * @param string $root Starting directory reference
-	 * @param string &$found List of files found
-	 * @return boolean Returns true if files are found
-	 **/
-	static function find_files ($extension, $directory, $root, &$found) {
-		if (is_dir($directory)) {
-
-			$Directory = @dir($directory);
-			if ($Directory) {
-				while (( $file = $Directory->read() ) !== false) {
-					if (substr($file,0,1) == "." || substr($file,0,1) == "_") continue;				// Ignore .dot files and _directories
-					if (is_dir($directory.DIRECTORY_SEPARATOR.$file) && $directory == $root)		// Scan one deep more than root
-						self::find_files($extension,$directory.DIRECTORY_SEPARATOR.$file,$root, $found);	// but avoid recursive scans
-					if (substr($file,strlen($extension)*-1) == $extension)
-						$found[] = substr($directory,strlen($root)).DIRECTORY_SEPARATOR.$file;		// Add the file to the found list
-				}
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -250,8 +215,9 @@ class ModuleFile {
 	public $classname;		// The class name of the module
 	public $framework;		// The framework the module uses
 	public $interface;		// The interface the module implements
-	public $version;		// The version of the module
-	public $since;			// The core version required
+	public $package;		// The @package the addon belongs to
+	public $version;		// The @version of the module
+	public $since;			// The @since property sets core version required
 	public $addon = false;	// The valid addon flag
 
 	/**
@@ -339,8 +305,8 @@ class ModuleFile {
 
 		$error = false;
 
-		if ( empty($this->classname) && empty($this->interface) )
-			$error = true;
+		if ( false === strpos(strtolower($this->package), 'shopp') || empty($this->classname) || empty($this->interface) )
+			$error = true; // Valid addons must have an @package shopp property set and a valid class with an implemented interface
 		elseif ( empty($this->version) )
 			$error = shopp_debug(sprintf('%s could not be loaded because no @version property was set in the addon header comments.', $this->filename));
 		elseif ( empty($this->since) )
