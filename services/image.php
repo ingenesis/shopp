@@ -47,7 +47,7 @@ if ( ! function_exists('__')) {
 ShoppDeveloperAPI::load( $path, array('core','settings') );
 
 // Start the server
-new ImageServer();
+new ImageServer;
 exit;
 
 /**
@@ -58,6 +58,8 @@ exit;
  * @package image
  **/
 class ImageServer {
+
+	static $prettyurls = '/\/images\/(\d+).*$/';
 
 	private $caching = true;	// Set to false to force off image caching
 
@@ -74,7 +76,7 @@ class ImageServer {
 	private $valid = false;
 	private $Image = false;
 
-	function __construct () {
+	public function __construct () {
 
 		$this->setup();
 		$this->request();
@@ -85,10 +87,6 @@ class ImageServer {
 
 	}
 
-	static function path () {
-		return str_replace('\\', '/', realpath( dirname(dirname(__FILE__)) ) );
-	}
-
 	/**
 	 * Parses the request to determine the image to load
 	 *
@@ -97,11 +95,13 @@ class ImageServer {
 	 *
 	 * @return void
 	 **/
-	function request () {
+	public function request () {
 
-		if ( isset($_GET['siid']) ) $this->request = $_GET['siid'];
-		elseif ( 0 != preg_match('/\/images\/(\d+).*$/', $_SERVER['REQUEST_URI'], $matches) )
-			$this->request = $matches[1];	// Get requested image from pretty URL format
+		if ( isset($_GET['siid']) ) $request = $_GET['siid'];
+		elseif ( 0 != preg_match(self::$prettyurls, $_SERVER['REQUEST_URI'], $matches) )
+			$request = $matches[1];	// Get requested image from pretty URL format
+
+		$this->request = apply_filters('shopp_imageserver_request', $request);
 
 		if ( empty($this->request) ) return; // No valid image request, bail
 
@@ -109,23 +109,27 @@ class ImageServer {
 
 		foreach ( $_GET as $arg => $v ) {
 			if ( false !== strpos($arg, ',') ) {
-				$this->parameters = explode(',', $arg);
+				$args = explode(',', $arg);
 				if ( ! $clearpng )
-					$this->valid = array_pop($this->parameters);
+					$this->valid = array_pop($args);
 			}
 		}
 
-		// Handle pretty permalinks
-		if (preg_match('/\/images\/(\d+).*$/', $_SERVER['REQUEST_URI'], $matches))
-			$this->request = $matches[1];
+		$parameters = array_pad($args, count($this->args), '');
+		$this->parameters = apply_filters('shopp_imageserver_parameters', array_combine($this->args, $parameters) );
 
-		foreach ($this->parameters as $index => $arg)
-			if ( '' != $arg ) $this->{$this->args[ $index ]} = intval($arg);
+		// Setup properties
+		foreach ( $this->parameters as $property => $value )
+			if ( property_exists($this, $property) ) $this->$property = intval($value);
 
-		if ($this->height == 0 && $this->width > 0) $this->height = $this->width;
-		if ($this->width == 0 && $this->height > 0) $this->width = $this->height;
+		// Drop empty parameters
+		$this->parameters = array_filter($this->parameters, array('self', 'notempty'));
 
-		$this->scale = $this->scaling[$this->scale];
+		if ( $this->height == 0 && $this->width > 0 ) $this->height = $this->width;
+		if ( $this->width == 0 && $this->height > 0 ) $this->width = $this->height;
+
+		$this->scale = $this->scaling[ $this->scale ];
+
 		// Handle clear image requests (used in product gallery to reserve DOM dimensions)
 		if ( $clearpng ) $this->clearpng();
 
@@ -138,75 +142,85 @@ class ImageServer {
 	 * @since 1.1
 	 * @return boolean Status of the image load
 	 **/
-	function load () {
+	public function load () {
 
 		$cache = 'image_' . $this->request . ($this->valid ? '_' . $this->valid : '');
 		$cached = wp_cache_get($cache, 'shopp_image');
-		if ($cached) return ($this->Image = $cached);
+		if ( $cached ) return ($this->Image = $cached);
 
 		$this->Image = new ImageAsset($this->request);
-		if (max($this->width, $this->height) > 0) $this->loadsized();
+		if ( max($this->width, $this->height) > 0 ) $this->loadsized();
 
 		wp_cache_set($cache, $this->Image, 'shopp_image');
+
+		do_action('shopp_imageserver_load', $this->Image);
 
 		if ( ! empty($this->Image->id) || ! empty($this->Image->data) ) return true;
 		else return false;
 	}
 
-	function loadsized () {
+	public function loadsized () {
 		// Same size requested, skip resizing
-		if ($this->Image->width == $this->width && $this->Image->height == $this->height) return;
+		if ( $this->Image->width == $this->width && $this->Image->height == $this->height ) return;
 
 		$Cached = new ImageAsset(array(
 			'parent' => $this->Image->id,
 			'context'=>'image',
 			'type'=>'image',
-			'name'=>'cache_'.implode('_',$this->parameters)
+			'name'=>'cache_' . implode('_', $this->parameters)
 		));
 
 		// Use the cached version if it exists, otherwise resize the image
-		if (!empty($Cached->id) && $this->caching) $this->Image = $Cached;
+		if ( ! empty($Cached->id) && $this->caching ) $this->Image = $Cached;
 		else $this->resize(); // No cached copy exists, recreate
 	}
 
-	function resize () {
-		$key = (defined('SECRET_AUTH_KEY') && SECRET_AUTH_KEY != '')?SECRET_AUTH_KEY:DB_PASSWORD;
-		$message = $this->Image->id.','.implode(',',$this->parameters);
-		if ($this->valid != sprintf('%u',crc32($key.$message))) {
-			header("HTTP/1.1 404 Not Found");
-			die('');
+	public function resize () {
+
+		$key = defined('SECRET_AUTH_KEY') && SECRET_AUTH_KEY != '' ? SECRET_AUTH_KEY : DB_PASSWORD;
+		$message = $this->Image->id . ',' . implode(',', $this->parameters);
+
+		if ( $this->valid != sprintf('%u', crc32($key . $message)) ) {
+			header('HTTP/1.1 401 Unauthorized');
+			die('<h1>Not Authorized</h1>');
 		}
 
-		$Resized = new ImageProcessor($this->Image->retrieve(),$this->Image->width,$this->Image->height);
-		$scaled = $this->Image->scaled($this->width,$this->height,$this->scale);
-		$alpha = ('image/png' == $this->Image->mime);
-		if (-1 == $this->fill) $alpha = true;
-		$Resized->scale($scaled['width'],$scaled['height'],$this->scale,$alpha,$this->fill);
+		do_action('shopp_imageserver_preprocess', $this->Image, $this->parameters);
+
+		$Resized = new ImageProcessor($this->Image->retrieve(), $this->Image->width, $this->Image->height);
+		$scaled = $this->Image->scaled($this->width, $this->height, $this->scale);
+
+		$alpha = ( 'image/png' == $this->Image->mime );
+		if ( -1 == $this->fill ) $alpha = true;
+		$Resized->scale($scaled['width'], $scaled['height'], $this->scale, $alpha, $this->fill);
 
 		// Post sharpen
-		if (!$alpha && $this->sharpen !== false)
+		if ( ! $alpha && $this->sharpen > 0 )
 			$Resized->UnsharpMask($this->sharpen);
 
 		$ResizedImage = new ImageAsset();
-		$ResizedImage->copydata($this->Image,false,array());
-		$ResizedImage->name = 'cache_'.implode('_',$this->parameters);
-		$ResizedImage->filename = $ResizedImage->name.'_'.$ResizedImage->filename;
+		$ResizedImage->copydata($this->Image, false, array());
+		$ResizedImage->name = 'cache_' . implode('_', $this->parameters);
+		$ResizedImage->filename = $ResizedImage->name . '_' . $ResizedImage->filename;
 		$ResizedImage->parent = $this->Image->id;
 		$ResizedImage->context = 'image';
-		$ResizedImage->mime = "image/jpeg";
+		$ResizedImage->mime = 'image/jpeg';
 		$ResizedImage->id = false;
 		$ResizedImage->width = $Resized->width();
 		$ResizedImage->height = $Resized->height();
+		$ResizedImage->settings = $this->parameters;
 
-		foreach ($this->args as $index => $arg)
-			$ResizedImage->settings[$arg] = isset($this->parameters[$index])?intval($this->parameters[$index]):false;
+		do_action('shopp_imageserver_processed', $ResizedImage, $this->parameters);
 
 		$ResizedImage->data = $Resized->imagefile($this->quality);
-		if (empty($ResizedImage->data)) return false;
+
+
+		if ( empty($ResizedImage->data) ) return false;
 
 		$ResizedImage->size = strlen($ResizedImage->data);
+
 		$this->Image = $ResizedImage;
-		if ($ResizedImage->store( $ResizedImage->data ) === false)
+		if ( false === $ResizedImage->store( $ResizedImage->data ) )
 			return false;
 
 		$ResizedImage->save();
@@ -220,7 +234,7 @@ class ImageServer {
 	 * @since 1.1
 	 * @return void
 	 **/
-	function render () {
+	public function render () {
 
 		// Show the not found image if the image is not found
 		$found = $this->Image->found();
@@ -240,7 +254,7 @@ class ImageServer {
 	 * @since 1.1
 	 * @return void
 	 **/
-	function error () {
+	public function error () {
 		header("HTTP/1.1 404 Not Found");
 		$notfound = ImageServer::path() . '/core/ui/icons/notfound.png';
 		if ( defined('SHOPP_NOTFOUND_IMAGE') && file_exists(SHOPP_NOTFOUND_IMAGE) )
@@ -265,7 +279,7 @@ class ImageServer {
 	 *
 	 * @return void
 	 **/
-	function clearpng () {
+	public function clearpng () {
 		$max = 1920;
 		$this->width = min($max,$this->width);
 		$this->height = min($max,$this->height);
@@ -286,7 +300,7 @@ class ImageServer {
 	 * @param int $length The size of the file in bytes (strlen)
 	 * @return void
 	 **/
-	function headers ( $file, $length ) {
+	public function headers ( $file, $length ) {
 		header("Cache-Control: no-cache, must-revalidate");
 		header("Content-type: image/png");
 		header("Content-Disposition: inline; filename=$file");
@@ -303,7 +317,7 @@ class ImageServer {
 	 *
 	 * @return void
 	 **/
-	function setup () {
+	public function setup () {
 
 		global $Shopp;
 
@@ -318,6 +332,20 @@ class ImageServer {
 
 		ShoppSettings();
 
+		$modules = shopp_setting('imaging_modules');
+
+		// Only load image modules if necessary
+		if ( ! empty($modules) )
+			new ShoppImagingModules();
+
+	}
+
+	private static function notempty ( $value ) {
+		return ( '' != $value );
+	}
+
+	public static function path () {
+		return str_replace('\\', '/', realpath( dirname(dirname(__FILE__)) ) );
 	}
 
 }

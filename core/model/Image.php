@@ -79,7 +79,7 @@ class ImageProcessor {
 		} else { // Sample from the corner pixels
 			if ( $this->src->image ) {
 				$topleft = @ImageColorAt($this->src->image, 0, 0);
-				$bottomright = @ImageColorAt($this->src->image, $this->src->width-1, $this->src->height-1);
+				$bottomright = @ImageColorAt($this->src->image, $this->src->width - 1, $this->src->height - 1);
 				if ( $topleft == $bottomright ) $rgb = $this->hexrgb($topleft);
 				else {
 					// Use average of sampled colors for background
@@ -126,7 +126,7 @@ class ImageProcessor {
 			return apply_filters('shopp_image_scale', $this);
 	}
 
-	private function dimensions ( $width, $height, $fit='all', $dx=false, $dy=false, $cropscale=false ) {
+	private function dimensions ( $width, $height, $fit = 'all', $dx = false, $dy = false, $cropscale = false ) {
 		if ( $this->src->width <= $width && $this->src->height <= $height ) {
 			$this->width = $this->src->width;
 			$this->height = $this->src->height;
@@ -142,7 +142,7 @@ class ImageProcessor {
 
 		$this->resized($width, $height, $this->axis);
 
-		if ('crop' == $fit ) { // Center cropped image on the canvas
+		if ( 'crop' == $fit ) { // Center cropped image on the canvas
 			if ( false !== $cropscale ) {
 				$this->width = $this->src->width * $cropscale;
 				$this->height = $this->src->height * $cropscale;
@@ -357,3 +357,58 @@ class ImageProcessor {
 	}
 
 } // class ImageProcessor
+
+/**
+ * ShoppImagingSystem
+ *
+ * @author Jonathan Davis
+ * @since 1.3
+ * @package shopp
+ **/
+interface ShoppImagingModule {
+}
+
+/**
+ * ShoppImageModules
+ *
+ * @author Jonathan Davis
+ * @since 1.3
+ * @package shopp
+ **/
+class ShoppImagingModules extends ModuleLoader {
+
+	protected $interface = 'ShoppImagingModule';
+	protected $paths =  array(SHOPP_ADDONS);
+
+	/**
+	 * constructor
+	 *
+	 * @author Jonathan Davis
+	 *
+	 * @return void
+	 **/
+	public function __construct () {
+
+		// Prevent imaging modules that are not enabled from loading
+		add_filter('shopp_modules_valid_shoppimagingmodule', array('ShoppImagingModules', 'enabled'), 10, 2 );
+
+		$this->installed(); // Find modules
+		$this->load(true);
+
+	}
+
+	/**
+	 * Determines if an imaging module is enabled
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return boolean True if enabled, false otherwise
+	 **/
+	public static function enabled ( $valid, $Module ) {
+		$enabled = shopp_setting('imaging_modules');
+		if ( empty($enabled) ) $enabled = array();
+		return in_array($Module->classname, (array)$enabled);
+	}
+
+} // END class ShoppImageModules
