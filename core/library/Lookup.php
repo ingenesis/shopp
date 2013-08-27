@@ -850,9 +850,10 @@ class Lookup {
 	static function timeframes_menu () {
 		$units = array( 'd' => 11, 'w' => 7, 'm' => 4 );
 		$_ = array();
+		$min = 0;
 
 		foreach ( $units as $u => $count ) {
-			for ( $i = 1; $i < $count; $i++ ) {
+			for ( $i = $min; $i < $count; $i++ ) {
 				switch ($u) {
 					case 'd': $_[$i.$u] = sprintf(_n('%d day','%d days',$i,'Shopp'), $i); break;
 					case 'w': $_[$i.$u] = sprintf(_n('%d week','%d weeks',$i,'Shopp'), $i); break;
@@ -860,6 +861,7 @@ class Lookup {
 					break;
 				}
 			}
+			$min = 0 === $min ? ++$min : $min; // Increase the min number of units to one after the first loop (allow 0 days but not 0 weeks)
 		}
 
 		return apply_filters('shopp_timeframes_menu',$_);
