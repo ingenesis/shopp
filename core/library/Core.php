@@ -1346,7 +1346,7 @@ abstract class ShoppCore {
 	 **/
 	public static function phone ($num) {
 		if (empty($num)) return '';
-		$parsed = parse_phone($num);
+		$parsed = Shopp::parse_phone($num);
 		extract($parsed);
 
 		$string = "";

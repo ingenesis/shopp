@@ -430,4 +430,10 @@ class CoreTests extends ShoppTestCase {
 		$this->assertEquals('9000', $phone['exchange']);
 		$this->assertEquals('1007009000', $phone['raw']);
 	}
+
+	public function test_phone() {
+		$correct = '(987) 654-3210';
+		$this->assertEquals($correct, Shopp::phone('9876543210'));
+		$this->assertEquals($correct, Shopp::phone('+987-654 x3210'));
+	}
 }
