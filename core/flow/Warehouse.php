@@ -41,7 +41,8 @@ class ShoppAdminWarehouse extends AdminController {
 		if (isset($_GET['view']) && in_array($_GET['view'],$this->views))
 			$this->view = $_GET['view'];
 
-	 	get_current_screen()->post_type = ShoppProduct::$posttype;
+		if ( get_current_screen() )
+			get_current_screen()->post_type = ShoppProduct::$posttype;
 
 		if (!empty($_GET['id'])) {
 			wp_enqueue_script('jquery-ui-draggable');
@@ -969,11 +970,11 @@ class ShoppAdminWarehouse extends AdminController {
 	 * @author Jonathan Davis
 	 * @return string JSON encoded result with DB id, filename, type & size
 	 **/
-	public function downloads () {
+	public static function downloads () {
+
 		$error = false;
-		if (isset($_FILES['Filedata']['error'])) $error = $_FILES['Filedata']['error'];
-		// @todo Replace $this->uploadErrors with an Lookup::errors of common PHP upload errors translated into more helpful messages
-		if ($error) die(json_encode(array("error" => $this->uploadErrors[$error])));
+		if ( isset($_FILES['Filedata']['error']) ) $error = $_FILES['Filedata']['error'];
+		if ( $error ) die( json_encode(array("error" => Lookup::errors('uploads', $error))) );
 
 		if (!is_uploaded_file($_FILES['Filedata']['tmp_name']))
 			die(json_encode(array("error" => __('The file could not be saved because the upload was not found on the server.','Shopp'))));
@@ -1011,19 +1012,15 @@ class ShoppAdminWarehouse extends AdminController {
 	/**
 	 * AJAX behavior to process uploaded images
 	 *
-	 * TODO: Find a better place for this code so products & categories can both use it
-	 *
 	 * @author Jonathan Davis
 	 * @return string JSON encoded result with thumbnail id and src
 	 **/
-	public function images () {
+	public static function images () {
 		$context = false;
 
 		$error = false;
 		if (isset($_FILES['Filedata']['error'])) $error = $_FILES['Filedata']['error'];
-		if ($error) die(json_encode(array("error" => $this->uploadErrors[$error])));
-		if (!class_exists('ImageProcessor'))
-			require(SHOPP_MODEL_PATH."/Image.php");
+		if ( $error ) die( json_encode(array("error" => Lookup::errors('uploads', $error))) );
 
 		$valid_contexts = array('product','category');
 
@@ -1068,6 +1065,7 @@ class ShoppAdminWarehouse extends AdminController {
 			die(json_encode(array("error" => __('The image reference was not saved to the database.','Shopp'))));
 
 		echo json_encode(array("id"=>$Image->id));
+		exit;
 	}
 
 	/**

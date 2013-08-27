@@ -211,12 +211,13 @@
 					qp = oa[1]?oa[1].split('&'):[],
 					fparams = {},
 					action = false;
+
 				$.each(qp, function (i,pair) {
 					var kv = pair.split('=');
 					if (kv.length == 2 && !options.params[kv[0]]) fparams[kv[0]] = kv[1];
 				});
 
-				action = url+'?'+($(fparams).size() > 0?$.param(fparams)+'&':'')+$.param(options.params);
+				action = url+'?'+('' != $.param(fparams)?$.param(fparams)+'&':'')+$.param(options.params);
 				form[0].setAttribute('action',action);
 
 				/** Submit the actual form */
@@ -225,8 +226,8 @@
 				/** Do something after we are finished uploading */
 				iframe.unbind().load(function() {
 					/** Get a response from the server in plain text */
-					var myFrame = document.getElementById(iframe.attr('name'));
-					var response = $(myFrame.contentWindow.document.body).text();
+					var myFrame = document.getElementById(iframe.attr('name')),
+						response = $(myFrame.contentWindow.document.body).text();
 
 					/** Do something on complete */
 					self.onComplete(response); //done :D
