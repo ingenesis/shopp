@@ -11,6 +11,8 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
+add_filter('shopp_themeapi_context_name', array('ShoppProductThemeAPI', '_context_name'));
+
 // Default text filters for product Theme API tags
 add_filter('shopp_themeapi_product_name','convert_chars');
 add_filter('shopp_themeapi_product_summary','convert_chars');
@@ -98,6 +100,16 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	);
 
 	public static function _apicontext () { return 'product'; }
+
+	public static function _context_name ( $name ) {
+		switch ( $name ) {
+			case 'product':
+			case 'shoppproduct':
+				return 'product';
+				break;
+		}
+		return $name;
+	}
 
 	/**
 	 * _setobject - returns the global context object used in the shopp('product') call
