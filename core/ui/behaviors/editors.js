@@ -1018,7 +1018,7 @@ jQuery.fn.FileChooser = function (line, status) {
 		importstatus.attr('class','status');
 
 		attach.unbind('click').click(function () {
-			$.fn.colorbox.close();
+			$.fn.colorbox.hide();
 			if (stored) {
 				dlpath.val(importurl.val());
 				importurl.val('').attr('class','fileimport');
@@ -1138,7 +1138,7 @@ function FileUploader (button,defaultButton) {
 		action: ajaxurl,
 		params: { action:'shopp_upload_file' },
 		onSubmit: function() {
-			$.fn.colorbox.close();
+			$.fn.colorbox.hide();
 			_.targetCell.attr('class','').html('');
 			$('<div class="progress"><div class="bar"></div><div class="gloss"></div></div>').appendTo(_.targetCell);
 			_.progressBar = _.targetCell.find('div.bar');
@@ -1197,7 +1197,7 @@ function FileUploader (button,defaultButton) {
 	}
 
 	function fileDialogComplete (selected, queued) {
-		$.fn.colorbox.close();
+		$.fn.colorbox.hide();
 		if (!selected) return;
 		try { this.startUpload(); }
 		catch (ex) { this.debug(ex); }
