@@ -1945,8 +1945,8 @@ function shopp_product_variant_set_shipping ( $variant = false, $flag = false, $
 	if ( $flag && ! empty($settings) ) {
 		$Price->shipping = "on";
 		if ( isset($settings['weight']) ) {
-			if ( 0.0 >= $settings['weight'] ) {
-				shopp_debug(__FUNCTION__ . " failed: Weight must be greater than 0.");
+			if ( 0.0 > $settings['weight'] ) {
+				shopp_debug(__FUNCTION__ . " failed: Weight must be 0 or greater.");
 				return false;
 			}
 
@@ -1958,8 +1958,8 @@ function shopp_product_variant_set_shipping ( $variant = false, $flag = false, $
 		}
 
 		if ( isset($settings['height']) && isset($settings['width']) && isset($settings['length']) ) {
-			if ( 0.0 >= $settings['height'] || 0.0 >= $settings['width'] || 0.0 >= $settings['length'] ) {
-				shopp_debug(__FUNCTION__ . " failed: Height, width, and length must be greater than 0.");
+			if ( 0.0 > $settings['height'] || 0.0 > $settings['width'] || 0.0 > $settings['length'] ) {
+				shopp_debug(__FUNCTION__ . " failed: Height, width, and length must be 0 or greater.");
 				return false;
 			}
 
