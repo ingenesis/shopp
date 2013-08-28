@@ -33,18 +33,18 @@ class ShoppAdminWarehouse extends AdminController {
 	public function __construct () {
 		parent::__construct();
 
-		ShoppingObject::store('worklist',$this->worklist);
+		ShoppingObject::store('worklist', $this->worklist);
 
-		if ('off' == shopp_setting('inventory'))
-			array_splice($this->views,4,1);
+		if ( 'off' == shopp_setting('inventory') )
+			array_splice($this->views, 4, 1);
 
-		if (isset($_GET['view']) && in_array($_GET['view'],$this->views))
+		if ( isset($_GET['view']) && in_array($_GET['view'], $this->views) )
 			$this->view = $_GET['view'];
 
 		if ( get_current_screen() )
 			get_current_screen()->post_type = ShoppProduct::$posttype;
 
-		if (!empty($_GET['id'])) {
+		if ( ! empty($_GET['id']) ) {
 			wp_enqueue_script('jquery-ui-draggable');
 			wp_enqueue_script('postbox');
 			wp_enqueue_script('wp-lists');
@@ -70,14 +70,14 @@ class ShoppAdminWarehouse extends AdminController {
 			add_action('admin_head',array(&$this,'layout'));
 
 		} else {
-			add_action('load-'.$this->screen,array($this,'loader'));
-			add_action('admin_print_scripts',array(&$this,'columns'));
+			add_action('load-' . $this->screen, array($this,'loader'));
+			add_action('admin_print_scripts', array($this, 'columns'));
 		}
 
 		if ('inventory' == $this->view && 'on' == shopp_setting('inventory'))
 			do_action('shopp_inventory_manager_scripts');
 
-		add_action('load-'.$this->screen,array($this,'workflow'));
+		add_action('load-' . $this->screen, array($this,'workflow'));
 
 		do_action('shopp_product_admin_scripts');
 
@@ -279,7 +279,7 @@ class ShoppAdminWarehouse extends AdminController {
 		switch ($view) {
 			case 'inventory':
 				if ( shopp_setting_enabled('inventory') ) $is_inventory = true;
-				else shopp_redirect(add_query_arg('view',null,$url),true);
+				else Shopp::redirect(add_query_arg('view', null, $url), true);
 				break;
 			case 'trash': $is_trash = true; break;
 			case 'bestselling': $is_bestselling = true; break;
@@ -495,13 +495,13 @@ class ShoppAdminWarehouse extends AdminController {
 		$args = array_merge($defaults,$_GET);
 		extract($args,EXTR_SKIP);
 
-		$url = add_query_arg(array_merge($_GET,array('page'=>$this->Admin->pagename('products'))),admin_url('admin.php'));
+		$url = add_query_arg(array_merge($_GET, array('page' => $this->Admin->pagename('products'))), admin_url('admin.php'));
 
-		if (empty($categories)) $categories = array('');
+		if ( empty($categories) ) $categories = array('');
 
 		$categories_menu = wp_dropdown_categories(array(
-			'show_option_all' => __('View all categories','Shopp'),
-			'show_option_none' => __('Uncategorized','Shopp'),
+			'show_option_all' => __('View all categories', 'Shopp'),
+			'show_option_none' => __('Uncategorized', 'Shopp'),
 			'hide_empty' => 0,
 			'hierarchical' => 1,
 			'show_count' => 0,
@@ -511,7 +511,7 @@ class ShoppAdminWarehouse extends AdminController {
 			'taxonomy' => 'shopp_category'
 		));
 
-		if ('on' == shopp_setting('inventory')) {
+		if ( 'on' == shopp_setting('inventory') ) {
 			$inventory_filters = array(
 				'all' => __('View all products','Shopp'),
 				'is' => __('In stock','Shopp'),
@@ -519,10 +519,10 @@ class ShoppAdminWarehouse extends AdminController {
 				'oos' => __('Out-of-stock','Shopp'),
 				'ns' => __('Not stocked','Shopp')
 			);
-			$inventory_menu = '<select name="sl">'.menuoptions($inventory_filters,$sl,true).'</select>';
+			$inventory_menu = '<select name="sl">'.Shopp::menuoptions($inventory_filters, $sl, true) . '</select>';
 		}
 
-		if ('off' == shopp_setting('inventory')) unset($subs['inventory']);
+		if ( 'off' == shopp_setting('inventory') ) unset($subs['inventory']);
 		switch ($view) {
 			case 'inventory':
 				if ( shopp_setting_enabled('inventory') ) $is_inventory = true;
@@ -558,13 +558,12 @@ class ShoppAdminWarehouse extends AdminController {
 
 		$subs = $this->subs;
 
-		$path = SHOPP_ADMIN_PATH.'/products';
-		$ui = 'products.php';
 		switch ($view) {
 			case 'inventory': if (shopp_setting_enabled('inventory')) $ui = 'inventory.php'; break;
+			default: $ui = 'products.php'; break;
 		}
 
-		include("$path/$ui");
+		include(SHOPP_ADMIN_PATH . '/products/' . $ui);
 	}
 
 	/**

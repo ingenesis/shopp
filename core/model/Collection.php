@@ -74,7 +74,7 @@ class ProductCollection implements Iterator {
 			'taxquery' => false,	// Cross taxonomy queries
 			'debug' => false		// Output the query for debugging
 		);
-		$loading = array_merge($defaults,$options);
+		$loading = array_merge($defaults, $options);
 		$loading = apply_filters("shopp_{$slug}_collection_load_options", $loading);
 		extract($loading);
 
