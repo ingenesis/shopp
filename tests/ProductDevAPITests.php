@@ -923,7 +923,7 @@ class ProductDevAPITests extends ShoppTestCase {
 		$shipping = array('weight'=>50, 'length'=>60, 'width'=>70, 'height'=>80);
 		$Price = shopp_product_variant_set_shipping( new ShoppPrice($priceid), true, $shipping, 'product');
 
-		$this->AssertTrue( is_object($Price) && is_a($Price, 'Price') );
+		$this->AssertTrue( is_object($Price) && is_a($Price, 'ShoppPrice') );
 		$this->AssertTrue(!empty($Price->settings) && !empty($Price->settings['dimensions']));
 		$dims = $Price->settings['dimensions'];
 

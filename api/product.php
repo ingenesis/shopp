@@ -824,7 +824,7 @@ function shopp_product_variant_to_item ( $Variant, $quantity = 1 ) {
 	$quantity = (int) $quantity;
 	if ( ! $quantity ) $quantity = 1;
 
-	if ( is_object($Variant) && is_a($Variant, 'Price') && $Variant->product && $Variant->id && in_array($Variant->context, array('product', 'variation')) ) {
+	if ( is_object($Variant) && is_a($Variant, 'ShoppPrice') && $Variant->product && $Variant->id && in_array($Variant->context, array('product', 'variation')) ) {
 		$Product = shopp_product( $Variant->product );
 		$Item = new Item( $Product, $Variant->id );
 		$Item->quantity($quantity);
@@ -1086,7 +1086,7 @@ function shopp_product_rmv_spec ( $product = false, $name = '' ) {
 function shopp_product_set_variant ( $variant = false, $data = array(), $context = 'variant' ) {
 	$context = ( 'variant' == $context ? 'variation' : $context );
 	$save = true;
-	if ( is_object($variant) && is_a($variant, 'Price') ) {
+	if ( is_object($variant) && is_a($variant, 'ShoppPrice') ) {
 		$Price = $variant;
 		$save = false;
 	} else {
@@ -1761,7 +1761,7 @@ function _optioncombinations ($combos=array(), $options, $menu = false, &$result
 function shopp_product_variant_set_type ( $variant = false, $type = 'N/A', $context = 'variant' ) {
 	$context = ( 'variant' == $context ? 'variation' : $context );
 	$save = true;
-	if ( is_object($variant) && is_a($variant, 'Price') ) {
+	if ( is_object($variant) && is_a($variant, 'ShoppPrice') ) {
 		$Price = $variant;
 		$save = false;
 	} else {
@@ -1804,7 +1804,7 @@ function shopp_product_variant_set_type ( $variant = false, $type = 'N/A', $cont
 function shopp_product_variant_set_taxed ( $variant = false, $taxed = true, $context = 'variant' ) {
 	$context = ( 'variant' == $context ? 'variation' : $context );
 	$save = true;
-	if ( is_object($variant) && is_a($variant, 'Price') ) {
+	if ( is_object($variant) && is_a($variant, 'ShoppPrice') ) {
 		$Price = $variant;
 		$save = false;
 	} else {
@@ -1838,7 +1838,7 @@ function shopp_product_variant_set_taxed ( $variant = false, $taxed = true, $con
 function shopp_product_variant_set_price ( $variant = false, $price = 0.0, $context = 'variant' ) {
 	$context = ( 'variant' == $context ? 'variation' : $context );
 	$save = true;
-	if ( is_object($variant) && is_a($variant, 'Price') ) {
+	if ( is_object($variant) && is_a($variant, 'ShoppPrice') ) {
 		$Price = $variant;
 		$save = false;
 	} else {
@@ -1879,7 +1879,7 @@ function shopp_product_variant_set_price ( $variant = false, $price = 0.0, $cont
 function shopp_product_variant_set_saleprice ( $variant = false, $flag = false, $price = 0.0, $context = 'variant' ) {
 	$context = ( 'variant' == $context ? 'variation' : $context );
 	$save = true;
-	if ( is_object($variant) && is_a($variant, 'Price') ) {
+	if ( is_object($variant) && is_a($variant, 'ShoppPrice') ) {
 		$Price = $variant;
 		$save = false;
 	} else {
@@ -1926,7 +1926,7 @@ function shopp_product_variant_set_shipping ( $variant = false, $flag = false, $
 	$Shopp = Shopp::object();
 	$context = ( 'variant' == $context ? 'variation' : $context );
 	$save = true;
-	if ( is_object($variant) && is_a($variant, 'Price') ) {
+	if ( is_object($variant) && is_a($variant, 'ShoppPrice') ) {
 		$Price = $variant;
 		$save = false;
 	} else {
@@ -1996,7 +1996,7 @@ function shopp_product_variant_set_shipping ( $variant = false, $flag = false, $
 function shopp_product_variant_set_inventory ( $variant = false, $flag = false, $settings = array(), $context = 'variant' ) {
 	$context = ( 'variant' == $context ? 'variation' : $context );
 	$save = true;
-	if ( is_object($variant) && is_a($variant, 'Price') ) {
+	if ( is_object($variant) && is_a($variant, 'ShoppPrice') ) {
 		$Price = $variant;
 		$save = false;
 	} else {
@@ -2040,7 +2040,7 @@ function shopp_product_variant_set_inventory ( $variant = false, $flag = false, 
 function shopp_product_variant_set_stock ( $variant = false, $stock = 0, $action = 'adjust', $context = 'variant' ) {
 	$context = ( 'variant' == $context ? 'variation' : $context );
 	$save = true;
-	if ( is_object($variant) && is_a($variant, 'Price') ) {
+	if ( is_object($variant) && is_a($variant, 'ShoppPrice') ) {
 		$Price = $variant;
 		$save = false;
 	} else {
@@ -2078,7 +2078,7 @@ function shopp_product_variant_set_stock ( $variant = false, $stock = 0, $action
 function shopp_product_variant_set_donation ( $variant = false, $settings = array(), $context = 'variant' ) {
 	$context = ( 'variant' == $context ? 'variation' : $context );
 	$save = true;
-	if ( is_object($variant) && is_a($variant, 'Price') ) {
+	if ( is_object($variant) && is_a($variant, 'ShoppPrice') ) {
 		$Price = $variant;
 		$save = false;
 	} else {
@@ -2142,7 +2142,7 @@ function shopp_product_variant_set_donation ( $variant = false, $settings = arra
 function shopp_product_variant_set_subscription ( $variant = false, $settings = array(), $context = 'variant' ) {
 	$context = ( 'variant' == $context ? 'variation' : $context );
 	$save = true;
-	if ( is_object($variant) && is_a($variant, 'Price') ) {
+	if ( is_object($variant) && is_a($variant, 'ShoppPrice') ) {
 		$Price = $variant;
 		$save = false;
 	} else {
