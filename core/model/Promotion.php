@@ -1,6 +1,6 @@
 <?php
 /**
- * Promotion class
+ * ShoppPromo class
  * Handles special promotion deals
  *
  * @author Jonathan Davis
@@ -11,7 +11,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class Promotion extends DatabaseObject {
+class ShoppPromo extends DatabaseObject {
 	static $table = "promo";
 
 	static $values = array(
@@ -52,7 +52,7 @@ class Promotion extends DatabaseObject {
 		if (!empty($this->rules) && is_array($this->rules)) {
 			foreach ($this->rules as $rule) {
 
-				if (Promotion::$values[$rule['property']] == "price")
+				if (ShoppPromo::$values[$rule['property']] == "price")
 					$value = Shopp::floatval($rule['value']);
 				else $value = $rule['value'];
 
@@ -173,7 +173,7 @@ class Promotion extends DatabaseObject {
 		switch($op) {
 			// String or Numeric operations
 			case "Is equal to":
-			 	if($property && Promotion::$values[$property] == 'price') {
+			 	if($property && ShoppPromo::$values[$property] == 'price') {
 					return ( Shopp::floatval($subject) != 0
 					&& Shopp::floatval($value) != 0
 					&& Shopp::floatval($subject) == Shopp::floatval($value));
@@ -244,7 +244,7 @@ class Promotion extends DatabaseObject {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @param array $promos A list of Promotion ids of the promotions to be updated
+	 * @param array $promos A list of ShoppPromo ids of the promotions to be updated
 	 * @return void
 	 **/
 	function used ($promos) {
@@ -309,10 +309,10 @@ class Promotion extends DatabaseObject {
 	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
-	 * @return Promotion The newly created Promotion object
+	 * @return ShoppPromo The newly created ShoppPromo object
 	 **/
 	function duplicate () {
-		$Promotion = new Promotion();
+		$Promotion = new ShoppPromo();
 		$Promotion->copydata($this);
 		$Promotion->name = sprintf(__('%s copy','Shopp'),$Promotion->name);
 		$Promotion->status = 'disabled';
@@ -377,7 +377,7 @@ class Promotion extends DatabaseObject {
 		$prices = self::discounted_prices($ids);	// Get the discounted price records
 
 		foreach ( $ids as $id ) {
-			$Promo = new Promotion($id);
+			$Promo = new ShoppPromo($id);
 			if ( 'Catalog' == $Promo->target )
 				$Promo->uncatalog($prices);			// Remove the deleted price discounts
 		}
@@ -405,7 +405,7 @@ class Promotion extends DatabaseObject {
 
 		$catalogpromos = DB::query("SELECT id FROM $table WHERE target='Catalog'",'array','col','id');
 		foreach ($catalogpromos as $promoid) {
-			$Promo = new Promotion($promoid);
+			$Promo = new ShoppPromo($promoid);
 			$Promo->catalog();
 		}
 
@@ -428,7 +428,7 @@ class Promotion extends DatabaseObject {
 
 		$catalogpromos = DB::query("SELECT id FROM $table WHERE target='Catalog'",'array','col','id');
 		foreach ($catalogpromos as $promoid) {
-			$Promo = new Promotion($promoid);
+			$Promo = new ShoppPromo($promoid);
 			$Promo->catalog();
 		}
 
@@ -436,4 +436,4 @@ class Promotion extends DatabaseObject {
 	}
 
 
-} // END class Promotion
+} // END class ShoppPromo

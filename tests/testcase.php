@@ -56,7 +56,7 @@ class ShoppTestCase extends WP_UnitTestCase {
 
 	static function resetTables () {
 		$classes = array(
-			'Address','ShoppProduct','Promotion','ProductSummary','ShoppPrice','Customer','ShoppPurchase','Purchased'
+			'Address','ShoppProduct','ShoppPromo','ProductSummary','ShoppPrice','Customer','ShoppPurchase','Purchased'
 		);
 		foreach ($classes as $classname) {
 			$table = DatabaseObject::tablename(get_class_property($classname, 'table'));

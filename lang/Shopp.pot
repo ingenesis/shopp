@@ -1313,11 +1313,11 @@ msgid "Catalog Promotions"
 msgstr ""
 
 #: ../shopp/core/flow/Promote.php:189
-msgid "Cart Promotions"
+msgid "Cart ShoppPromos"
 msgstr ""
 
 #: ../shopp/core/flow/Promote.php:190
-msgid "Cart Item Promotions"
+msgid "Cart Item ShoppPromos"
 msgstr ""
 
 #: ../shopp/core/flow/Promote.php:214
@@ -4333,7 +4333,7 @@ msgstr ""
 msgid "copy"
 msgstr ""
 
-#: ../shopp/core/model/Promotion.php:283
+#: ../shopp/core/model/ShoppPromo.php:283
 #, php-format
 msgid "%s copy"
 msgstr ""
@@ -4391,7 +4391,7 @@ msgid "Shipping Name"
 msgstr ""
 
 #: ../shopp/core/model/Purchase.php:499
-msgid "Promotions Applied"
+msgid "ShoppPromos Applied"
 msgstr ""
 
 #: ../shopp/core/model/Purchase.php:500
@@ -5765,7 +5765,7 @@ msgid "Pricing"
 msgstr ""
 
 #: ../shopp/core/ui/promotions/editor.php:4
-msgid "Promotion Editor"
+msgid "ShoppPromo Editor"
 msgstr ""
 
 #: ../shopp/core/ui/promotions/editor.php:28
@@ -5773,11 +5773,11 @@ msgid "Enter promotion name"
 msgstr ""
 
 #: ../shopp/core/ui/promotions/promotions.php:4
-msgid "New Promotion"
+msgid "New ShoppPromo"
 msgstr ""
 
 #: ../shopp/core/ui/promotions/promotions.php:13
-msgid "Search Promotions"
+msgid "Search ShoppPromos"
 msgstr ""
 
 #: ../shopp/core/ui/promotions/promotions.php:20
@@ -5791,7 +5791,7 @@ msgid "Disable"
 msgstr ""
 
 #: ../shopp/core/ui/promotions/promotions.php:29
-msgid "View All Promotions"
+msgid "View All ShoppPromos"
 msgstr ""
 
 #: ../shopp/core/ui/promotions/promotions.php:33
@@ -5833,7 +5833,7 @@ msgid "End the promotion on this date."
 msgstr ""
 
 #: ../shopp/core/ui/promotions/ui.php:33
-msgid "Save Promotion"
+msgid "Save ShoppPromo"
 msgstr ""
 
 #: ../shopp/core/ui/promotions/ui.php:41
@@ -5967,7 +5967,7 @@ msgid "Set the next order number to sync with your accounting systems."
 msgstr ""
 
 #: ../shopp/core/ui/settings/preferences.php:68
-msgid "Promotions Limit"
+msgid "ShoppPromos Limit"
 msgstr ""
 
 #: ../shopp/core/ui/settings/preferences.php:73

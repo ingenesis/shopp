@@ -264,7 +264,7 @@ class CartTotalsTests extends ShoppTestCase {
 			)
 		);
 		foreach ($promos as $data) {
-			$Promotion = new Promotion();
+			$Promotion = new ShoppPromo();
 			$Promotion->updates($data);
 			$Promotion->save();
 		}

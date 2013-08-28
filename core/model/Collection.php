@@ -2117,7 +2117,7 @@ class PromoProducts extends SmartCollection {
 	public function smart ( array $options = array() ) {
 		$id = urldecode($options['id']);
 
-		$Promo = new Promotion($id);
+		$Promo = new ShoppPromo($id);
 		$this->name = $Promo->name;
 		$this->slug = $this->uri = sanitize_title_with_dashes($this->name);
 

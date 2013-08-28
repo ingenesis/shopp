@@ -57,10 +57,10 @@ class ShoppAdminDiscounter extends AdminController {
 
 		if ( $this->page == $page && ! empty($action) ) {
 			switch ( $action ) {
-				case 'enable': Promotion::enableset($selected); break;
-				case 'disable': Promotion::disableset($selected); break;
-				case 'delete': Promotion::deleteset($selected); break;
-				case 'duplicate': $P = new Promotion($selected[0]); $P->duplicate(); break;
+				case 'enable': ShoppPromo::enableset($selected); break;
+				case 'disable': ShoppPromo::disableset($selected); break;
+				case 'delete': ShoppPromo::deleteset($selected); break;
+				case 'duplicate': $P = new ShoppPromo($selected[0]); $P->duplicate(); break;
 			}
 			$url = remove_query_arg( $f, $url );
 
@@ -92,7 +92,7 @@ class ShoppAdminDiscounter extends AdminController {
 		if ( ! current_user_can('shopp_promotions') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
-		$table = DatabaseObject::tablename(Promotion::$table);
+		$table = DatabaseObject::tablename(ShoppPromo::$table);
 
 		$defaults = array(
 			'page' => false,
@@ -116,7 +116,7 @@ class ShoppAdminDiscounter extends AdminController {
 		$where = array();
 		if ( ! empty($s) ) $where[] = "name LIKE '%$s%'";
 		if ( $status ) {
-			$datesql = Promotion::activedates();
+			$datesql = ShoppPromo::activedates();
 			switch (strtolower($status)) {
 				case 'active': $where[] = "status='enabled' AND $datesql"; break;
 				case 'inactive': $where[] = "status='enabled' AND NOT $datesql"; break;
@@ -177,8 +177,8 @@ class ShoppAdminDiscounter extends AdminController {
 		check_admin_referer('shopp-save-discount');
 
 		if ( 'new' !== $_POST['id'] ) {
-			$Promotion = new Promotion($_POST['id']);
-		} else $Promotion = new Promotion();
+			$Promotion = new ShoppPromo($_POST['id']);
+		} else $Promotion = new ShoppPromo();
 
 		if ( ! empty($_POST['starts']['month']) && ! empty($_POST['starts']['date']) && ! empty($_POST['starts']['year']) )
 			$_POST['starts'] = mktime(0, 0, 0, $_POST['starts']['month'], $_POST['starts']['date'], $_POST['starts']['year']);
@@ -249,9 +249,9 @@ class ShoppAdminDiscounter extends AdminController {
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		if ( 'new' !== $_GET['id'] ) {
-			$Promotion = new Promotion($_GET['id']);
+			$Promotion = new ShoppPromo($_GET['id']);
 			do_action('shopp_discount_promo_loaded', $Promotion);
-		} else $Promotion = new Promotion();
+		} else $Promotion = new ShoppPromo();
 
 		$this->disabled_alert($Promotion);
 
@@ -265,7 +265,7 @@ class ShoppAdminDiscounter extends AdminController {
 	 *
 	 *  add_filter('shopp_hide_disabled_promo_warning', function() { return true; } ); // 5.3 style
 	 */
-	protected function disabled_alert ( Promotion $Promotion ) {
+	protected function disabled_alert ( ShoppPromo $Promotion ) {
 		if ( 'enabled' === $Promotion->status || apply_filters('shopp_hide_disabled_promo_warning', false) ) return;
 		$this->notice(Shopp::__('This promotion is not currently enabled.'), 'notice', 20);
 	}

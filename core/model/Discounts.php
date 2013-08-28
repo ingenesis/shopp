@@ -588,7 +588,7 @@ class ShoppDiscountRule {
 			case 'is equal to':
 
 				$type = 'string';
-			 	if ( isset(Promotion::$values[ $property ]) && 'price' == Promotion::$values[ $property ] )
+			 	if ( isset(ShoppPromo::$values[ $property ]) && 'price' == ShoppPromo::$values[ $property ] )
 					$type = 'float';
 
 				return $this->isequalto($subject,$value,$type);
@@ -596,7 +596,7 @@ class ShoppDiscountRule {
 			case 'is not equal to':
 
 				$type = 'string';
-			 	if ( isset(Promotion::$values[ $property ]) && 'price' == Promotion::$values[ $property ] )
+			 	if ( isset(ShoppPromo::$values[ $property ]) && 'price' == ShoppPromo::$values[ $property ] )
 					$type = 'float';
 
 				return ! $this->isequalto($subject,$value,$type);
@@ -739,7 +739,7 @@ class ShoppOrderDiscount {
 	private $items = array();				// A list of items the discount applies to
 
 	/**
-	 * Converts a Promotion object to a Discount object
+	 * Converts a ShoppPromo object to a Discount object
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.3
@@ -1058,10 +1058,10 @@ class ShoppPromotions extends ListFramework {
 
 		if ( $this->loaded ) return; // Don't load twice in one request
 
-		$table = DatabaseObject::tablename(Promotion::$table);
+		$table = DatabaseObject::tablename(ShoppPromo::$table);
 		$where = array(
 			"status='enabled'",
-			Promotion::activedates(),
+			ShoppPromo::activedates(),
 			"target IN ('" . join("','", self::$targets) . "')"
 		);
 		$orderby = 'target DESC';

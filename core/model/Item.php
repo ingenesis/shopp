@@ -791,14 +791,14 @@ class ShoppCartItem {
 
 			case 'Input name':
 				foreach($this->data as $inputName=>$inputValue){
-					if (Promotion::match_rule($inputName, $logic, $value, $property)){
+					if (ShoppPromo::match_rule($inputName, $logic, $value, $property)){
 						return true;
 					}
 				}
 				return false;
 			case 'Input value':
 				foreach($this->data as $inputName=>$inputValue){
-					if (Promotion::match_rule($inputValue, $logic, $value, $property)){
+					if (ShoppPromo::match_rule($inputValue, $logic, $value, $property)){
 						return true;
 					}
 				}
@@ -810,7 +810,7 @@ class ShoppCartItem {
 			case 'Discount amount': $subject = $this->discount; break;
 
 		}
-		return Promotion::match_rule($subject,$logic,$value,$property);
+		return ShoppPromo::match_rule($subject,$logic,$value,$property);
 	}
 
 	// @deprecated

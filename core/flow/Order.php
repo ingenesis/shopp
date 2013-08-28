@@ -416,7 +416,7 @@ class ShoppOrder {
 		unset($Purchase->order);
 		$Purchase->save();
 
-		Promotion::used(array_keys($promos));
+		ShoppPromo::used(array_keys($promos));
 
 		// Process the order events if updating an existing order
 		if ( ! empty($this->inprogress) ) {

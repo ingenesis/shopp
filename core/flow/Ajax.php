@@ -358,7 +358,7 @@ class ShoppAjax {
 				case 'shopp_promotions':
 					$id = 'id';
 					$name = 'name';
-					$table = DatabaseObject::tablename(Promotion::$table);
+					$table = DatabaseObject::tablename(ShoppPromo::$table);
 					break;
 				case 'shopp_downloads':
 					$id = 'id';

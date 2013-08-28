@@ -564,7 +564,7 @@ class ShoppProduct extends WPShoppObject {
 
 		// Calculate catalog discounts if not already calculated
 		if (!empty($price->discounts)) {
-			$discount = Promotion::pricing($price->promoprice,$price->discounts);
+			$discount = ShoppPromo::pricing($price->promoprice,$price->discounts);
 			if ($discount->freeship) $freeshipping = true;
 			$price->promoprice = $discount->pricetag;
 		}

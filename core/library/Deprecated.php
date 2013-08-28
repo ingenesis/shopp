@@ -40,6 +40,10 @@ if ( ! class_exists('Product', false) ) {
 	class Product extends ShoppProduct {}
 }
 
+if ( ! class_exists('Promotion', false) ) {
+	class Promotion extends ShoppPromo {}
+}
+
 if ( ! class_exists('Purchase', false) ) {
 	class Purchase extends ShoppPurchase {}
 }
