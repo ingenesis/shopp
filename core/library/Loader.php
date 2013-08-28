@@ -270,7 +270,7 @@ function &ShoppLoader () {
 
 ShoppLoader()->basepath( dirname(dirname(__FILE__)) );
 ShoppLoader::map(array(
-	'address' => '/model/Address.php',
+	'address' => '/library/Deprecated.php',
 	'admincontroller' => '/flow/Flow.php',
 	'alsoboughtproducts' => '/model/Collection.php',
 	'amountvoidedevent' => '/model/Events.php',
@@ -473,6 +473,7 @@ ShoppLoader::map(array(
 	'shoppaccountpage' => '/flow/Pages.php',
 	'shoppaccountwidget' => '/ui/widgets/account.php',
 	'shoppaddon_upgrader' => '/flow/Install.php',
+	'shoppaddress' => '/model/Address.php',
 	'shoppadmin' => '/flow/Admin.php',
 	'shoppadminaccount' => '/flow/Account.php',
 	'shoppadmincategorize' => '/flow/Categorize.php',

@@ -310,7 +310,7 @@ function shopp_rmv_customer (  $customer = false ) {
  *
  * @param int $id (required) the address id to retrieve, or customer id
  * @param string $type (optional default:billing) 'billing' to lookup billing address by customer id, 'shipping' to lookup shipping adress by customer id, or 'id' to lookup by address id
- * @return Address object
+ * @return ShoppAddress object
  **/
 function shopp_address (  $id = false, $type = 'billing' ) {
 	if ( ! $id ) {
@@ -326,7 +326,7 @@ function shopp_address (  $id = false, $type = 'billing' ) {
 		$Address = new ShippingAddress($id, 'customer');
 	} else {
 		// lookup by address id
-		$Address = new Address($id, 'id');
+		$Address = new ShoppAddress($id, 'id');
 	}
 
 	if ( empty($Address->id) ) {
@@ -393,7 +393,7 @@ function shopp_rmv_customer_address (  $address = false ) {
 		return false;
 	}
 
-	$Address = new Address($address);
+	$Address = new ShoppAddress($address);
 
 	if ( empty($Address->id) ) {
 		shopp_debug(__FUNCTION__ . " failed: No such address with id $address.");

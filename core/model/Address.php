@@ -22,7 +22,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @since 1.1
  * @package shopp
  **/
-class Address extends DatabaseObject {
+class ShoppAddress extends DatabaseObject {
 
 	static $table = 'address';
 
@@ -129,7 +129,7 @@ class Address extends DatabaseObject {
  * @package address
  **/
 
-class BillingAddress extends Address {
+class BillingAddress extends ShoppAddress {
 
 	public $type = 'billing';
 
@@ -174,7 +174,7 @@ class BillingAddress extends Address {
  * @copyright Ingenesis Limited, 21 February, 2011
  * @package address
  **/
-class ShippingAddress extends Address {
+class ShippingAddress extends ShoppAddress {
 
 	public $type = 'shipping';
 	public $method = false;
@@ -219,7 +219,7 @@ class PostcodeMapping {
 	/**
 	 * Lookup and determine the state/region based on numeric postcode ranges.
 	 *
-	 * @param Address $Address
+	 * @param ShoppAddress $Address
 	 */
 	public static function numericrange (Address $Address) {
 		$postcode = $Address->postcode;
@@ -250,10 +250,10 @@ class PostcodeMapping {
 	 * @since 1.2
 	 *
 	 * @param string $prefix The postal code prefix
-	 * @param Address $Address
+	 * @param ShoppAddress $Address
 	 * @return void
 	 **/
-	public static function prefixcode ($prefix, Address $Address) {
+	public static function prefixcode ($prefix, ShoppAddress $Address) {
 		$postcodes = Lookup::postcodes();
 		if ( ! isset($postcodes[ $Address->country ]) ) return;
 

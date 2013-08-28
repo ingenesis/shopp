@@ -14,8 +14,8 @@
 
 if ( defined('SHOPP_DISALLOW_DEPRECATED_CLASSES') && SHOPP_DISALLOW_DEPRECATED_CLASSES ) return;
 
-if ( ! class_exists('Product', false) ) {
-	class Product extends ShoppProduct {}
+if ( ! class_exists('Address', false) ) {
+	class Address extends ShoppAddress {}
 }
 
 if ( ! class_exists('Cart', false) ) {
@@ -34,6 +34,10 @@ if ( ! class_exists('Cart', false) ) {
 
 if ( ! class_exists('Price', false) ) {
 	class Price extends ShoppPrice {}
+}
+
+if ( ! class_exists('Product', false) ) {
+	class Product extends ShoppProduct {}
 }
 
 if ( ! class_exists('Purchase', false) ) {
