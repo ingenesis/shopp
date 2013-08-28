@@ -97,7 +97,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		'weight' => 'weight'
 	);
 
-	public static function _apicontext () { return 'shoppproduct'; }
+	public static function _apicontext () { return 'product'; }
 
 	/**
 	 * _setobject - returns the global context object used in the shopp('product') call
