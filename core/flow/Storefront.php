@@ -22,7 +22,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @package shopp
  * @subpackage storefront
  **/
-class ShoppStorefront extends FlowController {
+class ShoppStorefront extends ShoppFlowController {
 
 	public $behaviors = array();	// Runtime JavaScript behaviors
 	public $checkout = false;		// Flags when the checkout form is being processed

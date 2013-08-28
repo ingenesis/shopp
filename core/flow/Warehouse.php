@@ -13,7 +13,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppAdminWarehouse extends AdminController {
+class ShoppAdminWarehouse extends ShoppAdminController {
 
 	public $views = array('published', 'drafts', 'onsale', 'featured', 'bestselling', 'inventory', 'trash');
 	public $view = 'all';

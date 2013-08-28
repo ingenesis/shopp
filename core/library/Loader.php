@@ -271,7 +271,7 @@ function &ShoppLoader () {
 ShoppLoader()->basepath( dirname(dirname(__FILE__)) );
 ShoppLoader::map(array(
 	'address' => '/library/Deprecated.php',
-	'admincontroller' => '/flow/Flow.php',
+	'admincontroller' => '/library/Deprecated.php',
 	'alsoboughtproducts' => '/model/Collection.php',
 	'amountvoidedevent' => '/model/Events.php',
 	'amountvoidedeventrenderer' => '/ui/orders/events.php',
@@ -322,7 +322,7 @@ ShoppLoader::map(array(
 	'failureordereventrender' => '/ui/orders/events.php',
 	'featuredproducts' => '/model/Collection.php',
 	'fileasset' => '/model/Asset.php',
-	'flowcontroller' => '/flow/Flow.php',
+	'flowcontroller' => '/library/Deprecated.php',
 	'freeorder' => '/model/Gateway.php',
 	'gatewayframework' => '/model/Gateway.php',
 	'gatewaymodule' => '/model/Gateway.php',
@@ -477,6 +477,7 @@ ShoppLoader::map(array(
 	'shoppadmin' => '/flow/Admin.php',
 	'shoppadminaccount' => '/flow/Account.php',
 	'shoppadmincategorize' => '/flow/Categorize.php',
+	'shoppadmincontroller' => '/flow/Flow.php',
 	'shoppadmindashboard' => '/flow/Dashboard.php',
 	'shoppadmindiscounter' => '/flow/Discounter.php',
 	'shoppadminlisttable' => '/flow/Admin.php',
@@ -517,6 +518,7 @@ ShoppLoader::map(array(
 	'shopperrorstorefrontnotices' => '/library/Error.php',
 	'shoppfacetedmenuwidget' => '/ui/widgets/facetedmenu.php',
 	'shoppflow' => '/flow/Flow.php',
+	'shoppflowcontroller' => '/flow/Flow.php',
 	'shoppformvalidation' => '/library/Validation.php',
 	'shoppimagingmodule' => '/model/Image.php',
 	'shoppimagingmodules' => '/model/Image.php',

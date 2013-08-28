@@ -22,7 +22,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @since 1.2
  * @package shopp
  **/
-class Members extends AdminController {
+class Members extends ShoppAdminController {
 
 	/**
 	 * Members constructor

@@ -19,7 +19,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @package shopp
  * @author Jonathan Davis
  **/
-class ShoppAdminSetup extends AdminController {
+class ShoppAdminSetup extends ShoppAdminController {
 
 	protected $ui = 'settings';
 

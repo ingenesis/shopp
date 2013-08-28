@@ -13,7 +13,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppAdminCategorize extends AdminController {
+class ShoppAdminCategorize extends ShoppAdminController {
 
 	public $worklist = array();
 	protected $ui = 'categories';

@@ -29,7 +29,7 @@
 
 			</div>
 		</div>
-		<form action="<?php echo AdminController::url(array('id'=>$Purchase->id)); ?>" method="post" id="order-updates">
+		<form action="<?php echo ShoppAdminController::url( array('id' => $Purchase->id) ); ?>" method="post" id="order-updates">
 
 		<?php if ( count($Purchase->purchased) > 0 ): ?>
 			<tbody id="items" class="list items">
@@ -175,7 +175,7 @@
 							ob_start();
 							switch ($column) {
 								case 'items':
-									$editurl = AdminController::url(array('id'=>$Purchase->id,'editline'=>$id));
+									$editurl = ShoppAdminController::url( array('id' => $Purchase->id, 'editline'=>$id) );
 									?>
 										<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
 											<a href="<?php echo add_query_arg(array('page' => 'shopp-products','id' => $Item->product),admin_url('admin.php')); ?>">

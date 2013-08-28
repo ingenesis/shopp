@@ -18,6 +18,10 @@ if ( ! class_exists('Address', false) ) {
 	class Address extends ShoppAddress {}
 }
 
+if ( ! class_exists('AdminController', false) ) {
+	class AdminController extends ShoppAdminController {}
+}
+
 if ( ! class_exists('Cart', false) ) {
 	class Cart extends ShoppCart {
 		/**
@@ -30,6 +34,10 @@ if ( ! class_exists('Cart', false) ) {
 		 **/
 		public function retotal () {}
 	}
+}
+
+if ( ! class_exists('FlowController', false) ) {
+	class FlowController extends ShoppFlowController {}
 }
 
 if ( ! class_exists('Price', false) ) {

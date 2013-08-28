@@ -18,7 +18,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @package admin
  * @since 1.1
  **/
-class ShoppAdmin extends FlowController {
+class ShoppAdmin extends ShoppFlowController {
 
 	private $pages = array();	// Defines a map of pages to create menus from
 	private $menus = array();	// Map of page names to WP screen ids for initialized Shopp menus

@@ -13,7 +13,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppAdminDiscounter extends AdminController {
+class ShoppAdminDiscounter extends ShoppAdminController {
 
 	protected $ui = 'discounts';
 

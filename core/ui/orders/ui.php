@@ -3,7 +3,7 @@ function manage_meta_box ($Purchase) {
 	$Gateway = $Purchase->gateway();
 
 ?>
-<form action="<?php echo AdminController::url(array('page'=>$page,'id'=>$Purchase->id)); ?>" method="post">
+<form action="<?php echo ShoppAdminController::url( array('page' => $page, 'id'=>$Purchase->id) ); ?>" method="post">
 
 <?php if ($Purchase->shipable): ?>
 <script id="shipment-ui" type="text/x-jquery-tmpl">
@@ -324,14 +324,14 @@ function billto_meta_box ($Purchase) {
 		</script>
 
 	<?php if ( isset($_POST['edit-billing-address']) ): ?>
-		<form action="<?php echo AdminController::url( array('page' => $page, 'id' => $Purchase->id) ); ?>" method="post" id="billing-address-editor">
+		<form action="<?php echo ShoppAdminController::url( array('page' => $page, 'id' => $Purchase->id) ); ?>" method="post" id="billing-address-editor">
 		<?php echo ShoppUI::template($editaddress, $address); ?>
 		</form>
 	<?php return; endif; ?>
 
-	<form action="<?php echo AdminController::url( array('page' => $page,'id' => $Purchase->id) ); ?>" method="post" id="billing-address-editor"></form>
+	<form action="<?php echo ShoppAdminController::url( array('page' => $page,'id' => $Purchase->id) ); ?>" method="post" id="billing-address-editor"></form>
 	<div class="display">
-	<form action="<?php echo AdminController::url( array('page' => $page, 'id' => $Purchase->id) ); ?>" method="post"><?php
+	<form action="<?php echo ShoppAdminController::url( array('page' => $page, 'id' => $Purchase->id) ); ?>" method="post"><?php
 	$targets = shopp_setting('target_markets');
 ?>
 		<input type="hidden" id="edit-billing-address-data" value="<?php
@@ -361,7 +361,7 @@ function billto_meta_box ($Purchase) {
 ShoppUI::addmetabox('order-billing', __('Billing Address','Shopp').$Admin->boxhelp('order-manager-billing'), 'billto_meta_box', 'toplevel_page_shopp-orders', 'side', 'core');
 
 function shipto_meta_box ($Purchase) { ?>
-	<form action="<?php echo AdminController::url(array('id'=>$Purchase->id)); ?>" method="post" id="shipping-address-editor"></form>
+	<form action="<?php echo ShoppAdminController::url(array('id'=>$Purchase->id)); ?>" method="post" id="shipping-address-editor"></form>
 	<div class="display">
 		<form>
 		<?php $targets = shopp_setting('target_markets'); ?>
@@ -476,7 +476,7 @@ function contact_meta_box ($Purchase) {
 	</form>
 	<?php if ( $iframe ): ?>
 	<iframe id="customer-search-results" name="customer-search-results" src="<?php echo esc_url($searchurl); ?>"></iframe>
-	<form action="<?php echo AdminController::url(array('page' => $page,'id' => (int)$Purchase->id)); ?>" method="POST">
+	<form action="<?php echo ShoppAdminController::url(array('page' => $page,'id' => (int)$Purchase->id)); ?>" method="POST">
 	<div><input type="submit" id="cancel-change-customer" name="cancel-change-customer" value="<?php _e('Cancel','Shopp'); ?>" class="button-secondary" /></div>
 	</form>
 	<?php endif; ?>
@@ -488,7 +488,7 @@ function contact_meta_box ($Purchase) {
 	?>
 	<h4><?php _e('Search for Customer','Shopp'); ?></h4>
 	<?php echo ShoppUI::template( $search ); ?>
-	<form id="change-customer" action="<?php echo AdminController::url(array('page' => $page,'id' => (int)$Purchase->id)); ?>" method="POST">
+	<form id="change-customer" action="<?php echo ShoppAdminController::url(array('page' => $page,'id' => (int)$Purchase->id)); ?>" method="POST">
 	<h4><?php _e('Add New Customer','Shopp'); ?></h4>
 	<input type="hidden" name="change-customer" value="true" />
 	<?php echo ShoppUI::template( $editcustomer, array( '${action}' => 'new-customer', '${savelabe££l}' => __('Add New Customer','Shopp') ) ); ?>
@@ -507,7 +507,7 @@ function contact_meta_box ($Purchase) {
 			return;
 		} elseif ( isset($_REQUEST['edit-customer'])) {
 		?>
-			<form action="<?php echo AdminController::url(array('page' => $page,'id' => (int)$Purchase->id)); ?>" method="POST">
+			<form action="<?php echo ShoppAdminController::url(array('page' => $page,'id' => (int)$Purchase->id)); ?>" method="POST">
 			<?php echo ShoppUI::template($editcustomer,$customer); ?>
 			</form>
 		<?php
@@ -515,9 +515,9 @@ function contact_meta_box ($Purchase) {
 		}
 	?>
 	<div id="change-customer-editor"></div>
-	<form action="<?php echo AdminController::url(array('page' => $page,'id' => (int)$Purchase->id)); ?>" method="post" id="customer-editor-form"></form>
+	<form action="<?php echo ShoppAdminController::url(array('page' => $page,'id' => (int) $Purchase->id)); ?>" method="post" id="customer-editor-form"></form>
 	<div class="display">
-		<form action="<?php echo AdminController::url(array('id'=>$Purchase->id)); ?>" method="get">
+		<form action="<?php echo ShoppAdminController::url(array('id' => $Purchase->id)); ?>" method="get">
 		<?php $targets = shopp_setting('target_markets'); ?>
 			<input type="hidden" id="edit-customer-data" value="<?php
 				echo esc_attr(json_encode($customer));

@@ -221,7 +221,7 @@ class ShoppFlow {
 } // End class ShoppFlow
 
 /**
- * FlowController
+ * ShoppFlowController
  *
  * Provides a template for flow controllers
  *
@@ -229,10 +229,10 @@ class ShoppFlow {
  * @package shopp
  * @author Jonathan Davis
  **/
-abstract class FlowController  {
+abstract class ShoppFlowController  {
 
 	/**
-	 * FlowController constructor
+	 * ShoppFlowController constructor
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.1
@@ -244,10 +244,10 @@ abstract class FlowController  {
 	}
 
 
-} // END class FlowController
+} // END class ShoppFlowController
 
 /**
- * AdminController
+ * ShoppAdminController
  *
  * Provides a template for admin controllers
  *
@@ -255,7 +255,7 @@ abstract class FlowController  {
  * @since 1.1
  * @package shopp
  **/
-abstract class AdminController extends FlowController {
+abstract class ShoppAdminController extends ShoppFlowController {
 
 	public $Admin = false;
 	public $url;
@@ -269,7 +269,7 @@ abstract class AdminController extends FlowController {
 	protected $notices = array();
 
 	/**
-	 * AdminController constructor
+	 * ShoppAdminController constructor
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.1

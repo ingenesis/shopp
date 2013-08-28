@@ -17,7 +17,7 @@
  * @package shopp
  * @author Jonathan Davis
  **/
-class ShoppAdminSystem extends AdminController {
+class ShoppAdminSystem extends ShoppAdminController {
 
 	protected $ui = 'settings';
 

@@ -20,7 +20,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @since 1.3
  * @author Jonathan Davis
  **/
-class ShoppAdminReport extends AdminController {
+class ShoppAdminReport extends ShoppAdminController {
 
 	public $records = array();
 	public $count = false;

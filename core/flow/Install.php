@@ -19,7 +19,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @package shopp
  * @author Jonathan Davis
  **/
-class ShoppInstallation extends FlowController {
+class ShoppInstallation extends ShoppFlowController {
 
 	static $errors = array();
 	static $nextstep = array();
