@@ -572,11 +572,11 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 		return $labels[$O->status];
 	}
 
-	public static function subtotal ( $result, $options, $O ) { return money($O->subtotal); }
+	public static function subtotal ( $result, $options, $O ) { return Shopp::money($O->subtotal); }
 
-	public static function tax ( $result, $options, $O ) { return money($O->tax); }
+	public static function tax ( $result, $options, $O ) { return Shopp::money($O->tax); }
 
-	public static function total ( $result, $options, $O ) { return money($O->total); }
+	public static function total ( $result, $options, $O ) { return Shopp::money($O->total); }
 
 	public static function total_items ( $result, $options, $O ) { return count($O->purchased); }
 
