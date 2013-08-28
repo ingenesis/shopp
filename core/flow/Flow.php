@@ -75,7 +75,7 @@ class ShoppFlow {
 
 			$this->handler();
 
-		} else $this->handler('Storefront');
+		} else $this->handler('ShoppStorefront');
 	}
 
 	/**
@@ -401,13 +401,13 @@ abstract class AdminController extends FlowController {
  * @author Jonathan Davis
  * @since 1.1.5
  *
- * @return Storefront|false
+ * @return ShoppStorefront|false
  **/
 function &ShoppStorefront () {
 	$false = false;
 	$Shopp = Shopp::object();
 	if ( ! isset($Shopp->Flow) || ! is_object($Shopp->Flow->Controller) ) return $false;
-	if ( get_class($Shopp->Flow->Controller) != 'Storefront' ) return $false;
+	if ( get_class($Shopp->Flow->Controller) != 'ShoppStorefront' ) return $false;
 	return $Shopp->Flow->Controller;
 }
 

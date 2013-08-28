@@ -282,11 +282,11 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 	// Disabled and Deprecated
 	public static function errors ($result, $options, $O) {
-		// Now handled in Storefront controller always.
+		// Now handled in ShoppStorefront controller always.
 		return false;
 	}
 	public static function errors_exist ($result, $options, $O) {
-		// Now handled in Storefront controller always.
+		// Now handled in ShoppStorefront controller always.
 		return false;
 	}
 

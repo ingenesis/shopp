@@ -7,7 +7,7 @@ class CollectionDevAPITests extends ShoppTestCase {
 	static $category;
 
 	static function setUpBeforeClass () {
-		if ( ! ShoppStorefront() ) ShoppStorefront(new Storefront());
+		if ( ! ShoppStorefront() ) ShoppStorefront(new ShoppStorefront());
 
 		$starfleet = shopp_add_product_tag('Starfleet');
 		$federation = shopp_add_product_tag('Federation');

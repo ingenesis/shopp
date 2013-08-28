@@ -1,6 +1,6 @@
 <?php
 /**
- * Storefront
+ * ShoppStorefront
  *
  * Flow controller for the front-end shopping interfaces
  *
@@ -15,14 +15,14 @@
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 /**
- * Storefront
+ * ShoppStorefront
  *
  * @author Jonathan Davis
  * @since 1.1
  * @package shopp
  * @subpackage storefront
  **/
-class Storefront extends FlowController {
+class ShoppStorefront extends FlowController {
 
 	public $behaviors = array();	// Runtime JavaScript behaviors
 	public $checkout = false;		// Flags when the checkout form is being processed
@@ -1043,7 +1043,7 @@ class Storefront extends FlowController {
 
 	public function autowrap ( string $content ) {
 		if ( ! in_array(get_the_ID(), $this->shortcoded) ) return $content;
-		return Storefront::wrapper($content);
+		return ShoppStorefront::wrapper($content);
 	}
 
 	/**
@@ -1104,4 +1104,4 @@ class Storefront extends FlowController {
 		return apply_filters('shopp_storefront_errors', $content);
 	}
 
-} // END class Storefront
+} // END class ShoppStorefront

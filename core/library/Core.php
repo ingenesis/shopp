@@ -1595,10 +1595,10 @@ abstract class ShoppCore {
 	/**
 	 * Wraps mark-up in a #shopp container, if needed
 	 *
-	 * @deprecated Use Storefront::wrapper() instead
+	 * @deprecated Use ShoppStorefront::wrapper() instead
 	 **/
 	public static function div ($string) {
-		return Storefront::wrapper($string);
+		return ShoppStorefront::wrapper($string);
 	}
 
 	public static function daytimes () {
@@ -1739,7 +1739,7 @@ abstract class ShoppCore {
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.0
-	 * @deprecated Functionality moved to the Storefront
+	 * @deprecated Functionality moved to the ShoppStorefront
 	 *
 	 * @param array $data The data to populate the RSS feed with
 	 * @return string The RSS markup

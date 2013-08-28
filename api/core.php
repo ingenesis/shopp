@@ -292,7 +292,7 @@ function is_shopp_search ( $wp_query = false ) {
  * @author Jonathan Davis, John Dillick
  * @since 1.0
  *
- * @param string $page (optional) System page name ID for the correct Storefront page {@see ShoppPages class}
+ * @param string $page (optional) System page name ID for the correct ShoppStorefront page {@see ShoppPages class}
  * @param WP_Query $wp_query (optional) will use the global wp_query by default if false, or the provided WP_Query object
  * @return boolean
  **/
@@ -324,7 +324,7 @@ function is_shopp_page ( $page = false, $wp_query = false ) {
  * @since 1.2.1
  *
  * @param WP_Query $wp_query (optional) will use the global wp_query by default if false, or the WP_Query object to evaluation
- * @param string $page (optional) System page name ID for the correct Storefront page {@see ShoppPages class}
+ * @param string $page (optional) System page name ID for the correct ShoppStorefront page {@see ShoppPages class}
  * @return bool
  **/
 function is_shopp_query ( $wp_query = false, $page = false ) {

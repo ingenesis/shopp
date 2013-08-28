@@ -343,7 +343,7 @@ class ShoppAccountPage extends ShoppPage {
 
 		ob_start();
 		if ( apply_filters('shopp_show_account_errors', true) && ShoppErrors()->exist(SHOPP_AUTH_ERR) )
-			echo Storefront::errors(array('account-errors.php', 'errors.php'));
+			echo ShoppStorefront::errors(array('account-errors.php', 'errors.php'));
 		locate_shopp_template($templates, true);
 		$content = ob_get_contents();
 		ob_end_clean();
@@ -520,7 +520,7 @@ class ShoppCartPage extends ShoppPage {
 		ob_start();
 
 		if ( ShoppErrors()->exist(SHOPP_COMM_ERR) )
-			echo Storefront::errors();
+			echo ShoppStorefront::errors();
 
 		locate_shopp_template(array('cart.php'), true);
 		$content = ob_get_contents();
@@ -569,7 +569,7 @@ class ShoppCheckoutPage extends ShoppPage {
 		ob_start();
 		$Errors = ShoppErrorStorefrontNotices();
 		if ( $Errors->exist() )
-			echo Storefront::errors();
+			echo ShoppStorefront::errors();
 
 		ShoppStorefront()->checkout = true;
 		locate_shopp_template(array('checkout.php'), true);
@@ -627,7 +627,7 @@ class ShoppConfirmPage extends ShoppPage {
 		ob_start();
 		ShoppStorefront()->_confirm_page_content = true;
 		if ( $Errors->exist(SHOPP_COMM_ERR) )
-			echo Storefront::errors();
+			echo ShoppStorefront::errors();
 
 		locate_shopp_template(array('confirm.php'), true);
 		$content = ob_get_contents();
@@ -765,7 +765,7 @@ class ShoppProductPage extends ShoppPage {
 		locate_shopp_template($templates, true);
 		$content = ob_get_contents();
 		ob_end_clean();
-		return Storefront::wrapper($content);
+		return ShoppStorefront::wrapper($content);
 	}
 
 }

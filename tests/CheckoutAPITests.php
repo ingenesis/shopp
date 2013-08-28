@@ -11,7 +11,7 @@ class CheckoutAPITests extends ShoppTestCase {
 
 	static function setUpBeforeClass () {
 		$Shopp = Shopp::object();
-		$Shopp->Flow->handler('Storefront');
+		$Shopp->Flow->handler('ShoppStorefront');
 
 		$args = array(
 			'name' => 'USS Enterprise',

@@ -30,7 +30,7 @@ class CatalogAPITests extends ShoppTestCase {
 	static function setUpBeforeClass () {
 
 		$Shopp = Shopp::object();
-		$Shopp->Flow->handler('Storefront');
+		$Shopp->Flow->handler('ShoppStorefront');
 
 		$Product = shopp_add_product($product);
 		$category = shopp_add_product_category('Battle Cruiser');
@@ -142,7 +142,7 @@ class CatalogAPITests extends ShoppTestCase {
 	}
 
 	function test_catalog_collections () {
-		$Storefront = new Storefront();
+		$Storefront = new ShoppStorefront();
 		ob_start();
 		shopp('catalog','catalog-products','show=3');
 		$actual = ob_get_contents();

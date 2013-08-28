@@ -201,7 +201,7 @@ class Shopp extends ShoppCore {
 	}
 
 	/**
-	 * Sets up permalink handling for Storefront pages
+	 * Sets up permalink handling for ShoppStorefront pages
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.2

@@ -21,7 +21,7 @@ class ProductAPITests extends ShoppTestCase {
 		// $this->_set_setting('taxrates',shopp_setting('taxrates'));
 
 		$Shopp = Shopp::object();
-		$Shopp->Flow->Controller = new Storefront();
+		$Shopp->Flow->Controller = new ShoppStorefront();
 
 		self::$category = $Uniforms = shopp_add_product_category('Uniforms');
 		$CommandDivision = shopp_add_product_category('Command Division', '', $Uniforms);

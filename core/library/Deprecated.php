@@ -47,3 +47,7 @@ if ( ! class_exists('Promotion', false) ) {
 if ( ! class_exists('Purchase', false) ) {
 	class Purchase extends ShoppPurchase {}
 }
+
+if ( ! class_exists('Storefront', false) ) {
+	class Storefront extends ShoppStorefront {}
+}

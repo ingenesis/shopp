@@ -677,7 +677,7 @@ class ShoppAdmin extends FlowController {
 	 **/
 	public function navmenus () {
 		if (isset($_REQUEST['add-shopp-menu-item']) && isset($_REQUEST['menu-item'])) {
-			// $pages = Storefront::pages_settings();
+			// $pages = ShoppStorefront::pages_settings();
 
 			$nav_menu_selected_id = isset( $_REQUEST['menu'] ) ? (int) $_REQUEST['menu'] : 0;
 
