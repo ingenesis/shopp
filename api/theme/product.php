@@ -313,9 +313,10 @@ class ShoppProductThemeAPI implements ShoppAPI {
 				}
 
 				$markup[] = '</select>';
+
+				if ( ! empty($after_menu) ) $markup[] = $after_menu;
 			}
 
-			if ( ! empty($after_menu) ) $markup[] = $after_menu;
 		}
 
 
