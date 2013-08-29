@@ -3,22 +3,21 @@
  * Test Mode
  *
  * @author Jonathan Davis
- * @version 1.2
  * @copyright Ingenesis Limited, July 2011
+ * @package shopp
+ * @version 1.2
  * @since 1.1
- * @package shopp/gateway
- * @uses TestMode
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class TestMode extends GatewayFramework {
+class ShoppGatewayTestMode extends GatewayFramework implements GatewayModule {
 
 	public $secure = false;							// SSL not required
 
 	public $refunds = true;
 	public $captures = true;
-	public $cards = array("visa","mc","disc","amex");	// Support cards
+	public $cards = array('visa', 'mc', 'disc', 'amex');	// Support cards
 
 	/**
 	 * Setup the TestMode gateway
@@ -30,17 +29,18 @@ class TestMode extends GatewayFramework {
 	 **/
 	public function __construct () {
 		parent::__construct();
-		$this->setup('cards','error');
+		$this->setup('cards', 'error');
 
 		// Autoset useable payment cards
 		$this->settings['cards'] = array();
-		foreach ($this->cards as $card)	$this->settings['cards'][] = $card->symbol;
+		foreach ( $this->cards as $card )
+			$this->settings['cards'][] = $card->symbol;
 
-		add_action('shopp_testmode_sale',array(&$this,'sale'));
-		add_action('shopp_testmode_auth',array(&$this,'auth'));
-		add_action('shopp_testmode_capture',array(&$this,'capture'));
-		add_action('shopp_testmode_refund',array(&$this,'refund'));
-		add_action('shopp_testmode_void',array(&$this,'void'));
+		add_action('shopp_testmode_sale', array($this, 'sale'));
+		add_action('shopp_testmode_auth', array($this, 'auth'));
+		add_action('shopp_testmode_capture', array($this, 'capture'));
+		add_action('shopp_testmode_refund', array($this, 'refund'));
+		add_action('shopp_testmode_void', array($this, 'void'));
 	}
 
 	/**
@@ -54,47 +54,47 @@ class TestMode extends GatewayFramework {
 	public function process () {
 		// If the error option is checked, always generate an error
 		if (Shopp::str_true($this->settings['error']))
-			return new ShoppError(__("This is an example error message. Disable the 'always show an error' setting to stop displaying this error.","Shopp"),'test_mode_error',SHOPP_TRXN_ERR);
+			return new ShoppError(__("This is an example error message. Disable the 'always show an error' setting to stop displaying this error.", "Shopp"), 'test_mode_error', SHOPP_TRXN_ERR);
 
 		// Set the transaction data for the order
-		$this->Order->transaction($this->txnid(),'CHARGED');
+		$this->Order->transaction($this->txnid(), 'CHARGED');
 		return true;
 	}
 
-	public function sale (OrderEventMessage $Event) {
-		$this->handler('authed',$Event);
-		$this->handler('captured',$Event);
+	public function sale ( OrderEventMessage $Event ) {
+		$this->handler('authed', $Event);
+		$this->handler('captured', $Event);
 	}
 
-	public function auth (OrderEventMessage $Event) {
-		$this->handler('authed',$Event);
+	public function auth ( OrderEventMessage $Event ) {
+		$this->handler('authed', $Event);
 	}
 
-	public function capture (OrderEventMessage $Event) {
-		$this->handler('captured',$Event);
+	public function capture ( OrderEventMessage $Event ) {
+		$this->handler('captured', $Event);
 	}
 
-	public function refund (OrderEventMessage $Event) {
-		$this->handler('refunded',$Event);
+	public function refund ( OrderEventMessage $Event ) {
+		$this->handler('refunded', $Event);
 	}
 
-	public function void (OrderEventMessage $Event) {
-		$this->handler('voided',$Event);
+	public function void ( OrderEventMessage $Event ) {
+		$this->handler('voided', $Event);
 	}
 
-	public function handler ($type,$Event) {
-		if(!isset($Event->txnid)) $Event->txnid = time();
-		if (Shopp::str_true($this->settings['error'])) {
-			new ShoppError(__("This is an example error message. Disable the 'always show an error' setting to stop displaying this error.",'Shopp'),'testmode_error',SHOPP_TRXN_ERR);
-			return shopp_add_order_event($Event->order,$Event->type.'-fail',array(
+	public function handler ( $type, $Event ) {
+		if( ! isset($Event->txnid) ) $Event->txnid = time();
+		if ( Shopp::str_true($this->settings['error']) ) {
+			new ShoppError(__("This is an example error message. Disable the 'always show an error' setting to stop displaying this error.", 'Shopp'), 'testmode_error', SHOPP_TRXN_ERR);
+			return shopp_add_order_event($Event->order, $Event->type . '-fail', array(
 				'amount' => $Event->amount,
 				'error' => 0,
-				'message' => __("This is an example error message. Disable the 'always show an error' setting to stop displaying this error.",'Shopp'),
+				'message' => __("This is an example error message. Disable the 'always show an error' setting to stop displaying this error.", 'Shopp'),
 				'gateway' => $this->module
 			));
 		}
 
-		shopp_add_order_event($Event->order,$type,array(
+		shopp_add_order_event($Event->order, $type, array(
 			'txnid' => $Event->txnid,
 			'txnorigin' => $Event->txnid,
 			'fees' => 0,
@@ -118,7 +118,7 @@ class TestMode extends GatewayFramework {
 	 * @return void
 	 **/
 	public function settings () {
-		$this->ui->checkbox(0,array(
+		$this->ui->checkbox(0, array(
 			'name' => 'error',
 			'label' => 'Always show an error',
 			'checked' => $this->settings['error']

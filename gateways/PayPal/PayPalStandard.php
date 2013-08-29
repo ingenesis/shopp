@@ -2,14 +2,11 @@
 /**
  * PayPal Standard
  *
- *
- *
  * @author Jonathan Davis, John Dillick
  * @copyright Ingenesis Limited, 27 May, 2009
+ * @package shopp
  * @version 1.2.2
  * @since 1.2
- * @package shopp/gateway
- * @uses ShoppGatewayPayPalStandard
  *
  **/
 
@@ -59,7 +56,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	public $reversals = array();
 	public $txn_types = array();
 
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 
 		$this->setup('account','pdtverify','pdttoken','testmode');
@@ -145,7 +142,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return void
 	 **/
-	function actions () {
+	public function actions () {
 		add_action('shopp_order_confirm_needed', array($this,'force_confirm'),9); // intercept checkout request, force confirm
 		add_action('shopp_init_confirmation',array($this,'confirmation')); // replace confirm order page with paypal form
 		add_action('template_redirect',array($this,'returned')); // wipes shopping session on thanks page load
@@ -164,7 +161,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return void
 	 **/
-	function sale ( $Event ) {
+	public function sale ( $Event ) {
 		// check payer_status
 		if ( isset($this->response->payer_status) ) {
 			shopp_add_order_event( $Event->order, 'review', array(
@@ -226,7 +223,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return void
 	 **/
-	function captured ( $Purchase ) {
+	public function captured ( $Purchase ) {
 		$Purchase->load_events();
 		if ( ! ($Purchase->balance > 0) ) return; // no more to capture
 
@@ -261,7 +258,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return void
 	 **/
-	function refunded ( $Purchase ) {
+	public function refunded ( $Purchase ) {
 		if ( $Purchase->refunded == $Purchase->total ) return; // no more refunds
 
 		// check for reason_code
@@ -285,7 +282,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	}
 
 
-	function voided ( $Purchase ) {
+	public function voided ( $Purchase ) {
 		if ( $Purchase->isvoid() ) return; // already voided
 
 		shopp_add_order_event($Purchase->id, 'voided', array(
@@ -305,7 +302,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return void
 	 **/
-	function confirmation () {
+	public function confirmation () {
 		add_filter('shopp_confirm_url',array($this,'url'));
 		add_filter('shopp_confirm_form',array($this,'form'));
 		add_filter('shopp_themeapi_checkout_confirmbutton',array($this,'confirm'),10,3); // replace submit button with paypal image
@@ -321,7 +318,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return void
 	 **/
-	function force_confirm ( $confirm ) {
+	public function force_confirm ( $confirm ) {
 		$this->Order->Billing->cardtype = "PayPal";
 		$this->Order->confirm = true;
 		return true;
@@ -337,7 +334,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return array The modified list of button tags
 	 **/
-	function submit ($tag=false,$options=array(),$attrs=array()) {
+	public function submit ($tag=false,$options=array(),$attrs=array()) {
 		$tag[$this->settings['label']] = '<input type="image" name="process" src="'.$this->buttonurl.'" class="checkout-button" '.inputattrs($options,$attrs).' />';
 		return $tag;
 	}
@@ -350,7 +347,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return string
 	 **/
-	function confirm ($tag=false,$options=array(),$attrs=array()) {
+	public function confirm ($tag=false,$options=array(),$attrs=array()) {
 		return join('', $this->submit(array(),$options,$attrs));
 	}
 
@@ -364,7 +361,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return string checkout url
 	 **/
-	function url ($url=false) {
+	public function url ($url=false) {
 		if ($this->settings['testmode'] == "on") return $this->sandboxurl;
 		else return $this->checkouturl;
 	}
@@ -379,7 +376,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return string PayPal cart form
 	 **/
-	function sendcart () {
+	public function sendcart () {
 		$result = '<form action="'.$this->url().'" method="POST">';
 		$result .= $this->form('',array('address_override'=>0));
 		$result .= $this->submit();
@@ -397,7 +394,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return string PayPal cart form contents
 	 **/
-	function form ($form,$options=array()) {
+	public function form ($form,$options=array()) {
 		$Shopping = ShoppShopping();
 		$Order = ShoppOrder();
 		$Customer = $Order->Customer;
@@ -558,7 +555,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return bool valid order
 	 **/
-	function pdtpassthru ($valid) {
+	public function pdtpassthru ($valid) {
 		if ($valid) return $valid;
 		// If the order data validation fails, passthru to the thank you page
 		shopp_redirect( Shopp::url(false,'thanks') );
@@ -574,7 +571,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return void
 	 **/
-	function returned () {
+	public function returned () {
 		if ( ! is_thanks_page() ) return;
 
 		// Session has already been reset after a processed transaction
@@ -597,7 +594,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return void
 	 **/
-	function remote () {
+	public function remote () {
 		if ( 'PPS' != $_REQUEST['rmtpay'] || ! isset($_REQUEST['tx']) ) return; // not PDT message
 
 		shopp_debug('Processing PDT packet: '._object_r($_REQUEST));
@@ -679,7 +676,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return void
 	 **/
-	function ipn () {
+	public function ipn () {
 
 		// Not an IPN for PPS
 		if ( 'PPS' != $_REQUEST['_txnupdate'] ) return;
@@ -815,7 +812,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return bool is_robot() override on empty user agent
 	 **/
-	function is_robot_override ( $is_robot ) {
+	public function is_robot_override ( $is_robot ) {
 		if ( ! isset($_SERVER['HTTP_USER_AGENT']) ) return false;
 		return $is_robot;
 	}
@@ -828,7 +825,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return void
 	 **/
-	function ipnupdates () {
+	public function ipnupdates () {
 		$Order = $this->Order;
 		$data = stripslashes_deep($_POST);
 
@@ -870,7 +867,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return boolean True if the IPN message is authentic, false otherwise
 	 **/
-	function verifyipn () {
+	public function verifyipn () {
 
 		if ( Shopp::str_true($this->settings['testmode']) ) return true;
 
@@ -894,7 +891,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return boolean True if verified, false otherwise
 	 **/
-	function verifypdt () {
+	public function verifypdt () {
 		if ($this->settings['pdtverify'] != "on") return false;
 		if ($this->settings['testmode'] == "on") return "VERIFIED";
 		$_ = array();
@@ -915,7 +912,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return ShoppError The Shopp error message object of the PayPal error message
 	 **/
-	function error () {
+	public function error () {
 		if (!empty($this->Response)) {
 
 			$message = join("; ",$this->Response->l_longmessage);
@@ -933,7 +930,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return string The response string from the request
 	 **/
-	function send ($data, $url=false, $deprecated=false, $options = array()) {
+	public function send ($data, $url=false, $deprecated=false, $options = array()) {
 		return parent::send($data,$this->url());
 	}
 
@@ -945,7 +942,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return void
 	 **/
-	function settings () {
+	public function settings () {
 
 		$this->ui->text(0,array(
 			'name' => 'account',
@@ -986,7 +983,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 *
 	 * @return string JavaScript behaviors to add to the payment settings interface
 	 **/
-	function tokenjs () {
+	public function tokenjs () {
 		ob_start(); ?>
 jQuery(document).bind('paypalstandardSettings',function() {
 	var $ = jqnc(),p = '#paypalstandard-pdt',v = $(p+'verify'),t = $(p+'token');
@@ -997,6 +994,4 @@ jQuery(document).bind('paypalstandardSettings',function() {
 		return $script;
 	}
 
-} // END class PayPalStandard
-
-?>
+}

@@ -4,10 +4,9 @@
  *
  * @author Jonathan Davis
  * @copyright Ingenesis Limited, 27 May, 2009
+ * @package shopp
  * @version 1.3
  * @since 1.1
- * @package shopp/gateway
- * @uses ShoppGateway2Checkout
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access

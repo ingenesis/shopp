@@ -5,17 +5,16 @@
  * Provides offline payment handling
  *
  * @author Jonathan Davis
- * @version 1.3
  * @copyright Ingenesis Limited, April, 2008
- * @package Shopp
+ * @package shopp
+ * @version 1.3
  * @since 1.3
- * @subpackage OfflinePayment
  *
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class OfflinePayment extends GatewayFramework implements GatewayModule {
+class ShoppGatewayOfflinePayment extends GatewayFramework implements GatewayModule {
 
 	public $secure = false;		// SSL not required
 	public $authonly = true;	// Auth only transactions

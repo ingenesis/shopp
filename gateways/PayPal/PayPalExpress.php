@@ -1,47 +1,45 @@
 <?php
 /**
  * PayPal Express
- * @class PayPalExpress
  *
  * @author Jonathan Davis
- * @version 1.2
  * @copyright Ingenesis Limited, 26 August, 2008
  * @package shopp
+ * @version 1.2
  * @since 1.2
- * @subpackage PayPalExpress
  *
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class PayPalExpress extends GatewayFramework implements GatewayModule {
+class ShoppGatewayPayPalExpress extends GatewayFramework implements GatewayModule {
 
 	// Settings
-	var $secure = false;
-	var $refunds = true;
-	var $authonly = true;
+	public $secure = false;
+	public $refunds = true;
+	public $authonly = true;
 
 	// URLs
-	var $buttonurl = 'http://www.paypal.com/%s/i/btn/btn_xpressCheckout.gif';
-	var $sandboxurl = 'https://www.sandbox.paypal.com/%s/cgi-bin/webscr?cmd=_express-checkout';
-	var $liveurl = 'https://www.paypal.com/%s/cgi-bin/webscr?cmd=_express-checkout';
-	var $sandboxapi = 'https://api-3t.sandbox.paypal.com/nvp';
-	var $liveapi = 'https://api-3t.paypal.com/nvp';
+	public $buttonurl = 'http://www.paypal.com/%s/i/btn/btn_xpressCheckout.gif';
+	public $sandboxurl = 'https://www.sandbox.paypal.com/%s/cgi-bin/webscr?cmd=_express-checkout';
+	public $liveurl = 'https://www.paypal.com/%s/cgi-bin/webscr?cmd=_express-checkout';
+	public $sandboxapi = 'https://api-3t.sandbox.paypal.com/nvp';
+	public $liveapi = 'https://api-3t.paypal.com/nvp';
 
 	// Internals
-	var $baseop = array();
-	var $currencies = array("USD", "AUD", "BRL", "CAD", "CZK", "DKK", "EUR", "HKD", "HUF",
+	public $baseop = array();
+	public $currencies = array("USD", "AUD", "BRL", "CAD", "CZK", "DKK", "EUR", "HKD", "HUF",
 	 						"ILS", "JPY", "MYR", "MXN", "NOK", "NZD", "PHP", "PLN", "GBP",
 	 						"SGD", "SEK", "CHF", "TWD", "THB");
 
-	var $locales = array("AT" => "de_DE", "AU" => "en_AU", "BE" => "en_US", "CA" => "en_US",
+	public $locales = array("AT" => "de_DE", "AU" => "en_AU", "BE" => "en_US", "CA" => "en_US",
 							"CH" => "de_DE", "CN" => "zh_CN", "DE" => "de_DE", "ES" => "es_ES",
 							"FR" => "fr_FR", "GB" => "en_GB", "GF" => "fr_FR", "GI" => "en_US",
 							"GP" => "fr_FR", "IE" => "en_US", "IT" => "it_IT", "JP" => "ja_JP",
 							"MQ" => "fr_FR", "NL" => "nl_NL", "PL" => "pl_PL", "RE" => "fr_FR",
 							"US" => "en_US");
 
-	var $status = array('Pending' => 'authed',
+	public $status = array('Pending' => 'authed',
 						'Processed' => 'authed',
 						'Canceled-Reversal' => 'captured',
 						'Completed' => 'captured',
@@ -52,9 +50,9 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 						'Failed' => 'voided',
 						'Voided' => 'voided');
 
-	var $shiprequired = array('en_GB');
+	public $shiprequired = array('en_GB');
 
-	function __construct () {
+	public function __construct () {
 		parent::__construct();
 
 		$this->setup('username','password','signature','testmode');
@@ -82,7 +80,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 		add_action('shopp_paypalexpress_refund', array($this, 'refund'));
 	}
 
-	function actions () {
+	public function actions () {
 		add_action('shopp_checkout_processed', array($this, 'checkout'));
 		add_action('shopp_init_confirmation', array($this, 'GetExpressCheckoutDetails'));
 		add_action('shopp_remote_payment', array($this, 'returned'));
@@ -97,7 +95,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return array List of checkout buttons
 	 **/
-	function submit ($tag=false,$options=array(),$attrs=array()) {
+	public function submit ($tag=false,$options=array(),$attrs=array()) {
 		$tag[$this->settings['label']] = '<input type="image" name="process" src="'.$this->buttonurl.'" class="checkout-button" '.inputattrs($options,$attrs).' />';
 		return $tag;
 	}
@@ -110,7 +108,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return string The PayPal payment URL
 	 **/
-	function url ($url=false) {
+	public function url ($url=false) {
 		if ( Shopp::str_true($this->settings['testmode']) ) return $this->sandboxurl;
 		else return $this->liveurl;
 	}
@@ -123,7 +121,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return string The PayPal API server URL
 	 **/
-	function apiurl ($url=false) {
+	public function apiurl ($url=false) {
 		if ( Shopp::str_true($this->settings['testmode']) ) return $this->sandboxapi;
 		else return $this->liveapi;
 	}
@@ -139,7 +137,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return void
 	 **/
-	function returned () {
+	public function returned () {
 		$Order = ShoppOrder();
 
 		if ( ! empty($_GET['token']) ) $Order->token = $_GET['token'];
@@ -156,7 +154,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return void
 	 **/
-	function checkout () {
+	public function checkout () {
 		// because shopp_process_free_order occurs after shopp_checkout_processed
 		// we do not want to redirect if the order is free at shopp_checkout_processed
 		if ( $this->Order->Cart->orderisfree() ) return;
@@ -174,7 +172,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return string The generated Express Checkout form
 	 **/
-	function cartcheckout () {
+	public function cartcheckout () {
 
 		$response = $this->SetExpressCheckout();
 
@@ -196,7 +194,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 * @param ShoppOrderEvent $Event The auth order event
 	 * @return void
 	 **/
-	function auth ( $Event ) {
+	public function auth ( $Event ) {
 
 		$response = $this->DoExpressCheckoutPayment();
 		$status = $this->status[ $response->paymentinfo_0_paymentstatus ];
@@ -230,7 +228,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 * @param ShoppOrderEvent $Event The refund order event
 	 * @return void
 	 **/
-	function refund ( $Event ) {
+	public function refund ( $Event ) {
 
 		$response = $this->RefundTransaction($Event->order,$Event->amount,$Event->reason);
 
@@ -259,7 +257,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return array List of credentials for the request
 	 **/
-	function RequestSignature () {
+	public function RequestSignature () {
 		$_ = array();
 
 		$_['USER'] 					= $this->settings['username'];
@@ -278,7 +276,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return object The API response or ShoppError
 	 **/
-	function SetExpressCheckout () {
+	public function SetExpressCheckout () {
 		$_ = $this->RequestSignature();
 
 		// Options
@@ -323,7 +321,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return void
 	 **/
-	function GetExpressCheckoutDetails () {
+	public function GetExpressCheckoutDetails () {
 		$Order = ShoppOrder();
 
 		if (!isset($Order->token) || !isset($Order->payerid)) return false;
@@ -387,7 +385,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return Object The response object on success (redirects on error)
 	 **/
-	function DoExpressCheckoutPayment () {
+	public function DoExpressCheckoutPayment () {
 		$Order = ShoppOrder();
 		if ( ! isset($Order->token) || ! isset($Order->payerid) ) return false;
 
@@ -433,7 +431,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 * @param string $reason The reason note from the refund event
 	 * @return Object The successful response object or a ShoppError
 	 **/
-	function RefundTransaction ( $order, $amount, $reason = '' ) {
+	public function RefundTransaction ( $order, $amount, $reason = '' ) {
 		$Purchase = shopp_order($order);
 
 		$_ = $this->RequestSignature();
@@ -468,7 +466,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return array The list of order detail fields
 	 **/
-	function PaymentRequest () {
+	public function PaymentRequest () {
 		// Localize Order objects
 		$Order = ShoppOrder();
 		$Customer = $Order->Customer;
@@ -558,7 +556,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return void
 	 **/
-	function ipn () {
+	public function ipn () {
 		shopp_debug("IPN message: "._object_r($_POST));
 
 		// Cancel processing if this is not a PayPal Website Payments Standard/Express Checkout IPN
@@ -622,7 +620,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return boolean True for an authentic message, false otherwise
 	 **/
-	function verifyipn () {
+	public function verifyipn () {
 		if ( Shopp::str_true($this->settings['testmode']) ) return true;
 
 		$_ = array();
@@ -644,7 +642,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return Object The response from the server or a ShoppError
 	 **/
-	function send ($message) {
+	public function send ($message) {
 		shopp_debug('message: '._object_r($message));
 		$response = parent::send($message,$this->apiurl());
 
@@ -663,7 +661,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 * @param string $buffer The raw response string
 	 * @return Object The standard class object containing response data
 	 **/
-	function response ($buffer) {
+	public function response ($buffer) {
 		$_ = new stdClass();
 		$_->debuglog = '';
 
@@ -718,7 +716,7 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 	 *
 	 * @return void
 	 **/
-	function settings () {
+	public function settings () {
 		$this->ui->text(0,array(
 			'name' => 'username',
 			'size' => 30,
@@ -743,10 +741,8 @@ class PayPalExpress extends GatewayFramework implements GatewayModule {
 		$this->ui->checkbox(0,array(
 			'name' => 'testmode',
 			'checked' => $this->settings['testmode'],
-			'label' => sprintf(__('Use the %s','Shopp'),'<a href="http://docs.shopplugin.net/PayPal_Sandbox" target="shoppdocs">PayPal Sandbox</a>')
+			'label' => sprintf(__('Use the %s','Shopp'),'<a href="https://shopplugin.net/PayPal_Sandbox" target="shoppdocs">PayPal Sandbox</a>')
 		));
 	}
 
-} // END class PayPalExpress
-
-?>
+}
