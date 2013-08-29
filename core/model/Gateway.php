@@ -513,6 +513,7 @@ class GatewayModules extends ModuleLoader {
 	 * @return void
 	 **/
 	public function settings () {
+		$this->recache();
 		$this->load(true);
 	}
 

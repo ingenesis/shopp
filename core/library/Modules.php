@@ -161,6 +161,18 @@ abstract class ModuleLoader {
 		return ( 1 <= count($matches) );
 	}
 
+	public function recache () {
+
+		$cachekey = sanitize_key($this->interface);
+		wp_cache_delete($cachekey, 'shopp-addons');
+
+		$legacy_cachekey = sanitize_key($this->interface);
+		wp_cache_delete($legacy_cachekey, 'shopp-legacy-addons');
+
+		$this->installed();
+
+	}
+
 	/**
 	 * Gets a ModuleFile entry
 	 *
@@ -270,7 +282,6 @@ class ModuleFile {
 					$this->$property = $value;
 			}
 
-
 		}
 
 		if ( $this->valid() !== true ) return;
@@ -340,15 +351,18 @@ class ModuleFile {
 		$f = @fopen($file, 'r');
 		if ( ! $f ) return false;
 
-		$meta = false;
+		$docblock = false;
 		$string = '';
 
+		$lines = 0;
 		while ( ! feof($f) ) {
-			$buffer = fgets($f, 80);
-			if ( false !== strpos($buffer, '/*') ) $meta = true;
-			if ( $meta ) $string .= $buffer;
-			if ( false !== strpos($buffer, 'class ') && false !== strpos($buffer, ' implements ')) break;
+			$buffer = fgets($f, 128);
+			if ( false !== strpos($buffer, '/*') ) $docblock = true;
+			if ( $docblock ) $string .= $buffer;
+			if ( false !== strpos($buffer, 'class ') && false !== strpos($buffer, '{') ) break; // Seek up to the first class declaration
+			if ( $lines++ > 64 ) return '';  // If no classes are found within the first 64 lines, it's not a Shopp addon
 		}
+		fclose($f);
 
 		return $string;
 	}
