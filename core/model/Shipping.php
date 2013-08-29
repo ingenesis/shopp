@@ -137,7 +137,7 @@ class ShippingModules extends ModuleLoader {
 	 *
 	 * @return void
 	 **/
-	public function &get ($module) {
+	public function &get ( $module ) {
 		if (empty($this->active)) $this->settings();
 		if (!isset($this->active[$module])) return false;
 		return $this->active[$module];
@@ -203,7 +203,7 @@ interface ShippingModule {
 	 *
 	 * @return boolean
 	 **/
-	public function activated();
+	public function activated ();
 
 	/**
 	 * Used to initialize/reset shipping module calculation properties
@@ -229,7 +229,7 @@ interface ShippingModule {
 	 * @param Item $Item The cart Item object
 	 * @return void
 	 **/
-	public function calcitem($id,$Item);
+	public function calcitem ( $id, $Item );
 
 	/**
 	 * Used to calculate aggregate shipping amounts
@@ -243,7 +243,7 @@ interface ShippingModule {
 	 * @param Order $Order A reference to the current Order object
 	 * @return array The modified $options list
 	 **/
-	public function calculate(&$options,$Order);
+	public function calculate ( &$options, $Order );
 
 } // END interface ShippingModule
 

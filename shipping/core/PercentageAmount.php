@@ -5,11 +5,10 @@
  * Provides shipping calculations based on a percentage of order amount ranges
  *
  * @author Jonathan Davis
- * @version 1.2
  * @copyright Ingenesis Limited, 12 July, 2011
  * @package shopp
+ * @version 1.2
  * @since 1.2
- * @subpackage PercentageAmount
  *
  **/
 
@@ -17,26 +16,26 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class PercentageAmount extends ShippingFramework implements ShippingModule {
 
-	function init () { /* Not implemented */ }
-	function calcitem ($id,$Item) { /* Not implemented */ }
+	public function init () { /* Not implemented */ }
+	public function calcitem ( $id, $Item ) { /* Not implemented */ }
 
-	function methods () {
+	public function methods () {
 		return __('Percentage Rate Tiers','Shopp');
 	}
 
-	function calculate (&$options,$Order) {
+	public function calculate ( &$options, $Order ) {
 
-		foreach ($this->methods as $slug => $method) {
+		foreach ( $this->methods as $slug => $method ) {
 
 			$tiers = $this->tablerate($method['table']);
-			if ($tiers === false) continue; // Skip methods that don't match at all
+			if ( false === $tiers ) continue; // Skip methods that don't match at all
 
 			$amount = 0;
 			$tiers = array_reverse($tiers);
-			foreach ($tiers as $tier) {
+			foreach ( $tiers as $tier ) {
 				extract($tier);
-				$amount = (Shopp::floatval($rate)/100)* $Order->Cart->Totals->subtotal;
-				if (Shopp::floatval($Order->Cart->Totals->subtotal) >= Shopp::floatval($threshold)) break;
+				$amount = (Shopp::floatval($rate) / 100) * $Order->Cart->total('order');
+				if ( $Order->Cart->total('order') >= Shopp::floatval($threshold) ) break;
 			}
 
 			$rate = array(
@@ -47,17 +46,17 @@ class PercentageAmount extends ShippingFramework implements ShippingModule {
 				'items' => false
 			);
 
-			$options[$slug] = new ShippingOption($rate);
+			$options[ $slug ] = new ShippingOption($rate);
 
 		}
 
 		return $options;
 	}
 
-	function settings () {
+	public function settings () {
 
 		$this->ui->tablerates(0,array(
-			'unit' => array(__('Order Subtotal','Shopp')),
+			'unit' => array(Shopp::__('Order Subtotal')),
 			'table' => $this->settings['table'],
 			'threshold_class' => 'money',
 			'rate_class' => 'percentage'

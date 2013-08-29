@@ -5,30 +5,30 @@
  * Provides shipping calculations based on order amount ranges
  *
  * @author Jonathan Davis
- * @version 1.2
  * @copyright Ingenesis Limited, 27 April, 2008
  * @package shopp
+ * @version 1.2
  * @since 1.2
- * @subpackage OrderAmount
+ *
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class OrderAmount extends ShippingFramework implements ShippingModule {
 
-	function init () {
+	public function init () {
 		/* Not implemented */
 	}
 
-	function calcitem ( $id, $Item ) {
+	public function calcitem ( $id, $Item ) {
 		/* Not implemented */
 	}
 
-	function methods () {
+	public function methods () {
 		return Shopp::__('Order Amount Tiers');
 	}
 
-	function calculate ( &$options, $Order ) {
+	public function calculate ( &$options, $Order ) {
 
 		foreach ($this->methods as $slug => $method) {
 
@@ -58,7 +58,7 @@ class OrderAmount extends ShippingFramework implements ShippingModule {
 		return $options;
 	}
 
-	function settings () {
+	public function settings () {
 
 		$this->ui->tablerates(0,array(
 			'unit' => array( Shopp::__('Order Amount') ),

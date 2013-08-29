@@ -5,11 +5,10 @@
  * Provides shipping calculations based on order amount tiers
  *
  * @author Jonathan Davis
- * @version 1.2
  * @copyright Ingenesis Limited, 27 April, 2008
  * @package shopp
+ * @version 1.2
  * @since 1.2
- * @subpackage OrderWeight
  *
  **/
 
@@ -17,21 +16,21 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class OrderWeight extends ShippingFramework implements ShippingModule {
 
-	var $weight = 0;
+	public $weight = 0;
 
-	function init () {
+	public function init () {
 		$this->weight = 0;
 	}
 
-	function methods () {
-		return __('Order Weight Tiers','Shopp');
+	public function methods () {
+		return Shopp::__('Order Weight Tiers');
 	}
 
-	function calcitem ($id,$Item) {
-		$this->weight += $Item->weight*$Item->quantity;
+	public function calcitem ( $id, $Item ) {
+		$this->weight += $Item->weight * $Item->quantity;
 	}
 
-	function calculate (&$options,$Order) {
+	public function calculate ( &$options, $Order ) {
 
 		foreach ($this->methods as $slug => $method) {
 
@@ -40,10 +39,10 @@ class OrderWeight extends ShippingFramework implements ShippingModule {
 
 			$amount = 0;
 			$tiers = array_reverse($tiers);
-			foreach ($tiers as $tier) {
+			foreach ( $tiers as $tier ) {
 				extract($tier);
 				$amount = Shopp::floatval($rate);			// Capture the rate amount
-				if ($this->weight >= $threshold) break;
+				if ( $this->weight >= $threshold ) break;
 			}
 
 			$rate = array(
@@ -54,16 +53,16 @@ class OrderWeight extends ShippingFramework implements ShippingModule {
 				'items' => false
 			);
 
-			$options[$slug] = new ShippingOption($rate);
+			$options[ $slug ] = new ShippingOption($rate);
 
 		}
 
 		return $options;
 	}
 
-	function settings () {
-		$this->ui->tablerates(0,array(
-			'unit' => array(__('Weight','Shopp'),shopp_setting('weight_unit')),
+	public function settings () {
+		$this->ui->tablerates(0, array(
+			'unit' => array(Shopp::__('Weight'), shopp_setting('weight_unit')),
 			'table' => $this->settings['table'],
 			'rate_class' => 'money'
 		));

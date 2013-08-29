@@ -5,11 +5,10 @@
  * Provides a free shipping rate not included in shipping estimates
  *
  * @author Jonathan Davis
- * @version 1.2
  * @copyright Ingenesis Limited, January 19, 2010
  * @package shopp
+ * @version 1.2
  * @since 1.2
- * @subpackage FreeOption
  *
  **/
 
@@ -27,8 +26,10 @@ class FreeOption extends ShippingFramework implements ShippingModule {
 	public function calculate ( &$options, $Order ) {
 
 		foreach ( $this->methods as $slug => $method ) {
+
 			$amount = $this->tablerate($method['table']);
-			if ($amount === false) continue; // Skip methods that don't match at all
+			if ( false === $amount ) continue; // Skip methods that don't match at all
+
 			$rate = array(
 				'slug' => $slug,
 				'name' => $method['label'],

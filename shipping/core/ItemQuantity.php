@@ -5,11 +5,10 @@
  * Provides shipping calculations based on the total quantity of items ordered
  *
  * @author Jonathan Davis
- * @version 1.2
  * @copyright Ingenesis Limited, 27 April, 2008
  * @package shopp
+ * @version 1.2
  * @since 1.2
- * @subpackage ItemQuantity
  *
  **/
 
@@ -19,19 +18,19 @@ class ItemQuantity extends ShippingFramework implements ShippingModule {
 
 	public $items = 0;
 
-	function methods () {
+	public function methods () {
 		return Shopp::__('Item Quantity Tiers');
 	}
 
-	function init () {
+	public function init () {
 		$this->items = 0;
 	}
 
-	function calcitem ( $id, $Item ) {
+	public function calcitem ( $id, $Item ) {
 		$this->items += $Item->quantity;
 	}
 
-	function calculate ( &$options, $Order ) {
+	public function calculate ( &$options, $Order ) {
 
 		foreach ( $this->methods as $slug => $method ) {
 
@@ -43,7 +42,7 @@ class ItemQuantity extends ShippingFramework implements ShippingModule {
 			foreach ( $tiers as $tier ) {
 				extract($tier);
 				$amount = Shopp::floatval($rate);			// Capture the rate amount
-				if ((int)$this->items >= (int)$threshold) break;
+				if ( (int)$this->items >= (int)$threshold ) break;
 			}
 
 			$rate = array(
@@ -61,7 +60,7 @@ class ItemQuantity extends ShippingFramework implements ShippingModule {
 		return $options;
 	}
 
-	function settings () {
+	public function settings () {
 		$this->ui->tablerates(0, array(
 			'unit' => array(Shopp::__('Item Quantity'), Shopp::__('items')),
 			'table' => $this->settings['table'],

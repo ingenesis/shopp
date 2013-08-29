@@ -5,11 +5,10 @@
  * Provides flat rates on entire order
  *
  * @author Jonathan Davis
- * @version 1.2
  * @copyright Ingenesis Limited, June 14, 2011
  * @package shopp
+ * @version 1.2
  * @since 1.2
- * @subpackage OrderRates
  *
  **/
 
@@ -18,19 +17,23 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 class OrderRates extends ShippingFramework implements ShippingModule {
 
 	public function methods () {
-		return __('Flat Order Rates','Shopp');
+		return Shopp::__('Flat Order Rates');
 	}
 
-	public function init () { /* Not implemented */ }
+	public function init () {
+		/* Not implemented */
+	}
 
-	public function calcitem ($id, $Item) { /* Not implemented */  }
+	public function calcitem ( $id, $Item ) {
+		/* Not implemented */
+	}
 
-	public function calculate (&$options, $Order) {
+	public function calculate ( &$options, $Order ) {
 
 		foreach ($this->methods as $slug => $method) {
 
 			$amount = $this->tablerate($method['table']);
-			if ($amount === false) continue; // Skip methods that don't match at all
+			if ( false === $amount ) continue; // Skip methods that don't match at all
 
 			$rate = array(
 				'slug' => $slug,
@@ -40,7 +43,7 @@ class OrderRates extends ShippingFramework implements ShippingModule {
 				'items' => false
 			);
 
-			$options[$slug] = new ShippingOption($rate);
+			$options[ $slug ] = new ShippingOption($rate);
 
 		}
 
@@ -49,7 +52,7 @@ class OrderRates extends ShippingFramework implements ShippingModule {
 
 	public function settings () {
 
-		$this->ui->flatrates(0,array(
+		$this->ui->flatrates(0, array(
 			'table' => $this->settings['table']
 		));
 
