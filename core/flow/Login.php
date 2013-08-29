@@ -269,8 +269,7 @@ class ShoppLogin {
 		$secure = ShoppOrder()->security();
 
 		session_commit(); // Save the session just prior to redirect
-		
-		//Changed to allow GET redirect as well as POST, allows better flexibility
+
 		if ( isset($_REQUEST['redirect']) && ! empty($_REQUEST['redirect']) ) {
 			if ( ShoppPages()->exists($_REQUEST['redirect']) ) $redirect = Shopp::url(false, $_REQUEST['redirect'], $secure);
 			else $redirect = $_REQUEST['redirect'];
@@ -278,7 +277,7 @@ class ShoppLogin {
 
 		if ( ! $redirect ) $redirect = Shopp::url(false,'account',$secure);
 
-		shopp_safe_redirect($redirect);
+		Shopp::safe_redirect($redirect);
 		exit();
 	}
 
@@ -294,4 +293,4 @@ class ShoppLogin {
 		return isset($_POST[ self::PROCESS ]);
 	}
 
-} // END class Login
+} // END class ShoppLogin
