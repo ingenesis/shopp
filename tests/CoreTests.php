@@ -365,6 +365,21 @@ class CoreTests extends ShoppTestCase {
 		$this->assertStringMatchesFormat('%Aemail-order.php', $path);
 	}
 
+	public function test_maintenance() {
+		$this->markTestIncomplete('During test execution db_version may not have been populated resulting in a fail. '
+			.'May need to forcibly set it to match sDB::$version during testing.');
+
+		$originalmode = shopp_setting('maintenance');
+
+		shopp_set_setting('maintenance', 'on');
+		$this->assertTrue(Shopp::maintenance());
+
+		shopp_set_setting('maintenance', '0');
+		$this->assertFalse(Shopp::maintenance());
+
+		shopp_set_setting('maintenance', $originalmode);
+	}
+
 	public function test_mktimestamp() {
 		$date = new DateTime('2063-04-05');
 		$mysql = $date->format('Y-m-d H:i:s');
