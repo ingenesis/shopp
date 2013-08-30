@@ -1470,9 +1470,9 @@ abstract class ShoppCore {
 	 * @param string $pkey PEM encoded RSA public key
 	 * @return string Encrypted binary data
 	 **/
-	public static function rsa_encrypt ($data, $pkey){
-		openssl_public_encrypt($data, $encrypted,$pkey);
-		return ($encrypted)?$encrypted:false;
+	public static function rsa_encrypt ( $data, $pkey ) {
+		openssl_public_encrypt($data, $encrypted, $pkey);
+		return ($encrypted) ? $encrypted : false;
 	}
 
 

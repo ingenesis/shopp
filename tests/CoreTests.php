@@ -472,4 +472,10 @@ class CoreTests extends ShoppTestCase {
 		$this->assertEquals('54.99', Shopp::roundprice('54.985', array('precision' => 2)));
 		$this->assertEquals('54.985', Shopp::roundprice('54.985', array('precision' => 3)));
 	}
+
+	public function test_rsa_encrypt() {
+		$pem = file_get_contents(SHOPP_UNITTEST_DIR . '/data/security.pem');
+		$encrypted = Shopp::rsa_encrypt('Counselor Troi is half-Betazoid.', $pem);
+		$this->assertTrue(!empty($encrypted));
+	}
 }
