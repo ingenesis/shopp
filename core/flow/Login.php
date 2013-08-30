@@ -89,7 +89,7 @@ class ShoppLogin {
 
 			// Wordpress user logged in, but Shopp customer isn't
 			if ( ! empty($user->ID) && ! $this->Customer->logged_in() ) {
-				if ( $Account = new Customer($user->ID, 'wpuser') ) {
+				if ( $Account = new ShoppCustomer($user->ID, 'wpuser') ) {
 					$this->login($Account);
 					$this->Customer->wpuser = $user->ID;
 					return;
@@ -134,7 +134,7 @@ class ShoppLogin {
 
 		switch(shopp_setting('account_system')) {
 			case 'shopp':
-				$Account = new Customer($id,'email');
+				$Account = new ShoppCustomer($id,'email');
 
 				if (empty($Account)) {
 					new ShoppError( $errors['invalid_email'],'invalid_account',SHOPP_AUTH_ERR );
@@ -197,7 +197,7 @@ class ShoppLogin {
 	 * @return void
 	 **/
 	public function wplogin ( $cookie, $expire, $expiration, $id ) {
-		if ( $Account = new Customer($id, 'wpuser') ) {
+		if ( $Account = new ShoppCustomer($id, 'wpuser') ) {
 			$this->login($Account);
 			add_action('wp_logout',array(&$this,'logout'));
 		}
@@ -247,7 +247,7 @@ class ShoppLogin {
 	 **/
 	public function logout () {
 
-		$this->Customer = new Customer();
+		$this->Customer = new ShoppCustomer();
 		$this->Billing = new BillingAddress();
 		$this->Shipping = new ShippingAddress();
 		$this->Shipping->locate();

@@ -126,7 +126,7 @@ class ShoppResources {
 		if ( ! current_user_can('shopp_export_customers') ) exit();
 
 		if ( ! isset($_POST['settings']['customerexport_columns']) ) {
-			$Customer = Customer::exportcolumns();
+			$Customer = ShoppCustomer::exportcolumns();
 			$Billing = BillingAddress::exportcolumns();
 			$Shipping = ShippingAddress::exportcolumns();
 			$_POST['settings']['customerexport_columns'] =

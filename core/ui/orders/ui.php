@@ -543,7 +543,7 @@ function contact_meta_box ($Purchase) {
 	$wp_user = false;
 
 	if ( 'wordpress' == $accounts ) {
-		$Customer = new Customer($Purchase->customer);
+		$Customer = new ShoppCustomer($Purchase->customer);
 		$WPUser = get_userdata($Customer->wpuser);
 
 		$edituser_url = add_query_arg('user_id',$Customer->wpuser,admin_url('user-edit.php'));

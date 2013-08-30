@@ -2521,7 +2521,7 @@ msgstr ""
 #: ../shopp/core/model/Customer.php:173
 #: ../shopp/core/model/Customer.php:186
 #, php-format
-msgid "[%s] New Customer Registration"
+msgid "[%s] New ShoppCustomer Registration"
 msgstr ""
 
 #: ../shopp/core/model/Customer.php:175
@@ -5004,7 +5004,7 @@ msgid "Shipping Address"
 msgstr ""
 
 #: ../shopp/core/ui/help/customers.php:1
-msgid "Using Advanced Customer Search"
+msgid "Using Advanced ShoppCustomer Search"
 msgstr ""
 
 #: ../shopp/core/ui/help/customers.php:6
@@ -5494,7 +5494,7 @@ msgid "Order History"
 msgstr ""
 
 #: ../shopp/core/ui/orders/ui.php:343
-msgid "Sent to the Customer:"
+msgid "Sent to the ShoppCustomer:"
 msgstr ""
 
 #: ../shopp/core/ui/orders/ui.php:361
@@ -6003,11 +6003,11 @@ msgid "Receipt Emails"
 msgstr ""
 
 #: ../shopp/core/ui/settings/preferences.php:94
-msgid "Send to Customer Only"
+msgid "Send to ShoppCustomer Only"
 msgstr ""
 
 #: ../shopp/core/ui/settings/preferences.php:95
-msgid "Send to Customer &amp; Shop Owner Email"
+msgid "Send to ShoppCustomer &amp; Shop Owner Email"
 msgstr ""
 
 #: ../shopp/core/ui/settings/preferences.php:95
@@ -6984,7 +6984,7 @@ msgid "The payment is pending because it was made to an email address that is no
 msgstr ""
 
 #: ../shopp/gateways/PayPal/PayPalStandard.php:85
-msgid "Contact PayPal Customer Service to see if your account needs to be upgraded."
+msgid "Contact PayPal ShoppCustomer Service to see if your account needs to be upgraded."
 msgstr ""
 
 #: ../shopp/gateways/PayPal/PayPalStandard.php:86
@@ -6992,7 +6992,7 @@ msgid "Your account is not yet verified."
 msgstr ""
 
 #: ../shopp/gateways/PayPal/PayPalStandard.php:87
-msgid "Contact PayPal Customer Service to determine why payment was not completed."
+msgid "Contact PayPal ShoppCustomer Service to determine why payment was not completed."
 msgstr ""
 
 #: ../shopp/gateways/PayPal/PayPalStandard.php:91

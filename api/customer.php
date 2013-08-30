@@ -37,11 +37,11 @@ function shopp_customer ( $customer = false, $key = 'customer' ) {
 			shopp_debug(__FUNCTION__ . " failed: Customer $customer could not be found.");
 			return false;
 		}
-		$Customer = new Customer($customer, 'wpuser');
+		$Customer = new ShoppCustomer($customer, 'wpuser');
 	} else if ( 'email' == $key ) {
-		$Customer = new Customer($customer, 'email');
+		$Customer = new ShoppCustomer($customer, 'email');
 	} else {
-		$Customer = new Customer($customer);
+		$Customer = new ShoppCustomer($customer);
 	}
 
 	if ( ! $Customer->id ) {
@@ -109,7 +109,7 @@ function shopp_customer_marketing (  $customer = false, $flag = null ) {
  * @return array list of customers for marketing
  **/
 function shopp_customer_marketing_list ( $exclude = false ) {
-	$table = DatabaseObject::tablename(Customer::$table);
+	$table = DatabaseObject::tablename(ShoppCustomer::$table);
 	$where = ( $exclude ? "WHERE marketing='yes'" : "");
 	$results = db::query( "SELECT id, firstname, lastname, email, marketing, type FROM $table $where", 'array' );
 
@@ -141,7 +141,7 @@ function shopp_add_customer (  $data = array() ) {
 
 	// handle duplicate or missing wpuser
 	if ( isset($data['wpuser']) ) {
-		$c = new Customer($data['wpuser'], 'wpuser');
+		$c = new ShoppCustomer($data['wpuser'], 'wpuser');
 		if ( $c->id ) {
 			shopp_debug(__FUNCTION__ . " failed: Customer with WordPress user id {$data['wpuser']} already exists.");
 			return false;
@@ -153,7 +153,7 @@ function shopp_add_customer (  $data = array() ) {
 
 	// handle duplicate or missing email address
 	if ( isset($data['email']) ) {
-		$c = new Customer($data['email'], 'email');
+		$c = new ShoppCustomer($data['email'], 'email');
 		if ( $c->id ) {
 			shopp_debug(__FUNCTION__ . " failed: Customer with email {$data['email']} already exists.");
 			return false;
@@ -171,7 +171,7 @@ function shopp_add_customer (  $data = array() ) {
 
 	$shipping = array();
 	$billing = array();
-	$Customer = new Customer();
+	$Customer = new ShoppCustomer();
 
 	foreach ( $data as $key => $value ) {
 		if ( in_array($key, $map) ) $Customer->{$key} = $value;
@@ -280,7 +280,7 @@ function shopp_rmv_customer (  $customer = false ) {
 		return false;
 	}
 
-	$Customer = new Customer($customer);
+	$Customer = new ShoppCustomer($customer);
 	if ( empty($Customer->id) ) {
 		shopp_debug("shopp_rmv_customer notice: No such customer with id $customer");
 		return false;

@@ -14,7 +14,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class Customer extends DatabaseObject {
+class ShoppCustomer extends DatabaseObject {
 	static $table = 'customer';
 
 	public $login = false;			 // Login authenticated flag
@@ -369,7 +369,7 @@ class Customer extends DatabaseObject {
 			);
 	}
 
-} // END class Customer
+} // END class ShoppCustomer
 
 class CustomersExport {
 
@@ -391,7 +391,7 @@ class CustomersExport {
 
 		$Shopp = Shopp::object();
 
-		$this->customer_cols = Customer::exportcolumns();
+		$this->customer_cols = ShoppCustomer::exportcolumns();
 		$this->billing_cols = BillingAddress::exportcolumns();
 		$this->shipping_cols = ShippingAddress::exportcolumns();
 		$this->defined = array_merge($this->customer_cols, $this->billing_cols, $this->shipping_cols);

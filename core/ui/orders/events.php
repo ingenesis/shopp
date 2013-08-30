@@ -484,7 +484,7 @@ class DownloadOrderEventRenderer extends OrderEventRenderer {
 	}
 
 	function details () {
-		$Customer = new Customer($this->customer);
+		$Customer = new ShoppCustomer($this->customer);
 
 		return sprintf('by <a href="%2$s">%1$s</a> from %3$s',
 			"$Customer->firstname $Customer->lastname",

@@ -93,7 +93,7 @@ class ShoppAdminAccount extends ShoppAdminController {
 				&& is_array($selected)
 				&& current_user_can('shopp_delete_customers')) {
 			foreach($selected as $deletion) {
-				$Customer = new Customer($deletion);
+				$Customer = new ShoppCustomer($deletion);
 				$Billing = new BillingAddress($Customer->id, 'customer');
 				$Billing->delete();
 				$Shipping = new ShippingAddress($Customer->id, 'customer');
@@ -108,10 +108,10 @@ class ShoppAdminAccount extends ShoppAdminController {
 			$wp_integration = ('wordpress' === shopp_setting( 'account_system' ));
 
 			if ($_POST['id'] !== 'new') {
-				$Customer = new Customer($_POST['id']);
+				$Customer = new ShoppCustomer($_POST['id']);
 				$Billing = new BillingAddress($Customer->id, 'customer');
 				$Shipping = new ShippingAddress($Customer->id, 'customer');
-			} else $Customer = new Customer();
+			} else $Customer = new ShoppCustomer();
 
 			if (!empty($Customer->wpuser)) $user = get_user_by('id',$Customer->wpuser);
 			$new_customer = empty( $Customer->id );
@@ -353,12 +353,12 @@ class ShoppAdminAccount extends ShoppAdminController {
 
 
 		if ($_GET['id'] != "new") {
-			$Customer = new Customer($_GET['id']);
+			$Customer = new ShoppCustomer($_GET['id']);
 			$Customer->Billing = new BillingAddress($Customer->id, 'customer');
 			$Customer->Shipping = new ShippingAddress($Customer->id, 'customer');
 			if (empty($Customer->id))
 				wp_die(__('The requested customer record does not exist.','Shopp'));
-		} else $Customer = new Customer();
+		} else $Customer = new ShoppCustomer();
 
 		if (empty($Customer->info->meta)) remove_meta_box('customer-info','shopp_page_shopp-customers','normal');
 

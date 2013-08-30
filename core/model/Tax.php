@@ -168,7 +168,7 @@ class ShoppTax {
 	}
 
 	/**
-	 * Evaluates the tax rules against the taxable Item or Customer
+	 * Evaluates the tax rules against the taxable Item or ShoppCustomer
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.3

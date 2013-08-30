@@ -76,13 +76,13 @@ class ShoppFormValidation {
 
 			shopp_debug('Login set to '. $_POST['loginname'] . ' for WordPress account creation.');
 
-			$ExistingCustomer = new Customer($_POST['email'], 'email');
+			$ExistingCustomer = new ShoppCustomer($_POST['email'], 'email');
 
 			if ( $Customer->guest && ! empty($ExistingCustomer->id) ) $Customer->id = $ExistingCustomer->id;
 			if ( apply_filters('shopp_email_exists', ! $Customer->guest && (email_exists($_POST['email']) || ! empty($ExistingCustomer->id))) )
 				return shopp_add_error( __('The email address you entered is already in use. Try logging in if you previously created an account, or enter another email address to create your new account.','Shopp') );
 		} elseif ( 'shopp' == shopp_setting('account_system') && ! $Customer->logged_in() ) {
-			$ExistingCustomer = new Customer($_POST['email'],'email');
+			$ExistingCustomer = new ShoppCustomer($_POST['email'],'email');
 			if ( apply_filters('shopp_email_exists', ! empty($ExistingCustomer->id)) )
 				return shopp_add_error( __('The email address you entered is already in use. Try logging in if you previously created an account, or enter another email address to create a new account.','Shopp') );
 		}

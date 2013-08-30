@@ -104,7 +104,7 @@ class ShoppRegistration {
 		// Remove invalid characters from the phone number
 		$updates['phone'] = preg_replace('/[^\d\(\)\-+\. (ext|x)]/','', $updates['phone'] );
 
-		if ( empty($Customer) ) $Customer = new Customer();
+		if ( empty($Customer) ) $Customer = new ShoppCustomer();
 		else $Customer->reset();
 
 		$Customer->updates($updates);

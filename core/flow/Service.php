@@ -361,7 +361,7 @@ class ShoppAdminService extends ShoppAdminController {
 			wp_die(__('You do not have sufficient permissions to access this page.','Shopp'));
 
 		$Purchase = ShoppPurchase();
-		$Purchase->Customer = new Customer($Purchase->customer);
+		$Purchase->Customer = new ShoppCustomer($Purchase->customer);
 		$Gateway = $Purchase->gateway();
 
 		if (!empty($_POST["send-note"])){
@@ -515,7 +515,7 @@ class ShoppAdminService extends ShoppAdminController {
 		}
 
 		if ( isset($_POST['order-action']) && 'new-customer' == $_POST['order-action'] && ! empty($_POST['customer']) && ! isset($_POST['cancel-edit-customer'])) {
-			$Customer = new Customer();
+			$Customer = new ShoppCustomer();
 			$Customer->updates($_POST['customer']);
 			$Customer->password = wp_generate_password(12,true);
 			if ( 'wordpress' == shopp_setting('account_system') ) $Customer->create_wpuser();
@@ -528,7 +528,7 @@ class ShoppAdminService extends ShoppAdminController {
 		}
 
 		if ( isset($_GET['order-action']) && 'change-customer' == $_GET['order-action'] && ! empty($_GET['customerid'])) {
-			$Customer = new Customer((int)$_GET['customerid']);
+			$Customer = new ShoppCustomer((int)$_GET['customerid']);
 			if ( (int)$Customer->id > 0) {
 				$Purchase->copydata($Customer);
 				$Purchase->save();

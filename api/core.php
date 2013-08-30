@@ -32,17 +32,17 @@ function ShoppProduct ( ShoppProduct $Object = null ) {
 }
 
 /**
- * ShoppCustomer - get and set the global Customer object
+ * ShoppCustomer - get and set the global ShoppCustomer object
  *
  * @author John Dillick
  * @since 1.2
  *
- * @param Customer $Object (optional) the specified Customer object
- * @return Customer the current global customer object
+ * @param ShoppCustomer $Object (optional) the specified ShoppCustomer object
+ * @return ShoppCustomer the current global customer object
  **/
 function ShoppCustomer ( $Object = false ) {
 	$Order = ShoppOrder();
-	if ( $Object && is_a($Object, 'Customer') )
+	if ( $Object && is_a($Object, 'ShoppCustomer') )
 		$Order->Customer = $Object;
 	return $Order->Customer;
 }
