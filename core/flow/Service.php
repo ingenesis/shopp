@@ -127,7 +127,7 @@ class ShoppAdminService extends ShoppAdminController {
 				$Purchase = new ShoppPurchase($selection);
 				$Purchase->load_purchased();
 				foreach ($Purchase->purchased as $purchased) {
-					$Purchased = new Purchased($purchased->id);
+					$Purchased = new ShoppPurchased($purchased->id);
 					$Purchased->delete();
 				}
 				$Purchase->delete();
@@ -291,7 +291,7 @@ class ShoppAdminService extends ShoppAdminController {
 		$formatPref = shopp_setting('purchaselog_format');
 		if (!$formatPref) $formatPref = 'tab';
 
-		$columns = array_merge(Purchase::exportcolumns(),Purchased::exportcolumns());
+		$columns = array_merge(ShoppPurchase::exportcolumns(),ShoppPurchased::exportcolumns());
 		$selected = shopp_setting('purchaselog_columns');
 		if (empty($selected)) $selected = array_keys($columns);
 
@@ -631,7 +631,7 @@ class ShoppAdminService extends ShoppAdminController {
 	 * @return void
 	 **/
 	public function status_counts () {
-		$table = DatabaseObject::tablename(Purchase::$table);
+		$table = DatabaseObject::tablename(ShoppPurchase::$table);
 		$labels = shopp_setting('order_status');
 
 		if (empty($labels)) return false;

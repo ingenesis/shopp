@@ -64,7 +64,7 @@ class ShoppResources {
 
 		if ( ! isset($_POST['settings']['purchaselog_columns']) ) {
 			$Purchase = ShoppPurchase::exportcolumns();
-			$Purchased = Purchased::exportcolumns();
+			$Purchased = ShoppPurchased::exportcolumns();
 			$_POST['settings']['purchaselog_columns'] = array_keys(array_merge($Purchase, $Purchased));
 			$_POST['settings']['purchaselog_headers'] = 'on';
 		}

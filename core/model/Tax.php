@@ -390,7 +390,7 @@ class ShoppTaxableItem {
 	}
 
 	/**
-	 * Evaluates tax rules for Purchased objects
+	 * Evaluates tax rules for ShoppPurchased objects
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.3

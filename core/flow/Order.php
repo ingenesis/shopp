@@ -472,7 +472,7 @@ class ShoppOrder {
 	 **/
 	public function items ( $purchaseid ) {
 		foreach( $this->Cart as $Item ) {	// Build purchased records from cart items
-			$Purchased = new Purchased();
+			$Purchased = new ShoppPurchased();
 			$Purchased->purchase = $purchaseid;
 			$Purchased->copydata($Item);
 			$Purchased->save();

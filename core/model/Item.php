@@ -82,7 +82,7 @@ class ShoppCartItem {
 		$args = func_get_args();
 		if ( empty($args) ) return;
 
-		if ( get_class($Product) == 'Purchased' ) $this->load_purchased($Product);
+		if ( get_class($Product) == 'ShoppPurchased' ) $this->load_purchased($Product);
 		else $this->load($Product, $pricing, $category, $data, $addons);
 
 

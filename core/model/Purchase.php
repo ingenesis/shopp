@@ -56,7 +56,7 @@ class ShoppPurchase extends DatabaseObject {
 		$table = DatabaseObject::tablename(Purchased::$table);
 		$meta = DatabaseObject::tablename(MetaObject::$table);
 		$price = DatabaseObject::tablename(Price::$table);
-		$Purchased = new Purchased();
+		$Purchased = new ShoppPurchased();
 		if (empty($this->id)) return false;
 		$this->purchased = DB::query("SELECT pd.*,pr.inventory FROM $table AS pd LEFT JOIN $price AS pr ON pr.id=pd.price WHERE pd.purchase=$this->id", 'array', array($Purchased, 'loader') );
 		foreach ( $this->purchased as &$purchase) {
@@ -585,7 +585,7 @@ class ShoppPurchase extends DatabaseObject {
 	public function delete_purchased () {
 		if (empty($this->purchased)) $this->load_purchased();
 		foreach ($this->purchased as $item) {
-			$Purchased = new Purchased();
+			$Purchased = new ShoppPurchased();
 			$Purchased->populate($item);
 			$Purchased->delete();
 		}
@@ -623,8 +623,8 @@ class PurchasesExport {
 	public function __construct () {
 		$Shopp = Shopp::object();
 
-		$this->purchase_cols = Purchase::exportcolumns();
-		$this->purchased_cols = Purchased::exportcolumns();
+		$this->purchase_cols = ShoppPurchase::exportcolumns();
+		$this->purchased_cols = ShoppPurchased::exportcolumns();
 		$this->defined = array_merge($this->purchase_cols,$this->purchased_cols);
 
 		$this->sitename = get_bloginfo('name');
@@ -689,8 +689,8 @@ class PurchasesExport {
 		if (!empty($customer)) $where[] = "customer=".intval($customer);
 		$where = !empty($where) ? "WHERE ".join(' AND ',$where) : '';
 
-		$purchasetable = DatabaseObject::tablename(Purchase::$table);
-		$purchasedtable = DatabaseObject::tablename(Purchased::$table);
+		$purchasetable = DatabaseObject::tablename(ShoppPurchase::$table);
+		$purchasedtable = DatabaseObject::tablename(ShoppPurchased::$table);
 		$offset = ($this->set*$this->limit);
 
 		$c = 0; $columns = array(); $purchasedcols = false;

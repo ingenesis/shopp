@@ -12,7 +12,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class Purchased extends DatabaseObject {
+class ShoppPurchased extends DatabaseObject {
 
 	static $table = 'purchased';
 

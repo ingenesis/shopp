@@ -478,7 +478,7 @@ class DecryptOrderEventRenderer extends OrderEventRenderer {
 class DownloadOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		$Purchased = new Purchased($this->purchased);
+		$Purchased = new ShoppPurchased($this->purchased);
 		$Download = new ProductDownload($this->download);
 		return sprintf(__('%s downloaded','Shopp'),'<strong>'.$Purchased->name.' ('.$Download->name.')</strong>');
 	}

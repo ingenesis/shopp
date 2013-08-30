@@ -557,10 +557,10 @@ class DownloadAsset extends FileAsset {
 
 	public function loadby_dkey ($key) {
 		$db = &DB::get();
-		if (!class_exists('Purchased')) require(SHOPP_MODEL_PATH."/Purchased.php");
+		if (!class_exists('ShoppPurchased')) require(SHOPP_MODEL_PATH."/Purchased.php");
 		$pricetable = DatabaseObject::tablename(Price::$table);
 
-		$Purchased = new Purchased($key,'dkey');
+		$Purchased = new ShoppPurchased($key,'dkey');
 		if (!empty($Purchased->id)) {
 			// Handle purchased line-item downloads
 			$Purchase = new ShoppPurchase($Purchased->purchase);
@@ -583,9 +583,9 @@ class DownloadAsset extends FileAsset {
 	}
 
 	public function purchased () {
-		if (!class_exists('Purchased')) require(SHOPP_MODEL_PATH."/Purchased.php");
+		if (!class_exists('ShoppPurchased')) require(SHOPP_MODEL_PATH."/Purchased.php");
 		if (!$this->purchased) return false;
-		return new Purchased($this->purchased);
+		return new ShoppPurchased($this->purchased);
 	}
 
 	public function download ($dkey=false) {

@@ -468,7 +468,7 @@ class ShoppAjax {
 
 			$customer_table = DatabaseObject::tablename(Customer::$table);
 			$billing_table = DatabaseObject::tablename(BillingAddress::$table);
-			$purchase_table = DatabaseObject::tablename(Purchase::$table);
+			$purchase_table = DatabaseObject::tablename(ShoppPurchase::$table);
 			global $wpdb;
 			$users_table = $wpdb->users;
 

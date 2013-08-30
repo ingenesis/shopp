@@ -215,7 +215,7 @@ class ShoppAdminReport extends ShoppAdminController {
 		$format = shopp_setting('report_format');
 		if ( ! $format ) $format = 'tab';
 
-		$columns = array_merge(ShoppPurchase::exportcolumns(), Purchased::exportcolumns());
+		$columns = array_merge(ShoppPurchase::exportcolumns(), ShoppPurchased::exportcolumns());
 		$selected = shopp_setting('purchaselog_columns');
 		if (empty($selected)) $selected = array_keys($columns);
 

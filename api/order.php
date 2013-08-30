@@ -30,8 +30,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @return array of Purchase objects
  **/
 function shopp_orders ( $from = false, $to = false, $items = true, $customers = array(), $limit = false, $order = 'DESC' ) {
-	$pt = DatabaseObject::tablename(Purchase::$table);
-	$pd = DatabaseObject::tablename(Purchased::$table);
+	$pt = DatabaseObject::tablename(ShoppPurchase::$table);
+	$pd = DatabaseObject::tablename(ShoppPurchased::$table);
 
 	$where = array();
 	if ( $from ) {
@@ -92,7 +92,7 @@ function _shopp_order_purchased ( &$records, &$purchased, $orders ) {
 			$records[$purchased->purchase]->purchased = array();
 		}
 
-		$records[$purchased->purchase]->purchased[$purchased->id] = new Purchased();
+		$records[$purchased->purchase]->purchased[$purchased->id] = new ShoppPurchased();
 		$records[$purchased->purchase]->purchased[$purchased->id]->populate($purchased);
 		if ( "yes" == $purchased->addons ) {
 			$records[$purchased->purchase]->purchased[$purchased->id]->addons = new ObjectMeta($purchased->id, 'purchased', 'addon');
@@ -433,7 +433,7 @@ function shopp_rmv_order ($id) {
 	if ( $Purchase = shopp_order_exists($id) ) {
 		$Purchase->load_purchased();
 		foreach ( $Purchase->purchased as $P ) {
-			$Purchased = new Purchased();
+			$Purchased = new ShoppPurchased();
 			$Purchased->populate($P);
 			$Purchased->delete();
 		}
@@ -479,8 +479,8 @@ function shopp_add_order_line ( $order = false, $data = array() ) {
 		return false;
 	}
 
-	// Create and save a new Purchased item object
-	$Purchased = new Purchased;
+	// Create and save a new ShoppPurchased item object
+	$Purchased = new ShoppPurchased;
 	if ( is_object($data) && is_a($data, 'Item') ) {
 		$Purchased->copydata($data);
 		if ($data->inventory) $data->unstock();
@@ -536,7 +536,7 @@ function shopp_rmv_order_line ( $order = false, $line = 0 ) {
 
 	if ( empty($Lines) || $line >= count($Lines) ) return false;
 
-	$Purchased = new Purchased();
+	$Purchased = new ShoppPurchased();
 	$Purchased->populate($Lines[$id]);
 	$Purchase = shopp_order($order);
 
@@ -565,7 +565,7 @@ function shopp_rmv_order_line ( $order = false, $line = 0 ) {
  * @since 1.2
  *
  * @param int $order (required) the order id
- * @return bool|array false on failure, array of Purchased line item objects on success
+ * @return bool|array false on failure, array of ShoppPurchased line item objects on success
  **/
 function shopp_order_lines ( $order = false ) {
 	$Order = shopp_order( $order );
@@ -615,7 +615,7 @@ function shopp_add_order_line_download ( $order = false, $line = 0, $download = 
 		return false;
 	}
 
-	$Purchased = new Purchased;
+	$Purchased = new ShoppPurchased;
 	$Purchased->populate($Lines[$id]);
 
 	$Purchased->download = $download;
@@ -642,7 +642,7 @@ function shopp_rmv_order_line_download ( $order = false, $line = 0 ) {
 		return false;
 
 	$id = $ids[$line];
-	$Purchased = new Purchased;
+	$Purchased = new ShoppPurchased;
 	$Purchased->populate($Lines[$id]);
 
 	$Purchase->download = 0;
@@ -777,7 +777,7 @@ function shopp_add_order_line_data ( $order = false, $line = 0, $data = array() 
 	$Lines = shopp_order_lines($order);
 	if ( empty($Lines) || $line >= count($Lines) || ! isset($Lines[$line]) )
 		return false;
-	$Purchased = new Purchased();
+	$Purchased = new ShoppPurchased();
 	$Purchased->populate($Lines[$line]);
 
 	if ( ! is_array($Purchased->data) ) $Purchased->data = array();
@@ -802,7 +802,7 @@ function shopp_rmv_order_line_data ($order = false, $line = 0, $name = false) {
 	$Lines = shopp_order_lines($order);
 	if ( empty($Lines) || $line >= count($Lines) || ! isset($Lines[$line]) )
 		return false;
-	$Purchased = new Purchased();
+	$Purchased = new ShoppPurchased();
 	$Purchased->populate($Lines[$line]);
 
 	if ( ! is_array($Purchased->data) ) $Purchased->data = array();
