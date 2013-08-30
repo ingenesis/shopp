@@ -11,7 +11,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppGatewayTestMode extends GatewayFramework implements GatewayModule {
+class ShoppTestMode extends GatewayFramework implements GatewayModule {
 
 	public $secure = false;							// SSL not required
 
