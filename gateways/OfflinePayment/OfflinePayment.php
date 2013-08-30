@@ -14,7 +14,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppGatewayOfflinePayment extends GatewayFramework implements GatewayModule {
+class ShoppOfflinePayment extends GatewayFramework implements GatewayModule {
 
 	public $secure = false;		// SSL not required
 	public $authonly = true;	// Auth only transactions
