@@ -836,14 +836,14 @@ function ImageUploads (id,type) {
 					srcalt.val(altfield.val());
 				}),
 				doneButton = ui.find('input[type=button]').click(function () {
-					$.fn.colorbox.close();
+					$.colorbox.close();
 				}),
 				cropping = ui.find('div.cropping').hide(),
 				croptool = ui.find('div.cropui'),
 				cropselect = ui.find('select[name=cropimage]').change(function () {
 					if (cropselect.val() == '') {
 						croptool.empty();
-						$.fn.colorbox.resize();
+						$.colorbox.resize();
 						return;
 					}
 
@@ -855,7 +855,7 @@ function ImageUploads (id,type) {
 						init:{x:parseInt(init[0],10),y:parseInt(init[1],10),s:new Number(init[2])}
 					}).ready(function () {
 						var padding = 125; // Pad the resize so we have enough space
-						$.fn.colorbox.resize({innerWidth:(parseInt(d[0],10))+padding});
+						$.colorbox.resize({innerWidth:(parseInt(d[0],10))+padding});
 					}).bind('change.scalecrop',function (e,c) {
 						if (!c.s) c.s = 1;
 						if (c) srcCropped.filter('input[alt='+cropselect.val()+']').val(c.x+','+c.y+','+c.s);
@@ -870,7 +870,7 @@ function ImageUploads (id,type) {
 				cropping.show();
 			}
 
-			$.fn.colorbox({'title':IMAGE_DETAILS_TEXT,'html':ui});
+			$.colorbox({'title':IMAGE_DETAILS_TEXT,'html':ui});
 
 		});
 		enableDeleteButton($(this).find('button.delete'));
@@ -1018,7 +1018,7 @@ jQuery.fn.FileChooser = function (line, status) {
 		importstatus.attr('class','status');
 
 		attach.unbind('click').click(function () {
-			$.fn.colorbox.hide();
+			$.colorbox.hide();
 			if (stored) {
 				dlpath.val(importurl.val());
 				importurl.val('').attr('class','fileimport');
@@ -1138,12 +1138,14 @@ function FileUploader (button,defaultButton) {
 		action: ajaxurl,
 		params: { action:'shopp_upload_file' },
 		onSubmit: function() {
-			$.fn.colorbox.hide();
+			$.colorbox.hide();
 			_.targetCell.attr('class','').html('');
 			$('<div class="progress"><div class="bar"></div><div class="gloss"></div></div>').appendTo(_.targetCell);
 			_.progressBar = _.targetCell.find('div.bar');
 		},
 		onComplete: function(results) {
+			$.colorbox.close();
+
 			var filedata = false,targetHolder = _.targetCell;
 			try {
 				filedata = $.parseJSON(results);
@@ -1201,7 +1203,7 @@ function FileUploader (button,defaultButton) {
 	}
 
 	function fileDialogComplete (selected, queued) {
-		$.fn.colorbox.hide();
+		$.colorbox.hide();
 		if (!selected) return;
 		try { this.startUpload(); }
 		catch (ex) { this.debug(ex); }
@@ -1221,6 +1223,7 @@ function FileUploader (button,defaultButton) {
 	function uploadSuccess (file, results) {
 		var filedata = false,targetCell = this.targetCell,i = this.targetLine;
 
+		$.colorbox.close();
 		try { filedata = $.parseJSON(results); }
 		catch (ex) { filedata.error = results; }
 		if (!filedata.id && !filedata.name) {
