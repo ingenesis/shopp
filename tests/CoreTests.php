@@ -467,4 +467,9 @@ class CoreTests extends ShoppTestCase {
 		$this->assertEquals('588.1 MB', Shopp::readableFileSize('616628224'));
 		$this->assertEquals('2.3 GB', Shopp::readableFileSize('2466516992'));
 	}
+
+	public function test_roundprice() {
+		$this->assertEquals('54.99', Shopp::roundprice('54.985', array('precision' => 2)));
+		$this->assertEquals('54.985', Shopp::roundprice('54.985', array('precision' => 3)));
+	}
 }

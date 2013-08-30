@@ -1455,7 +1455,7 @@ abstract class ShoppCore {
 	 * @return float The rounded float
 	 **/
 	public static function roundprice ($amount, $format = array() ) {
-		$format = currency_format($format);
+		$format = Shopp::currency_format($format);
 		extract($format);
 		return round($amount, $precision);
 	}
