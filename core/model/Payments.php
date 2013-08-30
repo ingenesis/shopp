@@ -30,6 +30,11 @@ class ShoppPayments extends ListFramework {
 	private $userset = false;
 	private $secure = false;
 
+	public function __construct () {
+		ShoppingObject::store('paymethod', $this->selected);
+		ShoppingObject::store('payselected', $this->userset);
+	}
+
 	/**
 	 * Builds a list of payment method options
 	 *
@@ -83,11 +88,12 @@ class ShoppPayments extends ListFramework {
 		$this->processors = $processors;
 
 		// Always include FreeOrder in the list of available payment processors
-		$this->processors['FreeOrder'] = 'freeorder';
+		$this->processors['ShoppFreeOrder'] = 'freeorder';
 
 	}
 
 	public function request () {
+
 		if ( ! isset($_POST['paymethod']) ) return;
 		if ( 'freeorder' == $_POST['paymethod'] ) return; // Ah, ah, ah! Shoppers can't just select free order processing
 

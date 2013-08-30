@@ -170,7 +170,7 @@ class ShoppCheckout {
 	public function payment () {
 		if ( ! $this->paycard() ) return;
 
-		add_filter('shopp_validate_checkout', 'ShoppFormValidation::paycard');
+		add_filter('shopp_validate_checkout', array('ShoppFormValidation', 'paycard'));
 
 		$Billing = ShoppOrder()->Billing;
 		$Payments = ShoppOrder()->Payments;

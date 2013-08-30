@@ -114,7 +114,7 @@ class ShoppOrder {
 
 		// Select the default gateway processor
 		// Schedule for after the gateways are loaded (priority 20)
-		add_action('shopp_init', array($this->Payments, 'initial'), 20);
+		add_action('shopp_init', array($this->Payments, 'selected'), 20);
 
 		// Handle remote transaction processing (priority 20)
 		// Needs to happen after the processor is selected in the session,
@@ -353,7 +353,7 @@ class ShoppOrder {
 	 **/
 	public function freebie () {
 
-		$this->Payments->processor('FreeOrder');
+		$this->Payments->processor('ShoppFreeOrder');
 		$this->Billing->cardtype = __('Free Order','Shopp');
 
 		return true;
