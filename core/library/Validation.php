@@ -168,8 +168,9 @@ class ShoppFormValidation {
 
 		$card = Lookup::paycard( strtolower($fields['cardtype']) );
 
-		if ( apply_filters('shopp_billing_valid_cardtype', ! $card ))
-			return shopp_add_error( __('The credit card type you provided is invalid.','Shopp') );
+		// Skip validating payment details for purchases not requiring a
+		// payment (credit) card including free orders, remote checkout systems, etc
+		if ( false === $card ) return ( is_a($result, 'ShoppError') ) ? $result : true;
 
 		if ( apply_filters('shopp_billing_valid_card', ! $card->validate($fields['card']) ))
 			return shopp_add_error( __('The credit card number you provided is invalid.','Shopp') );
