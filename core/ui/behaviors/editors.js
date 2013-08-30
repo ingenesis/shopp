@@ -1160,7 +1160,11 @@ function FileUploader (button,defaultButton) {
 			filedata.type = filedata.type.replace(/\//gi," ");
 			$(_.progressBar).animate({'width':'76px'},250,function () {
 				$(this).parent().fadeOut(500,function() {
-					targetHolder.attr('class','file '+filedata.type).html(filedata.name+'<br /><small>'+readableFileSize(filedata.size)+'</small><input type="hidden" name="price['+_.targetLine+'][download]" value="'+filedata.id+'" />');
+					targetHolder.attr('class', 'file').html(
+						'<div class="icon shoppui-file ' + filedata.type + '"></div>' +
+						filedata.name + '<br /><small>' + readableFileSize(filedata.size)+'</small>' +
+						'<input type="hidden" name="price[' + _.targetLine + '][download]" value="' + filedata.id + '" />'
+					);
 					$(this).remove();
 				});
 			});
@@ -1230,7 +1234,11 @@ function FileUploader (button,defaultButton) {
 		$(this.progressBar).animate({'width':'76px'},250,function () {
 			$(this).parent().fadeOut(500,function() {
 				$(this).remove();
-				$(targetCell).attr('class','file '+filedata.type).html(filedata.name+'<br /><small>'+readableFileSize(filedata.size)+'</small><input type="hidden" name="price['+i+'][download]" value="'+filedata.id+'" />');
+				$(targetCell).attr('class', 'file').html(
+					'<div class="icon shoppui-file ' + filedata.type + '"></div>' +
+					filedata.name + '<br /><small>' + readableFileSize(filedata.size)+'</small>' +
+					'<input type="hidden" name="price[' + i + '][download]" value="' + filedata.id + '" />'
+				);
 			});
 		});
 	}

@@ -258,25 +258,25 @@ div.comment-item:hover .row-actions { visibility:visible; }
 .shopp .file small { color:#444; }
 
 .shopp .file .icon { font-family: 'shopp-icons'; margin-left: -28px; float: left; font-size: 2em; }
-.shoppui-file:before {content: "\e03a";}
+.shoppui-file:before {content: "\e03d";}
 .shoppui-file.zip:before,
 .shoppui-file.stuffit:before,
-.shoppui-file.tar:before {content: "\e03c";}
-.shoppui-file.pdf:before {content: "\e03d";}
+.shoppui-file.tar:before {content: "\e03e";}
+.shoppui-file.pdf:before {content: "\e03f";}
 .shoppui-file.doc:before,
-.shoppui-file.msword:before {content: "\e03e";}
+.shoppui-file.msword:before {content: "\e040";}
 .shoppui-file.spreadsheet:before,
-.shoppui-file.excel:before {content: "\e03f";}
+.shoppui-file.excel:before {content: "\e041";}
 .shoppui-file.slides:before,
-.shoppui-file.ppt:before {content: "\e040";}
+.shoppui-file.ppt:before {content: "\e042";}
 .shoppui-file.text:before,
 .shoppui-file.code:before,
 .shoppui-file.php:before,
 .shoppui-file.html:before,
-.shoppui-file.xml:before {content: "\e041";}
-.shoppui-file.audio:before {content: "\e042";}
-.shoppui-file.video:before {content: "\e043";}
-.shoppui-file.image:before {content: "\e044";}
+.shoppui-file.xml:before {content: "\e043";}
+.shoppui-file.audio:before {content: "\e044";}
+.shoppui-file.video:before {content: "\e045";}
+.shoppui-file.image:before {content: "\e046";}
 
 #variations-pricing > tr > th,#variations-pricing > tr > td { border-top:1px solid #dfdfdf; }
 .form-table.pricing { border-bottom:1px solid #dfdfdf; }
