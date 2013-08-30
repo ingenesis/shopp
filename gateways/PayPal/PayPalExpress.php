@@ -12,7 +12,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppGatewayPayPalExpress extends GatewayFramework implements GatewayModule {
+class ShoppPayPalExpress extends GatewayFramework implements GatewayModule {
 
 	// Settings
 	public $secure = false;
