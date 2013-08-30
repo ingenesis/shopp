@@ -92,7 +92,7 @@ abstract class GatewayFramework {
 		$this->session = ShoppShopping()->session;
 		$this->Order = ShoppOrder();
 
-		if ( 'FreeOrder' != $this->module ) // There are no settings for FreeOrder
+		if ( 'ShoppFreeOrder' != $this->module ) // There are no settings for ShoppFreeOrder
 			$this->settings = shopp_setting($this->module);
 
 		if ( ! isset($this->settings['label']) && $this->cards )
@@ -114,11 +114,6 @@ abstract class GatewayFramework {
 		elseif ( $this->saleonly )
 			add_filter('shopp_purchase_order_' . $gateway . '_processing', create_function('', 'return "sale";'));
 
-	}
-
-	public function myactions () {
-		if ( $this->myorder() && method_exists($this, 'actions') )
-			$this->actions();
 	}
 
 	/**
@@ -148,6 +143,11 @@ abstract class GatewayFramework {
 	 **/
 	public function myorder () {
 		return ( $this->Order->Payments->processor() == $this->module );
+	}
+
+	public function myactions () {
+		if ( $this->myorder() && method_exists($this, 'actions') )
+			$this->actions();
 	}
 
 	/**
@@ -317,9 +317,8 @@ abstract class GatewayFramework {
 	public function amount ( $amount, array $format = array() ) {
 
 		if ( is_string($amount) ) {
-			$Totals = ShoppOrder()->Cart->Totals;
-			if ( ! isset($Totals->$amount) ) return false;
-			$amount = $Totals->$amount;
+			$Cart = ShoppOrder()->Cart;
+			$amount = $Cart->total($amount);
 		} elseif ( ! ( is_int($amount) || is_float($amount) ) ) return $amount;
 
 		$defaults = array(
@@ -330,7 +329,7 @@ abstract class GatewayFramework {
 		$format = array_merge($defaults, $format);
 		extract($format);
 
-		$amount = apply_filters('shopp_gateway_amount', $amount);
+		$amount = apply_filters('shopp_gateway_amount', abs($amount));
 		return number_format($amount, $precision, $decimals, $thousands);
 	}
 
@@ -472,7 +471,7 @@ class GatewayModules extends ModuleLoader {
 	}
 
 	public function freeorder () {
-		$this->freeorder = new FreeOrder();
+		$this->freeorder = new ShoppFreeOrder();
 	}
 
 	/**
@@ -650,22 +649,20 @@ class GatewaySettingsUI extends ModuleSettingsUI {
 }
 
 /**
- * FreeOrder class
- *
  * Handles order processing for free orders
  *
  * @author Jonathan Davis
- * @since 1.2
  * @package shopp
+ * @since 1.2
  **/
-class FreeOrder extends GatewayFramework {
+class ShoppFreeOrder extends GatewayFramework {
 
 	public $secure = false;	// SSL not required
 	public $refunds = true;	// Supports refunds
 	public $saleonly = true;
 
 	/**
-	 * Setup the FreeOrder gateway
+	 * Setup the ShoppFreeOrder gateway
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.2
@@ -680,7 +677,6 @@ class FreeOrder extends GatewayFramework {
 		add_action('shopp_freeorder_refund', array($this, 'void'));
 		add_action('shopp_freeorder_void', array($this, 'void'));
 	}
-
 
 	public function capture ( OrderEventMessage $Event ) {
 		shopp_add_order_event($Event->order, 'captured', array(
@@ -704,7 +700,7 @@ class FreeOrder extends GatewayFramework {
 
 	}
 
-} // END class FreeOrder
+} // END class ShoppFreeOrder
 
 /**
  * PayCard class

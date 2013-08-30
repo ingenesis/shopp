@@ -295,7 +295,7 @@ class ShoppAdminService extends ShoppAdminController {
 		$selected = shopp_setting('purchaselog_columns');
 		if (empty($selected)) $selected = array_keys($columns);
 
-		$Gateways = array_merge($Shopp->Gateways->modules,array('FreeOrder' => $Shopp->Gateways->freeorder));
+		$Gateways = array_merge($Shopp->Gateways->modules, array('ShoppFreeOrder' => $Shopp->Gateways->freeorder));
 
 		include(SHOPP_ADMIN_PATH."/orders/orders.php");
 	}

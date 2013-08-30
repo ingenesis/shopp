@@ -302,12 +302,13 @@ class ShoppPurchase extends DatabaseObject {
 
 	public function gateway () {
 		$Shopp = Shopp::object();
+		$Gateways = $Shopp->Gateways;
 
 		$processor = $this->gateway;
-		if ('FreeOrder' == $processor) return $Shopp->Gateways->freeorder;
-		if (isset($Shopp->Gateways->active[$processor])) return $Shopp->Gateways->active[$processor];
+		if ( 'ShoppFreeOrder' == $processor ) return $Gateways->freeorder;
+		if ( isset($Gateways->active[ $processor ]) ) return $Gateways->active[ $processor ];
 		else {
-			foreach ($Shopp->Gateways->active as $Gateway) {
+			foreach ( $Gateways->active as $Gateway ) {
 				if ($processor != $Gateway->name) continue;
 				return $Gateway;
 				break;
