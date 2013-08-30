@@ -12,7 +12,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModule {
+class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 
 	// Settings
 	public $secure = false; // do not require SSL or session encryption
@@ -319,7 +319,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 	 * @return void
 	 **/
 	public function force_confirm ( $confirm ) {
-		$this->Order->Billing->cardtype = "PayPal";
+		$this->Order->Billing->cardtype = 'PayPal';
 		$this->Order->confirm = true;
 		return true;
 	}
@@ -509,7 +509,7 @@ class ShoppGatewayPayPalStandard extends GatewayFramework implements GatewayModu
 
 			// Line Items
 			$id = 0;
-			foreach($Order->Cart->contents as $i => $Item) {
+			foreach( $Order->Cart as $i => $Item ) {
 				$id++;
 				$_['item_number_'.$id]		= $id;
 				$_['item_name_'.$id]		= $Item->name.((!empty($Item->option->label))?' '.$Item->option->label:'');
