@@ -39,7 +39,7 @@ function settings_meta_box ($Category) {
 
 	<?php
 }
-Shopp::addmetabox('category-settings', __('Settings','Shopp').$Admin->boxhelp('category-editor-settings'), 'settings_meta_box', 'shopp_page_shopp-category', 'side', 'core');
+ShoppUI::addmetabox('category-settings', __('Settings','Shopp').$Admin->boxhelp('category-editor-settings'), 'settings_meta_box', 'shopp_page_shopp-category', 'side', 'core');
 
 function images_meta_box ($Category) {
 ?>
