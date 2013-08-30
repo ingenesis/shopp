@@ -443,4 +443,21 @@ class CoreTests extends ShoppTestCase {
 		$this->assertEquals('2,718.28%', Shopp::percentage(M_E * 1000, array('precision' => 2)));
 		$this->assertEquals('2 718.28%', Shopp::percentage(M_E * 1000, array('precision' => 2, 'thousands' => ' ')));
 	}
+
+	public function test_raw_request_url() {
+		// Keep original values
+		$host = $_SERVER['HTTP_HOST'];
+		$request = $_SERVER['REQUEST_URI'];
+
+		// Change for test purposes
+		$_SERVER['HTTP_HOST'] = 'example.com';
+		$_SERVER['REQUEST_URI'] = '/shop/category/space-boots/';
+
+		$expected = 'http://example.com/shop/category/space-boots/';
+		$this->assertEquals($expected, Shopp::raw_request_url());
+
+		// Clean up
+		$_SERVER['HTTP_HOST'] = $host;
+		$_SERVER['REQUEST_URI'] = $request;
+	}
 }
