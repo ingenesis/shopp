@@ -460,4 +460,11 @@ class CoreTests extends ShoppTestCase {
 		$_SERVER['HTTP_HOST'] = $host;
 		$_SERVER['REQUEST_URI'] = $request;
 	}
+
+	public function test_readable_file_size() {
+		$this->assertEquals('4 KB', Shopp::readableFileSize('4096'));
+		$this->assertEquals('24.3 KB', Shopp::readableFileSize('24832'));
+		$this->assertEquals('588.1 MB', Shopp::readableFileSize('616628224'));
+		$this->assertEquals('2.3 GB', Shopp::readableFileSize('2466516992'));
+	}
 }
