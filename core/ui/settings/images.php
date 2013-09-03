@@ -65,6 +65,10 @@
 		<input type="submit" value="<?php esc_attr_e('Apply','Shopp'); ?>" name="apply" id="apply" class="button-secondary action" />
 		</div>
 
+		<div class="alignleft actions">
+			<a href="<?php echo esc_url(add_query_arg('id', 'new', $this->url)); ?>" class="button"><?php _e('Add New','Shopp'); ?></a>
+		</div>
+
 		<?php $ListTable->pagination('top'); ?>
 
 		<br class="clear" />

@@ -980,7 +980,7 @@ abstract class ShoppCore {
 	 * @return float
 	 **/
 	public static function floatval ( $value, $round = true, array $format = array() ) {
-		$format = Shopp::currency_format($format);
+		$format = ShoppCore::currency_format($format); // Use ShoppCore here instead of Shopp here
 		extract($format, EXTR_SKIP);
 
 		$float = false;

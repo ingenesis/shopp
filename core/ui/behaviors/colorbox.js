@@ -1036,12 +1036,12 @@
 
 	// Added by Jonathan Davis, Ingenesis Limited
 	publicMethod.hide = function () {
-			$overlay.fadeTo(settings.fadeOut || 0, 0);
-			$box.fadeTo(settings.fadeOut || 0, 0, function () {
-				$overlay.hide();
-				$box.css({'opacity': 1, cursor: 'auto','left':'-9999em'});
-				trigger(event_closed, settings.onClosed);
-			});
+		$overlay.fadeTo(settings.fadeOut || 0, 0);
+		$box.fadeTo(settings.fadeOut || 0, 0, function () {
+			$overlay.hide();
+			$box.css({'opacity': 1, cursor: 'auto','left':'-9999em'});
+			trigger(event_closed, settings.onClosed);
+		});
 	};
 
 	// Removes changes Colorbox made to the document, but does not remove the plugin.

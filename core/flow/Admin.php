@@ -136,9 +136,9 @@ class ShoppAdmin extends ShoppFlowController {
 		$this->addpage('setup', 				Shopp::__('Setup'),			'ShoppAdminSetup');
 		$this->addpage('setup-core',			Shopp::__('Shopp Setup'),	'ShoppAdminSetup', 'setup');
 		$this->addpage('setup-management',		Shopp::__('Management'),	'ShoppAdminSetup', 'setup');
-		$this->addpage('setup-presentation',	Shopp::__('Presentation'),	'ShoppAdminSetup', 'setup');
 		$this->addpage('setup-checkout',		Shopp::__('Checkout'),		'ShoppAdminSetup', 'setup');
 		$this->addpage('setup-downloads',		Shopp::__('Downloads'),		'ShoppAdminSetup', 'setup');
+		$this->addpage('setup-presentation',	Shopp::__('Presentation'),	'ShoppAdminSetup', 'setup');
 		$this->addpage('setup-pages',			Shopp::__('Pages'),			'ShoppAdminSetup', 'setup');
 		$this->addpage('setup-images',			Shopp::__('Images'),		'ShoppAdminSetup', 'setup');
 

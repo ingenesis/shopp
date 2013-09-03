@@ -121,11 +121,12 @@ class ImageServer {
 		$this->parameters = apply_filters('shopp_imageserver_parameters', array_combine($this->args, $parameters) );
 
 		// Drop empty parameters
-		$this->parameters = array_filter($this->parameters, array('self', 'notempty'));
+		$this->parameters = array_filter($this->parameters, array('ImageAsset', 'notempty'));
 
 		// Setup properties
 		foreach ( $this->parameters as $property => $value )
 			if ( property_exists($this, $property) ) $this->$property = intval($value);
+
 
 		if ( $this->height == 0 && $this->width > 0 ) $this->height = $this->width;
 		if ( $this->width == 0 && $this->height > 0 ) $this->width = $this->height;
@@ -179,10 +180,7 @@ class ImageServer {
 
 	public function resize () {
 
-		$key = defined('SECRET_AUTH_KEY') && SECRET_AUTH_KEY != '' ? SECRET_AUTH_KEY : DB_PASSWORD;
-		$message = $this->Image->id . ',' . implode(',', $this->parameters);
-
-		if ( $this->valid != sprintf('%u', crc32($key . $message)) ) {
+		if ( $this->valid != ImageAsset::checksum($this->Image->id, $this->parameters) ) {
 			header('HTTP/1.1 401 Unauthorized');
 			die('<h1>Not Authorized</h1>');
 		}
@@ -341,10 +339,6 @@ class ImageServer {
 		if ( ! empty($modules) )
 			new ShoppImagingModules();
 
-	}
-
-	private static function notempty ( $value ) {
-		return ( '' != $value );
 	}
 
 	public static function path () {

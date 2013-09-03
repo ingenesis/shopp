@@ -411,16 +411,16 @@ class ImageAsset extends FileAsset {
 		return $d;
 	}
 
-	public function scaledWidth ($width,$height) {
-		$d = array('width'=>$this->width,'height'=>$this->height);
+	public function scaledWidth ( $width, $height ) {
+		$d = array('width' => $this->width, 'height' => $this->height);
 		$scale = $width / $this->width;
 		$d['width'] = $width;
 		$d['height'] = ceil($this->height * $scale);
 		return $d;
 	}
 
-	public function scaledHeight ($width,$height) {
-		$d = array('width'=>$this->width,'height'=>$this->height);
+	public function scaledHeight ( $width, $height ) {
+		$d = array('width' => $this->width, 'height' => $this->height);
 		$scale = $height / $this->height;
 		$d['height'] = $height;
 		$d['width'] = ceil($this->width * $scale);
@@ -441,21 +441,49 @@ class ImageAsset extends FileAsset {
 	 * @param bool $fill
 	 * @return void
 	 */
-	public function resizing ($width,$height,$scale=false,$sharpen=false,$quality=false,$fill=false) {
-		$key = (defined('SECRET_AUTH_KEY') && SECRET_AUTH_KEY != '') ? SECRET_AUTH_KEY : DB_PASSWORD;
+	public function resizing ( $width, $height, $scale = false, $sharpen = false, $quality = false, $fill = false ) {
 		$args = func_get_args();
 
 		if ($args[1] == 0) $args[1] = $args[0];
-
-		$message = rtrim(join(',',$args),',');
-
-		$validation = sprintf('%u',crc32($key.$this->id.','.$message));
+		$message = rtrim(join(',', $args), ',');
+		$validation = self::checksum($this->id, $args);
 		$message .= ",$validation";
 		return $message;
 	}
 
+	/**
+	 * Builds a salted checksum from the image request parameters
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param integer $id The image id
+	 * @param array $args The parameters array
+	 * @return string The generated checksum
+	 **/
+	public static function checksum ( $id, array $args ) {
+		$key = defined('SECRET_AUTH_KEY') && '' != SECRET_AUTH_KEY ? SECRET_AUTH_KEY : DB_PASSWORD;
+		array_unshift($args, $id);
+		$args = array_filter($args, array(__CLASS__, 'notempty'));
+		$message = join(',', $args);
+		return sprintf('%u', crc32($key . $message));
+	}
+
+	/**
+	 * Helper to filter for non-empty parameters
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param scalar $value The value to evaluate
+	 * @return boolean True if not empty, false otherwise
+	 **/
+	public static function notempty ( $value ) {
+		return ( '' !== $value && false !== $value );
+	}
+
 	public function extensions () {
-		array_push($this->_xcols,'filename','width','height','alt','title','settings');
+		array_push($this->_xcols, 'filename', 'width', 'height', 'alt', 'title', 'settings');
 	}
 
 	/**
