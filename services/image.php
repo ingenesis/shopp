@@ -26,8 +26,9 @@ if ( ! isset($GLOBALS['Shopp']) ) $GLOBALS['Shopp'] = new stdClass;
 if ( ! defined('WPINC') ) define('WPINC', 'wp-includes'); // Stop 403s from unauthorized direct access
 
 // Core functions and lazy loader
-if ( ! class_exists('ShoppCore'))
+if ( ! class_exists('ShoppCore') )
 	require_once "$path/core/library/Core.php";
+
 require "$path/core/library/Loader.php";
 
 // Barebones bootstrap (say that 5x fast) for WordPress
@@ -35,6 +36,7 @@ if ( ! defined('ABSPATH') && $loadfile = ShoppLoader::find_wpload()) {
 	require($loadfile);
 	global $table_prefix;
 }
+
 
 // Stub i18n for compatibility
 if ( ! function_exists('__')) {

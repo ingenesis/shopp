@@ -89,12 +89,13 @@ class StorageEngines extends ModuleLoader {
 	 * @return StorageEngine or false if not able to be loaded
 	 **/
 	public function &get ( $module ) {
+		$false = false;
 
 		if ( empty($this->active) )
 			$this->activate($module);
 
 		if ( ! isset($this->active[ $module ]) )
-			return false;
+			return $false;
 
 		return $this->active[$module];
 	}
@@ -342,7 +343,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function checkbox ($column = 0, $attributes = array()) {
+	public function checkbox ( $column = 0, array $attributes = array() ) {
 		if (isset($attributes['name']))
 			$attributes['name'] .= '][${context}';
 		parent::checkbox($column, $attributes);
@@ -360,7 +361,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function menu ($column = 0, $attributes = array(), $options = array()) {
+	public function menu ( $column = 0, array $attributes = array(), array $options = array()) {
 		$attributes['title'] = '${'.$attributes['name'].'}';
 		if (isset($attributes['name']))
 			$attributes['name'] .= '][${context}';
@@ -379,7 +380,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function multimenu ($column = 0, $attributes = array(), $options = array()) {
+	public function multimenu ( $column = 0, array $attributes = array(), array $options = array() ) {
 		if (isset($attributes['name']))
 			$attributes['name'] .= '][${context}';
 		parent::multimenu($column,$attributes,$options);
@@ -396,7 +397,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function input ($column = 0, $attributes = array()) {
+	public function input ( $column = 0, array $attributes = array() ) {
 		if (isset($attributes['name'])) {
 			$name = $attributes['name'];
 			$attributes['value'] = '${'.$name.'}';
@@ -417,7 +418,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function textarea ($column=0,$attributes=array()) {
+	public function textarea ( $column = 0, array $attributes = array() ) {
 		if (isset($attributes['name'])) {
 			$name = $attributes['name'];
 			$attributes['value'] = '${'.$name.'}';
@@ -438,7 +439,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function button ($column=0,$attributes=array()) {
+	public function button ( $column = 0, array $attributes = array() ) {
 		if (isset($attributes['name'])) {
 			$name = $attributes['name'];
 			$attributes['value'] = '${'.$name.'}';
@@ -447,7 +448,7 @@ class StorageSettingsUI extends ModuleSettingsUI {
 		parent::button($column,$attributes);
 	}
 
-	public function behaviors ($script) {
+	public function behaviors ( $script ) {
 		shopp_custom_script('system-settings',$script);
 	}
 

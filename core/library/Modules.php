@@ -44,11 +44,11 @@ abstract class ModuleLoader {
 	 **/
 	public function installed () {
 
-		$cachekey = sanitize_key($this->interface);
+		$cachekey = self::sanitize_key($this->interface);
 		if ( $cached = wp_cache_get($cachekey, 'shopp-addons') )
 			$this->modules = $cached;
 
-		$legacy_cachekey = sanitize_key($this->interface);
+		$legacy_cachekey = self::sanitize_key($this->interface);
 		if ( $legacy = wp_cache_get($legacy_cachekey, 'shopp-legacy-addons') )
 			$this->legacy = $legacy;
 
@@ -59,7 +59,7 @@ abstract class ModuleLoader {
 
 		if ( ! $found || empty($files) ) return $files;
 
-		$keyinterface = sanitize_key($this->interface);
+		$keyinterface = self::sanitize_key($this->interface);
 		foreach ( $files as $file ) {
 			// Skip if the file can't be read or isn't a real file at all
 			if ( ! is_readable($file) || is_dir($file) ) continue;
@@ -163,10 +163,10 @@ abstract class ModuleLoader {
 
 	public function recache () {
 
-		$cachekey = sanitize_key($this->interface);
+		$cachekey = self::sanitize_key($this->interface);
 		wp_cache_delete($cachekey, 'shopp-addons');
 
-		$legacy_cachekey = sanitize_key($this->interface);
+		$legacy_cachekey = self::sanitize_key($this->interface);
 		wp_cache_delete($legacy_cachekey, 'shopp-legacy-addons');
 
 		$this->installed();
@@ -203,6 +203,13 @@ abstract class ModuleLoader {
 		ShoppLoader::add($module, $ModuleFile->file);
 		$this->active[ $module ] = $ModuleFile->load();
 		return $this->active[ $module ];
+	}
+
+	private static function sanitize_key ( $key ) {
+		$raw_key = $key;
+		$key = strtolower( $key );
+		$key = preg_replace( '/[^a-z0-9_\-]/', '', $key );
+		return $key;
 	}
 
 
@@ -312,8 +319,6 @@ class ModuleFile {
 	 **/
 	public function valid () {
 
-		if ( ! defined('Shopp::VERSION') ) return false; // Something funky is going on
-
 		$error = false;
 
 		if ( false === strpos(strtolower($this->package), 'shopp') || empty($this->classname) || empty($this->interface) )
@@ -322,8 +327,9 @@ class ModuleFile {
 			$error = shopp_debug(sprintf('%s could not be loaded because no @version property was set in the addon header comments.', $this->filename));
 		elseif ( empty($this->since) )
 			$error = shopp_debug(sprintf('%s could not be loaded because no @since property was set in the addon header comments.', $this->filename));
-		elseif ( version_compare(self::baseversion(Shopp::VERSION), self::baseversion($this->since)) == -1 ) {
-			$error = shopp_debug(sprintf('%s could not be loaded because it requires version %s (or higher) of Shopp.', $this->name, $this->since));
+		elseif ( defined('SHOPP_VERSION') ) {
+			if ( version_compare(self::baseversion(SHOPP_VERSION), self::baseversion($this->since)) == -1 )
+				$error = shopp_debug(sprintf('%s could not be loaded because it requires version %s (or higher) of Shopp.', $this->name, $this->since));
 		}
 
 		if ( $error ) return false;
@@ -398,7 +404,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function __construct ($Module,$name) {
+	public function __construct ( $Module, $name ) {
 		$this->name = $name;
 		$this->module = $Module->module;
 		$this->id = sanitize_title_with_dashes($this->module);
@@ -449,7 +455,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function checkbox ($column=0,$attributes=array()) {
+	public function checkbox ( $column = 0, array $attributes = array() ) {
 		$defaults = array(
 			'label' => '',
 			'type' => 'checkbox',
@@ -484,7 +490,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function menu ($column=0,$attributes=array(),$options=array()) {
+	public function menu ( $column = 0, array $attributes = array(), array $options = array() ) {
 		$defaults = array(
 			'label' => '',
 			'selected' => '',
@@ -522,7 +528,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function multimenu ($column=0,$attributes=array(),$options=array()) {
+	public function multimenu ( $column = 0, array $attributes = array(), array $options = array() ) {
 
 		$defaults = array(
 			'label' => '',
@@ -572,7 +578,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function input ($column=0,$attributes=array()) {
+	public function input ( $column = 0, array $attributes = array() ) {
 		$defaults = array(
 			'type' => 'hidden',
 			'label' => '',
@@ -602,9 +608,9 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function text ($column=0,$attributes=array()) {
+	public function text ( $column = 0, array $attributes = array() ) {
 		$attributes['type'] = 'text';
-		$this->input($column,$attributes);
+		$this->input($column, $attributes);
 	}
 
 	/**
@@ -618,7 +624,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function password ($column=0,$attributes=array()) {
+	public function password ( $column = 0, array $attributes = array() ) {
 		$attributes['type'] = 'password';
 		$this->input($column,$attributes);
 	}
@@ -634,7 +640,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function hidden ($column=0,$attributes=array()) {
+	public function hidden ( $column = 0, array $attributes = array() ) {
 		$attributes['type'] = 'hidden';
 		$this->input($column,$attributes);
 	}
@@ -650,7 +656,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function textarea ($column=0,$attributes=array()) {
+	public function textarea ( $column = 0, array $attributes = array() ) {
 		$defaults = array(
 			'label' => '',
 			'readonly' => false,
@@ -682,7 +688,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function button ($column=0,$attributes=array()) {
+	public function button ( $column = 0, array $attributes = array() ) {
 		$defaults = array(
 			'type' => 'button',
 			'label' => '',
@@ -712,7 +718,7 @@ class ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function p ($column=0,$attributes=array()) {
+	public function p ( $column = 0, array $attributes = array() ) {
 		$defaults = array(
 			'id' => '',
 			'label' => '',
