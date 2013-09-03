@@ -32,16 +32,16 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  		return self::$instance;
  	}
 
- 	static function register ($type,$class) {
+ 	static function register ( $type, $class ) {
  		$Dispatch = self::instance();
  		$Dispatch->handlers[$type] = $class;
  	}
 
- 	static function add ($order,$type,$message=array()) {
+ 	static function add ( $order, $type, array $message = array() ) {
  		$Dispatch = self::instance();
 
- 		if (!isset($Dispatch->handlers[$type]))
- 			return trigger_error('OrderEvent type "'.$type.'" does not exist.',E_USER_ERROR);
+ 		if ( ! isset($Dispatch->handlers[ $type ]) )
+ 			return trigger_error('OrderEvent type "'.$type.'" does not exist.', E_USER_ERROR);
 
  		$Event = $Dispatch->handlers[$type];
  		$message['order'] = $order;
@@ -50,7 +50,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  		return false;
  	}
 
- 	static function events ($order) {
+ 	static function events ( $order ) {
  		$Dispatch = self::instance();
  		$Object = new OrderEventMessage();
  		$meta = $Object->_table;
@@ -60,13 +60,13 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  						AND type='$Object->type'
  						AND parent='$order'
  					ORDER BY created,id";
- 		return DB::query($query,'array',array($Object,'loader'),'name');
+ 		return DB::query($query, 'array',array($Object, 'loader'), 'name');
  	}
 
- 	static function handler ($name) {
+ 	static function handler ( $name ) {
  		$Dispatch = self::instance();
- 		if (isset($Dispatch->handlers[$name]))
- 			return $Dispatch->handlers[$name];
+ 		if ( isset($Dispatch->handlers[ $name ]) )
+ 			return $Dispatch->handlers[ $name ];
  	}
 
  }
@@ -82,22 +82,22 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  class OrderEventMessage extends MetaObject {
 
  	// Mapped properties should be added (not exclude standard properties)
- 	var $_addmap = true;
- 	var $_map = array('order' => 'parent','amount' => 'numeral');
- 	var $_xcols = array();
- 	var $_emails = array();		// Registry to track emails messages are dispatched to
- 	var $context = 'purchase';
- 	var $type = 'event';
+	public $_addmap = true;
+	public $_map = array('order' => 'parent','amount' => 'numeral');
+	public $_xcols = array();
+	public $_emails = array();		// Registry to track emails messages are dispatched to
+	public $context = 'purchase';
+	public $type = 'event';
 
- 	var $message = array();		// Message protocol to be defined by sub-classes
+	public $message = array();		// Message protocol to be defined by sub-classes
 
- 	var $order = false;
- 	var $amount = 0.0;
- 	var $txnid = false;
+	public $order = false;
+	public $amount = 0.0;
+	public $txnid = false;
 
- 	function __construct ($data=false) {
+	public function __construct ( $data = false ) {
  		$this->init(self::$table);
- 		if (!$data) return;
+ 		if ( ! $data ) return;
 
  		$message = $this->msgprops();
 
@@ -112,7 +112,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  		$data = $this->filter($data);
 
  		// Ensure the data is provided
- 		$missing = array_diff($this->_xcols,array_keys($data));
+ 		$missing = array_diff($this->_xcols, array_keys($data));
 
  		if (!empty($missing)) {
  			$params = array();
@@ -125,27 +125,29 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  		$this->copydata($data);
  		$this->save();
 
- 		if (empty($this->id)) {
- 			new ShoppError(sprintf('An error occured while saving a new %s',get_class($this)),false,SHOPP_DEBUG_ERR);
+ 		if ( empty($this->id) ) {
+			shopp_debug(sprintf('An error occured while saving a new %s', get_class($this)));
  			return $this->_exception = true;
  		}
 
  		$action = sanitize_key($this->name);
 
- 		new ShoppError(sprintf('%s dispatched.',get_class($this)),false,SHOPP_DEBUG_ERR);
+		shopp_debug(sprintf('%s dispatched.', get_class($this)));
 
  		if (isset($this->gateway)) {
  			$gateway = sanitize_key($this->gateway);
- 			do_action_ref_array('shopp_'.$gateway.'_'.$action,array($this));
+			if ( 0 === strpos($gateway, 'shopp') )
+				$gateway = substr($gateway, 5);
+ 			do_action_ref_array('shopp_' . $gateway . '_' . $action, array($this));
  		}
 
- 		do_action_ref_array('shopp_'.$action.'_order_event',array($this));
- 		do_action_ref_array('shopp_order_event',array($this));
+ 		do_action_ref_array('shopp_' . $action . '_order_event', array($this));
+ 		do_action_ref_array('shopp_order_event', array($this));
 
 
  	}
 
- 	function msgprops () {
+	public function msgprops () {
  		$message = $this->message;
  		unset($this->message);
  		if (isset($message) && !empty($message)) {
@@ -158,7 +160,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  		return $message;
  	}
 
- 	function datatype ($var) {
+	public function datatype ($var) {
  		if (is_array($var)) return 'array';
  		if (is_bool($var)) return 'boolean';
  		if (is_float($var)) return 'float';
@@ -181,7 +183,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  	 * @param object $record Result record data object
  	 * @return void
  	 **/
- 	function loader (&$records,&$record,$type=false,$index='id',$collate=false) {
+	public function loader ( array &$records, &$record, $type = false, $index = 'id', $collate = false ) {
  		if ($type !== false && isset($record->$type) && class_exists(OrderEvent::handler($record->$type))) {
  			$OrderEventClass = OrderEvent::handler($record->$type);
  		} elseif (isset($this)) {
@@ -192,7 +194,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  		$Object = new $OrderEventClass(false);
  		$Object->msgprops();
  		$Object->populate($record);
- 		if (method_exists($Object,'expopulate'))
+ 		if (method_exists($Object, 'expopulate'))
  			$Object->expopulate();
 
  		if ($collate) {
@@ -201,7 +203,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  		} else $records[$index] = $Object;
  	}
 
- 	function filter ($msg) {
+	public function filter ($msg) {
  		return $msg;
  	}
 
@@ -213,7 +215,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  	 *
  	 * @return string The label of the event
  	 **/
- 	function label () {
+	public function label () {
  		if ( '' == $this->name ) return '';
 
  		$states = (array)shopp_setting('order_states');
@@ -236,9 +238,9 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class CreditOrderEventMessage extends OrderEventMessage {
- 	var $transactional = true;	// Mark the order event as a balance adjusting event
- 	var $credit = true;
- 	var $debit = false;
+	public $transactional = true;	// Mark the order event as a balance adjusting event
+	public $credit = true;
+	public $debit = false;
  }
 
  /**
@@ -250,9 +252,9 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class DebitOrderEventMessage extends OrderEventMessage {
- 	var $transactional = true;	// Mark the order event as a balance adjusting event
- 	var $debit = true;
- 	var $credit = false;
+	public $transactional = true;	// Mark the order event as a balance adjusting event
+	public $debit = true;
+	public $credit = false;
  }
 
  /**
@@ -278,8 +280,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class PurchaseOrderEvent extends OrderEventMessage {
- 	var $name = 'purchase';
- 	var $message = array(
+	public $name = 'purchase';
+	public $message = array(
  		'gateway' => ''		// Gateway (class name) to process authorization through
  	);
  }
@@ -300,8 +302,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class InvoicedOrderEvent extends DebitOrderEventMessage {
- 	var $name = 'invoiced';
- 	var $message = array(
+	public $name = 'invoiced';
+	public $message = array(
  		'gateway' => '',		// Gateway (class name) to process authorization through
  		'amount' => 0.0			// Amount invoiced for the order
  	);
@@ -320,8 +322,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class AuthOrderEvent extends OrderEventMessage {
- 	var $name = 'auth';
- 	var $message = array(
+	public $name = 'auth';
+	public $message = array(
  		'gateway' => '',		// Gateway (class name) to process authorization through
  		'amount' => 0.0			// Amount to capture (charge)
  	);
@@ -337,9 +339,9 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class AuthedOrderEvent extends OrderEventMessage {
- 	var $name = 'authed';
- 	var $capture = false;
- 	var $message = array(
+	public $name = 'authed';
+	public $capture = false;
+	public $message = array(
  		'txnid' => '',			// Transaction ID
  		'amount' => 0.0,		// Gross amount authorized
  		'gateway' => '',		// Gateway handler name (module name from @subpackage)
@@ -348,7 +350,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  		'payid' => ''			// Payment ID (last 4 of card or check number)
  	);
 
- 	function __construct ($data) {
+	public function __construct ($data) {
 
  		$this->lock($data);
 
@@ -361,7 +363,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
  	}
 
- 	function filter ($msg) {
+	public function filter ($msg) {
 
  		if (empty($msg['payid'])) return $msg;
  		$paycards = Lookup::paycards();
@@ -381,7 +383,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  	 *
  	 * @return boolean
  	 **/
- 	function lock ($data) {
+	public function lock ($data) {
  		if (!isset($data['order'])) return false;
 
  		$order = $data['order'];
@@ -404,7 +406,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  	 *
  	 * @return boolean
  	 **/
- 	function unlock () {
+	public function unlock () {
  		if (!$this->order) return false;
  		$unlocked = DB::query("SELECT RELEASE_LOCK('$this->order') as unlocked",'auto','col','unlocked');
  		return ($unlocked == 1);
@@ -423,7 +425,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class UnstockOrderEvent extends OrderEventMessage {
- 	var $name = 'unstock';
+	public $name = 'unstock';
  	protected $allocated = array();
 
  	/**
@@ -434,7 +436,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  	 *
  	 * @return array The updated message
  	 **/
- 	function filter ($message) {
+	public function filter ($message) {
  		$this->_xcols[] = 'allocated';
  		$message['allocated'] = false;
  		return $message;
@@ -449,7 +451,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   	* @param int $id (optional) the purchased item id
   	* @return mixed if id is provided, the allocated object, else array of allocated objects
   	**/
- 	function allocated ( $id = false ) {
+	public function allocated ( $id = false ) {
  		if ( $id && isset($this->allocated[$id]) ) return $this->allocated[$id];
  		return $this->allocated;
  	}
@@ -463,7 +465,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   	* @param array $allocated the array of allocated item objects
   	* @return boolean success
   	**/
- 	function unstocked ( $allocated = array() ) {
+	public function unstocked ( $allocated = array() ) {
  		if ( empty($allocated) ) return false;
  		$this->allocated = $allocated;
  		$this->save();
@@ -485,8 +487,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class SaleOrderEvent extends OrderEventMessage {
- 	var $name = 'sale';
- 	var $message = array(
+	public $name = 'sale';
+	public $message = array(
  		'gateway' => '',		// Gateway (class name) to process authorization through
  		'amount' => 0.0			// Amount to capture (charge)
  	);
@@ -506,8 +508,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class RebillOrderEvent extends DebitOrderEventMessage {
- 	var $name = 'rebill';
- 	var $message = array(
+	public $name = 'rebill';
+	public $message = array(
  		'txnid' => '',			// Transaction ID
  		'gateway' => '',		// Gateway class name (module name from @subpackage)
  		'amount' => 0.0,		// Gross amount authorized
@@ -530,8 +532,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class CaptureOrderEvent extends OrderEventMessage {
- 	var $name = 'capture';
- 	var $message = array(
+	public $name = 'capture';
+	public $message = array(
  		'txnid' => '',			// Transaction ID of the prior AuthedOrderEvent
  		'gateway' => '',		// Gateway (class name) to process capture through
  		'amount' => 0.0,		// Amount to capture (charge)
@@ -557,8 +559,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class CapturedOrderEvent extends CreditOrderEventMessage {
- 	var $name = 'captured';
- 	var $message = array(
+	public $name = 'captured';
+	public $message = array(
  		'txnid' => '',			// Transaction ID of the CAPTURE event
  		'amount' => 0.0,		// Amount captured
  		'fees' => 0.0,			// Transaction fees taken by the gateway net revenue = amount-fees
@@ -589,8 +591,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class RecapturedOrderEvent extends CreditOrderEventMessage {
- 	var $name = 'recaptured';
- 	var $message = array(
+	public $name = 'recaptured';
+	public $message = array(
  		'txnorigin' => '',		// Original transaction ID (txnid of original Purchase record)
  		'txnid' => '',			// Transaction ID of the recurring payment event
  		'amount' => 0.0,		// Amount captured
@@ -614,8 +616,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class RefundOrderEvent extends OrderEventMessage {
- 	var $name = 'refund';
- 	var $message = array(
+	public $name = 'refund';
+	public $message = array(
  		'txnid' => '',
  		'gateway' => '',		// Gateway (class name) to process refund through
  		'amount' => 0.0,
@@ -623,7 +625,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  		'reason' => 0
  	);
 
- 	function filter ($msg) {
+	public function filter ($msg) {
  		$reasons = shopp_setting('cancel_reasons');
  		$msg['reason'] = $reasons[ $msg['reason'] ];
  		return $msg;
@@ -647,8 +649,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class RefundedOrderEvent extends DebitOrderEventMessage {
- 	var $name = 'refunded';
- 	var $message = array(
+	public $name = 'refunded';
+	public $message = array(
  		'txnid' => '',			// Transaction ID for the REFUND event
  		'amount' => 0.0,		// Amount refunded
  		'gateway' => ''			// Gateway handler name (module name from @subpackage)
@@ -668,8 +670,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class VoidOrderEvent extends OrderEventMessage {
- 	var $name = 'void';
- 	var $message = array(
+	public $name = 'void';
+	public $message = array(
  		'txnid' => 0,			// Transaction ID for the authorization
  		'gateway' => '',		// Gateway (class name) to process capture through
  		'user' => 0,			// The WP user ID processing the void
@@ -677,7 +679,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  		'note' => 0			// The reason code
  	);
 
- 	function filter ($msg) {
+	public function filter ($msg) {
  		$reasons = shopp_setting('cancel_reasons');
  		$msg['reason'] = $reasons[ $msg['reason'] ];
  		return $msg;
@@ -695,8 +697,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class AmountVoidedEvent extends CreditOrderEventMessage {
- 	var $name = 'amt-voided';
- 	var $message = array(
+	public $name = 'amt-voided';
+	public $message = array(
  		'amount' => 0.0		// Amount voided
  	);
  }
@@ -711,8 +713,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class VoidedOrderEvent extends CreditOrderEventMessage {
- 	var $name = 'voided';
- 	var $message = array(
+	public $name = 'voided';
+	public $message = array(
  		'txnorigin' => '',		// Original transaction ID (txnid of original Purchase record)
  		'txnid' => '',			// Transaction ID for the VOID event
  		'gateway' => ''			// Gateway handler name (module name from @subpackage)
@@ -729,8 +731,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class NoteOrderEvent extends OrderEventMessage {
- 	var $name = 'note';
- 	var $message = array(
+	public $name = 'note';
+	public $message = array(
  		'user' => 0,			// The WP user ID of the note author
  		'note' => ''			// The message to send
  	);
@@ -746,8 +748,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class NoticeOrderEvent extends OrderEventMessage {
- 	var $name = 'notice';
- 	var $message = array(
+	public $name = 'notice';
+	public $message = array(
  		'user' => 0,			// The WP user ID associated with the notice
  		'kind' => '',			// Free form notice type to be used for classifying types of notices
  		'notice' => ''			// The message to log
@@ -764,8 +766,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class ReviewOrderEvent extends OrderEventMessage {
- 	var $name = 'review';
- 	var $message = array(
+	public $name = 'review';
+	public $message = array(
  		'kind' => '',			// The kind of fraud review: AVS (address verification system), CVN (card verification number), FRT (fraud review team)
  		'note' => ''			// The message to log for the order
  	);
@@ -782,8 +784,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   **/
 
  class AuthFailOrderEvent extends OrderEventMessage {
- 	var $name = 'auth-fail';
- 	var $message = array(
+	public $name = 'auth-fail';
+	public $message = array(
  		'amount' => 0.0,		// Amount to be authorized
  		'error' => '',			// Error code (if provided)
  		'message' => '',		// Error message reported by the gateway
@@ -793,8 +795,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  OrderEvent::register('auth-fail','AuthFailOrderEvent');
 
  class CaptureFailOrderEvent extends OrderEventMessage {
- 	var $name = 'capture-fail';
- 	var $message = array(
+	public $name = 'capture-fail';
+	public $message = array(
  		'amount' => 0.0,		// Amount to be captured
  		'error' => '',			// Error code (if provided)
  		'message' => '',		// Error message reported by the gateway
@@ -804,8 +806,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  OrderEvent::register('capture-fail','CaptureFailOrderEvent');
 
  class RecaptureFailOrderEvent extends OrderEventMessage {
- 	var $name = 'recapture-fail';
- 	var $message = array(
+	public $name = 'recapture-fail';
+	public $message = array(
  		'amount' => 0.0,		// Amount of the recurring payment
  		'error' => '',			// Error code (if provided)
  		'message' => '',		// Error message reported by the gateway
@@ -816,8 +818,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  OrderEvent::register('recapture-fail','RecaptureFailOrderEvent');
 
  class RefundFailOrderEvent extends OrderEventMessage {
- 	var $name = 'refund-fail';
- 	var $message = array(
+	public $name = 'refund-fail';
+	public $message = array(
  		'amount' => 0.0,		// Amount to be refunded
  		'error' => '',			// Error code (if provided)
  		'message' => '',		// Error message reported by the gateway
@@ -827,8 +829,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  OrderEvent::register('refund-fail','RefundFailOrderEvent');
 
  class VoidFailOrderEvent extends OrderEventMessage {
- 	var $name = 'void-fail';
- 	var $message = array(
+	public $name = 'void-fail';
+	public $message = array(
  		'error' => '',			// Error code (if provided)
  		'message' => '',		// Error message reported by the gateway
  		'gateway' => ''			// Gateway handler name (module name from @subpackage)
@@ -845,8 +847,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @subpackage orderevent
   **/
  class DecryptOrderEvent extends OrderEventMessage {
- 	var $name = 'decrypt';
- 	var $message = array(
+	public $name = 'decrypt';
+	public $message = array(
  		'user' => 0				// WordPress user id
  	);
  }
@@ -860,8 +862,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @package shopp
   **/
  class ShippedOrderEvent extends OrderEventMessage {
- 	var $name = 'shipped';
- 	var $message = array(
+	public $name = 'shipped';
+	public $message = array(
  		'tracking' => '',		// Tracking number (you know, for tracking)
  		'carrier' => '',		// Carrier ID (name, eg. UPS, USPS, FedEx)
  	);
@@ -876,8 +878,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @package shopp
   **/
  class DownloadOrderEvent extends OrderEventMessage {
- 	var $name = 'download';
- 	var $message = array(
+	public $name = 'download';
+	public $message = array(
  		'purchased' => 0,		// Purchased line item ID (or add-on meta record ID)
  		'download' => 0,		// Download ID (meta record)
  		'ip' => '',				// IP address of the download

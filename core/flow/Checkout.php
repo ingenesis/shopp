@@ -48,7 +48,7 @@ class ShoppCheckout {
 
 		if ( empty($_POST) ) return;
 
-		$submitted = stripslashes_deep($_POST);				// Clean it up
+		$submitted = stripslashes_deep($_POST);					// Clean it up
 		$this->form = array_merge(self::$defaults, $submitted);	// Capture it
 
 		$action = $this->form('checkout');
@@ -56,6 +56,7 @@ class ShoppCheckout {
 		add_action('shopp_confirm_order', array($this, 'confirmed'));
 
 		if ( empty($action) ) return;
+
 		$this->Register = new ShoppRegistration();
 
 		add_action('shopp_process_shipmethod', array($this, 'shipmethod'));
@@ -283,7 +284,9 @@ class ShoppCheckout {
 	public function registration () {
         add_filter('shopp_validate_registration', create_function('', 'return true;') ); // Validation already conducted during the checkout process
         add_filter('shopp_registration_redirect', create_function('', 'return false;') ); // Prevent redirection to account page after registration
-		$this->Register->process();
+
+		ShoppRegistration::process();
+
 	}
 
 	/**

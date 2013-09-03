@@ -321,8 +321,7 @@ div.progress div.gloss { position:absolute;width:100%;height:10px;background:url
 .shopp .options .setting select { width:97%; }
 .shopp .multipane .controls.right{ float:none; }
 
-.shopp .form-table input[type=checkbox] { vertical-align:middle;border-style:none !important; }
-
+/*.shopp .form-table input[type=checkbox] { vertical-align:middle;border-style:none !important; }*/
 .shopp .multiple-select { position:relative;overflow-x:hidden;overflow-y:auto;height:120px;width:250px;display:inline-block;border:1px solid #dfdfdf;background:#ffffff;padding:0;margin:0; }
 .shopp .multiple-select ul { list-style-type:none;position:absolute;left:0;right:0;line-height:1;width:auto;margin:0;padding:0; }
 .shopp .multiple-select ul li { margin:0;padding:2px 2px 0 0;clear:both; }

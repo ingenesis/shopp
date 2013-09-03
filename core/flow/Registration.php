@@ -52,7 +52,8 @@ class ShoppRegistration {
 		add_action('parse_request', array($this, 'customer'));
 		add_action('parse_request', array($this, 'shipaddress'));
 		add_action('parse_request', array($this, 'billaddress'));
-		add_action('parse_request', array($this, 'process'));
+
+		add_action('parse_request', array(__CLASS__, 'process'));
 
 		add_filter('shopp_validate_registration', 'ShoppFormValidation::names');
 		add_filter('shopp_validate_registration', 'ShoppFormValidation::email');
@@ -163,7 +164,7 @@ class ShoppRegistration {
 
 	}
 
-	public function process () {
+	public static function process () {
 
 		if ( true !== apply_filters('shopp_validate_registration', false) ) return;
 

@@ -235,6 +235,36 @@ abstract class ShoppCore {
 	}
 
 	/**
+	 * Get translated inline-Markdown rendered HTML (use for single-line Markdown)
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param string $text The text to translate
+	 * @return string The translated Markdown-rendered HTML text
+	 **/
+	public static function _mi () {
+		$args = func_get_args();
+		$markdown = call_user_func_array(array(__CLASS__, '_m'), $args);
+		return str_replace(array('<p>', '</p>'), '', $markdown);
+	}
+
+	/**
+	 * Output translated Markdown rendered HTML with translator context
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param string $text The text to translate
+	 * @param string $context An explination of how and where the text is used
+	 * @return string The translated text
+	 **/
+	public static function _emi ( $text ) {
+		$args = func_get_args();
+		echo call_user_func_array(array(__CLASS__, '_mi'), $args);
+	}
+
+	/**
 	 * Get translated Markdown rendered HTML with translator context
 	 *
 	 * @author Jonathan Davis
@@ -297,7 +327,7 @@ abstract class ShoppCore {
 	 * @param int $timestamp (optional) The timestamp to be formatted (defaults to current timestamp)
 	 * @return string The formatted localized date/time
 	 **/
-	public static function _d ( string $format, integer $timestamp = null ) {
+	public static function _d ( string $format, $timestamp = null ) {
 
 		$tokens = array(
 			'D' => array('Mon' => Shopp::__('Mon'), 'Tue' => Shopp::__('Tue'),
@@ -1032,9 +1062,10 @@ abstract class ShoppCore {
 	 * @param array $allowed (optional) Allowable attribute options for the element
 	 * @return string Attribute markup fragment
 	 **/
-	public static function inputattrs ($options,$allowed=array()) {
-		if (!is_array($options)) return "";
-		if (empty($allowed)) {
+	public static function inputattrs ( $options, array $allowed = array() ) {
+
+		if ( ! is_array($options) ) return '';
+		if ( empty($allowed) ) {
 			$allowed = array('autocomplete','accesskey','alt','checked','class','disabled','format',
 				'minlength','maxlength','placeholder','readonly','required','size','src','tabindex','cols','rows',
 				'title','value');
@@ -1042,9 +1073,9 @@ abstract class ShoppCore {
 		$string = "";
 		$classes = "";
 
-		if (isset($options['label']) && !isset($options['value'])) $options['value'] = $options['label'];
-		foreach ($options as $key => $value) {
-			if (!in_array($key,$allowed)) continue;
+		if ( isset($options['label']) && !isset($options['value']) ) $options['value'] = $options['label'];
+		foreach ( $options as $key => $value ) {
+			if ( ! in_array($key, $allowed) ) continue;
 			switch($key) {
 				case "class": $classes .= " $value"; break;
 				case "checked":
@@ -1069,7 +1100,7 @@ abstract class ShoppCore {
 					$string .= ' '.$key.'="'.esc_attr($value).'"';
 			}
 		}
-		if (!empty($classes)) $string .= ' class="'.esc_attr(trim($classes)).'"';
+		if ( ! empty($classes) ) $string .= ' class="' . esc_attr(trim($classes)) . '"';
 	 	return $string;
 	}
 
