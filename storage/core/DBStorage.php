@@ -5,12 +5,11 @@
  * Provides database storage in the asset table
  *
  * @author Jonathan Davis
- * @version 1.0
  * @copyright Ingenesis Limited, February 18, 2010
  * @license GNU GPL version 3 (or later) {@see license.txt}
  * @package shopp
+ * @version 1.0
  * @since 1.1
- * @subpackage DBStorage
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
