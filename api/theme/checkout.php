@@ -630,10 +630,12 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 			'value' => '',
 			'options' => ''
 		);
-		if ('textarea' == $defaults['type']) {
+
+		if ( isset($options['type']) && 'textarea' == $options['type'] ) {
 			$defaults['cols'] = '30';
 			$defaults['rows'] = '3';
 		}
+
 		$op = array_merge($defaults,$options);
 		extract($op);
 
@@ -867,14 +869,14 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		$buttons = array('<input type="submit" name="process" id="checkout-button" '.inputattrs($options,$submit_attrs).' />');
 
-		if (!$O->Cart->orderisfree())
-			$buttons = apply_filters('shopp_checkout_submit_button',$buttons,$options,$submit_attrs);
+		if ( ! $O->Cart->orderisfree() )
+			$buttons = apply_filters('shopp_checkout_submit_button', $buttons, $options, $submit_attrs);
 
 		$_ = array();
 		foreach ($buttons as $label => $button)
 			$_[] = '<span class="payoption-button payoption-'.sanitize_title_with_dashes($label).($label === 0?$wrapclass:'').'">'.$button.'</span>';
 
-		return join("\n",$_);
+		return join("\n", $_);
 	}
 
 	public static function submit_login ($result, $options, $O) {

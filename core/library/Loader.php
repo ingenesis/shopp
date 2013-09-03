@@ -323,7 +323,7 @@ ShoppLoader::map(array(
 	'featuredproducts' => '/model/Collection.php',
 	'fileasset' => '/model/Asset.php',
 	'flowcontroller' => '/library/Deprecated.php',
-	'freeorder' => '/model/Gateway.php',
+	'shoppfreeorder' => '/model/Gateway.php',
 	'gatewayframework' => '/model/Gateway.php',
 	'gatewaymodule' => '/model/Gateway.php',
 	'gatewaymodules' => '/model/Gateway.php',

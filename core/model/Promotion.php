@@ -247,13 +247,13 @@ class ShoppPromo extends DatabaseObject {
 	 * @param array $promos A list of ShoppPromo ids of the promotions to be updated
 	 * @return void
 	 **/
-	function used ($promos) {
-		if (empty($promos) || !is_array($promos)) return;
+	public static function used ($promos) {
+		if ( empty($promos) || ! is_array($promos) ) return;
 		$table = DatabaseObject::tablename(self::$table);
-		DB::query("UPDATE LOW_PRIORITY $table SET uses=uses+1 WHERE 0 < FIND_IN_SET(id,'".join(',',$promos)."')");
+		DB::query("UPDATE LOW_PRIORITY $table SET uses=uses+1 WHERE 0 < FIND_IN_SET(id,'" . join(',', $promos) . "')");
 	}
 
-	static function activedates () {
+	public static function activedates () {
 
 		// By default the promotion editor will save a value of 1
 		// for the start and end dates if no date values are provided.

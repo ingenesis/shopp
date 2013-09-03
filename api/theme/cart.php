@@ -296,7 +296,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 
 	public static function needs_shipping_estimates ( $result, $options, $O ) {
 		// Shipping must be enabled, without free shipping and shipped items must be present in the cart
-		return ( shopp_setting_enabled('shipping') && !( $O->freeship && empty($O->shipped) ) );
+		return ( shopp_setting_enabled('shipping') && ! ShoppOrder()->Shiprates->free() && ! empty($O->shipped) );
 	}
 
 	public static function referrer ( $result, $options, $O ) {
@@ -324,7 +324,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		if ( empty($O->shipped) ) return "";
 		if ( isset($options['label']) ) {
 			$options['currency'] = "false";
-			if ( $O->freeshipping ) {
+			if ( ShoppOrder()->Shiprates->free() ) {
 				$result = shopp_setting('free_shipping_text');
 				if ( empty($result) ) $result = __('Free Shipping!','Shopp');
 			}
@@ -333,7 +333,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		} else {
 			if ( false === $O->Totals->total('shipping') )
 				return __("Enter Postal Code","Shopp");
-			elseif ( false === $O->Totals->shipping )
+			elseif ( false === $O->total('shipping') )
 				return __("Not Available","Shopp");
 			else $result = $O->Totals->total('shipping');
 		}

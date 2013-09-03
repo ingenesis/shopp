@@ -616,19 +616,19 @@ class GatewaySettingsUI extends ModuleSettingsUI {
 	 *
 	 * @return void
 	 **/
-	public function cardmenu ( $column = 0, $attributes = array(), $cards = array() ) {
+	public function cardmenu ( $column = 0, array $attributes = array(), array $cards = array() ) {
 		$options = array();
 		foreach ( $cards as $card )
 			$options[ strtolower($card->symbol) ] = $card->name;
 		$this->multimenu($column, $attributes, $options);
 	}
 
-	public function input ( $column = 0, $attributes = array() ) {
+	public function input ( $column = 0, array $attributes = array() ) {
 		$this->multifield($attributes);
 		parent::input($column, $attributes);
 	}
 
-	public function textarea ( $column = 0, $attributes = array() ) {
+	public function textarea ( $column = 0, array $attributes = array() ) {
 		$this->multifield($attributes);
 		parent::textarea($column, $attributes);
 	}
