@@ -1224,10 +1224,10 @@ abstract class ShoppReportExportFramework {
 		$name = $reports[$report]['name'];
 
 		header("Content-type: $this->content_type; charset=UTF-8");
-		// header("Content-Disposition: attachment; filename=\"$sitename $name.$this->extension\"");
-		// header("Content-Description: Delivered by WordPress/Shopp ".Shopp::VERSION);
-		// header("Cache-Control: maxage=1");
-		// header("Pragma: public");
+		header("Content-Disposition: attachment; filename=\"$sitename $name.$this->extension\"");
+		header("Content-Description: Delivered by WordPress/Shopp ".Shopp::VERSION);
+		header("Cache-Control: maxage=1");
+		header("Pragma: public");
 
 		$this->begin();
 		if ($this->headings) $this->heading();
