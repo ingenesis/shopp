@@ -354,7 +354,7 @@ class ShoppStorefront extends ShoppFlowController {
 	public function maintenance ( string $template ) {
 		// Only run if in maintenance mode
 		if ( ! is_shopp_page() ) return $template;
-		if ( ! Shopp::maintenance()) return $template;
+		if ( ! Shopp::maintenance() ) return $template;
 
 		// Remove normal Shopp Storefront template processing
 		// so maintenance content takes over

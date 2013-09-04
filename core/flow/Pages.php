@@ -134,6 +134,7 @@ class ShoppPages extends ListFramework {
 class ShoppPage {
 
 	public static $name = 'catalog';
+	public static $template = '';
 
 	protected $slug = 'shopp';			// Slug of the page
 	protected $title = '';				// Title of the page
@@ -171,6 +172,12 @@ class ShoppPage {
 		return get_class_property($classname, 'name');
 	}
 
+
+	public function pagetemplate () {
+		$classname = get_class($this);
+		return get_class_property($classname, 'template');
+	}
+
 	public function content ($content) {
 		return $content;
 	}
@@ -201,10 +208,20 @@ class ShoppPage {
 		return $this->description;
 	}
 
+	/**
+	 * Determines page template names (page templates, not content templates)
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return array List of page templates
+	 **/
 	public function templates () {
 		$templates = array('shopp.php', 'page.php');
-		if (!empty($this->name)) array_unshift($templates, "$this->name.php");
-		if (!empty($this->template)) array_unshift($templates, $this->template);
+		$name = $this->name();
+		$template = $this->pagetemplate();
+		if ( ! empty($name) ) array_unshift($templates, "$name.php");
+		if ( ! empty($template) ) array_unshift($templates, "$template.php");
 		return $templates;
 	}
 
@@ -688,11 +705,12 @@ class ShoppThanksPage extends ShoppPage {
  **/
 class ShoppMaintenancePage extends ShoppPage {
 
-	protected $templates = array('shopp-maintenance.php');
+	public static $name = 'shopp-maintenance';
+	protected $templates = array('maintenance.php');
 
 	public function __construct ( $options = array() ) {
 
-		$options['title'] = __("We're Sorry!", 'Shopp');
+		$options['title'] = Shopp::__('We’re Sorry!');
 
 		parent::__construct($options);
 
@@ -702,12 +720,11 @@ class ShoppMaintenancePage extends ShoppPage {
 		global $wp_query, $wp_the_query;
 		if ( $wp_the_query !== $wp_query ) return $content;
 
-		if ( '' != locate_shopp_template(array('maintenance.php')) ) {
+		if ( '' != locate_shopp_template($this->templates) ) {
 			ob_start();
-			locate_shopp_template(array('maintenance.php'));
-			$content = ob_get_contents();
-			ob_end_clean();
-		} else $content = '<div id="shopp" class="update"><p>'.__("The store is currently down for maintenance.  We'll be back soon!", "Shopp").'</p><div class="clear"></div></div>';
+			locate_shopp_template($this->templates, true);
+			$content = ob_get_clean();
+		} else $content = '<div id="shopp" class="update"><p>' . Shopp::__('The store is currently down for maintenance. We’ll be back soon!').'</p><div class="clear"></div></div>';
 
 		return $content;
 	}
@@ -944,7 +961,7 @@ class ShoppShortcodes {
 		} elseif ( ! isset( ShoppProduct()->id ) ) {
 			return "";
 		}
- 
+
 		ob_start();
 		?>
 		<form action="<?php shopp('cart.url'); ?>" method="post" class="shopp product">
