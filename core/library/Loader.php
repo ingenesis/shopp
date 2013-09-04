@@ -217,6 +217,8 @@ class ShoppLoader {
 
 		$filepath = dirname( ! empty($_SERVER['SCRIPT_FILENAME']) ? $_SERVER['SCRIPT_FILENAME'] : __FILE__ );
 
+		define('SHOPP_LOADER_APC', function_exists('apc_exists'));
+
 		if ( file_exists(self::sanitize($root) . '/' . $loadfile))
 			$wp_abspath = $root;
 
@@ -225,6 +227,10 @@ class ShoppLoader {
 			// SetEnv SHOPP_WPCONFIG_PATH /path/to/wpconfig
 			// and SHOPP_ABSPATH used on webserver site config
 			$wp_abspath = $_SERVER['SHOPP_WP_ABSPATH'];
+		} elseif ( SHOPP_LOADER_APC && apc_exists('shopp_wp_abspath') && $cached = apc_fetch('shopp_wp_abspath')
+			 && file_exists("$cached/$loadfile") ) {
+
+			$wp_abspath = $cached;
 
 		} elseif ( strpos($filepath, $root) !== false ) {
 			// Shopp directory has DOCUMENT_ROOT ancenstor, find wp-config.php
@@ -233,7 +239,6 @@ class ShoppLoader {
 				if (file_exists( sanitize_path(join('/', $fullpath)) . '/' . $loadfile ))
 					$wp_abspath = join('/', $fullpath);
 			}
-
 		} elseif ( file_exists(self::sanitize($root).'/'.$loadfile) ) {
 			$wp_abspath = $root; // WordPress install in DOCUMENT_ROOT
 		} elseif ( file_exists(self::sanitize(dirname($root)) . '/' . $loadfile) ) {
@@ -246,6 +251,8 @@ class ShoppLoader {
 	    }
 
 		$wp_load_file = self::sanitize($wp_abspath) . "/$loadfile";
+
+		if ( SHOPP_LOADER_APC ) apc_store('shopp_wp_abspath', $wp_abspath);
 
 		if ( $wp_load_file !== false ) return $wp_load_file;
 		return false;
