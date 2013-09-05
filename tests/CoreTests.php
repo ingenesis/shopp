@@ -493,4 +493,23 @@ class CoreTests extends ShoppTestCase {
 		$encrypted = Shopp::rsa_encrypt('Counselor Troi is half-Betazoid.', $pem);
 		$this->assertTrue(!empty($encrypted));
 	}
+
+	public function test_set_wp_query_var() {
+		global $wp, $wp_query;
+		Shopp::set_wp_query_var('custom_property', 'Shiney new space boots');
+
+		$in_wp = (isset($wp->query_vars['custom_property']) and 'Shiney new space boots' === $wp->query_vars['custom_property']);
+		$in_wp_query = (isset($wp_query->query_vars['custom_property']) and 'Shiney new space boots' === $wp_query->query_vars['custom_property']);
+
+		$this->assertTrue($in_wp);
+		$this->assertTrue($in_wp_query);
+	}
+
+	/**
+	 * @depends test_set_wp_query_var
+	 */
+	public function test_get_wp_query_var() {
+		Shopp::set_wp_query_var('warp_factor', '9');
+		$this->assertTrue('9' === Shopp::get_wp_query_var('warp_factor'));
+	}
 }
