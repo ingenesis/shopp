@@ -290,7 +290,7 @@ class ShoppAdminSetup extends ShoppAdminController {
 		if ( ! current_user_can('shopp_settings_checkout') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
-		$purchasetable = DatabaseObject::tablename(ShoppPurchase::$table);
+		$purchasetable = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
 		$next = $db->query("SELECT IF ((MAX(id)) > 0,(MAX(id)+1),1) AS id FROM $purchasetable LIMIT 1");
 		$next_setting = shopp_setting('next_order_id');
 

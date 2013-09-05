@@ -22,7 +22,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @package shopp
  * @subpackage meta
  **/
-class ShoppMetaObject extends DatabaseObject {
+class ShoppMetaObject extends ShoppDatabaseObject {
 	static $table = 'meta';
 
 	public $context = 'product';
@@ -90,7 +90,7 @@ class ShoppMetaObject extends DatabaseObject {
  * @package shopp
  * @subpackage meta
  **/
-abstract class MetasetObject extends DatabaseObject {
+abstract class MetasetObject extends ShoppDatabaseObject {
 	static $table = 'meta';
 
 	public $_table = false;	// Fully qualified table name
@@ -108,7 +108,7 @@ abstract class MetasetObject extends DatabaseObject {
 	}
 
 	function init ($table,$key='id') {
-		$this->_table = DatabaseObject::tablename(MetasetObject::$table);
+		$this->_table = ShoppDatabaseObject::tablename(MetasetObject::$table);
 		$this->_type = get_class($this);
 		$properties = array_keys(get_object_vars($this));
 		$this->_properties = array_filter($properties,array('MetasetObject','_ignore_'));
@@ -224,7 +224,7 @@ class ObjectMeta {
 	public $named = array();
 
 	function __construct ($parent=false,$context='product',$type=false,$sort='sortorder') {
-		$this->_table = DatabaseObject::tablename(self::$table);
+		$this->_table = ShoppDatabaseObject::tablename(self::$table);
 
 		$params = array(
 			'parent' => $parent,

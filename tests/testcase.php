@@ -59,7 +59,7 @@ class ShoppTestCase extends WP_UnitTestCase {
 			'Address','ShoppProduct','ShoppPromo','ProductSummary','ShoppPrice','ShoppCustomer','ShoppPurchase','ShoppPurchased'
 		);
 		foreach ($classes as $classname) {
-			$table = DatabaseObject::tablename(get_class_property($classname, 'table'));
+			$table = ShoppDatabaseObject::tablename(get_class_property($classname, 'table'));
 			sDB::query('DELETE FROM '. $table);
 		}
 

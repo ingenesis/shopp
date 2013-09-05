@@ -14,7 +14,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppCustomer extends DatabaseObject {
+class ShoppCustomer extends ShoppDatabaseObject {
 	static $table = 'customer';
 
 	public $login = false;			 // Login authenticated flag
@@ -211,9 +211,9 @@ class ShoppCustomer extends DatabaseObject {
 	/*public function load_downloads () {
 		$Storefront = ShoppStorefront();
 		if (empty($this->id)) return false;
-		$orders = DatabaseObject::tablename(ShoppPurchase::$table);
-		$purchases = DatabaseObject::tablename(Purchased::$table);
-		$asset = DatabaseObject::tablename(ProductDownload::$table);
+		$orders = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
+		$purchases = ShoppDatabaseObject::tablename(Purchased::$table);
+		$asset = ShoppDatabaseObject::tablename(ProductDownload::$table);
 		$query = "(SELECT p.dkey AS dkey,p.id,p.purchase,p.download as download,p.name AS name,p.optionlabel,p.downloads,o.total,o.created,f.id as download,f.name as filename,f.value AS filedata
 			FROM $purchases AS p
 			LEFT JOIN $orders AS o ON o.id=p.purchase
@@ -263,8 +263,8 @@ class ShoppCustomer extends DatabaseObject {
 
 		$where = '';
 		if (isset($filters['where'])) $where = " AND {$filters['where']}";
-		$orders = DatabaseObject::tablename(ShoppPurchase::$table);
-		$purchases = DatabaseObject::tablename(Purchased::$table);
+		$orders = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
+		$purchases = ShoppDatabaseObject::tablename(Purchased::$table);
 		$query = "SELECT o.* FROM $orders AS o WHERE o.customer=$this->id $where ORDER BY created DESC";
 
 		$PurchaseLoader = new ShoppPurchase();
@@ -473,9 +473,9 @@ class CustomersExport {
 		if (isset($request['s']) && !empty($request['s'])) $where .= " AND (id='{$request['s']}' OR firstname LIKE '%{$request['s']}%' OR lastname LIKE '%{$request['s']}%' OR CONCAT(firstname,' ',lastname) LIKE '%{$request['s']}%' OR transactionid LIKE '%{$request['s']}%')";
 		if (!empty($request['start']) && !empty($request['end'])) $where .= " AND  (UNIX_TIMESTAMP(c.created) >= $starts AND UNIX_TIMESTAMP(c.created) <= $ends)";
 
-		$customer_table = DatabaseObject::tablename(Customer::$table);
-		$billing_table = DatabaseObject::tablename(BillingAddress::$table);
-		$shipping_table = DatabaseObject::tablename(ShippingAddress::$table);
+		$customer_table = ShoppDatabaseObject::tablename(Customer::$table);
+		$billing_table = ShoppDatabaseObject::tablename(BillingAddress::$table);
+		$shipping_table = ShoppDatabaseObject::tablename(ShippingAddress::$table);
 		$offset = $this->set*$this->limit;
 
 		$c = 0; $columns = array();

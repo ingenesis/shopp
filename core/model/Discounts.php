@@ -1058,7 +1058,7 @@ class ShoppPromotions extends ListFramework {
 
 		if ( $this->loaded ) return; // Don't load twice in one request
 
-		$table = DatabaseObject::tablename(ShoppPromo::$table);
+		$table = ShoppDatabaseObject::tablename(ShoppPromo::$table);
 		$where = array(
 			"status='enabled'",
 			ShoppPromo::activedates(),

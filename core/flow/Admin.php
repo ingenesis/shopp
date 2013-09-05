@@ -896,7 +896,7 @@ class ShoppUI {
 				<?php
 					// Promo Collections
 					$select = DB::select(array(
-						'table' => DatabaseObject::tablename(ShoppPromo::$table),
+						'table' => ShoppDatabaseObject::tablename(ShoppPromo::$table),
 						'columns' => 'SQL_CALC_FOUND_ROWS id,name',
 						'where' => array("target='Catalog'","status='enabled'"),
 						'orderby' => 'created DESC'

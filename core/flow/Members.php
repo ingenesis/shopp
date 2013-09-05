@@ -186,7 +186,7 @@ class Members extends ShoppAdminController {
 			$ends = mktime(23,59,59,$month,$day,$year);
 		}
 
-		$membership_table = DatabaseObject::tablename(MemberPlan::$table);
+		$membership_table = ShoppDatabaseObject::tablename(MemberPlan::$table);
 		$MemberPlan = new MemberPlan();
 
 		$where = '';

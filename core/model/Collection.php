@@ -47,7 +47,7 @@ class ProductCollection implements Iterator {
 		$Storefront = ShoppStorefront();
 		$Shopping = ShoppShopping();
 		$Processing = new ShoppProduct();
-		$summary_table = DatabaseObject::tablename(ProductSummary::$table);
+		$summary_table = ShoppDatabaseObject::tablename(ProductSummary::$table);
 
 		$defaults = array(
 			'columns' => false,		// Include extra columns (string) 'c.col1,c.col2…'
@@ -575,7 +575,7 @@ class ProductTaxonomy extends ProductCollection {
 	public function load ( array $options = array() ) {
 
 		global $wpdb;
-		$summary_table = DatabaseObject::tablename(ProductSummary::$table);
+		$summary_table = ShoppDatabaseObject::tablename(ProductSummary::$table);
 
 		$options['joins'][ $wpdb->term_relationships ] = "INNER JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id AND tr.term_taxonomy_id=$this->term_taxonomy_id)";
 		$options['joins'][ $wpdb->term_taxonomy ] = "INNER JOIN $wpdb->term_taxonomy AS tt ON (tr.term_taxonomy_id=tt.term_taxonomy_id AND tt.term_id=$this->id)";
@@ -619,7 +619,7 @@ class ProductTaxonomy extends ProductCollection {
 
 	public function load_meta () {
 		if ( empty($this->id) ) return;
-		$meta = DatabaseObject::tablename(ShoppMetaObject::$table);
+		$meta = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
 		DB::query("SELECT * FROM $meta WHERE parent=$this->id AND context='$this->context' AND type='meta'", 'array', array($this, 'metaloader'), 'type');
 	}
 
@@ -766,7 +766,7 @@ class ProductTaxonomy extends ProductCollection {
 
 	static function recount ( $terms, $taxonomy ) {
 		global $wpdb;
-		$summary_table = DatabaseObject::tablename(ProductSummary::$table);
+		$summary_table = ShoppDatabaseObject::tablename(ProductSummary::$table);
 
 		foreach ( (array)$terms as $term ) {
 			$where = array(
@@ -938,7 +938,7 @@ class ProductCategory extends ProductTaxonomy {
 
 		}
 
-		$spectable = DatabaseObject::tablename(Spec::$table);
+		$spectable = ShoppDatabaseObject::tablename(Spec::$table);
 		$jointables = str_replace('p.ID','m.parent',join(' ',$joins)); // Rewrite the joins to use the spec table reference
 		$having = "HAVING ".join(' AND ',$filters);
 
@@ -996,7 +996,7 @@ class ProductCategory extends ProductTaxonomy {
 					$casewhen .= " WHEN (minprice >= {$r['min']}$minprice) THEN $index";
 				}
 
-				$sumtable = DatabaseObject::tablename(ProductSummary::$table);
+				$sumtable = ShoppDatabaseObject::tablename(ProductSummary::$table);
 				$query = "SELECT count(*) AS total, CASE $casewhen END AS rangeid
 					FROM $sumtable
 					WHERE product IN ($ids) GROUP BY rangeid";
@@ -1024,7 +1024,7 @@ class ProductCategory extends ProductTaxonomy {
 			if ('custom' == $Facet->type) $custom[] = DB::escape($Facet->name);
 
 		// Load spec aggregation data
-		$spectable = DatabaseObject::tablename(Spec::$table);
+		$spectable = ShoppDatabaseObject::tablename(Spec::$table);
 
 		$query = "SELECT spec.name,spec.value,
 			IF(0 >= FIND_IN_SET(spec.name,'".join(",",$custom)."'),IF(spec.numeral > 0,spec.name,spec.value),spec.value) AS merge, count(DISTINCT spec.value) AS uniques,
@@ -1188,7 +1188,7 @@ class ProductCategory extends ProductTaxonomy {
 		if ('RAND' == $ordering) $orderby = 'RAND()';
 		else $orderby .= ' '.$ordering;
 
-		$table = DatabaseObject::tablename(CategoryImage::$table);
+		$table = ShoppDatabaseObject::tablename(CategoryImage::$table);
 		if (empty($this->id)) return false;
 		$query = "SELECT * FROM $table WHERE parent=$this->id AND context='category' AND type='image' ORDER BY $orderby";
 		$records = DB::query($query,'array',array($this,'metaloader'),'type');
@@ -1199,9 +1199,9 @@ class ProductCategory extends ProductTaxonomy {
 	// function alphapages ($loading=array()) {
 	// 	$db =& DB::get();
 	//
-	// 	$catalogtable = DatabaseObject::tablename(Catalog::$table);
-	// 	$producttable = DatabaseObject::tablename(Product::$table);
-	// 	$pricetable = DatabaseObject::tablename(Price::$table);
+	// 	$catalogtable = ShoppDatabaseObject::tablename(Catalog::$table);
+	// 	$producttable = ShoppDatabaseObject::tablename(Product::$table);
+	// 	$pricetable = ShoppDatabaseObject::tablename(Price::$table);
 	//
 	// 	$alphanav = range('A','Z');
 	//
@@ -1282,7 +1282,7 @@ class ProductCategory extends ProductTaxonomy {
 	 **/
 	public function save_imageorder ($ordering) {
 		$db = DB::get();
-		$table = DatabaseObject::tablename(CategoryImage::$table);
+		$table = ShoppDatabaseObject::tablename(CategoryImage::$table);
 		foreach ($ordering as $i => $id)
 			$db->query("UPDATE LOW_PRIORITY $table SET sortorder='$i' WHERE (id='$id' AND parent='$this->id' AND context='category' AND type='image')");
 		return true;
@@ -1302,7 +1302,7 @@ class ProductCategory extends ProductTaxonomy {
 		if (empty($images) || !is_array($images)) return false;
 
 		$db = DB::get();
-		$table = DatabaseObject::tablename(CategoryImage::$table);
+		$table = ShoppDatabaseObject::tablename(CategoryImage::$table);
 		$set = "id=".join(' OR id=',$images);
 		$query = "UPDATE $table SET parent='$this->id',context='category' WHERE ".$set;
 		$db->query($query);
@@ -1326,7 +1326,7 @@ class ProductCategory extends ProductTaxonomy {
 	 **/
 	public function delete_images ($images) {
 		$db = &DB::get();
-		$imagetable = DatabaseObject::tablename(CategoryImage::$table);
+		$imagetable = ShoppDatabaseObject::tablename(CategoryImage::$table);
 		$imagesets = "";
 		foreach ($images as $image) {
 			$imagesets .= (!empty($imagesets)?" OR ":"");
@@ -1637,7 +1637,7 @@ class BestsellerProducts extends SmartCollection {
 			$start = $options['range'][0];
 			$end = $options['range'][1];
 			if (!$end) $end = current_time('timestamp');
-			$purchased = DatabaseObject::tablename(Purchased::$table);
+			$purchased = ShoppDatabaseObject::tablename(Purchased::$table);
 			$this->loading['columns'] = "COUNT(*) AS sold";
 			$this->loading['joins'] = array($purchased => "INNER JOIN $purchased as pur ON pur.product=p.id");
 			$this->loading['where'] = array("pur.created BETWEEN '".DB::mkdatetime($start)."' AND '".DB::mkdatetime($end)."'");
@@ -1652,7 +1652,7 @@ class BestsellerProducts extends SmartCollection {
 
 	static function threshold () {
 		// Get mean sold for bestselling threshold
-		$summary = DatabaseObject::tablename(ProductSummary::$table);
+		$summary = ShoppDatabaseObject::tablename(ProductSummary::$table);
 		return (float)DB::query("SELECT AVG(sold) AS threshold FROM $summary WHERE 0 != sold", 'auto', 'col', 'threshold');
 	}
 
@@ -1729,7 +1729,7 @@ class SearchResults extends SmartCollection {
 			$where = "($where OR terms REGEXP '[[:<:]](" . str_replace(' ','|',$shortwords) . ")[[:>:]]')";
 		}
 
-		$index = DatabaseObject::tablename(ContentIndex::$table);
+		$index = ShoppDatabaseObject::tablename(ContentIndex::$table);
 		$this->loading = array(
 			'joins' => array($index => "INNER JOIN $index AS search ON search.product=p.ID"),
 			'columns' => "$score AS score",
@@ -2013,7 +2013,7 @@ class AlsoBoughtProducts extends SmartCollection {
 		$this->name = sprintf(__('Customers that bought "%s" also bought&hellip;','Shopp'),$this->product->name);
 
 		// @todo Add WP_Cache support since this is a pretty expensive query
-		$purchased = DatabaseObject::tablename(Purchased::$table);
+		$purchased = ShoppDatabaseObject::tablename(Purchased::$table);
 		$matches = DB::query("SELECT  p2,((psum - (sum1 * sum2 / n)) / sqrt((sum1sq - pow(sum1, 2.0) / n) * (sum2sq - pow(sum2, 2.0) / n))) AS r, n
 						FROM (
 							SELECT n1.product AS p1,n2.product AS p2,SUM(n1.quantity) AS sum1,SUM(n2.quantity) AS sum2,
@@ -2121,7 +2121,7 @@ class PromoProducts extends SmartCollection {
 		$this->name = $Promo->name;
 		$this->slug = $this->uri = sanitize_title_with_dashes($this->name);
 
-		$pricetable = DatabaseObject::tablename(Price::$table);
+		$pricetable = ShoppDatabaseObject::tablename(Price::$table);
 		$this->loading = array('where' => array("p.id IN (SELECT product FROM $pricetable WHERE 0 < FIND_IN_SET($Promo->id,discounts))"));
 	}
 

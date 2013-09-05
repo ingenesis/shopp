@@ -586,7 +586,7 @@ class DownloadAsset extends FileAsset {
 	public function loadby_dkey ($key) {
 		$db = &DB::get();
 		if (!class_exists('ShoppPurchased')) require(SHOPP_MODEL_PATH."/Purchased.php");
-		$pricetable = DatabaseObject::tablename(Price::$table);
+		$pricetable = ShoppDatabaseObject::tablename(Price::$table);
 
 		$Purchased = new ShoppPurchased($key,'dkey');
 		if (!empty($Purchased->id)) {

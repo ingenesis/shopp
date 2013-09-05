@@ -238,7 +238,7 @@ class ShoppProduct extends WPShoppObject {
 	 **/
 	public function load_meta ( $ids ) {
 		if ( empty($ids) ) return;
-		$table = DatabaseObject::tablename(ShoppMetaObject::$table);
+		$table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
 
 		$imagesort = $this->image_order();
 		$metasort = array('sortorder','sortorder ASC');
@@ -260,7 +260,7 @@ class ShoppProduct extends WPShoppObject {
 	 **/
 	public function load_coverimages ( $ids ) {
 		if ( empty($ids) ) return;
-		$table = DatabaseObject::tablename(ShoppMetaObject::$table);
+		$table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
 		$sortorder = $this->image_order();
 		DB::query("SELECT * FROM ( SELECT * FROM $table WHERE context='product' AND type='image' AND parent IN ($ids) ORDER BY $sortorder ) AS img GROUP BY parent",'array',array($this, 'metasetloader'),'parent','metatype','name',false);
 	}
@@ -275,8 +275,8 @@ class ShoppProduct extends WPShoppObject {
 	 **/
 	public function load_sold ($ids) {
 		if ( empty($ids) ) return;
-		$purchase = DatabaseObject::tablename(ShoppPurchase::$table);
-		$purchased = DatabaseObject::tablename(Purchased::$table);
+		$purchase = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
+		$purchased = ShoppDatabaseObject::tablename(Purchased::$table);
 		$query = "SELECT p.product as id,sum(p.quantity) AS sold,sum(p.total) AS grossed FROM $purchased as p INNER JOIN $purchase AS o ON p.purchase=o.id WHERE p.product IN ($ids) AND o.txnstatus !='void' GROUP BY p.product";
 		DB::query($query,'array',array($this,'sold'));
 	}
@@ -872,7 +872,7 @@ class ShoppProduct extends WPShoppObject {
 	 * @return void
 	 **/
 	public function save_imageorder ($ordering) {
-		$table = DatabaseObject::tablename(ProductImage::$table);
+		$table = ShoppDatabaseObject::tablename(ProductImage::$table);
 		foreach ($ordering as $i => $id)
 			DB::query("UPDATE LOW_PRIORITY $table SET sortorder='$i' WHERE (id='$id' AND parent='$this->id' AND context='product' AND type='image')");
 	}
@@ -911,7 +911,7 @@ class ShoppProduct extends WPShoppObject {
 	 **/
 	public function link_images ($images) {
 		if (empty($images)) return;
-		$table = DatabaseObject::tablename(ProductImage::$table);
+		$table = ShoppDatabaseObject::tablename(ProductImage::$table);
 		DB::query("UPDATE $table SET parent='$this->id',context='product' WHERE id IN (".join(',',$images).")");
 	}
 
@@ -978,7 +978,7 @@ class ShoppProduct extends WPShoppObject {
 	 * all related images (small and thumbnails) */
 	public function delete_images ($images) {
 		$db = &DB::get();
-		$imagetable = DatabaseObject::tablename(ProductImage::$table);
+		$imagetable = ShoppDatabaseObject::tablename(ProductImage::$table);
 		$imagesets = "";
 		foreach ($images as $image) {
 			$imagesets .= (!empty($imagesets)?" OR ":"");
@@ -1006,11 +1006,11 @@ class ShoppProduct extends WPShoppObject {
 		wp_delete_object_term_relationships($id, get_object_taxonomies(Product::$posttype));
 
 		// Delete prices
-		$table = DatabaseObject::tablename(Price::$table);
+		$table = ShoppDatabaseObject::tablename(Price::$table);
 		DB::query("DELETE LOW_PRIORITY FROM $table WHERE product='$id'");
 
 		// Delete images/files
-		$table = DatabaseObject::tablename(ProductImage::$table);
+		$table = ShoppDatabaseObject::tablename(ProductImage::$table);
 
 		// Delete images
 		$images = array();
@@ -1019,15 +1019,15 @@ class ShoppProduct extends WPShoppObject {
 		$this->delete_images($images);
 
 		// Delete product meta (specs, images, downloads)
-		$table = DatabaseObject::tablename(ShoppMetaObject::$table);
+		$table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
 		DB::query("DELETE LOW_PRIORITY FROM $table WHERE parent='$id' AND context='product'");
 
 		// Delete product summary
-		$table = DatabaseObject::tablename(ProductSummary::$table);
+		$table = ShoppDatabaseObject::tablename(ProductSummary::$table);
 		DB::query("DELETE FROM $table WHERE product='$id'");
 
 		// Delete product search index
-		$table = DatabaseObject::tablename(ContentIndex::$table);
+		$table = ShoppDatabaseObject::tablename(ContentIndex::$table);
 		DB::query("DELETE FROM $table WHERE product='$id'");
 
 		// Delete record
@@ -1212,7 +1212,7 @@ class ShoppProduct extends WPShoppObject {
  * @package shopp
  * @subpackage product
  **/
-class ProductSummary extends DatabaseObject {
+class ProductSummary extends ShoppDatabaseObject {
 	const RECALCULATE = '0000-00-00 00:00:01';
 
 	static $table = 'summary';
@@ -1237,7 +1237,7 @@ class ProductSummary extends DatabaseObject {
 
 		// Insert new record
 		$data['modified'] = "'".current_time('mysql')."'";
-		$dataset = DatabaseObject::dataset($data);
+		$dataset = ShoppDatabaseObject::dataset($data);
 		$query = "INSERT $this->_table SET $dataset ON DUPLICATE KEY UPDATE $dataset";
 		$id = DB::query($query);
 		do_action_ref_array('shopp_save_productsummary', array(&$this));

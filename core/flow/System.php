@@ -754,14 +754,14 @@ class ShoppAdminSystem extends ShoppAdminController {
 
 		} elseif ( ! empty($_POST['rebuild']) ) {
 			check_admin_referer('shopp-system-advanced');
-			$assets = DatabaseObject::tablename(ProductImage::$table);
+			$assets = ShoppDatabaseObject::tablename(ProductImage::$table);
 			$query = "DELETE FROM $assets WHERE context='image' AND type='image'";
 			if ( sDB::query($query) )
 				$this->notice(Shopp::__('All cached images have been cleared.'));
 
 		} elseif ( ! empty($_POST['resum']) ) {
 			check_admin_referer('shopp-system-advanced');
-			$summaries = DatabaseObject::tablename(ProductSummary::$table);
+			$summaries = ShoppDatabaseObject::tablename(ProductSummary::$table);
 			$query = "UPDATE $summaries SET modified='" . ProductSummary::RECALCULATE . "'";
 			if ( sDB::query($query) )
 				$this->notice(Shopp::__('Product summaries are set to recalculate.'));
@@ -826,7 +826,7 @@ class ShoppAdminSystem extends ShoppAdminController {
 			$this->notice(Shopp::__('Shopp system settings saved.'));
 
 		} elseif (!empty($_POST['rebuild'])) {
-			$assets = DatabaseObject::tablename(ProductImage::$table);
+			$assets = ShoppDatabaseObject::tablename(ProductImage::$table);
 			$query = "DELETE FROM $assets WHERE context='image' AND type='image'";
 			if (DB::query($query))
 				$updated = __('All cached images have been cleared.','Shopp');

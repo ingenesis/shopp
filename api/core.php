@@ -435,7 +435,7 @@ function shopp_rebuild_search_index () {
 	new ContentParser();
 
 	$set = 10; // Process 10 at a time
-	$index_table = DatabaseObject::tablename(ContentIndex::$table);
+	$index_table = ShoppDatabaseObject::tablename(ContentIndex::$table);
 
 	$total = DB::query("SELECT count(*) AS products,now() as start FROM $wpdb->posts WHERE post_type='" . ShoppProduct::$posttype . "'");
 	if ( empty($total->products) ) false;
@@ -461,7 +461,7 @@ function shopp_rebuild_search_index () {
 
 function shopp_empty_search_index () {
 
-	$index_table = DatabaseObject::tablename(ContentIndex::$table);
+	$index_table = ShoppDatabaseObject::tablename(ContentIndex::$table);
 	if ( sDB::query("DELETE FROM $index_table") ) return true;
 
 	return false;

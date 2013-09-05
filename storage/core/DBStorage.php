@@ -30,8 +30,8 @@ class DBStorage extends StorageModule implements StorageEngine {
 	public function __construct () {
 		parent::__construct();
 		$this->name = __('Database','Shopp');
-		$this->_table = DatabaseObject::tablename($this->_table);
-		$this->_metatable = DatabaseObject::tablename($this->_metatable);
+		$this->_table = ShoppDatabaseObject::tablename($this->_table);
+		$this->_metatable = ShoppDatabaseObject::tablename($this->_metatable);
 	}
 
 	/**

@@ -22,7 +22,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @since 1.1
  * @package shopp
  **/
-class ShoppAddress extends DatabaseObject {
+class ShoppAddress extends ShoppDatabaseObject {
 
 	static $table = 'address';
 

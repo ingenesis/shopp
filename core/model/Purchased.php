@@ -12,7 +12,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppPurchased extends DatabaseObject {
+class ShoppPurchased extends ShoppDatabaseObject {
 
 	static $table = 'purchased';
 
@@ -92,7 +92,7 @@ class ShoppPurchased extends DatabaseObject {
 
 		// Update sold tallies
 		if (!empty($this->product)) {
-			$summary = DatabaseObject::tablename(ProductSummary::$table);
+			$summary = ShoppDatabaseObject::tablename(ProductSummary::$table);
 			DB::query("UPDATE $summary SET sold=sold+$this->quantity,grossed=grossed+$this->total WHERE product='$this->product'");
 		}
 
@@ -100,7 +100,7 @@ class ShoppPurchased extends DatabaseObject {
 	}
 
 	public function delete () {
-		$table = DatabaseObject::tablename(ShoppMetaObject::$table);
+		$table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
 		DB::query("DELETE LOW_PRIORITY FROM $table WHERE parent='$this->id' AND context='purchased'");
 		parent::delete();
 	}

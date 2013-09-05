@@ -445,34 +445,34 @@ class ShoppInstallation extends ShoppFlowController {
 	 **/
 	public function upgrade_110 () {
 		$db = DB::get();
-		$meta_table = DatabaseObject::tablename('meta');
-		$setting_table = DatabaseObject::tablename('setting');
+		$meta_table = ShoppDatabaseObject::tablename('meta');
+		$setting_table = ShoppDatabaseObject::tablename('setting');
 
 		// Update product status from the 'published' column
-		$product_table = DatabaseObject::tablename('product');
+		$product_table = ShoppDatabaseObject::tablename('product');
 		$db->query("UPDATE $product_table SET status=CAST(published AS unsigned)");
 
 		// Set product publish date based on the 'created' date column
 		$db->query("UPDATE $product_table SET publish=created WHERE status='publish'");
 
 		// Update Catalog
-		$catalog_table = DatabaseObject::tablename('catalog');
+		$catalog_table = ShoppDatabaseObject::tablename('catalog');
 		$db->query("UPDATE $catalog_table set parent=IF(category!=0, category, tag), type=IF(category!=0, 'category', 'tag')");
 
 		// Update specs
-		$meta_table = DatabaseObject::tablename('meta');
-		$spec_table = DatabaseObject::tablename('spec');
+		$meta_table = ShoppDatabaseObject::tablename('meta');
+		$spec_table = ShoppDatabaseObject::tablename('spec');
 		$now = current_time('mysql');
 		$db->query("INSERT INTO $meta_table (parent, context, type, name, value, numeral, sortorder, created, modified)
 					SELECT product, 'product', 'spec', name, content, numeral, sortorder, '$now', '$now' FROM $spec_table");
 
 		// Update purchase table
-		$purchase_table = DatabaseObject::tablename('purchase');
+		$purchase_table = ShoppDatabaseObject::tablename('purchase');
 		$db->query("UPDATE $purchase_table SET txnid=transactionid, txnstatus=transtatus");
 
 		// Update image assets
-		$meta_table = DatabaseObject::tablename('meta');
-		$asset_table = DatabaseObject::tablename('asset');
+		$meta_table = ShoppDatabaseObject::tablename('meta');
+		$asset_table = ShoppDatabaseObject::tablename('asset');
 		$db->query("INSERT INTO $meta_table (parent, context, type, name, value, numeral, sortorder, created, modified)
 							SELECT parent, context, 'image', 'processing', CONCAT_WS('::', id, name, value, size, properties, LENGTH(data)), '0', sortorder, created, modified FROM $asset_table WHERE datatype='image'");
 		$records = $db->query("SELECT id, value FROM $meta_table WHERE type='image' AND name='processing'", 'array');
@@ -500,8 +500,8 @@ class ShoppInstallation extends ShoppFlowController {
 		}
 
 		// Update product downloads
-		$meta_table = DatabaseObject::tablename('meta');
-		$asset_table = DatabaseObject::tablename('asset');
+		$meta_table = ShoppDatabaseObject::tablename('meta');
+		$asset_table = ShoppDatabaseObject::tablename('asset');
 		$query = "INSERT INTO $meta_table (parent, context, type, name, value, numeral, sortorder, created, modified)
 					SELECT parent, context, 'download', 'processing', CONCAT_WS('::', id, name, value, size, properties, LENGTH(data)), '0', sortorder, created, modified FROM $asset_table WHERE datatype='download' AND parent != 0";
 		$db->query($query);
@@ -525,7 +525,7 @@ class ShoppInstallation extends ShoppFlowController {
 		}
 
 		// Update promotions
-		$promo_table = DatabaseObject::tablename('promo');
+		$promo_table = ShoppDatabaseObject::tablename('promo');
 		$records = $db->query("UPDATE $promo_table SET target='Cart' WHERE scope='Order'", 'array');
 
 		$FSStorage = array('path' => array());
@@ -622,23 +622,23 @@ class ShoppInstallation extends ShoppFlowController {
 		$db_version = ShoppSettings::dbversion();
 
 		// Clear the shopping session table
-		$shopping_table = DatabaseObject::tablename('shopping');
+		$shopping_table = ShoppDatabaseObject::tablename('shopping');
 		DB::query("DELETE FROM $shopping_table");
 
 		if ($db_version <= 1140) {
-			$summary_table = DatabaseObject::tablename('summary');
+			$summary_table = ShoppDatabaseObject::tablename('summary');
 			// Force summaries to rebuild
 			DB::query("UPDATE $summary_table SET modified='0000-00-00 00:00:01'");
 		}
 
-		$purchase_table = DatabaseObject::tablename('purchase');
+		$purchase_table = ShoppDatabaseObject::tablename('purchase');
 		DB::query("UPDATE $purchase_table SET txnstatus='captured' WHERE txnstatus='CHARGED'");
 
 		if ($db_version <= 1130) {
 
 			// Move settings to meta table
-			$meta_table = DatabaseObject::tablename('meta');
-			$setting_table = DatabaseObject::tablename('setting');
+			$meta_table = ShoppDatabaseObject::tablename('meta');
+			$setting_table = ShoppDatabaseObject::tablename('setting');
 
 			DB::query("INSERT INTO $meta_table (context, type, name, value, created, modified) SELECT 'shopp', 'setting', name, value, created, modified FROM $setting_table");
 
@@ -754,9 +754,9 @@ class ShoppInstallation extends ShoppFlowController {
 		}
 
 		if ($db_version <= 1121) {
-			$address_table = DatabaseObject::tablename('address');
-			$billing_table = DatabaseObject::tablename('billing');
-			$shipping_table = DatabaseObject::tablename('shipping');
+			$address_table = ShoppDatabaseObject::tablename('address');
+			$billing_table = ShoppDatabaseObject::tablename('billing');
+			$shipping_table = ShoppDatabaseObject::tablename('shipping');
 
 			// Move billing address data to the address table
 			DB::query("INSERT INTO $address_table (customer, type, address, xaddress, city, state, country, postcode, created, modified)
@@ -770,15 +770,15 @@ class ShoppInstallation extends ShoppFlowController {
 		if ($db_version <= 1131) {
 
 			// Copy products to posts
-				$catalog_table = DatabaseObject::tablename('catalog');
-				$product_table = DatabaseObject::tablename('product');
-				$price_table = DatabaseObject::tablename('price');
-				$summary_table = DatabaseObject::tablename('summary');
-				$meta_table = DatabaseObject::tablename('meta');
-				$category_table = DatabaseObject::tablename('category');
-				$tag_table = DatabaseObject::tablename('tag');
-				$purchased_table = DatabaseObject::tablename('purchased');
-				$index_table = DatabaseObject::tablename('index');
+				$catalog_table = ShoppDatabaseObject::tablename('catalog');
+				$product_table = ShoppDatabaseObject::tablename('product');
+				$price_table = ShoppDatabaseObject::tablename('price');
+				$summary_table = ShoppDatabaseObject::tablename('summary');
+				$meta_table = ShoppDatabaseObject::tablename('meta');
+				$category_table = ShoppDatabaseObject::tablename('category');
+				$tag_table = ShoppDatabaseObject::tablename('tag');
+				$purchased_table = ShoppDatabaseObject::tablename('purchased');
+				$index_table = ShoppDatabaseObject::tablename('index');
 
 				$post_type = 'shopp_product';
 
@@ -963,8 +963,8 @@ class ShoppInstallation extends ShoppFlowController {
 
 		// Move needed price table columns to price meta records
 		if ($db_version <= 1135) {
-			$meta_table = DatabaseObject::tablename('meta');
-			$price_table = DatabaseObject::tablename('price');
+			$meta_table = ShoppDatabaseObject::tablename('meta');
+			$price_table = ShoppDatabaseObject::tablename('price');
 
 			// Move 'options' to meta 'options' record
 			DB::query("INSERT INTO $meta_table (parent, context, type, name, value, created, modified)
@@ -1008,7 +1008,7 @@ class ShoppInstallation extends ShoppFlowController {
 		} // END if ($db_version <= 1145)
 
 		if ($db_version <= 1148) {
-			$price_table = DatabaseObject::tablename('price');
+			$price_table = ShoppDatabaseObject::tablename('price');
 			DB::query("UPDATE $price_table SET optionkey=(options*7001) WHERE context='addon'");
 		}
 

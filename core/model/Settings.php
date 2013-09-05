@@ -15,7 +15,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppSettings extends DatabaseObject {
+class ShoppSettings extends ShoppDatabaseObject {
 
 	static $table = 'meta';			// Base settings table name
 
@@ -120,7 +120,7 @@ class ShoppSettings extends DatabaseObject {
 		$Setting->value = DB::clean($value);
 
 		$data = DB::prepare($Setting);
-		$dataset = DatabaseObject::dataset($data);
+		$dataset = ShoppDatabaseObject::dataset($data);
 		if ( DB::query("INSERT $this->_table SET $dataset") )
 		 	$this->registry[$name] = $this->restore(DB::clean($value));
 		else return false;
@@ -145,7 +145,7 @@ class ShoppSettings extends DatabaseObject {
 		$Setting->name = $name;
 		$Setting->value = DB::clean($value);
 		$data = DB::prepare($Setting);				// Prepare the data for db entry
-		$dataset = DatabaseObject::dataset($data);	// Format the data in SQL
+		$dataset = ShoppDatabaseObject::dataset($data);	// Format the data in SQL
 
 		$where = array("context='$Setting->context'","type='$Setting->type'");
 		if (!empty($name)) $where[] = "name='".DB::clean($name)."'";
@@ -320,7 +320,7 @@ class ShoppSettings extends DatabaseObject {
 	public static function dbversion ( $legacy = false ) {
 
 		$source = $legacy ? 'setting' : self::$table;
-		$table = DatabaseObject::tablename($source);
+		$table = ShoppDatabaseObject::tablename($source);
 		$version = sDB::query("SELECT value FROM $table WHERE name='db_version'", 'object', 'col');
 
 		// Try again using the legacy table

@@ -348,8 +348,8 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 
 		// Setup queries
 		$pd = WPDatabaseObject::tablename(Product::$table);
-		$pt = DatabaseObject::tablename(Price::$table);
-		$ps = DatabaseObject::tablename(ProductSummary::$table);
+		$pt = ShoppDatabaseObject::tablename(Price::$table);
+		$ps = ShoppDatabaseObject::tablename(ProductSummary::$table);
 
 		$orderdirs = array('asc','desc');
 		if (in_array($order,$orderdirs)) $orderd = strtolower($order);

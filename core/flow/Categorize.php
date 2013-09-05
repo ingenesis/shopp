@@ -229,7 +229,7 @@ class ShoppAdminCategorize extends ShoppAdminController {
 		$ids = array_keys($Categories);
 		if ($workflow) return $ids;
 
-		$meta = DatabaseObject::tablename(ShoppMetaObject::$table);
+		$meta = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
 		if ( ! empty($ids) ) DB::query("SELECT * FROM $meta WHERE parent IN (".join(',',$ids).") AND context='category' AND type='meta'",'array',array($this,'metaloader'));
 
 		$count = wp_count_terms('shopp_category');

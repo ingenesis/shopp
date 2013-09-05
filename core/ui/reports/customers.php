@@ -32,9 +32,9 @@ class CustomersReport extends ShoppReportFramework implements ShoppReport {
 		$ordercols = "$ordercols $orderd";
 
 		$id = 'c.id';
-		$purchase_table = DatabaseObject::tablename('purchase');
-		$purchased_table = DatabaseObject::tablename('purchased');
-		$customer_table = DatabaseObject::tablename('customer');
+		$purchase_table = ShoppDatabaseObject::tablename('purchase');
+		$purchased_table = ShoppDatabaseObject::tablename('purchased');
+		$customer_table = ShoppDatabaseObject::tablename('customer');
 
 		$query = "SELECT $id AS id,
 							CONCAT(c.firstname,' ',c.lastname) AS customer,

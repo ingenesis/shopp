@@ -421,9 +421,9 @@ class sDB extends SingletonFramework {
 	}
 
 	/**
-	 * Prepares a DatabaseObject for entry into the database
+	 * Prepares a ShoppDatabaseObject for entry into the database
 	 *
-	 * Iterates the properties of a DatabaseObject and formats the data
+	 * Iterates the properties of a ShoppDatabaseObject and formats the data
 	 * according to the datatype meta available for the property to create
 	 * an array of key/value pairs that are easy concatenate into a valid
 	 * SQL query
@@ -431,7 +431,7 @@ class sDB extends SingletonFramework {
 	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
-	 * @param DatabaseObject $Object The object to be prepared
+	 * @param ShoppDatabaseObject $Object The object to be prepared
 	 * @return array Data structure ready for query building
 	 **/
 	public static function prepare ( $Object, array $mapping = array() ) {
@@ -631,7 +631,7 @@ if ( ! class_exists('DB',false) ) {
  * @since 1.0
  * @version 1.2
  **/
-abstract class DatabaseObject implements Iterator {
+abstract class ShoppDatabaseObject implements Iterator {
 
 	protected $_position = 0;
 	protected $_properties = array();
@@ -640,9 +640,9 @@ abstract class DatabaseObject implements Iterator {
 	protected $_map = array();
 
 	/**
-	 * Initializes the DatabaseObject with functional necessities
+	 * Initializes the ShoppDatabaseObject with functional necessities
 	 *
-	 * A DatabaseObject tracks meta data relevant to translating PHP object
+	 * A ShoppDatabaseObject tracks meta data relevant to translating PHP object
 	 * data into SQL-ready data.  This is done by reading and caching the
 	 * table schema so the properties and their data types can be known
 	 * in order to automate query building.
@@ -775,7 +775,7 @@ abstract class DatabaseObject implements Iterator {
 	 *
 	 * @param array $records A reference to the loaded record set
 	 * @param object $record A reference to the individual record to process
-	 * @param string $DatabaseObject (optional) The DatabaseObject class name to convert the record to
+	 * @param string $DatabaseObject (optional) The ShoppDatabaseObject class name to convert the record to
 	 * @param string $index (optional) The record column to use as the index in the record set
 	 * @param boolean $collate (optional) Flag to collate the records (records with matching index columns are collected into a nested array on the index in the set)
 	 * @param object $record Result record data object
@@ -870,9 +870,9 @@ abstract class DatabaseObject implements Iterator {
 	}
 
 	/**
-	 * Saves the current state of the DatabaseObject to the database
+	 * Saves the current state of the ShoppDatabaseObject to the database
 	 *
-	 * Intelligently saves a DatabaseObject, using an UPDATE query when the
+	 * Intelligently saves a ShoppDatabaseObject, using an UPDATE query when the
 	 * value for the primary key is set, and using an INSERT query when the
 	 * value of the primary key is not set.
 	 *
@@ -900,7 +900,7 @@ abstract class DatabaseObject implements Iterator {
 		if ( empty($id) ) { // Insert new record
 
 			if ( isset($data['created']) ) $data['created'] = "'$time'";
-			$dataset = DatabaseObject::dataset($data);
+			$dataset = ShoppDatabaseObject::dataset($data);
 			$this->id = sDB::query("INSERT $this->_table SET $dataset");
 			do_action_ref_array( "shopp_save_$classhook", array($this) );
 			return $this->id;
@@ -908,7 +908,7 @@ abstract class DatabaseObject implements Iterator {
 		}
 
 		// Update record
-		$dataset = DatabaseObject::dataset($data);
+		$dataset = ShoppDatabaseObject::dataset($data);
 		sDB::query("UPDATE $this->_table SET $dataset WHERE $this->_key='$id'");
 
 		do_action_ref_array( "shopp_save_$classhook", array($this) );
@@ -917,10 +917,10 @@ abstract class DatabaseObject implements Iterator {
 	}
 
 	/**
-	 * Deletes the database record associated with the DatabaseObject
+	 * Deletes the database record associated with the ShoppDatabaseObject
 	 *
 	 * Deletes the record that matches the primary key of the current
-	 * DatabaseObject
+	 * ShoppDatabaseObject
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.0
@@ -957,7 +957,7 @@ abstract class DatabaseObject implements Iterator {
 	}
 
 	/**
-	 * Populates the DatabaseObject properties from a db query result object
+	 * Populates the ShoppDatabaseObject properties from a db query result object
 	 *
 	 * Uses the available data model built from the table schema to
 	 * automatically set the object properties, taking care to convert
@@ -1019,8 +1019,8 @@ abstract class DatabaseObject implements Iterator {
 	/**
 	 * Populate the object properties from an array
 	 *
-	 * Updates the DatabaseObject properties when the key of the array
-	 * entry matches the name of the DatabaseObject property
+	 * Updates the ShoppDatabaseObject properties when the key of the array
+	 * entry matches the name of the ShoppDatabaseObject property
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.0
@@ -1047,7 +1047,7 @@ abstract class DatabaseObject implements Iterator {
 	 * Copy property values into the current DatbaseObject from another object
 	 *
 	 * Copies the property values from a specified object into the current
-	 * DatabaseObject where the property names match.
+	 * ShoppDatabaseObject where the property names match.
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.0
@@ -1070,7 +1070,7 @@ abstract class DatabaseObject implements Iterator {
 	}
 
 	/**
-	 * Shrinks a DatabaseObject to json-friendly data size
+	 * Shrinks a ShoppDatabaseObject to json-friendly data size
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.2
@@ -1185,16 +1185,16 @@ abstract class DatabaseObject implements Iterator {
 		$this->init($tablename);
 	}
 
-} // END class DatabaseObject
+} // END class ShoppDatabaseObject
 
 /**
- * Integrates Shopp DatabaseObjects with WordPress data tables
+ * Integrates Shopp ShoppDatabaseObjects with WordPress data tables
  *
  * @author Jonathan Davis
  * @since 1.2
  * @package DB
  **/
-class WPDatabaseObject extends DatabaseObject {
+class WPDatabaseObject extends ShoppDatabaseObject {
 
 	/**
 	 * Builds a table name from the defined WP table prefix

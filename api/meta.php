@@ -312,7 +312,7 @@ function shopp_rmv_meta ( $id = false, $context = false, $name = false, $type = 
 
 	// general meta entries
 	if ( $id && $context ) {
-		$table = DatabaseObject::tablename(ShoppMetaObject::$table);
+		$table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
 		$id = db::escape($id);
 		$context = db::escape($context);
 		$name = db::escape($name);

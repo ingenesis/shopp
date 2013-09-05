@@ -1684,7 +1684,7 @@ function shopp_product_set_variant_options ( $product = false, $options = array(
 
 
 	// clean up old variations
-	$table = DatabaseObject::tablename(Price::$table);
+	$table = ShoppDatabaseObject::tablename(Price::$table);
 	db::query("DELETE FROM $table WHERE product=$product AND context='variation'");
 
 	$prices = array();
@@ -2247,7 +2247,7 @@ function shopp_product_set_addon_options ( $product = false, $options = array(),
 
 
 	// clean up old variations
-	$table = DatabaseObject::tablename(Price::$table);
+	$table = ShoppDatabaseObject::tablename(Price::$table);
 	db::query("DELETE FROM $table WHERE product=$product AND context='addon'");
 
 	$prices = array();

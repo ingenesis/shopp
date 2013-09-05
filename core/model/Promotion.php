@@ -11,7 +11,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppPromo extends DatabaseObject {
+class ShoppPromo extends ShoppDatabaseObject {
 	static $table = "promo";
 
 	static $values = array(
@@ -43,7 +43,7 @@ class ShoppPromo extends DatabaseObject {
 	function catalog () {
 
 		$product_table = WPDatabaseObject::tablename(Product::$table);
-		$price_table = DatabaseObject::tablename(Price::$table);
+		$price_table = ShoppDatabaseObject::tablename(Price::$table);
 
 		$where_notdiscounted = array("0 = FIND_IN_SET($this->id,discounts)");
 		$where = array();
@@ -130,7 +130,7 @@ class ShoppPromo extends DatabaseObject {
 	function uncatalog ( $pricetags ) {
 		if ( empty($pricetags) ) return;
 
-		$table = DatabaseObject::tablename(Price::$table);
+		$table = ShoppDatabaseObject::tablename(Price::$table);
 		$discounted = DB::query("SELECT id,product,discounts,FIND_IN_SET($this->id,discounts) AS offset FROM $table WHERE id IN ('" . join(',', $pricetags) . "')", 'array');
 
 		$products = array();
@@ -142,7 +142,7 @@ class ShoppPromo extends DatabaseObject {
 		}
 
 		// Force resum on products next load
-		$summary = DatabaseObject::tablename('summary');
+		$summary = ShoppDatabaseObject::tablename('summary');
 		DB::query("UPDATE LOW_PRIORITY $summary SET modified='" . ProductSummary::$_updates . "' WHERE product IN (" . join(',', $products). ")");
 	}
 
@@ -159,7 +159,7 @@ class ShoppPromo extends DatabaseObject {
 		$where = array();
 		foreach ( $ids as $id )
 			$where[ $id ] = "0 < FIND_IN_SET('$id',discounts)";
-		$table = DatabaseObject::tablename('price');
+		$table = ShoppDatabaseObject::tablename('price');
 		$query = "SELECT id FROM $table WHERE " . join(" OR ", $where);
 		$pricetags = DB::query($query, 'array', 'col', 'id');
 		return (array)$pricetags;
@@ -249,7 +249,7 @@ class ShoppPromo extends DatabaseObject {
 	 **/
 	public static function used ($promos) {
 		if ( empty($promos) || ! is_array($promos) ) return;
-		$table = DatabaseObject::tablename(self::$table);
+		$table = ShoppDatabaseObject::tablename(self::$table);
 		DB::query("UPDATE LOW_PRIORITY $table SET uses=uses+1 WHERE 0 < FIND_IN_SET(id,'" . join(',', $promos) . "')");
 	}
 
@@ -338,7 +338,7 @@ class ShoppPromo extends DatabaseObject {
 
 		if (empty($pricetag) || empty($ids)) return $discount;
 
-		$table = DatabaseObject::tablename(self::$table);
+		$table = ShoppDatabaseObject::tablename(self::$table);
 		$query = "SELECT type,SUM(discount) AS amount FROM $table WHERE 0 < FIND_IN_SET(id,'$ids') AND (discount > 0 OR type='Free Shipping') AND status='enabled' AND " . self::activedates() . " GROUP BY type ORDER BY type DESC";
 		$discounts = DB::query($query,'array');
 		if (empty($discounts)) return $discount;
@@ -383,7 +383,7 @@ class ShoppPromo extends DatabaseObject {
 		}
 
 
-		$table = DatabaseObject::tablename(self::$table);
+		$table = ShoppDatabaseObject::tablename(self::$table);
 		DB::query("DELETE FROM $table WHERE id IN (" . join(',', $ids) . ")"); // Delete the promotions
 
 		return true;
@@ -400,7 +400,7 @@ class ShoppPromo extends DatabaseObject {
 	 **/
 	static function enableset ($ids) {
 		if (empty($ids) || !is_array($ids)) return false;
-		$table = DatabaseObject::tablename(self::$table);
+		$table = ShoppDatabaseObject::tablename(self::$table);
 		DB::query("UPDATE $table SET status='enabled' WHERE id IN (".join(',',$ids).")");
 
 		$catalogpromos = DB::query("SELECT id FROM $table WHERE target='Catalog'",'array','col','id');
@@ -423,7 +423,7 @@ class ShoppPromo extends DatabaseObject {
 	 **/
 	static function disableset ($ids) {
 		if (empty($ids) || !is_array($ids)) return false;
-		$table = DatabaseObject::tablename(self::$table);
+		$table = ShoppDatabaseObject::tablename(self::$table);
 		DB::query("UPDATE $table SET status='disabled' WHERE id IN (".join(',',$ids).")");
 
 		$catalogpromos = DB::query("SELECT id FROM $table WHERE target='Catalog'",'array','col','id');
