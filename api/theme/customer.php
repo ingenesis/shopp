@@ -234,8 +234,8 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	}
 
 	public static function download ($result, $options, $O) {
-		$Storefront = ShoppStorefront();
-		$download = current($Storefront->downloads);
+		$download = $O->_download;
+
 		$df = get_option('date_format');
 		$string = '';
 		if (array_key_exists('id',$options)) $string .= $download->download;
@@ -257,19 +257,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	}
 
 	public static function downloads ($result, $options, $O) {
-		$Storefront = ShoppStorefront();
-		if (empty($Storefront->downloads)) return false;
-		if (!isset($Storefront->_downloads_loop)) {
-			reset($Storefront->downloads);
-			$Storefront->_downloads_loop = true;
-		} else next($Storefront->downloads);
-
-		if (current($Storefront->downloads) !== false) return true;
-		else {
-			unset($Storefront->_downloads_loop);
-			reset($Storefront->downloads);
-			return false;
-		}
+		return ( false !== $O->each_download() );
 	}
 
 	public static function email ($result, $options, $O) {
@@ -306,10 +294,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	}
 
 	public static function has_downloads ($result, $options, $O) {
-		$Storefront = ShoppStorefront();
-		if ( ! empty($Storefront->downloads) )
-			reset($Storefront->downloads);
-		return ( ! empty($Storefront->downloads) );
+		return $O->has_downloads();
 	}
 
 	public static function has_info ($result, $options, $O) {

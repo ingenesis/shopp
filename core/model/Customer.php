@@ -22,6 +22,9 @@ class ShoppCustomer extends DatabaseObject {
 	public $newuser = false;		 // New WP user created flag
 	public $loginname = false;		 // Account login name
 	public $_password_change = null; // Password changed (true:successful false:failed null:unchanged)
+	public $_download = false;       // Current download item in loop
+	protected $downloads = array();  // List of purchased downloadable items
+
 
 	public function __construct ( $id = false, $key = 'id' ) {
 		$this->init(self::$table);
@@ -205,7 +208,7 @@ class ShoppCustomer extends DatabaseObject {
 		else shopp_debug('Successfully created the WordPress user for the Shopp account.');
 	}
 
-	public function load_downloads () {
+	/*public function load_downloads () {
 		$Storefront = ShoppStorefront();
 		if (empty($this->id)) return false;
 		$orders = DatabaseObject::tablename(ShoppPurchase::$table);
@@ -231,7 +234,7 @@ class ShoppCustomer extends DatabaseObject {
 				$download->{$property} = $value;
 			}
 		}
-	}
+	}*/
 
 	public function load_orders ($filters=array()) {
 		if (empty($this->id)) return false;
@@ -352,6 +355,48 @@ class ShoppCustomer extends DatabaseObject {
 
 		$this->_saved = true;
 
+	}
+
+	/**
+	 * Indicates if the customer has purchased downloadable assets.
+	 *
+	 * @return bool
+	 */
+	public function has_downloads() {
+		$this->load_downloads();
+		return ( ! empty($this->downloads) );
+	}
+
+	/**
+	 * Loads downloadable purchase data for this customer (populates the downloads property).
+	 */
+	public function load_downloads() {
+		// Bail out if the downloads property is already populated or we can't load customer order data
+		if ( /*! empty($this->downloads) ||*/ ! ($purchases = shopp_customer_orders($this->id)) ) return; # Decomment before commit!
+		$this->downloads = array();
+
+		foreach ( $purchases as $Purchase ) {
+			reset($Purchase->purchased);
+			$this->extract_downloads($Purchase->purchased);
+		}
+	}
+
+	protected function extract_downloads($items) {
+		while ( list($index, $Purchased) = each($items) ) {
+			if ( empty($Purchased->download) ) continue;
+			$this->downloads[] = $Purchased;
+		}
+	}
+
+	public function reset_downloads() {
+		reset($this->downloads);
+	}
+
+	public function each_download() {
+		if ( empty($this->downloads) ) return false;
+		$this->_download = current($this->downloads);
+		next($this->downloads);
+		return $this->_download;
 	}
 
 	public static function exportcolumns () {
