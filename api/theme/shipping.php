@@ -56,7 +56,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 	 *
 	 **/
 	public static function _setobject ( $Object, $object ) {
-		if ( is_object($Object) && is_a($Object, 'Order') && isset($Object->Shiprates) && 'shipping' == strtolower($object) )
+		if ( is_object($Object) && is_a($Object, 'ShoppOrder') && isset($Object->Shiprates) && 'shipping' == strtolower($object) )
 			return $Object->Shiprates;
 		else if ( strtolower($object) != 'shipping' ) return $Object; // not mine, do nothing
 

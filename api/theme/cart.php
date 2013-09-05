@@ -79,7 +79,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	 *
 	 **/
 	public static function _setobject ( $Object, $object ) {
-		if ( is_object($Object) && is_a($Object, 'Order') && isset($Object->Cart) && 'cart' == strtolower($object) )
+		if ( is_object($Object) && is_a($Object, 'ShoppOrder') && isset($Object->Cart) && 'cart' == strtolower($object) )
 			return $Object->Cart;
 		else if ( strtolower($object) != 'cart' ) return $Object; // not mine, do nothing
 

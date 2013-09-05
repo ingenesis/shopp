@@ -118,7 +118,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	 *
 	 **/
 	public static function _setobject ($Object, $object) {
-		if ( is_object($Object) && is_a($Object, 'Order') && 'checkout' == strtolower($object) ) return $Object;
+		if ( is_object($Object) && is_a($Object, 'ShoppOrder') && 'checkout' == strtolower($object) ) return $Object;
 		else if ( strtolower($object) != 'checkout' ) return $Object; // not mine, do nothing
 
 		return ShoppOrder();

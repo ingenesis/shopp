@@ -772,7 +772,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 
 			// destroy the defunct Order object from defunct session and restore the Order object from the loaded session
 			// also assign the restored Order object as the global Order object
-			$this->Order = ShoppOrder( ShoppingObject::__new( 'Order', ShoppOrder() ) );
+			$this->Order = ShoppOrder( ShoppingObject::__new( 'ShoppOrder', ShoppOrder() ) );
 
 			$Shopping = ShoppShopping();
 
