@@ -53,7 +53,7 @@ class ShoppOrder {
 	public function __construct () {
 
 		$this->Cart = ShoppingObject::__new( 'ShoppCart' );
-		$this->Customer = ShoppingObject::__new( 'Customer' );
+		$this->Customer = ShoppingObject::__new( 'ShoppCustomer' );
 
 		$this->Billing = ShoppingObject::__new( 'BillingAddress' );
 		$this->Billing->locate();
