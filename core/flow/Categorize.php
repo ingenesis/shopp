@@ -229,7 +229,7 @@ class ShoppAdminCategorize extends ShoppAdminController {
 		$ids = array_keys($Categories);
 		if ($workflow) return $ids;
 
-		$meta = DatabaseObject::tablename(MetaObject::$table);
+		$meta = DatabaseObject::tablename(ShoppMetaObject::$table);
 		if ( ! empty($ids) ) DB::query("SELECT * FROM $meta WHERE parent IN (".join(',',$ids).") AND context='category' AND type='meta'",'array',array($this,'metaloader'));
 
 		$count = wp_count_terms('shopp_category');
@@ -261,7 +261,7 @@ class ShoppAdminCategorize extends ShoppAdminController {
 			$target = $this->categories[ $record->parent ];
 		} else return;
 
-		$Meta = new MetaObject();
+		$Meta = new ShoppMetaObject();
 		$Meta->populate($record);
 		$target->meta[$record->name] = $Meta;
 		if (!isset($this->{$record->name}))
@@ -423,8 +423,8 @@ class ShoppAdminCategorize extends ShoppAdminController {
 		$meta = array('spectemplate','facetedmenus','variations','pricerange','priceranges','specs','options','prices');
 		$metadata = array_filter_keys($_POST,$meta);
 		foreach ($metadata as $name => $data) {
-		    if ( ! isset($Category->meta[ $name ]) || !is_a($Category->meta[ $name ],'MetaObject') ) {
-		        $Meta = new MetaObject();
+		    if ( ! isset($Category->meta[ $name ]) || !is_a($Category->meta[ $name ],'ShoppMetaObject') ) {
+		        $Meta = new ShoppMetaObject();
 		        $Meta->name = $name;
 		        $Category->meta[ $name ] = $Meta;
 		    }

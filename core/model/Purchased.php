@@ -43,7 +43,7 @@ class ShoppPurchased extends DatabaseObject {
 		// Create meta records for any addons
 		foreach ((array)$Item->addons as $i => $Addon) {
 			$Download = false;
-			$Meta = new MetaObject(array(
+			$Meta = new ShoppMetaObject(array(
 				'parent' => $this->id,
 				'context' => 'purchased',
 				'type' => 'meta',
@@ -59,7 +59,7 @@ class ShoppPurchased extends DatabaseObject {
 				$hash = array($this->name,$Addon->label,$this->purchase,$this->product,$this->price,$i,time());
 				$Addon->dkey = sha1(join('',$hash));
 
-				$Download = new MetaObject(array(
+				$Download = new ShoppMetaObject(array(
 					'parent' => $this->id,
 					'context' => 'purchased',
 					'type' => 'download',
@@ -100,7 +100,7 @@ class ShoppPurchased extends DatabaseObject {
 	}
 
 	public function delete () {
-		$table = DatabaseObject::tablename(MetaObject::$table);
+		$table = DatabaseObject::tablename(ShoppMetaObject::$table);
 		DB::query("DELETE LOW_PRIORITY FROM $table WHERE parent='$this->id' AND context='purchased'");
 		parent::delete();
 	}

@@ -89,7 +89,7 @@ class ShoppCustomer extends DatabaseObject {
 
 		if (empty($this->info) || !is_array($this->info)) return true;
 		foreach ((array)$this->info as $name => $value) {
-			$Meta = new MetaObject(array(
+			$Meta = new ShoppMetaObject(array(
 				'parent' => $this->id,
 				'context' => 'customer',
 				'type' => 'meta',
@@ -389,7 +389,7 @@ class ShoppCustomer extends DatabaseObject {
 			}
 
 			// Is *this* item an addon?
-			if ( is_a($Purchased, 'MetaObject') ) $Purchased = $Purchased->value;
+			if ( is_a($Purchased, 'ShoppMetaObject') ) $Purchased = $Purchased->value;
 
 			// Is it a downloadable item? Do not add the same dkey twice
 			if ( empty($Purchased->download) ) continue;

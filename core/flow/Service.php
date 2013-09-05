@@ -380,13 +380,13 @@ class ShoppAdminService extends ShoppAdminController {
 
 		if (!empty($_POST['delete-note'])) {
 			$noteid = key($_POST['delete-note']);
-			$Note = new MetaObject(array('id' => $noteid,'type'=>'order_note'));
+			$Note = new ShoppMetaObject(array('id' => $noteid,'type'=>'order_note'));
 			$Note->delete();
 		}
 
 		if (!empty($_POST['edit-note'])) {
 			$noteid = key($_POST['note-editor']);
-			$Note = new MetaObject(array('id' => $noteid, 'type' => 'order_note'));
+			$Note = new ShoppMetaObject(array('id' => $noteid, 'type' => 'order_note'));
 			$Note->value->message = stripslashes($_POST['note-editor'][$noteid]);
 			$Note->save();
 		}
@@ -658,7 +658,7 @@ class ShoppAdminService extends ShoppAdminController {
 
 	public function addnote ($order, $message, $sent = false) {
 		$user = wp_get_current_user();
-		$Note = new MetaObject();
+		$Note = new ShoppMetaObject();
 		$Note->parent = $order;
 		$Note->context = 'purchase';
 		$Note->type = 'order_note';

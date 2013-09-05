@@ -23,6 +23,7 @@ if ( ! class_exists('Address', false) ) { class Address extends ShoppAddress {} 
 if ( ! class_exists('AdminController', false) ) { class AdminController extends ShoppAdminController {} }
 if ( ! class_exists('Customer', false) ) { class Customer extends ShoppCustomer {} }
 if ( ! class_exists('FlowController', false) ) { class FlowController extends ShoppFlowController {} }
+if ( ! class_exists('MetaObject', false) ) { class MetaObject extends ShoppMetaObject {} }
 if ( ! class_exists('Price', false) ) {	class Price extends ShoppPrice {} }
 if ( ! class_exists('Product', false) ) { class Product extends ShoppProduct {} }
 if ( ! class_exists('Promotion', false) ) { class Promotion extends ShoppPromo {} }

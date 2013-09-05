@@ -79,7 +79,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
   * @package shopp
   * @subpackage orderevent
   **/
- class OrderEventMessage extends MetaObject {
+ class OrderEventMessage extends ShoppMetaObject {
 
  	// Mapped properties should be added (not exclude standard properties)
 	public $_addmap = true;

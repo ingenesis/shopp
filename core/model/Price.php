@@ -53,7 +53,7 @@ class ShoppPrice extends DatabaseObject {
 			'settings' => 'settings'
 		);
 		$metaclass = array(
-			'meta' => 'MetaObject'
+			'meta' => 'ShoppMetaObject'
 		);
 
 		if ('metatype' == $property)

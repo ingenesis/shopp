@@ -54,7 +54,7 @@ class ShoppPurchase extends DatabaseObject {
 	public function load_purchased () {
 
 		$table = DatabaseObject::tablename(Purchased::$table);
-		$meta = DatabaseObject::tablename(MetaObject::$table);
+		$meta = DatabaseObject::tablename(ShoppMetaObject::$table);
 		$price = DatabaseObject::tablename(Price::$table);
 		$Purchased = new ShoppPurchased();
 		if (empty($this->id)) return false;
@@ -577,7 +577,7 @@ class ShoppPurchase extends DatabaseObject {
 	}
 
 	public function delete () {
-		$table = DatabaseObject::tablename(MetaObject::$table);
+		$table = DatabaseObject::tablename(ShoppMetaObject::$table);
 		DB::query("DELETE LOW_PRIORITY FROM $table WHERE parent='$this->id' AND context='purchase'");
 		parent::delete();
 	}

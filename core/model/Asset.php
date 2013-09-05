@@ -23,7 +23,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @package shopp
  * @subpackage asset
  **/
-class FileAsset extends MetaObject {
+class FileAsset extends ShoppMetaObject {
 
 	public $mime;
 	public $size;
@@ -44,7 +44,7 @@ class FileAsset extends MetaObject {
 	}
 
 	/**
-	 * Populate extended fields loaded from the MetaObject
+	 * Populate extended fields loaded from the ShoppMetaObject
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.1
@@ -677,7 +677,7 @@ class ProductDownload extends DownloadAsset {
 // Prevent loading image setting classes when run in image server script context
 if ( !class_exists('ListFramework') ) return;
 
-class ImageSetting extends MetaObject {
+class ImageSetting extends ShoppMetaObject {
 
 	static $qualities = array(100,92,80,70,60);
 	static $fittings = array('all','matte','crop','width','height');

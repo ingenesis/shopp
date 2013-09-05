@@ -238,7 +238,7 @@ class ShoppProduct extends WPShoppObject {
 	 **/
 	public function load_meta ( $ids ) {
 		if ( empty($ids) ) return;
-		$table = DatabaseObject::tablename(MetaObject::$table);
+		$table = DatabaseObject::tablename(ShoppMetaObject::$table);
 
 		$imagesort = $this->image_order();
 		$metasort = array('sortorder','sortorder ASC');
@@ -260,7 +260,7 @@ class ShoppProduct extends WPShoppObject {
 	 **/
 	public function load_coverimages ( $ids ) {
 		if ( empty($ids) ) return;
-		$table = DatabaseObject::tablename(MetaObject::$table);
+		$table = DatabaseObject::tablename(ShoppMetaObject::$table);
 		$sortorder = $this->image_order();
 		DB::query("SELECT * FROM ( SELECT * FROM $table WHERE context='product' AND type='image' AND parent IN ($ids) ORDER BY $sortorder ) AS img GROUP BY parent",'array',array($this, 'metasetloader'),'parent','metatype','name',false);
 	}
@@ -402,7 +402,7 @@ class ShoppProduct extends WPShoppObject {
 		$metaclass = array(
 			'image' => 'ProductImage',
 			'spec' => 'Spec',
-			'meta' => 'MetaObject'
+			'meta' => 'ShoppMetaObject'
 		);
 
 		if ($property == 'metatype')
@@ -1019,7 +1019,7 @@ class ShoppProduct extends WPShoppObject {
 		$this->delete_images($images);
 
 		// Delete product meta (specs, images, downloads)
-		$table = DatabaseObject::tablename(MetaObject::$table);
+		$table = DatabaseObject::tablename(ShoppMetaObject::$table);
 		DB::query("DELETE LOW_PRIORITY FROM $table WHERE parent='$id' AND context='product'");
 
 		// Delete product summary
@@ -1255,7 +1255,7 @@ class ProductSummary extends DatabaseObject {
  * @package shopp
  * @subpackage product
  **/
-class Spec extends MetaObject {
+class Spec extends ShoppMetaObject {
 
 	public function __construct ($id=false) {
 		$this->init(self::$table);

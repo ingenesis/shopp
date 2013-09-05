@@ -945,7 +945,7 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 				if (isset($Product->meta[$name])) {
 					$Meta = $Product->meta[$name];
 					if (is_array($Meta)) $Meta = reset($Product->meta[$name]);
-				} else $Meta = new MetaObject(array('parent'=>$Product->id,'context'=>'product','type'=>'meta','name'=>$name));
+				} else $Meta = new ShoppMetaObject(array('parent'=>$Product->id,'context'=>'product','type'=>'meta','name'=>$name));
 				$Meta->parent = $Product->id;
 				$Meta->name = $name;
 				$Meta->value = $value;

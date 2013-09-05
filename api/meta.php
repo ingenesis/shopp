@@ -163,7 +163,7 @@ function shopp_meta ( $id = false, $context = false, $name = false, $type = 'met
 
 	// Load meta by id
 	if ( $id && false === $context ) {
-		$meta = new MetaObject();
+		$meta = new ShoppMetaObject();
 		$meta->load($id);
 
 		if ( empty($meta->id) ) {
@@ -251,7 +251,7 @@ function shopp_set_meta ( $id = false, $context = false, $name = false, $value =
 
 	// save existing meta record by meta id
 	if ( $id && ! $context ) {
-		$meta = new MetaObject();
+		$meta = new ShoppMetaObject();
 		$meta->load($id);
 		if ( ! empty($meta->id) ) {
 			$meta->updates( array_merge($record, $valuefield) );
@@ -265,7 +265,7 @@ function shopp_set_meta ( $id = false, $context = false, $name = false, $value =
 
 	// fully spec'd meta entry
 	if ( $id && $context && $type && $name ) {
-		$meta = new MetaObject();
+		$meta = new ShoppMetaObject();
 		$meta->load( array_merge( $record, array( 'parent'=>$id, 'context'=>$context ) ) );
 		$meta->updates( array_merge(array( 'parent'=>$id, 'context'=>$context ), $record, $valuefield) );
 		$meta->save();
@@ -295,7 +295,7 @@ function shopp_rmv_meta ( $id = false, $context = false, $name = false, $type = 
 
 	// save existing meta record by meta id
 	if ( $id && ! $context ) {
-		$meta = new MetaObject();
+		$meta = new ShoppMetaObject();
 		$meta->load($id);
 		if ( $meta->id ) $meta->delete();
 		return true;
@@ -303,7 +303,7 @@ function shopp_rmv_meta ( $id = false, $context = false, $name = false, $type = 
 
 	// fully spec'd meta entry
 	if ( $id && $context && $type && $name ) {
-		$meta = new MetaObject();
+		$meta = new ShoppMetaObject();
 		$meta->load( array( 'parent'=>$id, 'context'=>$context, 'type' => $type, 'name' => $name ) );
 
 		if ( $meta->id ) $meta->delete();
@@ -312,7 +312,7 @@ function shopp_rmv_meta ( $id = false, $context = false, $name = false, $type = 
 
 	// general meta entries
 	if ( $id && $context ) {
-		$table = DatabaseObject::tablename(MetaObject::$table);
+		$table = DatabaseObject::tablename(ShoppMetaObject::$table);
 		$id = db::escape($id);
 		$context = db::escape($context);
 		$name = db::escape($name);

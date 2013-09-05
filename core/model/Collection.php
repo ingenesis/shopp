@@ -619,7 +619,7 @@ class ProductTaxonomy extends ProductCollection {
 
 	public function load_meta () {
 		if ( empty($this->id) ) return;
-		$meta = DatabaseObject::tablename(MetaObject::$table);
+		$meta = DatabaseObject::tablename(ShoppMetaObject::$table);
 		DB::query("SELECT * FROM $meta WHERE parent=$this->id AND context='$this->context' AND type='meta'", 'array', array($this, 'metaloader'), 'type');
 	}
 
@@ -634,7 +634,7 @@ class ProductTaxonomy extends ProductCollection {
 
 		$metaclass = array(
 			'image' => 'CategoryImage',
-			'meta' => 'MetaObject'
+			'meta' => 'ShoppMetaObject'
 		);
 
 		if ('type' == $property)
@@ -675,10 +675,10 @@ class ProductTaxonomy extends ProductCollection {
 
 			if ( $name == $Meta->id ) continue;
 
-			if (is_a($Meta,'MetaObject')) {
+			if (is_a($Meta,'ShoppMetaObject')) {
 				$MetaObject = $Meta;
 			} else {
-				$MetaObject = new MetaObject();
+				$MetaObject = new ShoppMetaObject();
 				$MetaObject->populate($Meta);
 			}
 
