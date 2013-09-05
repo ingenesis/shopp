@@ -92,8 +92,18 @@ abstract class GatewayFramework {
 		$this->session = ShoppShopping()->session;
 		$this->Order = ShoppOrder();
 
-		if ( 'ShoppFreeOrder' != $this->module ) // There are no settings for ShoppFreeOrder
+		if ( 'ShoppFreeOrder' != $this->module ) { // There are no settings for ShoppFreeOrder
 			$this->settings = shopp_setting($this->module);
+
+			// @todo Remove legacy gateway settings migrations
+			// Attempt to copy old settings if this is a new prefixed gateway class
+			if ( empty($this->settings) && false !== strpos($this->module, 'Shopp') ) {
+				$legacy = substr($this->module, 5);
+				$this->settings = shopp_setting($legacy);
+				if ( ! empty($this->settings) )
+					shopp_set_setting($this->module, $this->settings);
+			}
+		}
 
 		if ( ! isset($this->settings['label']) && $this->cards )
 			$this->settings['label'] = __('Credit Card', 'Shopp');
@@ -460,13 +470,19 @@ class GatewayModules extends ModuleLoader {
 	public function activated () {
 		$Shopp = Shopp::object();
 		$this->activated = array();
-		$gateways = explode(",", shopp_setting('active_gateways'));
+		$gateways = explode(',', shopp_setting('active_gateways'));
 		$modules = array_keys($this->modules);
+
 		foreach ( $gateways as $gateway ) {
 			if ( false !== strpos($gateway, '-') ) list($gateway, $id) = explode('-', $gateway);
+			$upgraded = 'Shopp' . $gateway;
 			if ( in_array($gateway, $modules) && !in_array($gateway, $this->activated) )
 				$this->activated[] = $this->modules[ $gateway ]->classname;
+			// @todo Remove legacy gateway settings migrations
+			elseif ( false === strpos($gateway, 'Shopp') && in_array($upgraded, $modules) && ! in_array($upgraded, $this->activated) )
+				$this->activated[] = $this->modules[ $upgraded ]->classname;
 		}
+
 		return $this->activated;
 	}
 
