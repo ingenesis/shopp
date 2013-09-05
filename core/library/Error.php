@@ -609,7 +609,8 @@ class ShoppErrorNotification {
 	 * @return void
 	 **/
 	public function notify ( $error ) {
-		if ( ! ($error->level && $this->types) ) return;
+		// Use bitwise & (NOT &&) to detect if the error level is in the subscribed types
+		if ( ! ($error->level & $this->types) ) return;
 
 		$url = parse_url(get_bloginfo('url'));
 
