@@ -383,8 +383,17 @@ class ShoppCustomer extends DatabaseObject {
 
 	protected function extract_downloads($items) {
 		while ( list($index, $Purchased) = each($items) ) {
+			// Check for downloadable addons
+			if ( isset($Purchased->addons) && count($Purchased->addons->meta) >= 1 ) {
+				$this->extract_downloads($Purchased->addons->meta);
+			}
+
+			// Is *this* item an addon?
+			if ( is_a($Purchased, 'MetaObject') ) $Purchased = $Purchased->value;
+
+			// Is it a downloadable item? Do not add the same dkey twice
 			if ( empty($Purchased->download) ) continue;
-			$this->downloads[] = $Purchased;
+			$this->downloads[$Purchased->dkey] = $Purchased;
 		}
 	}
 
