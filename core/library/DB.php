@@ -1311,7 +1311,7 @@ abstract class SessionObject {
 
 		if ( ! $this->handling() )
 			trigger_error('The session handlers could not be initialized.',E_USER_NOTICE);
-		else shopp_debug( 'Session started '.str_repeat('-',64) );
+		else shopp_debug( 'Session started ' . str_repeat('-', 64) );
 
 		register_shutdown_function('session_write_close');
 	}
@@ -1391,12 +1391,12 @@ abstract class SessionObject {
 
 				if ( empty($key) && ! is_ssl() ) shopp_redirect( force_ssl(raw_request_url(),true) );
 
-				$readable = sDB::query("SELECT AES_DECRYPT('".
+				$readable = sDB::query("SELECT AES_DECRYPT('" .
 										mysql_real_escape_string(
 											base64_decode(
-												substr($result->data,1)
+												substr($result->data, 1)
 											)
-										)."','$key') AS data",'auto','col','data');
+										) . "','$key') AS data", 'auto', 'col', 'data');
 				$result->data = $readable;
 
 			}
@@ -1474,10 +1474,12 @@ abstract class SessionObject {
 
 		$now = current_time('mysql');
 		$query = "UPDATE $this->_table SET ip='$this->ip',stash='$this->stash',data='$data',modified='$now' WHERE session='$this->session'";
-		if (!sDB::query($query))
+
+		if ( ! sDB::query($query) )
 			trigger_error("Could not save session updates to the database.");
 
 		do_action('shopp_session_saved');
+
 
 		// Save standard session data for compatibility
 		if ( ! empty($session) )

@@ -116,16 +116,16 @@ class Shopping extends SessionObject {
 	 **/
 	static function resession ( $session = false ) {
 
-		do_action('shopp_pre_resession', $session);
-
 		$Shopping = ShoppShopping();
+
+		do_action('shopp_pre_resession', $session);
 
 		// commit current session
 		session_write_close();
 		$Shopping->handling(); // Workaround for PHP 5.2 bug #32330
 
-		if ($session) { // loading session
-			session_id($session); // session_id while session is closed
+		if ( $session ) { // loading session
+			session_id( $session ); // session_id while session is closed
 			$Shopping->session = session_id(); // Get the new session assignment
 			$Shopping->init();
 			return true;
@@ -139,11 +139,13 @@ class Shopping extends SessionObject {
 
 		// Commit the session and restart
 		session_write_close();
+
 		$Shopping->handling(); // Workaround for PHP 5.2 bug #32330
 		$Shopping->init();
 
 		do_action('shopp_reset_session'); // @deprecated do_action('shopp_reset_session')
 		do_action('shopp_resession');
+
 		return true;
 	}
 
