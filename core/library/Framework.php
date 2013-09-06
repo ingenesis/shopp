@@ -24,9 +24,9 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 class ListFramework implements Iterator {
 
+	protected $_added;
+	protected $_checks;
 	protected $_list = array();
-	protected $_added = null;
-	protected $_checks = 0;
 
 	/**
 	 * Add an entry to the list
@@ -287,14 +287,28 @@ class ListFramework implements Iterator {
 	 *
 	 * @return True if changed, false otherwise
 	 **/
-	public function changed () {
+	public function changed ( $state = null ) {
+		if ( null === $state ) $state = $this->_checks; // Keep current checksum
+		$this->_checks = $this->state(); // Get the current state
 
-		$lastcheck = $this->_checks; // Keep current checksum
-		$this->_checks = hash('crc32b', serialize($this->_list) );
+		// If no prior state but the list is not empty it has changed
+		if ( null === $state && ! empty($this->_list) ) return true;
 
-		if ( 0 == $lastcheck ) return true;
-		return ( $lastcheck != $this->_checks );
+		// Check if the list has changed from the prior state
+		return ( $state != $this->_checks );
+	}
 
+	/**
+	 * Return a checksum of the state of the list
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return string A hash of the list
+	 **/
+	public function state () {
+		// Use crc32b for fastest, short but specific enough checksum
+		return hash('crc32b', serialize($this->_list) );
 	}
 
 } // class ListFramework

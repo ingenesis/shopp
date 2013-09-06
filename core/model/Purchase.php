@@ -326,16 +326,16 @@ class ShoppPurchase extends DatabaseObject {
 	 * @param OrderEvent $event The OrderEvent object passed by the hook
 	 * @return void
 	 **/
-	public function notifications ($Event) {
-		if ($Event->order != $this->id) return; // Only handle notifications for events relating to this order
+	public function notifications ( $Event ) {
+		if ( $Event->order != $this->id ) return; // Only handle notifications for events relating to this order
 
 		$defaults = array('note');
 
 		$this->message['event'] = $Event;
-		if (!empty($Event->note)) $this->message['note'] = &$Event->note;
+		if ( ! empty($Event->note) ) $this->message['note'] = &$Event->note;
 
 		// Generic filter hook for specifying global email messages
-		$messages = apply_filters('shopp_order_event_emails',array(
+		$messages = apply_filters('shopp_order_event_emails', array(
 			'customer' => array(
 				"$this->firstname $this->lastname",		// Recipient name
 				$this->email,							// Recipient email address
@@ -349,30 +349,30 @@ class ShoppPurchase extends DatabaseObject {
 		));
 
 		// Event-specific hook for event specific email messages
-		$messages = apply_filters('shopp_'.$Event->name.'_order_event_emails',$messages);
+		$messages = apply_filters('shopp_' . $Event->name . '_order_event_emails', $messages);
 
-		foreach ($messages as $name => $message) {
-			list($addressee,$email,$subject,$template) = $message;
+		foreach ( $messages as $name => $message ) {
+			list($addressee, $email, $subject, $template) = $message;
 
 			$templates = array($template);
 
 			// Add note kind-specific template support
-			if (isset($Event->kind) && !empty($Event->kind)) {
-				list($basename,$php) = explode('.',$template);
+			if ( isset($Event->kind) && ! empty($Event->kind) ) {
+				list($basename, $php) = explode('.', $template);
 				$notekind = "$basename-$Event->kind.$php";
-				array_unshift($templates,$notekind);
+				array_unshift($templates, $notekind);
 			}
 
 			// Always send messages to customers for default event types (note, etc)
-			if (in_array($Event->name,$defaults) && 'customer' == $name)
+			if ( in_array($Event->name, $defaults) && 'customer' == $name )
 				$templates[] = 'email.php';
 
 			$file = locate_shopp_template($templates);
 			// Send email if the specific template is available
 			// and if an email has not already been sent to the recipient
-			if ( ! empty($file) && ! in_array($email,$Event->_emails) ) {
+			if ( ! empty($file) && ! in_array($email, $Event->_emails) ) {
 
-				if ( $this->email($addressee,$email,$subject,array($template)) )
+				if ( $this->email($addressee, $email, $subject, array($template)) )
 					$Event->_emails[] = $email;
 
 			}

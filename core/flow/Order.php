@@ -43,6 +43,8 @@ class ShoppOrder {
 	public $purchase = false;			// Purchase ID of the finalized sale
 	public $txnid = false;				// The transaction ID reported by the gateway
 
+	public $state;						// Checksum state of the items in the cart
+
 	/**
 	 * Order constructor
 	 *
@@ -72,6 +74,7 @@ class ShoppOrder {
 		ShoppingObject::store('inprogress', $this->inprogress);
 		ShoppingObject::store('purchase', $this->purchase);
 		ShoppingObject::store('txnid', $this->txnid);
+		ShoppingObject::store('orderstate', $this->state);
 
 		$this->Promotions = new ShoppPromotions;
 		$this->Payments = new ShoppPayments;
@@ -103,7 +106,7 @@ class ShoppOrder {
 		// Ensure payment card PAN is truncated after successful processing
 		add_action('shopp_authed_order_event', array($this, 'securecard'));
 
-		add_action('shopp_resession', array($this, 'clear'));
+		add_action('shopp_pre_resession', array($this, 'clear'), 100);
 
 		// Collect available payment methods from active gateways
 		// Schedule for after the gateways are loaded (priority 20)
@@ -132,6 +135,7 @@ class ShoppOrder {
 	 * @return void
 	 **/
 	public function request () {
+
 		if ( ! empty($_REQUEST['rmtpay']) )
 			return do_action('shopp_remote_payment');
 
@@ -369,6 +373,7 @@ class ShoppOrder {
 	 **/
 	public function purchase ( PurchaseOrderEvent $Event ) {
 		$Shopping = ShoppShopping();
+		$changed = $this->changed();
 
 		// No auth message, bail
 		if ( empty($Event) ) {
@@ -381,20 +386,21 @@ class ShoppOrder {
 		$this->gateway = $Event->gateway;
 
 		$paycard = Lookup::paycard($this->Billing->cardtype);
-		$this->Billing->cardtype = !$paycard?$this->Billing->cardtype:$paycard->name;
+		$this->Billing->cardtype = ! $paycard ? $this->Billing->cardtype : $paycard->name;
 
 		$promos = array();
-		foreach ($this->Cart->discounts as &$promo) {
-			$promos[$promo->id] = $promo->name;
-			$promo->uses++;
-		}
+		foreach ( $this->Discounts as $Discount )
+			$promos[ $Discount->id() ] = $Discount->name();
 
-		if (empty($this->inprogress)) {
-			$Purchase = new ShoppPurchase();	// Create a new order
-		} else { // Handle updates to an existing order from checkout reprocessing
-			if ( !empty(ShoppPurchase()->id) ) $Purchase = ShoppPurchase();	// Update existing order
-			else $Purchase = new ShoppPurchase($this->inprogress);
-			$changed = $this->Cart->changed(); // Detect changes to the cart
+		if ( empty($this->inprogress) ) {
+			// Create a new order
+			$Purchase = new ShoppPurchase();
+		} elseif ( empty(ShoppPurchase()->id) ) {
+			// Handle updates to an existing order from checkout reprocessing
+			$Purchase = new ShoppPurchase($this->inprogress);
+		} else {
+			// Update existing order
+			$Purchase = ShoppPurchase();
 		}
 
 		// Capture early event transaction IDs
@@ -404,7 +410,7 @@ class ShoppOrder {
 		$Purchase->copydata($this);
 		$Purchase->copydata($this->Customer);
 		$Purchase->copydata($this->Billing);
-		$Purchase->copydata($this->Shipping,'ship');
+		$Purchase->copydata($this->Shipping, 'ship');
 		$Purchase->copydata($this->Cart->Totals->data());
 		$Purchase->subtotal = $Purchase->order; // Remap order to subtotal
 		$Purchase->customer = $this->Customer->id;
@@ -416,19 +422,28 @@ class ShoppOrder {
 		unset($Purchase->order);
 		$Purchase->save();
 
+		// Catch Purchase record save errors
+		if ( empty($Purchase->id) ) {
+			shopp_add_error( Shopp::__('The order could not be created because of a technical problem on the server. Please try again, or contact the website adminstrator.') );
+			return;
+		}
+
 		ShoppPromo::used(array_keys($promos));
+		ShoppPurchase($Purchase);
 
 		// Process the order events if updating an existing order
 		if ( ! empty($this->inprogress) ) {
 
-			if ($changed) { // The order has changed since the last order attempt
+			if ( $changed ) { // The order has changed since the last order attempt
 
 				// Rebuild purchased records from cart items
 				$Purchase->delete_purchased();
 
+				remove_action( 'shopp_order_event', array($Purchase, 'notifications') );
+
 				// Void prior invoiced balance
-				shopp_add_order_event($Purchase->id,'voided',array(
-					'txnorigin' => '','txnid' => '',
+				shopp_add_order_event($Purchase->id, 'voided', array(
+					'txnorigin' => '', 'txnid' => '',
 					'gateway' => $Purchase->gateway
 				));
 
@@ -436,15 +451,10 @@ class ShoppOrder {
 				$this->items($Purchase->id);
 				$this->invoice($Purchase);
 
+				add_action( 'shopp_order_event', array($Purchase, 'notifications') );
 			}
 
-			ShoppPurchase($Purchase);
-			return $this->process($Purchase);
-		}
-
-		// Catch Purchase record save errors
-		if ( empty($Purchase->id) ) {
-			shopp_add_error( __('The order could not be created because of a technical problem on the server. Please try again, or contact the website adminstrator.','Shopp') );
+			$this->process($Purchase);
 			return;
 		}
 
@@ -452,7 +462,6 @@ class ShoppOrder {
 
 		$this->purchase = false; 			// Clear last purchase in prep for new purchase
 		$this->inprogress = $Purchase->id;	// Keep track of the purchase record in progress for transaction updates
-		ShoppPurchase( $Purchase );
 
 		shopp_debug('Purchase '.$Purchase->id.' was successfully saved to the database.');
 
@@ -478,6 +487,20 @@ class ShoppOrder {
 			$Purchased->save();
 		}
 		$this->checksum = $this->Cart->checksum;	// Track the cart contents checksum to detect changes.
+	}
+
+	/**
+	 * Detect changes to the order (in the cart)
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return boolean True if the order changed from the last time
+	 **/
+	public function changed () {
+		$before = $this->state;
+		$this->state = $this->Cart->state( $before );
+		return ( $before != $this->state );
 	}
 
 	/**
@@ -687,6 +710,10 @@ class ShoppOrder {
 		}
 	}
 
+	public function paymethod () {
+		return $this->Payments->selected();
+	}
+
 	/**
 	 * Clear order-specific information to prepare for a new order
 	 *
@@ -698,7 +725,6 @@ class ShoppOrder {
 	public function clear () {
 
 		$this->Cart->clear();
-
 		$this->Discounts->clear();
 		$this->Promotions->clear();
 		// $this->Shiprates->clear();
