@@ -529,4 +529,16 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue( ! empty($one_part) );
 		$this->assertTrue( ! empty($two_part) );
 	}
+
+	public function test_rss() {
+		$data = array(
+			'link' => 'http://shopplugin.net/mars',
+			'title' => 'We are going to Mars',
+			'description' => 'Interesting news about our products.',
+			'rss_language' => 'en_CA',
+			'sitename' => 'Martian Shopping'
+		);
+		$rss = Shopp::rss($data);
+		$this->assertValidMarkup($rss);
+	}
 }
