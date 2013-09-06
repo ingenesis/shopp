@@ -520,4 +520,13 @@ class CoreTests extends ShoppTestCase {
 		$this->assertEquals('8d', Shopp::daytimes('1w', '1d'));
 		$this->assertEquals('40d', Shopp::daytimes('1m', '1w', '3d'));
 	}
+
+	public function test_keybind() {
+		$part_a = str_pad(md5('Centauri Montes'), 40, '0');
+		$part_b = str_pad(md5('Octantis Mons'), 40, '0');
+		$one_part = Shopp::keybind(array($part_a));
+		$two_part = Shopp::keybind(array($part_a, $part_b));
+		$this->assertTrue( ! empty($one_part) );
+		$this->assertTrue( ! empty($two_part) );
+	}
 }
