@@ -185,7 +185,7 @@ class ShoppCustomer extends ShoppDatabaseObject {
 
 		$_[] = apply_filters('shopp_merchant_new_customer_notification',$_);
 
-		if (!shopp_email(join("\n",$_)))
+		if (!Shopp::email(join("\n",$_)))
 			new ShoppError('The new account notification e-mail could not be sent.','new_account_email',SHOPP_ADMIN_ERR);
 		else shopp_debug('A new account notification e-mail was sent to the merchant.');
 		if (empty($this->password)) return;
@@ -203,7 +203,7 @@ class ShoppCustomer extends ShoppDatabaseObject {
 
 		$_[] = apply_filters('shopp_new_customer_notification',$_);
 
-		if (!shopp_email(join("\n",$_)))
+		if (!Shopp::email(join("\n",$_)))
 			new ShoppError('The customer\'s account notification e-mail could not be sent.','new_account_email',SHOPP_ADMIN_ERR);
 		else shopp_debug('Successfully created the WordPress user for the Shopp account.');
 	}

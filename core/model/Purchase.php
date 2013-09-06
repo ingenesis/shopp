@@ -471,13 +471,13 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		$defaults = array('email.php','order.php','order.html');
 		$emails = array_merge((array)$templates,$defaults);
 
-		$template = locate_shopp_template($emails);
+		$template = Shopp::locate_template($emails);
 
 		if (!file_exists($template))
 			return new ShoppError(__('A purchase notification could not be sent because the template for it does not exist.','purchase_notification_template',SHOPP_ADMIN_ERR));
 
 		// Send the email
-		if (shopp_email($template,$this->message)) {
+		if (Shopp::email($template,$this->message)) {
 			shopp_debug('A purchase notification was sent to: '.$this->message['to']);
 			return true;
 		}

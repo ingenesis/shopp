@@ -9,6 +9,7 @@ class CoreTests extends ShoppTestCase {
 
 	public $domain = '';
 	public $context = '';
+	public $email = array();
 
 
 	public function test_unsupported () {
