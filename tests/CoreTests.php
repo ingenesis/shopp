@@ -541,4 +541,9 @@ class CoreTests extends ShoppTestCase {
 		$rss = Shopp::rss($data);
 		$this->assertValidMarkup($rss);
 	}
+
+	public function test_pagename() {
+		$this->assertEquals('mars-admin-screen.php', Shopp::pagename('index.php/mars-admin-screen.php')); // IIS rewrites
+		$this->assertEquals('mars-admin-screen.php', Shopp::pagename('mars-admin-screen.php'));
+	}
 }
