@@ -512,4 +512,11 @@ class CoreTests extends ShoppTestCase {
 		Shopp::set_wp_query_var('warp_factor', '9');
 		$this->assertTrue('9' === Shopp::get_wp_query_var('warp_factor'));
 	}
+
+	public function test_daytimes() {
+		$this->assertEquals('3d', Shopp::daytimes('72h'));
+		$this->assertEquals('4d', Shopp::daytimes('2d', '48h'));
+		$this->assertEquals('8d', Shopp::daytimes('1w', '1d'));
+		$this->assertEquals('40d', Shopp::daytimes('1m', '1w', '3d'));
+	}
 }
