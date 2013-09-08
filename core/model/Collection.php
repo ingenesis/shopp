@@ -1846,7 +1846,6 @@ class TagProducts extends SmartCollection {
 
 		$term = get_term_by('name',$this->tag,ProductTag::$taxon);
 
-		$tagquery = '';
 		if ( false !== strpos($options['tag'], ',') ) {
 			$tags = explode(',', $options['tag']);
 			foreach ( $tags as $tag ) {
