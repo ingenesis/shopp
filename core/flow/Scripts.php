@@ -326,12 +326,11 @@ function shopp_default_scripts (&$scripts) {
 add_action('shopp_default_scripts', 'shopp_default_scripts');
 
 function shopp_default_script_settings () {
-	$baseop = shopp_setting('base_operations');
 
-	$currency = array();
 	$base = array();
-	if (isset($baseop['currency']['format']['decimals'])) {
-		$settings = &$baseop['currency']['format'];
+
+	$settings = Shopp::currency_format();
+	if ( ! empty($settings) ) {
 		$currency = array(
 			// Currency formatting
 			'cp' => $settings['cpos'],
@@ -344,7 +343,7 @@ function shopp_default_script_settings () {
 			$currency['g'] = is_array($settings['grouping']) ? join(',',$settings['grouping']) : $settings['grouping'];
 
 	}
-	if (!is_admin()) $base = array('nocache' => is_shopp_page('account'));
+	if ( ! is_admin() ) $base = array('nocache' => is_shopp_page('account'));
 
 	// Validation alerts
 	shopp_localize_script('catalog', '$cv', array(
@@ -356,7 +355,7 @@ function shopp_default_script_settings () {
 	));
 
 	// Checkout page settings & localization
-	shopp_localize_script('checkout','$co', array(
+	shopp_localize_script('checkout', '$co', array(
 		'ajaxurl' => admin_url('admin-ajax.php'),
 		'loginname' => __('You did not enter a login.','Shopp'),
 		'loginpwd' => __('You did not enter a password to login with.','Shopp'),
@@ -369,29 +368,29 @@ function shopp_default_script_settings () {
 	));
 
 	// Calendar localization
-	shopp_localize_script('calendar','$cal',array(
+	shopp_localize_script('calendar', '$cal', array(
 		// Month names
-		'jan' => __('January','Shopp'),
-		'feb' => __('February','Shopp'),
-		'mar' => __('March','Shopp'),
-		'apr' => __('April','Shopp'),
-		'may' => __('May','Shopp'),
-		'jun' => __('June','Shopp'),
-		'jul' => __('July','Shopp'),
-		'aug' => __('August','Shopp'),
-		'sep' => __('September','Shopp'),
-		'oct' => __('October','Shopp'),
-		'nov' => __('November','Shopp'),
-		'dec' => __('December','Shopp'),
+		'jan' => __('January', 'Shopp'),
+		'feb' => __('February', 'Shopp'),
+		'mar' => __('March', 'Shopp'),
+		'apr' => __('April', 'Shopp'),
+		'may' => __('May', 'Shopp'),
+		'jun' => __('June', 'Shopp'),
+		'jul' => __('July', 'Shopp'),
+		'aug' => __('August', 'Shopp'),
+		'sep' => __('September', 'Shopp'),
+		'oct' => __('October', 'Shopp'),
+		'nov' => __('November', 'Shopp'),
+		'dec' => __('December', 'Shopp'),
 
 		// Weekday names
-		'sun' => __('Sun','Shopp'),
-		'mon' => __('Mon','Shopp'),
-		'tue' => __('Tue','Shopp'),
-		'wed' => __('Wed','Shopp'),
-		'thu' => __('Thu','Shopp'),
-		'fri' => __('Fri','Shopp'),
-		'sat' => __('Sat','Shopp')
+		'sun' => __('Sun', 'Shopp'),
+		'mon' => __('Mon', 'Shopp'),
+		'tue' => __('Tue', 'Shopp'),
+		'wed' => __('Wed', 'Shopp'),
+		'thu' => __('Thu', 'Shopp'),
+		'fri' => __('Fri', 'Shopp'),
+		'sat' => __('Sat', 'Shopp')
 	));
 
 	// Product editor: unsaved changes warning
@@ -399,8 +398,8 @@ function shopp_default_script_settings () {
 		'confirm' => __('The changes you made will be lost if you navigate away from this page.', 'Shopp')
 	));
 
-	$defaults = apply_filters('shopp_js_settings',array_merge($currency,$base));
-	shopp_localize_script('shopp','$s',$defaults);
+	$defaults = apply_filters('shopp_js_settings', array_merge($currency, $base));
+	shopp_localize_script('shopp', '$s',$defaults);
 }
 
-add_action('shopp_print_scripts','shopp_default_script_settings',100);
+add_action('shopp_print_scripts', 'shopp_default_script_settings', 100);
