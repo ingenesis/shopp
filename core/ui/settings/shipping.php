@@ -17,13 +17,18 @@
 		<table class="form-table">
 			<tr>
 				<th scope="row" valign="top"><label for="shipping-toggle"><?php _e('Calculate Shipping','Shopp'); ?></label></th>
-				<td><input type="hidden" name="settings[shipping]" value="off" /><input type="checkbox" name="settings[shipping]" value="on" id="shipping-toggle"<?php if (shopp_setting('shipping') == "on") echo ' checked="checked"'?> /><label for="shipping-toggle"> <?php _e('Enabled','Shopp'); ?></label><br />
+				<td><input type="hidden" name="settings[shipping]" value="off" /><input type="checkbox" name="settings[shipping]" value="on" id="shipping-toggle"<?php if ( shopp_setting_enabled('shipping') ) echo ' checked="checked"'?> /><label for="shipping-toggle"> <?php _e('Enabled','Shopp'); ?></label><br />
 	            <?php _e('Enables shipping cost calculations. Disable if you are exclusively selling intangible products.','Shopp'); ?></td>
 			</tr>
 			<tr>
 				<th scope="row" valign="top"><label for="shipping-toggle"><?php _e('Track Inventory','Shopp'); ?></label></th>
-				<td><input type="hidden" name="settings[inventory]" value="off" /><input type="checkbox" name="settings[inventory]" value="on" id="inventory-toggle"<?php if (shopp_setting('inventory') == "on") echo ' checked="checked"'?> /><label for="inventory-toggle"> <?php _e('Enabled','Shopp'); ?></label><br />
-	            <?php _e('Enables inventory tracking. Disable if you are exclusively selling intangible products or not keeping track of product stock.','Shopp'); ?></td>
+				<td><p><input type="hidden" name="settings[inventory]" value="off" /><input type="checkbox" name="settings[inventory]" value="on" id="inventory-toggle"<?php if ( shopp_setting_enabled('inventory') ) echo ' checked="checked"'?> /><label for="inventory-toggle"> <?php _e('Enable inventory tracking','Shopp'); ?></label><br />
+	            <?php _e('Enables inventory tracking. Disable if you are exclusively selling intangible products or not keeping track of product stock.','Shopp'); ?></p>
+
+
+				<input type="hidden" name="settings[backorders]" value="off" /><input type="checkbox" name="settings[backorders]" value="on" id="backorders-toggle"<?php if ( shopp_setting_enabled('backorders') ) echo ' checked="checked"'?> /><label for="backorders-toggle"> <?php _e('Allow backorders','Shopp'); ?></label><br />
+				<?php _e('Allows customers to order products that cannot be fulfilled because of a lack of available product in-stock. Disable to prevent customers from ordering more product than is available in-stock.','Shopp'); ?>
+			</td>
 			</tr>
 			<tr>
 				<th scope="row" valign="top"><label><?php _e('Shipping Carriers','Shopp'); ?></label></th>

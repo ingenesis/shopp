@@ -392,7 +392,7 @@ class ShoppCart extends ListFramework {
 	 * @return boolean
 	 **/
 	public function xitemstock ( ShoppCartItem $Item ) {
-		if ( ! shopp_setting_enabled('inventory') ) return true;
+		if ( ! shopp_setting_enabled('inventory') || shopp_setting_enabled('backorders') ) return true;
 
 		// Build a cross-product map of the total quantity of ordered products to known stock levels
 		$order = array();

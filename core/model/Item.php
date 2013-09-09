@@ -323,7 +323,7 @@ class ShoppCartItem {
 			$qty = 1;
 		}
 
-		if ( in_array($this->type, array('Membership','Subscription')) || 'Download' == $this->type && !shopp_setting_enabled('download_quantity') ) {
+		if ( in_array($this->type, array('Membership','Subscription')) || 'Download' == $this->type && ! shopp_setting_enabled('download_quantity') ) {
 			return ($this->quantity = 1);
 		}
 
@@ -331,18 +331,26 @@ class ShoppCartItem {
 		$this->quantity = (int)$qty;
 
 		if ( ! $this->instock($qty) ) {
+
 			$levels = array($this->option->stock);
 			foreach ($this->addons as $addon) // Take into account stock levels of any addons
 				if ( Shopp::str_true($addon->inventory) ) $levels[] = $addon->stock;
 
 			if ( $qty > $min = min($levels) ) {
-				new ShoppError(__('Not enough of the product is available in stock to fulfill your request.','Shopp'),'item_low_stock');
-				if ( ! $min ) return; // don't set min to item quantity if no stock
-				$this->quantity = $min;
+
+				if ( shopp_setting_enabled('backorders') ) {
+					$this->backordered = $qty - $min;
+					new ShoppError(Shopp::__('"%s" is not available in the requested quantity. %d of the items will be backordered with delayed delivery.', $this->name, $this->backordered), 'item_backorder');
+				} else {
+					new ShoppError(Shopp::__('"%s" is not available in the requested quantity.', $this->name), 'item_low_stock');
+					if ( ! $min ) return; // don't set min to item quantity if no stock
+					$this->quantity = $min;
+				}
+
 			}
 		}
 
-		$this->qtydelta = $this->quantity-$current;
+		$this->qtydelta = $this->quantity - $current;
 		if ( 0 != $this->qtydelta ) $this->totals();
 	}
 
@@ -359,7 +367,7 @@ class ShoppCartItem {
 			$qty = Shopp::floatval($qty);
 			$this->quantity = $this->unitprice;
 		}
-		$this->quantity($this->quantity+$qty);
+		$this->quantity($this->quantity + $qty);
 	}
 
 	/**
