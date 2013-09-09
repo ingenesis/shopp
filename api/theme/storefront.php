@@ -448,8 +448,12 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 					$prettyurls = ( '' != get_option('permalink_structure') );
 					$link = Shopp::url( $prettyurls ? "$namespace/{$category->slug}" : array($taxonomy=>$category->slug),false );
 				}
-				$string .=
-					'<option value="'.$link.'">'.$padding.$category->name.$total.'</option>';
+				$categoryname = $category->name;
+
+				$filtered = apply_filters('shopp_storefront_categorylist_option', compact('link', 'padding', 'categoryname', 'total'));
+				extract($filtered, EXTR_OVERWRITE);
+
+				$string .= '<option value="' . $link . '">' . $padding . $categoryname . $total . '</option>';
 				$previous = &$category;
 				$level = $category->level;
 			}
@@ -459,39 +463,38 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			$depth = 0;
 
 			$string .= $title;
-			if ($wraplist) $string .= '<ul'.$classes.'>';
+			if ($wraplist) $string .= '<ul' . $classes . '>';
 			$Collection = ShoppCollection();
-			foreach ($categories as &$category) {
-				if (!isset($category->count)) $category->count = 0;
-				if (!isset($category->level)) $category->level = 0;
+			foreach ( $categories as &$category ) {
+				if ( ! isset($category->count) ) $category->count = 0;
+				if ( ! isset($category->level) ) $category->level = 0;
 
 				// If the parent of this category was excluded, add this to the excludes and skip
-				if (!empty($category->parent) && in_array($category->parent,$exclude)) {
+				if ( ! empty($category->parent) && in_array($category->parent, $exclude) ) {
 					$exclude[] = $category->id;
 					continue;
 				}
 
-				if (!empty($category->id) && in_array($category->id,$exclude)) continue; // Skip excluded categories
-				if ($levellimit && $category->level >= $levellimit) continue;
-				if ($hierarchy && $category->level > $depth) {
+				if ( ! empty($category->id) && in_array($category->id, $exclude) ) continue; // Skip excluded categories
+				if ( $levellimit && $category->level >= $levellimit ) continue;
+				if ( $hierarchy && $category->level > $depth ) {
 					$parent = &$previous;
-					if (!isset($parent->path)) $parent->path = $parent->slug;
-					if (substr($string,-5,5) == "</li>") // Keep everything but the
+					if ( ! isset($parent->path) ) $parent->path = $parent->slug;
+					if ( substr($string, -5, 5) == '</li>' ) // Keep everything but the
 						$string = substr($string,0,-5);  // last </li> to re-open the entry
 					$active = '';
 
+					if ( $Collection && property_exists($Collection, 'parent') && $Collection->parent == $parent->id ) $active = ' active';
 
-					if ( $Collection && property_exists($Collection,'parent') && $Collection->parent == $parent->id ) $active = ' active';
-
-					$subcategories = '<ul class="children'.$active.'">';
+					$subcategories = '<ul class="children' . $active . '">';
 					$string .= $subcategories;
 				}
 
-				if ($hierarchy && $category->level < $depth) {
-					for ($i = $depth; $i > $category->level; $i--) {
-						if (substr($string,strlen($subcategories)*-1) == $subcategories) {
+				if ( $hierarchy && $category->level < $depth ) {
+					for ( $i = $depth; $i > $category->level; $i-- ) {
+						if ( substr($string, strlen($subcategories) * -1) == $subcategories ) {
 							// If the child menu is empty, remove the <ul> to avoid breaking standards
-							$string = substr($string,0,strlen($subcategories)*-1).'</li>';
+							$string = substr($string, 0, strlen($subcategories) * -1) . '</li>';
 						} else $string .= '</ul></li>';
 					}
 				}
@@ -500,50 +503,53 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 					$link = get_term_link( (int) $category->term_id,$category->taxonomy);
 					if (is_wp_error($link)) $link = '';
 				} else {
-					$namespace = get_class_property( 'SmartCollection' ,'namespace');
-					$taxonomy = get_class_property( 'SmartCollection' ,'taxon');
+					$namespace = get_class_property( 'SmartCollection', 'namespace');
+					$taxonomy = get_class_property( 'SmartCollection', 'taxon');
 					$prettyurls = ( '' != get_option('permalink_structure') );
-					$link = Shopp::url( $prettyurls ? "$namespace/{$category->slug}" : array($taxonomy=>$category->slug),false );
+					$link = Shopp::url( $prettyurls ? "$namespace/{$category->slug}" : array($taxonomy => $category->slug), false );
 				}
 
 				$total = '';
-				if ( Shopp::str_true($products) && $category->count > 0 ) $total = ' <span>('.$category->count.')</span>';
+				if ( Shopp::str_true($products) && $category->count > 0 ) $total = ' <span>(' . $category->count . ')</span>';
 
 				$classes = array();
-				if (isset($Collection->slug) && $Collection->slug == $category->slug)
+				if ( isset($Collection->slug) && $Collection->slug == $category->slug )
 					$classes[] = 'current';
 
-				if (isset($Collection->parent) && $Collection->parent == $category->id)
+				if ( isset($Collection->parent) && $Collection->parent == $category->id )
 					$classes[] = 'current-parent';
 
+				$categoryname = $category->name;
+				$filtered = apply_filters('shopp_storefront_categorylist_link', compact('link', 'classes', 'categoryname', 'total'));
+				extract($filtered, EXTR_OVERWRITE);
+
 				if ( empty($classes) ) $classes = '';
-				else $classes = ' class="'.join(' ',$classes).'"';
+				else $class = ' class="' . join(' ', $classes) . '"';
 
 				$listing = '';
+				if ( ! empty($link) && ($category->count > 0 || isset($category->smart) || Shopp::str_true($linkall)) ) {
+					$listing = '<a href="' . esc_url($link) . '"' . $class . '>' . esc_html($category->name) . ($linkcount ? $total : '') . '</a>'.( ! $linkcount ? $total : '');
+				} else $listing = $categoryname;
 
-				if (!empty($link) && ($category->count > 0 || isset($category->smart) || Shopp::str_true($linkall)))
-					$listing = '<a href="'.$link.'"'.$classes.'>'.esc_html($category->name).($linkcount?$total:'').'</a>'.(!$linkcount?$total:'');
-				else $listing = $category->name;
-
-				if (Shopp::str_true($showall) ||
+				if ( Shopp::str_true($showall) ||
 					$category->count > 0 ||
 					isset($category->smart) ||
 					$category->_children)
-					$string .= '<li'.$classes.'>'.$listing.'</li>';
+					$string .= '<li' . $class . '>' . $listing . '</li>';
 
 				$previous = &$category;
 				$depth = $category->level;
 			}
-			if ($hierarchy && $depth > 0)
-				for ($i = $depth; $i > 0; $i--) {
-					if (substr($string,strlen($subcategories)*-1) == $subcategories) {
+			if ( $hierarchy && $depth > 0 )
+				for ( $i = $depth; $i > 0; $i-- ) {
+					if ( substr($string, strlen($subcategories) * -1) == $subcategories ) {
 						// If the child menu is empty, remove the <ul> to avoid breaking standards
-						$string = substr($string,0,strlen($subcategories)*-1).'</li>';
+						$string = substr($string, 0, strlen($subcategories) * -1) . '</li>';
 					} else $string .= '</ul></li>';
 				}
-			if ($wraplist) $string .= '</ul>';
+			if ( $wraplist ) $string .= '</ul>';
 		}
-		return $before.$string.$after;
+		return $before . $string . $after;
 		break;
 	}
 
