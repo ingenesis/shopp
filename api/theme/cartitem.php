@@ -225,8 +225,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		);
 		$options = array_merge($defaults, $options);
 
-		$fields = array('id','type','label','sale','saleprice','price',
-						'inventory','stock','sku','weight','shipfee','unitprice');
+		$fields = array('id', 'type', 'menu', 'label', 'sale', 'saleprice', 'price', 'inventory', 'stock', 'sku', 'weight', 'shipfee', 'unitprice');
 
 		$fieldset = array_intersect($fields, array_keys($options));
 		if ( empty($fieldset) ) $fieldset = array('label');
@@ -234,6 +233,10 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		$_ = array();
 		foreach ($fieldset as $field) {
 			switch ($field) {
+				case 'menu':
+					list($menus, $menumap) = self::_addon_menus();
+					$_[] = isset( $menumap[ $addon->options ]) ? $menus[ $menumap[ $addon->options ] ] : '';
+					break;
 				case 'weight': $_[] = $addon->dimensions['weight'];
 				case 'saleprice':
 				case 'price':
@@ -261,6 +264,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 			'after' => '',
 			'class' => '',
 			'exclude' => '',
+			'separator' => ': ',
 			'prices' => true,
 			'taxes' => shopp_setting('tax_inclusive')
 		);
@@ -272,18 +276,46 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		$prices = Shopp::str_true($prices);
 		$taxes = Shopp::str_true($taxes);
 
+		// Get the menu labels list and addon options to menus map
+		list($menus, $menumap) = self::_addon_menus();
+
 		$result .= $before . '<ul' . $classes . '>';
-		foreach ($O->addons as $id => $addon) {
-			if ( in_array($addon->label,$excludes) ) continue;
+		foreach ( $O->addons as $id => $addon ) {
+
+			if ( in_array($addon->label, $excludes) ) continue;
+			$menu = isset( $menumap[ $addon->options ]) ? $menus[ $menumap[ $addon->options ] ] . $separator : false;
+
 			$price = ( Shopp::str_true($addon->sale) ? $addon->promoprice : $addon->price );
 			if ($taxes && $O->taxrate > 0)
 				$price = $price + ( $price * $O->taxrate );
 
 			if ($prices) $pricing = " (" . ( $addon->price < 0 ?'-' : '+' ) . money($price) . ')';
-			$result .= '<li>' . $addon->label . $pricing . '</li>';
+			$result .= '<li>' . $menu . $addon->label . $pricing . '</li>';
 		}
 		$result .= '</ul>' . $after;
 		return $result;
+	}
+
+	/**
+	 * Helper function that maps the current cart item's addons to the cart item's configured product menu options
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @return array A combined list of the menu labels list and addons menu map
+	 **/
+	private static function _addon_menus () {
+		$menus = shopp_meta(shopp('cartitem.get-product'), 'product', 'options');
+		$addonmenus = array();
+		$menulabels = array();
+		if ( isset($menus['a']) ) {
+			foreach ($menus['a'] as $addonmenu) {
+				$menulabels[ $addonmenu['id'] ] = $addonmenu['name'];
+				foreach ( $addonmenu['options'] as $menuoption)
+					$addonmenus[ $menuoption['id'] ] = $addonmenu['id'];
+			}
+		}
+		return array($menulabels, $addonmenus);
 	}
 
 	public static function has_inputs ( $result, $options, $O ) {
