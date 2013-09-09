@@ -30,8 +30,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @return array of Purchase objects
  **/
 function shopp_orders ( $from = false, $to = false, $items = true, $customers = array(), $limit = false, $order = 'DESC' ) {
-	$pt = DatabaseObject::tablename(ShoppPurchase::$table);
-	$pd = DatabaseObject::tablename(ShoppPurchased::$table);
+	$pt = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
+	$pd = ShoppDatabaseObject::tablename(ShoppPurchased::$table);
 
 	$where = array();
 	if ( $from ) {

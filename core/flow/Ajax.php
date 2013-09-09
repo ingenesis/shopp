@@ -265,7 +265,7 @@ class ShoppAjax {
 		check_admin_referer('wp_ajax_shopp_order_note_message');
 		if (!isset($_GET['id'])) die('1');
 
-		$Note = new MetaObject(array('id' => intval($_GET['id']),'type'=>'order_note'));
+		$Note = new ShoppMetaObject(array('id' => intval($_GET['id']),'type'=>'order_note'));
 		die($Note->value->message);
 	}
 
@@ -345,7 +345,7 @@ class ShoppAjax {
 				case 'shopp_memberships':
 					$id = 'id';
 					$name = 'name';
-					$table = DatabaseObject::tablename('meta');
+					$table = ShoppDatabaseObject::tablename('meta');
 					$where[] = "context='membership'";
 					$where[] = "type='membership'";
 					break;
@@ -358,12 +358,12 @@ class ShoppAjax {
 				case 'shopp_promotions':
 					$id = 'id';
 					$name = 'name';
-					$table = DatabaseObject::tablename(ShoppPromo::$table);
+					$table = ShoppDatabaseObject::tablename(ShoppPromo::$table);
 					break;
 				case 'shopp_downloads':
 					$id = 'id';
 					$name = 'name';
-					$table = DatabaseObject::tablename('meta');
+					$table = ShoppDatabaseObject::tablename('meta');
 					$where[] = "context='price'";
 					$where[] = "type='download'";
 					break;
@@ -466,9 +466,9 @@ class ShoppAjax {
 			if ( empty($pagenum) ) $pagenum = 1;
 			$index = ($per_page * ($pagenum-1));
 
-			$customer_table = DatabaseObject::tablename(Customer::$table);
-			$billing_table = DatabaseObject::tablename(BillingAddress::$table);
-			$purchase_table = DatabaseObject::tablename(ShoppPurchase::$table);
+			$customer_table = ShoppDatabaseObject::tablename(Customer::$table);
+			$billing_table = ShoppDatabaseObject::tablename(BillingAddress::$table);
+			$purchase_table = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
 			global $wpdb;
 			$users_table = $wpdb->users;
 
@@ -551,7 +551,7 @@ class ShoppAjax {
 		if ( (int)$_GET['stock'] < 0 ) die('0');
 		$Priceline->stock = $Priceline->stocked = $_GET['stock'];
 		$Priceline->save();
-		$summary = DatabaseObject::tablename(ProductSummary::$table);
+		$summary = ShoppDatabaseObject::tablename(ProductSummary::$table);
 		DB::query("UPDATE $summary SET modified='0000-00-00 00:00:01' WHERE product=$Priceline->product LIMIT 1");
 		echo "1";
 		exit();
@@ -718,7 +718,7 @@ class ShoppAjax {
 		if (empty($_POST['position']) || !is_array($_POST['position'])) die('0');
 
 		$db = sDB::get();
-		$table = DatabaseObject::tablename(ProductCategory::$table);
+		$table = ShoppDatabaseObject::tablename(ProductCategory::$table);
 		$updates = $_POST['position'];
 		foreach ($updates as $id => $position)
 			$db->query("UPDATE $table SET priority='$position' WHERE id='$id'");

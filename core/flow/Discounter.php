@@ -92,7 +92,7 @@ class ShoppAdminDiscounter extends ShoppAdminController {
 		if ( ! current_user_can('shopp_promotions') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
-		$table = DatabaseObject::tablename(ShoppPromo::$table);
+		$table = ShoppDatabaseObject::tablename(ShoppPromo::$table);
 
 		$defaults = array(
 			'page' => false,

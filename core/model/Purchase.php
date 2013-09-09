@@ -13,7 +13,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppPurchase extends DatabaseObject {
+class ShoppPurchase extends ShoppDatabaseObject {
 
 	static $table = 'purchase';
 
@@ -53,9 +53,9 @@ class ShoppPurchase extends DatabaseObject {
 
 	public function load_purchased () {
 
-		$table = DatabaseObject::tablename(Purchased::$table);
-		$meta = DatabaseObject::tablename(MetaObject::$table);
-		$price = DatabaseObject::tablename(Price::$table);
+		$table = ShoppDatabaseObject::tablename(Purchased::$table);
+		$meta = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
+		$price = ShoppDatabaseObject::tablename(Price::$table);
 		$Purchased = new ShoppPurchased();
 		if (empty($this->id)) return false;
 		$this->purchased = DB::query("SELECT pd.*,pr.inventory FROM $table AS pd LEFT JOIN $price AS pr ON pr.id=pd.price WHERE pd.purchase=$this->id", 'array', array($Purchased, 'loader') );
@@ -207,7 +207,7 @@ class ShoppPurchase extends DatabaseObject {
 
 		if ( empty($allocated) ) return;
 
-		$pricetable = DatabaseObject::tablename(Price::$table);
+		$pricetable = ShoppDatabaseObject::tablename(Price::$table);
 		$lowlevel = shopp_setting('lowstock_level');
 		foreach ( $prices as $price => $data ) {
 			list($productname, $qty) = $data;
@@ -279,10 +279,10 @@ class ShoppPurchase extends DatabaseObject {
 
 		$data = DB::escape($updates);
 		$data = array_map(create_function('$value','return "\'$value\'";'),$data);
-		$dataset = DatabaseObject::dataset($data);
+		$dataset = ShoppDatabaseObject::dataset($data);
 
 		if ( ! empty($dataset) ) {
-			$table = DatabaseObject::tablename(self::$table);
+			$table = ShoppDatabaseObject::tablename(self::$table);
 			$query = "UPDATE $table SET $dataset WHERE id='$Event->order' LIMIT 1";
 			DB::query($query);
 		}
@@ -471,13 +471,13 @@ class ShoppPurchase extends DatabaseObject {
 		$defaults = array('email.php','order.php','order.html');
 		$emails = array_merge((array)$templates,$defaults);
 
-		$template = locate_shopp_template($emails);
+		$template = Shopp::locate_template($emails);
 
 		if (!file_exists($template))
 			return new ShoppError(__('A purchase notification could not be sent because the template for it does not exist.','purchase_notification_template',SHOPP_ADMIN_ERR));
 
 		// Send the email
-		if (shopp_email($template,$this->message)) {
+		if (Shopp::email($template,$this->message)) {
 			shopp_debug('A purchase notification was sent to: '.$this->message['to']);
 			return true;
 		}
@@ -577,7 +577,7 @@ class ShoppPurchase extends DatabaseObject {
 	}
 
 	public function delete () {
-		$table = DatabaseObject::tablename(MetaObject::$table);
+		$table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
 		DB::query("DELETE LOW_PRIORITY FROM $table WHERE parent='$this->id' AND context='purchase'");
 		parent::delete();
 	}
@@ -689,8 +689,8 @@ class PurchasesExport {
 		if (!empty($customer)) $where[] = "customer=".intval($customer);
 		$where = !empty($where) ? "WHERE ".join(' AND ',$where) : '';
 
-		$purchasetable = DatabaseObject::tablename(ShoppPurchase::$table);
-		$purchasedtable = DatabaseObject::tablename(ShoppPurchased::$table);
+		$purchasetable = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
+		$purchasedtable = ShoppDatabaseObject::tablename(ShoppPurchased::$table);
 		$offset = ($this->set*$this->limit);
 
 		$c = 0; $columns = array(); $purchasedcols = false;

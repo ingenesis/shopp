@@ -102,7 +102,7 @@ class IndexProduct {
  * @since 1.1
  * @package shopp
  **/
-class ContentIndex extends DatabaseObject {
+class ContentIndex extends ShoppDatabaseObject {
 	static $table = "index";
 
 	var $_loaded = false;

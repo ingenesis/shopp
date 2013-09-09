@@ -1,4 +1,4 @@
-<?php $meta = DatabaseObject::tablename('meta'); ?>
+<?php $meta = ShoppDatabaseObject::tablename('meta'); ?>
 DROP TABLE IF EXISTS <?php echo $meta; ?>;
 CREATE TABLE <?php echo $meta; ?> (								-- Meta records table
 	id bigint(20) unsigned NOT NULL auto_increment,				-- (8) Primary key
@@ -15,7 +15,7 @@ CREATE TABLE <?php echo $meta; ?> (								-- Meta records table
 	KEY lookup (name,parent,context,type)						-- Find by object record and meta type
 ) ENGINE=MyIsAM DEFAULT CHARSET=utf8;
 
-<?php $summary = DatabaseObject::tablename('summary'); ?>
+<?php $summary = ShoppDatabaseObject::tablename('summary'); ?>
 DROP TABLE IF EXISTS <?php echo $summary; ?>;
 CREATE TABLE <?php echo $summary; ?> (							-- Summary table for product state records
 	product bigint(20) unsigned NOT NULL default '0',			-- (8) Product ID (wp_posts ID)
@@ -40,7 +40,7 @@ CREATE TABLE <?php echo $summary; ?> (							-- Summary table for product state 
 	KEY lowprice (minprice,product)								-- Catalog index by lowest price
 ) ENGINE=MyIsAM DEFAULT CHARSET=utf8;
 
-<?php $price = DatabaseObject::tablename('price'); ?>
+<?php $price = ShoppDatabaseObject::tablename('price'); ?>
 DROP TABLE IF EXISTS <?php echo $price; ?>;
 CREATE TABLE <?php echo $price; ?> (							-- Price table
 	id bigint(20) unsigned NOT NULL auto_increment,				-- (8) Primary key
@@ -70,7 +70,7 @@ CREATE TABLE <?php echo $price; ?> (							-- Price table
 	KEY context (context)										-- Lookup by context
 ) ENGINE=MyIsAM DEFAULT CHARSET=utf8;
 
-<?php $index = DatabaseObject::tablename('index'); ?>
+<?php $index = ShoppDatabaseObject::tablename('index'); ?>
 DROP TABLE IF EXISTS <?php echo $index; ?>;
 CREATE TABLE <?php echo $index; ?> (							-- Search index table
 	id bigint(20) unsigned NOT NULL auto_increment,				-- (8) Primary key
@@ -84,7 +84,7 @@ CREATE TABLE <?php echo $index; ?> (							-- Search index table
 	FULLTEXT search (terms)										-- Full-text index for search operations
 ) ENGINE=MyIsAM DEFAULT CHARSET=utf8;
 
-<?php $asset = DatabaseObject::tablename('asset'); ?>
+<?php $asset = ShoppDatabaseObject::tablename('asset'); ?>
 DROP TABLE IF EXISTS <?php echo $asset; ?>;
 CREATE TABLE <?php echo $asset; ?> (							-- Binary storage repo
 	id bigint(20) unsigned NOT NULL auto_increment,				-- (8) Primary key
@@ -92,7 +92,7 @@ CREATE TABLE <?php echo $asset; ?> (							-- Binary storage repo
 	PRIMARY KEY id (id)
 ) ENGINE=MyIsAM DEFAULT CHARSET=utf8;
 
-<?php $shopping = DatabaseObject::tablename('shopping'); ?>
+<?php $shopping = ShoppDatabaseObject::tablename('shopping'); ?>
 DROP TABLE IF EXISTS <?php echo $shopping; ?>;
 CREATE TABLE <?php echo $shopping; ?> (							-- Active shopping sessions
 	session varchar(32) NOT NULL,								-- (1-33) PHP Session ID
@@ -106,7 +106,7 @@ CREATE TABLE <?php echo $shopping; ?> (							-- Active shopping sessions
 	KEY customer (customer)										-- Lookup by customer
 ) ENGINE=MyIsAM DEFAULT CHARSET=utf8;
 
-<?php $customer = DatabaseObject::tablename('customer'); ?>
+<?php $customer = ShoppDatabaseObject::tablename('customer'); ?>
 DROP TABLE IF EXISTS <?php echo $customer; ?>;
 CREATE TABLE <?php echo $customer; ?> (							-- Customer account records
 	id bigint(20) unsigned NOT NULL auto_increment,				-- (8) Primary key
@@ -127,7 +127,7 @@ CREATE TABLE <?php echo $customer; ?> (							-- Customer account records
 	KEY type (type)												-- Lookup by customer type
 ) ENGINE=MyIsAM DEFAULT CHARSET=utf8;
 
-<?php $address = DatabaseObject::tablename('address'); ?>
+<?php $address = ShoppDatabaseObject::tablename('address'); ?>
 DROP TABLE IF EXISTS <?php echo $address; ?>;
 CREATE TABLE <?php echo $address; ?> (							-- Customer physical addresses
 	id bigint(20) unsigned NOT NULL auto_increment,				-- (8) Primary key
@@ -147,7 +147,7 @@ CREATE TABLE <?php echo $address; ?> (							-- Customer physical addresses
 	KEY ref (customer,type)										-- Lookup by customer and address record type
 ) ENGINE=MyIsAM DEFAULT CHARSET=utf8;
 
-<?php $purchase = DatabaseObject::tablename('purchase'); ?>
+<?php $purchase = ShoppDatabaseObject::tablename('purchase'); ?>
 DROP TABLE IF EXISTS <?php echo $purchase; ?>;
 CREATE TABLE <?php echo $purchase; ?> (							-- Purchase log
 	id bigint(20) unsigned NOT NULL auto_increment,				-- Primary key
@@ -203,7 +203,7 @@ CREATE TABLE <?php echo $purchase; ?> (							-- Purchase log
 	KEY customer (customer)										-- Indexed lookup by customer
 ) ENGINE=MyIsAM DEFAULT CHARSET=utf8;
 
-<?php $purchased = DatabaseObject::tablename('purchased'); ?>
+<?php $purchased = ShoppDatabaseObject::tablename('purchased'); ?>
 DROP TABLE IF EXISTS <?php echo $purchased; ?>;
 CREATE TABLE <?php echo $purchased; ?> (						-- Line items purchased in an order
 	id bigint(20) unsigned NOT NULL auto_increment,				-- Primary key
@@ -235,7 +235,7 @@ CREATE TABLE <?php echo $purchased; ?> (						-- Line items purchased in an orde
 	KEY dkey (dkey(8))											-- Download key lookup
 ) ENGINE=MyIsAM DEFAULT CHARSET=utf8;
 
-<?php $promo = DatabaseObject::tablename('promo'); ?>
+<?php $promo = ShoppDatabaseObject::tablename('promo'); ?>
 DROP TABLE IF EXISTS <?php echo $promo; ?>;
 CREATE TABLE <?php echo $promo; ?> (							-- Promotions
 	id bigint(20) unsigned NOT NULL auto_increment,				-- Primary key

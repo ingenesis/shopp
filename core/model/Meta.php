@@ -15,14 +15,14 @@
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 /**
- * MetaObject
+ * ShoppMetaObject
  *
  * @author Jonathan Davis
  * @since 1.1
  * @package shopp
  * @subpackage meta
  **/
-class MetaObject extends DatabaseObject {
+class ShoppMetaObject extends ShoppDatabaseObject {
 	static $table = 'meta';
 
 	public $context = 'product';
@@ -46,7 +46,7 @@ class MetaObject extends DatabaseObject {
 	}
 
 	/**
-	 * Populate extended fields loaded from the MetaObject
+	 * Populate extended fields loaded from the ShoppMetaObject
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.1
@@ -90,7 +90,7 @@ class MetaObject extends DatabaseObject {
  * @package shopp
  * @subpackage meta
  **/
-abstract class MetasetObject extends DatabaseObject {
+abstract class MetasetObject extends ShoppDatabaseObject {
 	static $table = 'meta';
 
 	public $_table = false;	// Fully qualified table name
@@ -108,7 +108,7 @@ abstract class MetasetObject extends DatabaseObject {
 	}
 
 	function init ($table,$key='id') {
-		$this->_table = DatabaseObject::tablename(MetasetObject::$table);
+		$this->_table = ShoppDatabaseObject::tablename(MetasetObject::$table);
 		$this->_type = get_class($this);
 		$properties = array_keys(get_object_vars($this));
 		$this->_properties = array_filter($properties,array('MetasetObject','_ignore_'));
@@ -127,7 +127,7 @@ abstract class MetasetObject extends DatabaseObject {
 		$r = $db->query("SELECT * FROM $this->_table WHERE $where",'array');
 
 		foreach ($r as $row) {
-			$meta = new MetaObject();
+			$meta = new ShoppMetaObject();
 			$meta->populate($row,'',array());
 			$this->_meta[$meta->name] = $meta;
 
@@ -156,7 +156,7 @@ abstract class MetasetObject extends DatabaseObject {
 		$db = &DB::get();
 
 		if (empty($this->id)) {
-			$meta = new MetaObject();
+			$meta = new ShoppMetaObject();
 			$meta->parent = 0;
 			$meta->context = $this->_context;
 			$meta->type = $this->_type;
@@ -171,7 +171,7 @@ abstract class MetasetObject extends DatabaseObject {
 		foreach(get_object_vars($this) as $property => $value) {
 			if ($property[0] == "_") continue; // Skip mapping properties
 			if (!isset($this->_meta[$property])) {
-				$meta = new MetaObject();
+				$meta = new ShoppMetaObject();
 				$meta->parent = $this->_parent;
 				$meta->context = $this->_context;
 				$meta->type = $this->_type;
@@ -224,7 +224,7 @@ class ObjectMeta {
 	public $named = array();
 
 	function __construct ($parent=false,$context='product',$type=false,$sort='sortorder') {
-		$this->_table = DatabaseObject::tablename(self::$table);
+		$this->_table = ShoppDatabaseObject::tablename(self::$table);
 
 		$params = array(
 			'parent' => $parent,
@@ -249,7 +249,7 @@ class ObjectMeta {
 		$r = $db->query("SELECT * FROM $this->_table WHERE $where",'array');
 
 		foreach ($r as $row) {
-			$meta = new MetaObject();
+			$meta = new ShoppMetaObject();
 			$meta->populate($row,'',array());
 
 			$this->meta[$meta->id] = $meta;

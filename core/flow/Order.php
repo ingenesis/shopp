@@ -55,7 +55,7 @@ class ShoppOrder {
 	public function __construct () {
 
 		$this->Cart = ShoppingObject::__new( 'ShoppCart' );
-		$this->Customer = ShoppingObject::__new( 'Customer' );
+		$this->Customer = ShoppingObject::__new( 'ShoppCustomer' );
 
 		$this->Billing = ShoppingObject::__new( 'BillingAddress' );
 		$this->Billing->locate();
@@ -545,8 +545,8 @@ class ShoppOrder {
 	// public function salestats ($status, &$Purchase) {
 	// 	if (empty($Purchase->id)) return;
 	//
-	// 	$products = DatabaseObject::tablename(Product::$table);
-	// 	$purchased = DatabaseObject::tablename(Purchased::$table);
+	// 	$products = ShoppDatabaseObject::tablename(Product::$table);
+	// 	$purchased = ShoppDatabaseObject::tablename(Purchased::$table);
 	//
 	// 	// Transaction status changed
 	// 	if ('CHARGED' == $status) // Now CHARGED, add quantity ordered to product 'sold' stat

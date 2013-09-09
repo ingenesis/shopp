@@ -22,7 +22,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @since 1.2
  * @package membership
  **/
-class Membership extends DatabaseObject  {
+class Membership extends ShoppDatabaseObject  {
 	static $table = 'meta';
 
 	var $_table = false;	// Fully qualified table name
@@ -65,7 +65,7 @@ class Membership extends DatabaseObject  {
  * @since 1.2
  * @package membership
  **/
-class MemberPlan extends DatabaseObject  {
+class MemberPlan extends ShoppDatabaseObject  {
 	static $table = 'meta';
 
 	var $_table = false;	// Fully qualified table name
@@ -169,7 +169,7 @@ class MemberPlan extends DatabaseObject  {
 		$db = DB::get();
 
 		// @todo Delete all catalog entries related to this
-		// $catalog = DatabaseObject::tablename(Catalog::$table);
+		// $catalog = ShoppDatabaseObject::tablename(Catalog::$table);
 		// $db->query("DELETE FROM $this->_table WHERE parent='$id' AND context='membership'");
 
 		// Delete all meta data related to this entry
@@ -258,7 +258,7 @@ class MemberStage extends MemberPlan  {
  * @since 1.2
  * @package membership
  **/
-class MemberAccess extends DatabaseObject  {
+class MemberAccess extends ShoppDatabaseObject  {
 	static $table = 'meta';
 
 	var $_table = false;	// Fully qualified table name
@@ -302,7 +302,7 @@ class MemberAccess extends DatabaseObject  {
  * @since 1.2
  * @package membership
  **/
-class MemberContent extends DatabaseObject  {
+class MemberContent extends ShoppDatabaseObject  {
 	static $table = 'catalog';
 
 	function __construct ($content=false,$access=false,$stage=false) {

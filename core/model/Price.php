@@ -15,7 +15,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppPrice extends DatabaseObject {
+class ShoppPrice extends ShoppDatabaseObject {
 
 	static $table = "price";
 
@@ -38,7 +38,7 @@ class ShoppPrice extends DatabaseObject {
 		parent::delete();
 
 		// clean up meta entries for deleted price
-		$metatable = DatabaseObject::tablename('meta');
+		$metatable = ShoppDatabaseObject::tablename('meta');
 		$query = "DELETE FROM $metatable WHERE context='price' and parent=$price";
 		DB::query($query);
 	}
@@ -53,7 +53,7 @@ class ShoppPrice extends DatabaseObject {
 			'settings' => 'settings'
 		);
 		$metaclass = array(
-			'meta' => 'MetaObject'
+			'meta' => 'ShoppMetaObject'
 		);
 
 		if ('metatype' == $property)

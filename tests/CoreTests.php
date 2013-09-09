@@ -9,6 +9,7 @@ class CoreTests extends ShoppTestCase {
 
 	public $domain = '';
 	public $context = '';
+	public $email = array();
 
 
 	public function test_unsupported () {
@@ -492,5 +493,57 @@ class CoreTests extends ShoppTestCase {
 		$pem = file_get_contents(SHOPP_UNITTEST_DIR . '/data/security.pem');
 		$encrypted = Shopp::rsa_encrypt('Counselor Troi is half-Betazoid.', $pem);
 		$this->assertTrue(!empty($encrypted));
+	}
+
+	public function test_set_wp_query_var() {
+		global $wp, $wp_query;
+		Shopp::set_wp_query_var('custom_property', 'Shiney new space boots');
+
+		$in_wp = (isset($wp->query_vars['custom_property']) and 'Shiney new space boots' === $wp->query_vars['custom_property']);
+		$in_wp_query = (isset($wp_query->query_vars['custom_property']) and 'Shiney new space boots' === $wp_query->query_vars['custom_property']);
+
+		$this->assertTrue($in_wp);
+		$this->assertTrue($in_wp_query);
+	}
+
+	/**
+	 * @depends test_set_wp_query_var
+	 */
+	public function test_get_wp_query_var() {
+		Shopp::set_wp_query_var('warp_factor', '9');
+		$this->assertTrue('9' === Shopp::get_wp_query_var('warp_factor'));
+	}
+
+	public function test_daytimes() {
+		$this->assertEquals('3d', Shopp::daytimes('72h'));
+		$this->assertEquals('4d', Shopp::daytimes('2d', '48h'));
+		$this->assertEquals('8d', Shopp::daytimes('1w', '1d'));
+		$this->assertEquals('40d', Shopp::daytimes('1m', '1w', '3d'));
+	}
+
+	public function test_keybind() {
+		$part_a = str_pad(md5('Centauri Montes'), 40, '0');
+		$part_b = str_pad(md5('Octantis Mons'), 40, '0');
+		$one_part = Shopp::keybind(array($part_a));
+		$two_part = Shopp::keybind(array($part_a, $part_b));
+		$this->assertTrue( ! empty($one_part) );
+		$this->assertTrue( ! empty($two_part) );
+	}
+
+	public function test_rss() {
+		$data = array(
+			'link' => 'http://shopplugin.net/mars',
+			'title' => 'We are going to Mars',
+			'description' => 'Interesting news about our products.',
+			'rss_language' => 'en_CA',
+			'sitename' => 'Martian Shopping'
+		);
+		$rss = Shopp::rss($data);
+		$this->assertValidMarkup($rss);
+	}
+
+	public function test_pagename() {
+		$this->assertEquals('mars-admin-screen.php', Shopp::pagename('index.php/mars-admin-screen.php')); // IIS rewrites
+		$this->assertEquals('mars-admin-screen.php', Shopp::pagename('mars-admin-screen.php'));
 	}
 }

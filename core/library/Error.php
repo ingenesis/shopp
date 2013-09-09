@@ -626,7 +626,7 @@ class ShoppErrorNotification {
 		if ( isset($error->debug['file']) && defined('WP_DEBUG') )
 			$_[] = 'DEBUG: ' . basename($error->debug['file']) . ', line ' . $error->debug['line'];
 
-		shopp_email( join("\n", $_) );
+		Shopp::email( join("\n", $_) );
 	}
 
 }

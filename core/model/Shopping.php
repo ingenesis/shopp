@@ -45,7 +45,7 @@ class Shopping extends SessionObject {
 	 **/
 	public function __construct () {
 		// Set the database table to use
-		$this->_table = DatabaseObject::tablename('shopping');
+		$this->_table = ShoppDatabaseObject::tablename('shopping');
 
 		// Initialize the session handlers
 		parent::__construct();
@@ -156,7 +156,7 @@ class Shopping extends SessionObject {
 		$expired = SHOPP_CART_EXPIRES;
 		$now = current_time('mysql');
 
-		$meta_table = DatabaseObject::tablename('meta');
+		$meta_table = ShoppDatabaseObject::tablename('meta');
 
 		DB::query("INSERT INTO $meta_table (context,type,name,value,created,modified)
 					SELECT 'shopping','session',session,data,created,modified FROM $this->_table WHERE $timeout < UNIX_TIMESTAMP('$now') - UNIX_TIMESTAMP(modified) AND stash=1");

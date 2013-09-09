@@ -348,8 +348,8 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 
 		// Setup queries
 		$pd = WPDatabaseObject::tablename(Product::$table);
-		$pt = DatabaseObject::tablename(Price::$table);
-		$ps = DatabaseObject::tablename(ProductSummary::$table);
+		$pt = ShoppDatabaseObject::tablename(Price::$table);
+		$ps = ShoppDatabaseObject::tablename(ProductSummary::$table);
 
 		$orderdirs = array('asc','desc');
 		if (in_array($order,$orderdirs)) $orderd = strtolower($order);
@@ -945,7 +945,7 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 				if (isset($Product->meta[$name])) {
 					$Meta = $Product->meta[$name];
 					if (is_array($Meta)) $Meta = reset($Product->meta[$name]);
-				} else $Meta = new MetaObject(array('parent'=>$Product->id,'context'=>'product','type'=>'meta','name'=>$name));
+				} else $Meta = new ShoppMetaObject(array('parent'=>$Product->id,'context'=>'product','type'=>'meta','name'=>$name));
 				$Meta->parent = $Product->id;
 				$Meta->name = $name;
 				$Meta->value = $value;

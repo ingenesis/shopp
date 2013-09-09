@@ -20,8 +20,8 @@ class DiscountsReport extends ShoppReportFramework implements ShoppReport {
 
 		$where = join(" AND ",$where);
 		$id = $this->timecolumn('o.created');
-		$orders_table = DatabaseObject::tablename('purchase');
-		$purchased_table = DatabaseObject::tablename('purchased');
+		$orders_table = ShoppDatabaseObject::tablename('purchase');
+		$purchased_table = ShoppDatabaseObject::tablename('purchased');
 		$query = "SELECT CONCAT($id) AS id,
 							UNIX_TIMESTAMP(o.created) as period,
 							COUNT(DISTINCT p.id) AS items,

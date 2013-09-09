@@ -14,7 +14,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-class ShoppCustomer extends DatabaseObject {
+class ShoppCustomer extends ShoppDatabaseObject {
 	static $table = 'customer';
 
 	public $login = false;			 // Login authenticated flag
@@ -22,6 +22,9 @@ class ShoppCustomer extends DatabaseObject {
 	public $newuser = false;		 // New WP user created flag
 	public $loginname = false;		 // Account login name
 	public $_password_change = null; // Password changed (true:successful false:failed null:unchanged)
+	public $_download = false;       // Current download item in loop
+	protected $downloads = array();  // List of purchased downloadable items
+
 
 	public function __construct ( $id = false, $key = 'id' ) {
 		$this->init(self::$table);
@@ -86,7 +89,7 @@ class ShoppCustomer extends DatabaseObject {
 
 		if (empty($this->info) || !is_array($this->info)) return true;
 		foreach ((array)$this->info as $name => $value) {
-			$Meta = new MetaObject(array(
+			$Meta = new ShoppMetaObject(array(
 				'parent' => $this->id,
 				'context' => 'customer',
 				'type' => 'meta',
@@ -182,7 +185,7 @@ class ShoppCustomer extends DatabaseObject {
 
 		$_[] = apply_filters('shopp_merchant_new_customer_notification',$_);
 
-		if (!shopp_email(join("\n",$_)))
+		if (!Shopp::email(join("\n",$_)))
 			new ShoppError('The new account notification e-mail could not be sent.','new_account_email',SHOPP_ADMIN_ERR);
 		else shopp_debug('A new account notification e-mail was sent to the merchant.');
 		if (empty($this->password)) return;
@@ -200,17 +203,17 @@ class ShoppCustomer extends DatabaseObject {
 
 		$_[] = apply_filters('shopp_new_customer_notification',$_);
 
-		if (!shopp_email(join("\n",$_)))
+		if (!Shopp::email(join("\n",$_)))
 			new ShoppError('The customer\'s account notification e-mail could not be sent.','new_account_email',SHOPP_ADMIN_ERR);
 		else shopp_debug('Successfully created the WordPress user for the Shopp account.');
 	}
 
-	public function load_downloads () {
+	/*public function load_downloads () {
 		$Storefront = ShoppStorefront();
 		if (empty($this->id)) return false;
-		$orders = DatabaseObject::tablename(ShoppPurchase::$table);
-		$purchases = DatabaseObject::tablename(Purchased::$table);
-		$asset = DatabaseObject::tablename(ProductDownload::$table);
+		$orders = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
+		$purchases = ShoppDatabaseObject::tablename(Purchased::$table);
+		$asset = ShoppDatabaseObject::tablename(ProductDownload::$table);
 		$query = "(SELECT p.dkey AS dkey,p.id,p.purchase,p.download as download,p.name AS name,p.optionlabel,p.downloads,o.total,o.created,f.id as download,f.name as filename,f.value AS filedata
 			FROM $purchases AS p
 			LEFT JOIN $orders AS o ON o.id=p.purchase
@@ -231,7 +234,7 @@ class ShoppCustomer extends DatabaseObject {
 				$download->{$property} = $value;
 			}
 		}
-	}
+	}*/
 
 	public function load_orders ($filters=array()) {
 		if (empty($this->id)) return false;
@@ -260,8 +263,8 @@ class ShoppCustomer extends DatabaseObject {
 
 		$where = '';
 		if (isset($filters['where'])) $where = " AND {$filters['where']}";
-		$orders = DatabaseObject::tablename(ShoppPurchase::$table);
-		$purchases = DatabaseObject::tablename(Purchased::$table);
+		$orders = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
+		$purchases = ShoppDatabaseObject::tablename(Purchased::$table);
 		$query = "SELECT o.* FROM $orders AS o WHERE o.customer=$this->id $where ORDER BY created DESC";
 
 		$PurchaseLoader = new ShoppPurchase();
@@ -354,6 +357,57 @@ class ShoppCustomer extends DatabaseObject {
 
 	}
 
+	/**
+	 * Indicates if the customer has purchased downloadable assets.
+	 *
+	 * @return bool
+	 */
+	public function has_downloads() {
+		$this->load_downloads();
+		return ( ! empty($this->downloads) );
+	}
+
+	/**
+	 * Loads downloadable purchase data for this customer (populates the downloads property).
+	 */
+	public function load_downloads() {
+		// Bail out if the downloads property is already populated or we can't load customer order data
+		if ( /*! empty($this->downloads) ||*/ ! ($purchases = shopp_customer_orders($this->id)) ) return; # Decomment before commit!
+		$this->downloads = array();
+
+		foreach ( $purchases as $Purchase ) {
+			reset($Purchase->purchased);
+			$this->extract_downloads($Purchase->purchased);
+		}
+	}
+
+	protected function extract_downloads($items) {
+		while ( list($index, $Purchased) = each($items) ) {
+			// Check for downloadable addons
+			if ( isset($Purchased->addons) && count($Purchased->addons->meta) >= 1 ) {
+				$this->extract_downloads($Purchased->addons->meta);
+			}
+
+			// Is *this* item an addon?
+			if ( is_a($Purchased, 'ShoppMetaObject') ) $Purchased = $Purchased->value;
+
+			// Is it a downloadable item? Do not add the same dkey twice
+			if ( empty($Purchased->download) ) continue;
+			$this->downloads[$Purchased->dkey] = $Purchased;
+		}
+	}
+
+	public function reset_downloads() {
+		reset($this->downloads);
+	}
+
+	public function each_download() {
+		if ( empty($this->downloads) ) return false;
+		$this->_download = current($this->downloads);
+		next($this->downloads);
+		return $this->_download;
+	}
+
 	public static function exportcolumns () {
 		$prefix = "c.";
 		return array(
@@ -419,9 +473,9 @@ class CustomersExport {
 		if (isset($request['s']) && !empty($request['s'])) $where .= " AND (id='{$request['s']}' OR firstname LIKE '%{$request['s']}%' OR lastname LIKE '%{$request['s']}%' OR CONCAT(firstname,' ',lastname) LIKE '%{$request['s']}%' OR transactionid LIKE '%{$request['s']}%')";
 		if (!empty($request['start']) && !empty($request['end'])) $where .= " AND  (UNIX_TIMESTAMP(c.created) >= $starts AND UNIX_TIMESTAMP(c.created) <= $ends)";
 
-		$customer_table = DatabaseObject::tablename(Customer::$table);
-		$billing_table = DatabaseObject::tablename(BillingAddress::$table);
-		$shipping_table = DatabaseObject::tablename(ShippingAddress::$table);
+		$customer_table = ShoppDatabaseObject::tablename(Customer::$table);
+		$billing_table = ShoppDatabaseObject::tablename(BillingAddress::$table);
+		$shipping_table = ShoppDatabaseObject::tablename(ShippingAddress::$table);
 		$offset = $this->set*$this->limit;
 
 		$c = 0; $columns = array();

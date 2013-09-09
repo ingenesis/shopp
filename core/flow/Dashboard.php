@@ -104,7 +104,7 @@ class ShoppAdminDashboard {
 		if (!empty($args)) extract( $args, EXTR_SKIP );
 
 		if ( ! $range || !isset($ranges[ strtolower($range) ]) ) $range = 'last30';
-		$purchasetable = DatabaseObject::tablename(ShoppPurchase::$table);
+		$purchasetable = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
 
 		$now = current_time('timestamp');
 		$offset = get_option( 'gmt_offset' ) * 3600;
@@ -264,8 +264,8 @@ class ShoppAdminDashboard {
 		echo $widget_name;
 		echo $after_title;
 
-		$purchasetable = DatabaseObject::tablename(ShoppPurchase::$table);
-		$purchasedtable = DatabaseObject::tablename(Purchased::$table);
+		$purchasetable = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
+		$purchasedtable = ShoppDatabaseObject::tablename(Purchased::$table);
 
 		$Orders = $db->query("SELECT p.*,count(i.id) as items FROM $purchasetable AS p LEFT JOIN $purchasedtable AS i ON i.purchase=p.id GROUP BY i.purchase ORDER BY created DESC LIMIT 6",'array');
 
@@ -322,7 +322,7 @@ class ShoppAdminDashboard {
 		$args = array_merge($defaults,$args);
 		if (!empty($args)) extract( $args, EXTR_SKIP );
 
-		$pt = DatabaseObject::tablename(Price::$table);
+		$pt = ShoppDatabaseObject::tablename(Price::$table);
 		$setting = ( shopp_setting('lowstock_level') );
 
 		$where = array();
