@@ -452,7 +452,8 @@ class ShoppOrder {
 				$this->invoice($Purchase);
 
 				add_action( 'shopp_order_event', array($Purchase, 'notifications') );
-			}
+			} elseif ( 'voided' == $Purchase->txnstatus )
+				$this->invoice($Purchase); // Re-invoice cancelled orders that are still in-progress @see #1930
 
 			$this->process($Purchase);
 			return;
