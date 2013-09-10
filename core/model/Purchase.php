@@ -677,6 +677,7 @@ class PurchasesExport {
 						case "zipcode":
 						case "postcode":	$search[] = "postcode='$keyword'"; break;
 						case "country": 	$search[] = "country='$keyword'"; break;
+						case "promo":    $search[] = "promos LIKE '%$keyword%'"; break;
 					}
 				}
 				if (empty($search)) $search[] = "(o.id='$s' OR CONCAT(firstname,' ',lastname) LIKE '%$s%')";

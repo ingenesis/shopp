@@ -101,7 +101,7 @@
 		<?php endforeach; ?>
 		</tbody>
 	<?php else: ?>
-		<tbody><tr><td colspan="5"><?php Shop::esc_html_e('No discounts found.'); ?></td></tr></tbody>
+		<tbody><tr><td colspan="5"><?php Shopp::esc_html_e('No discounts found.'); ?></td></tr></tbody>
 	<?php endif; ?>
 	</table>
 	</form>
