@@ -192,7 +192,6 @@ class ShoppAdminService extends ShoppAdminController {
 						case "zipcode":
 						case "postcode":	$search[] = "postcode='$keyword'"; break;
 						case "country": 	$search[] = "country='$keyword'"; break;
-						case "promo":    $search[] = "promos LIKE '%$keyword%'"; break;
 						case "product":
 											$purchased = ShoppDatabaseObject::tablename(Purchased::$table);
 											$joins[$purchased] = "INNER JOIN $purchased AS p ON p.purchase = o.id";
