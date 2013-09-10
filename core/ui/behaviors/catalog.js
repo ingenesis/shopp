@@ -27,7 +27,7 @@ function ProductOptionsMenus (target,settings) {
 	menus.each(function (id,menu) {
 		current = menu;
 		menucache[id] = $(menu).children();
-		if ($.browser.msie) disabledHandler(menu);
+		if ($.ua.msie) disabledHandler(menu);
 		if (id > 0)	previous = menus[id-1];
 		if (menus.length == 1) {
 			optionPriceTags();
@@ -75,7 +75,7 @@ function ProductOptionsMenus (target,settings) {
 						o.p = asMoney(new Number(pricetag+tax));
 					}
 
-					if ($.browser.msie) option.css('color','#373737');
+					if ($.ua.msie) option.css('color','#373737');
 					if ((price.i && price.s < 1) || price.t == 'N/A') {
 						if (option.attr('selected'))
 							option.parent().attr('selectedIndex',0);

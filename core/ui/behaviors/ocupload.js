@@ -95,7 +95,7 @@
 		/** Watch for file selection */
 		input.change(function() {
 			if (this.value == '') return false;
-			if ($.browser.msie) {
+			if ($.ua.msie) {
 				// prevent double change events firing in IE
 				if (this.firedChange) return this.firedChange = false;
 				this.firedChange = true;

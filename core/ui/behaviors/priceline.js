@@ -490,9 +490,9 @@ function Priceline (id,options,data,target,attachment) {
 		this.bind('change.value',function () {
 			if (this.checked) { s.hide(); ui.show(); }
 			else { s.show(); ui.hide(); }
-			if ($.browser.msie) $(this).blur();
+			if ($.ua.msie) $(this).blur();
 		}).click(function () {
-			if ($.browser.msie) $(this).trigger('change.value');
+			if ($.ua.msie) $(this).trigger('change.value');
 			if (this.checked) f.focus().select();
 		}).trigger('change.value');
 		return $(this);

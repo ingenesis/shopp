@@ -746,7 +746,7 @@ function ImageUploads (id,type) {
 			sorting : false
 
 		},
-		prevent_swf_caching: $.browser.msie, // Prevents Flash caching issues in IE
+		prevent_swf_caching: $.ua.msie, // Prevents Flash caching issues in IE
 		debug: imageupload_debug
 
 	};
@@ -1122,7 +1122,7 @@ function FileUploader (button,defaultButton) {
 			targetLine : false,
 			progressBar : false
 		},
-		prevent_swf_caching: $.browser.msie, // Prevents Flash caching issues in IE
+		prevent_swf_caching: $.ua.msie, // Prevents Flash caching issues in IE
 		debug: fileupload_debug
 
 	};

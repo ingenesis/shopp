@@ -9,6 +9,14 @@
  **/
 function jqnc () { return jQuery.noConflict(); }
 
+jQuery.ua={chrome:false,mozilla:false,opera:false,msie:false,safari:false};
+jQuery.each(jQuery.ua,function(c,a){
+	var ua=navigator.userAgent;
+	jQuery.ua[c]=((new RegExp(c,'i').test(ua)))?true:false;
+	if(jQuery.ua.mozilla && c=='mozilla'){jQuery.ua.mozilla=new RegExp('firefox','i').test(ua)?true:false;};
+	if(jQuery.ua.chrome && c=='safari'){jQuery.ua.safari=false;};
+});
+
 /**
  * Returns a copy/clone of an object
  **/
