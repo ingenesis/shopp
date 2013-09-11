@@ -329,6 +329,7 @@ class ShoppAdminCategorize extends ShoppAdminController {
 
 		if (empty($Shopp->Category)) $Category = new ProductCategory();
 		else $Category = $Shopp->Category;
+
 		$Category->load_meta();
 		$Category->load_images();
 
@@ -420,15 +421,27 @@ class ShoppAdminCategorize extends ShoppAdminController {
 				$_POST['prices'] = $Category->prices = array();
 		}
 
-		$meta = array('spectemplate','facetedmenus','variations','pricerange','priceranges','specs','options','prices');
-		$metadata = array_filter_keys($_POST,$meta);
-		foreach ($metadata as $name => $data) {
-		    if ( ! isset($Category->meta[ $name ]) || !is_a($Category->meta[ $name ],'ShoppMetaObject') ) {
-		        $Meta = new ShoppMetaObject();
-		        $Meta->name = $name;
-		        $Category->meta[ $name ] = $Meta;
-		    }
-			$Category->meta[$name]->value = stripslashes_deep($data);
+		$metaprops = array('spectemplate','facetedmenus','variations','pricerange','priceranges','specs','options','prices');
+		$metadata = array_filter_keys($_POST, $metaprops);
+
+		// Update existing entries
+		$updates = array();
+		foreach ($Category->meta as $id => $MetaObject) {
+			$name = $MetaObject->name;
+			if ( isset($metadata[ $name ]) ) {
+				$MetaObject->value = stripslashes_deep($metadata[ $name ]);
+				$updates[] = $name;
+			}
+		}
+
+		// Create any new missing meta entries
+		$new = array_diff(array_keys($metadata), $updates); // Determine new entries from the exsting updates
+		foreach ( $new as $name ) {
+			if ( ! isset($metadata[ $name ]) ) continue;
+	        $Meta = new MetaObject();
+	        $Meta->name = $name;
+			$Meta->value = stripslashes_deep($metadata[ $name ]);
+	        $Category->meta[] = $Meta;
 		}
 
 		$Category->save();
