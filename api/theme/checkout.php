@@ -564,7 +564,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults,$options);
 		extract($options);
 
-		if ( Shopp::str_true($O->guest) ||Shopp::str_true($checked) )
+		if ( $O->Customer->session(ShoppCustomer::GUEST) || Shopp::str_true($checked) )
 			$options['checked'] = 'on';
 
 		$_ = array();
@@ -617,7 +617,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	}
 
 
-	public static function not_logged_in ($result, $options, $O) { return (!$O->Customer->logged_in() && shopp_setting('account_system') != "none"); }
+	public static function not_logged_in ($result, $options, $O) { return (!$O->Customer->loggedin() && shopp_setting('account_system') != "none"); }
 
 	public static function order_data ($result, $options, $O) {
 		$select_attrs = array('title','required','class','disabled','required','size','tabindex','accesskey');

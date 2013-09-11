@@ -15,15 +15,27 @@
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class ShoppCustomer extends ShoppDatabaseObject {
+
+	const LOGIN = 1;
+	const GUEST = 2;
+	const WPUSER = 4;
+
+	const PASSWORD = 1;
+	const PROFILE = 2;
+
 	static $table = 'customer';
 
-	public $login = false;			 // Login authenticated flag
-	public $info = false;			 // Custom customer info fields
-	public $newuser = false;		 // New WP user created flag
-	public $loginname = false;		 // Account login name
-	public $_password_change = null; // Password changed (true:successful false:failed null:unchanged)
-	public $_download = false;       // Current download item in loop
-	protected $downloads = array();  // List of purchased downloadable items
+	public $info = false;			// Custom customer info fields
+	public $loginname = false;		// Account login name
+
+	public $newuser = false;		// New WP user created flag
+	public $guest = false;          // Flag for guest customers
+
+	protected $session = 0;         // Tracks Customer session flags
+	protected $updates = 0;         // Tracks updated setting flags
+
+	public $_download = false;      // Current download item in loop
+	protected $downloads = array(); // List of purchased downloadable items
 
 
 	public function __construct ( $id = false, $key = 'id' ) {
@@ -41,15 +53,43 @@ class ShoppCustomer extends ShoppDatabaseObject {
 		$this->listeners();
 	}
 
+	public function __sleep () {
+		$properties = array_keys( get_object_vars($this) );
+		return array_diff($properties, array('updates', 'downloads', '_download'));
+	}
+
 	public function reset () {
-		$this->newuser = false;
+		$this->session = 0;
 	}
 
 	public function listeners () {
-		// add_action('parse_request',array($this,'menus'));
-		// add_action('shopp_account_management',array($this,'management'));
 		add_action('shopp_logged_out', array($this, 'logout'));
 	}
+
+	public function session ( $flag, $setting = null ) {
+		if ( null === $setting ) {
+			return ( ($this->session & $flag) == $flag );
+		} else return $this->flag('session', $flag, $setting);
+	}
+
+	public function updated ( $flag, $setting = null ) {
+		if ( null === $setting ) {
+			return ( ($this->updates & $flag) == $flag );
+		} else return $this->flag('updates', $flag, $setting);
+	}
+
+    protected function flag ( $property, $flag, $setting = false ) {
+
+		if ( ! property_exists($this, $property ) ) return false;
+
+		if ( $setting )
+			$this->$property |= $flag;
+		else
+			$this->$property &= ~$flag;
+
+		return true;
+
+    }
 
 	/**
 	 * simplify - get a simplified version of the customer object
@@ -80,8 +120,8 @@ class ShoppCustomer extends ShoppDatabaseObject {
 	 * @return void
 	 **/
 	public function load_info () {
-		$this->info = new ObjectMeta($this->id,'customer');
-		if (!$this->info) $this->info = new ObjectMeta();
+		$this->info = new ObjectMeta($this->id, 'customer');
+		if ( ! $this->info ) $this->info = new ObjectMeta();
 	}
 
 	public function save () {
@@ -112,17 +152,21 @@ class ShoppCustomer extends ShoppDatabaseObject {
 	 *
 	 * @return bool true if logged in, false if not logged in
 	 **/
-	public function logged_in () {
+	public function loggedin () {
 		if ( 'wordpress' == shopp_setting('account_system') ) {
 			$user = wp_get_current_user();
-			return apply_filters('shopp_customer_login_check', $user->ID == $this->wpuser && $this->login );
+			return apply_filters('shopp_customer_login_check', $user->ID == $this->wpuser && $this->session(self::LOGIN) );
 		}
 
-		return apply_filters('shopp_customer_login_check', $this->login);
+		return apply_filters('shopp_customer_login_check', $this->session(self::LOGIN));
+	}
+
+	public function login () {
+		$this->session(self::LOGIN, true);
 	}
 
 	public function logout () {
-		$this->login = false;
+		$this->session(self::LOGIN, false);
 	}
 
 	public function order () {
@@ -151,7 +195,7 @@ class ShoppCustomer extends ShoppDatabaseObject {
 			if (isset($_GET['id'])) $request = (int)$_GET['id'];
 		}
 
-		if ($this->logged_in() && 'order' == $request && false !== $id) {
+		if ($this->loggedin() && 'order' == $request && false !== $id) {
 			$Purchase = new ShoppPurchase((int)$id);
 			if ($Purchase->customer == $this->id) {
 				ShoppPurchase($Purchase);
@@ -248,7 +292,7 @@ class ShoppCustomer extends ShoppDatabaseObject {
 			if (isset($_GET['id'])) $id = (int)$_GET['id'];
 		}
 
-		if ($this->logged_in() && 'orders' == $request && !empty($id)) {
+		if ($this->loggedin() && 'orders' == $request && !empty($id)) {
 			$Purchase = new ShoppPurchase((int)$id);
 			if ($Purchase->customer == $this->id) {
 				ShoppPurchase($Purchase);
@@ -273,7 +317,9 @@ class ShoppCustomer extends ShoppDatabaseObject {
 	}
 
 	public function create_wpuser () {
-		require(ABSPATH.'/wp-includes/registration.php');
+
+		require(ABSPATH . '/wp-includes/registration.php');
+
 		if (empty($this->loginname)) return false;
 		if (!validate_username($this->loginname)) {
 			new ShoppError(__('This login name is invalid because it uses illegal characters. Please enter a valid login name.','Shopp'),'login_exists',SHOPP_ERR);
@@ -300,14 +346,15 @@ class ShoppCustomer extends ShoppDatabaseObject {
 		// Link the WP user ID to this customer record
 		$this->wpuser = $wpuser;
 
-		if (apply_filters('shopp_notify_new_wpuser',true)) {
+		if (apply_filters('shopp_notify_new_wpuser', true)) {
 			// Send email notification of the new account
 			wp_new_user_notification( $wpuser, $this->password );
 		}
 
 		shopp_debug('Successfully created the WordPress user for the Shopp account.');
 
-		$this->newuser = true;
+		// Set the WP user created flag
+		$this->session(self::WPUSER, true);
 
 		return true;
 	}
@@ -353,7 +400,7 @@ class ShoppCustomer extends ShoppDatabaseObject {
 			}
 		}
 
-		$this->_saved = true;
+		$this->updated(self::PROFILE, true);
 
 	}
 
@@ -362,7 +409,7 @@ class ShoppCustomer extends ShoppDatabaseObject {
 	 *
 	 * @return bool
 	 */
-	public function has_downloads() {
+	public function has_downloads () {
 		$this->load_downloads();
 		return ( ! empty($this->downloads) );
 	}
@@ -370,7 +417,7 @@ class ShoppCustomer extends ShoppDatabaseObject {
 	/**
 	 * Loads downloadable purchase data for this customer (populates the downloads property).
 	 */
-	public function load_downloads() {
+	public function load_downloads () {
 		// Bail out if the downloads property is already populated or we can't load customer order data
 		if ( /*! empty($this->downloads) ||*/ ! ($purchases = shopp_customer_orders($this->id)) ) return; # Decomment before commit!
 		$this->downloads = array();
@@ -381,7 +428,7 @@ class ShoppCustomer extends ShoppDatabaseObject {
 		}
 	}
 
-	protected function extract_downloads($items) {
+	protected function extract_downloads ($items) {
 		while ( list($index, $Purchased) = each($items) ) {
 			// Check for downloadable addons
 			if ( isset($Purchased->addons) && count($Purchased->addons->meta) >= 1 ) {
@@ -397,11 +444,11 @@ class ShoppCustomer extends ShoppDatabaseObject {
 		}
 	}
 
-	public function reset_downloads() {
+	public function reset_downloads () {
 		reset($this->downloads);
 	}
 
-	public function each_download() {
+	public function each_download () {
 		if ( empty($this->downloads) ) return false;
 		$this->_download = current($this->downloads);
 		next($this->downloads);

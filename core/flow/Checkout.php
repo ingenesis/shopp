@@ -99,9 +99,10 @@ class ShoppCheckout {
 		$Customer = ShoppOrder()->Customer;
 
 		// Update guest checkout flag
-		$guest = false;
-		if ( Shopp::str_true($this->form('guest')) ) $guest = true;
-		$Customer->guest = apply_filters('shopp_guest_checkout', $guest);
+		$guest = Shopp::str_true($this->form('guest'));
+
+		// Set the customer guest flag
+		$Customer->session(ShoppCustomer::GUEST, apply_filters('shopp_guest_checkout', $guest));
 
 		$this->Register->customer();
 

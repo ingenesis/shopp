@@ -172,7 +172,7 @@ class ShoppRegistration {
 		$BillingAddress = ShoppOrder()->Billing;
 		$ShippingAddress = ShoppOrder()->Shipping;
 
-		if ( $Customer->guest ) {
+		if ( $Customer->session(ShoppCustomer::GUEST) ) {
 			$Customer->type = __('Guest', 'Shopp');
 		} else {
 			// WordPress account integration used, customer has no wp user
@@ -183,7 +183,7 @@ class ShoppRegistration {
 		}
 
 		// New customer, save hashed password
-		if ( ! $Customer->exists() && ! $Customer->guest ) {
+		if ( ! $Customer->exists() && ! $Customer->session(ShoppCustomer::GUEST) ) {
 			$Customer->id = false;
 			shopp_debug('Creating new Shopp customer record');
 			if ( empty($Customer->password) )

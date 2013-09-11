@@ -328,7 +328,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	}
 
 	public static function logged_in ( $result, $options, $O ) {
-		return ShoppCustomer()->logged_in() && 'none' != shopp_setting('account_system');
+		return ShoppCustomer()->loggedin() && 'none' != shopp_setting('account_system');
 	}
 
 	public static function login_label ( $result, $options, $O ) {
@@ -363,7 +363,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	}
 
 	public static function not_logged_in ( $result, $options, $O ) {
-		return (! ShoppCustomer()->logged_in() && 'none' != shopp_setting('account_system'));
+		return (! ShoppCustomer()->loggedin() && 'none' != shopp_setting('account_system'));
 	}
 
 	public static function order ( $result, $options, $O ) {
@@ -403,15 +403,11 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	}
 
 	public static function password_changed ( $result, $options, $O ) {
-		$change = (isset($O->_password_change) && $O->_password_change);
-		unset($O->_password_change);
-		return $change;
+		return $O->updated(ShoppCustomer::PASSWORD);
 	}
 
 	public static function password_change_fail ( $result, $options, $O ) {
-		$change = (isset($O->_password_change) && !$O->_password_change);
-		unset($O->_password_change);
-		return $change;
+		return $O->updated(ShoppCustomer::PROFILE) && ! $O->updated(ShoppCustomer::PASSWORD);
 	}
 
 	public static function password_login ( $result, $options, $O ) {
@@ -431,9 +427,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 
 	public static function profile_saved ( $result, $options, $O ) {
-		$saved = (isset($O->_saved) && $O->_saved);
-		unset($O->_saved);
-		return $saved;
+		return $O->updated(ShoppCustomer::PROFILE);
 	}
 
 	public static function purchases ( $result, $options, $O ) {
@@ -610,7 +604,9 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		return Shopp::url(array('acct'=>null),'account',$Shopp->Gateways->secure);
 	}
 
-	public static function wpuser_created ( $result, $options, $O ) { return $O->newuser; }
+	public static function wpuser_created ( $result, $options, $O ) {
+		return $O->session(ShoppCustomer::WPUSER);
+	}
 
 	/** Address helper methods **/
 

@@ -964,7 +964,7 @@ class ShoppStorefront extends ShoppFlowController {
 		$this->account = compact('request', 'id');
 
 		$download_request = get_query_var('s_dl');
-		if ( ! ShoppCustomer()->logged_in() ) {
+		if ( ! ShoppCustomer()->loggedin() ) {
 			$screens = array('login', 'recover', 'rp');
 			if ( ! in_array($this->account['request'], $screens) )
 				$this->account = array('request' => 'login', 'id' => false);

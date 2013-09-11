@@ -88,7 +88,7 @@ class ShoppLogin {
 			$user = wp_get_current_user();
 
 			// Wordpress user logged in, but Shopp customer isn't
-			if ( ! empty($user->ID) && ! $this->Customer->logged_in() ) {
+			if ( ! empty($user->ID) && ! $this->Customer->loggedin() ) {
 				if ( $Account = new ShoppCustomer($user->ID, 'wpuser') ) {
 					$this->login($Account);
 					$this->Customer->wpuser = $user->ID;
@@ -211,12 +211,12 @@ class ShoppLogin {
 	 *
 	 * @return void
 	 **/
-	public function login ($Account) {
+	public function login ( $Account ) {
 
-		if ( $this->Customer->login ) return; // Prevent login pong (Shopp login <-> WP login)
+		if ( $this->Customer->session(ShoppCustomer::LOGIN) ) return; // Prevent login pong (Shopp login <-> WP login)
 
 		$this->Customer->copydata($Account, '', array());
-		$this->Customer->login = true;
+		$this->Customer->login(); // Mark the customer account as logged in
 		unset($this->Customer->password);
 		$this->Billing->load($Account->id, 'customer');
 		$this->Billing->card = '';

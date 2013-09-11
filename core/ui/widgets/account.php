@@ -35,7 +35,7 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppAccountWidget') ) {
 	    function widget($args, $options) {
 			if (!empty($args)) extract($args);
 
-			$loggedin = ShoppCustomer()->logged_in();
+			$loggedin = ShoppCustomer()->loggedin();
 			// Hide login form on account page when not logged in to prevent duplicate forms
 			if (is_account_page() && !$loggedin) return '';
 

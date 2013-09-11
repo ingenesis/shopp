@@ -196,7 +196,7 @@ class ShoppResources {
 			if ( __('Guest','Shopp') != ShoppCustomer()->type ) {
 
 				// Account restriction checks
-				if ( $accounts && !ShoppCustomer()->logged_in() ) {
+				if ( $accounts && !ShoppCustomer()->loggedin() ) {
 					shopp_error(Shopp::__('You must login to download purchases.'));
 					$forbidden = true;
 				}

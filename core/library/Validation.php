@@ -46,7 +46,7 @@ class ShoppFormValidation {
 	public static function login ( $result ) {
 		$Customer = ShoppOrder()->Customer;
 
-		if ( 'wordpress' == shopp_setting('account_system') && ! $Customer->logged_in() ) {
+		if ( 'wordpress' == shopp_setting('account_system') && ! $Customer->loggedin() ) {
 			require ABSPATH . '/wp-includes/registration.php';
 
 			// Validate possible wp account names for availability
@@ -78,10 +78,10 @@ class ShoppFormValidation {
 
 			$ExistingCustomer = new ShoppCustomer($_POST['email'], 'email');
 
-			if ( $Customer->guest && ! empty($ExistingCustomer->id) ) $Customer->id = $ExistingCustomer->id;
-			if ( apply_filters('shopp_email_exists', ! $Customer->guest && (email_exists($_POST['email']) || ! empty($ExistingCustomer->id))) )
+			if ( $Customer->session(ShoppCustomer::GUEST) && ! empty($ExistingCustomer->id) ) $Customer->id = $ExistingCustomer->id;
+			if ( apply_filters('shopp_email_exists', ! $Customer->session(ShoppCustomer::GUEST) && (email_exists($_POST['email']) || ! empty($ExistingCustomer->id))) )
 				return shopp_add_error( __('The email address you entered is already in use. Try logging in if you previously created an account, or enter another email address to create your new account.','Shopp') );
-		} elseif ( 'shopp' == shopp_setting('account_system') && ! $Customer->logged_in() ) {
+		} elseif ( 'shopp' == shopp_setting('account_system') && ! $Customer->loggedin() ) {
 			$ExistingCustomer = new ShoppCustomer($_POST['email'],'email');
 			if ( apply_filters('shopp_email_exists', ! empty($ExistingCustomer->id)) )
 				return shopp_add_error( __('The email address you entered is already in use. Try logging in if you previously created an account, or enter another email address to create a new account.','Shopp') );
