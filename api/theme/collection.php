@@ -65,6 +65,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		'facetfiltered' => 'facet_filtered',
 		'facetmenus' => 'facet_menus',
 		'facetname' => 'facet_name',
+		'facetlabel' => 'facet_label',
 		'facetslug' => 'facet_slug',
 		'facetlink' => 'facet_link',
 		'facetmenuhasoptions' => 'facet_menu_has_options',
@@ -216,8 +217,15 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		return $facet->name;
 	}
 
+	public static function facet_label ($result, $options, $O) {
+		if (isset($O->_filters_loop)) $facet = $O->facet;
+		else $facet = current($O->facets);
+		return $facet->filters[$facet->selected]->label;
+	}
+
 	public static function facet_slug ( $result, $options, $O ) {
-		$facet = current($O->facets);
+		if (isset($O->_filters_loop)) $facet = $O->facet;
+		else $facet = current($O->facets);
 		return $facet->slug;
 	}
 
