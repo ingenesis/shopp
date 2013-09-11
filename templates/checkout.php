@@ -12,13 +12,13 @@
 ?>
 
 <form action="<?php shopp( 'checkout.url' ); ?>" method="post" class="shopp validate" id="checkout">
-	
+
 	<?php shopp( 'checkout.cart-summary' ); ?>
-	
+
 	<?php if ( shopp( 'cart.hasitems' ) ) : ?>
-		
+
 		<?php shopp( 'checkout.function' ); ?>
-		
+
 		<ul>
 			<?php if ( shopp( 'customer.notloggedin' ) ) : ?>
 				<li>
@@ -28,7 +28,7 @@
 					<span><?php shopp('customer','login-button','context=checkout&value=Login'); ?></span>
 				</li>
 			<?php endif; ?>
-			
+
 			<li>
 				<label for="firstname"><?php _e('Contact Information','Shopp'); ?></label>
 				<span><label for="firstname"><?php _e('First','Shopp'); ?></label><?php shopp('checkout','firstname','required=true&minlength=2&size=8&title='.__('First Name','Shopp')); ?></span>
@@ -39,7 +39,7 @@
 				<span><label for="phone"><?php _e('Phone','Shopp'); ?></label><?php shopp('checkout','phone','format=phone&size=15&title='.__('Phone','Shopp')); ?></span>
 				<span><label for="email"><?php _e('Email','Shopp'); ?></label><?php shopp('checkout','email','required=true&format=email&size=30&title='.__('Email','Shopp')); ?></span>
 			</li>
-			
+
 			<?php if ( shopp( 'customer.notloggedin' ) ) : ?>
 				<li>
 					<span><label for="password"><?php _e('Password','Shopp'); ?></label>
@@ -49,13 +49,13 @@
 					<?php shopp('checkout','confirm-password','required=true&format=passwords&size=16&title='.__('Password Confirmation','Shopp')); ?></span>
 				</li>
 			<?php endif; ?>
-			
+
 			<?php if ( shopp( 'cart.needs-shipped' ) ) : ?>
 				<li class="half" id="billing-address-fields">
 			<?php else: ?>
 				<li>
 			<?php endif; ?>
-					
+
 					<label for="billing-address"><?php _e( 'Billing Address', 'Shopp' ); ?></label>
 					<div>
 						<label for="billing-name"><?php _e( 'Name', 'Shopp' ); ?></label>
@@ -75,7 +75,7 @@
 					</div>
 					<div class="right">
 						<label for="billing-state"><?php _e( 'State / Province', 'Shopp' ); ?></label>
-						<?php shopp( 'checkout.billing-state', 'required=true&title=' . __( 'State/Provice/Region billing address', 'Shopp' ) ); ?>
+						<?php shopp( 'checkout.billing-state', 'required=auto&title=' . __( 'State/Provice/Region billing address', 'Shopp' ) ); ?>
 					</div>
 					<div class="left">
 						<label for="billing-postcode"><?php _e( 'Postal / Zip Code', 'Shopp' ); ?></label>
@@ -110,7 +110,7 @@
 					</div>
 					<div class="right">
 						<label for="shipping-state"><?php _e( 'State / Province', 'Shopp' ); ?></label>
-						<?php shopp( 'checkout.shipping-state', 'required=true&title=' . __( 'State/Provice/Region shipping address', 'Shopp' ) ); ?>
+						<?php shopp( 'checkout.shipping-state', 'required=auto&title=' . __( 'State/Provice/Region shipping address', 'Shopp' ) ); ?>
 					</div>
 					<div class="left">
 						<label for="shipping-postcode"><?php _e( 'Postal / Zip Code', 'Shopp' ); ?></label>
@@ -124,7 +124,7 @@
 			<?php else: ?>
 				</li>
 			<?php endif; ?>
-			
+
 			<?php if ( shopp( 'checkout.billing-localities' ) ) : ?>
 				<li class="half locale hidden">
 					<div>
@@ -133,12 +133,12 @@
 					</div>
 				</li>
 			<?php endif; ?>
-			
+
 			<li>
 				<?php shopp( 'checkout.payment-options' ); ?>
 				<?php shopp( 'checkout.gateway-inputs' ); ?>
 			</li>
-			
+
 			<?php if ( shopp( 'checkout.card-required' ) ) : ?>
 				<li class="payment">
 					<label for="billing-card"><?php _e( 'Payment Information', 'Shopp' ); ?></label>
@@ -177,9 +177,9 @@
 						</span>
 					</li>
 				<?php endif; ?>
-				
+
 			<?php endif; ?>
-			
+
 			<li>
 				<div class="inline">
 					<label for="marketing"><?php shopp('checkout','marketing'); ?> <?php _e( 'Yes, I would like to receive e-mail updates and special offers!', 'Shopp' ); ?></label>
@@ -187,6 +187,6 @@
 			</li>
 		</ul>
 		<p class="submit"><?php shopp( 'checkout.submit', 'value=' . __( 'Submit Order', 'Shopp' ) ); ?></p>
-		
+
 	<?php endif; ?>
 </form>

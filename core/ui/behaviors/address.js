@@ -25,6 +25,9 @@
 						options += '<option value="'+value+'">'+label+'</option>';
 					});
 					if (!init) menu.empty().append(options).setDisabled(false).show().focus();
+					if (menu.hasClass('auto-required')) menu.addClass('required');
+				} else {
+					if (menu.hasClass('auto-required')) menu.removeClass('required');
 				}
 				menu.setDisabled(false).show();
 				$('label[for='+state.attr('id')+']').attr('for',menu.attr('id'));

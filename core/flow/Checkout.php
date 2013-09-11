@@ -185,7 +185,7 @@ class ShoppCheckout {
 
 		// Sanitize the card number to ensure it only contains numbers
 		if ( ! empty($form['card']) )
-			$billing['card'] = preg_replace('/[^\d]/','',$billing['card']);
+			$form['card'] = preg_replace('/[^\d]/', '', $form['card']);
 
 		// Change the cardtype to the selected payment service option label
 		$Billing->cardtype = $Payments->selected()->label;

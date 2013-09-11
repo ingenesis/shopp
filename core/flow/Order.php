@@ -37,6 +37,7 @@ class ShoppOrder {
 	public $Checkout = false;			// The checkout processor
 
 	public $data = array();				// Extra/custom order data
+	public $sameaddress = false;		// Toggle for copying a primary address to the secondary address
 
 	// Post processing properties
 	public $inprogress = false;			// Generated purchase ID

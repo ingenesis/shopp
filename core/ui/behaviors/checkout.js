@@ -108,31 +108,6 @@ jQuery(document).ready(function () {
 		}
 	});
 
-	/*$('#firstname,#lastname').change(function () {
-		$('#billing-name,#shipping-name').val(new String($('#firstname').val()+" "+$('#lastname').val()).trim());
-	});
-
-	sameaddr.change(function (e,init) {
-		var refocus = false,
-			bc = $('#billing-country'),
-			sc = $('#shipping-country'),
-			prime = 'billing' == sameaddr.val() ? shipFields : billFields,
-			alt   = 'shipping' == sameaddr.val() ? shipFields : billFields;
-
-		if (sameaddr.is(':checked')) {
-			prime.removeClass('half');
-			alt.hide().find('.required').setDisabled(true);
-		} else {
-			prime.addClass('half');
-			alt.show().find('.disabled:not(._important)').setDisabled(false);
-			if (!init) refocus = true;
-		}
-		if (bc.is(':visible')) bc.trigger('change.localemenu',[init]);
-		if (sc.is(':visible')) sc.trigger('change.localemenu',[init]);
-		if (refocus) alt.find('input:first').focus();
-	}).trigger('change',[true])
-			.click(function () { $(this).change(); }); // For IE compatibility;*/
-
 	guest.change(function(e) {
 		var passwords = checkoutForm.find('input.passwords'),labels = [];
 		$.each(passwords,function () { labels.push('label[for='+$(this).attr('id')+']'); });
