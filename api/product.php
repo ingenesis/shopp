@@ -2054,13 +2054,20 @@ function shopp_product_variant_set_stock ( $variant = false, $stock = 0, $action
 		}
 	}
 
+	$hadstock = $Price->stock;
+	$stocklevel = $Price->stocked;
+
 	$Price->stock = $stock;
 	if ( 'restock' == $action ) {
 		$Price->modified = 0;
 		$Price->stocked = $stock;
 	}
 
-	if ( $save ) return $Price->save();
+	if ( $save ) {
+		ProductSummary::rebuild($Price->product);
+		do_action('shopp_stock_product', $stock, $Price, $hadstock, $stocklevel);
+		return $Price->save();
+	}
 	return $Price;
 }
 

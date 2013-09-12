@@ -17,9 +17,9 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class ShoppPrice extends ShoppDatabaseObject {
 
-	static $table = "price";
+	static $table = 'price';
 
-	function __construct ($id=false,$key=false) {
+	public function __construct ($id=false,$key=false) {
 		$this->init(self::$table);
 		if ($this->load($id,$key)) {
 			$this->load_download();
@@ -31,7 +31,7 @@ class ShoppPrice extends ShoppDatabaseObject {
 
 	}
 
-	function delete () {
+	public function delete () {
 		if ( empty($this->id) ) return;
 
 		$price = $this->id;
@@ -43,7 +43,7 @@ class ShoppPrice extends ShoppDatabaseObject {
 		DB::query($query);
 	}
 
-	function metasetloader ( &$records, &$record, $id = 'id', $property = false, $collate = false, $merge = false ) {
+	public function metasetloader ( &$records, &$record, $id = 'id', $property = false, $collate = false, $merge = false ) {
 		if (isset($this->prices) && !empty($this->prices)) $prices = &$this->prices;
 		else $prices = array();
 
@@ -112,7 +112,7 @@ class ShoppPrice extends ShoppDatabaseObject {
 	 *
 	 * @return boolean
 	 **/
-	function load_download () {
+	public function load_download () {
 		if ($this->type != "Download") return false;
 		$this->download = new ProductDownload();
 		$this->download->load(array(
@@ -125,7 +125,7 @@ class ShoppPrice extends ShoppDatabaseObject {
 		return true;
 	}
 
-	function load_settings () {
+	public function load_settings () {
 		$settings = shopp_meta ( $this->id, 'price', 'settings');
 		if ( is_array( $settings ) ) {
 			foreach ( $settings as $property => $setting ) {
@@ -142,7 +142,7 @@ class ShoppPrice extends ShoppDatabaseObject {
 	 *
 	 * @return boolean
 	 **/
-	function attach_download ($id) {
+	public function attach_download ($id) {
 		if (!$id) return false;
 
 		$Download = new ProductDownload($id);
@@ -177,7 +177,7 @@ class ShoppPrice extends ShoppDatabaseObject {
 	 *
 	 * @return boolean True if a discount applies
 	 **/
-	function discounts () {
+	public function discounts () {
 		if (empty($this->discounts)) return false;
 		$pricetag = Shopp::str_true($this->sale)?$this->saleprice:$this->price;
 		$discount = ShoppPromo::pricing($pricetag,$this->discounts);
@@ -186,7 +186,7 @@ class ShoppPrice extends ShoppDatabaseObject {
 		return true;
 	}
 
-	function disabled () {
+	public function disabled () {
 		return ( 'N/A' == $this->type );
 	}
 
@@ -200,7 +200,7 @@ class ShoppPrice extends ShoppDatabaseObject {
 	 *
 	 * @return array
 	 **/
-	static function types () {
+	public static function types () {
 		 return array(
 			array('value'=>'Shipped','label'=>__('Shipped','Shopp')),
 			array('value'=>'Virtual','label'=>__('Virtual','Shopp')),
@@ -223,7 +223,7 @@ class ShoppPrice extends ShoppDatabaseObject {
 	 *
 	 * @return array
 	 **/
-	static function periods () {
+	public static function periods () {
 		return array(
 			array(
 				array('value'=>'d','label'=>__('days','Shopp')),
@@ -242,5 +242,3 @@ class ShoppPrice extends ShoppDatabaseObject {
 	}
 
 } // END class Price
-
-?>

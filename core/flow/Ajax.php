@@ -544,17 +544,16 @@ class ShoppAjax {
 	}
 
 	public function update_inventory () {
+
 		check_admin_referer('wp_ajax_shopp_update_inventory');
-		$Priceline = new ShoppPrice($_GET['id']);
-		if ( empty($Priceline->id) ) die('0');
-		if ( ! Shopp::str_true($Priceline->inventory) ) die('0');
-		if ( (int)$_GET['stock'] < 0 ) die('0');
-		$Priceline->stock = $Priceline->stocked = $_GET['stock'];
-		$Priceline->save();
-		$summary = ShoppDatabaseObject::tablename(ProductSummary::$table);
-		DB::query("UPDATE $summary SET modified='0000-00-00 00:00:01' WHERE product=$Priceline->product LIMIT 1");
-		echo "1";
-		exit();
+
+		$restocked = shopp_product_variant_set_stock((int) $_GET['id'], (int) $_GET['stock'], 'restock');
+
+		if ( $restocked ) {
+			echo '1';
+			exit;
+		} else die('0');
+
 	}
 
 	public function import_file () {

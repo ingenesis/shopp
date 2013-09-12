@@ -829,7 +829,8 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 					$priceline['recurring']['trialprice'] = Shopp::floatval($priceline['recurring']['trialprice']);
 
 				if ($Price->stock != $priceline['stocked']) {
-					$priceline['stock'] = $priceline['stocked'];
+					$priceline['stock'] = (int) $priceline['stocked'];
+					do_action('shopp_stock_product', $priceline['stock'], $Price, $Price->stock, $Price->stocklevel);
 				} else unset($priceline['stocked']);
 				$Price->updates($priceline);
 				$Price->save();

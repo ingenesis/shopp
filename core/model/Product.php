@@ -1205,7 +1205,12 @@ class ShoppProduct extends WPShoppObject {
 } // END class Product
 
 /**
- * Description
+ * The ProductSummary records make product collection querying more
+ * efficient by adding a data aggregation and summarization process to
+ * collect all collection-relevant information about a product and
+ * saving it to a single record. This means that in most cases, a
+ * single join is all that is required for product collection queries
+ * providing a massive boost to performance (both speed and memory utilization).
  *
  * @author Jonathan Davis
  * @since 1.2
@@ -1213,6 +1218,7 @@ class ShoppProduct extends WPShoppObject {
  * @subpackage product
  **/
 class ProductSummary extends ShoppDatabaseObject {
+
 	const RECALCULATE = '0000-00-00 00:00:01';
 
 	static $table = 'summary';
@@ -1243,6 +1249,23 @@ class ProductSummary extends ShoppDatabaseObject {
 		do_action_ref_array('shopp_save_productsummary', array(&$this));
 		return $id;
 
+	}
+
+	/**
+	 * Marks an individual product for summary recalculation
+	 *
+	 * Recalculating t
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param integer $id The product ID to update
+	 * @return boolean True if successful, false otherwise
+	 **/
+	public static function rebuild ( $id ) {
+		$id = intval($id);
+		$table = ShoppDatabaseObject::tablename(ProductSummary::$table);
+		return DB::query("UPDATE $table SET modified='" . self::RECALCULATE . "' WHERE product=$id LIMIT 1");
 	}
 
 } // END class ProductSummary
