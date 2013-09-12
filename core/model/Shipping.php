@@ -585,29 +585,44 @@ abstract class ShippingFramework {
 
 			// Handle postcode matching
 			if (!empty($d['postcode'])) {
-				$negative_conditions = false;
-				$match_found = false;
-				if ('!' == substr($rule['postcode'], 0, 1) ) {
-					$negative_conditions = true;
-					$rule['postcode'] = substr($rule['postcode'], 1);
-				}
-				
 				if (false !== strpos($rule['postcode'],','))
 					$postcodes = explode(',',$rule['postcode']);
 				else $postcodes = array($rule['postcode']);
-
+				
+				//Exclusive rules need to be evaluated first
+				usort($postcodes, function($a, $b) {
+						$a_logic = '!' == substr($a, 0, 1);
+						$b_logic = '!' == substr($b, 0, 1);
+						
+						if($a_logic > $b_logic)
+							return -1;
+						if($a_logic < $b_logic)
+							return 1;
+							
+						//$a and $b have the same weight
+						return 0;
+					});
+				
+				$num_exclusions = 0;
 				foreach ($postcodes as $coderule) {
 					$coderule = trim($coderule);
-
+					
+					//Determine if rule is exclusive
+					$exclude = false;
+					if ('!' == substr($coderule, 0, 1) ) {
+						$exclude = true;
+						$num_exclusions++;
+						$coderule = substr($coderule, 1);
+					}
+					
 					// Match numeric postcode ranges (only works for pure numeric postcodes like US zip codes)
 					// Cannot be mixed with wildcard ranges (eg 55*-56* does not work, use 55000-56999)
 					if (false !== strpos($coderule,'-')) {
 						list($start,$end) = explode('-',$coderule);
 						if ($match['postcode'] >= $start && $match['postcode'] <= $end) {
-							if($negative_conditions)
-								$match_found = true;
-							else
-								unset($d['postcode']); // Clear exception to match
+							if($exclude)
+								return false;
+							unset($d['postcode']); // Clear exception to match
 						}
 						continue;
 					}
@@ -616,28 +631,25 @@ abstract class ShippingFramework {
 					if (strpos($coderule,'*') !== false) {
 						$pattern = str_replace('*','(.+?)',$coderule);
 						if (preg_match("/^$pattern$/i",$match['postcode'])) {
-							if($negative_conditions)
-								$match_found = true;
-							else
-								unset($d['postcode']); // Clear exception to match
+							if($exclude)
+								return false;
+							unset($d['postcode']); // Clear exception to match
 						}
 						continue;
 					}
 
 					// Exact match
 					if ($coderule == $match['postcode']) {
-						if($negative_conditions)
-							$match_found = true;
-						else
-							unset($d['postcode']); // Clear exception to match
+						if($exclude)
+							return false;
+						unset($d['postcode']); // Clear exception to match
 						continue;
 					}
 
 				}
 				
-				if($negative_conditions && !$match_found) //No matches were found
-					unset($d['postcode']);
-
+				if ($num_exclusions == count($postcodes))
+					unset($d['postcode']); //All of the rules were exclusive and passed, clear exception
 			}
 
 			// If exceptions were cleared, return the matching rate
