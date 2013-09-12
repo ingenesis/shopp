@@ -58,7 +58,7 @@ Thank you for using Shopp! E-commerce just got a little easier and more secure. 
 	public function contributors () {
 
 		$contributors = get_transient('shopp_contributors');
-		if ( false !== $contributors ) return $contributors;
+		if ( ! empty($contributors) ) return $contributors;
 
 		$response = wp_remote_get( 'https://api.github.com/repos/ingenesis/shopp/contributors', array('sslverify' => false) );
 
@@ -68,7 +68,30 @@ Thank you for using Shopp! E-commerce just got a little easier and more secure. 
 		$contributors = json_decode( wp_remote_retrieve_body($response) );
 		if ( ! is_array( $contributors ) ) return array();
 
+		// Get full name and company if available
+		$top = 0;
+		foreach ( $contributors as $contributor ) {
+			$response = wp_remote_get( $contributor->url, array('sslverify' => false) );
+			$contributor->name = $contributor->login;
+			$contributor->company = '';
+			$contrubutor->link = $contributor->html_url;
+			if ( $top++ > 45 ) continue; // Top 30 contributors only (API requests are rate-limited to 60/hour)
+
+			if ( 200 != wp_remote_retrieve_response_code($response) || is_wp_error($response) ) continue;
+			$user = json_decode( wp_remote_retrieve_body($response) );
+			$contributor->user = $user;
+			if ( isset($user->name) ) {
+				$contributor->name = $user->name;
+				if ( $user->company != $user->name )
+					$contributor->company = $user->company;
+				if ( isset($user->blog) ) $contributor->link = $user->blog;
+			}
+
+		}
+
 		set_transient('shopp_contributors', $contributors, 86400);
+
+		return $contributors;
 
 	}
 }
