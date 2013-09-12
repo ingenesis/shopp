@@ -590,20 +590,15 @@ abstract class ShippingFramework {
 				else $postcodes = array($rule['postcode']);
 				
 				//Exclusive rules need to be evaluated first
-				usort($postcodes, function($a, $b) {
-						$a_logic = '!' == substr($a, 0, 1);
-						$b_logic = '!' == substr($b, 0, 1);
-						
-						if($a_logic > $b_logic)
-							return -1;
-						if($a_logic < $b_logic)
-							return 1;
-							
-						//$a and $b have the same weight
-						return 0;
-					});
+				usort($postcodes, create_function(
+						'$a, $b',
+						'$a = ( "!" == $a{0} ); 
+						 $b = ( "!" == $b{0} ); 
+						 if ( $a == $b ) return 0; 
+						 return ( $a < $b ) ? -1 : 1;'
+				));
 				
-				$num_exclusions = 0;
+				$exclusions = 0;
 				foreach ($postcodes as $coderule) {
 					$coderule = trim($coderule);
 					
@@ -611,7 +606,7 @@ abstract class ShippingFramework {
 					$exclude = false;
 					if ('!' == substr($coderule, 0, 1) ) {
 						$exclude = true;
-						$num_exclusions++;
+						$exclusions++;
 						$coderule = substr($coderule, 1);
 					}
 					
@@ -648,7 +643,7 @@ abstract class ShippingFramework {
 
 				}
 				
-				if ($num_exclusions == count($postcodes))
+				if ($exclusions == count($postcodes))
 					unset($d['postcode']); //All of the rules were exclusive and passed, clear exception
 			}
 
