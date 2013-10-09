@@ -123,7 +123,6 @@ class ShoppTMCELoader {
 		define('WPINC_URL',get_bloginfo('wpurl').'/'.WPINC);
 		define('TINYMCE_URL',WPINC_URL.'/js/tinymce/');
 		if(!current_user_can('edit_posts')) !($error = self::errors(3));
-		do_action('admin_init');
 	}
 
 	static function errors ($code) {
