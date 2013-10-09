@@ -396,3 +396,173 @@ function shopp_cart_item_addons_count ($itemkey) {
 	}
 	return (int) count($addons);
 }
+
+/**
+* The following needs review because I think some of this may be redundant. These all worked on Shopp 1.2.x. -Chris
+*/
+
+/**
+* Returns the cart item discount amount
+*
+* @param $itemkey
+* @return int|bool
+*/
+function shopp_cart_item_discount ( $itemkey ) {	
+	$Item = shopp_cart_item( $itemkey );
+	if ( empty( $Item ) ) return false;
+
+	// subtract the original price from the saleprice
+	if ( $Item->option->sale )
+		return ( $Item->option->price - $Item->option->promoprice );
+
+	return false;
+}
+
+/**
+* Returns the total discount (discount * quantity)
+*
+* @param $itemkey
+* @return int|bool
+*/
+function shopp_cart_item_discounts ( $itemkey ) {
+	$Item = shopp_cart_item( $itemkey );
+	if ( empty( $Item ) ) return false;
+
+	if ( $Item->option->sale ){
+		$discount = $Item->option->price - $Item->option->promoprice;
+		return ( $Item->quantity * $discount );
+	}
+
+	return false;
+}
+
+/**
+* Checks whether an item is on sale or not
+*
+* @param $itemkey
+* @return bool
+*/
+function shopp_cart_item_onsale ( $itemkey ) {
+	$Item = shopp_cart_item( $itemkey );
+	if ( empty( $Item ) ) {
+		shopp_debug(__FUNCTION__ . " failed: no such item $itemkey");
+		return false;
+	}
+
+	return str_true( $Item->sale );
+}
+
+/**
+* Returns the non-discounted price on an item
+*
+* @param $itemkey
+* @return int|bool
+*/
+function shopp_cart_item_price ( $itemkey ) {
+	$Item = shopp_cart_item( $itemkey );
+	if ( empty( $Item ) ) {
+		shopp_debug(__FUNCTION__ . " failed: no such item $itemkey");
+		return false;
+	}
+
+	return $Item->option->price;
+}
+
+/**
+* Returns the total original price on an item
+*
+* @param $itemkey
+* @return int|bool
+*/
+function shopp_cart_item_prices ( $itemkey ) {
+	$Item = shopp_cart_item( $itemkey );
+	if ( empty( $Item ) ) {
+		shopp_debug(__FUNCTION__ . " failed: no such item $itemkey");
+		return false;
+	}
+
+	return ( $Item->option->price * $Item->quantity );
+}
+
+/**
+* Returns the sale price on an item
+*
+* @param $itemkey
+* @return int|bool
+*/
+function shopp_cart_item_saleprice ( $itemkey ) {
+	$Item = shopp_cart_item( $itemkey );
+	if ( empty( $Item ) ) {
+		shopp_debug(__FUNCTION__ . " failed: no such item $itemkey");
+		return false;
+	}
+
+	return money($Item->option->promoprice);
+}
+
+/**
+* Returns the total sale price on an item
+*
+* @param $itemkey
+* @return int|bool
+*/
+function shopp_cart_item_saleprices ( $itemkey ) {
+	$Item = shopp_cart_item( $itemkey );
+	if ( empty( $Item ) ) {
+		shopp_debug(__FUNCTION__ . " failed: no such item $itemkey");
+		return false;
+	}
+
+	return ( $Item->option->promoprice * $Item->quantity );
+}
+
+/**
+* Returns the percentage of the discount
+*
+* @param $itemkey
+* @return int|bool
+*/
+function shopp_cart_item_savings ( $itemkey ) {
+	$Item = shopp_cart_item( $itemkey );
+	if ( empty( $Item ) ) {
+		shopp_debug(__FUNCTION__ . " failed: no such item $itemkey");
+		return false;
+	}
+
+	if ( $Item->option->sale )
+		return ( $Item->option->promoprice / $Item->option->price ) * 100;
+
+	return false;
+}
+
+/**
+* Check if any of the items in the cart are on sale
+*
+* @return bool
+*/
+function shopp_cart_has_savings () {
+	$Items = shopp_cart_items();
+	foreach ( $Items as $item ){
+		if ( $item->sale ) return true;
+	}	
+}
+
+/**
+* Total discount of each item PLUS any Promotional Catalog discounts
+*
+* @return int
+*/
+function shopp_cart_total_savings () {
+
+	$totalsavings = 0;
+	$originaltotal = 0;
+	$Items = shopp_cart_items();
+
+	foreach ( $Items as $item ){
+		$originaltotal += $item->option->price * $item->quantity;
+	}
+
+	$savings = $originaltotal - ShoppOrder()->Cart->Totals->subtotal + ShoppOrder()->Cart->Totals->discount;
+
+	return $savings;
+}
