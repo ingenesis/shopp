@@ -235,6 +235,13 @@ class ShoppLogin {
 		}
 
 		do_action_ref_array('shopp_login', array($this->Customer));
+		
+		/*
+		Not the way you guys will want to do this, but can we allow for
+		redirecting on login to a specified variable using $_REQUEST['redirect']?
+		See Extended pull description for case use
+		*/
+		$this->redirect();
 	}
 
 	/**
