@@ -1,7 +1,7 @@
 	<div class="wrap shopp">
 
 		<div class="icon32"></div>
-		<h2><?php _e('Discount Editor','Shopp'); ?> <a href="<?php echo esc_url(add_query_arg(array_merge($_GET,array('page'=>'shopp-promotions','id'=>'new')),admin_url('admin.php'))); ?>" class="add-new-h2"><?php _e('Add New','Shopp'); ?></a> </h2>
+		<h2><?php _e('Discount Editor','Shopp'); ?> <a href="<?php echo esc_url(add_query_arg(array_merge($_GET,array('page'=>'shopp-discounts','id'=>'new')),admin_url('admin.php'))); ?>" class="add-new-h2"><?php _e('Add New','Shopp'); ?></a> </h2>
 
 		<?php do_action('shopp_admin_notices'); ?>
 
