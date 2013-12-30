@@ -192,7 +192,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 	public static function company ( $result, $options, $O ) {
 		if (!isset($options['mode'])) $options['mode'] = "input";
-		if ($options['mode'] == "value") return ShoppOrder()->Customer->company;
+		if ($options['mode'] == "value") return $O->company;
 		if (!empty(ShoppOrder()->Customer->company))
 			$options['value'] = ShoppOrder()->Customer->company;
 		return '<input type="text" name="company" id="company" '.inputattrs($options).' />';
@@ -237,7 +237,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 	public static function email ( $result, $options, $O ) {
 		if (!isset($options['mode'])) $options['mode'] = "input";
-		if ($options['mode'] == "value") return ShoppOrder()->Customer->email;
+		if ($options['mode'] == "value") return $O->email;
 		if (!empty(ShoppOrder()->Customer->email))
 			$options['value'] = ShoppOrder()->Customer->email;
 		return '<input type="text" name="email" id="email" '.inputattrs($options).' />';
@@ -255,7 +255,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 	public static function first_name ( $result, $options, $O ) {
 		if (!isset($options['mode'])) $options['mode'] = "input";
-		if ($options['mode'] == "value") return ShoppOrder()->Customer->firstname;
+		if ($options['mode'] == "value") return $O->firstname;
 		if (!empty(ShoppOrder()->Customer->firstname))
 			$options['value'] = ShoppOrder()->Customer->firstname;
 		return '<input type="text" name="firstname" id="firstname" '.inputattrs($options).' />';
@@ -338,7 +338,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 	public static function last_name ( $result, $options, $O ) {
 		if (!isset($options['mode'])) $options['mode'] = "input";
-		if ($options['mode'] == "value") return $O->Customer->lastname;
+		if ($options['mode'] == "value") return $O->lastname;
 		if (!empty(ShoppOrder()->Customer->lastname))
 			$options['value'] = ShoppOrder()->Customer->lastname;
 		return '<input type="text" name="lastname" id="lastname" '.inputattrs($options).' />';
@@ -359,7 +359,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	public static function login_name ( $result, $options, $O ) {
 		if (!isset($options['mode'])) $options['mode'] = "input";
 		if (!isset($options['autocomplete'])) $options['autocomplete'] = "off";
-		if ($options['mode'] == "value") return ShoppOrder()->Customer->loginname;
+		if ($options['mode'] == "value") return $O->loginname;
 		if (!empty(ShoppOrder()->Customer->loginname))
 			$options['value'] = ShoppOrder()->Customer->loginname;
 		return '<input type="text" name="loginname" id="login" '.inputattrs($options).' />';
@@ -367,7 +367,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 	public static function marketing ( $result, $options, $O ) {
 		if (!isset($options['mode'])) $options['mode'] = "input";
-		if ($options['mode'] == "value") return ShoppOrder()->Customer->marketing;
+		if ($options['mode'] == "value") return $O->marketing;
 		if (!empty(ShoppOrder()->Customer->marketing))
 			$options['value'] = ShoppOrder()->Customer->marketing;
 		$attrs = array("accesskey","alt","checked","class","disabled","format",
@@ -413,7 +413,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if (!isset($options['mode'])) $options['mode'] = "input";
 		if (!isset($options['autocomplete'])) $options['autocomplete'] = "off";
 		if ($options['mode'] == "value")
-			return strlen(ShoppOrder()->Customer->password) == 34?str_pad('&bull;',8):ShoppOrder()->Customer->password;
+			return strlen($O->password) == 34?str_pad('&bull;',8):$O->password;
 		if (!empty(ShoppOrder()->Customer->password))
 			$options['value'] = ShoppOrder()->Customer->password;
 		return '<input type="password" name="password" id="password" '.inputattrs($options).' />';
@@ -436,7 +436,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 	public static function phone ( $result, $options, $O ) {
 		if (!isset($options['mode'])) $options['mode'] = "input";
-		if ($options['mode'] == "value") return ShoppOrder()->Customer->phone;
+		if ($options['mode'] == "value") return $O->phone;
 		if (!empty(ShoppOrder()->Customer->phone))
 			$options['value'] = ShoppOrder()->Customer->phone;
 		return '<input type="text" name="phone" id="phone" '.inputattrs($options).' />';
