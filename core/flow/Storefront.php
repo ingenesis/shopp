@@ -432,7 +432,7 @@ class ShoppStorefront extends ShoppFlowController {
 	}
 
 	public function collections ( string $template ) {
-		if ( ! is_shopp_collection() ) return $template;
+		if ( ! is_shopp_collection() || '' != $template ) return $template;
 
 		$Page = new ShoppCollectionPage();
 		$Page->poststub();
