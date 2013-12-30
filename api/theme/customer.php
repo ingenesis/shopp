@@ -338,7 +338,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 	public static function last_name ( $result, $options, $O ) {
 		if (!isset($options['mode'])) $options['mode'] = "input";
-		if ($options['mode'] == "value") return $O->Customer->lastname;
+		if ($options['mode'] == "value") return ShoppOrder()->Customer->lastname;
 		if (!empty(ShoppOrder()->Customer->lastname))
 			$options['value'] = ShoppOrder()->Customer->lastname;
 		return '<input type="text" name="lastname" id="lastname" '.inputattrs($options).' />';
