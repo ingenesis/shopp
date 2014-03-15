@@ -228,10 +228,10 @@
 				</div>
 			</td>
 			<td class="local column-local">
-				<div class="checkbox"><?php if ($haslocals): ?><div class="checked">&nbsp;</div><?php else: ?>&nbsp;<?php endif; ?></div>
+				<div class="checkbox<?php if ($haslocals) echo ' checked'; ?>">&nbsp;</div>
 			</td>
 			<td class="conditional column-conditional">
-				<div class="checkbox"><?php if (count($rules) > 0): ?><div class="checked">&nbsp;</div><?php else: ?>&nbsp;<?php endif; ?></div>
+				<div class="checkbox<?php if ( count($rules) > 0 ) echo ' checked'; ?>">&nbsp;</div>
 			</td>
 		</tr>
 		<?php endforeach; ?>

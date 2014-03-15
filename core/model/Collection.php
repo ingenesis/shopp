@@ -1890,7 +1890,7 @@ class TagProducts extends SmartCollection {
 			}
 		} else $terms[] = $term->term_id;
 
-		$this->name = Shopp::__('Products tagged &quot;%s&quot;', $this->tag);
+		$this->name = ( isset($options['title']) ) ? $options['title'] : Shopp::__('Products tagged &quot;%s&quot;', $this->tag);
 		$this->uri = urlencode($this->tag);
 
 		global $wpdb;
