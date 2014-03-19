@@ -941,7 +941,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		$select_attrs = array('title','required','class','disabled','required','size','tabindex','accesskey');
 
 		unset($_options['label']); // Interferes with the text input value when passed to inputattrs()
-		$labeling = '<label for="quantity-'.$O->id.'">'.$label.'</label>';
+		if( Shopp::str_true($label) ) $labeling = '<label for="quantity-'.$O->id.'">'.$label.'</label>';
 
 
 		if ( ! isset($O->_prices_loop) ) reset($O->prices);
