@@ -627,7 +627,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		if ('agreed' == $value) $options['checked'] = 'checked';
 
-		if (false !== $agreement) {
+		if ( "false" !== $agreement && ! empty( $agreement ) ) {
 			$page = get_page_by_path($agreement);
 			$frame = '<div class="scrollable clickwrap clickwrap-terms'.( $termsclass ? " $termsclass" : "" ).'">'.apply_filters('shopp_checkout_clickwrap_terms',$page->post_content).'</div>';
 		}
