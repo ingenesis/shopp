@@ -29,6 +29,8 @@
 		<div class="alignleft actions">
 		<?php if (current_user_can('shopp_delete_orders')): ?><button type="submit" id="delete-button" name="deleting" value="order" class="button-secondary"><?php _e('Delete','Shopp'); ?></button><?php endif; ?>
 		</div>
+		<?php $printurl = wp_nonce_url(admin_url('admin-ajax.php').'?action=shopp_order_receipt', 'wp_ajax_shopp_order_receipt'); ?> 
+ 		<div class="alignleft actions"><a id="print-button" href="<?php echo esc_url($printurl); ?>" class="button hide-if-no-js"><?php _e('Print Orders','Shopp'); ?></a></div>
 		<div class="alignleft actions">
 			<select name="newstatus">
 				<?php echo Shopp::menuoptions($statusLabels,false,true); ?>
