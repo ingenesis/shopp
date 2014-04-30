@@ -126,9 +126,6 @@ class ShoppAdminSetup extends ShoppAdminController {
 						if (isset($baseop['currency'][$field])) $baseop['currency']['format'][$field] = $baseop['currency'][$field];
 				}
 
-				shopp_set_setting('tax_inclusive', // Automatically set the inclusive tax setting
-					(in_array($country, Lookup::country_inclusive_taxes()) ? 'on' : 'off')
-				);
 			}
 
 			if (!isset($_POST['settings']['target_markets']))
