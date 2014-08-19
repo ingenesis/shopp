@@ -22,7 +22,14 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppFacetedMenuWidget') ) {
 			);
 	    }
 
-	    function widget ( array $args, array $options ) {
+        /** Echo the widget content.
+         *
+         * Subclasses should over-ride this function to generate their widget code.
+         *
+         * @param array $args Display arguments including before_title, after_title, before_widget, and after_widget.
+         * @param array $instance The settings for the particular instance of the widget
+         */
+	    function widget ( $args, $options ) {
 
 			if ( ! empty($args) )
 				extract($args);
@@ -44,7 +51,10 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppFacetedMenuWidget') ) {
 	        return $new_instance;
 	    }
 
-	    function form ( array $options ) {
+	    /**
+  	     * @param array $instance Current settings
+             */
+	    function form ( $options ) {
 			?>
 			<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title'); ?></label>
 			<input type="text" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>" class="widefat" value="<?php echo $options['title']; ?>"></p>
