@@ -555,7 +555,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 				shopp_setting('merchant_email'),									// Recipient email address
 				Shopp::__('New Order - %s', $Purchase->id),								// Subject
 				array_merge(array('email-merchant-order.php'), $templates))			// Templates
-		));
+		), $Purchase);
 
 		// Remove merchant notification if disabled in receipt copy setting
 		if ( ! shopp_setting_enabled('receipt_copy') ) unset($messages['merchant']);
