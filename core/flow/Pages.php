@@ -187,6 +187,10 @@ class ShoppPage {
 		return $content;
 	}
 
+	public function nocomment () {
+		return array();
+	}
+
 	/**
 	 * Provides the title for the page from settings
 	 *
@@ -225,7 +229,10 @@ class ShoppPage {
 		$templates = array('shopp.php', 'page.php');
 
 		$name = $this->name();
-		if ( ! empty($name) ) array_unshift($templates, "$name.php");
+		if ( ! empty($name) ) {
+			array_unshift($templates, "$name.php"); // @deprecated
+			array_unshift($templates, "shopp-$name.php");
+		}
 
 		$template = $this->pagetemplate();
 		if ( ! empty($template) ) array_unshift($templates, "$template.php");
@@ -241,7 +248,19 @@ class ShoppPage {
 		add_filter('wp_head', array($this, 'head'), 20);
 		add_filter('the_content', array($this, 'content'), 20);
 		add_filter('the_excerpt', array($this, 'content'), 20);
+		add_filter('comments_array', array($this, 'nocomment'));
+		add_filter('wpseo_replacements', array($this, 'wpseo')); // compatibility helper for WPSEO
 	}
+
+	public function wpseo ( $replacements ) {
+
+		if ( is_shopp_page() && empty($replacements['%%title%%']) )
+			$replacements['%%title%%'] = $this->title();
+
+		return $replacements;
+
+	}
+
 
 	public function poststub () {
 		global $wp_query;
@@ -468,7 +487,7 @@ class ShoppAccountPage extends ShoppPage {
 		$_[] = 'Content-type: text/html';
 		$_[] = '';
 		$_[] = '<p>'.__('A request has been made to reset the password for the following site and account:', 'Shopp').'<br />';
-		$_[] = get_option('siteurl').'</p>';
+		$_[] = get_bloginfo('url').'</p>';
 		$_[] = '';
 		$_[] = '<ul>';
 		if (isset($_POST['email-login']))
@@ -531,7 +550,7 @@ class ShoppAccountPage extends ShoppPage {
 		$_[] = 'Subject: ' . $subject;
 		$_[] = 'Content-type: text/html';
 		$_[] = '';
-		$_[] = '<p>' . Shopp::__('Your new password for %s:', get_option('siteurl')) . '</p>';
+		$_[] = '<p>' . Shopp::__('Your new password for %s:', get_bloginfo('url')) . '</p>';
 		$_[] = '';
 		$_[] = '<ul>';
 		if ( $user_data )

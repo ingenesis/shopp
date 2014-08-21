@@ -139,7 +139,11 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @return int|boolean Number of posts found or, true if a Shopp Storefront request
 	 **/
 	public function found ( $found_posts, WP_Query $wp_query ) {
-		if ( $this->request($wp_query) ) return true;
+		if ( $this->request($wp_query) ) {
+			$Page = new stdClass();
+			$Page->ID = 0;
+			return array( $Page ); // Short page stub to prevent PHP Notices in wp_query
+		}
 		return $found_posts;
 	}
 
@@ -1004,11 +1008,6 @@ class ShoppStorefront extends ShoppFlowController {
 		$this->shortcodes['catalog-product'] 	= array('ShoppShortcodes', 'product');
 		$this->shortcodes['catalog-buynow'] 	= array('ShoppShortcodes', 'buynow');
 		$this->shortcodes['catalog-collection']	= array('ShoppShortcodes', 'collection');
-
-		// @deprecated shortcodes
-		$this->shortcodes['product']	= array('ShoppShortcodes', 'product');
-		$this->shortcodes['buynow']		= array('ShoppShortcodes', 'buynow');
-		$this->shortcodes['category']	= array('ShoppShortcodes', 'collection');
 
 		foreach ( $this->shortcodes as $name => &$callback )
 			if ( shopp_setting_enabled('maintenance') || ! ShoppSettings()->available() || Shopp::maintenance() )

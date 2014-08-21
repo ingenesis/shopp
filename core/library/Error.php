@@ -415,7 +415,7 @@ class ShoppErrorLogging {
 		$this->dir = defined('SHOPP_LOG_PATH') ? SHOPP_LOG_PATH : sys_get_temp_dir();
 		$this->dir = sanitize_path($this->dir); // Windows path sanitiation
 
-		$siteurl = parse_url(get_bloginfo('siteurl'));
+		$siteurl = parse_url(get_bloginfo('url'));
 		$sub = ! empty($path) ? '_' . sanitize_title_with_dashes($path) : '';
 		$this->logfile = trailingslashit($this->dir) . $siteurl['host'] . $sub . '_' . self::FILENAME;
 

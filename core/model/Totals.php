@@ -420,7 +420,7 @@ abstract class OrderTotalAmount {
 	 * @param float $value The value of the amount
 	 * @return float The current amount
 	 **/
-	public function &amount ( float $value = null ) {
+	public function &amount ( $value = null ) {
 		if ( ! is_null($value) ) $this->amount = $value;
 		$amount = (float)round($this->amount, $this->precision());
 		return $amount;
@@ -740,7 +740,7 @@ class OrderAmountItemTax extends OrderAmountTax {
 		return (float) array_sum($this->items());
 	}
 
-	public function &amount ( float $value = null ) {
+	public function &amount ( $value = null ) {
 		return parent::amount($this->total());
 	}
 
@@ -764,7 +764,7 @@ class OrderAmountShippingTax extends OrderAmountTax {
 	protected $rate = 0.0;	// The applied rate
 	protected $label = '';
 
-	public function __construct ( float $taxable ) {
+	public function __construct ( $taxable ) {
 		$Tax = ShoppOrder()->Tax;
 
 		$taxes = array();

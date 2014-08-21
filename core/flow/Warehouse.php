@@ -719,7 +719,7 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 	 * @param Product $Product
 	 * @return void
 	 **/
-	public function save ( ShoppProduct $Product) {
+	public function save ( ShoppProduct $Product ) {
 		check_admin_referer('shopp-save-product');
 
 		if ( ! current_user_can('shopp_products') )
@@ -727,6 +727,7 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 
 		ShoppSettings()->saveform(); // Save workflow setting
 
+		$status = $Product->status;
 		// Set publish date
 		if ('publish' == $_POST['status']) {
 			$publishing = isset($_POST['publish'])?$_POST['publish']:array();
@@ -761,20 +762,6 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 
 		do_action('shopp_pre_product_save');
 		$Product->save();
-
-		foreach ( get_object_taxonomies(Product::$posttype) as $taxonomy ) {
-			$tags = '';
-			$taxonomy_obj = get_taxonomy($taxonomy);
-
-			if ( isset($_POST['tax_input']) && isset($_POST['tax_input'][$taxonomy]) ) {
-				$tags = $_POST['tax_input'][$taxonomy];
-				if ( is_array($tags) ) // array = hierarchical, string = non-hierarchical.
-					$tags = array_filter($tags);
-			}
-
-			if ( current_user_can($taxonomy_obj->cap->assign_terms) )
-				wp_set_post_terms( $Product->id, $tags, $taxonomy );
-		}
 
 		// Remove deleted images
 		if (!empty($_POST['deleteImages'])) {
@@ -883,6 +870,33 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 
 		$Product->load_sold($Product->id); // Refresh accurate product sales stats
 		$Product->sumup();
+
+		// Update taxonomies after pricing summary is generated
+		// Summary table entry is needed for ProductTaxonomy::recount() to
+		// count properly based on aggregate product inventory, see #2968
+		foreach ( get_object_taxonomies(Product::$posttype) as $taxonomy ) {
+			$tags = '';
+			$taxonomy_obj = get_taxonomy($taxonomy);
+
+			if ( isset($_POST['tax_input']) && isset($_POST['tax_input'][$taxonomy]) ) {
+				$tags = $_POST['tax_input'][$taxonomy];
+				if ( is_array($tags) ) // array = hierarchical, string = non-hierarchical.
+					$tags = array_filter($tags);
+			}
+
+			if ( current_user_can($taxonomy_obj->cap->assign_terms) )
+				wp_set_post_terms( $Product->id, $tags, $taxonomy );
+		}
+
+		// Ensure taxonomy counts are updated on status changes, see #2968
+		if ( $status != $_POST['status'] ) {
+			var_dump(__METHOD__ . ': ' . __LINE__);
+			$Post = new StdClass;
+			$Post->ID = $Product->id;
+			$Post->post_type = ShoppProduct::$posttype;
+			var_dump($Post);
+			wp_transition_post_status($_POST['status'], $Product->status, $Post);
+		}
 
 		if (!empty($_POST['meta']['options']))
 			$_POST['meta']['options'] = stripslashes_deep($_POST['meta']['options']);

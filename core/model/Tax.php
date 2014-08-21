@@ -337,7 +337,7 @@ class ShoppTax {
 	 * @param float $taxable The amount to calculate taxes on
 	 * @return float The total tax amount
 	 **/
-	public static function calculate ( array &$rates, float $taxable ) {
+	public static function calculate ( array &$rates, $taxable ) {
 
 		$compound = 0;
 		$total = 0;
@@ -382,7 +382,7 @@ class ShoppTax {
 	 * @param float $$amount The amount including tax
 	 * @return float The amount excluding tax
 	 **/
-	public static function exclusive ( array &$rates, float $amount ) {
+	public static function exclusive ( array &$rates, $amount ) {
 		$taxrate = 0;
 		foreach ( $rates as $tax )
 			$taxrate += $tax->rate;

@@ -1029,7 +1029,7 @@ class ShoppProduct extends WPShoppObject {
 
 		// Delete assignment to taxonomies (categories, tags, custom taxonomies)
 		wp_delete_object_term_relationships($id, get_object_taxonomies(ShoppProduct::$posttype));
-		
+
 		// Delete product meta (dimensions)
 		$table_meta = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
 		$table_price = ShoppDatabaseObject::tablename(ShoppPrice::$table);
@@ -1202,7 +1202,7 @@ class ShoppProduct extends WPShoppObject {
 	 * @param string $status The status to set: publish, draft, trash
 	 * @return boolean
 	 **/
-	static function publishset ($ids,$status) {
+	static function publishset ( array $ids, $status ) {
 
 		if ( empty($ids) || ! is_array($ids) ) return false;
 		$settings = array('publish', 'draft', 'trash');
@@ -1215,6 +1215,13 @@ class ShoppProduct extends WPShoppObject {
 		$post_date = sDB::mkdatetime($time);
 
 		sDB::query("UPDATE $table SET post_status='$status', post_date='$post_date', post_date_gmt='$post_date_gmt', post_modified='$post_date', post_modified_gmt='$post_date_gmt' WHERE ID in (" . join(',', $ids) . ")");
+
+		foreach ( $ids as $id ) { // Recount taxonomy counts #2968
+			$Post = new StdClass;
+			$Post->ID = $id;
+			$Post->post_type = ShoppProduct::$posttype;
+			wp_transition_post_status($_POST['status'], $Product->status, $Post);
+		}
 
 		return true;
 	}

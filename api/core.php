@@ -500,6 +500,8 @@ function is_shopp_taxonomy ( $wp_query = false ) {
 
 	if ( empty($wp_query->tax_query) ) return false; // No taxonomy request {@see #2748}
 
+	if ( ! isset($wp_query->post) ) $wp_query->post = null; // Prevent PHP notices
+
 	$object = $wp_query->get_queried_object();
 
 	$taxonomies = get_object_taxonomies(ShoppProduct::$posttype, 'names');

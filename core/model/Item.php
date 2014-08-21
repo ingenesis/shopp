@@ -105,6 +105,7 @@ class ShoppCartItem {
 		$Product->load_data();
 
 		// If option ids are passed, lookup by option key, otherwise by id
+		$Price = false;
 		if ( is_array($pricing) && ! empty($pricing) ) {
 			$optionkey = $Product->optionkey($pricing);
 			if ( ! isset($Product->pricekey[ $optionkey ]) ) $optionkey = $Product->optionkey($pricing, true); // deprecated prime

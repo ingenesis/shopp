@@ -460,7 +460,7 @@ class ShoppOrder {
 		$Purchase->customer = $this->Customer->id;
 		$Purchase->taxing = shopp_setting_enabled('tax_inclusive') ? 'inclusive' : 'exclusive';
 		$Purchase->freight = $this->Cart->total('shipping');
-		$Purchase->shipoption = $shipoption->name;
+		$Purchase->shipoption = isset($shipoption->name) ? $shipoption->name : '';
 		$Purchase->ip = $Shopping->ip;
 		$Purchase->created = current_time('mysql');
 		unset($Purchase->order);

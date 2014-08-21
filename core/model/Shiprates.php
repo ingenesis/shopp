@@ -130,7 +130,7 @@ class ShoppShiprates extends ListFramework {
 	 * @param boolean $free Flag to set the free shipping value
 	 * @return boolean True if free, false otherwise
 	 **/
-	public function free ( boolean $free = null ) {
+	public function free ( $free = null ) {
 
 		if ( isset($free) ) // Override the free setting if the free flag is set
 			$this->free = $free;
@@ -256,7 +256,6 @@ class ShoppShiprates extends ListFramework {
 	 * @return void
 	 **/
 	private function items () {
-
 		foreach ( $this->shippable as $id => $free ) {
 
 			$CartItem = shopp_cart_item($id);
@@ -264,9 +263,8 @@ class ShoppShiprates extends ListFramework {
 
 			$Item = new ShoppShippableItem( $CartItem );
 			$this->item($Item);
-			do_action_ref_array('shopp_calculate_item_shipping', array($id, &$Item));
+			do_action('shopp_calculate_item_shipping', $id, $Item);
 		}
-
 	}
 
 	/**

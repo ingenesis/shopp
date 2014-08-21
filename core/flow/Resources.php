@@ -271,7 +271,7 @@ class ShoppResources {
 
 		echo ShoppSupport::callhome(array(
 			'ShoppScreencast' => $_GET['id'],
-			'site' => get_bloginfo('siteurl')
+			'site' => get_bloginfo('url')
 		));
 
 		exit;

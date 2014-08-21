@@ -1,31 +1,32 @@
 /*!
  * checkout.js - Shopp catalog behaviors library
- * Copyright © 2008-2010 by Ingenesis Limited
+ * Copyright © 2008-2014 by Ingenesis Limited
  * Licensed under the GPLv3 {@see license.txt}
  */
 
 jQuery(document).ready(function () {
 	var $ = jqnc(),login=false,
-		sameaddr = $('.sameaddress'),
 		submitLogin = $('#submit-login-checkout'),
 		accountLogin = $('#account-login-checkout'),
 		passwordLogin = $('#password-login-checkout'),
 		guest = $('#guest-checkout'),
 		checkoutForm = $('#checkout.shopp'),
-		paymethods = $('#checkout.shopp [name=paymethod]'),
+		sameaddr = checkoutForm.find('.sameaddress'),
+		paymethods = checkoutForm.find('[name=paymethod]'),
+		defaultPaymethod = decodeURIComponent(d_pm),
 		localeMenu = $('#billing-locale'),
 		billCard = $('#billing-card'),
 		billCardtype = $('#billing-cardtype'),
-		checkoutButtons = $('.payoption-button'),
-		checkoutButton = $('.payoption-' + decodeURIComponent(d_pm)),
+		checkoutButtons = checkoutForm.find('.payoption-button'),
+		checkoutButton = checkoutForm.find('.payoption-' + defaultPaymethod),
 		submitButtons = checkoutButtons.find('input'),
 		checkoutProcess = $('#shopp-checkout-function'),
-		localeFields = $('#checkout.shopp li.locale');
+		localeFields = checkoutForm.find('li.locale');
 
 	// No payment option selectors found, use default when on checkout page only
-	if (checkoutForm.find('input[name=checkout]').val() == "process") {
+	if ( checkoutForm.find('input[name=checkout]').val() == "process" ) {
 		checkoutButtons.hide();
-		if (checkoutButton.length == 0) checkoutButton = $('.payoption-0');
+		if ( checkoutButton.length == 0 ) checkoutButton = checkoutForm.find('.payoption-0');
 		checkoutButton.show();
 		paymethods.change(paymethod_select).change();
 	}
@@ -33,17 +34,17 @@ jQuery(document).ready(function () {
 	$.fn.extend({
 		disableSubmit: function () {
 			return $(this).each(function() {
-				var $this = $(this);
-				$this.data('label', $this.val()).data('timeout',
+				var $this = $(this), label = $this.data('label') ? $co.submitting : $this.val();
+				$this.data('timeout',
 					setTimeout(function () { $this.enableSubmit(); alert($co.error); }, $co.timeout * 1000)
-				).prop('disabled',true).addClass('disabled').val($co.submitting);
+				).setDisabled(true).val($co.submitting);
 			});
 		},
 		enableSubmit: function () {
 			return $(this).each(function() {
-				var $this = $(this);
+				var $this = $(this), label = $this.data('label') ? $this.data('label') : $this.val();
 				clearTimeout($this.data('timeout'));
-				$this.prop('disabled', false).removeClass('disabled').val($this.data('label'));
+				$this.setDisabled(false).val(label);
 			});
 		},
 	});
@@ -51,6 +52,8 @@ jQuery(document).ready(function () {
 	submitButtons.on('click', function () {
 		$(this).disableSubmit();
 		setTimeout(function () { checkoutForm.submit(); }, 1);
+	}).each(function () {
+		$(this).data('label', $(this).val());
 	});
 
 	// Validate paycard number before submit
@@ -70,11 +73,11 @@ jQuery(document).ready(function () {
 		var cardtype = new String( billCardtype.val() ).toLowerCase(),
 			card = paycards[cardtype];
 
-		$('.paycard.xcsc').attr('disabled',true).addClass('disabled');
+		$('.paycard.xcsc').setDisabled(true);
 		if ( ! card || ! card['inputs'] ) return;
 
 		$.each(card['inputs'], function (input,inputlen) {
-			$('#billing-xcsc-'+input).attr('disabled', false).removeClass('disabled');
+			$('#billing-xcsc-'+input).setDisabled(false);
 		});
 
 	}).change();
@@ -189,10 +192,16 @@ jQuery(document).ready(function () {
 
 	$(window).load(function () {
 		$(document).trigger('shopp_paymethod',[paymethods.val()]);
+	}).unload(function () { // Re-enable submit buttons for if/when back button is pressed
+		submitButtons.enableSubmit();
 	});
 
 	function paymethod_select (e) {
-		var $this = $(this),paymethod = decodeURIComponent($(this).val()),checkoutButton = $('.payoption-'+paymethod),options='',pc = false;
+		var $this = $(this),
+			paymethod = decodeURIComponent($this.val()),
+			checkoutButton = checkoutForm.find('.payoption-'+paymethod),
+			options='',
+			pc = false;
 
 		if (this != window && $this.attr && 'radio' == $this.attr('type') && !$this.is(':checked')) return;
 		$(document).trigger('shopp_paymethod',[paymethod]);
@@ -202,7 +211,7 @@ jQuery(document).ready(function () {
 
 		if (pm_cards[paymethod] && pm_cards[paymethod].length > 0) {
 			checkoutForm.find('.payment,.paycard').show();
-			checkoutForm.find('.paycard.disabled').attr('disabled',false).removeClass('disabled');
+			checkoutForm.find('.paycard.disabled').setDisabled(false);
 			if (typeof(paycards) !== 'undefined') {
 				$.each(pm_cards[paymethod], function (a,s) {
 					if (!paycards[s]) return;
@@ -214,28 +223,30 @@ jQuery(document).ready(function () {
 
 		} else {
 			checkoutForm.find('.payment,.paycard').hide();
-			checkoutForm.find('.paycard').attr('disabled',true).addClass('disabled');
+			checkoutForm.find('.paycard').setDisabled(true);
 		}
 		checkoutButton.show();
 	}
 
 	function validcard () {
-		if (billCard.length == 0) return true;
-		if (billCard.attr('disabled')) return true;
+		if ( billCard.length == 0 ) return true;
+		if ( billCard.is(':disabled') || billCard.is(':hidden') ) return true;
 		var v = billCard.val().replace(/\D/g,''),
-			paymethod = paymethods.filter(':checked').val()?paymethods.filter(':checked').val():paymethods.val(),
+			$paymethod = paymethods.filter(':checked'),
+			paymethod = $paymethod.val() ? $paymethod.val() : paymethods.val(),
 			card = false;
-		if (!paymethod) paymethod = decodeURIComponent(d_pm);
-		if (billCard.val().match(/(X)+\d{4}/)) return true; // If card is masked, skip validation
-		if (!pm_cards[paymethod]) return true; // The selected payment method does not have cards
-		$.each(pm_cards[paymethod], function (a,s) {
-			var pc = paycards[s],pattern = new RegExp(pc.pattern.substr(1,pc.pattern.length-2));
-			if (v.match(pattern)) {
+		if ( ! paymethod ) paymethod = defaultPaymethod;
+		if ( billCard.val().match(/(X)+\d{4}/) ) return true; // If card is masked, skip validation
+		if ( ! pm_cards[ paymethod ] ) return true; // The selected payment method does not have cards
+		$.each(pm_cards[paymethod], function (a, s) {
+			var pc = paycards[s],
+				pattern = new RegExp(pc.pattern.substr(1, pc.pattern.length - 2));
+			if ( v.match(pattern) ) {
 				card = pc.symbol;
 				return billCardtype.val(card).change();
 			}
 		});
-		if (!luhn(v)) return false;
+		if ( ! luhn(v) ) return false;
 		return card;
 	}
 

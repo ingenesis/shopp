@@ -430,7 +430,7 @@ class FormPostFramework {
 	protected $form = array();
 	protected $defaults = array();
 
-	public function form ( $key = null, boolean $latest = null ) {
+	public function form ( $key = null, $latest = null ) {
 
 		if ( true === $latest ) $this->updateform();
 

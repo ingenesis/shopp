@@ -25,7 +25,8 @@ class ItemRates extends ShippingFramework implements ShippingModule {
 	}
 
 	public function calcitem ( $id, $Item ) {
-		if ( ! $Item->freeshipping ) $this->items += $Item->quantity;
+		if ( $Item->shipsfree ) return;
+		$this->items += $Item->quantity;
 	}
 
 	public function calculate ( &$options, $Order ) {
