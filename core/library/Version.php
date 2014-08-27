@@ -35,7 +35,7 @@ class ShoppVersion {
 	/**
 	 * Provides the full plugin release version string
 	 *
-	 * @author Jonathan Davis
+	 * @author Jonathan Davis and Steve Brickle
 	 * @since 1.3
 	 *
 	 * @return string The current release version string
