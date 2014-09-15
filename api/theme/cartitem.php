@@ -442,7 +442,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	public static function input ( $result, $options, $O ) {
 		$data = current($O->data);
 		$name = key($O->data);
-		if ( isset($options['name']) ) return $name;
+		if ( isset($options['name']) ) return apply_filters('shopp_cartitem_input_name', $name);
 		return apply_filters('shopp_cartitem_input_data', $data);
 	}
 
@@ -467,7 +467,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		foreach ( $O->data as $name => $data ) {
 			if (in_array($name,$exclude)) continue;
 			if (is_array($data)) $data = join($separator, $data);
-			$result .= '<li><strong>' . $name . '</strong>: ' . apply_filters('shopp_cartitem_input_data', $data) . '</li>';
+			$result .= '<li><strong>' . apply_filters('shopp_cartitem_input_name', $name) . '</strong>: ' . apply_filters('shopp_cartitem_input_data', $data) . '</li>';
 		}
 		$result .= '</ul>'.$after;
 		return $result;
