@@ -872,7 +872,8 @@ class ShoppProductPage extends ShoppPage {
 class ShoppCollectionPage extends ShoppPage {
 
 	public static $name = 'shopp-collection';
-
+	public static $filtered_content = false;
+	
 	public $slug = 'catalog';
 	public $templates = array('shopp-collection.php');
 
@@ -980,7 +981,7 @@ class ShoppCollectionPage extends ShoppPage {
 	public function content ($content) {
 		global $wp_query;
 		// Only modify content for Shopp collections (Shopp smart collections and taxonomies)
-		if ( ! $wp_query->is_main_query() ||  ! is_shopp_collection() ) return $content;
+		if ( ! $wp_query->is_main_query() ||  ! is_shopp_collection() || self::$filtered_content ) return $content;
 
 		$Collection = ShoppCollection();
 
@@ -998,6 +999,7 @@ class ShoppCollectionPage extends ShoppPage {
 		$content = ob_get_contents();
 		ob_end_clean();
 
+		self::$filtered_content = true;
 		return apply_filters('shopp_category_template', $content);
 	}
 
