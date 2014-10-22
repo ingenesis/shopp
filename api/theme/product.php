@@ -2095,14 +2095,15 @@ class ShoppProductThemeAPI implements ShoppAPI {
 				reset($O->prices);
 				$O->_prices_loop = true;
 			} else next($O->prices);
+
 			$price = current($O->prices);
 
-			if ( $price && ( $price->type == 'N/A' || $price->context != 'variation' ) )
+			while ( false !== $price && ('N/A' == $price->type || 'variation' != $price->context) )
 				$price = next($O->prices);
 
-			if ( $price !== false ) return true;
+			if ( false !== current($O->prices) ) return true;
 			else {
-				unset($O->_prices_loop);
+				$O->_prices_loop = false;
 				return false;
 			}
 		}
