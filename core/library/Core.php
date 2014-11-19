@@ -1737,6 +1737,8 @@ abstract class ShoppCore {
 
 		$to = $headers['To']; unset($headers['To']);
 		$subject = $headers['Subject']; unset($headers['Subject']);
+		$from = $headers['From']; unset($headers['From']);
+		$headers[] = 'From: '.shopp_setting('business_name').' <'.$from.'>';
 
 		$sent = wp_mail($to, $subject, $message, $headers);
 
