@@ -632,7 +632,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 	/**
 	 * Iterates over the addons from the current item in the items loop
 	 *
-	 * @api `shopp('purcahse.item-addons')`
+	 * @api `shopp('purchase.item-addons')`
 	 * @since 1.1
 	 *
 	 * @param string        $result  The output
