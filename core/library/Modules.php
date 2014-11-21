@@ -397,7 +397,7 @@ class ModuleFile {
 	}
 
 	public static function baseversion ( $version ) {
-		preg_match('/^[\d\.]+/', $version, $baseversion);
+		preg_match('/^[\d\.]+/', trim($version), $baseversion);
 		return $baseversion[0];
 	}
 
