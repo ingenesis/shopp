@@ -80,7 +80,12 @@ class ShoppAjax {
 
 	public function receipt () {
 		check_admin_referer('wp_ajax_shopp_order_receipt');
-		if ( 0 == intval($_GET['id']) ) die('-1');
+		if ( 0 == intval($_GET['id']) && !is_array($_GET['id']) ) die('-1');
+
+		if( !is_array($_GET['id']) )
+		{
+			$_GET['id'] = array($_GET['id']);
+		}
 
 		ShoppPurchase( new ShoppPurchase((int)$_GET['id']));
 
@@ -90,7 +95,25 @@ class ShoppAjax {
 			echo '<style type="text/css">body { padding: 20px; font-family: Arial,Helvetica,sans-serif; }</style>';
 			echo "<link rel='stylesheet' href='".shopp_template_url('shopp.css')."' type='text/css' />";
 		echo "</head><body>";
-		echo apply_filters('shopp_admin_order_receipt',shopp('purchase','get-receipt','template=receipt-admin.php'));
+
+		$_GET['id'] = array_values($_GET['id']);
+		foreach( $_GET['id'] as $key => $id )
+		{
+			$style = 'width:100%; height:100%;';
+
+			if( ($key + 1) < count($_GET['id']) )
+			{
+				$style .= 'page-break-after:always;';
+			}
+
+			echo '<div style="' . $style . '">';
+
+			ShoppPurchase( new ShoppPurchase($id) );
+			echo apply_filters('shopp_admin_order_receipt',shopp('purchase','get-receipt','template=receipt-admin.php'));
+
+			echo '</div>';
+		}
+
 		if (isset($_GET['print']) && $_GET['print'] == 'auto')
 			echo '<script type="text/javascript">window.onload = function () { window.print(); window.close(); }</script>';
 		echo "</body></html>";

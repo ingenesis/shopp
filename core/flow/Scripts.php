@@ -222,6 +222,9 @@ function shopp_default_scripts (&$scripts) {
 	$scripts->add('ocupload', '/ui/behaviors/ocupload.js', array('jquery'), $version);
 	$scripts->add_data('ocupload', 'group', 1);
 
+	$scripts->add('print-orders', '/ui/behaviors/print-orders.js', array('jquery'), $version);
+	$scripts->add_data('print-orders', 'group', 1);
+
 	$scripts->add('orders', '/ui/behaviors/orders.js', array('jquery'), $version);
 	$scripts->add_data('orders', 'group', 1);
 

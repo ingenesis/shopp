@@ -320,6 +320,7 @@ class ShoppAdminService extends ShoppAdminController {
 	public function columns () {
 		shopp_enqueue_script('calendar');
 		shopp_enqueue_script('daterange');
+		shopp_enqueue_script('print-orders');
 		register_column_headers($this->screen, array(
 			'cb'=>'<input type="checkbox" />',
 			'order'=>__('Order','Shopp'),
