@@ -123,8 +123,8 @@ function shopp_deregister_script( $handle ) {
  *                               and so should be included if a version number is available and makes sense for the script.
  * @param bool        $in_footer Optional. Whether to enqueue the script before </head> or before </body>.
  *                               Default 'false'. Accepts 'false' or 'true'.
-*/
-function shopp_enqueue_script ( $handle, $src = false, $deps = array(), $ver = false, $in_footer = false ) {
+ */
+function shopp_enqueue_script( $handle, $src = false, $deps = array(), $ver = false, $in_footer = false ) {
 	global $ShoppScripts;
 	if ( !is_a($ShoppScripts, 'ShoppScripts') )
 		$ShoppScripts = new ShoppScripts();
@@ -153,7 +153,7 @@ function shopp_enqueue_script ( $handle, $src = false, $deps = array(), $ver = f
  * @param string $list Optional, defaults to 'queue'. Others values are 'registered', 'queue', 'done', 'to_do'
  * @return bool
  */
-function shopp_script_is ( $handle, $list = 'queue' ) {
+function shopp_script_is( $handle, $list = 'queue' ) {
 	global $ShoppScripts;
 	if ( !is_a($ShoppScripts, 'ShoppScripts') )
 		$ShoppScripts = new ShoppScripts();
@@ -178,13 +178,9 @@ function shopp_script_is ( $handle, $list = 'queue' ) {
  * @return void
  **/
 function shopp_dependencies () {
-	global $ShoppScripts, $ShoppStyles, $wp_scripts;
-
+	global $ShoppScripts, $wp_scripts;
 	if ( ! is_a($ShoppScripts, 'ShoppScripts') )
 		$ShoppScripts = new ShoppScripts();
-
-	if ( ! is_a($ShoppStyles, 'ShoppStyles') )
-		$ShoppStyles = new ShoppStyles();
 
 	foreach ( $wp_scripts->queue as $handle ) {
 		$deps = $wp_scripts->registered[ $handle ]->deps;

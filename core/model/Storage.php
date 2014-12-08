@@ -42,7 +42,8 @@ class StorageEngines extends ModuleLoader {
 	 **/
 	public function __construct () {
 
-		add_action('shopp_module_loaded', array($this, 'actions'));
+		if ( function_exists('add_action') )
+			add_action('shopp_module_loaded', array($this, 'actions'));
 
 		$this->installed();
 		$this->activated();

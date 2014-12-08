@@ -1,25 +1,53 @@
 <?php
 /**
- * image.php
- *
+ * ImageServer
  * Provides low-overhead image service support
  *
- * @copyright Ingenesis Limited, December 2009-2013
- * @license GNU GPL version 3 (or later) {@see license.txt}
- * @package Shopp\Services\Scripts
- * @version 1.4
- * @since 1.1
+ * @author Jonathan Davis
+ * @version 1.0
+ * @copyright Ingenesis Limited, 12 December, 2009
+ * @package shopp
+ * @subpackage image
  **/
-
-defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 // Reduce image display issues by hiding warnings/notices
 ini_set('display_errors', 0);
 
+if ( ! defined('SHORTINIT') ) define('SHORTINIT',true);
 define('SHOPP_IMGSERVER_LOADED', true);
 
+$path = ImageServer::path();
+
+// Create a "stub" global Shopp object for use by Asset objects (as the $Shopp
+// global will not otherwise be present for them to populate)
+if ( ! isset($GLOBALS['Shopp']) ) $GLOBALS['Shopp'] = new stdClass;
+
+// Make core Shopp functionality available
+if ( ! defined('WPINC') ) define('WPINC', 'wp-includes'); // Stop 403s from unauthorized direct access
+
+// Core functions and lazy loader
+if ( ! class_exists('ShoppLoader') )
+	require "$path/core/library/Loader.php";
+
+// Barebones bootstrap (say that 5x fast) for WordPress
+if ( ! defined('ABSPATH') && $loadfile = ShoppLoader::find_wpload()) {
+	require($loadfile);
+	global $table_prefix;
+}
+
+
+// Stub i18n for compatibility
+if ( ! function_exists('__')) {
+	// Localization API is not available at this point
+	function __ ($string,$domain=false) {
+		return $string;
+	}
+}
+
+ShoppDeveloperAPI::load( dirname(ShoppLoader::basepath()), array('core','settings') );
+
 // Start the server
-new ShoppImageServer();
+new ImageServer;
 exit;
 
 /**
@@ -29,7 +57,7 @@ exit;
  * @since 1.1
  * @package image
  **/
-class ShoppImageServer {
+class ImageServer {
 
 	static $prettyurls = '{^/.+?/images/(\d+)/.*$}';
 
@@ -58,7 +86,6 @@ class ShoppImageServer {
 		else $this->error();
 
 	}
-
 
 	/**
 	 * Parses the request to determine the image to load
@@ -304,8 +331,9 @@ class ShoppImageServer {
 		if ( ! defined('SHOPP_ADDONS') )
 			define('SHOPP_ADDONS', WP_CONTENT_DIR . '/shopp-addons');
 
-		$Shopp = Shopp::plugin();
 		$Shopp->Storage = new StorageEngines();
+
+		ShoppSettings();
 
 		$modules = shopp_setting('imaging_modules');
 

@@ -209,6 +209,80 @@ class ShoppLoader {
 		fclose($file);
 	}
 
+	public static function find_wpload () {
+
+		$configfile = 'wp-config.php';
+		$loadfile = 'wp-load.php';
+		$wp_abspath = false;
+		$cached = false;
+
+		$syspath = explode('/', $_SERVER['SCRIPT_FILENAME']);
+		$uripath = explode('/', $_SERVER['SCRIPT_NAME']);
+		$rootpath = array_diff($syspath, $uripath);
+		$root = '/' . join('/', $rootpath);
+
+		$filepath = dirname( ! empty($_SERVER['SCRIPT_FILENAME']) ? $_SERVER['SCRIPT_FILENAME'] : __FILE__ );
+
+		define('SHOPP_LOADER_APC', function_exists('apc_exists'));
+		$apccache = 'shopp_wp_abspath_' . hash('crc32b', $filepath);
+
+		if ( isset($_SERVER['SHOPP_WP_ABSPATH'] )
+			&& file_exists(self::sanitize($_SERVER['SHOPP_WP_ABSPATH']) . '/' . $loadfile) ) {
+
+			// SetEnv SHOPP_WP_ABSPATH /path/to/wp-load.php
+			// and SHOPP_ABSPATH used on webserver site config
+			$wp_abspath = $_SERVER['SHOPP_WP_ABSPATH'];
+
+		} elseif ( SHOPP_LOADER_APC && apc_exists($apccache) && $cached = apc_fetch($apccache) && file_exists("$cached/$loadfile") ) {
+
+			return "$cached/$loadfile";
+
+		} elseif ( file_exists(self::sanitize($root) . '/' . $loadfile) ) {
+
+			$wp_abspath = $root; // WordPress install in DOCUMENT_ROOT
+
+		} elseif ( strpos($filepath, $root) !== false ) {
+
+			// Shopp directory has DOCUMENT_ROOT ancenstor, find wp-load.php
+			$fullpath = explode ('/', self::sanitize($filepath));
+			while ( ! $wp_abspath && null !== array_pop($fullpath) )
+				if ( file_exists( self::sanitize(join('/', $fullpath)) . '/' . $loadfile ) )
+					$wp_abspath = join('/', $fullpath);
+
+			if ( ! $wp_abspath ) {
+				// No wp-load.php found in any of the parent directories
+				// Try scanning sub-directories of DOCUMENT_ROOT for WP sub-directory installs
+				$subdirs = array_reverse(glob($root . '/*', GLOB_ONLYDIR));
+				foreach ( $subdirs as $dir ) {
+					$found = glob($dir . '/' . $loadfile);
+					if ( ! empty($found) ) {
+						$wp_abspath = $dir;
+						break;
+					}
+				}
+			}
+
+	    } else {
+
+	        /* Last chance, do or die */
+			$filepath = self::sanitize($filepath);
+	        if ( false !== ($pos = strpos($filepath, 'wp-content/plugins')) )
+	            $wp_abspath = substr($filepath, 0, --$pos);
+
+	    }
+
+		$wp_load_file = self::sanitize($wp_abspath) . "/$loadfile";
+
+		if ( false !== $wp_load_file ) {
+			if ( SHOPP_LOADER_APC )
+				apc_store($apccache, $wp_abspath);
+			return $wp_load_file;
+		}
+
+		return false;
+
+	}
+
 	/**
 	 * Indicates if Shopp is being activated. This can be useful for systems such as the Settings object
 	 * which will wish to avoid database operations before the schema is available, etc.
@@ -288,6 +362,7 @@ ShoppLoader::map(array(
 	'gatewaysettingsui' => '/model/Gateway.php',
 	'imageasset' => '/model/Asset.php',
 	'imageprocessor' => '/model/Image.php',
+	'imageserver' => '/image.php',
 	'imagesetting' => '/model/Asset.php',
 	'imagesettings' => '/model/Asset.php',
 	'indexproduct' => '/model/Search.php',
@@ -482,7 +557,6 @@ ShoppLoader::map(array(
 	'shoppflow' => '/flow/Flow.php',
 	'shoppflowcontroller' => '/flow/Flow.php',
 	'shoppformvalidation' => '/library/Validation.php',
-	'shoppimageserver' => '/image.php',
 	'shoppimagingmodule' => '/model/Image.php',
 	'shoppimagingmodules' => '/model/Image.php',
 	'shopping' => '/model/Shopping.php',
@@ -521,7 +595,6 @@ ShoppLoader::map(array(
 	'shoppresources' => '/flow/Resources.php',
 	'shoppscripts' => '/flow/Scripts.php',
 	'shoppsearchwidget' => '/ui/widgets/search.php',
-	'shoppservices' => '/library/ShoppServices.php',
 	'shoppsettings' => '/model/Settings.php',
 	'shoppshippableitem' => '/model/Shiprates.php',
 	'shoppshiprates' => '/model/Shiprates.php',
@@ -529,7 +602,6 @@ ShoppLoader::map(array(
 	'shoppshopperswidget' => '/ui/widgets/shoppers.php',
 	'shoppshortcodes' => '/flow/Pages.php',
 	'shoppstorefront' => '/flow/Storefront.php',
-	'shoppstyles' => '/flow/Styles.php',
 	'shoppsupport' => '/library/Support.php',
 	'shopptagcloudwidget' => '/ui/widgets/tagcloud.php',
 	'shopptax' => '/model/Tax.php',

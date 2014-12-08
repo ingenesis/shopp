@@ -737,7 +737,7 @@ class ShoppAdminSystem extends ShoppAdminController {
 		add_action('shopp_gateway_module_settings',array($Gateways,'templates'));
 		include $this->ui('payments.php');
 	}
-
+	
 	public function payments_help () {
 		$Shopp = Shopp::object();
 		$Gateways = $Shopp->Gateways;
@@ -775,11 +775,6 @@ class ShoppAdminSystem extends ShoppAdminController {
 			ShoppErrorLogging()->loglevel( (int)shopp_setting('error_logging') );
 			ShoppErrorNotification()->setup();
 
-			if ( isset($_POST['shopp_services_plugins']) && $this->helper_installed() ) {
-				add_option('shopp_services_plugins'); // Add if it doesn't exist
-				update_option('shopp_services_plugins', $_POST['shopp_services_plugins']);
-			}
-
 			$this->notice(Shopp::__('Advanced settings saved.'));
 
 		} elseif ( ! empty($_POST['rebuild']) ) {
@@ -796,107 +791,37 @@ class ShoppAdminSystem extends ShoppAdminController {
 			if ( sDB::query($query) )
 				$this->notice(Shopp::__('Product summaries are set to recalculate.'));
 
-		} elseif ( isset($_POST['shopp_services_helper']) ) {
-			check_admin_referer('shopp-system-advanced');
-
-			$plugin = 'ShoppServices.php';
-			$source = SHOPP_PATH . "/core/library/$plugin";
-			$install = WPMU_PLUGIN_DIR . '/' . $plugin;
-
-			if ( false === ( $creds = request_filesystem_credentials($this->url, '', false, false, null) ) )
-				return true; // stop the normal page form from displaying
-
-			if ( ! WP_Filesystem($creds) ) { // credentials were no good, ask for them again
-				request_filesystem_credentials($this->url, '', false, false, null);
-				return true;
-			}
-
-			global $wp_filesystem;
-
-			if ( 'install' == $_POST['shopp_services_helper'] ) {
-
-				if ( ! $wp_filesystem->exists($install) ) {
-					if ( $wp_filesystem->exists(WPMU_PLUGIN_DIR) || $wp_filesystem->mkdir(WPMU_PLUGIN_DIR, FS_CHMOD_DIR) ) {
-						// Install the mu-plugin helper
-						$wp_filesystem->copy($source, $install, true, FS_CHMOD_FILE);
-					} else $this->notice(Shopp::_mi('The services helper could not be installed because the `mu-plugins` directory could not be created. Check the file permissions of the `%s` directory on the web aserver.', WP_CONTENT_DIR), 'error');
-				}
-
-				if ( $wp_filesystem->exists($install) ) {
-					shopp_set_setting('shopp_services_helper', 'on');
-					$this->notice(Shopp::__('Services helper installed.'));
-				} else $this->notice(Shopp::__('The services helper failed to install.'), 'error');
-
-			} elseif ( 'remove' == $_POST['shopp_services_helper'] ) {
-				global $wp_filesystem;
-
-				if ( $wp_filesystem->exists($install) )
-					$wp_filesystem->delete($install);
-
-				if ( ! $wp_filesystem->exists($install) ) {
-					shopp_set_setting('shopp_services_helper', 'off');
-					$this->notice(Shopp::__('Services helper uninstalled.'));
-				} else {
-					$this->notice(Shopp::__('Services helper could not be uninstalled.'), 'error');
-				}
-			}
 		}
 
 		$notifications = shopp_setting('error_notifications');
-		if ( empty($notifications) ) $notifications = array();
+		if (empty($notifications)) $notifications = array();
 
 		$notification_errors = array(
-			SHOPP_TRXN_ERR  => Shopp::__('Transaction Errors'),
-			SHOPP_AUTH_ERR  => Shopp::__('Login Errors'),
-			SHOPP_ADDON_ERR => Shopp::__('Add-on Errors'),
-			SHOPP_COMM_ERR  => Shopp::__('Communication Errors'),
-			SHOPP_STOCK_ERR => Shopp::__('Inventory Warnings')
-		);
+			SHOPP_TRXN_ERR => __('Transaction Errors','Shopp'),
+			SHOPP_AUTH_ERR => __('Login Errors','Shopp'),
+			SHOPP_ADDON_ERR => __('Add-on Errors','Shopp'),
+			SHOPP_COMM_ERR => __('Communication Errors','Shopp'),
+			SHOPP_STOCK_ERR => __('Inventory Warnings','Shopp')
+			);
 
 		$errorlog_levels = array(
-			0               => Shopp::__('Disabled'),
-			SHOPP_ERR       => Shopp::__('General Shopp Errors'),
-			SHOPP_TRXN_ERR  => Shopp::__('Transaction Errors'),
-			SHOPP_AUTH_ERR  => Shopp::__('Login Errors'),
-			SHOPP_ADDON_ERR => Shopp::__('Add-on Errors'),
-			SHOPP_COMM_ERR  => Shopp::__('Communication Errors'),
-			SHOPP_STOCK_ERR => Shopp::__('Inventory Warnings'),
-			SHOPP_ADMIN_ERR => Shopp::__('Admin Errors'),
-			SHOPP_DB_ERR    => Shopp::__('Database Errors'),
-			SHOPP_PHP_ERR   => Shopp::__('PHP Errors'),
-			SHOPP_ALL_ERR   => Shopp::__('All Errors'),
-			SHOPP_DEBUG_ERR => Shopp::__('Debugging Messages')
-		);
+			0 => __('Disabled','Shopp'),
+			SHOPP_ERR => __('General Shopp Errors','Shopp'),
+			SHOPP_TRXN_ERR => __('Transaction Errors','Shopp'),
+			SHOPP_AUTH_ERR => __('Login Errors','Shopp'),
+			SHOPP_ADDON_ERR => __('Add-on Errors','Shopp'),
+			SHOPP_COMM_ERR => __('Communication Errors','Shopp'),
+			SHOPP_STOCK_ERR => __('Inventory Warnings','Shopp'),
+			SHOPP_ADMIN_ERR => __('Admin Errors','Shopp'),
+			SHOPP_DB_ERR => __('Database Errors','Shopp'),
+			SHOPP_PHP_ERR => __('PHP Errors','Shopp'),
+			SHOPP_ALL_ERR => __('All Errors','Shopp'),
+			SHOPP_DEBUG_ERR => __('Debugging Messages','Shopp')
+			);
 
-		$plugins = get_plugins();
-		$service_plugins = get_option('shopp_services_plugins');
+		$loading = array('shopp' => __('Load on Shopp-pages only','Shopp'),'all' => __('Load on entire site','Shopp'));
 
 		include $this->ui('advanced.php');
-	}
-
-	public function helper_installed () {
-		$plugins = wp_get_mu_plugins();
-		foreach ( $plugins as $plugin )
-			if ( false !== strpos($plugin, 'ShoppServices.php') ) return true;
-		return false;
-	}
-
-	public static function install_services_helper () {
-		if ( ! self::filesystemcreds() ) {
-
-		}
-	}
-
-	protected static function filesystemcreds () {
-		if ( false === ( $creds = request_filesystem_credentials($this->url, '', false, false, null) ) ) {
-			return false; // stop the normal page form from displaying
-		}
-
-		if ( ! WP_Filesystem($creds) ) { // credentials were no good, ask for them again
-			request_filesystem_credentials($this->url, $method, true, false, $form_fields);
-			return false;
-		}
-		return $creds;
 	}
 
 	public function log () {

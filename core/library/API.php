@@ -21,7 +21,7 @@ interface ShoppAPI {
 final class ShoppDeveloperAPI {
 
 	static $core = array(
-		'core', 'theme', 'script', 'style',
+		'core', 'theme', 'script',
 		'admin', 'asset', 'cart', 'collection',
 		'customer', 'meta', 'order', 'product',
 		'settings'

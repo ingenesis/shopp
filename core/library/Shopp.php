@@ -374,7 +374,16 @@ final class Shopp extends ShoppCore {
 	 **/
 	public static function services () {
 		if ( WP_DEBUG ) define('SHOPP_MEMORY_PROFILE_BEFORE', memory_get_peak_usage(true) );
-		ShoppServices::serve();
+
+		$services = dirname(ShoppLoader()->basepath()) . '/services';
+
+		// Image Server request handling
+		if ( isset($_GET['siid']) || 1 == preg_match('{^/.+?/images/\d+/.*$}', $_SERVER['REQUEST_URI']) )
+			return require "$services/image.php";
+
+		// Script Server request handling
+		if ( isset($_GET['sjsl']) )
+			return require "$services/scripts.php";
 	}
 
 	// Deprecated properties
