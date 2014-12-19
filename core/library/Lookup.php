@@ -702,6 +702,7 @@ class Lookup {
 		$_['lasr'] = new PayCard('Laser','Lasr','/^(6304|6706|6709|6771)\d{12,15}$/');
 		$_['solo'] = new PayCard('Solo','Solo','/^(6334|6767)(\d{12}|\d{14,15})$/',3, array('start'=>5,'issue'=>3));
 		$_['visa'] = new PayCard('Visa','Visa','/^4[0-9]{12}(?:[0-9]{3})?$/',3);
+		$_['delta'] = new PayCard('Visa Debit/Delta','Delta','/^4[0-9]{12}(?:[0-9]{3})?$/',3);
 		return apply_filters('shopp_payment_cards',$_);
 	}
 
