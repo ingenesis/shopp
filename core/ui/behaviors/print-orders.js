@@ -1,6 +1,6 @@
 jQuery(window).ready( function($) {
 	var printOrderURL = $('#print-button').attr('href');
-	$('body').append('<iframe id="print-receipt" name="receipt" src="' + printOrderURL + '" width="400" height="100" style="visiblity: hidden;"></iframe>');
+	$('body').append('<iframe id="print-receipt" name="receipt" src="' + printOrderURL + '" width="400" height="100" style="display: none;"></iframe>');
 
 	$('#print-button').click(function(event) {
 		event.preventDefault();
@@ -30,7 +30,7 @@ jQuery(window).ready( function($) {
 	});
 
 	function showPrintModal()
-	{	
+	{
 		// DEFAULT SHOPP FUNCTIONALITY
 		var frame = $( '#print-receipt' ).get( 0 ), fw = frame.contentWindow;
 
