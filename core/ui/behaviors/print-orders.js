@@ -5,7 +5,7 @@ jQuery(window).ready( function($) {
 	$('#print-button').click(function(event) {
 		event.preventDefault();
 
-		// CREATE AN ARRAY OF SELECTED IDS
+		// Create an array of the selected orders
 		var ids = [];
 		$('#orders-table th input').each( function () {
 			if( this.checked )
@@ -31,7 +31,7 @@ jQuery(window).ready( function($) {
 
 	function showPrintModal()
 	{
-		// DEFAULT SHOPP FUNCTIONALITY
+		// Default shopp functionality
 		var frame = $( '#print-receipt' ).get( 0 ), fw = frame.contentWindow;
 
 		// Which browser agent?
