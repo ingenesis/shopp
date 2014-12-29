@@ -19,7 +19,7 @@ jQuery(document).ready(function ($) {
 
 		$.getJSON(zones_url+'&action=shopp_country_zones&country='+baseop.val(),
 			function(data) {
-				baseopZone.hide().empty().attr('disabled',true);;
+				baseopZone.hide().empty().attr('disabled',true);
 				if (!data) return true;
 
 				$.each(data, function(value,label) {

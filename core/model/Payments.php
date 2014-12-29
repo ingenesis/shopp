@@ -149,7 +149,7 @@ class ShoppPayments extends ListFramework {
 	 * @param string $selection The payment option slug
 	 * @return ShoppPaymentOption The selected payment option (or false)
 	 **/
-	public function selected ( string $selection = null ) {
+	public function selected ( $selection = null ) {
 
 		if ( isset($selection) ) {
 			if ( $this->exists($selection) )
@@ -180,7 +180,7 @@ class ShoppPayments extends ListFramework {
 	 * @param string $processor The payment processor class
 	 * @return string The payment processor class name
 	 **/
-	public function processor ( string $processor = null ) {
+	public function processor ( $processor = null ) {
 
 		$selected = $this->selected();
 
@@ -264,7 +264,7 @@ class ShoppPayments extends ListFramework {
 	 * @param string $module The payment module class name
 	 * @return GatewayFramework A payment gateway class (or boolean false if not valid)
 	 **/
-	private function modules ( string $module = null ) {
+	private function modules ( $module = null ) {
 		$Shopp = Shopp::object();
 
 		if ( is_null($module) ) return $Shopp->Gateways->active;

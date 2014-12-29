@@ -208,7 +208,8 @@ class ShoppCart extends ListFramework {
 
 				if ( empty($prices) ) $prices[] = false; // Use default price for product if none provided
 				foreach($prices as $price)
-					$result = $this->additem($quantity, $Product, $price, $category, $data, $addons);
+					$result = $this->additem($quantity, $Product, $price, $category, apply_filters('shopp_cartitem_data', $data), $addons);
+
 			}
 		}
 
@@ -303,6 +304,8 @@ class ShoppCart extends ListFramework {
 			if ( ! $NewItem->valid() || ! $this->addable($NewItem) ) return false;
 		}
 
+		do_action('shopp_cart_before_add_item', array($NewItem) );
+
 		$id = $NewItem->fingerprint();
 
 		if ( $this->exists($id) ) {
@@ -343,7 +346,7 @@ class ShoppCart extends ListFramework {
 	 * @param int $item Index of the item in the Cart contents
 	 * @return boolean
 	 **/
-	public function rmvitem ( string $id ) {
+	public function rmvitem ( $id ) {
 		$Item = $this->get($id);
 
 		$Totals = $this->Totals;
@@ -360,7 +363,7 @@ class ShoppCart extends ListFramework {
 
 		$Shipping->takeoff( $id );
 
-		do_action_ref_array('shopp_cart_remove_item', array($Item->fingerprint(), $Item));
+		do_action('shopp_cart_remove_item', $id, $Item);
 
 		return $this->remove($id);
 	}
@@ -485,7 +488,7 @@ class ShoppCart extends ListFramework {
 	 * @param int|array|Price $pricing Price record ID or an array of pricing record IDs or a Price object
 	 * @return boolean
 	 **/
-	public function change ( string $item, integer $product, integer $pricing, array $addons = array() ) {
+	public function change ( $item, $product, $pricing, array $addons = array() ) {
 
 		// Don't change anything if everything is the same
 		if ( ! $this->exists($item) || ($this->get($item)->product == $product && $this->get($item)->price == $pricing) )
@@ -572,6 +575,8 @@ class ShoppCart extends ListFramework {
 		$ShippingAddress = $Order->Shipping;
 		$Shiprates = $Order->Shiprates;
 
+		if ( empty($Shiprates) ) return;
+
 		// Tell Shiprates to track changes for this data...
 		$Shiprates->track('shipcountry', $ShippingAddress->country);
 		$Shiprates->track('shipstate', $ShippingAddress->state);
@@ -614,7 +619,7 @@ class ShoppCart extends ListFramework {
 		do_action('shopp_cart_item_totals', $Totals); // Update cart item totals
 
 		$items = $this->keys(); // Use local array for iterating
-		foreach ( $items as $itemid ) { // Allow other code to interate the cart in this loop
+		foreach ( $items as $itemid ) { // Allow other code to iterate the cart in this loop
 			$Item = $this->get($itemid);
 			$Item->totals();
 		}
@@ -651,7 +656,7 @@ class ShoppCart extends ListFramework {
 	 * @param string $register The name of the register to get an amount for
 	 * @return float The total amount for the register
 	 **/
-	public function total ( string $register = null, string $entry = null ) {
+	public function total ( $register = null, $entry = null ) {
 
 		// Setup totals counter
 		if ( false === $this->Totals ) $this->Totals = new OrderTotals();
@@ -714,7 +719,7 @@ class ShoppCart extends ListFramework {
 	 * @return boolean True if there are shipped items in the cart
 	 **/
 	public function downloads () {
-		return $this->filteritems('download');
+		return $this->filteritems('downloads');
 	}
 
 	/**
@@ -738,14 +743,15 @@ class ShoppCart extends ListFramework {
 	 * @param string $type The type of item to find (shipped, downloads or recurring)
 	 * @return boolean True if the item is of the specified type, false otherwise
 	 **/
-	private function filteritems ($type) {
-		$types = array('shipped','downloads','recurring');
-		if ( ! in_array($type,$types) ) return false;
+	private function filteritems ( $type ) {
+		$types = array('shipped', 'downloads', 'recurring');
+		if ( ! in_array($type, $types) ) return false;
 
 		$this->$type = array();
 		foreach ($this as $key => $item) {
-			if ( ! $item->$type ) continue;
-			$this->{$type}[$key] = $item;
+			$prop = rtrim($type, 's'); // No plural properties
+			if ( ! $item->$prop ) continue;
+			$this->{$type}[ $key ] = $item;
 		}
 
 		return ! empty($this->$type);

@@ -33,7 +33,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 
 	public $inventory = false;
 	public $downloads = false;
-	public $shipable = false;
+	public $shippable = false;
 	public $shipped = false;
 	public $stocked = false;
 
@@ -42,7 +42,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		$this->init(self::$table);
 		if ( ! $id ) return true;
 		$this->load($id, $key);
-		if ( ! empty($this->shipmethod) ) $this->shipable = true;
+		if ( ! empty($this->shipmethod) ) $this->shippable = true;
 
 	}
 
@@ -117,7 +117,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		$index = $record->id;
 
 		if ( ! empty($Purchased->download) ) $this->downloads = true;
-		if ( 'Shipped' == $Purchased->type ) $this->shipable = true;
+		if ( 'Shipped' == $Purchased->type ) $this->shippable = true;
 		if ( isset($record->inventory) ) {
 			$Purchased->inventory = Shopp::str_true($record->inventory);
 			if ( $Purchased->inventory ) $this->stocked = true;
@@ -136,7 +136,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 			foreach ( $Purchased->addons->meta as $Addon ) {
 				$addon = $Addon->value;
 				if ( 'Download' == $addon->type ) $this->downloads = true;
-				if ( 'Shipped' == $addon->type ) $this->shipable = true;
+				if ( 'Shipped' == $addon->type ) $this->shippable = true;
 				if ( Shopp::str_true($addon->inventory) ) $this->stocked = true;
 			}
 
@@ -227,7 +227,8 @@ class ShoppPurchase extends ShoppDatabaseObject {
 
 			if ( 'ShoppCustomer' == $class ) { // hash the password before storage
 				$Object->hashpass();
-				$Record->passhash = $Object->passhash;
+				if ( isset($Object->passhash) )
+					$Record->passhash = $Object->passhash;
 				$Record->loginname = $Object->loginname;
 			}
 
@@ -370,6 +371,24 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		}
 
 		$Event->unstocked($allocated);
+	}
+
+	/**
+	 * Determines if the order has a given order event
+	 *
+	 * @since 1.3.5
+	 *
+	 * @param string $event The event to check for
+	 * @return boolean True if the event occurred
+	 **/
+	public function did ( $event ) {
+
+		if ( empty($this->events) ) $this->load_events(); // Load events
+		foreach ( (array) $this->events as $entry )
+			if ( $event == $entry->name ) return true;
+
+		return false;
+
 	}
 
 	/**
@@ -521,7 +540,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 	 *
 	 * @return void
 	 **/
-	public function success ( $Purchase ) {
+	public static function success ( $Purchase ) {
 
 		$templates = array('email-order.php', 'order.php', 'order.html');
 
@@ -537,7 +556,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 				shopp_setting('merchant_email'),									// Recipient email address
 				Shopp::__('New Order - %s', $Purchase->id),								// Subject
 				array_merge(array('email-merchant-order.php'), $templates))			// Templates
-		));
+		), $Purchase);
 
 		// Remove merchant notification if disabled in receipt copy setting
 		if ( ! shopp_setting_enabled('receipt_copy') ) unset($messages['merchant']);
@@ -563,7 +582,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		else $email['to'] = Shopp::email_to( $address, $addressee );
 		$email['subject'] = $subject;
 		$email['receipt'] = $this->receipt();
-		$email['url'] = get_bloginfo('siteurl');
+		$email['url'] = get_bloginfo('url');
 		$email['sitename'] = get_bloginfo('name');
 		$email['orderid'] = $this->id;
 
@@ -851,7 +870,7 @@ class PurchasesExport {
 			$meta_table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
 			$joins[ $meta_table ] = "LEFT JOIN $meta_table AS discounts ON discounts.parent = o.id AND discounts.name='discounts' AND discounts.context='purchase'";
 		}
-		
+
 		if ( $addoncols ) {
 			$meta_table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
 			$joins[ $meta_table.'_2' ] = "LEFT JOIN $meta_table AS addons ON addons.parent = p.id AND addons.type='addon' AND addons.context='purchased'";

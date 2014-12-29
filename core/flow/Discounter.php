@@ -188,7 +188,19 @@ class ShoppAdminDiscounter extends ShoppAdminController {
 		if ( ! empty($_POST['ends']['month']) && ! empty($_POST['ends']['date']) && ! empty($_POST['ends']['year']) )
 			$_POST['ends'] = mktime(23, 59, 59, $_POST['ends']['month'], $_POST['ends']['date'], $_POST['ends']['year']);
 		else $_POST['ends'] = 1;
-		if ( isset($_POST['rules']) ) $_POST['rules'] = stripslashes_deep($_POST['rules']);
+
+		if ( isset($_POST['rules']) ) {
+			$_POST['rules'] = stripslashes_deep($_POST['rules']);
+			foreach($_POST['rules'] as &$rule) {
+
+				if ( 'promo code' == strtolower($rule['property']) )
+					$rule['value'] = trim($rule['value']);
+
+				if ( false !== stripos($rule['property'], 'country') && 'USA' == $rule['value'] )
+					$rule['value'] = 'US'; // country-based rules must use 2-character ISO code, see #3129
+
+			}
+		}
 
 		$Promotion->updates($_POST);
 		$Promotion->save();

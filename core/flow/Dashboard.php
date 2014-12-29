@@ -25,27 +25,27 @@ class ShoppAdminDashboard {
 	 *
 	 * @return void
 	 **/
-	public function init () {
+	public static function init () {
 
 		$dashboard = shopp_setting('dashboard');
 
 		if ( ! ( current_user_can('shopp_financials') && Shopp::str_true($dashboard) ) ) return false;
 
-		wp_add_dashboard_widget('dashboard_shopp_stats', __('Sales Stats','Shopp'), array('ShoppAdminDashboard','stats_widget'),
+		wp_add_dashboard_widget('dashboard_shopp_stats', __('Sales Stats','Shopp'), array(__CLASS__,'stats_widget'),
 			array('all_link' => '','feed_link' => '','width' => 'half','height' => 'single')
 		);
 
-		wp_add_dashboard_widget('dashboard_shopp_orders', __('Recent Orders','Shopp'), array('ShoppAdminDashboard', 'orders_widget'),
+		wp_add_dashboard_widget('dashboard_shopp_orders', __('Recent Orders','Shopp'), array(__CLASS__, 'orders_widget'),
 			array('all_link' => 'admin.php?page=' . ShoppAdmin()->pagename('orders'),'feed_link' => '','width' => 'half','height' => 'single')
 		);
 
 		if ( shopp_setting_enabled('inventory') ) {
-			wp_add_dashboard_widget('dashboard_shopp_inventory', __('Inventory Monitor','Shopp'), array('ShoppAdminDashboard', 'inventory_widget'),
+			wp_add_dashboard_widget('dashboard_shopp_inventory', __('Inventory Monitor','Shopp'), array(__CLASS__, 'inventory_widget'),
 				array('all_link' => 'admin.php?page=' . ShoppAdmin()->pagename('products'),'feed_link' => '','width' => 'half','height' => 'single')
 			);
 		}
 
-		add_action('admin_print_styles-index.php', array('ShoppAdminDashboard', 'styles'));
+		add_action('admin_print_styles-index.php', array(__CLASS__, 'styles'));
 
 	}
 
@@ -58,7 +58,7 @@ class ShoppAdminDashboard {
 	 * @return void
 	 **/
 	public function styles () {
-		wp_enqueue_style('shopp.dashboard', SHOPP_ADMIN_URI . '/styles/dashboard.css', array(), ShoppVersion::cache(), 'screen');
+		shopp_enqueue_style('dashboard');
 	}
 
 	/**
@@ -72,7 +72,7 @@ class ShoppAdminDashboard {
 	 *
 	 * @return void
 	 **/
-	public function stats_widget ( $args = false ) {
+	public static function stats_widget ( $args = false ) {
 
 		$ranges = array(
 			'today' => __('Today','Shopp'),
@@ -244,7 +244,7 @@ class ShoppAdminDashboard {
 	 *
 	 * @return void
 	 **/
-	public function orders_widget ( $args = false ) {
+	public static function orders_widget ( $args = false ) {
 
 		$defaults = array(
 			'before_widget' => '',
@@ -268,7 +268,7 @@ class ShoppAdminDashboard {
 		$txnstatus_labels = Lookup::txnstatus_labels();
 
 		if ( ! ( $Orders = get_transient('shopp_dashboard_orders') ) ) {
-			$Orders = sDB::query("SELECT p.*,count(*) as items FROM (SELECT * FROM $purchasetable ORDER BY created DESC LIMIT 6) AS p LEFT JOIN $purchasedtable AS i ON i.purchase=p.id GROUP BY p.id ORDER BY p.id DESC", 'array');
+			$Orders = sDB::query("SELECT p.*,count(*) as items FROM (SELECT * FROM $purchasetable WHERE txnstatus != 'purchased' AND txnstatus != 'invoiced' ORDER BY created DESC LIMIT 6) AS p LEFT JOIN $purchasedtable AS i ON i.purchase=p.id GROUP BY p.id ORDER BY p.id DESC", 'array');
 			set_transient('shopp_dashboard_orders', $Orders, 90); // Keep for the next 1 minute
 		}
 
@@ -308,7 +308,7 @@ class ShoppAdminDashboard {
 	 *
 	 * @return void
 	 **/
-	public function inventory_widget ( $args = false ) {
+	public static function inventory_widget ( $args = false ) {
 
 		$warnings = array(
 			'none' => __('OK','Shopp'),

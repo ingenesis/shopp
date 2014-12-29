@@ -9,28 +9,27 @@ class ShippingReport extends ShoppReportFramework implements ShoppReport {
 			'yaxis' => array('tickFormatter' => 'asMoney')
 		));
 
-		$this->chartseries( __('Shipping','Shopp'), array('column' => 'shipping') );
+		$this->chartseries( __('Shipping', 'Shopp'), array('column' => 'shipping') );
 	}
 
 	function query () {
 		extract($this->options, EXTR_SKIP);
 
 		$where = array();
-		$where[] = "p.type = 'Shipped'";
-		$where[] = "$starts < " . self::unixtime('o.created');
-		$where[] = "$ends > " . self::unixtime('o.created');
+		$where[] = "o.freight > 0";
+		$where[] = "o.created BETWEEN '" . sDB::mkdatetime($starts) . "' AND '" . sDB::mkdatetime($ends) . "'";
 
-		$where = join(" AND ",$where);
+		$where = join(" AND ", $where);
 		$id = $this->timecolumn('o.created');
 		$orders_table = ShoppDatabaseObject::tablename('purchase');
 		$purchased_table = ShoppDatabaseObject::tablename('purchased');
 		$query = "SELECT CONCAT($id) AS id,
 							UNIX_TIMESTAMP(o.created) as period,
-							COUNT(DISTINCT p.id) AS items,
+							SUM( ( SELECT SUM(p.quantity) FROM $purchased_table AS p WHERE o.id = p.purchase AND p.type='Shipped' ) ) AS items,
 							COUNT(DISTINCT o.id) AS orders,
-							SUM(o.freight) as shipping
-					FROM $purchased_table AS p
-					LEFT JOIN $orders_table AS o ON p.purchase=o.id
+							SUM(o.subtotal) AS subtotal,
+							SUM(o.freight) AS shipping
+					FROM $orders_table AS o
 					WHERE $where
 					GROUP BY CONCAT($id)";
 
@@ -39,20 +38,20 @@ class ShippingReport extends ShoppReportFramework implements ShoppReport {
 
 	function columns () {
 	 	return array(
-			'period'=>__('Period','Shopp'),
-			'orders'=>__('Orders','Shopp'),
-			'items'=>__('Items','Shopp'),
-			'subtotal'=>__('Subtotal','Shopp'),
-			'shipping'=>__('Shipping','Shopp')
+			'period'   => __('Period', 'Shopp'),
+			'orders'   => __('Orders', 'Shopp'),
+			'items'    => __('Items', 'Shopp'),
+			'subtotal' => __('Subtotal', 'Shopp'),
+			'shipping' => __('Shipping', 'Shopp')
 		);
 	}
 
-	static function orders ($data) { return intval($data->orders); }
+	static function orders ( $data ) { return intval($data->orders); }
 
-	static function items ($data) { return intval($data->items); }
+	static function items ( $data ) { return intval($data->items); }
 
-	static function subtotal ($data) { return money($data->subtotal); }
+	static function subtotal ( $data ) { return money($data->subtotal); }
 
-	static function shipping ($data) { return money($data->shipping); }
+	static function shipping ( $data ) { return money($data->shipping); }
 
 }

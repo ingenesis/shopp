@@ -66,6 +66,7 @@ class ShoppAdminReport extends ShoppAdminController {
 			'customers' => array( 'class' => 'CustomersReport', 'name' => __('Customers Report','Shopp'), 'label' => __('Customers','Shopp') ),
 			'locations' => array( 'class' => 'LocationsReport', 'name' => __('Locations Report','Shopp'), 'label' => __('Locations','Shopp') ),
 			'products' => array( 'class' => 'ProductsReport', 'name' => __('Products Report','Shopp'), 'label' => __('Products','Shopp') ),
+			'paytype' => array( 'class' => 'PaymentTypesReport', 'name' => __('Payment Types Report','Shopp'), 'label' => __('Payment Types','Shopp') ),
 		));
 	}
 
@@ -262,7 +263,6 @@ abstract class ShoppReportFramework {
 	// Settings
 	public $periods = false;		// A time period series report
 
-
 	public $screen = false;			// The current WP screen
 	public $Chart = false;			// The report chart (if any)
 
@@ -276,6 +276,8 @@ abstract class ShoppReportFramework {
 	public $total = 0;				// Total number of records in the report
 	public $pages = 1;				// Number of pages for the report
 	public $daterange = false;
+
+	private $columns = array();		// Helper to track columns in a report
 
 	public function __construct ($request = array()) {
 		$this->options = $request;
@@ -309,7 +311,11 @@ abstract class ShoppReportFramework {
 		$loaded = sDB::query( $query, 'array', array($this, 'process') );
 
 		if ( $this->periods && $this->Chart ) {
-			foreach ( $this->data as $index => $record ) {
+			foreach ( $this->data as $index => &$record ) {
+				if ( count(get_object_vars($record)) <= 1 ) {
+					foreach ( $this->columns as $column )
+						$record->$column = null;
+				}
 				foreach ( $this->chartseries as $series => $column ) {
 					$data = isset($record->$column) ? $record->$column : 0;
 					$this->chartdata($series, $record->period, $data);
@@ -336,11 +342,15 @@ abstract class ShoppReportFramework {
 		$index = isset($record->$index) ? $record->$index : '!NO_INDEX!';
 
 		$columns = get_object_vars($record);
+		if ( empty($this->columns) ) { // Map out the columns that are used
+			$this->columns = array_diff(array_keys($columns), array('id', 'period'));
+		}
+
 		foreach ($columns as $column => $value) {
-			if ( (int)$value > 0 || (float)$value > 0 ) {
+			if ( is_numeric($value) && 0 !== $value ) {
 				if ( ! isset($this->totals->$column) ) $this->totals->$column = 0;
 				$this->totals->$column += $value;
-			}
+			} else $this->totals->$column = null;
 		}
 
 		if ( $this->periods && isset($this->data[ $index ]) ) {
@@ -449,12 +459,11 @@ abstract class ShoppReportFramework {
 	 * @author Jonathan Davis
 	 * @since 1.3
 	 *
+	 * @param int $column A datetime column value
 	 * @return string Date index column SQL statement
 	 **/
-	public function timecolumn ( string $column ) {
-		$tzoffset = date('Z')/3600;
-		$column = "CONVERT_TZ($column,'+00:00','".($tzoffset>=0?'+':'-')."$tzoffset:00')";
-		switch (strtolower($this->options['scale'])) {
+	public function timecolumn ( $column ) {
+		switch ( strtolower($this->options['scale']) ) {
 			case 'hour':	$_ = "HOUR($column)"; break;
 			case 'week':	$_ = "WEEK($column,3),' ',YEAR($column)"; break;
 			case 'month':	$_ = "MONTH($column),' ',YEAR($column)"; break;
@@ -462,20 +471,6 @@ abstract class ShoppReportFramework {
 			default:		$_ = "DAY($column),' ',MONTH($column),' ',YEAR($column)";
 		}
 		return $_;
-	}
-
-	/**
-	 * Gets the timezone-offset corrected unix_timestamp value for a MySQL column
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.3
-	 *
-	 * @param string $column The column name
-	 * @return string The UNIX_TIMESTAMP SQL column fragment
-	 **/
-	static function unixtime ( string $column ) {
-		$tzoffset = date('Z')/3600;
-		return "UNIX_TIMESTAMP(CONVERT_TZ($column,'+00:00','".($tzoffset>=0?'+':'-')."$tzoffset:00'))";
 	}
 
 	/**
@@ -489,7 +484,7 @@ abstract class ShoppReportFramework {
 	 * @param string $scale Scale of periods (hour, day, week, month, year)
 	 * @return int The number of periods
 	 **/
-	public function range ( integer $starts, integer $ends, $scale = 'day') {
+	public function range ( $starts, $ends, $scale = 'day') {
 		$oneday = 86400;
 		$years = date('Y',$ends)-date('Y',$starts);
 		switch (strtolower($scale)) {
@@ -532,12 +527,12 @@ abstract class ShoppReportFramework {
 	 * @param array $formats The starting and ending date() formats
 	 * @return string Formatted week range label
 	 **/
-	static function weekrange ( int $ts, $formats=array('F j','F j Y') ) {
-		$weekday = date('w',$ts);
-		$startweek = $ts-($weekday*86400);
-		$endweek = $startweek+(6*86400);
+	static function weekrange ( $ts, array $formats = array('F j', 'F j Y') ) {
+		$weekday = date('w', $ts);
+		$startweek = $ts - ( $weekday * 86400 );
+		$endweek = $startweek + ( 6 * 86400 );
 
-		return sprintf('%s - %s',date($formats[0],$startweek),date($formats[1],$endweek));
+		return sprintf('%s - %s', date($formats[0], $startweek), date($formats[1], $endweek));
 	}
 
 	/**
@@ -552,7 +547,7 @@ abstract class ShoppReportFramework {
 	 * @param array $options The options for this report
 	 * @return void
 	 **/
-	static function period ($data,$column,$title,$options) {
+	static function period ( $data, $column, $title, array $options ) {
 
 		if ( __('Total','Shopp') == $data->period ) { echo __('Total','Shopp'); return; }
 		if ( __('Average','Shopp') == $data->period ) { echo __('Average','Shopp'); return; }
@@ -704,13 +699,13 @@ abstract class ShoppReportFramework {
 	 * @return void
 	 **/
 	public function table () {
-		extract($this->options,EXTR_SKIP);
+		extract($this->options, EXTR_SKIP);
 
 		// Get only the records for this page
-		$beginning = (int)($paged-1)*$per_page;
+		$beginning = (int) ( $paged - 1 ) * $per_page;
 
 		$report = array_values($this->data);
-		$report = array_slice($report, $beginning, $beginning+$per_page, true );
+		$report = array_slice($report, $beginning, $beginning + $per_page, true );
 		unset($this->data); // Free memory
 
 	?>
@@ -728,18 +723,18 @@ abstract class ShoppReportFramework {
 
 				$even = false;
 				$records = 0;
-				while (list($id,$data) = each($report)):
-					if ($records++ > $per_page) break;
+				while ( list($id, $data) = each($report) ):
+					if ( $records++ > $per_page ) break;
 				?>
 					<tr<?php if ( ! $even ) echo " class='alternate'"; $even = ! $even; ?>>
 				<?php
 
-					foreach ($columns as $column => $column_title) {
-						$classes = array($column,"column-$column");
-						if ( in_array($column,$hidden) ) $classes[] = 'hidden';
+					foreach ( $columns as $column => $column_title ) {
+						$classes = array($column, "column-$column");
+						if ( in_array($column, $hidden) ) $classes[] = 'hidden';
 
-						if ( method_exists(get_class($this),$column)): ?>
-							<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><?php echo call_user_func(array($this,$column),$data,$column,$column_title,$this->options); ?></td>
+						if ( method_exists(get_class($this), $column) ): ?>
+							<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php echo call_user_func(array($this, $column), $data, $column, $column_title, $this->options); ?></td>
 						<?php else: ?>
 							<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
 							<?php do_action( 'shopp_manage_report_custom_column', $column, $column_title, $data );	?>
@@ -756,13 +751,14 @@ abstract class ShoppReportFramework {
 					$first = true;
 					foreach ($columns as $column => $column_title):
 						if ( $first ) {
-							$averages->$column = __('Average','Shopp');
+							$averages->id = $averages->period = $averages->$column = __('Average','Shopp');
 							$first = false;
 						} else {
-							$value = isset($averages->$column) ? $averages->$column : 0;
+							$value = isset($averages->$column) ? $averages->$column : null;
 							$total = isset($this->total) ? $this->total : 0;
-							if ( 0 == $total ) $averages->$column = 0;
-							else $averages->$column = ($value / $total);
+							if ( null == $value ) $averages->$column = '';
+							elseif ( 0 === $total ) $averages->$column = 0;
+							else $averages->$column = ( $value / $total );
 						}
 						$classes = array($column,"column-$column");
 						if ( in_array($column,$hidden) ) $classes[] = 'hidden';
@@ -781,16 +777,17 @@ abstract class ShoppReportFramework {
 					$first = true;
 					foreach ($columns as $column => $column_title):
 						if ( $first ) {
-							$this->totals->$column = __('Total','Shopp');
+							$label = __('Total','Shopp');
+							$this->totals->id = $this->totals->period = $this->totals->$column = $label;
 							$first = false;
 						}
 						$classes = array($column,"column-$column");
-						if ( in_array($column,$hidden) ) $classes[] = 'hidden';
+						if ( in_array($column, $hidden) ) $classes[] = 'hidden';
 					?>
 						<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
 							<?php
-								if ( method_exists(get_class($this),$column) )
-									echo call_user_func(array($this,$column),$this->totals,$column,$column_title,$this->options);
+								if ( method_exists(get_class($this), $column) )
+									echo call_user_func(array($this, $column), $this->totals, $column, $column_title, $this->options);
 								else do_action( 'shopp_manage_report_custom_column_total', $column, $column_title, $data );
 							?>
 						</td>
@@ -928,7 +925,7 @@ abstract class ShoppReportFramework {
 	 * @param array $options The options to set
 	 * @return void
 	 **/
-	protected function setchart ($options = array() ) {
+	protected function setchart ( array $options = array() ) {
 		if ( ! $this->Chart ) $this->initchart();
 		$this->Chart->settings($options);
 	}
@@ -944,7 +941,7 @@ abstract class ShoppReportFramework {
 	 * @param scalar $y The value for the Y-axis
 	 * @return void
 	 **/
-	protected function chartdata ($series,$x,$y) {
+	protected function chartdata ( $series, $x, $y ) {
 		$this->Chart->data($series,$x,$y,$this->periods);
 	}
 
@@ -958,7 +955,7 @@ abstract class ShoppReportFramework {
 	 * @param array $options The series settings (and possible the data)
 	 * @return void
 	 **/
-	protected function chartseries ( $label, $options = array() ) {
+	protected function chartseries ( $label, array $options = array() ) {
 		if ( ! $this->Chart ) $this->initchart();
 		if ( isset($options['column']) ) $this->chartseries[] = $options['column'];	// Register the column to the data series index
 		$this->Chart->series($label, $options);										// Initialize the series in the chart
@@ -1202,12 +1199,12 @@ abstract class ShoppReportExportFramework {
 	public $data = false;
 
 	public $recordstart = true;
-	public $content_type = "text/plain";
+	public $content_type = "text/plain; charset=UTF-8";
 	public $extension = "txt";
 	public $set = 0;
 	public $limit = 1024;
 
-	public function __construct ( $Report ) {
+	public function __construct ( ShoppReportFramework $Report ) {
 
 		$this->ReportClass = get_class($Report);
 		$this->options = $Report->options;
@@ -1243,7 +1240,7 @@ abstract class ShoppReportExportFramework {
 		$reports = ShoppAdminReport::reports();
 		$name = $reports[$report]['name'];
 
-		header("Content-type: $this->content_type; charset=UTF-8");
+		header("Content-type: $this->content_type");
 		header("Content-Disposition: attachment; filename=\"$sitename $name.$this->extension\"");
 		header("Content-Description: Delivered by " . ShoppVersion::agent());
 		header("Cache-Control: maxage=1");
@@ -1276,8 +1273,8 @@ abstract class ShoppReportExportFramework {
 	 * @return void
 	 **/
 	public function heading () {
-		foreach ($this->selected as $name)
-			$this->export($this->columns[$name]);
+		foreach ( $this->selected as $name )
+			$this->export($this->columns[ $name ]);
 		$this->record();
 	}
 
@@ -1383,7 +1380,7 @@ abstract class ShoppReportExportFramework {
  **/
 class ShoppReportTabExport extends ShoppReportExportFramework {
 
-	public function __construct( $Report ) {
+	public function __construct( ShoppReportFramework $Report ) {
 		parent::__construct( $Report );
 		$this->output();
 	}
@@ -1401,14 +1398,14 @@ class ShoppReportTabExport extends ShoppReportExportFramework {
  **/
 class ShoppReportCSVExport extends ShoppReportExportFramework {
 
-	public function __construct ($Report) {
+	public function __construct ( ShoppReportFramework $Report ) {
 		parent::__construct($Report);
-		$this->content_type = "text/csv";
+		$this->content_type = "text/csv; charset=UTF-8";
 		$this->extension = "csv";
 		$this->output();
 	}
 
-	public function export ($value) {
+	public function export ( $value ) {
 		$value = str_replace('"','""',$value);
 		if (preg_match('/^\s|[,"\n\r]|\s$/',$value)) $value = '"'.$value.'"';
 		echo ($this->recordstart?"":",").$value;
@@ -1428,9 +1425,9 @@ class ShoppReportCSVExport extends ShoppReportExportFramework {
  **/
 class ShoppReportXLSExport extends ShoppReportExportFramework {
 
-	public function __construct ($Report) {
+	public function __construct ( ShoppReportFramework $Report ) {
 		parent::__construct($Report);
-		$this->content_type = "application/vnd.ms-excel";
+		$this->content_type = "application/vnd.ms-excel; charset=Windows-1252";
 		$this->extension = "xls";
 		$this->c = 0; $this->r = 0;
 		$this->output();
@@ -1444,14 +1441,13 @@ class ShoppReportXLSExport extends ShoppReportExportFramework {
 		echo pack("ss", 0x0A, 0x00);
 	}
 
-	public function export ($value) {
-		if (preg_match('/^[\d\.]+$/',$value)) {
-		 	echo pack("sssss", 0x203, 14, $this->r, $this->c, 0x0);
-			echo pack("d", $value);
+	public function export ( $value ) {
+		if ( is_numeric($value) ) {
+		 	echo pack("sssss", 0x203, 14, $this->r, $this->c, 0x0) . pack("d", $value);
 		} else {
-			$l = strlen($value);
-			echo pack("ssssss", 0x204, 8+$l, $this->r, $this->c, 0x0, $l);
-			echo $value;
+			$v = mb_convert_encoding($value, 'Windows-1252', 'UTF-8');
+			$l = mb_strlen($v, 'Windows-1252');
+			echo pack("ssssss", 0x204, 8+$l, $this->r, $this->c, 0x0, $l) . $v;
 		}
 		$this->c++;
 	}

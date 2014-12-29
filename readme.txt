@@ -3,7 +3,7 @@ Contributors: jond, barry.hughes, clifgriffin, jdillick, lorenzocaum, chaoix
 Donate link: http://shopp.me/shopp-donate
 Tags: ecommerce, e-commerce, wordpress ecommerce, shopp, shop, shopping, cart, store, storefront, sales, sell, catalog, checkout, accounts, secure, variations, variants, reports, downloads, digital, downloadable, inventory, stock, shipping, taxes, shipped, addons, widgets, shortcodes
 Requires at least: 3.5
-Tested up to: 3.8
+Tested up to: 3.9
 Stable tag: trunk
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -156,7 +156,7 @@ At a minimum you should setup a **Base of Operations** location to setup Shopp t
 
 = Do you have a demo version? =
 
-We have an online demo you can play around with. You can also login to the admin.
+We have an [online demo](http://demo.shopplugin.net) you can play around with. You can also [login to the admin](http://demo.shopplugin.net/wp-login.php).
 
 = Where can I see examples of Shopp in action? =
 
@@ -168,7 +168,7 @@ The Shopp [Community Extras directory](https://shopplugin.com/extras/plugins/) i
 
 = Do I need an SSL certificate? =
 
-If you plan to take credit card numbers on your website, you **must** install and activate an SSL certificate to secure communication between your website visitors and your web server. You can find affordable SSL Certificates on the [Shopp Store](https://shopplugin.com/store/category/trust-services/). If you plan to take payments through an offsite payment system, such as PayPal Payments Standard, you do **not** need an SSL certificate. Even if you don't need one, an SSL certificate can boost your storefront's credibiliy and does provide protection for other sensitive customer information.
+If you plan to take credit card numbers on your website, you **must** install and activate an SSL certificate to secure communication between your website visitors and your web server. You can find affordable SSL Certificates on the [Shopp Store](https://shopplugin.com/store/category/trust-services/). If you plan to take payments through an offsite payment system, such as PayPal Payments Standard, you do **not** need an SSL certificate. Even if you don't need one, an SSL certificate can boost your storefront's credibility and does provide protection for other sensitive customer information.
 
 = I thought Shopp was a premium plugin? =
 
@@ -180,4 +180,4 @@ No! Shopp includes two popular payment platforms with the free download: PayPal 
 
 = What if I have an emergency and my store goes down? =
 
-Incident support is available from our team by buying a priority support credit from the Shopp Store
+Incident support is available from our team by buying a priority support credit from the Shopp Store.

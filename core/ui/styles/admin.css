@@ -39,7 +39,7 @@ th.textright { text-align: right; }
 #products-manager select.filters { max-width: 150px; }
 #products-manager .column-name img { margin-right: 3px; }
 
-.column-featured .feature { font-size: 16px; display: block; border: none; padding: 0; margin: 0 auto; }
+.column-featured .feature { font-size: 16px; display: inline-block; border: none; padding: 0; margin: 0 auto; }
 .column-featured .shoppui-star { font-family: 'shopp-icons'; color: #B1B1B1; background: -webkit-linear-gradient(top, #fff, #E8E8E8 50%, #CDCDCD 60%, #BDBDBD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; }
 .column-featured .shoppui-star:hover { font-family: 'shopp-icons'; color: #B1B1B1; background: -webkit-linear-gradient(top, #fff, #E8E8E8 50%, #CDCDCD 60%, #BDBDBD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; }
 .column-featured .shoppui-star.featured { color: #EFCB3A; background: -webkit-linear-gradient(top, #FFF, #F8DB8F 50%, #FDB14F 60%, #E78C35); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -433,6 +433,7 @@ span.indent { display: inline-block; width: 36px; }
 #poststuff #order-status .inside { margin:0;padding:0; }
 .shopp #major-publishing-actions { text-align:right; clear: none; }
 #save-category #major-publishing-actions input { min-width: 75px; }
+#save-customer #misc-publishing-actions { padding: 6px 12px 12px;}
 
 #major-publishing-actions select { font-size: 1em; }
 .postbox #summary { width:100%; }
@@ -556,6 +557,7 @@ p.controls { position:absolute;top:0;right:0;margin:0; }
 #order .left-column {float:left;width:260px;display:inline;overflow:visible; }
 #order .right-column { width:100%;display: inline;}
 #order #main-column { margin-left:280px; }
+#order .column-qty { text-align: center; }
 
 #order .meta-boxes .inside { line-height:1.3em; }
 #order .meta-boxes .inside big { line-height:1.5em; }
@@ -759,8 +761,8 @@ div.storage-settings { clear:both;margin-top:8px; }
 /** Inline editors **/
 tr.inline-edit-row td  { padding: 10px; border-bottom: 1px solid #e1e1e1; border-top: 1px solid #e1e1e1; }
 .inline-edit-row label { line-height: 20px; font-size: 11px; }
-
 .inline-edit-row span { display: inline-block; }
+.shopp-settings td > div { padding-bottom: 8px; }
 
 #order-contact iframe { width: 100%; }
 #customer-select { background: #f5f5f5; width: 236px; min-width: 236px; }

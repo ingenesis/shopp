@@ -29,6 +29,7 @@ class ImageProcessor {
 	private $dx = 0;
 	private $dy = 0;
 	private $alpha = false;
+	private $complexity = false;
 
 	public function __construct ( $data, $width, $height ) {
 
@@ -199,140 +200,130 @@ class ImageProcessor {
 	}
 
 	/**
-	 * Performs an unsharp mask on the processed image
+	 * Calculate the visual complexity of the image
 	 *
-	 * Photoshop-like unsharp mask processing using image convolution.
-	 * Original algorithm by Torstein Hansi
+	 * Provides a fast method for determining visual complexity of
+	 * an image by comparing a raw image size to jpeg image file size.
+	 * The JPEG compression algorithm is really good at compressing
+	 * repetitive areas (low detail) areas of an image and gives us
+	 * a good enough indicator for the complexity in an image.
 	 *
 	 * @author Jonathan Davis
-	 * @since 1.0
-	 * @version 2.1.1
-	 * @copyright Torstein Hansi <thoensi_at_netcom_dot_no>, July 2003
+	 * @since 1.3.4
 	 *
+	 * @return float A complexity amount (jpeg size to raw gd size)
+	 **/
+	public function complexity () {
+
+		$image =& $this->src->image;
+
+		if ( false !== $this->complexity ) return $this->complexity;
+
+		ob_start(); imagegd($image);
+		$source = strlen(ob_get_clean());
+
+		ob_start();	imagejpeg($image);
+		$jpeg = strlen(ob_get_clean());
+
+		$this->complexity = 0.7 - ( $jpeg / $source );
+
+		return $this->complexity;
+
+	}
+
+	/**
+	 * Performs an unsharp mask on the image
+	 *
+	 * Smart unsharp masking looks at the visual complexity
+	 * of the image to determine how to vary the strength of
+	 * the sharpening and the narrowness of the edge threshold.
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3.4
+	 * @version 1.0
+	 *
+	 * @param int $amount Strength of the sharpening (0-100)
+	 * @param int $threshold The narrowness of the sharpening filter (0-255)
 	 * @return void
 	 **/
-	public function UnsharpMask ( $amount = 50, $radius = 0.5, $threshold = 3 ) {
+	public function sharpen ( $amount = 100, $threshold = null ) {
+
 		if ( ! isset($this->processed) ) $image =& $this->src->image;
 		else $image = &$this->processed;
 
-	    // Attempt to calibrate the parameters to Photoshop
-	    if ( $amount > 500 ) $amount = 500;
-	    $amount = $amount * 0.016;
-	    if ( $radius > 50 ) $radius = 50;
-	    $radius = $radius * 2;
+		// Don't unsharp mask if we have a very low detail image
+		$complexity = $this->complexity();
+		if ( $complexity < 0.15 ) return;
+
+	    if ( $amount > 100 ) $amount = 100;
+
+		// Calibration to a reasonable strength
+		$amount = ( $amount * (1 + $complexity) ) * 0.01618;
+
+		// Calibrate the threshold to the image complexity
+		if ( empty($threshold) ) $threshold = 10 - ( $complexity * 13 );
 	    if ( $threshold > 255 ) $threshold = 255;
 
-	    $radius = abs( round($radius) );
-	    if ( 0 == $radius ) return $image;
+		// Create a gausian blur for edge detection
 	    $w = imagesx($image); $h = imagesy($image);
-	    $canvas = imagecreatetruecolor($w, $h);
 	    $blur = imagecreatetruecolor($w, $h);
+        imagecopy ($blur, $image, 0, 0, 0, 0, $w, $h);
+		imagefilter($blur, IMG_FILTER_GAUSSIAN_BLUR);
 
-	    /**
-	     * Gaussian blur matrix:
-		 *	1    2    1
-		 *	2    4    2
-	     *	1    2    1
-		 **/
+		// Walk through each pixel of the image
+        for ( $x = 0; $x < $w - 1 ; $x++ ) { // each row
+            for ( $y = 0; $y < $h - 1 ; $y++ ) { // each pixel
 
-	    if ( function_exists('imageconvolution') ) { // PHP >= 5.1
-            $matrix = array(
-				array( 1, 2, 1 ),
-            	array( 2, 4, 2 ),
-            	array( 1, 2, 1 )
-        	);
-	        imagecopy ($blur, $image, 0, 0, 0, 0, $w, $h);
-	        imageconvolution($blur, $matrix, 16, 0);
-	    } else {
+				$changed = false;
+				$pixel = array(
+					'src' => imagecolorsforindex($image, imagecolorat($image, $x, $y) ),
+					'blur' => imagecolorsforindex($blur, imagecolorat($blur, $x, $y) )
+				);
+				$channels = array_keys($pixel['src']);
 
-			// Move copies of the image around one pixel at the time and merge them with weight
-			// according to the matrix. The same matrix is simply repeated for higher radii.
-	        for ($i = 0; $i < $radius; $i++)    {
-	            imagecopy ($blur, $image, 0, 0, 1, 0, $w - 1, $h); // left
-	            imagecopymerge ($blur, $image, 1, 0, 0, 0, $w, $h, 50); // right
-	            imagecopymerge ($blur, $image, 0, 0, 0, 0, $w, $h, 50); // center
-	            imagecopy ($canvas, $blur, 0, 0, 0, 0, $w, $h);
+				// If masked pixel channel value differs enough ($threshold) from the original,
+				// we found an edge. Boost the edge contrast by a strength ($amount) of the
+				// color channel difference between the blurred mask pixel and the source image pixel.
+				// Otherwise leave the pixel alone to preserve smooth surfaces/gradients.
+				foreach ( $channels as $channel ) {
 
-	            imagecopymerge ($blur, $canvas, 0, 0, 0, 1, $w, $h - 1, 33.33333 ); // up
-	            imagecopymerge ($blur, $canvas, 0, 1, 0, 0, $w, $h, 25); // down
-	        }
-	    }
+					$src = $pixel['src'][ $channel ];
+					$mask = $pixel['blur'][ $channel ];
 
-	    if ( $threshold > 0 ){
-	        // Calculate the difference between the blurred pixels and the original
-	        // and set the pixels
-	        for ( $x = 0; $x < $w-1; $x++ ) { // each row
-	            for ( $y = 0; $y < $h; $y++ ) { // each pixel
+					// Calculate the difference
+					$diff = $src - $mask;
 
-	                $rgbOrig = ImageColorAt($image, $x, $y);
-	                $rOrig = ( ($rgbOrig >> 16) & 0xFF );
-	                $gOrig = ( ($rgbOrig >> 8) & 0xFF );
-	                $bOrig = ( $rgbOrig & 0xFF );
+					// If the difference is more than the threshold, we're near an edge
+					if ( abs($diff) >= $threshold ) {
+						// Change the pixel channel with the difference factored by the strength amount
+						$value = ( $amount * $diff ) + $src;
 
-	                $rgbBlur = ImageColorAt($blur, $x, $y);
+						// Ceiling/floor values (if is faster than min/max)
+						if ( $value > 255 ) $value = 255;
+						elseif ( $value < 0 ) $value = 0;
 
-	                $rBlur = ( ($rgbBlur >> 16) & 0xFF );
-	                $gBlur = ( ($rgbBlur >> 8) & 0xFF );
-	                $bBlur = ( $rgbBlur & 0xFF );
+						// Save the channel value
+						$$channel = $value;
+						$changed = true;
+					} else $$channel = $src;
+				}
 
-	                // When the masked pixels differ less from the original
-	                // than the threshold specifies, they are set to their original value.
-	                $rNew = ( abs($rOrig - $rBlur) >= $threshold)
-	                    ? max(0, min(255, ($amount * ($rOrig - $rBlur)) + $rOrig))
-	                    : $rOrig;
-	                $gNew = ( abs($gOrig - $gBlur) >= $threshold)
-	                    ? max(0, min(255, ($amount * ($gOrig - $gBlur)) + $gOrig))
-	                    : $gOrig;
-	                $bNew = ( abs($bOrig - $bBlur) >= $threshold)
-	                    ? max(0, min(255, ($amount * ($bOrig - $bBlur)) + $bOrig))
-	                    : $bOrig;
+				if ( $changed ) { // Update the pixel in the image with the new color
+					$color = imagecolorallocatealpha($image, $red, $green, $blue, $alpha);
+					imagesetpixel($image, $x, $y, $color);
+				}
+            }
+        }
 
-
-
-	                if ( ($rOrig != $rNew) || ($gOrig != $gNew) || ($bOrig != $bNew) ) {
-	                        $pixCol = ImageColorAllocate($image, $rNew, $gNew, $bNew);
-	                        ImageSetPixel($image, $x, $y, $pixCol);
-	                    }
-	            }
-	        }
-	    } else {
-	        for ( $x = 0; $x < $w; $x++ ) { // each row
-	            for ( $y = 0; $y < $h; $y++ ) { // each pixel
-	                $rgbOrig = ImageColorAt($image, $x, $y);
-	                $rOrig = ( ($rgbOrig >> 16) & 0xFF );
-	                $gOrig = ( ($rgbOrig >> 8) & 0xFF );
-	                $bOrig = ( $rgbOrig & 0xFF );
-
-	                $rgbBlur = ImageColorAt($blur, $x, $y);
-
-	                $rBlur = ( ($rgbBlur >> 16) & 0xFF );
-	                $gBlur = ( ($rgbBlur >> 8) & 0xFF );
-	                $bBlur = ( $rgbBlur & 0xFF );
-
-	                $rNew = ( $amount * ($rOrig - $rBlur) ) + $rOrig;
-	                    if ( $rNew > 255 ) $rNew = 255;
-	                    elseif ( $rNew < 0 ) $rNew = 0;
-	                $gNew = ( $amount * ($gOrig - $gBlur) ) + $gOrig;
-	                    if ( $gNew > 255 ) $gNew = 255;
-	                    elseif ($gNew < 0 ) $gNew = 0;
-	                $bNew = ( $amount * ($bOrig - $bBlur) ) + $bOrig;
-	                    if ( $bNew > 255 ) $bNew = 255;
-	                    elseif ( $bNew < 0 ) $bNew = 0;
-	                $rgbNew = ( $rNew << 16 ) + ( $gNew << 8 ) + $bNew;
-	                    ImageSetPixel($image, $x, $y, $rgbNew);
-	            }
-	        }
-	    }
-
-	    imagedestroy($canvas);
 	    imagedestroy($blur);
+		imagefilter($image, IMG_FILTER_SMOOTH, 16); // Just enough to anti-alias edges
 
 	}
 
 	/**
 	 * Convert a decimal-encoded hexadecimal color to RGB color values
 	 *
-	 * Uses bit-shifty voodoo magic to pick the color spectrum apart.
+	 * Uses bit-shifty voodoo to pick the color channels apart.
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.1

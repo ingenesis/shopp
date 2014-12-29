@@ -79,7 +79,12 @@ tinyMCEPopup.onInit.add(function(ed) {
 				if (pm.val() != 0 && pm.val() != null) tag = '[catalog-product id="'+pm.val()+'"]';
 
 				if (window.tinyMCE) {
-					window.tinyMCE.execInstanceCommand('content', 'mceInsertContent', false, tag);
+					var tmce_ver = window.tinyMCE.majorVersion;
+					if ( tmce_ver >= "4" ) {
+						window.tinyMCE.execCommand('mceInsertContent', false, tag);
+					} else {
+						window.tinyMCE.execInstanceCommand('content', 'mceInsertContent', false, tag);
+					}
 					tinyMCEPopup.editor.execCommand('mceRepaint');
 					tinyMCEPopup.close();
 				}

@@ -39,9 +39,9 @@ class ShoppLogin {
 	 **/
 	public function __construct () {
 
-		$this->Customer = ShoppOrder()->Customer;
-		$this->Billing = ShoppOrder()->Billing;
-		$this->Shipping = ShoppOrder()->Shipping;
+		$this->Customer = &ShoppOrder()->Customer;
+		$this->Billing = &ShoppOrder()->Billing;
+		$this->Shipping = &ShoppOrder()->Shipping;
 
 		if ( 'none' == shopp_setting('account_system') ) return; // Disabled
 
@@ -95,6 +95,7 @@ class ShoppLogin {
 					return;
 				}
 			}
+
 		}
 
 		if ( ! self::submitted() ) return false;
@@ -126,7 +127,7 @@ class ShoppLogin {
 	 * @param string $type (optional) Type of identifying credential provided (defaults to 'email')
 	 * @return void
 	 **/
-	public function auth ( string $id, string $password, $type = 'email') {
+	public function auth ( $id, $password, $type = 'email') {
 
 		do_action('shopp_auth');
 
@@ -157,7 +158,7 @@ class ShoppLogin {
 
 	  		case 'wordpress':
 				if ( 'email' == $type ) {
-					$user = get_user_by_email($id);
+					$user = get_user_by('email', $id);
 					if ( $user ) $loginname = $user->user_login;
 					else {
 						new ShoppError( $errors['invalid_email'], 'invalid_account', SHOPP_AUTH_ERR );
@@ -175,11 +176,7 @@ class ShoppLogin {
 							new ShoppError( sprintf(__('Unknown login error: %s'), $message), 'unknown_login_error', SHOPP_AUTH_ERR);
 					}
 					return;
-				} else {
-					wp_set_auth_cookie($user->ID, false, is_ssl());
-					do_action('wp_login', $user->user_login, $user);
-					wp_set_current_user($user->ID, $user->user_login);
-				}
+				} else self::wpuser($user);
 	  			break;
 			default: return;
 		}
@@ -203,8 +200,19 @@ class ShoppLogin {
 	public function wplogin ( $cookie, $expire, $expiration, $id ) {
 		if ( $Account = new ShoppCustomer($id, 'wpuser') ) {
 			$this->login($Account);
-			add_action('wp_logout',array(&$this,'logout'));
+			add_action('wp_logout', array($this,'logout'));
 		}
+	}
+
+	/**
+	 * Helper to log a user into WordPress
+	 */
+	public static function wpuser ( WP_User $User ) {
+		if ( ! is_a($User, 'WP_User') ) return false;
+		wp_set_auth_cookie($User->ID, false, is_ssl());
+		do_action('wp_login', $User->user_login, $User);
+		wp_set_current_user($User->ID, $User->user_login);
+		return true;
 	}
 
 	/**
@@ -247,13 +255,18 @@ class ShoppLogin {
 	 * @return void
 	 **/
 	public function logout () {
+		$Shopp = Shopp::object();
+		$Order = ShoppOrder();
+		$Shopping = ShoppShopping();
 
-		$this->Customer = new ShoppCustomer();
-		$this->Billing = new BillingAddress();
-		$this->Shipping = new ShippingAddress();
+
+		$this->Customer->clear();
+		$this->Billing->clear();
+		$this->Shipping->clear();
 		$this->Shipping->locate();
 
-		do_action_ref_array('shopp_logged_out', array($this->Customer));
+		do_action('shopp_logged_out', $this->Customer);
+
 	}
 
 	/**
@@ -269,8 +282,6 @@ class ShoppLogin {
 		$redirect = false;
 		$secure = ShoppOrder()->security();
 
-		session_commit(); // Save the session just prior to redirect
-
 		if ( isset($_REQUEST['redirect']) && ! empty($_REQUEST['redirect']) ) {
 			if ( ShoppPages()->exists($_REQUEST['redirect']) ) $redirect = Shopp::url(false, $_REQUEST['redirect'], $secure);
 			else $redirect = $_REQUEST['redirect'];
@@ -279,7 +290,6 @@ class ShoppLogin {
 		if ( ! $redirect ) $redirect = apply_filters('shopp_login_redirect', Shopp::url(false, 'account', $secure));
 
 		Shopp::safe_redirect($redirect);
-		exit;
 	}
 
 	/**

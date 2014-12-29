@@ -4,7 +4,7 @@
  * Licensed under the GPLv3 {@see license.txt}
  */
 jQuery.fn.PopupCalendar = function (settings) {
-	var $ = jqnc(),
+	var $ = jQuery,
 		_ = this,
 		$this = $(this),
 		defaults = {

@@ -139,7 +139,11 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @return int|boolean Number of posts found or, true if a Shopp Storefront request
 	 **/
 	public function found ( $found_posts, WP_Query $wp_query ) {
-		if ( $this->request($wp_query) ) return true;
+		if ( $this->request($wp_query) ) {
+			$Page = new stdClass();
+			$Page->ID = 0;
+			return array( $Page ); // Short page stub to prevent PHP Notices in wp_query
+		}
 		return $found_posts;
 	}
 
@@ -360,7 +364,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @param string $template Template file path
 	 * @return void
 	 **/
-	public function maintenance ( string $template ) {
+	public function maintenance ( $template ) {
 		// Only run if in maintenance mode
 		if ( ! is_shopp_page() ) return $template;
 		if ( ! Shopp::maintenance() ) return $template;
@@ -409,7 +413,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @param string $template The template
 	 * @return string The output of the templates
 	 **/
-	public function pages ( string $template ) {
+	public function pages ( $template ) {
 		// Catch smart collection pages
 		if ( is_shopp_collection() )
 			return $this->collections($template);
@@ -431,11 +435,10 @@ class ShoppStorefront extends ShoppFlowController {
 		return locate_template( $Page->templates() );
 	}
 
-	public function collections ( string $template ) {
+	public function collections ( $template ) {
 		if ( ! is_shopp_collection() ) return $template;
 
 		$Page = new ShoppCollectionPage();
-		$Page->poststub();
 
 		return locate_template( $Page->templates() );
 	}
@@ -589,10 +592,11 @@ class ShoppStorefront extends ShoppFlowController {
 
 		add_action( 'wp_head', array($this, 'header') );
 		add_action( 'wp_footer', array($this, 'footer') );
-		wp_enqueue_style( 'shopp.catalog', SHOPP_ADMIN_URI.'/styles/catalog.css', array(), 20110511, 'screen' );
-		wp_enqueue_style( 'shopp.icons', SHOPP_ADMIN_URI.'/styles/icons.css', array(), 20110511, 'screen' );
-		wp_enqueue_style( 'shopp', Shopp::template_url('shopp.css'), array(), 20110511, 'screen' );
-		wp_enqueue_style( 'shopp.colorbox', SHOPP_ADMIN_URI.'/styles/colorbox.css', array(), 20110511, 'screen' );
+
+		shopp_enqueue_style('catalog');
+		shopp_enqueue_style('icons');
+		shopp_enqueue_style('colorbox');
+		shopp_enqueue_style('shopp', Shopp::template_url('shopp.css'), array('catalog'), hash('crc32b', ABSPATH . ShoppVersion::release()), 'all');
 
 		$orderhistory = ( is_account_page() && isset($_GET['id']) && ! empty($_GET['id']) );
 
@@ -729,7 +733,7 @@ class ShoppStorefront extends ShoppFlowController {
 			$script .= "\t".join("\t\n",$this->behaviors) . "\n";
 			$script .= '});' . "\n";
 		}
-		shopp_custom_script('catalog', $script);
+		shopp_custom_script('shopp', $script);
 	}
 
 	/**
@@ -1005,11 +1009,6 @@ class ShoppStorefront extends ShoppFlowController {
 		$this->shortcodes['catalog-buynow'] 	= array('ShoppShortcodes', 'buynow');
 		$this->shortcodes['catalog-collection']	= array('ShoppShortcodes', 'collection');
 
-		// @deprecated shortcodes
-		$this->shortcodes['product']	= array('ShoppShortcodes', 'product');
-		$this->shortcodes['buynow']		= array('ShoppShortcodes', 'buynow');
-		$this->shortcodes['category']	= array('ShoppShortcodes', 'collection');
-
 		foreach ( $this->shortcodes as $name => &$callback )
 			if ( shopp_setting_enabled('maintenance') || ! ShoppSettings()->available() || Shopp::maintenance() )
 				add_shortcode($name, array('', 'maintenance_shortcode') );
@@ -1017,7 +1016,7 @@ class ShoppStorefront extends ShoppFlowController {
 
 	}
 
-	public function autowrap ( string $content ) {
+	public function autowrap ( $content ) {
 		if ( ! in_array(get_the_ID(), $this->shortcoded) ) return $content;
 		return ShoppStorefront::wrapper($content);
 	}
@@ -1030,7 +1029,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 *
 	 * @return string The template file being loaded
 	 **/
-	public static function intemplate ( string $template = null ) {
+	public static function intemplate ( $template = null ) {
 		if ( isset($template) )
 			self::$template = basename($template);
 		if ( empty(self::$template) ) return '';
@@ -1047,9 +1046,9 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @param array $classes CSS classes to add to the container
 	 * @return string The wrapped markup
 	 **/
-	static function wrapper ( string $string ) {
+	static function wrapper ( $string ) {
 
-		$classes = array('shopp_page');
+		$classes = array('shoppage', 'shopp_page');
 
 		$views = array('list', 'grid');
 		$view = shopp_setting('default_catalog_view');

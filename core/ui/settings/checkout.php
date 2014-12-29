@@ -2,12 +2,12 @@
 	<div class="icon32"></div>
 	<?php
 
-		shopp_admin_screen_tabs();;
+		shopp_admin_screen_tabs();
 		do_action('shopp_admin_notices');
 
 	?>
 
-	<form name="settings" id="checkout" action="<?php echo add_query_arg('tab', $this->tab, esc_url($this->url)); ?>" method="post">
+	<form name="settings" id="checkout" action="<?php echo esc_url($this->url); ?>"  method="post">
 		<?php wp_nonce_field('shopp-settings-checkout'); ?>
 
 		<table class="form-table">

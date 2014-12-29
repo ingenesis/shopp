@@ -63,7 +63,7 @@ class OrderTotals extends ListFramework {
 	 * @param string $id The entry identifier
 	 * @return OrderAmount The order amount entry
 	 **/
-	public function &entry ( string $register, string $id = null ) {
+	public function &entry ( $register, $id = null ) {
 		$false = false;
 		if ( ! isset($this->register[ $register ]) ) return $false;
 		$Register = &$this->register[ $register ];
@@ -85,7 +85,7 @@ class OrderTotals extends ListFramework {
 	 * @param string $id The entry identifier
 	 * @return boolean True if succesful, false otherwise
 	 **/
-	public function takeoff ( string $register, string $id ) {
+	public function takeoff ( $register, $id ) {
 
 		if ( ! isset($this->register[ $register ]) ) return false;
 		$Register = &$this->register[ $register ];
@@ -105,7 +105,7 @@ class OrderTotals extends ListFramework {
 	 * @param string $register The register to find the entry in
 	 * @return boolean True if successful
 	 **/
-	public function reset ( string $register ) {
+	public function reset ( $register ) {
 
 		if ( ! isset($this->register[ $register ]) ) return false;
 		$Register = &$this->register[ $register ];
@@ -125,7 +125,7 @@ class OrderTotals extends ListFramework {
 	 * @param float $amount The amount to change
 	 * @return boolean True for success, false otherwise
 	 **/
-	public function update ( string $register, $entry ) {
+	public function update ( $register, $entry ) {
 		if ( ! isset($this->register[ $register ]) ) return false;
 
 		$Register = &$this->register[ $register ];
@@ -209,7 +209,7 @@ class OrderTotals extends ListFramework {
 	 * @param string $register The name of the register to check
 	 * @return boolean True when the register has changed
 	 **/
-	public function haschanged ( string $register ) {
+	public function haschanged ( $register ) {
 		$check = isset($this->checks[ $register ]) ? $this->checks[$register] : 0;
 		$this->checks[$register] = hash('crc32b', serialize($this->register[$register]) );
 		if ( 0 == $check ) return true;
@@ -270,7 +270,7 @@ class OrderTotalRegisters {
 	 * @param string $class The name of the register amount handling class
 	 * @return void
 	 **/
- 	static public function register ( string $class ) {
+ 	static public function register ( $class ) {
 		$register = get_class_property($class, 'register');
  		self::$handlers[ $register ] = $class;
  	}
@@ -284,7 +284,7 @@ class OrderTotalRegisters {
 	 * @param string $register The register name
 	 * @return string The class name of the handler
 	 **/
- 	static private function handler ( string $register ) {
+ 	static private function handler ( $register ) {
  		if ( isset(self::$handlers[ $register ]) )
  			return self::$handlers[ $register ];
 		return false;
@@ -300,7 +300,7 @@ class OrderTotalRegisters {
 	 * @param array $message The amount options
 	 * @return OrderTotalAmount An constructed OrderTotalAmount object
 	 **/
- 	static public function add ( OrderTotals $Totals, string $register, array $options = array() ) {
+ 	static public function add ( OrderTotals $Totals, $register, array $options = array() ) {
 		$RegisterClass = self::handler($register);
 
  		if ( false === $RegisterClass )
@@ -420,7 +420,7 @@ abstract class OrderTotalAmount {
 	 * @param float $value The value of the amount
 	 * @return float The current amount
 	 **/
-	public function &amount ( float $value = null ) {
+	public function &amount ( $value = null ) {
 		if ( ! is_null($value) ) $this->amount = $value;
 		$amount = (float)round($this->amount, $this->precision());
 		return $amount;
@@ -699,7 +699,7 @@ class OrderAmountItemTax extends OrderAmountTax {
 	protected $items = array(); // Store the item tax amounts
 	protected $label = '';
 
-	public function __construct ( ShoppItemTax &$Tax, string $itemid ) {
+	public function __construct ( ShoppItemTax &$Tax, $itemid ) {
 
 		$this->items[ $itemid ] = &$Tax->total;
 		$this->label = &$Tax->label;
@@ -708,7 +708,7 @@ class OrderAmountItemTax extends OrderAmountTax {
 		$this->amount = $this->total();
 	}
 
-	public function unapply ( string $itemid ) {
+	public function unapply ( $itemid ) {
 		if ( isset($this->items[ $itemid ]) );
 			unset($this->items[ $itemid ]);
 
@@ -740,7 +740,7 @@ class OrderAmountItemTax extends OrderAmountTax {
 		return (float) array_sum($this->items());
 	}
 
-	public function &amount ( float $value = null ) {
+	public function &amount ( $value = null ) {
 		return parent::amount($this->total());
 	}
 
@@ -764,7 +764,7 @@ class OrderAmountShippingTax extends OrderAmountTax {
 	protected $rate = 0.0;	// The applied rate
 	protected $label = '';
 
-	public function __construct ( float $taxable ) {
+	public function __construct ( $taxable ) {
 		$Tax = ShoppOrder()->Tax;
 
 		$taxes = array();

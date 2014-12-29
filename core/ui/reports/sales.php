@@ -4,11 +4,9 @@
  *
  * Sales report
  *
- * @author Jonathan Davis
- * @version 1.0
  * @copyright Ingenesis Limited, June 2012
- * @package shopp
- * @subpackage shopp
+ * @package Shopp\Reports\Sales
+ * @version 1.0
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -29,9 +27,8 @@ class SalesReport extends ShoppReportFramework implements ShoppReport {
 
 		$where = array();
 
-		$where[] = "$starts < " . self::unixtime('o.created');
-		$where[] = "$ends > " . self::unixtime('o.created');
-		$where[] = "o.txnstatus IN ('authed', 'captured', 'CHARGED')";;
+		$where[] = "o.created BETWEEN '" . sDB::mkdatetime($starts) . "' AND '" . sDB::mkdatetime($ends) . "'";
+		$where[] = "o.txnstatus IN ('authed', 'captured', 'CHARGED')";
 
 		$where = join(" AND ",$where);
 

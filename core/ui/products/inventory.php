@@ -81,7 +81,7 @@
 <script type="text/javascript">
 /* <![CDATA[ */
 jQuery(document).ready( function() {
-	var $=jqnc(),
+	var $=jQuery,
 		updateurl = '<?php echo wp_nonce_url(admin_url('admin-ajax.php'),'wp_ajax_shopp_update_inventory'); ?>';
 
 	$('input.stock').change(function () {

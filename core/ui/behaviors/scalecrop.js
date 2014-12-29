@@ -4,7 +4,7 @@
  * Licensed under the GPLv3 {@see license.txt}
  */
 jQuery.fn.scaleCrop = function (settings) {
-	var $ = jqnc(),
+	var $ = jQuery,
 		defaults = {
 			imgsrc:false,
 			target:{width:300,height:300},

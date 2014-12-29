@@ -1,5 +1,5 @@
 jQuery(document).ready( function() {
-	var $=jqnc(),plot,previousPoint = null;
+	var $=jQuery,plot,previousPoint = null;
 
 	new DateRange('#range','#start','#end');
 

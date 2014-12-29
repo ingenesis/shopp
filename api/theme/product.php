@@ -5,10 +5,10 @@
  * ShoppProductThemeAPI provides shopp('product') Theme API tags
  *
  * @api
- * @copyright Ingenesis Limted, 2012-2013
- * @package shopp
- * @since 1.2
+ * @copyright Ingenesis Limted, 2012-2014
+ * @package Shopp\API\Theme\Product
  * @version 1.3
+ * @since 1.2
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -42,7 +42,11 @@ add_filter('shopp_themeapi_product_spec', 'do_shortcode', 12);
  *
  **/
 class ShoppProductThemeAPI implements ShoppAPI {
-	static $context = 'ShoppProduct';
+
+	/**
+	 * @var array The registry of available `shopp('object')` properties
+	 * @internal
+	 **/
 	static $register = array(
 		'addon' => 'addon',
 		'addons' => 'addons',
@@ -62,7 +66,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		'hasaddons' => 'has_addons',
 		'hascategories' => 'has_categories',
 		'hassavings' => 'has_savings',
-		'hasvariations' => 'has_variations',
+		'hasvariants' => 'has_variants',
 		'hasimages' => 'has_images',
 		'hasspecs' => 'has_specs',
 		'hastags' => 'has_tags',
@@ -95,15 +99,36 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		'tags' => 'tags',
 		'taxrate' => 'taxrate',
 		'type' => 'type',
-		'variation' => 'variation',
-		'variations' => 'variations',
-		'weight' => 'weight'
+		'variant' => 'variant',
+		'variants' => 'variants',
+		'weight' => 'weight',
+
+		// Deprecated
+		'hasvariations' => 'has_variants',
+		'variation' => 'variant',
+		'variations' => 'variants',
 	);
 
+	/**
+	 * Provides the authoritative Theme API context
+	 *
+	 * @internal
+	 * @since 1.2
+	 *
+	 * @return string The Theme API context name
+	 */
 	public static function _apicontext () {
 		return 'product';
 	}
 
+	/**
+	 * Remaps the other Theme API contexts to the authoritative context
+	 *
+	 * @internal
+	 * @since 1.2
+	 *
+	 * @return string The Theme API context name
+	 */
 	public static function _context_name ( $name ) {
 		switch ( $name ) {
 			case 'product':
@@ -115,11 +140,14 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	}
 
 	/**
-	 * _setobject - returns the global context object used in the shopp('product') call
+	 * Returns the proper global context object used in a shopp('collection') call
 	 *
-	 * @author John Dillick
+	 * @internal
 	 * @since 1.2
 	 *
+	 * @param ShoppProduct $Object The ShoppOrder object to set as the working context
+	 * @param string       $context The context being worked on by the Theme API
+	 * @return ShoppProduct The active object context
 	 **/
 	public static function _setobject ($Object, $object) {
 		if ( is_object($Object) && is_a($Object, 'ShoppProduct') ) return $Object;
@@ -130,6 +158,27 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		}
 	}
 
+
+	/**
+	 * Provides product addon input markup or properties for the current addon in the loop
+	 *
+	 * Used with `shopp('product.addons')` looping.
+	 *
+	 * @api `shopp('product.addon')`
+	 * @since 1.1
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **separator**: ` ` The separator to use between properties when requesting multiple properties
+	 * - **units**: `on` (on,off) Include the weight unit when weight is requested as a property
+	 * - **discounts**: `on` (on,off) When used with the **saleprice** property, shows the discounted price of the addon
+	 * - **taxes**: `null` (on,off) Include or exclude taxes from prices
+	 * - **input**: `null` (text,checkbox,radio,hidden) Sets the type of input to create
+	 * - **money**: `on` (on, off) Format the amount in the current currency format
+	 * - **number**: `off` (on, off) Provide the unformatted number (floating point)
+	 * @param ShoppProduct $O       The working object
+	 * @return string The addon input markup or property value
+	 **/
 	public static function addon ( $result, $options, $O ) {
 
 		$defaults = array(
@@ -198,6 +247,33 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		return join($separator, $_);
 	}
 
+	/**
+	 * Iterate over the product addons or provide markup for a product addons chooser widget
+	 *
+	 * @api `shopp('product.addons')`
+	 * @since 1.1
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **mode**: `loop` (loop, menu) Iterate over the addons with `loop` or provide an addon chooser `menu` widget
+	 * - **defaults**: Specify a default option that is displayed as the initial selection for the `menu`
+	 * - **before_menu**: Markup to add before the widget
+	 * - **after_menu**: Markup to add after the widget
+	 * - **label**: `on` (on,off) Show or hide the menu name labels from the `menu` widget
+	 * - **format**: `%l (+%p)` The addon option label format
+	 *   - **%p**: shows the current variant price including available discounts.
+	 *   - **%l**: show the option label.
+	 *   - **%s**: show the stock amount of a product in inventory
+	 *   - **%d**: show the discount amount of an on sale variant.
+	 *   - **%r**: show the original price (the non-sale price) of the product variant.
+	 *   - **%u**: show the SKU for the product variant.
+	 * - **required**: `off` (on,off) Require an addon selection before the product can be added to the cart
+	 * - **required_error**: `You must select addon options for this item before you can add it to your shopping cart.` The error message to show when adding to the cart without selecting an addon when the **required** option is `on`
+	 * - **taxes**: Include or exclude taxes from prices
+	 * - **class**: The class attribute specifies one or more class-names for the menu elements
+	 * @param ShoppProduct $O       The working object
+	 * @return bool|string True if the next addon exists, or false otherwise, or the addon chooser markup
+	 **/
 	public static function addons ( $result, $options, $O ) {
 
 		// Default mode is: loop
@@ -214,7 +290,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 			if ( false !== current($O->prices) ) return true;
 			else {
-				$O->_addon_loop = false;
+				unset($O->_addon_loop);
 				return false;
 			}
 		}
@@ -224,14 +300,13 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 		$defaults = array(
 			'defaults' => '',
-			'disabled' => 'show',
 			'before_menu' => '',
 			'after_menu' => '',
 			'mode' => 'menu',
 			'label' => true,
 			'format' => '%l (+%p)',
 			'required' => false,
-			'required_error' => __('You must select addon options for this item before you can add it to your shopping cart.','Shopp'),
+			'required_error' => Shopp::__('You must select addon options for this item before you can add it to your shopping cart.'),
 			'taxes' => null,
 			'class' => '',
 			);
@@ -289,9 +364,9 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 			// Index addon prices by option
 			$index = array();
-			foreach ($O->prices as $pricetag) {
-				if ($pricetag->context != "addon") continue;
-				$index[$pricetag->optionkey] = $pricetag;
+			foreach ( $O->prices as $pricetag ) {
+				if ( 'addon' != $pricetag->context ) continue;
+				$index[ $pricetag->optionkey ] = $pricetag;
 			}
 
 			foreach ( $addons as $id => $menu ) {
@@ -338,73 +413,126 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 
 		if ( $required )
-			add_storefrontjs("$('#".$menuid."').parents('form').bind('shopp_validate',function () { if ('' == $('#".$menuid."').val()) this.shopp_validation = ['".$required_error."', $('#".$menuid."').get(0) ]; }); ");
+			add_storefrontjs("$('#" . $menuid . "').parents('form').on('shopp_validate',function(){if($('#" . $menuid . "').val()=='')$(this).data('error',['" . $required_error . "',$('#" . $menuid . "').get(0)]);});");
 
 		return join('', $markup);
 	}
 
+	/**
+	 * Provides markup for an add-to-cart button
+	 *
+	 * @api `shopp('product.add-to-cart')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **ajax**: `off` (on,off,html) Enable or disable AJAX behaviors or enable with an HTML AJAX response
+	 * - **class**: `addtocart` The class attribute specifies one or more class-names for the button element
+	 * - **label**: `Add to Cart` The label to display on the button
+	 * - **redirect**: A Shopp page (account,cart,catalog,checkout) or full URL to redirect to after adding the product to the cart
+	 * @param ShoppProduct $O       The working object
+	 * @return string The button markup
+	 **/
 	public static function add_to_cart ( $result, $options, $O ) {
-		if (!shopp_setting_enabled('shopping_cart')) return '';
+		if ( ! shopp_setting_enabled('shopping_cart') ) return '';
 		$defaults = array(
 			'ajax' => false,
 			'class' => 'addtocart',
-			'label' => __('Add to Cart','Shopp'),
+			'label' => Shopp::__('Add to Cart'),
 			'redirect' => false,
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract($options);
 
 		$classes = array();
-		if (!empty($class)) $classes = explode(' ',$class);
+		if ( ! empty($class) ) $classes = explode(' ', $class);
 
-		$string = "";
+		$string = '';
 		if ( shopp_setting_enabled('inventory') && $O->outofstock )
-			return apply_filters('shopp_product_outofstock_text', '<span class="outofstock">'.esc_html(shopp_setting('outofstock_text')).'</span>');
+			return apply_filters('shopp_product_outofstock_text', '<span class="outofstock">' . esc_html(shopp_setting('outofstock_text')) . '</span>');
 
-		if ($redirect)
-			$string .= '<input type="hidden" name="redirect" value="'.esc_attr($redirect).'" />';
+		if ( $redirect )
+			$string .= '<input type="hidden" name="redirect" value="' . esc_attr($redirect) . '" />';
 
-		$string .= '<input type="hidden" name="products['.$O->id.'][product]" value="'.$O->id.'" />';
+		$string .= '<input type="hidden" name="products[' . $O->id . '][product]" value="' . $O->id . '" />';
 
 		if ( ! Shopp::str_true($O->variants) && ! empty($O->prices) ) { // If variants are off, locate the default price line
-			foreach ($O->prices as $price) {
-				if ('product' == $price->context) {
+			foreach ( $O->prices as $price ) {
+				if ( 'product' == $price->context ) {
 					$default = $price; break;
 				}
 			}
-			if ('N/A' == $default->type) return false; // Disable add to cart if the default price is disabled
-			$string .= '<input type="hidden" name="products['.$O->id.'][price]" value="'.$default->id.'" />';
+			if ( 'N/A' == $default->type ) return false; // Disable add to cart if the default price is disabled
+			$string .= '<input type="hidden" name="products[' . $O->id . '][price]" value="' . $default->id . '" />';
 		}
 
-		$collection = isset(ShoppCollection()->slug)?shopp('collection','get-slug'):false;
-		if (!empty($collection)) {
-			$string .= '<input type="hidden" name="products['.$O->id.'][category]" value="'.esc_attr($collection).'" />';
+		$collection = isset(ShoppCollection()->slug) ? shopp('collection', 'get-slug') : false;
+		if ( ! empty($collection) ) {
+			$string .= '<input type="hidden" name="products[' . $O->id . '][category]" value="' . esc_attr($collection) . '" />';
 		}
 
 		$string .= '<input type="hidden" name="cart" value="add" />';
-		if (!$ajax) {
-			$options['class'] = join(' ',$classes);
-			$string .= '<input type="submit" name="addtocart" '.inputattrs($options).' />';
+		if ( ! $ajax ) {
+			$options['class'] = join(' ', $classes);
+			$string .= '<input type="submit" name="addtocart" ' . inputattrs($options) . ' />';
 		} else {
-			if ('html' == $ajax) $classes[] = 'ajax-html';
+			if ( 'html' == $ajax ) $classes[] = 'ajax-html';
 			else $classes[] = 'ajax';
-			$options['class'] = join(' ',$classes);
+			$options['class'] = join(' ', $classes);
 			$string .= '<input type="hidden" name="ajax" value="true" />';
-			$string .= '<input type="button" name="addtocart" '.inputattrs($options).' />';
+			$string .= '<input type="button" name="addtocart" ' . inputattrs($options) . ' />';
 		}
 
 		return $string;
 	}
 
+	/**
+	 * Checks if the product is available (in stock)
+	 *
+	 * @api `shopp('product.availability')`
+	 * @since 1.2
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if available, false otherwise
+	 **/
 	public static function availability ( $result, $options, $O ) {
 		return ! ( shopp_setting_enabled('inventory') && $O->outofstock );
 	}
 
+	/**
+	 * Provides markup for an buy-now button
+	 *
+	 * @api `shopp('product.buy-now')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **ajax**: `off` (on,off,html) Enable or disable AJAX behaviors or enable with an HTML AJAX response
+	 * - **class**: `addtocart` The class attribute specifies one or more class-names for the button element
+	 * - **label**: `Buy Now` The label to display on the button
+	 * - **redirect**: A Shopp page (account,cart,catalog,checkout) or full URL to redirect to after adding the product to the cart
+	 * @param ShoppProduct $O       The working object
+	 * @return string The button markup
+	 **/
 	public static function buy_now ( $result, $options, $O ) {
 		if ( ! isset($options['value']) ) $options['value'] = Shopp::__('Buy Now');
-		return self::addtocart( $result, $options, $O );
+		return self::add_to_cart( $result, $options, $O );
 	}
 
+
+	/**
+	 * Iterate over the categories the product is assigned to
+	 *
+	 * @api `shopp('product.categories')`
+	 * @since 1.1
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if the next category exists, false otherwise
+	 **/
 	public static function categories ( $result, $options, $O ) {
 		if ( ! isset($O->_categories_loop) ) {
 			reset($O->categories);
@@ -418,6 +546,18 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		}
 	}
 
+	/**
+	 * Provide details about an assigned category from the categories loop
+	 *
+	 * @api `shopp('product.category')`
+	 * @since 1.1
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **show**: `name` (id,slug,name) Show the category term id, slug or name
+	 * @param ShoppProduct $O       The working object
+	 * @return string The category detail
+	 **/
 	public static function category ( $result, $options, $O ) {
 
 		$category = current($O->categories);
@@ -430,6 +570,36 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 	}
 
+	/**
+	 * Generates image markup
+	 *
+	 * @api `shopp('product.coverimage')`
+	 * @since 1.0
+	 *
+	 * @param string $result  The output
+	 * @param array  $options The options
+	 * - **alt**: The alt property of the image
+	 * - **bg**: The background color to use with the matte fit (#rrggbb)
+	 * - **class**: Specifies the CSS class of the image
+	 * - **fit**: The fit of unproportional images to the requested size:
+	 * -- **width**: Scale the image down to fit the image in the new size by the width, cropping any extra height
+	 * -- **height**: Scale the image down to fit the image in the new size by the height, cropping any extra width
+	 * -- **crop**: Scale the image down to fit by the smallest dimension to fill the entire image, cropping the extra off the other dimension (specific cropping adjustments can be made in the product editor)
+	 * -- **matte**: Scale the image down to fit within the new size filling extra space with a background color
+	 * -- **all**: Scale the image down to fit within the new size (the final size may differ from the specified dimensions)
+	 * - **id**: Specify the image to show by the database ID
+	 * - **property**: (id,url,src,title,alt,width,height,class) Provide a property of the image rather than the image markup
+	 * - **quality**: The JPEG image quality (0-100%, default is 80)
+	 * - **sharpen**: Apply an unsharp mask to the image (100%-500%, default is none)
+	 * - **size**: The size to use for width and height of the image (used in place of width and height)
+	 * - **title**: The title property of the image
+	 * - **width**: The width of the image in pixels
+	 * - **height**: The height of the image in pixels
+	 * - **zoom**: Enables the image zoom effect to view the original size image in a modal image viewer (Colorbox)
+	 * - **zoomfx**: `shopp-zoom` Enables zoom (also known as lightbox) effects for alternate JavaScript-based modal content viewers.
+	 * @param Object $O       The working object
+	 * @return string The generated image markup
+	 **/
 	public static function coverimage ( $result, $options, $O ) {
 		// Force select the first loaded image
 		unset($options['id']);
@@ -438,12 +608,35 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		return self::image( $result, $options, $O );
 	}
 
+	/**
+	 * Provide the product description
+	 *
+	 * @api `shopp('product.description')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return string The description markup
+	 **/
 	public static function description ( $result, $options, $O ) {
 		return $O->description;
 	}
 
+	/**
+	 * Checks if the request product is found
+	 *
+	 * @api `shopp('product.found')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **load**: `categories,images,prices,specs,summary,tags` (prices,coverimages,images,specs,tags,categories,summary) Specify the product data sets to bulk load
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if found, false otherwise
+	 **/
 	public static function found ( $result, $options, $O ) {
-		if (empty($O->id)) return false;
+		if ( empty($O->id) ) return false;
 		// Prevent re-loading individual product data in category loops
 		if ( ShoppCollection() && shopp('collection.products', 'looping=true') ) return true;
 		$loadable = array('prices', 'coverimages', 'images', 'specs', 'tags', 'categories', 'summary');
@@ -454,17 +647,71 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		extract($options);
 
 		if ( false !== strpos($load, ',') ) $load = explode(',', $load);
-		$load = array_intersect($loadable,(array)$load);
+		$load = array_intersect($loadable, (array)$load);
 		if ( empty($load) ) $load = array('summary', 'prices', 'images', 'specs', 'tags', 'categories');
 		$O->load_data($load);
 		return true;
 	}
 
+	/**
+	 * Checks if a product has free shipping
+	 *
+	 * @api `shopp('product.free-shipping')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True for free shipping, false otherwise
+	 **/
 	public static function free_shipping ( $result, $options, $O ) {
-		if (empty($O->prices)) $O->load_data(array('prices'));
+		if ( empty($O->prices) ) $O->load_data(array('prices'));
 		return Shopp::str_true($O->freeship);
 	}
 
+	/**
+	 * Provides markup for a product image gallery
+	 *
+	 * @api `shopp('product.gallery')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **margins**: `20` Informs the PHP environment of the CSS margins used around elements for more accurate layout calculations
+	 * - **rowthumbs**: Sets the number of thumbnails per row to automatically resize the thumbnails to fit the space
+	 * - **p.setting**: Sets the image setting name to use for the preview image (individual settings can still be overridden)
+	 * - **p.size**: Sets the width and height of the preview image
+	 * - **p.width**: Sets the width of the preview image
+	 * - **p.height**: Sets the height of the preview image
+	 * - **p.fit**: `all` The fit of unproportional images to the requested size:
+	 *   - **all**: Scale the image down to fit within the new size (the final size may differ from the specified dimensions)
+	 *   - **crop**: Scale the image down to fit by the smallest dimension to fill the entire image, cropping the extra off the other dimension (specific cropping adjustments can be made in the product editor)
+	 *   - **height**: Scale the image down to fit the image in the new size by the height, cropping any extra width
+	 *   - **matte**: Scale the image down to fit within the new size filling extra space with a background color
+	 *   - **width**: Scale the image down to fit the image in the new size by the width, cropping any extra height
+	 * - **p.sharpen**: `0` The amount of unsharp mask to use on the preview image
+	 * - **p.quality**: `80` (0%-100%) The JPEG image quality of the preview image
+	 * - **p.bg**: `#ffffff` (#rrggbb) The background color to use with the `matte` setting for the **p_fit** option
+	 * - **p.link**: `on` (on,off) Include a link to the original full-size image
+	 * - **rel**: Used to provide information about the relationship between the product and the linked image
+	 * - **thumbsetting**: Specifies the image setting name to use for thumbnail images (individual settings can still be overridden)
+	 * - **thumbsize**: Sets the width and height of the thumbnail images
+	 * - **thumbwidth**: Sets the width of the thumbnail images
+	 * - **thumbheight**: Sets the height of the thumbnail images
+	 * - **thumbfit**: `all` Sets fit of unproportional images to the requested size:
+	 *   - **all**: Scale the image down to fit within the new size (the final size may differ from the specified dimensions)
+	 *   - **crop**: Scale the image down to fit by the smallest dimension to fill the entire image, cropping the extra off the other dimension (specific cropping adjustments can be made in the product editor)
+	 *   - **height**: Scale the image down to fit the image in the new size by the height, cropping any extra width
+	 *   - **matte**: Scale the image down to fit within the new size filling extra space with a background color
+	 *   - **width**: Scale the image down to fit the image in the new size by the width, cropping any extra height
+	 * - **thumbsharpen**: `0` The amount of unsharp mask to use on thumbnail images
+	 * - **thumbquality**: `80` (0%-100%) The JPEG image quality of the thumbnail images
+	 * - **thumbbg**: `#ffffff` (#rrggbb) The background color to use with the `matte` setting for the **thumbfit** option
+	 * - **zoomfx**: `shopp-zoom` Enables zoom (also known as a lightbox) effects for alternate JavaScript-based modal viewers. To change the built-in Colorbox options @use `shopp('storefront.zoom-options')`
+	 * - **preview**: `click` (click,hover,dblclick,mousedown) The browser action to use to preview a thumbnail
+	 * @param ShoppProduct $O       The working object
+	 * @return string The gallery markup
+	 **/
 	public static function gallery ( $result, $options, $O ) {
 		if ( empty($O->images) ) $O->load_data(array('images'));
 		if ( empty($O->images) ) return false;
@@ -507,9 +754,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 			// Effects settings
 			'zoomfx' => 'shopp-zoom',
-			'preview' => 'click',
-			'colorbox' => '{}'
-
+			'preview' => 'click'
 		);
 
 		// Populate defaults from named settings, if provided
@@ -531,7 +776,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		$options = array();
 		$keys = array_keys($optionset);
 		foreach ( $keys as $key )
-			$options[ str_replace('.', '_',$key) ] = $optionset[ $key ];
+			$options[ str_replace('.', '_', $key) ] = $optionset[ $key ];
 		extract($options);
 
 		if ( $p_size > 0 )
@@ -654,11 +899,33 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		return $result;
 	}
 
+	/**
+	 * Checks if the product has any addon options
+	 *
+	 * @api `shopp('product.has-addons')`
+	 * @since 1.1
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if addons exist, false otherwise
+	 **/
 	public static function has_addons ( $result, $options, $O ) {
 		reset($O->prices);
 		return ( Shopp::str_true($O->addons) && ! empty($O->options['a']) );
 	}
 
+	/**
+	 * Checks if the product is assigned to any categories
+	 *
+	 * @api `shopp('product.has-categories')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if categories exist, false otherwise
+	 **/
 	public static function has_categories ( $result, $options, $O ) {
 
 		if ( empty($O->categories) )
@@ -671,6 +938,17 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 	}
 
+	/**
+	 * Checks if the product has any images
+	 *
+	 * @api `shopp('product.has-images')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if images exist, false otherwise
+	 **/
 	public static function has_images ( $result, $options, $O ) {
 
 		if ( empty($O->images) )
@@ -681,10 +959,32 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 	}
 
+	/**
+	 * Checks if the product is on sale with savings from the regular price
+	 *
+	 * @api `shopp('product.has-savings')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if savings exist, false otherwise
+	 **/
 	public static function has_savings ( $result, $options, $O ) {
 		return ( Shopp::str_true($O->sale) && $O->min['saved'] > 0 );
 	}
 
+	/**
+	 * Checks if the product has spec entries
+	 *
+	 * @api `shopp('product.has-specs')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if specs exist, false otherwise
+	 **/
 	public static function has_specs ( $result, $options, $O ) {
 
 		if ( empty($O->specs) )
@@ -697,6 +997,17 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 	}
 
+	/**
+	 * Checks if the product has any tags
+	 *
+	 * @api `shopp('product.has-tags')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if tags exist for the product, false otherwise
+	 **/
 	public static function has_tags ( $result, $options, $O ) {
 
 		if ( empty($O->tags) )
@@ -709,7 +1020,18 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 	}
 
-	public static function has_variations ( $result, $options, $O ) {
+	/**
+	 * Checks if the product has variants
+	 *
+	 * @api `shopp('product.has-variants')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return void
+	 **/
+	public static function has_variants ( $result, $options, $O ) {
 
 		if ( ! Shopp::str_true($O->variants) ) return false;
 
@@ -724,18 +1046,51 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 	}
 
+	/**
+	 * Provides the product's custom post-type database Id
+	 *
+	 * @api `shopp('context.property')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return void
+	 **/
 	public static function id ( $result, $options, $O ) {
 		return $O->id;
 	}
 
 	/**
-	 * Renders a product image
+	 * Provides markup for displaying a product image
 	 *
-	 * @see the image() method from theme/catalog.php
-	 * @author Jonathan Davis
-	 * @since 1.2
+	 * @api `shopp('product.image')`
+	 * @since 1.0
 	 *
-	 * @return string
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **alt**: The alt property of the image
+	 * - **bg**: The background color to use with the matte fit (#rrggbb)
+	 * - **class**: Specifies the CSS class of the image
+	 * - **fit**: The fit of unproportional images to the requested size:
+	 *   - **all**: Scale the image down to fit within the new size (the final size may differ from the specified dimensions)
+	 *   - **crop**: Scale the image down to fit by the smallest dimension to fill the entire image, cropping the extra off the other dimension (specific cropping adjustments can be made in the product editor)
+	 *   - **height**: Scale the image down to fit the image in the new size by the height, cropping any extra width
+	 *   - **matte**: Scale the image down to fit within the new size filling extra space with a background color
+	 *   - **width**: Scale the image down to fit the image in the new size by the width, cropping any extra height
+	 * - **id**: Specify the image to show by the database ID
+	 * - **index**: Specify the index of the image to show
+	 * - **property**: (id,url,src,title,alt,width,height,class) Provide a property of the image rather than the image markup
+	 * - **quality**: The JPEG image quality (0-100%, default is 80)
+	 * - **sharpen**: Apply an unsharp mask to the image (100%-500%, default is none)
+	 * - **size**: The size to use for width and height of the image (used in place of width and height)
+	 * - **title**: The title property of the image
+	 * - **width**: The width of the image in pixels
+	 * - **height**: The height of the image in pixels
+	 * - **zoom**: `off` Enables the image zoom effect to view the original size image in a modal image viewer (Colorbox)
+	 * - **zoomfx**: `shopp-zoom` Enables zoom (also known as lightbox) effects for alternate JavaScript-based modal content viewers.
+	 * @param ShoppProduct $O       The working object
+	 * @return string The generated image markup
 	 **/
 	public static function image ( $result, $options, $O ) {
 		$loadset = array('images', 'coverimages');
@@ -749,39 +1104,111 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		return ShoppStorefrontThemeAPI::image( $result, $options, $O );
 	}
 
+	/**
+	 * Iterates over the loaded product images
+	 *
+	 * @api `shopp('product.images')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if the next image exists, false otherwise
+	 **/
 	public static function images ( $result, $options, $O ) {
-		if (!$O->images) return false;
-		if (!isset($O->_images_loop)) {
+		if ( ! $O->images ) return false;
+		if ( ! isset($O->_images_loop) ) {
 			reset($O->images);
 			$O->_images_loop = true;
 		} else next($O->images);
 
-		if (current($O->images) !== false) return true;
+		if ( current($O->images) !== false ) return true;
 		else {
 			unset($O->_images_loop);
 			return false;
 		}
 	}
 
+	/**
+	 * Checks if the current product is in the shopping cart
+	 *
+	 * @api `shopp('product.in-cart')`
+	 * @since 1.1
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if the product is in the cart, false otherwise
+	 **/
 	public static function in_cart ( $result, $options, $O ) {
-		$Order = ShoppOrder();
-		$cartitems = $Order->Cart->contents;
-		if (empty($cartitems)) return false;
-		foreach ((array)$cartitems as $Item)
-			if ($Item->product == $O->id) return true;
+		$Cart = ShoppOrder()->Cart;
+
+		if ( $Cart->count == 0 ) return false; // Cart is empty
+
+		foreach ( $Cart as $Item )
+			if ( $Item->product == $O->id ) return true;
 		return false;
 	}
 
+	/**
+	 * Checks if the current product is in a specified category
+	 *
+	 * @api `shopp('product.in-category')`
+	 * @since 1.1
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **id**: Specify the category to check by database ID
+	 * - **name**: Specify the category to check by name
+	 * - **slug**: Specify the category to check by slug
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if the product is assigned to the category, false otherwise
+	 **/
 	public static function in_category ( $result, $options, $O ) {
-		if (empty($O->categories)) $O->load_data(array('categories'));
-		if (isset($options['id'])) $field = "id";
-		if (isset($options['name'])) $field = "name";
-		if (isset($options['slug'])) $field = "slug";
-		foreach ($O->categories as $category)
-			if ($category->{$field} == $options[$field]) return true;
+		if ( empty($O->categories) )
+			$O->load_data(array('categories'));
+
+		if ( isset($options['slug']) )     $field = 'slug';
+		elseif ( isset($options['id']) )   $field = 'id';
+		elseif ( isset($options['name']) ) $field = 'name';
+
+		foreach ( (array)$O->categories as $category )
+			if ( $category->$field == $options[ $field ] ) return true;
 		return false;
 	}
 
+	/**
+	 * Provide the markup for a custom product input field
+	 *
+	 * @api `shopp('product.input')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **type**: `text` (menu,textarea,text,hidden,checkbox,radio,button,submit) The input type to generate
+	 * - **name**: **REQUIRED** The name of the input field to add to the product
+	 * - **autocomplete**: (on, off) Specifies whether an `<input>` element should have autocomplete enabled
+	 * - **accesskey**: Specifies a shortcut key to activate/focus an element. Linux/Windows: `[Alt]`+`accesskey`, Mac: `[Ctrl]``[Opt]`+`accesskey`
+	 * - **alt**: Specifies an alternate text for images (only for type="image")
+	 * - **checked**: Specifies that an `<input>` element should be pre-selected when the page loads (for type="checkbox" or type="radio")
+	 * - **class**: The class attribute specifies one or more class-names for an element
+	 * - **disabled**: Specifies that an `<input>` element should be disabled
+	 * - **format**: Specifies special field formatting class names for JS validation
+	 * - **minlength**: Sets a minimum length for the field enforced by JS validation
+	 * - **maxlength**: Specifies the maximum number of characters allowed in an `<input>` element
+	 * - **placeholder**: Specifies a short hint that describes the expected value of an `<input>` element
+	 * - **readonly**: Specifies that an input field is read-only
+	 * - **required**: Adds a class that specified an input field must be filled out before submitting the form, enforced by JS
+	 * - **size**: Specifies the width, in characters, of an `<input>` element
+	 * - **src**: Specifies the URL of the image to use as a submit button (only for type="image")
+	 * - **tabindex**: Specifies the tabbing order of an element
+	 * - **cols**: Specifies the visible width of a `<textarea>`
+	 * - **rows**: Specifies the visible number of lines in a `<textarea>`
+	 * - **title**: Specifies extra information about an element
+	 * - **value**: Specifies the value of an `<input>` element
+	 * @param ShoppProduct $O       The working object
+	 * @return string The input markup
+	 **/
 	public static function input ( $result, $options, $O ) {
 		$defaults = array(
 			'type' => 'text',
@@ -841,20 +1268,65 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		return $result;
 	}
 
+	/**
+	 * Check if the product is a featured product
+	 *
+	 * @api `shopp('product.is-featured')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if the product is featured, false otherwise
+	 **/
 	public static function is_featured ( $result, $options, $O ) {
 		return Shopp::str_true($O->featured);
 	}
 
+	/**
+	 * Provides the name of the product
+	 *
+	 * @api `shopp('product.name')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return string The product name
+	 **/
 	public static function name ( $result, $options, $O ) {
-		return apply_filters('shopp_product_name',$O->name);
+		return apply_filters('shopp_product_name', $O->name);
 	}
 
+	/**
+	 * Checks if the product is on sale
+	 *
+	 * @api `shopp('product.on-sale')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if the product is on sale, false otherwise
+	 **/
 	public static function on_sale ( $result, $options, $O ) {
-		if (empty($O->prices)) $O->load_data(array('prices','summary'));
-		if (empty($O->prices)) return false;
+		if ( empty($O->prices) ) $O->load_data(array('prices', 'summary'));
+		if ( empty($O->prices) ) return false;
 		return Shopp::str_true($O->sale);
 	}
 
+	/**
+	 * Checks if the product is out-of-stock
+	 *
+	 * @api `shopp('product.out-of-stock')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **label**: Show a label if the product is out of stock
+	 * @param ShoppProduct $O       The working object
+	 * @return bool|string True if out-of-stock, false otherwise, or the given label
+	 **/
 	public static function out_of_stock ( $result, $options, $O ) {
 
 		if ( ! shopp_setting_enabled('inventory') ) return false;
@@ -874,6 +1346,25 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 	}
 
+	/**
+	 * Provide the price or price range of the product
+	 *
+	 * @api `shopp('product.price')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **disabled**: `Currently unavailable` The label to show when the product is disabled (no valid, active prices)
+	 * - **high**: `off` (on,off) Show only the highest price of the variant price range
+	 * - **low**: `off` (on,off) Show only the lowest price of the variant price range
+	 * - **money**: `on` (on,off) Format the number with the current currency format for the store
+	 * - **number**: `off` (on,off) Provide the pure numeric value without currency formatting
+	 * - **separator**: ` &mdash; ` The separator used for the price range
+	 * - **starting**: Provides a label and displays the lowest price with the label as a prefix (@example "Starting at $9.99")
+	 * - **taxes**: (on,off) Include taxes in the price or exclude taxes from the price
+	 * @param ShoppProduct $O       The working object
+	 * @return string The price (range) markup
+	 **/
 	public static function price ( $result, $options, $O ) {
 		$defaults = array(
 			'taxes' => null,
@@ -916,11 +1407,65 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		else return $prices;
 	}
 
+	/**
+	 * Provide the sale price or sale price range of the product
+	 *
+	 * @api `shopp('product.saleprice')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **disabled**: `Currently unavailable` The label to show when the product is disabled (no valid, active prices)
+	 * - **high**: `off` (on,off) Show only the highest price of the variant price range
+	 * - **low**: `off` (on,off) Show only the lowest price of the variant price range
+	 * - **money**: `on` (on,off) Format the number with the current currency format for the store
+	 * - **number**: `off` (on,off) Provide the pure numeric value without currency formatting
+	 * - **separator**: `&mdash; ` The separator used for the price range
+	 * - **starting**: Provides a label and displays the lowest price with the label as a prefix (@example "Starting at $9.99")
+	 * - **taxes**: (on,off) Include taxes in the price or exclude taxes from the price
+	 * @param ShoppProduct $O       The working object
+	 * @return string The sale price markup
+	 **/
 	public static function saleprice ( $result, $options, $O ) {
 		$options['property'] = 'saleprice';
 		return self::price( $result, $options, $O );
 	}
 
+	/**
+	 * Provides a product quantity input for adding the product to the shopping cart
+	 *
+	 * @api `shopp('product.quantity')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **input**: `text` (text,menu) The type of quantity input field to generate
+	 * - **label**: A label to show with the input field
+	 * - **labelpos**: `before` (before,after) The position of the label, `before` or `after` the input
+	 * - **options**: `1-15,20,25,30,40,50,75,100` Used with the `menu` setting for the **input** option to generate the available quantity options.
+	 *   -Options are separated by commas and a range of options can be specified by using a dash (1-15) to generate all of the options from the beginning of the range to the end of the range
+	 * - **autocomplete**: (on, off) Specifies whether an `<input>` element should have autocomplete enabled
+	 * - **accesskey**: Specifies a shortcut key to activate/focus an element. Linux/Windows: `[Alt]`+`accesskey`, Mac: `[Ctrl]``[Opt]`+`accesskey`
+	 * - **alt**: Specifies an alternate text for images (only for type="image")
+	 * - **checked**: Specifies that an `<input>` element should be pre-selected when the page loads (for type="checkbox" or type="radio")
+	 * - **class**: The class attribute specifies one or more class-names for an element
+	 * - **disabled**: Specifies that an `<input>` element should be disabled
+	 * - **format**: Specifies special field formatting class names for JS validation
+	 * - **minlength**: Sets a minimum length for the field enforced by JS validation
+	 * - **maxlength**: Specifies the maximum number of characters allowed in an `<input>` element
+	 * - **placeholder**: Specifies a short hint that describes the expected value of an `<input>` element
+	 * - **readonly**: Specifies that an input field is read-only
+	 * - **required**: Adds a class that specified an input field must be filled out before submitting the form, enforced by JS
+	 * - **size**: Specifies the width, in characters, of an `<input>` element
+	 * - **src**: Specifies the URL of the image to use as a submit button (only for type="image")
+	 * - **tabindex**: Specifies the tabbing order of an element
+	 * - **cols**: Specifies the visible width of a `<textarea>`
+	 * - **rows**: Specifies the visible number of lines in a `<textarea>`
+	 * - **title**: Specifies extra information about an element
+	 * - **value**: `1` Specifies the value of the `<input>` element
+	 * @param ShoppProduct $O       The working object
+	 * @return string The input markup
+	 **/
 	public static function quantity ( $result, $options, $O ) {
 		if ( ! shopp_setting_enabled('shopping_cart') ) return '';
 		if ( shopp_setting_enabled('inventory') && $O->outofstock ) return '';
@@ -932,15 +1477,15 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			'labelpos' => 'before',
 			'label' => '',
 			'options' => '1-15,20,25,30,40,50,75,100',
-			'size' => 3
+			'size' => false
 		);
-		$options = array_merge($defaults,$options);
-		$_options = $options;
-		extract($_options);
+		$options = array_merge($defaults, $options);
+		$attributes = $options;
+		extract($attributes);
 		$select_attrs = array('title','required','class','disabled','required','size','tabindex','accesskey');
 
-		unset($_options['label']); // Interferes with the text input value when passed to inputattrs()
-		if( !empty($label) ) $labeling = '<label for="quantity-'.$O->id.'">'.$label.'</label>';
+		unset($attributes['label']); // Interferes with the text input value when passed to inputattrs()
+		$labeling = empty($label) ? '' : '<label for="quantity-' . $O->id . '">' . $label . '</label>';
 
 
 		if ( ! isset($O->_prices_loop) ) reset($O->prices);
@@ -973,7 +1518,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 					else for ($i = $v[0]; $i < $v[1]+1; $i++) $qtys[] = $i;
 				} else $qtys[] = $v;
 			}
-			$_[] = '<select name="products['.$O->id.'][quantity]" id="quantity-'.$O->id.'"' . inputattrs($options, $select_attrs) . '>';
+			$_[] = '<select name="products['.$O->id.'][quantity]" id="quantity-'.$O->id.'"' . inputattrs($attributes, $select_attrs) . '>';
 			foreach ($qtys as $qty) {
 				$amount = $qty;
 				if ( $variation && 'Donation' == $variation->type && Shopp::str_true($variation->donation['var']) ) {
@@ -989,20 +1534,48 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			$_[] = '</select>';
 		} elseif (Shopp::valid_input($input)) {
 			if (  $variation && 'Donation' == $variation->type && Shopp::str_true($variation->donation['var']) ) {
-				if ($variation->donation['min']) $_options['value'] = $variation->price;
-				$_options['class'] .= " currency";
+				if ($variation->donation['min']) $attributes['value'] = $variation->price;
+				$attributes['class'] .= " currency";
 			}
-			$_[] = '<input type="'.$input.'" name="products['.$O->id.'][quantity]" id="quantity-'.$O->id.'"'.inputattrs($_options).' />';
+			$_[] = '<input type="'.$input.'" name="products['.$O->id.'][quantity]" id="quantity-'.$O->id.'"'.inputattrs($attributes).' />';
 		}
 
 		if ("after" == $labelpos) $_[] = $labeling;
 		return join("\n",$_);
 	}
 
+	/**
+	 * Provide the relevance score for the product in certain product collections that score products
+	 *
+	 * Smart collections such as the Also Bought and Search Results collections will provide a
+	 * relevance score
+	 *
+	 * @api `shopp('product.relevance')`
+	 * @since 1.2
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return string The score value
+	 **/
 	public static function relevance ( $result, $options, $O ) {
-		return (string)$O->score;
+		return (string) $O->score;
 	}
 
+	/**
+	 * Provides the amount of cost savings between the regular price and the sale price
+	 *
+	 * @api `shopp('product.savings')`
+	 * @since 1.1
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **taxes**: Used to include or exclude taxes from consideration in the calculations
+	 * - **show**: (%,percent) Change the amount to calculate the percentage savings instead of the total amount
+	 * - **separator**: ` &mdash; ` The separator between a range of settings
+	 * @param ShoppProduct $O       The working object
+	 * @return string The savings amount
+	 **/
 	public static function savings ( $result, $options, $O ) {
 
 		$defaults = array(
@@ -1051,19 +1624,65 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 	}
 
+	/**
+	 * Provides schema.org markup for the current product
+	 *
+	 * A built-in schema template is used unless a custom
+	 * scheme template is defined in the active Shopp
+	 * content templates:
+	 *
+	 * - product-{slug}-schema.php
+	 * - product-schema.php
+	 * - built-in template
+	 *
+	 * @api `shopp('product.schema')`
+	 * @since 1.3
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return string The schema.org markup
+	 **/
 	public static function schema ( $result, $options, $O ) {
 		$template = locate_shopp_template( array('product-' . $O->slug . '-schema.php', 'product-schema.php') );
 		if ( ! $template ) $template = SHOPP_ADMIN_PATH . '/products/schema.php';
+
 		ob_start();
 		include($template);
-		$result = ob_get_clean();
-		return $result;
+		return ob_get_clean();
 	}
 
+	/**
+	 * Provides the product slug
+	 *
+	 * @api `shopp('product.slug')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return string The product slug
+	 **/
 	public static function slug ( $result, $options, $O ) {
 		return $O->slug;
 	}
 
+	/**
+	 * Provides a product specification entry from the specs loop
+	 *
+	 * @api `shopp('product.spec')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **separator**: `: ` Specifies the separator between the spec name and the contents
+	 * - **delimiter**: `, ` Specifies the delimiter between multiple spec values for a single entry
+	 * - **name**: Provides the name of the spec rather than the name and contents
+	 * - **index**: Specify the index to show that individual spec entry
+	 * - **content**: Show only the content of the entry rather than the name and contents
+	 * @param ShoppProduct $O       The working object
+	 * @return string The spec entry
+	 **/
 	public static function spec ( $result, $options, $O ) {
 		$showname = false;
 		$showcontent = false;
@@ -1074,84 +1693,144 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			'index' => false,
 			'content' => false,
 		);
-		if (isset($options['name'])) $showname = true;
-		if (isset($options['content'])) $showcontent = true;
-		$options = array_merge($defaults,$options);
+		if ( isset($options['name']) ) $showname = true;
+		if ( isset($options['content']) ) $showcontent = true;
+		$options = array_merge($defaults, $options);
 		extract($options);
 
 		$string = '';
 
-		if ( !empty($name) ) {
-			if ( ! isset($O->specnames[$name]) ) return apply_filters('shopp_product_spec',false);
-			$spec = $O->specnames[$name];
-			if (is_array($spec)) {
-				if ($index) {
-					foreach ($spec as $id => $item)
-						if (($id+1) == $index) $content = $item->value;
+		if ( ! empty($name) ) {
+			if ( ! isset($O->specnames[ $name ]) ) return apply_filters('shopp_product_spec', false);
+			$spec = $O->specnames[ $name ];
+			if ( is_array($spec) ) {
+				if ( $index ) {
+					foreach ( $spec as $id => $item )
+						if ( ( $id + 1 ) == $index ) $content = $item->value;
 				} else {
 					$values = array();
-					foreach ($spec as $item) $values[] = $item->value;
-					$content = join($delimiter,$values);
+					foreach ( $spec as $item ) $values[] = $item->value;
+					$content = join($delimiter, $values);
 				}
 			} else $content = $spec->value;
 
-			return apply_filters('shopp_product_spec',$content);
+			return apply_filters('shopp_product_spec', $content);
 		}
 
 		// Spec loop handling
 		$spec = current($O->specnames);
 
-		if (is_array($spec)) {
+		if ( is_array($spec) ) {
 			$values = array();
-			foreach ($spec as $id => $entry) {
+			foreach ( $spec as $id => $entry ) {
 				$specname = $entry->name;
 				$values[] = $entry->value;
 			}
-			$specvalue = join($delimiter,$values);
+			$specvalue = join($delimiter, $values);
 		} else {
 			$specname = $spec->name;
 			$specvalue = $spec->value;
 		}
 
-		if ($showname && $showcontent)
-			$string = $spec->name.$separator.apply_filters('shopp_product_spec',$specvalue);
-		elseif ($showname) $string = $specname;
-		elseif ($showcontent) $string = apply_filters('shopp_product_spec',$specvalue);
-		else $string = $specname.$separator.apply_filters('shopp_product_spec',$specvalue);
+		if ( $showname && $showcontent )
+			$string = $spec->name . $separator . apply_filters('shopp_product_spec', $specvalue);
+		elseif ( $showname )
+			$string = $specname;
+		elseif ( $showcontent )
+			$string = apply_filters('shopp_product_spec', $specvalue);
+		else $string = $specname . $separator . apply_filters('shopp_product_spec', $specvalue);
+
 		return $string;
 	}
 
+	/**
+	 * Provides the product SKU or list of variant SKUs for the product
+	 *
+	 * @api `shopp('product.sku')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **separator**: `,` The separator between SKUs in the variant SKU list
+	 * @param ShoppProduct $O       The working object
+	 * @return string The product SKU (list)
+	 **/
 	public static function sku ( $result, $options, $O ) {
+		$defaults = array(
+			'separator' => ','
+		);
+		$options = array_merge($defaults, $options);
+		extract($options, EXTR_SKIP);
+
 		if ( empty($O->prices) ) $O->load_data(array('prices'));
 
 		if ( 1 == count($O->prices) && $O->prices[0]->sku )
 			return $O->prices[0]->sku;
 
 		$skus = array();
-		foreach ($O->prices as $price)
-			if ( 'N/A' != $price->type && $price->sku ) $skus[$price->sku] = $price->sku;
+		foreach ( $O->prices as $price )
+			if ( 'N/A' != $price->type && $price->sku )
+				$skus[ $price->sku ] = $price->sku;
 
-		if ( ! empty($skus) ) return join(',', $skus);
+		if ( ! empty($skus) ) return join($separator, $skus);
 		return '';
 	}
 
+	/**
+	 * Iterates over the product spec entries
+	 *
+	 * @api `shopp('product.specs')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if the next spec exists, false otherwise
+	 **/
 	public static function specs ( $result, $options, $O ) {
-		if (!isset($O->_specs_loop)) {
+		if ( ! isset($O->_specs_loop) ) {
 			reset($O->specnames);
 			$O->_specs_loop = true;
 		} else next($O->specnames);
 
-		if (current($O->specnames) !== false) return true;
+		if ( current($O->specnames) !== false ) return true;
 		else {
 			unset($O->_specs_loop);
 			return false;
 		}
 	}
 
+	/**
+	 * Provides the current stock of the product
+	 *
+	 * Specifically this is the overall stock of the product:
+	 * the sum of the stock of the product variants.
+	 *
+	 * @api `shopp('product.stock')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return string The product stock amount
+	 **/
 	public static function stock ( $result, $options, $O ) {
 		return (int)$O->stock;
 	}
 
+	/**
+	 * Provides the product summary text
+	 *
+	 * @api `shopp('product.summary')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **overflow**: `&hellip;` The character or text to display when the summary is clipped
+	 * - **clip**: The number of characters to limit the
+	 * @param ShoppProduct $O       The working object
+	 * @return string The summary text
+	 **/
 	public static function summary ( $result, $options, $O ) {
 		$summary = $O->summary;
 
@@ -1163,30 +1842,69 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		return apply_filters('shopp_product_summary', $summary);
 	}
 
+	/**
+	 * Provide a tag entry from the tags loop
+	 *
+	 * @api `shopp('product.tag')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **
+	 * @param ShoppProduct $O       The working object
+	 * @return string The tag entry
+	 **/
 	public static function tag ( $result, $options, $O ) {
 		$tag = current($O->tags);
-		if (isset($options['show'])) {
-			if ($options['show'] == "id") return $tag->id;
-		}
+
+		if ( isset($options['show']) && 'id' == $options['show'] )
+			return $tag->id;
+
 		return $tag->name;
 	}
 
+	/**
+	 * Checks if the product is tagged with a specified tag
+	 *
+	 * @api `shopp('product.tagged')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **id**: Specify the tag to check by database ID
+	 * - **name**: Specify the tag to check by name
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if tagged with the given tag, false otherwise
+	 **/
 	public static function tagged ( $result, $options, $O ) {
-		if (empty($O->tags)) $O->load_data(array('tags'));
-		if (isset($options['id'])) $field = "id";
-		if (isset($options['name'])) $field = "name";
-		foreach ($O->tags as $tag)
-			if ($tag->{$field} == $options[$field]) return true;
+		if ( empty($O->tags) ) $O->load_data(array('tags'));
+
+		if ( isset($options['id']) )       $field = 'id';
+		elseif ( isset($options['name']) ) $field = 'name';
+
+		foreach ( $O->tags as $tag )
+			if ( $tag->$field == $options[ $field ] ) return true;
 		return false;
 	}
 
+	/**
+	 * Iterate over the tags assigned to the product
+	 *
+	 * @api `shopp('product.tags')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return bool True if the next tag exists, false otherwise
+	 **/
 	public static function tags ( $result, $options, $O ) {
-		if (!isset($O->_tags_loop)) {
+		if ( ! isset($O->_tags_loop) ) {
 			reset($O->tags);
 			$O->_tags_loop = true;
 		} else next($O->tags);
 
-		if (current($O->tags) !== false) return true;
+		if ( current($O->tags) !== false ) return true;
 		else {
 			unset($O->_tags_loop);
 			return false;
@@ -1194,40 +1912,106 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	}
 
 	// Note this returns the "effective" tax rate (not including compound taxes)
+
+	/**
+	 * Provides the effective tax rate for the product
+	 *
+	 * The effective tax rate does not include compound taxes
+	 *
+	 * @api `shopp('product.taxrate')`
+	 * @since 1.2
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return void
+	 **/
 	public static function taxrate ( $result, $options, $O ) {
 		return Shopp::taxrate($O);
 	}
 
-	public static function type ( $result, $options, $O ) {
-		if (empty($O->prices)) $O->load_data(array('prices'));
 
-		if (1 == count($O->prices))
+	/**
+	 * Provides the product type or list of variant types
+	 *
+	 * @api `shopp('product.type')`
+	 * @since 1.2
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **separator**: `,` The separator between each type entry for the variant type list
+	 * @param ShoppProduct $O       The working object
+	 * @return string The product type or variant type list
+	 **/
+	public static function type ( $result, $options, $O ) {
+		$defaults = array(
+			'separator' => ','
+		);
+		$options = array_merge($defaults, $options);
+		extract($options, EXTR_SKIP);
+
+		if ( empty($O->prices) ) $O->load_data(array('prices'));
+
+		if ( count($O->prices) == 1 )
 			return $O->prices[0]->type;
 
 		$types = array();
-		foreach ($O->prices as $price)
-			if ('N/A' != $price->type) $types[$price->type] = $price->type;
+		foreach ( $O->prices as $price )
+			if ( 'N/A' != $price->type )
+				$types[ $price->type ] = $price->type;
 
-		return join(',',$types);
+		return join($separator, $types);
 	}
 
+	/**
+	 * Provides the product permalink URL
+	 *
+	 * @api `shopp('product.url')`
+	 * @since 1.0
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return string The URL
+	 **/
 	public static function url ( $result, $options, $O ) {
 		global $wp_rewrite;
 		return Shopp::url( $wp_rewrite->using_permalinks() ? $O->slug : array(ShoppProduct::$posttype => $O->slug), false );
 	 }
 
-	public static function variation ( $result, $options, $O ) {
+ 	/**
+ 	 * Provides product varient input markup or properties for the current variant in the variants loop
+ 	 *
+ 	 * Used with `shopp('product.variants')` looping.
+ 	 *
+ 	 * @api `shopp('product.variant')`
+ 	 * @since 1.1
+ 	 *
+ 	 * @param string       $result  The output
+ 	 * @param array        $options The options
+ 	 * - **discounts**: `on` (on,off) When used with the **saleprice** property, shows the discounted price of the variant
+ 	 * - **input**: `null` (text,checkbox,radio,hidden) Sets the type of input to create
+ 	 * - **money**: `on` (on, off) Format the amount in the current currency format
+ 	 * - **number**: `off` (on, off) Provide the unformatted number (floating point)
+ 	 * - **separator**: ` ` The separator to use between properties when requesting multiple properties
+ 	 * - **taxes**: `null` (on,off) Include or exclude taxes from prices
+ 	 * - **units**: `on` (on,off) Include the weight unit when weight is requested as a property
+ 	 * @param ShoppProduct $O       The working object
+ 	 * @return string The variant input markup or property value
+ 	 **/
+	public static function variant ( $result, $options, $O ) {
 		$defaults = array(
-			'separator' => ' ',
-			'units' => 'on',
-			'promos' => 'on',
 			'discounts' => 'on',
-			'taxes' => null,
 			'money' => 'on',
-			'number' => 'off'
+			'number' => 'off',
+			'separator' => ' ',
+			'taxes' => null,
+			'units' => 'on'
 		);
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
+
+		if ( isset($promos) ) $discounts = $promos; // support for deprecated `promos` option
 
 		$weightunit = Shopp::str_true($units) ? shopp_setting('weight_unit') : '';
 		$variation = current($O->prices);
@@ -1277,28 +2061,55 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		return join($separator,$_);
 	}
 
-	public static function variations ( $result, $options, $O ) {
-		$string = "";
+	/**
+	 * Iterate over the product variants or provide markup for a product variants chooser widget
+	 *
+	 * @api `shopp('product.variants')`
+	 * @since 1.1
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **mode**: `loop` (loop, single, multiple) Iterate over the variants with `loop` or provide an variant chooser widget using a `single` drop-down menu for all variants or `multiple` menus
+	 * - **defaults**: Specify a default option that is displayed as the initial selection for the `menu`
+	 * - **before_menu**: Markup to add before the widget
+	 * - **after_menu**: Markup to add after the widget
+	 * - **label**: `on` (on,off) Show or hide the menu name labels from the `menu` widget
+	 * - **format**: `%l (+%p)` The variant option label format
+	 *   - **%p**: shows the current variant price including available discounts.
+	 *   - **%l**: show the option label.
+	 *   - **%s**: show the stock amount of a product in inventory
+	 *   - **%d**: show the discount amount of an on sale variant.
+	 *   - **%r**: show the original price (the non-sale price) of the product variant.
+	 *   - **%u**: show the SKU for the product variant.
+	 * - **required**: `You must select the options for this item before you can add it to your shopping cart.` The error message to show when adding to the cart without selecting an variant when the **required** option is `on`
+	 * - **taxes**: Include or exclude taxes from prices
+	 * - **class**: The class attribute specifies one or more class-names for the menu elements
+	 * @param ShoppProduct $O       The working object
+	 * @return bool|string True if the next variant exists, or false otherwise, or the variant chooser markup
+	 **/
+	public static function variants ( $result, $options, $O ) {
+		$string = '';
 
-		if (!isset($options['mode'])) {
-			if (!isset($O->_prices_loop)) {
+		if ( ! isset($options['mode']) ) {
+			if ( ! isset($O->_prices_loop) ) {
 				reset($O->prices);
 				$O->_prices_loop = true;
 			} else next($O->prices);
+
 			$price = current($O->prices);
 
-			if ($price && ($price->type == 'N/A' || $price->context != 'variation'))
+			while ( false !== $price && ('N/A' == $price->type || 'variation' != $price->context) )
 				$price = next($O->prices);
 
-			if ($price !== false) return true;
+			if ( false !== current($O->prices) ) return true;
 			else {
-				unset($O->_prices_loop);
+				$O->_prices_loop = false;
 				return false;
 			}
 		}
 
 		if ( shopp_setting_enabled('inventory') && $O->outofstock ) return false; // Completely out of stock, hide menus
-		if (!isset($options['taxes'])) $options['taxes'] = null;
+		if ( ! isset($options['taxes']) ) $options['taxes'] = null;
 
 		$defaults = array(
 			'defaults' => '',
@@ -1312,7 +2123,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			'taxes' => null,
 			'required' => __('You must select the options for this item before you can add it to your shopping cart.','Shopp')
 			);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract($options);
 
 		$taxes = isset($taxes) ? Shopp::str_true($taxes) : null;
@@ -1333,7 +2144,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 				$currently = self::_taxed((float)$currently, $O, $pricing->tax, $taxes);
 
-				$discount = 0 == $pricing->price ? 0 : 100 - round($pricing->promoprice * 100 / $pricing->price);
+				$discount = 0 == $pricing->price ? 0 : 100 - round( $pricing->promoprice * 100 / $pricing->price );
 				$_ = new StdClass();
 				$_->p = 'Donation' != $pricing->type && ! $disable ? money($currently) : false;
 				$_->l = $pricing->label;
@@ -1385,17 +2196,16 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			$select_collection = ( ! empty($collection_class) ) ? '.' . $collection_class : '';
 
 			ob_start();
-?><?php if (!empty($options['defaults'])): ?>
+?><?php if ( ! empty($options['defaults']) ): ?>
 $s.opdef = true;
 <?php endif; ?>
-<?php if (!empty($options['required'])): ?>
+<?php if ( ! empty($options['required']) ): ?>
 $s.opreq = "<?php echo $options['required']; ?>";
 <?php endif; ?>
 new ProductOptionsMenus(<?php printf("'select%s.product%d.options'",$select_collection,$O->id); ?>,<?php echo json_encode($jsoptions); ?>);
 <?php
 
-			$script = ob_get_contents();
-			ob_end_clean();
+			$script = ob_get_clean();
 
 			add_storefrontjs($script);
 
@@ -1415,39 +2225,71 @@ new ProductOptionsMenus(<?php printf("'select%s.product%d.options'",$select_coll
 		return $string;
 	}
 
+	/**
+	 * Provides the product weight or the variant weight range
+	 *
+	 * @api `shopp('product.weight')`
+	 * @since 1.2
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * - **convert**: `off` (on,off) Enable or disable converting from the product units to the display **unit** setting
+	 * - **max**: Only show the maximum weight
+	 * - **min**: Only show the minium weight
+	 * - **unit**: Set the unit
+	 * - **units**: `on` (on,off) Include the weight units label
+	 * @param ShoppProduct $O       The working object
+	 * @return string The weight or weight range
+	 **/
 	public static function weight ( $result, $options, $O ) {
-		if(empty($O->prices)) $O->load_data(array('prices'));
 		$defaults = array(
-			'unit' => shopp_setting('weight_unit'),
-			'min' => $O->min['weight'],
+			'convert' => false,
 			'max' => $O->max['weight'],
+			'min' => $O->min['weight'],
 			'units' => true,
-			'convert' => false
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
 
-		if(!isset($O->min['weight'])) return false;
+		$unit = shopp_setting('weight_unit');
 
-		if ($convert !== false) {
-			$min = convert_unit($min,$convert);
-			$max = convert_unit($max,$convert);
-			if (is_null($units)) $units = true;
+		if ( empty($O->prices) )
+			$O->load_data(array('prices'));
+
+		if( ! isset($O->min['weight']) ) return false;
+
+		if ( $convert !== false ) {
+			$min = convert_unit($min, $convert);
+			$max = convert_unit($max, $convert);
+			if ( is_null($units) ) $units = true;
 			$unit = $convert;
 		}
 
 		$range = false;
-		if ($min != $max) {
-			$range = array($min,$max);
+		if ( $min != $max ) {
+			$range = array($min, $max);
 			sort($range);
 		}
 
-		$string = ($min == $max)?round($min,3):round($range[0],3)." - ".round($range[1],3);
+		$string = $min == $max ? round($min, 3) : round($range[0], 3) . " - " . round($range[1], 3);
 		$string .= Shopp::str_true($units) ? " $unit" : "";
+
 		return $string;
 	}
 
-	public static function _variant_formatlabel ( string $format, $var ) {
+	/**
+	 * Handles formatting variant labels
+	 *
+	 * Replaces format tokens with the actual data
+	 *
+	 * @internal
+	 * @since 1.3
+	 *
+	 * @param string $format The format string
+	 * @param array $var The data elements to replace the tokens with
+	 * @return string The formatted label
+	 **/
+	private static function _variant_formatlabel ( $format, $var ) {
 		$data = (array)$var;
 
 		$label = $format;
@@ -1460,7 +2302,7 @@ new ProductOptionsMenus(<?php printf("'select%s.product%d.options'",$select_coll
 	/**
 	 * Helper function to determine if inclusive taxes apply to a given product
 	 *
-	 * @author Jonathan Davis
+	 * @internal
 	 * @since 1.3
 	 *
 	 * @param ShoppProduct $O The Shopp product to compare
@@ -1474,7 +2316,7 @@ new ProductOptionsMenus(<?php printf("'select%s.product%d.options'",$select_coll
 	 * Helper that applies or excludes taxes as needed from minumum and maximum price levels
 	 * based on inclusive tax settings and the tax option given
 	 *
-	 * @author Jonathan Davis
+	 * @internal
 	 * @since 1.3
 	 *
 	 * @param ShoppProduct $O The product to get properties from
@@ -1515,12 +2357,13 @@ new ProductOptionsMenus(<?php printf("'select%s.product%d.options'",$select_coll
 
 		if ( empty($taxrates) ) $taxrates = Shopp::taxrates($O);
 
-		$inclusivetax = self::_inclusive_taxes($O);
-		if ( isset($taxoption) ) $taxoption = Shopp::str_true( $taxoption );
+		if ( isset($taxoption) )
+			$taxoption = Shopp::str_true( $taxoption );
 
+		$inclusivetax = self::_inclusive_taxes($O);
 		if ( $inclusivetax ) {
 			$adjustment = ShoppTax::adjustment($taxrates);
-			if ( 1 != $adjustment )
+			if ( 1 != $adjustment && false !== $taxoption ) // Only adjust when taxes are not excluded @see #3041
 				return (float) ($amount / $adjustment);
 		}
 

@@ -5,7 +5,7 @@
  */
 
 function Pricelines () {
-	var $=jqnc(),_ = this;
+	var $=jQuery,_ = this;
 	_.idx = 0;
 	_.row = new Object();
 	_.variations = new Array();
@@ -13,6 +13,7 @@ function Pricelines () {
 	_.linked = new Array();
 
 	_.add = function (options,data,target,attachment) {
+
 		if (!data) data = {'context':'product'};
 		var key,p,targetkey,index;
 
@@ -29,12 +30,10 @@ function Pricelines () {
 				 	else _.variations.splice(index+1,0,xorkey(p.options));
 				}
 			} else _.variations.push(xorkey(p.options));
-		}
-		if (data.context == "addon") {
+		} else if (data.context == "addon") {
 			p = new Priceline(_.idx,options,data,target,attachment);
 			_.row[options] = p;
-		}
-		if (data.context == "product") {
+		} else if (data.context == "product") {
 			p = new Priceline(0,options,data,target,attachment);
 			_.row[0] = p;
 		}
@@ -150,8 +149,17 @@ function Pricelines () {
 
 }
 
+jQuery.fn.toggler = function (s,ui,f) {
+	var $ = jQuery, $this = $(this);
+	$this.closest('tr').on('change.toggle', $this, function () {
+		if ($this.prop('checked')) { s.hide(); ui.show(); }
+		else { s.show(); ui.hide(); }
+	}).trigger('change.toggle');
+	return this;
+};
+
 function Priceline (id,options,data,target,attachment) {
-	var $ = jqnc(),
+	var $ = jQuery,
 		_ = this,
 		tmp = template,
 		controller = Pricelines,
@@ -181,8 +189,9 @@ function Priceline (id,options,data,target,attachment) {
 	heading = $('<div class="pricing-label" />').appendTo(_.row);
 	labelText = $('<label for="label-'+i+'" />').appendTo(heading);
 
-	_.label = $('<input type="hidden" name="price['+i+'][label]" id="label-'+i+'" />').appendTo(heading);
-	_.label.change(function () { labelText.text($(this).val()); });
+	_.label = $('<input type="hidden" name="price['+i+'][label]" id="label-'+i+'" />')
+		.appendTo(heading);
+	$(_.row).on('change.label', '#label-'+i, function () { labelText.text($(this).val()); });
 
 	if (!data.id) data.id = '';
 	if (!data.product) data.product = product;
@@ -227,8 +236,8 @@ function Priceline (id,options,data,target,attachment) {
 					 '<input type="hidden" name="'+fn+'[tax]" value="on" /><input type="checkbox" name="'+fn+'[tax]" id="tax-'+i+'" value="off" />'+
 					 '<label for="tax-'+i+'"> '+NOTAX_LABEL+'</label><br /></td>').appendTo(inputsRow);
 
-		_.p = $('#price-'+i).val(asMoney(new Number(price)));
-		_.t = $('#tax-'+i).attr('checked',tax == "off"?true:false);
+		_.p = $('#price-'+i).val(asMoney(new Number(price || 0)));
+		_.t = $('#tax-'+i).prop('checked', ( tax == "off" ));
 	};
 
 	_.saleprice = function (toggle,saleprice) {
@@ -243,8 +252,10 @@ function Priceline (id,options,data,target,attachment) {
 		dis = ui.find('span.status');
 		ui = ui.find('span.ui').hide();
 
-		_.sp = $('#saleprice-'+i).val(asMoney(new Number(saleprice)));
-		_.spt = $('#sale-'+i).attr('checked',(toggle == "on"?true:false)).toggler(dis,ui,_.sp);
+		_.sp = $('#saleprice-'+i).val(asMoney(new Number(saleprice || 0)));
+		_.spt = $('#sale-'+i).prop('checked',toggle == "on");
+		_.toggler(_.spt,dis,ui,_.sp);
+
 	};
 
 	_.donation = function (price,tax,variable,minimum) {
@@ -254,8 +265,8 @@ function Priceline (id,options,data,target,attachment) {
 					 '<input type="hidden" name="'+fn+'[tax]" value="on" /><input type="checkbox" name="'+fn+'[tax]" id="tax-'+i+'" value="off" />'+
 					 '<label for="tax-'+i+'"> '+NOTAX_LABEL+'</label><br /></td>').appendTo(inputsRow);
 
-		_.p = $('#price-'+i).val(asMoney(new Number(price)));
-		_.t = $('#tax-'+i).attr('checked',tax == "on"?false:true);
+		_.p = $('#price-'+i).val(asMoney(new Number(price || 0)));
+		_.t = $('#tax-'+i).prop('checked',tax == "on"?false:true);
 
 		hd2 = $('<th />').appendTo(headingsRow);
 		ui2 = $('<td width="80%"><input type="hidden" name="'+fn+'[donation][var]" value="off" />'+
@@ -265,8 +276,8 @@ function Priceline (id,options,data,target,attachment) {
 					'<input type="checkbox" name="'+fn+'[donation][min]" id="donation-min-'+i+'" value="on" />'+
 					'<label for="donation-min-'+i+'"> '+DONATIONS_MIN_LABEL+'</label><br /></td>').appendTo(inputsRow);
 
-		_.dv = $('#donation-var-'+i).attr('checked',variable == "on"?true:false);
-		_.dm = $('#donation-min-'+i).attr('checked',minimum == "on"?true:false);
+		_.dv = $('#donation-var-'+i).prop('checked',variable == "on");
+		_.dm = $('#donation-min-'+i).prop('checked',minimum == "on");
 	};
 
 	_.shipping = function (toggle,dimensions,fee) {
@@ -285,21 +296,21 @@ function Priceline (id,options,data,target,attachment) {
 		inf = ui.find('span.ui').hide();
 		dui = ui.find('.dimui');
 
-		if (!dimensions.weight) dimensions.weight = 0;
-		_.w = $('#weight-'+i).val(formatNumber(new Number(dimensions.weight),nf,true)).bind('change.value',function () {
+		_.w = $('#weight-'+i).val(formatNumber(new Number(dimensions.weight || 0),nf,true));
+
+		inf.on('change.value', '#weight-'+i, function () {
 			this.value = formatNumber(isNaN(this.value)?0:this.value,nf,true);
 		});
 
 		_.fee = $('#shipfee-'+i);
-		_.fee.val(asMoney(new Number(fee)));
+		_.fee.val(asMoney(new Number(fee || 0)));
 
-		_.st = hd.find('#shipping-'+i).attr('checked',(toggle == "off"?false:true)).toggler(dis,inf,_.w);
+		_.st = hd.find('#shipping-'+i).prop('checked',(toggle == "off"?false:true));
+		_.toggler(_.st,dis,inf,_.w);
 
 		if (dimensionsRequired) {
-			dv = function (e,init) {
-				var value = this.value;
-				if (init) value = new Number(value);
-				this.value = formatNumber(value,nf,true);
+			dv = function () {
+				$this.val(formatNumber($this.val(),nf,true));
 			};
 
 			$('#weight-label-'+i).html(' '+dimensionUnit+'<sup>3</sup>/'+weightUnit);
@@ -328,25 +339,12 @@ function Priceline (id,options,data,target,attachment) {
 			if (!(dimensions instanceof Object))
 				dimensions = {'weight':0,'length':0,'width':0,'height':0};
 
-			_.dw = $('#dimensions-weight-'+i)
-				.val(dimensions.weight)
-				.bind('change.value',dv)
-				.trigger('change.value',true);
+			dc.on('change.value','input', dv).trigger('change.value');
 
-			_.dl = $('#dimensions-length-'+i)
-				.val(dimensions.length)
-				.bind('change.value',dv)
-				.trigger('change.value',true);
-
-			_.dwd = $('#dimensions-width-'+i)
-				.val(dimensions.width)
-				.bind('change.value',dv)
-				.trigger('change.value',true);
-
-			_.dh = $('#dimensions-height-'+i)
-				.val(dimensions.height)
-				.bind('change.value',dv)
-				.trigger('change.value',true);
+			_.dw = $('#dimensions-weight-'+i).val(new Number(dimensions.weight || 0));
+			_.dl = $('#dimensions-length-'+i).val(new Number(dimensions.length || 0));
+			_.dwd = $('#dimensions-width-'+i).val(new Number(dimensions.width || 0));
+			_.dh = $('#dimensions-height-'+i).val(new Number(dimensions.height || 0));
 
 			function volumeWeight () {
 				var d = 0, w = 0;
@@ -368,7 +366,7 @@ function Priceline (id,options,data,target,attachment) {
 
 
 			_.st.change(function () { // Make sure to hide the dimensions panel if shipping is disabled
-				if (!$(this).attr('checked')) dc.hide();
+				if (!$(this).prop('checked')) dc.hide();
 			});
 
 			_.dh.blur(toggleDimensions);
@@ -384,19 +382,24 @@ function Priceline (id,options,data,target,attachment) {
 		hd = $('<th><input type="hidden" name="'+fn+'[inventory]" value="off" />'+
 					'<input type="checkbox" name="'+fn+'[inventory]" id="inventory-'+i+'" value="on" />'+
 					'<label for="inventory-'+i+'"> '+INVENTORY_LABEL+'</label></th>').appendTo(headingsRow);
-		ui = $('<td><span class="status">'+NOT_TRACKED_TEXT+'</span>'+
+		ui = $('<td><span class="status"></span><input type="text" name="'+fn+'[sku]" id="sku-'+i+'" size="8" title="'+SKU_XTRA+'" class="selectall" />'+
+					'<label for="sku-'+i+'" title="'+SKU_LABEL_HELP+'"> '+SKU_LABEL+'</label><br />'+
 					'<span class="ui"><input type="text" name="'+fn+'[stocked]" id="stock-'+i+'" size="8" class="selectall right" />'+
-					'<label for="stock-'+i+'"> '+IN_STOCK_LABEL+'</label><br />'+
-					'<input type="text" name="'+fn+'[sku]" id="sku-'+i+'" size="8" title="'+SKU_XTRA+'" class="selectall" />'+
-					'<label for="sku-'+i+'" title="'+SKU_LABEL_HELP+'"> '+SKU_LABEL+'</label></span></td>').appendTo(inputsRow);
+					'<label for="stock-'+i+'"> '+IN_STOCK_LABEL+'</label>'+
+					'</span></td>').appendTo(inputsRow);
 
 		dis = ui.find('span.status');
 		ui = ui.find('span.ui').hide();
 
-		if (!stock) stock = 0;
-		_.stock = $('#stock-'+i).val(stock).trigger('change.value',function() { this.value = new Number(this.value); });
+		_.stock = $('#stock-'+i).val(new Number(stock || 0));
+
+		ui.on('change.value', '#stock-'+i, function () {
+			this.value = isNaN(this.value) ? 0 : new Number(this.value).roundFixed(0);
+		});
+
 		_.sku = $('#sku-'+i).val(sku);
-		_.it = hd.find('#inventory-'+i).attr('checked',(toggle == "on"?true:false)).toggler(dis,ui,_.stock);
+		_.it = hd.find('#inventory-'+i).prop('checked',toggle == "on")
+		_.toggler(_.it,dis,ui,_.stock);
 	};
 
 	_.download = function (d) {
@@ -470,9 +473,18 @@ function Priceline (id,options,data,target,attachment) {
 		}).change();
 		_.trialprice = $('#trialprice-'+i).val(asMoney(new Number(r.trialprice)));
 
-		_.trial = hd2.find('#trial-'+i).attr('checked',(r.trial == "on"?true:false)).toggler(dis,ui,_.trialint);
+		_.trial = hd2.find('#trial-'+i).prop('checked',(r.trial == "on"?true:false)).toggler(dis,ui,_.trialint);
 
 	};
+
+	_.toggler = function (toggle, off, ui, focal) {
+		toggle.parent().on('change.toggler', { toggle: toggle, off: off, ui: ui, focal: focal }, function (e) {
+			var toggle = e.data.toggle, off = e.data.off, ui = e.data.ui, focal = e.data.focal;
+			if (toggle.prop('checked')) { off.hide(); ui.show(); focal.select()}
+			else { off.show(); ui.hide(); }
+		}).trigger('change.toggler');
+
+	}
 
 	_.memberlevel = function () {
 		var hd,ui,memberships,mo;
@@ -480,22 +492,8 @@ function Priceline (id,options,data,target,attachment) {
 		memberships = ['Basic','Silver','Gold','Platinum'];
 		$(memberships).each(function (n,option) { mo += '<option value="'+option+'">'+option+'</option>'; });
 
-
 		hd = $('<th><label for="membership-'+i+'"> '+MEMBERSHIP_LABEL+'</label></th>').appendTo(headingsRow);
 		ui = $('<td><select name="'+fn+'[membership]" id="membership-'+i+'" class="membership">'+mo+'</select></td>').appendTo(inputsRow);
-
-	};
-
-	$.fn.toggler = function (s,ui,f) {
-		this.bind('change.value',function () {
-			if (this.checked) { s.hide(); ui.show(); }
-			else { s.show(); ui.hide(); }
-			if ($.ua.msie) $(this).blur();
-		}).click(function () {
-			if ($.ua.msie) $(this).trigger('change.value');
-			if (this.checked) f.focus().select();
-		}).trigger('change.value');
-		return $(this);
 	};
 
 	_.Shipped = function (data) {
@@ -535,7 +533,7 @@ function Priceline (id,options,data,target,attachment) {
 	};
 
 	// Alter the interface depending on the type of price line
-	type.bind('change.value',function () {
+	type.on('change.value',function () {
 		headingsRow.empty();
 		inputsRow.empty();
 		var ui = type.val();
@@ -548,13 +546,10 @@ function Priceline (id,options,data,target,attachment) {
 		if (ui == "Membership") _.Membership(data);
 
 		// Global behaviors
-		inputsRow.find('input.money').bind('change.value',function () {
-			this.value = asMoney(this.value);
-		}).trigger('change.value');
+		moneyInputs(inputsRow);
 		quickSelects(inputsRow);
 
 	}).trigger('change.value');
-
 
 	// Setup behaviors
 	_.disable = function () { _.lasttype = (type.val())?type.val():false; type.val('N/A').trigger('change.value'); };
@@ -598,7 +593,7 @@ function Priceline (id,options,data,target,attachment) {
 			}
 		}
 		if (string == "") string = DEFAULT_PRICELINE_LABEL;
-		_.label.val(htmlentities(string)).change();
+		_.label.val(htmlentities(string)).trigger('change.label');
 		optionids.val(ids);
 	};
 

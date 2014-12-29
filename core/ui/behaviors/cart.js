@@ -9,7 +9,7 @@
  * to the shopper's cart
  **/
 function addtocart ( form ) {
-	var $ = jqnc(), options = $(form).find('select.options'), selections=true;
+	var $ = jQuery, options = $(form).find('select.options'), selections=true;
 	if (options) {
 		options.each(function (i, menu) {
 			if ($(menu).val() == "") return (selections = false);
@@ -38,7 +38,7 @@ function addtocart ( form ) {
  **/
 function ShoppCartAjaxRequest ( form, response ) {
 	if ( ! response) response = "json";
-	var $ = jqnc(),
+	var $ = jQuery,
 		url = form.action,
 		$form = $(form),
 		data = $form.serialize(),
@@ -66,7 +66,7 @@ function ShoppCartAjaxRequest ( form, response ) {
  * is processed and displayed to the shopper.
  **/
 function ShoppCartAjaxHandler ( cart, response ) {
-	var $ = jqnc(),label = '',Item=false,Totals=false,
+	var $ = jQuery,label = '',Item=false,Totals=false,
 		widget = $('.widget_shoppcartwidget div.widget-all'),
 		wrapper = $('#shopp-cart-ajax'),
 		ui = widget.length > 0?widget:wrapper,
@@ -121,7 +121,7 @@ jQuery(document).ready(function($) {
 	// "Add to cart" button behaviors
 	$('input.addtocart').each(function() {
 		var button = $(this),
-			form = button.parents('form.product');
+			form = button.closest('form');
 		if (!form) return false;
 		form.unbind('submit.validate').bind('submit.addtocart',function (e) {
 			e.preventDefault();

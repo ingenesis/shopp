@@ -75,7 +75,7 @@
 <script type="text/javascript">
 
 jQuery(document).ready( function() {
-	var $=jqnc();
+	var $=jQuery;
 
 $('#selectall').change( function() {
 	$('#memberships th input').each( function () {

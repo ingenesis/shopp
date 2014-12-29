@@ -20,7 +20,8 @@ global $table_prefix, $wp_embed, $wp_locale, $_wp_deprecated_widgets_callbacks, 
 if ( !is_readable( SHOPP_UNITTEST_CONFIG ) )
 	die( "ERROR: wp-tests-config.php is missing! Please use wp-tests-config-sample.php to create a config file.\n" );
 
-require_once 'PHPUnit/Autoload.php';
+if ( file_exists('PHPUnit/Autoload.php') )
+	require_once 'PHPUnit/Autoload.php';
 require_once SHOPP_UNITTEST_CONFIG;
 
 define('WP_UNITTEST_DIR', realpath(ABSPATH . '../includes'));

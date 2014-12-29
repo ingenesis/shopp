@@ -3,7 +3,7 @@
 	<div class="icon32"></div>
 	<?php
 
-		shopp_admin_screen_tabs();;
+		shopp_admin_screen_tabs();
 		do_action('shopp_admin_notices');
 
 	?>

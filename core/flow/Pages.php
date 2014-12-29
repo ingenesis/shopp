@@ -41,7 +41,7 @@ class ShoppPages extends ListFramework {
 		return self::$object;
 	}
 
-	public function register ( string $StorefrontPageClass ) {
+	public function register ( $StorefrontPageClass ) {
 
 		if ( ! class_exists($StorefrontPageClass) ) return false;
 
@@ -83,7 +83,7 @@ class ShoppPages extends ListFramework {
 		add_permastruct($var, "$catalog/%$var%", false);
 	}
 
-	public function slugpage ( string $slug ) {
+	public function slugpage ( $slug ) {
 		if ( ! isset($this->slugs[ $slug ]) ) return false;
 		return $this->get( $this->slugs[ $slug ] );
 	}
@@ -187,6 +187,10 @@ class ShoppPage {
 		return $content;
 	}
 
+	public function nocomment () {
+		return array();
+	}
+
 	/**
 	 * Provides the title for the page from settings
 	 *
@@ -225,7 +229,10 @@ class ShoppPage {
 		$templates = array('shopp.php', 'page.php');
 
 		$name = $this->name();
-		if ( ! empty($name) ) array_unshift($templates, "$name.php");
+		if ( ! empty($name) ) {
+			array_unshift($templates, "$name.php"); // @deprecated
+			array_unshift($templates, "shopp-$name.php");
+		}
 
 		$template = $this->pagetemplate();
 		if ( ! empty($template) ) array_unshift($templates, "$template.php");
@@ -241,7 +248,19 @@ class ShoppPage {
 		add_filter('wp_head', array($this, 'head'), 20);
 		add_filter('the_content', array($this, 'content'), 20);
 		add_filter('the_excerpt', array($this, 'content'), 20);
+		add_filter('comments_array', array($this, 'nocomment'));
+		add_filter('wpseo_replacements', array($this, 'wpseo')); // compatibility helper for WPSEO
 	}
+
+	public function wpseo ( $replacements ) {
+
+		if ( is_shopp_page() && empty($replacements['%%title%%']) )
+			$replacements['%%title%%'] = $this->title();
+
+		return $replacements;
+
+	}
+
 
 	public function poststub () {
 		global $wp_query;
@@ -390,22 +409,28 @@ class ShoppAccountPage extends ShoppPage {
 		}
 
 		$widget = ( 'widget' === $request );
-		if ($widget) $request = 'menu'; // Modify widget request to render the account menu
+		if ( $widget ) $request = 'menu'; // Modify widget request to render the account menu
 
+		$orderlookup = '';
 		if ( 'none' == shopp_setting('account_system' ) )
-			return apply_filters( 'shopp_account_template', shopp( 'customer', 'get-order-lookup' ) );
+			$orderlookup = shopp( 'customer', 'get-order-lookup' );
 
 		// $download_request = get_query_var('s_dl');
 		if ( ! $request) $request = ShoppStorefront()->account['request'];
 		$templates = array( 'account-'.$request.'.php', 'account.php' );
-		if ( 'login' == $request || ! ShoppCustomer()->loggedin() ) $templates = array( 'login-' . $request . '.php', 'login.php' );
 		$context = ShoppStorefront::intemplate(); // Set account page context
 
 		$Errors = ShoppErrorStorefrontNotices();
 		ob_start();
 		if ( apply_filters( 'shopp_show_account_errors', true ) && $Errors->exist() )
 			echo ShoppStorefront::errors( array( "errors-$context", 'account-errors.php', 'errors.php' ) );
-		Shopp::locate_template( $templates, true );
+
+		if ( ! empty($orderlookup) ) {
+			echo $orderlookup;
+		} else {
+			if ( 'login' == $request || ! ShoppCustomer()->loggedin() ) $templates = array( 'login-' . $request . '.php', 'login.php' );
+			Shopp::locate_template( $templates, true );
+		}
 		$content = ob_get_clean();
 
 		// Suppress the #shopp div for sidebar widgets
@@ -462,7 +487,7 @@ class ShoppAccountPage extends ShoppPage {
 		$_[] = 'Content-type: text/html';
 		$_[] = '';
 		$_[] = '<p>'.__('A request has been made to reset the password for the following site and account:', 'Shopp').'<br />';
-		$_[] = get_option('siteurl').'</p>';
+		$_[] = get_bloginfo('url').'</p>';
 		$_[] = '';
 		$_[] = '<ul>';
 		if (isset($_POST['email-login']))
@@ -494,19 +519,19 @@ class ShoppAccountPage extends ShoppPage {
 		$activation = preg_replace('/[^a-z0-9]/i', '', $activation);
 
 		$errors = array();
-		if (empty($activation) || !is_string($activation))
-			$errors[] = new ShoppError(__('Invalid key', 'Shopp'));
+		if ( empty($activation) || ! is_string($activation) )
+			$errors[] = new ShoppError(Shopp::__('Invalid key'));
 
 		$RecoveryCustomer = new ShoppCustomer($activation, 'activation');
-		if (empty($RecoveryCustomer->id))
-			$errors[] = new ShoppError(__('Invalid key', 'Shopp'));
+		if ( empty($RecoveryCustomer->id) )
+			$errors[] = new ShoppError(Shopp::__('Invalid key'));
 
-		if (!empty($errors)) return false;
+		if ( ! empty($errors) ) return false;
 
 		// Generate a new random password
 		$password = wp_generate_password();
 
-		do_action_ref_array('password_reset', array(&$RecoveryCustomer, $password));
+		do_action_ref_array('password_reset', array($RecoveryCustomer, $password));
 
 		$RecoveryCustomer->password = wp_hash_password($password);
 		if ( 'wordpress' == shopp_setting('account_system') ) {
@@ -517,32 +542,32 @@ class ShoppAccountPage extends ShoppPage {
 		$RecoveryCustomer->activation = '';
 		$RecoveryCustomer->save();
 
-		$subject = apply_filters('shopp_reset_password_subject', sprintf(__('[%s] New Password', 'Shopp'), get_option('blogname')));
+		$subject = apply_filters('shopp_reset_password_subject', Shopp::__('[%s] New Password', get_option('blogname')));
 
 		$_ = array();
 		$_[] = 'From: ' . Shopp::email_from( shopp_setting('merchant_email'), shopp_setting('business_name') );
-		$_[] = 'To: '.$RecoveryCustomer->email;
-		$_[] = 'Subject: '.$subject;
+		$_[] = 'To: ' . $RecoveryCustomer->email;
+		$_[] = 'Subject: ' . $subject;
+		$_[] = 'Content-type: text/html';
 		$_[] = '';
-		$_[] = '<p>'.sprintf(__('Your new password for %s:', 'Shopp'), get_option('siteurl')).'</p>';
+		$_[] = '<p>' . Shopp::__('Your new password for %s:', get_bloginfo('url')) . '</p>';
 		$_[] = '';
 		$_[] = '<ul>';
-		if ($user_data)
-			$_[] = '<li>'.sprintf(__('Login name: %s', 'Shopp'), $user_data->user_login).'</li>';
-		$_[] = '<li>'.sprintf(__('Password: %s'), $password).'</li>';
+		if ( $user_data )
+			$_[] = '<li>' . Shopp::__('Login name: %s', $user_data->user_login) . '</li>';
+		$_[] = '<li>' . Shopp::__('Password: %s', $password) . '</li>';
 		$_[] = '</ul>';
 		$_[] = '';
-		$_[] = '<p>'.__('Click here to login:').' '.Shopp::url(false, 'account').'</p>';
+		$_[] = '<p>' . Shopp::__('Click here to login: %s', Shopp::url(false, 'account')) . '</p>';
 		$message = apply_filters('shopp_reset_password_message', $_);
 
-		if (!Shopp::email(join("\n", $message))) {
-			new ShoppError(__('The e-mail could not be sent.'), 'password_reset_email', SHOPP_ERR);
+		if ( ! Shopp::email(join("\n", $message)) ) {
+			shopp_add_error(Shopp::__('The e-mail could not be sent.'));
 			Shopp::redirect( add_query_arg( 'acct', 'recover', Shopp::url(false, 'account') ) );
-		} else new ShoppError(__('Check your email address for your new password.', 'Shopp'), 'password_reset_email', SHOPP_ERR);
+		} else shopp_add_error(Shopp::__('Check your email address for your new password.'));
 
 		unset($_GET['acct']);
 	}
-
 
 }
 
@@ -618,14 +643,9 @@ class ShoppCheckoutPage extends ShoppPage {
 		parent::__construct($options);
 	}
 
-	public function head () {
-		?>
-		<script type="text/javascript">
-		//<![CDATA[
-			document.body.className += ' js-on';
-		//]]>
-		</script>
-<?php
+	public function head () {?>
+		<script type="text/javascript">//<![CDATA[ checkout JS-support detection
+			document.documentElement.className += ' js-on'; //]]></script><?php
 	}
 
 	public function content ($content) {
@@ -804,7 +824,7 @@ class ShoppProductPage extends ShoppPage {
 		return $link;
 	}
 
-	public function wp_title ( string $title, string $sep = null, $placement = null ) {
+	public function wp_title ( $title, $sep = null, $placement = null ) {
 		if ( is_null($sep) ) $sep = '&mdash;';
 		if ( is_null($placement) ) $placement = '';
 
@@ -836,6 +856,12 @@ class ShoppProductPage extends ShoppPage {
 		$content = ob_get_contents();
 		ob_end_clean();
 		return ShoppStorefront::wrapper($content);
+	}
+
+
+	public function filters () {
+		parent::filters();
+		remove_filter('comments_array', array($this, 'nocomment'));
 	}
 
 }
@@ -961,6 +987,7 @@ class ShoppCollectionPage extends ShoppPage {
 		global $wp_query;
 		// Only modify content for Shopp collections (Shopp smart collections and taxonomies)
 		if ( ! $wp_query->is_main_query() ||  ! is_shopp_collection() ) return $content;
+		remove_filter('the_content', array($this, 'content'), 20);
 
 		$Collection = ShoppCollection();
 
@@ -1020,6 +1047,7 @@ class ShoppShortcodes {
 	 **/
 	static function product ($atts) {
 		$atts['template'] = array('product-shortcode.php', 'product.php');
+		$atts['published'] = 'hide';
 		ShoppStorefront()->shortcoded[] = get_the_ID();
 		return apply_filters('shopp_product_shortcode', shopp('catalog.get-product', $atts));
 	}

@@ -35,10 +35,10 @@
 		<p class="freeshipping"><?php _e( 'Free Shipping!', 'Shopp' ); ?></p>
 	<?php endif; ?>
 
-	<form action="<?php shopp( 'cart.url' ); ?>" method="post" class="shopp product validate validation-alerts">
-		<?php if ( shopp( 'product.has-variations' ) ) : ?>
+	<form action="<?php shopp( 'cart.url' ); ?>" method="post" class="shopp validate validation-alerts">
+		<?php if ( shopp( 'product.has-variants' ) ) : ?>
 			<ul class="variations">
-				<?php shopp( 'product.variations', 'mode=multiple&label=true&defaults=' . __( 'Select an option', 'Shopp') . '&before_menu=<li>&after_menu=</li>' ); ?>
+				<?php shopp( 'product.variants', 'mode=multiple&label=true&defaults=' . __( 'Select an option', 'Shopp') . '&before_menu=<li>&after_menu=</li>' ); ?>
 			</ul>
 		<?php endif; ?>
 

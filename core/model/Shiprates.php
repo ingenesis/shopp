@@ -57,7 +57,7 @@ class ShoppShiprates extends ListFramework {
 	 * @param string $selected (optional) The slug to set as the selected shiprate service option
 	 * @return ShoppShiprateService The currently selected shiprate service
 	 **/
-	public function selected ( string $selected = null ) {
+	public function selected ( $selected = null ) {
 
 		if ( is_null($selected) ) {
 			if ( ! $this->exists( $this->selected ) )
@@ -98,7 +98,7 @@ class ShoppShiprates extends ListFramework {
 	 * @param string $id The item id to remove
 	 * @return void
 	 **/
-	public function takeoff ( string $id ) {
+	public function takeoff ( $id ) {
 
 		if ( isset($this->shippable[ $id ]) )
 			unset($this->shippable[ $id ]);
@@ -117,8 +117,8 @@ class ShoppShiprates extends ListFramework {
 	 *
 	 * @return float The shipping fee amount
 	 **/
-	public function fees () {
-		return (float) apply_filters('shopp_shipping_fees', shopp_setting('order_shipfee') + array_sum($this->fees) );
+	public function fees ( ShoppShiprateService $Service ) {
+		return (float) apply_filters('shopp_shipping_fees', shopp_setting('order_shipfee') + array_sum($this->fees), $Service, $this->fees );
 	}
 
 	/**
@@ -130,7 +130,7 @@ class ShoppShiprates extends ListFramework {
 	 * @param boolean $free Flag to set the free shipping value
 	 * @return boolean True if free, false otherwise
 	 **/
-	public function free ( boolean $free = null ) {
+	public function free ( $free = null ) {
 
 		if ( isset($free) ) // Override the free setting if the free flag is set
 			$this->free = $free;
@@ -172,7 +172,7 @@ class ShoppShiprates extends ListFramework {
 	 * @param mixed $value The data to track stored as a reference
 	 * @return void
 	 **/
-	public function track ( string $name, &$value ) {
+	public function track ( $name, &$value ) {
 		$this->track[ $name ] = &$value;
 	}
 
@@ -218,6 +218,8 @@ class ShoppShiprates extends ListFramework {
 
 		do_action('shopp_calculate_shipping_init');		// Initialize shipping modules
 
+		parent::clear();									// clear existing rates before we pull new ones
+
 		$this->items();									// Send items to shipping modules that package them
 
 		$this->modules();								// Calculate active shipping module service methods
@@ -254,7 +256,6 @@ class ShoppShiprates extends ListFramework {
 	 * @return void
 	 **/
 	private function items () {
-
 		foreach ( $this->shippable as $id => $free ) {
 
 			$CartItem = shopp_cart_item($id);
@@ -262,9 +263,8 @@ class ShoppShiprates extends ListFramework {
 
 			$Item = new ShoppShippableItem( $CartItem );
 			$this->item($Item);
-			do_action_ref_array('shopp_calculate_item_shipping', array($id, &$Item));
+			do_action('shopp_calculate_item_shipping', $id, $Item);
 		}
-
 	}
 
 	/**
@@ -298,7 +298,7 @@ class ShoppShiprates extends ListFramework {
 
 		// Add all order shipping fees and item shipping fees
 		foreach ( $services as $service )
-			$service->amount += $this->fees();
+			$service->amount += $this->fees($service);
 
 		parent::clear();
 		$this->populate($services);

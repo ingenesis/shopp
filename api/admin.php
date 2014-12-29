@@ -4,13 +4,11 @@
  *
  * Admin Developer API
  *
- * @author Jonathan Davis
- * @version 1.0
  * @copyright Ingenesis Limited, June 2013
- * @license GNU GPL version 3 (or later) {@see license.txt}
- * @package shopp
- * @since 1.3
- * @subpackage shopp
+ * @license   GNU GPL version 3 (or later) {@see license.txt}
+ * @package   Shopp/API/Admin
+ * @version   1.0
+ * @since     1.3
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -18,7 +16,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 /**
  * Add a menu to the Shopp menu area
  *
- * @author Jonathan Davis
+ * @api
  * @since 1.3
  *
  * @param string $label	The translated label to use for the menu
@@ -26,9 +24,10 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @param integer $position The index position of where to add the menu
  * @param mixed $handler The callback handler to use to handle the page
  * @param string $access The access capability required to see the menu
+ * @param string $icon The URL for the icon to use for the menu
  * @return integer The position the menu was added
  **/
-function shopp_admin_add_menu ( string $label, string $page, integer $position = null, $handler = false, string $access = null, string $icon = null ) {
+function shopp_admin_add_menu ( $label, $page, $position = null, $handler = false, $access = null, $icon = null ) {
 
 	global $menu;
 	$Admin = ShoppAdmin();
@@ -65,7 +64,7 @@ function shopp_admin_add_menu ( string $label, string $page, integer $position =
 /**
  * Add a sub-menu to a Shopp menu
  *
- * @author Jonathan Davis
+ * @api
  * @since 1.3
  *
  * @param string $label	The translated label to use for the menu
@@ -75,7 +74,7 @@ function shopp_admin_add_menu ( string $label, string $page, integer $position =
  * @param string $access The access capability required to see the menu
  * @return integer The position the menu was added
  **/
-function shopp_admin_add_submenu ( string $label, string $page, string $menu = null, $handler = false, string $access = null ) {
+function shopp_admin_add_submenu ( $label, $page, $menu = null, $handler = false, $access = null ) {
 
 	$Admin = ShoppAdmin();
 	if ( is_null($menu) ) $Admin->mainmenu();
@@ -105,6 +104,14 @@ function shopp_admin_add_submenu ( string $label, string $page, string $menu = n
 
 }
 
+/**
+ * Renders the screen tabs registered for the current plugin page
+ *
+ * @api
+ * @since 1.3
+ *
+ * @return void
+ **/
 function shopp_admin_screen_tabs () {
 	global $plugin_page;
 
@@ -124,4 +131,3 @@ function shopp_admin_screen_tabs () {
 	$pagehook = sanitize_key($plugin_page);
 	echo '<h2 class="nav-tab-wrapper">' . join('', apply_filters('shopp_admin_' . $pagehook . '_screen_tabs', $markup)) . '</h2>';
 }
-

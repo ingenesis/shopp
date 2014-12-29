@@ -242,7 +242,7 @@ abstract class GatewayFramework {
 			'body' => $data,
 			'compress' => false,
 			'decompress' => true,
-			'sslverify' => false
+			'sslverify' => true,
 		);
 		$params = array_merge($defaults, $options);
 
@@ -517,13 +517,9 @@ class GatewayModules extends ModuleLoader {
 		$modules = array_keys($this->modules);
 
 		foreach ( $gateways as $gateway ) {
-			if ( false !== strpos($gateway, '-') ) list($gateway, $id) = explode('-', $gateway);
-			$upgraded = 'Shopp' . $gateway;
-			if ( in_array($gateway, $modules) && !in_array($gateway, $this->activated) )
-				$this->activated[] = $this->modules[ $gateway ]->classname;
-			// @todo Remove legacy gateway settings migrations
-			elseif ( false === strpos($gateway, 'Shopp') && in_array($upgraded, $modules) && ! in_array($upgraded, $this->activated) )
-				$this->activated[] = $this->modules[ $upgraded ]->classname;
+			$moduleclass = $this->moduleclass($gateway);
+			if ( ! empty($moduleclass) )
+				$this->activated[] = $moduleclass;
 		}
 
 		return $this->activated;
@@ -617,6 +613,33 @@ class GatewayModules extends ModuleLoader {
 			$classname = substr($classname, 5);
 		return sanitize_key($classname);
 	}
+
+	/**
+	 * Returns the classname of a valid module
+	 *
+	 * @since 1.3.4
+	 *
+	 * @return string|bool Class name of the module, or false if not a valid module
+	 **/
+	public function moduleclass ( $gateway ) {
+
+		// Handled suffixed multi-instance gateways names (e.g. OfflinePayments-0)
+		if ( false !== strpos($gateway, '-') )
+			list($gateway, $id) = explode('-', $gateway);
+
+		// Check for namespaced and non-namespaced derivitives
+		$namespaced = 'Shopp' . $gateway;
+
+		$module = false;
+		if ( isset($this->modules[ $namespaced ]) ) $module = $this->modules[ $namespaced ];
+		elseif ( isset($this->modules[ $gateway ]) ) $module = $this->modules[ $gateway ];
+
+		// If no valid module exists return false, otherwise provide the class name
+		if ( empty($module) ) return false;
+		else return $module->classname;
+
+	}
+
 
 } // END class GatewayModules
 
@@ -869,8 +892,10 @@ class PayCard {
 	 * @param string $value The masking character to use
 	 * @return string The masked PAN value
 	 **/
-	public static function mask ( $value, string $mask = null ) {
+	public static function mask ( $value, $mask = null ) {
 		if ( empty($value) ) return $value;
+
+		if ( ! self::checksum($value) ) return $value;
 
 		if ( ! isset($mask) ) $mask = 'X';
 		$n = self::sanitize($value);

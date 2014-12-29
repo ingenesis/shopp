@@ -4,33 +4,34 @@
  *
  * Super controller and base controller classes for handling low level request processing
  *
- * @author Jonathan Davis
+ * @copyright Ingenesis Limited, January 2010-2014
  * @version 1.3
- * @copyright Ingenesis Limited, January, 2010
- * @package shopp
- * @subpackage shopp
+ * @package Shopp\Flow
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 /**
- * ShoppFlow
+ * The super controller that does intial request routing to the handling controller
  *
- * @author Jonathan Davis
  * @since 1.1
- * @package shopp
+ * @package Shopp\Flow
  **/
-class ShoppFlow {
+final class ShoppFlow {
 
-	public $Controller = false;
-	public $Admin = false;
-	public $Installer = false;
-	public $Logins = false;
+	/** @var ShoppFlowController $Controller The current flow controller instance */
+	public $Controller = false; // @todo make this private
+
+	/** @var ShoppAdminController $Admin The admin flow controller */
+	public $Admin = false; // @todo Make this private or move the Admin to a singleton?
+
+	/** @var ShoppInstallation $Installer The installer instance */
+	private $Installer = false;
 
 	/**
-	 * Flow constructor
+	 * Constructor
 	 *
-	 * @author Jonathan Davis
+	 * @since 1.0
 	 *
 	 * @return void
 	 **/
@@ -42,6 +43,7 @@ class ShoppFlow {
 
 		// Handle AJAX requests
 		add_action( 'admin_init', array($this, 'ajax') );
+		add_action( 'admin_init', array($this, 'upgrades') );
 
 		// Boot up the menus & admin bar
 		add_action( 'admin_menu', array($this, 'menu'), 50 );
@@ -55,33 +57,39 @@ class ShoppFlow {
 	/**
 	 * Parses requests and hands off processing to specific subcontrollers
 	 *
-	 * @author Jonathan Davis
+	 * @since 1.0
 	 *
-	 * @return boolean
+	 * @param WP|array $request	The request to process
+	 * @return void
 	 **/
 	public function parse ( $request = false ) {
-		if ( is_a($request,'WP') ) $request = empty($request->query_vars) ? $_GET : $request->query_vars;
+
+		if ( is_a($request,'WP') )
+			$request = empty($request->query_vars) ? $_GET : $request->query_vars;
 		else $request = $_GET;
 
-		if ( isset($request['src']) ) $this->resources($request);
+		if ( isset($request['src']) )
+			$this->resources($request);
 
 		if ( defined('WP_ADMIN') ) {
 			if ( ! isset($_GET['page']) ) return;
+
 			if ( false === $this->Admin )
 				$this->Admin = new ShoppAdmin();
 
 			$this->handler();
 
 		} else $this->handler('ShoppStorefront');
+
 	}
 
 	/**
 	 * Loads a specified flow controller
 	 *
-	 * @author Jonathan Davis
+	 * @since 1.1
 	 *
-	 * @param string $controller The base name of the controller file
-	 * @return void
+	 * @param string|ShoppFlowController $controller The name of the controller class or a controller instance
+	 * @return bool True if a controller is set and initialized, false otherwise
 	 **/
 	public function handler ( $controller = null ) {
 		if ( defined('WP_ADMIN') && is_null($controller) && isset($_GET['page']) )
@@ -102,9 +110,9 @@ class ShoppFlow {
 	/**
 	 * Initializes the Admin controller
 	 *
-	 * @author Jonathan Davis
+	 * @since 1.0
 	 *
-	 * @return boolean
+	 * @return boolean True if the admin controller is established, false otherwise
 	 **/
 	public function admin () {
 		if ( ! defined('WP_ADMIN') ) return false;
@@ -120,30 +128,41 @@ class ShoppFlow {
 	/**
 	 * Defines the Shopp admin page and menu structure
 	 *
-	 * @author Jonathan Davis
+	 * @since 1.1
 	 *
 	 * @return void
 	 **/
 	public function menu () {
-		if ( ! defined('WP_ADMIN') ) return false;
+		if ( ! defined('WP_ADMIN') ) return;
 		$this->Admin = new ShoppAdmin;
 		$this->Admin->menus();
 		do_action('shopp_admin_menu');
 	}
 
+	/**
+	 * Start the AJAX controller to handle AJAX requests
+	 **/
 	public function ajax () {
 		if ( ! isset($_REQUEST['action']) || ! defined('DOING_AJAX') ) return;
 		new ShoppAjax;
 	}
 
-	public function resources ( $request ) {
+	/**
+	 * Start the resource controller to handle resource requests
+	 *
+	 * Resources requests refers to requests for file resources such as
+	 * product downloads or exports
+	 *
+	 * @param array $request The resource request to process
+	 * @return void
+	 **/
+	public function resources ( array $request ) {
 		$this->Controller = new ShoppResources( $request );
 	}
 
 	/**
 	 * Activates the plugin
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @return void
@@ -154,47 +173,104 @@ class ShoppFlow {
 	}
 
 	/**
-	 * deactivate()
-	 * Resets the data_model to prepare for potential upgrades/changes to the table schema */
+	 * Deactivates the plugin
+	 *
+	 * Resets the data_model to prepare for potential upgrades/changes to the table schema
+	 *
+	 * @since 1.0
+	 *
+	 * @return void
+	 **/
 	public function deactivate() {
 		$this->installation();
 		do_action('shopp_deactivate');
 	}
 
+	/**
+	 * Begins the installer
+	 *
+	 * @since 1.0
+	 *
+	 * @return void
+	 **/
 	public function installation () {
 		if ( ! defined('WP_ADMIN') ) return;
+		// Prevent a new instance if already running
 		if ( false !== $this->Installer ) return;
 
 		if ( ! $this->Installer )
-			$this->Installer = new ShoppInstallation;
+			$this->Installer = new ShoppInstallation();
 	}
 
+	/**
+	 * Begins database updates
+	 *
+	 * @since 1.3.6
+	 *
+	 * @return void
+	 **/
+	public function upgrades () {
+
+		if ( empty($_GET['action']) || 'shopp-upgrade' != $_GET['action'] ) return;
+
+		// Prevent unauthorized users from upgrading (without giving admin's a chance to backup)
+		if ( ! current_user_can('activate_plugins') ) return;
+
+		// Prevent outsiders from the upgrade process
+		check_admin_referer('shopp-upgrade');
+
+		$Installer = new ShoppInstallation();
+		$Installer->upgrade();
+
+		$welcome = add_query_arg( array('page' => $this->Admin->pagename('welcome')), admin_url('admin.php'));
+		Shopp::redirect($welcome, true);
+
+	}
+
+	/**
+	 * Saves form settings in bulk
+	 *
+	 * @since 1.2
+	 *
+	 * @return bool True if settings are saved, false otherwise
+	 **/
 	public function save_settings () {
-		if (empty($_POST['settings']) || !is_array($_POST['settings'])) return false;
-		foreach ($_POST['settings'] as $setting => $value)
-			shopp_set_setting($setting,$value);
+		if ( empty($_POST['settings']) || ! is_array($_POST['settings']) ) return false;
+		foreach ( $_POST['settings'] as $setting => $value )
+			shopp_set_setting($setting, $value);
 		return true;
 	}
 
-	// Admin Bar
+	/**
+	 * Adds Shopp shortcuts to the WordPress Admin Bar
+	 *
+	 * @since 1.2
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance
+	 * @return void
+	 **/
 	public function adminbar ( $wp_admin_bar ) {
+
 		$posttype = get_post_type_object(ShoppProduct::posttype());
-		if (empty( $posttype ) || !current_user_can( $posttype->cap->edit_post )) return;
-		$wp_admin_bar->add_menu( array(
+		if ( empty( $posttype ) || ! current_user_can($posttype->cap->edit_post) ) return;
+
+		$wp_admin_bar->add_menu(array(
 			'parent' => 'new-content',
-			'id' => 'new-'.ShoppProduct::posttype(),
+			'id' => 'new-' . ShoppProduct::posttype(),
 			'title' => $posttype->labels->singular_name,
-			'href' => admin_url( str_replace('%d','new',$posttype->_edit_link) )
-		) );
+			'href' => admin_url(str_replace('%d', 'new', $posttype->_edit_link))
+		));
 
 		$object = get_queried_object();
-		if (!empty($object) && isset($object->post_type)
-				&& $object->post_type == $posttype->name) {
-			$wp_admin_bar->add_menu( array(
+		if ( ! empty($object) && isset($object->post_type)
+			 && $object->post_type == $posttype->name ) {
+
+			$wp_admin_bar->add_menu(array(
 				'id' => 'edit',
 				'title' => $posttype->labels->edit_item,
-				'href' => get_edit_post_link( $object->ID )
-			) );
+				'href' => get_edit_post_link($object->ID)
+			));
+
 		}
 
 	}
@@ -202,13 +278,13 @@ class ShoppFlow {
 	/**
 	 * Displays the welcome screen
 	 *
+	 * @since 1.3
+	 *
 	 * @return boolean
-	 * @author Jonathan Davis
 	 **/
 	public static function welcome () {
 		return defined('WP_ADMIN') && shopp_setting_enabled('display_welcome') && empty($_POST['setup']);
 	}
-
 
 } // End class ShoppFlow
 
@@ -243,24 +319,32 @@ abstract class ShoppFlowController  {
  *
  * Provides a template for admin controllers
  *
- * @author Jonathan Davis
  * @since 1.1
- * @package shopp
+ * @package Shopp\Flow
  **/
 abstract class ShoppAdminController extends ShoppFlowController {
 
+	/** @var ShoppAdmin The ShoppAdmin instance for backwards compatibility */
 	public $Admin = false;
+
+	/** @var string The URL for this admin screen */
 	public $url;
+
+	/** @var string The current screen id */
 	public $screen;
+
+	/** @var string The current page of the screen pagination */
 	public $page;
+
+	/** @var string The current screen page name */
 	public $pagename;
 
+	/** @var array The list of registered notices to show on the screen */
 	protected $notices = array();
 
 	/**
 	 * ShoppAdminController constructor
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
 	 * @return void
@@ -293,10 +377,27 @@ abstract class ShoppAdminController extends ShoppFlowController {
 
 	}
 
+	/**
+	 * Admin screen routing
+	 *
+	 * Implemented in the concrete classes
+	 *
+	 * @since 1.1
+	 **/
 	public function admin () {
 		/* Implemented in the concrete classes */
 	}
 
+	/**
+	 * Adds a notice to the screen
+	 *
+	 * @since 1.3
+	 *
+	 * @param string $message The message to add
+	 * @param string $style `updated` (optional) The notice style class to use
+	 * @param int $priority The priority (order) of the message
+	 * @return void
+	 **/
 	public function notice ( $message, $style = 'updated', $priority = 10 ) {
 
 		$styles = array('updated', 'error');
@@ -312,6 +413,13 @@ abstract class ShoppAdminController extends ShoppFlowController {
 		array_splice($this->notices, $priority, 0, array($notice));
 	}
 
+	/**
+	 * Displays registered screen notices
+	 *
+	 * @since 1.3
+	 *
+	 * @return void
+	 **/
 	public function notices () {
 
 		if ( empty($this->notices) && ShoppSupport::activated() ) return;
@@ -333,7 +441,6 @@ abstract class ShoppAdminController extends ShoppFlowController {
 	/**
 	 * Provides the admin screen page value
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.3
 	 *
 	 * @return string The prefixed admin page name
@@ -342,6 +449,17 @@ abstract class ShoppAdminController extends ShoppFlowController {
 		return ShoppAdmin()->pagename($this->pagename);
 	}
 
+	/**
+	 * Renders screen tabs from a given associative array
+	 *
+	 * The tab array uses a tab page slug as the key and the
+	 * localized title as the value.
+	 *
+	 * @since 1.3
+	 *
+	 * @param array $tabs The tab map array
+	 * @return void
+	 **/
 	protected function tabs ( array $tabs = array() ) {
 		global $plugin_page;
 
@@ -361,6 +479,9 @@ abstract class ShoppAdminController extends ShoppFlowController {
 		echo '<h2 class="nav-tab-wrapper">' . join('', apply_filters('shopp_admin_' . $pagehook . '_screen_tabs', $markup)) . '</h2>';
 	}
 
+	/**
+	 * Handles maintenance mode messages
+	 **/
 	private function maintenance () {
 		if ( ShoppLoader::is_activating() || Shopp::upgradedb() ) return;
 
@@ -380,12 +501,31 @@ abstract class ShoppAdminController extends ShoppFlowController {
 		}
 	}
 
-	static function url ( $args = array() ) {
-		$args = array_map('esc_attr',$args);
-		return add_query_arg( array_merge($args,array('page'=> esc_attr($_GET['page'])) ),admin_url('admin.php'));
+	/**
+	 * Generates the full URL for the current admin screen
+	 *
+	 * @since 1.3
+	 *
+	 * @param array $params (optional) The parameters to include in the URL
+	 * @return string The generated URL with parameters
+	 **/
+	static function url ( $params = array() ) {
+		$params = array_map('esc_attr', $params);
+		$params['page'] = esc_attr($_GET['page']);
+		return add_query_arg($params, admin_url('admin.php'));
 	}
 
-
+	/**
+	 * Helper to load a UI view template
+	 *
+	 * Used with `include` statements so that any local variables
+	 * are still in scope when the template is included.
+	 *
+	 * @since 1.3
+	 *
+	 * @param string $file The file to include
+	 * @return string|bool The file path or false if not found
+	 **/
 	protected function ui ( $file ) {
 		$path = join('/', array(SHOPP_ADMIN_PATH, $this->ui, $file));
 		if ( is_readable($path) )
@@ -402,7 +542,6 @@ abstract class ShoppAdminController extends ShoppFlowController {
 /**
  * Helper to access the Shopp Storefront contoller
  *
- * @author Jonathan Davis
  * @since 1.1.5
  *
  * @return ShoppStorefront|false
@@ -415,6 +554,13 @@ function &ShoppStorefront () {
 	return $Shopp->Flow->Controller;
 }
 
+/**
+ * Provides the Admin controller instance
+ *
+ * @since 1.2
+ *
+ * @return ShoppAdminController|bool The ShoppAdminController instance or false
+ **/
 function &ShoppAdmin() {
 	$false = false;
 	$Shopp = Shopp::object();

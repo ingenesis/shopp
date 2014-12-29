@@ -41,7 +41,7 @@ class Lookup {
 		$_[5] = __('Africa','Shopp');
 		$_[6] = __('Asia','Shopp');
 		$_[7] = __('Oceania','Shopp');
-		return apply_filters('shopp_regions',$_);
+		return apply_filters('shopp_regions', $_);
 	}
 
 	/**
@@ -134,6 +134,7 @@ class Lookup {
 		$_['CR'] = array('name'=>__('Costa Rica','Shopp'),'currency'=>array('code'=>'CRC','format'=>'₡#.###,##'),'units'=>'metric','region'=>1);
 		$_['CI'] = array('name'=>__("Côte d'Ivoire",'Shopp'),'currency'=>array('code'=>'XOF','format'=>'# ### CFA'),'units'=>'metric','region'=>5);
 		$_['HR'] = array('name'=>__('Croatia','Shopp'),'currency'=>array('code'=>'HRK','format'=>'#.###,## kn'),'units'=>'metric','region'=>3);
+		$_['CU'] = array('name'=>__('Cuba','Shopp'),'currency'=>array('code'=>'CUP','format'=>'CUP#.###,##'),'units'=>'metric','region'=>1);
 		$_['CW'] = array('name'=>__('Curaçao','Shopp'),'currency'=>array('code'=>'ANG','format'=>'ƒ#.###,##'),'units'=>'metric','region'=>0);
 		$_['CY'] = array('name'=>__('Cyprus','Shopp'),'currency'=>array('code'=>'EUR','format'=>'€#.###,##'),'units'=>'metric','region'=>3);
 		$_['CZ'] = array('name'=>__('Czech Republic','Shopp'),'currency'=>array('code'=>'CZK','format'=>'# ###,## Kč'),'units'=>'metric','region'=>3);
@@ -182,7 +183,8 @@ class Lookup {
 		$_['IS'] = array('name'=>__('Iceland','Shopp'),'currency'=>array('code'=>'ISK','format'=>'#.###.###, kr'),'units'=>'metric','region'=>3);
 		$_['IN'] = array('name'=>__('India','Shopp'),'currency'=>array('code'=>'INR','format'=>'₨#,##,###.##'),'units'=>'metric','region'=>6);
 		$_['ID'] = array('name'=>__('Indonesia','Shopp'),'currency'=>array('code'=>'IDR','format'=>'Rp #.###,##'),'units'=>'metric','region'=>7);
-		$_['IQ'] = array('name'=>__('Iraq','Shopp'),'currency'=>array('code'=>'IQD','format'=>'#.###,## ع.د'),'units'=>'metric','region'=>4);
+		$_['IR'] = array('name'=>__('Iran','Shopp'),'currency'=>array('code'=>'IRR','format'=>'#.###,##﷼'),'units'=>'metric','region'=>4);
+		$_['IQ'] = array('name'=>__('Iraq','Shopp'),'currency'=>array('code'=>'IQD','format'=>'#.###,##د.ع'),'units'=>'metric','region'=>4);
 		$_['IE'] = array('name'=>__('Ireland','Shopp'),'currency'=>array('code'=>'EUR','format'=>'€#,###.##'),'units'=>'metric','region'=>3);
 		$_['IM'] = array('name'=>__('Isle of Man','Shopp'),'currency'=>array('code'=>'GBP','format'=>'£#,###.##'),'units'=>'metric','region'=>3);
 		$_['IL'] = array('name'=>__('Israel','Shopp'),'currency'=>array('code'=>'ILS','format'=>'#,###.## ₪'),'units'=>'metric','region'=>4);
@@ -280,6 +282,7 @@ class Lookup {
 		$_['ZA'] = array('name'=>__('South Africa','Shopp'),'currency'=>array('code'=>'ZAR','format'=>'R# ###,##'),'units'=>'metric','region'=>5);
 		$_['GS'] = array('name'=>__('South Georgia','Shopp'),'currency'=>array('code'=>'GBP','format'=>'£#,###.##'),'units'=>'metric','region'=>2);
 		$_['KR'] = array('name'=>__('South Korea','Shopp'),'currency'=>array('code'=>'KRW','format'=>'₩#,###.##'),'units'=>'metric','region'=>6);
+		$_['SS'] = array('name'=>__('South Sudan','Shopp'),'currency'=>array('code'=>'SSP','format'=>'SSP #,###.##'),'units'=>'metric','region'=>5);
 		$_['ES'] = array('name'=>__('Spain','Shopp'),'currency'=>array('code'=>'EUR','format'=>'#.###,## €'),'units'=>'metric','region'=>3);
 		$_['LK'] = array('name'=>__('Sri Lanka','Shopp'),'currency'=>array('code'=>'LKR','format'=>'SL₨ #,###.##'),'units'=>'metric','region'=>6);
 		$_['SD'] = array('name'=>__('Sudan','Shopp'),'currency'=>array('code'=>'SDG','format'=>'SDG #.###,##'),'units'=>'metric','region'=>5);
@@ -298,12 +301,12 @@ class Lookup {
 		$_['TO'] = array('name'=>__('Tonga','Shopp'),'currency'=>array('code'=>'TOP','format'=>'T$ #,###.##'),'units'=>'metric','region'=>7);
 		$_['TT'] = array('name'=>__('Trinidad and Tobago','Shopp'),'currency'=>array('code'=>'TTD','format'=>'TT$#,###.##'),'units'=>'metric','region'=>2);
 		$_['TN'] = array('name'=>__('Tunisia','Shopp'),'currency'=>array('code'=>'TND','format'=>'####,### د.ت'),'units'=>'metric','region'=>5);
-		$_['TR'] = array('name'=>__('Turkey','Shopp'),'currency'=>array('code'=>'TRL','format'=>'#.###,## TL'),'units'=>'metric','region'=>4);
+		$_['TR'] = array('name'=>__('Turkey','Shopp'),'currency'=>array('code'=>'TRL','format'=>'#.###,## TL'),'units'=>'metric','region'=>6);
 		$_['TM'] = array('name'=>__('Turkmenistan','Shopp'),'currency'=>array('code'=>'TMT','format'=>'#,###.## m'),'units'=>'metric','region'=>6);
 		$_['TC'] = array('name'=>__('Turks and Caicos Islands','Shopp'),'currency'=>array('code'=>'USD','format'=>'$#,###.##'),'units'=>'metric','region'=>1);
 		$_['TV'] = array('name'=>__('Tuvalu','Shopp'),'currency'=>array('code'=>'AUD','format'=>'$#,###.##'),'units'=>'metric','region'=>7);
 		$_['UG'] = array('name'=>__('Uganda','Shopp'),'currency'=>array('code'=>'UGX','format'=>'#,###.## USh'),'units'=>'metric','region'=>5);
-		$_['UA'] = array('name'=>__('Ukraine','Shopp'),'currency'=>array('code'=>'UAH','format'=>'# ###,## ₴'),'units'=>'metric','region'=>4);
+		$_['UA'] = array('name'=>__('Ukraine','Shopp'),'currency'=>array('code'=>'UAH','format'=>'# ###,## ₴'),'units'=>'metric','region'=>3);
 		$_['AE'] = array('name'=>__('United Arab Emirates','Shopp'),'currency'=>array('code'=>'AED','format'=>'Dhs. #,###.##'),'units'=>'metric','region'=>4);
 		$_['UY'] = array('name'=>__('Uruguay','Shopp'),'currency'=>array('code'=>'UYP','format'=>'$#,###.##'),'units'=>'metric','region'=>2);
 		$_['UZ'] = array('name'=>__('Uzbekistan','Shopp'),'currency'=>array('code'=>'UZS','format'=>'$#,###.##'),'units'=>'metric','region'=>6);
@@ -317,7 +320,7 @@ class Lookup {
 		$_['ZM'] = array('name'=>__('Zambia','Shopp'),'currency'=>array('code'=>'ZMK','format'=>'#,###.## ZK'),'units'=>'metric','region'=>5);
 		$_['ZW'] = array('name'=>__('Zimbabwe','Shopp'),'currency'=>array('code'=>'USD','format'=>'$#,###.##'),'units'=>'metric','region'=>5);
 
-		return apply_filters('shopp_countries',$_);
+		return apply_filters('shopp_countries', $_);
 	}
 
 	/**
@@ -720,36 +723,43 @@ class Lookup {
 		return apply_filters('shopp_packaging_types', $_);
 	}
 
+	/**
+	 * Provides a list of settings for registered shipping carriers
+	 *
+	 * @since 1.2
+	 *
+	 * @return array List of shipping carrier settings
+	 **/
 	public static function shipcarriers () {
 		$_ = array();
 
 		// Postal carriers
-		$_['usps'] = new ShippingCarrier(__('US Postal Service','Shopp'),'http://usps.com/','US','http://trkcnfrm1.smi.usps.com/PTSInternetWeb/InterLabelInquiry.do?origTrackNum=%s',
+		$_['usps'] = new ShippingCarrier(__('US Postal Service', 'Shopp'), 'http://usps.com/', 'US', 'https://tools.usps.com/go/TrackConfirmAction.action?tLabels=%s',
 		'/^(91\d{18}|91\d{20})$/');
-		$_['auspost'] = new ShippingCarrier(__('Australia Post','Shopp'),'http://auspost.com.au/','AU','http://auspost.com.au/track/track.html?trackIds=%s','/^(Z|[A-Z]{2}[A-Z0-9]{9}[A-Z]{2})/');
-		$_['capost'] = new ShippingCarrier(__('Canada Post','Shopp'),'http://canadapost.ca/','CA','http://www.canadapost.ca/cpotools/apps/track/personal/findByTrackNumber?trackingNumber=%s','/^(\d{16}|[A-Z]{2}[A-Z0-9]{9}[A-Z]{2})/');
-		$_['china-post'] = new ShippingCarrier(__('China Air Post','Shopp'),'http://183.com.cn/','CN');
-		$_['ems-china'] = new ShippingCarrier(__('EMS China','Shopp'),'http://www.ems.com.cn/','CN'); // EEXXXXXXXXXHK??
-		$_['hongkong-post'] = new ShippingCarrier(__('Hong Kong Post','Shopp'),'http://www.ems.com.cn/','CN');
-		$_['india-post'] = new ShippingCarrier(__('India Post','Shopp'),'http://www.indiapost.gov.in/','IN');
-		$_['japan-post'] = new ShippingCarrier(__('Japan Post','Shopp'),'http://www.indiapost.gov.in/','IN');
-		$_['parcelforce'] = new ShippingCarrier(__('Parcelforce','Shopp'),'http://parcelforce.com/','UK');
-		$_['post-danmark'] = new ShippingCarrier(__('Post Danmark','Shopp'),'http://www.postdanmark.dk/','DK');
-		$_['posten-norway'] = new ShippingCarrier(__('Posten Norway','Shopp'),'http://www.posten.no/','NO');
-		$_['posten-sweden'] = new ShippingCarrier(__('Posten Sweden','Shopp'),'http://www.posten.se/','NO');
-		$_['purolator'] = new ShippingCarrier(__('Purolator','Shopp'),'http://purolator.com/','CA','http://shipnow.purolator.com/shiponline/track/purolatortrack.asp?pinno=%s');
-		$_['russian-post'] = new ShippingCarrier(__('Russian Post','Shopp'),'http://www.russianpost.ru/','RU','http://www.russianpost.ru/rp/servise/ru/home/postuslug/trackingpo');
-		$_['thailand-post'] = new ShippingCarrier(__('Thailand Post','Shopp'),'http://www.thailandpost.com/','NO');
-		$_['nz-post'] = new ShippingCarrier(__('New Zealand Post','Shopp'),'http://www.nzpost.co.nz/','NZ','http://www.nzpost.co.nz/tools/tracking-new?trackid=%s','/[A-Z]{2}\d{9}[A-Z]{2}/i');
+		$_['auspost'] = new ShippingCarrier(__('Australia Post', 'Shopp'), 'http://auspost.com.au/', 'AU', 'http://auspost.com.au/track/track.html?trackIds=%s', '/^(Z|[A-Z]{2}[A-Z0-9]{9}[A-Z]{2})/');
+		$_['capost'] = new ShippingCarrier(__('Canada Post', 'Shopp'), 'http://canadapost.ca/', 'CA', 'http://www.canadapost.ca/cpotools/apps/track/personal/findByTrackNumber?trackingNumber=%s', '/^(\d{16}|[A-Z]{2}[A-Z0-9]{9}[A-Z]{2})/');
+		$_['china-post'] = new ShippingCarrier(__('China Air Post', 'Shopp'), 'http://183.com.cn/', 'CN');
+		$_['ems-china'] = new ShippingCarrier(__('EMS China', 'Shopp'), 'http://www.ems.com.cn/', 'CN'); // EEXXXXXXXXXHK??
+		$_['hongkong-post'] = new ShippingCarrier(__('Hong Kong Post', 'Shopp'), 'http://www.ems.com.cn/', 'CN');
+		$_['india-post'] = new ShippingCarrier(__('India Post', 'Shopp'), 'http://www.indiapost.gov.in/', 'IN');
+		$_['japan-post'] = new ShippingCarrier(__('Japan Post', 'Shopp'), 'http://www.indiapost.gov.in/', 'IN');
+		$_['parcelforce'] = new ShippingCarrier(__('Parcelforce', 'Shopp'), 'http://parcelforce.com/', 'UK');
+		$_['post-danmark'] = new ShippingCarrier(__('Post Danmark', 'Shopp'), 'http://www.postdanmark.dk/', 'DK');
+		$_['posten-norway'] = new ShippingCarrier(__('Posten Norway', 'Shopp'), 'http://www.posten.no/', 'NO');
+		$_['posten-sweden'] = new ShippingCarrier(__('Posten Sweden', 'Shopp'), 'http://www.posten.se/', 'NO');
+		$_['purolator'] = new ShippingCarrier(__('Purolator', 'Shopp'), 'http://purolator.com/', 'CA', 'http://shipnow.purolator.com/shiponline/track/purolatortrack.asp?pinno=%s');
+		$_['russian-post'] = new ShippingCarrier(__('Russian Post', 'Shopp'), 'http://www.russianpost.ru/', 'RU', 'http://www.russianpost.ru/rp/servise/ru/home/postuslug/trackingpo');
+		$_['thailand-post'] = new ShippingCarrier(__('Thailand Post', 'Shopp'), 'http://www.thailandpost.com/', 'NO');
+		$_['nz-post'] = new ShippingCarrier(__('New Zealand Post', 'Shopp'), 'http://www.nzpost.co.nz/', 'NZ', 'http://www.nzpost.co.nz/tools/tracking-new?trackid=%s', '/[A-Z]{2}\d{9}[A-Z]{2}/i');
 
 		// Global carriers - don't translate global carrier brand names
-		$_['ups'] = new ShippingCarrier('UPS','http://ups.com/','*','http://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=%s','/^(1Z[0-9A-Z]{16}|[\dT]\d{10})$/');
-		$_['fedex'] = new ShippingCarrier('FedEx','http://fedex.com/','*','http://www.fedex.com/Tracking?tracknumbers=%s','/^(\d{12}|\d{15}|96\d{20}|96\d{17}|96\d{13}|96\d{10})$/');
-		$_['aramex'] = new ShippingCarrier('Aramex','http://aramex.com/','*','http://www.aramex.com/express/track_results_multiple.aspx?ShipmentNumber=%s','/\d{10}/');
-		$_['dhl'] = new ShippingCarrier('DHL','http://www.dhl.com/','*','http://track.dhl-usa.com/TrackByNbr.asp?ShipmentNumber=%s','/^([A-Z]{3}\d{7}|[A-Z]{5}\d{7})/');
-		$_['tnt'] = new ShippingCarrier('TNT','http://tnt.com/','*','http://parcels-row.tntpost.com/mytrackandtrace/trackandtrace.aspx?lang=en&B=%s','/^([A-Z]{2}\d{9}[A-Z]{2}|\d{9})$/');
+		$_['ups'] = new ShippingCarrier('UPS', 'http://ups.com/', '*', 'http://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=%s', '/^(1Z[0-9A-Z]{16}|[\dT]\d{10})$/');
+		$_['fedex'] = new ShippingCarrier('FedEx', 'http://fedex.com/', '*', 'http://www.fedex.com/Tracking?tracknumbers=%s', '/^(\d{12}|\d{15}|96\d{20}|96\d{17}|96\d{13}|96\d{10})$/');
+		$_['aramex'] = new ShippingCarrier('Aramex', 'http://aramex.com/', '*', 'http://www.aramex.com/express/track_results_multiple.aspx?ShipmentNumber=%s', '/\d{10}/');
+		$_['dhl'] = new ShippingCarrier('DHL', 'http://www.dhl.com/', '*', 'http://track.dhl-usa.com/TrackByNbr.asp?ShipmentNumber=%s', '/^([A-Z]{3}\d{7}|[A-Z]{5}\d{7})/');
+		$_['tnt'] = new ShippingCarrier('TNT', 'http://tnt.com/', '*', 'http://parcels-row.tntpost.com/mytrackandtrace/trackandtrace.aspx?lang=en&B=%s', '/^([A-Z]{2}\d{9}[A-Z]{2}|\d{9})$/');
 
-		return apply_filters('shopp_shipping_carriers',$_);
+		return apply_filters('shopp_shipping_carriers', $_);
 	}
 
 	/**

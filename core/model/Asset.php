@@ -226,7 +226,8 @@ class ImageAsset extends FileAsset {
 	public static $defaults = array(
 		'scaling' => array('all', 'matte', 'crop', 'width', 'height'),
 		'sharpen' => 0,
-		'quality' => 80
+		'quality' => 80,
+		'fill' => 16777215
 	);
 
 	public $width;
@@ -329,7 +330,7 @@ class ImageAsset extends FileAsset {
 
 		if (!empty($data)) echo $data;
 		else $Engine->output($this->uri);
-		ob_flush(); flush();
+		@ob_flush(); @flush();
 		return;
 	}
 
@@ -399,7 +400,8 @@ class ImageAsset extends FileAsset {
 			self::HEIGHT => ( 0 == $args[ self::HEIGHT ] ) ? (int) $args[ self::WIDTH ] : (int) $args[ self::HEIGHT ],
 			self::SCALE => ( isset($args[ self::SCALE ]) ) ? (int) $args[ self::SCALE ] : 0,
 			self::SHARPEN => ( isset($args[ self::SHARPEN ]) ) ? (int) $args[ self::SHARPEN ] : self::$defaults['sharpen'],
-			self::QUALITY => ( isset($args[ self::QUALITY ]) ) ? (int) $args[ self::QUALITY ] : self::$defaults['quality']
+			self::QUALITY => ( isset($args[ self::QUALITY ]) ) ? (int) $args[ self::QUALITY ] : self::$defaults['quality'],
+			self::FILL => ( isset($args[ self::FILL ]) ) ? (int) $args[ self::FILL ] : self::$defaults['fill']
 		);
 
 		// Form the checksummed message
@@ -603,7 +605,8 @@ class DownloadAsset extends FileAsset {
 		header('Content-Description: Delivered by ' . ShoppVersion::agent());
 
 		ignore_user_abort(true);
-		ob_end_flush(); // Don't use the PHP output buffer
+		if ( ob_get_length() !== false )
+			while(@ob_end_flush()); // Clear all open output buffers
 
 		$this->send();	// Send the file data using the storage engine
 
@@ -703,7 +706,7 @@ class ImageSetting extends ShoppMetaObject {
 	 * @param integer $setting The numeric ImageSetting value
 	 * @return string The option name
 	 **/
-	public function fit ( integer $setting ) {
+	public function fit ( $setting ) {
 		if ( isset(self::$fittings[ $setting ]) )
 			return self::$fittings[ $setting ];
 		return self::$fittings[0];
@@ -717,7 +720,7 @@ class ImageSetting extends ShoppMetaObject {
 	 * @param integer $setting The numeric ImageSetting value
 	 * @return integer The option value
 	 **/
-	public function quality ( integer $setting ) {
+	public function quality ( $setting ) {
 		if ( isset(self::$qualities[ $setting ])  )
 			return self::$qualities[ $setting ];
 		return self::$qualities[2];

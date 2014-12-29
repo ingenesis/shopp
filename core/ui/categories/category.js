@@ -13,7 +13,7 @@ var Pricelines = new Pricelines(),
 	template = true;
 
 jQuery(document).ready(function () {
-	var $=jqnc(),
+	var $=jQuery,
 		editslug = new SlugEditor(category,'category'),
 		imageUploads = new ImageUploads($('#image-category-id').val(),'category');
 

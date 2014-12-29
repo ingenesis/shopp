@@ -74,13 +74,13 @@ jQuery(document).ready(function($) {
 	publishfields.attr('disabled',true);
 
 	$('#published').change(function () {
-		if ($(this).attr('checked')) $('#publish-status,#schedule-toggling').show();
+		if ($(this).prop('checked')) $('#publish-status,#schedule-toggling').show();
 		else $('#publish-status,#schedule-toggling,#scheduling').hide();
 	}).change();
 
 	$('#process-time').change(function () {
 		var pt = $('#processing');
-		if ($(this).attr('checked')) pt.slideDown('fast');
+		if ($(this).prop('checked')) pt.slideDown('fast');
 		else pt.hide();
 	}).change();
 
@@ -152,7 +152,7 @@ jQuery(document).ready(function($) {
 });
 
 function categories () {
-	var $=jqnc();
+	var $=jQuery;
 	$('#product .category-metabox').each(function () {
 		var $this = $(this),
 			taxonomy = $(this).attr('id').split('-').slice(1).join('-'),
@@ -199,7 +199,7 @@ function categories () {
 
 			tabui.find('li.tabs a').click();
 
-			$('#' + taxonomy + '-checklist li.popular-category :checkbox, #' + taxonomy + '-checklist-pop :checkbox').live( 'click', function(){
+			$('#' + taxonomy + '-checklist li.popular-category :checkbox, #' + taxonomy + '-checklist-pop :checkbox').on( 'click', function(){
 				var t = $(this), c = t.is(':checked'), id = t.val();
 				if ( id && t.parents('#taxonomy-'+taxonomy).length )
 					$('#in-' + taxonomy + '-' + id + ', #in-popular-' + taxonomy + '-' + id).attr( 'checked', c );
@@ -271,7 +271,7 @@ function categories () {
 }
 
 function tags () {
-	var $=jqnc();
+	var $=jQuery;
 	$('#product .tags-metabox').each(function () {
 		var $this = $(this),
 			taxonomy = $(this).attr('id').split('-').slice(1).join('-'),

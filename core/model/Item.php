@@ -105,6 +105,7 @@ class ShoppCartItem {
 		$Product->load_data();
 
 		// If option ids are passed, lookup by option key, otherwise by id
+		$Price = false;
 		if ( is_array($pricing) && ! empty($pricing) ) {
 			$optionkey = $Product->optionkey($pricing);
 			if ( ! isset($Product->pricekey[ $optionkey ]) ) $optionkey = $Product->optionkey($pricing, true); // deprecated prime
@@ -144,6 +145,9 @@ class ShoppCartItem {
 		$this->tags = $this->namelist($Product->tags);
 		$this->image = current($Product->images);
 		$this->description = $Product->summary;
+
+		if ( shopp_setting_enabled('taxes') ) // Must init taxable above addons roll-up #2825
+			$this->taxable = array(); // Re-init during ShoppCart::change() loads #2922
 
 		// Product has variants
 		if ( Shopp::str_true($Product->variants) && empty($this->variants) )
@@ -929,7 +933,6 @@ class ShoppCartItem {
 		$taxable = (float) array_sum($_);
 		$taxableqty = ( $this->bogof && $this->bogof != $this->quantity ) ? $this->quantity - $this->bogof : $this->quantity;
 
-
 		$Tax->rates($this->taxes, $Tax->item($this));
 
 		$this->unittax = ShoppTax::calculate($this->taxes, $taxable);
@@ -943,7 +946,7 @@ class ShoppCartItem {
 				$this->taxprice = $this->unitprice;
 
 			// Modify the unitprice from the original tax inclusive price and update the discounted price
-			$this->unitprice = ($this->taxprice / $adjustment);
+			$this->unitprice = ( $this->taxprice / $adjustment );
 			$this->priced = ( $this->unitprice - $this->discount );
 
 		} elseif ( isset($this->taxprice) ) { // Undo tax price adjustments

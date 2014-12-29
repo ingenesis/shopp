@@ -507,7 +507,7 @@ class ShoppAdminCategorize extends ShoppAdminController {
 	 **/
 	public function products_cols () {
 		register_column_headers($this->screen, array(
-			'name'      => '<div class="shoppui-spin-align"><div class="shoppui-spinner shoppui-spinfx shoppui-spinfx-steps8"></div></div>',
+			'name'      => '<div class="shoppui-spin-align"><div class="shoppui-spinner shoppui-spinfx shoppui-spinfx-steps8 hidden"></div></div>',
 			'title'     => Shopp::__('Product'),
 			'sold'      => Shopp::__('Sold'),
 			'gross'     => Shopp::__('Sales'),

@@ -63,6 +63,11 @@ class ShoppRegistration extends FormPostFramework {
 		add_filter('shopp_validate_registration', array('ShoppFormValidation', 'shipaddress'));
 		add_filter('shopp_validate_registration', array('ShoppFormValidation', 'billaddress'));
 
+		// Catch custmer login changes from ShoppFormValidation::login @see #3044 & #3053
+		add_action('shopp_customer_registration', array($this, 'customer'));
+
+		add_filter('shopp_registration_redirect', '__return_true');
+
 	}
 
 	public static function submitted () {
@@ -105,6 +110,7 @@ class ShoppRegistration extends FormPostFramework {
 		$confirmpass = $this->form('confirm-password', true);
 		if ( ! empty($confirmpass) )
 			$Customer->_confirm_password = $confirmpass;
+
 
 	}
 
@@ -154,12 +160,16 @@ class ShoppRegistration extends FormPostFramework {
 
 	public static function process () {
 
+		// We have to avoid truthiness, hence the strange logic expression
 		if ( true !== apply_filters('shopp_validate_registration', true) ) return;
 
 		$Customer = ShoppOrder()->Customer;
+		do_action('shopp_customer_registration', $Customer);
 
 		if ( $Customer->session(ShoppCustomer::GUEST) ) {
-			$Customer->type = __('Guest', 'Shopp');
+			$Customer->type = __('Guest', 'Shopp'); // No cuts
+			$Customer->wpuser = 0;                  // No buts
+			unset($Customer->password);             // No coconuts
 		} else {
 
 			// WordPress account integration used, customer has no wp user
@@ -168,7 +178,7 @@ class ShoppRegistration extends FormPostFramework {
 				else $Customer->create_wpuser(); // not logged in, create new account
 			}
 
-			if ( ! $Customer->exists() ) {
+			if ( ! $Customer->exists(true) ) {
 				$Customer->id = false;
 				shopp_debug('Creating new Shopp customer record');
 				if ( empty($Customer->password) )
@@ -187,7 +197,7 @@ class ShoppRegistration extends FormPostFramework {
 
 		// Update billing and shipping addresses
 		$addresses = array('Billing', 'Shipping');
-		foreach ($addresses as $Address) {
+		foreach ( $addresses as $Address ) {
 			if ( empty(ShoppOrder()->$Address->address) ) continue;
 			$Address = ShoppOrder()->$Address;
 			$Address->customer = $Customer->id;
@@ -195,6 +205,11 @@ class ShoppRegistration extends FormPostFramework {
 		}
 
 		do_action('shopp_customer_registered', $Customer);
+
+		// Auto-login
+		$Customer->login(); // Login the customer
+		if ( ! empty($Customer->wpuser) ) // Log the WordPress user in
+			ShoppLogin::wpuser(get_user_by('id', $Customer->wpuser));
 
         if ( apply_filters('shopp_registration_redirect', false) )
 			Shopp::redirect( Shopp::url(false, 'account') );

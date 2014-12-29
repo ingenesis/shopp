@@ -3,12 +3,12 @@
 	<div class="icon32"></div>
 	<?php
 
-		shopp_admin_screen_tabs();;
+		shopp_admin_screen_tabs();
 		do_action('shopp_admin_notices');
 
 	?>
 
-	<form action="<?php echo $this->url; ?>" id="pages" method="post">
+	<form action="<?php echo esc_url($this->url); ?>" id="pages" method="post">
 	<div>
 		<?php wp_nonce_field('shopp-settings-pages'); ?>
 	</div>

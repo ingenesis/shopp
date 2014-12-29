@@ -4,7 +4,7 @@
  * Licensed under the GPLv3 {@see license.txt}
  */
 jQuery(document).ready( function() {
-	var $ = jqnc();
+	var $ = jQuery;
 
 	/* Provide table row drag and drop for rows that relate through category relationships */
 	$.fn.dragRelatedRows = function(settings) {

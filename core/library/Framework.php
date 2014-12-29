@@ -39,7 +39,7 @@ class ListFramework implements Iterator {
 	 * @param mixed $entry The entry to add to the list
 	 * @return mixed Returns the entry
 	 **/
-	public function &add ( string $key, $entry ) {
+	public function &add ( $key, $entry ) {
 		$this->_list[$key] = $entry;
 		$this->_added = $key;
 		return $this->get($key);
@@ -54,7 +54,7 @@ class ListFramework implements Iterator {
 	 * @param string $key The key to set as the added record
 	 * @return The added entry or false if no added entries
 	 **/
-	public function added ( string $key = null ) {
+	public function added ( $key = null ) {
 		if ( ! is_null($key) && $this->exists($key) )
 			$this->_added = $key;
 		if ( $this->exists($this->_added) )
@@ -103,7 +103,7 @@ class ListFramework implements Iterator {
 	 * @param string $key $var Description...
 	 * @return boolean True if successful, false otherwise
 	 **/
-	public function update ( string $key, $entry ) {
+	public function update ( $key, $entry ) {
 		if ( ! $this->exists($key) ) return false;
 		if ( is_array($this->_list[ $key ]) && is_array($entry) )
 			$entry = array_merge($this->_list[$key],$entry);
@@ -430,7 +430,7 @@ class FormPostFramework {
 	protected $form = array();
 	protected $defaults = array();
 
-	public function form ( string $key = null, boolean $latest = null ) {
+	public function form ( $key = null, $latest = null ) {
 
 		if ( true === $latest ) $this->updateform();
 

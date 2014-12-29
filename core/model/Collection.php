@@ -35,6 +35,7 @@ class ProductCollection implements Iterator {
 	public $filters = false;
 	public $products = array();
 	public $total = 0;
+	public $pricerange = 'auto';
 
 	private $_keys = array();
 	private $_position = array();
@@ -340,14 +341,8 @@ class ProductCollection implements Iterator {
 			if ( ! $product ) return false; // No products, bail
 		}
 
-		$taxrate = 0;
-	    if ( shopp_setting_enabled('tax_inclusive') ) {
-			$TaxProduct = new ShoppProduct($product->id);
-	        $taxrate = shopp_taxrate(null, true, $TaxProduct);
-	    }
-
 		$item = array();
-		$item['guid'] = shopp($product, 'get-url');
+		$item['guid'] = shopp($product, 'get-id');
 		$item['title'] = $product->name;
 		$item['link'] =  shopp($product, 'get-url');
 		$item['pubDate'] = date('D, d M Y H:i O', $product->publish);
@@ -357,31 +352,23 @@ class ProductCollection implements Iterator {
 
 		$item['description'] .= '<table><tr>';
 		$Image = current($product->images);
-		if (!empty($Image)) {
+		if ( ! empty($Image) ) {
 			$item['description'] .= '<td><a href="' . $item['link'] . '" title="' . $product->name . '">';
 			$item['description'] .= '<img src="' . esc_attr(add_query_string($Image->resizing(75, 75, 0), Shopp::url($Image->id, 'images'))) . '" alt="' . $product->name . '" width="75" height="75" />';
 			$item['description'] .= '</a></td>';
 		}
 
 		$pricing = "";
-		if ( Shopp::str_true($product->sale) ) {
-			if ( $taxrate ) $product->min['saleprice'] += $product->min['saleprice'] * $taxrate;
-			if ( $product->min['saleprice'] != $product->max['saleprice'] )
-				$pricing .= Shopp::__('from') . ' ';
-			$pricing .= money($product->min['saleprice']);
-		} else {
-			if ($taxrate) {
-				$product->min['price'] += $product->min['price'] * $taxrate;
-				$product->max['price'] += $product->max['price'] * $taxrate;
-			}
+		$priceindex = 'price';
+		if ( Shopp::str_true($product->sale) ) $priceindex = 'saleprice';
 
-			if ( $product->min['price'] != $product->max['price'] )
-				$pricing .= Shopp::__('from') . ' ';
-			$pricing .= money($product->min['price']);
-		}
+		if ( $product->min[ $priceindex ] != $product->max[ $priceindex ] )
+			$pricing .= Shopp::__('from') . ' ';
+		$pricing .= money($product->min[ $priceindex ]);
+
 		$item['description'] .= "<td><p><big>$pricing</big></p>";
 
-		$item['description'] .= apply_filters('shopp_rss_description', ($product->summary), $product) . '</td></tr></table>';
+		$item['description'] .= apply_filters('shopp_rss_description', $product->summary, $product) . '</td></tr></table>';
 		$item['description'] =
 		 	'<![CDATA[' . $item['description'] . ']]>';
 
@@ -391,7 +378,8 @@ class ProductCollection implements Iterator {
 		// Below are Google Base specific attributes
 		// You can use the shopp_rss_item filter hook to add new item attributes or change the existing attributes
 
-		if ( $Image ) $item['g:image_link'] = add_query_string($Image->resizing(400, 400, 0), Shopp::url($Image->id, 'images'));
+		if ( $Image )
+			$item['g:image_link'] = add_query_string($Image->resizing(400, 400, 0), Shopp::url($Image->id, 'images'));
 		$item['g:condition'] = 'new';
 		$item['g:availability'] = shopp_setting_enabled('inventory') && $product->outofstock ? 'out of stock' : 'in stock';
 
@@ -1496,18 +1484,32 @@ class SmartCollection extends ProductCollection {
 		return Shopp::__('Collection');
 	}
 
-	public static function slugs ( string $class ) {
+	public static function slugs ( $class ) {
 		return apply_filters( 'shopp_' . strtolower($class) . '_collection_slugs', get_class_property($class, 'slugs') );
 	}
 
 	public function load ( array $options = array() ) {
 		$this->loading = array_merge( $this->_options, $options );
 
-		if ( isset($options['show']) )
-			$this->loading['limit'] = $options['show'];
+		if ( isset($this->loading['show']) ) {
+			$this->loading['limit'] = $this->loading['show'];
+			unset($this->loading['show']);
+		}
 
 		if ( isset($options['pagination']) )
 			$this->loading['pagination'] = $options['pagination'];
+
+		if ( isset($options['exclude']) ) {
+			$exclude = $options['exclude'];
+
+			if ( is_numeric(str_replace(',','',$exclude)) ) {
+				global $wpdb;
+				$this->loading['joins'][] = "INNER JOIN $wpdb->term_relationships as tr ON p.ID = tr.object_id";
+				$this->loading['joins'][] = "INNER JOIN $wpdb->term_taxonomy as tt ON tr.term_taxonomy_id = tt.term_taxonomy_id";
+				$this->loading['where'][] = "tr.term_taxonomy_id NOT IN ($exclude)";
+				$this->loading['where'][] = "tt.taxonomy = 'shopp_category'";
+			}
+		}
 
 		$this->smart($this->loading);
 
@@ -1888,7 +1890,7 @@ class TagProducts extends SmartCollection {
 
 		$terms = array();
 
-		$term = get_term_by('name',$this->tag,ProductTag::$taxon);
+		$term = get_term_by('name', $this->tag, ProductTag::$taxon);
 
 		if ( false !== strpos($options['tag'], ',') ) {
 			$tags = explode(',', $options['tag']);
@@ -1897,6 +1899,8 @@ class TagProducts extends SmartCollection {
 				$terms[] = $term->term_id;
 			}
 		} else $terms[] = $term->term_id;
+
+		if ( empty($terms) ) return;
 
 		$this->name = isset($options['title']) ? $options['title'] : Shopp::__('Products tagged &quot;%s&quot;', $this->tag);
 		$this->uri = urlencode($this->tag);
@@ -1908,9 +1912,10 @@ class TagProducts extends SmartCollection {
 		$where = array("tt.term_id IN (" . join(',', $terms) . ")");
 		$columns = 'COUNT(p.ID) AS score';
 		$groupby = 'p.ID';
-		$order = 'score DESC';
-		$loading = compact('columns', 'joins', 'where', 'groupby', 'order');
+		$orderby = 'score DESC';
+		$loading = compact('columns', 'joins', 'where', 'groupby', 'orderby');
 		$this->loading = array_merge($options, $loading);
+
 	}
 
 	public function pagelink ($page) {
@@ -1959,8 +1964,8 @@ class RelatedProducts extends SmartCollection {
 		$Order = ShoppOrder();
 		$Cart = $Order->Cart;
 
-		// Use the current product is available
-		if (!empty($Product->id))
+		// Use the current product if available
+		if ( ! empty($Product->id) )
 			$this->product = ShoppProduct();
 
 		// Or load a product specified
@@ -1986,30 +1991,33 @@ class RelatedProducts extends SmartCollection {
 			$slug = $this->product->slug;
 			$where = array("p.id != {$this->product->id}");
 			// Load the product's tags if they are not available
-			if (empty($this->product->tags))
+			if ( empty($this->product->tags) )
 				$this->product->load_data(array('tags'));
 
-			if (!$scope) $scope = array_keys($this->product->tags);
+			if ( empty($scope) ) $scope = array_keys($this->product->tags);
 		}
-		if (empty($scope)) return false;
+
+		if ( empty($scope) ) return false;
 
 		$this->name = __("Products related to","Shopp")." &quot;".stripslashes($name)."&quot;";
 		$this->uri = urlencode($slug);
 		$this->controls = false;
 
 		global $wpdb;
-		$joins[$wpdb->term_relationships] = "INNER JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id)";
-		$joins[$wpdb->term_taxonomy] = "INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id=tt.term_taxonomy_id";
-		$where[] = "tt.term_id IN (".join(',',$scope).")";
+		$joins[ $wpdb->term_relationships ] = "INNER JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id)";
+		$joins[ $wpdb->term_taxonomy ] = "INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id=tt.term_taxonomy_id";
+		$where[] = "tt.term_id IN (" . join(',', $scope) . ")";
 		$columns = 'COUNT(p.ID) AS score';
 		$groupby = 'p.ID';
-		$order = 'score DESC';
-		$loading = compact('columns','joins','where','groupby','order');
-		$this->loading = array_merge($options, $this->loading);
+		$orderby = 'score DESC';
+		$loading = compact('columns', 'joins', 'where', 'groupby', 'orderby');
 
-		if (isset($options['order'])) $this->loading['order'] = $options['order'];
-		if (isset($options['controls']) && Shopp::str_true($options['controls']))
+		$this->loading = array_merge($options, $loading);
+
+		if ( isset($options['order']) ) $this->loading['order'] = $options['order'];
+		if ( isset($options['controls']) && Shopp::str_true($options['controls']) )
 			unset($this->controls);
+
 	}
 
 }

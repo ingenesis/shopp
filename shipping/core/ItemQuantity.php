@@ -27,6 +27,7 @@ class ItemQuantity extends ShippingFramework implements ShippingModule {
 	}
 
 	public function calcitem ( $id, $Item ) {
+		if ( $Item->shipsfree ) return;
 		$this->items += $Item->quantity;
 	}
 
@@ -38,12 +39,20 @@ class ItemQuantity extends ShippingFramework implements ShippingModule {
 			if ( $tiers === false ) continue; // Skip methods that don't match at all
 
 			$amount = 0;
+			$matched = false;
 			$tiers = array_reverse($tiers);
+
 			foreach ( $tiers as $tier ) {
 				extract($tier);
 				$amount = Shopp::floatval($rate);			// Capture the rate amount
-				if ( (int)$this->items >= (int)$threshold ) break;
+
+				if ( (int)$this->items >= (int)$threshold ) {
+					$matched = true;
+					break;
+				}
 			}
+
+			if ( ! $matched ) return $options;
 
 			$rate = array(
 				'slug' => $slug,

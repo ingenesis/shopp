@@ -65,7 +65,7 @@ class ShoppTax {
 
 		$fallbacks = array();
 		$settings = array();
-		foreach ( $taxrates as $setting ) {
+		foreach ( (array) $taxrates as $setting ) {
 
 			$defaults = array(
 				'rate' => 0,
@@ -120,10 +120,11 @@ class ShoppTax {
 	public function rates ( array &$rates, ShoppTaxableItem $Item = null  ) {
 
 		if ( isset($Item) ) $this->Item = $Item;
+		if ( ! is_array($rates) ) $rates = array();
 
 		$settings = $this->settings();
 
-		foreach ( $settings as $key => $setting ) {
+		foreach ( (array) $settings as $key => $setting ) {
 
 			// Add any local rate to the base rate, then divide by 100 to prepare the rate to be applied
 			$rate = ( self::float($setting['rate']) + self::float($setting['localrate']) ) / 100;
@@ -142,7 +143,7 @@ class ShoppTax {
 		}
 
 		// get list of existing rates that no longer match
-		$unapply = array_keys(array_diff_key($rates, $settings));
+		$unapply = array_keys(array_diff_key($rates, (array) $settings));
 		foreach ( $unapply as $key )
 			$rates[ $key ]->amount = $rates[ $key ]->total = null;
 
@@ -162,7 +163,7 @@ class ShoppTax {
 	 * @param string $country The country code
 	 * @return boolean True if the country matches or false
 	 **/
-	protected function taxcountry ( string $country ) {
+	protected function taxcountry ( $country ) {
 		if ( empty($country) ) return false;
 		$EU = self::EUVAT == $country && in_array($this->address['country'], Lookup::country_euvat());
 		return apply_filters('shopp_tax_country', ( self::ALL == $country || $EU || $this->address['country'] == $country ),  $this->address['country'], $country);
@@ -177,7 +178,7 @@ class ShoppTax {
 	 * @param string $zone The name of the zone
 	 * @return boolean True if the zone matches or false
 	 **/
-	protected function taxzone ( string $zone ) {
+	protected function taxzone ( $zone ) {
 		if ( empty($zone) ) return true;
 		return ($this->address['zone'] == $zone);
 	}
@@ -191,27 +192,29 @@ class ShoppTax {
 	 * @param array $rules The list of tax rules to test
 	 * @return boolean True if the rules match enough to apply, false otherwise
 	 **/
-	protected function taxrules ( array $rules, string $logic ) {
+	protected function taxrules ( array $rules, $logic ) {
 		if ( empty($rules) ) return true;
 
 		$apply = false;
 		$matches = 0;
 
-		foreach ($rules as $rule) {
+		foreach ( $rules as $rule ) {
 			$match = false;
-
-			if ( false !== $this->Item && false !== strpos($rule['p'],'product') ) {
+			if ( is_a($this->Item, 'ShoppTaxableItem') && false !== strpos($rule['p'],'product') ) {
 				$match = $this->Item->taxrule($rule);
-			} elseif ( false !== strpos($rule['p'],'customer')) {
-				$match = $this->Customer->taxrule($rule);
+			} elseif ( is_a($this->Customer, 'ShoppCustomer') && false !== strpos($rule['p'],'customer') ) {
+				switch ( $rule['p'] ) {
+					case "customer-type": $match = strtolower($rule['v']) == strtolower($this->Customer->type); break;
+				}
 			}
 
-			if ($match) $matches++;
+			if ( $match ) $matches++;
 		}
-		if ( 'any' == $logic && $matches > 0) $apply = true;
+
+		if ( 'any' == $logic && $matches > 0 ) $apply = true;
 		if ( 'all' == $logic && count($rules) == $matches ) $apply = true;
 
-		return apply_filters('shopp_tax_rate_match_rule',$apply,$rule,$this);
+		return apply_filters('shopp_tax_rate_match_rule', $apply, $rule, $this);
 	}
 
 
@@ -268,6 +271,19 @@ class ShoppTax {
 		return $this->address;
 	}
 
+	/**
+	 * Sets the working customer
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param ShoppCustomer	$Customer The session customer to use for Customer rule conditions
+	 * @return void
+	 **/
+	public function customer ( ShoppCustomer $Customer ) {
+		$this->Customer = $Customer;
+	}
+
 	public static function baserates ( $Item = null ) {
 		// Get base tax rate
 		$base = shopp_setting('base_operations');
@@ -285,7 +301,7 @@ class ShoppTax {
 
 		if ( ! shopp_setting_enabled('tax_inclusive') ) return 1;
 
-		$baserates = ShoppTax::baserates($this);
+		$baserates = ShoppTax::baserates();
 		$baserate = reset($baserates);
 		$appliedrate = reset($rates);
 
@@ -322,7 +338,7 @@ class ShoppTax {
 	 * @param float $taxable The amount to calculate taxes on
 	 * @return float The total tax amount
 	 **/
-	public static function calculate ( array &$rates, float $taxable ) {
+	public static function calculate ( array &$rates, $taxable ) {
 
 		$compound = 0;
 		$total = 0;
@@ -367,7 +383,7 @@ class ShoppTax {
 	 * @param float $$amount The amount including tax
 	 * @return float The amount excluding tax
 	 **/
-	public static function exclusive ( array &$rates, float $amount ) {
+	public static function exclusive ( array &$rates, $amount ) {
 		$taxrate = 0;
 		foreach ( $rates as $tax )
 			$taxrate += $tax->rate;
@@ -384,7 +400,7 @@ class ShoppTax {
 	 * @param array $rates the list of applicable ShoppItemTax entries
 	 * @return float $total
 	 **/
-	public function total ( array &$taxes, integer $quantity ) {
+	public function total ( array &$taxes, $quantity ) {
 
 		$total = 0;
 		foreach ( $taxes as $label => &$taxrate ) {
@@ -455,7 +471,7 @@ class ShoppTaxableItem {
 	 * @param string $value The value to match
 	 * @return boolean True if matched or false
 	 **/
-	private function ShoppCartItem ( string $property, string $value ) {
+	private function ShoppCartItem ( $property, $value ) {
 		$CartItem = $this->Object;
 		switch ( $property ) {
 			case 'product-name': return ($value == $CartItem->name); break;
@@ -475,7 +491,7 @@ class ShoppTaxableItem {
 	 * @param string $value The value to match
 	 * @return boolean True if matched or false
 	 **/
-	private function ShoppProduct ( string $property, string $value ) {
+	private function ShoppProduct ( $property, $value ) {
 		$Product = $this->Object;
 		switch ( $property ) {
 			case 'product-name': return ($value == $Product->name); break;

@@ -497,15 +497,15 @@ class ProductDevAPITests extends ShoppTestCase {
 		$Product = shopp_product("St. John's Bay® Color Block Windbreaker", 'name');
 		$product = $Product->id;
 
-		$category = shopp_add_product_category ( 'Jackets', "Men's Jackets", 5 );
+		$category = shopp_add_product_category ( 'Jackets', "Men's Jackets" );
 		$this->assertTrue(shopp_product_add_categories($product, array($category)));
 
 		$Product = shopp_product($product);
 
-		$this->assertTrue(isset($Product->categories[$category]));
-		$this->AssertEquals('jackets', $Product->categories[$category]->slug);
-		$this->AssertEquals('Jackets', $Product->categories[$category]->name);
-		$this->AssertEquals("Men's Jackets", $Product->categories[$category]->description);
+		$this->assertTrue(isset($Product->categories[ $category ]));
+		$this->AssertEquals('jackets', $Product->categories[ $category ]->slug);
+		$this->AssertEquals('Jackets', $Product->categories[ $category ]->name);
+		$this->AssertEquals("Men's Jackets", $Product->categories[ $category ]->description);
 	}
 
 	function test_shopp_product_add_tags () {

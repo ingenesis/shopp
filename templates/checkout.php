@@ -75,7 +75,7 @@
 					</div>
 					<div class="right">
 						<label for="billing-state"><?php _e( 'State / Province', 'Shopp' ); ?></label>
-						<?php shopp( 'checkout.billing-state', 'required=auto&title=' . __( 'State/Provice/Region billing address', 'Shopp' ) ); ?>
+						<?php shopp( 'checkout.billing-state', 'required=auto&title=' . __( 'State/Province/Region billing address', 'Shopp' ) ); ?>
 					</div>
 					<div class="left">
 						<label for="billing-postcode"><?php _e( 'Postal / Zip Code', 'Shopp' ); ?></label>
@@ -154,11 +154,11 @@
 				<li class="payment">
 					<span>
 						<label for="billing-cardexpires-mm"><?php _e('MM','Shopp'); ?></label>
-						<?php shopp( 'checkout.billing-cardexpires-mm', 'size=4&required=true&minlength=2&maxlength=2&title=' . __( 'Card\'s 2-digit expiration month', 'Shopp' ) ); ?> /
+						<?php shopp( 'checkout.billing-cardexpires-mm', 'required=true&minlength=2&maxlength=2&title=' . __( 'Card\'s 2-digit expiration month', 'Shopp' ) ); ?> /
 					</span>
 					<span>
 						<label for="billing-cardexpires-yy"><?php _e( 'YY', 'Shopp' ); ?></label>
-						<?php shopp( 'checkout.billing-cardexpires-yy', 'size=4&required=true&minlength=2&maxlength=2&title=' . __( 'Card\'s 2-digit expiration year', 'Shopp' ) ); ?>
+						<?php shopp( 'checkout.billing-cardexpires-yy', 'required=true&minlength=2&maxlength=2&title=' . __( 'Card\'s 2-digit expiration year', 'Shopp' ) ); ?>
 					</span>
 					<span>
 						<label for="billing-cardtype"><?php _e( 'Card Type', 'Shopp' ); ?></label>

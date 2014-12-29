@@ -2,7 +2,7 @@
 	<div class="icon32"></div>
 	<?php
 
-		shopp_admin_screen_tabs();;
+		shopp_admin_screen_tabs();
 		do_action('shopp_admin_notices');
 
 	?>
@@ -160,7 +160,7 @@
 				$taxrate = array_merge($defaults,$taxrate);
 				extract($taxrate);
 
-				$rate = percentage($rate, array('precision'=>4));
+				$rate = Shopp::percentage(Shopp::floatval($rate), array('precision'=>4));
 				$location = $countries[ $country ];
 
 				if (isset($zone) && !empty($zone))

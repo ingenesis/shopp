@@ -42,7 +42,7 @@
 			<?php
 				foreach ($columns as $column => $column_title) {
 					$classes = array($column,"column-$column");
-					if ( in_array($column,$hidden) ) $classes[] = 'hidden';
+					if ( in_array($column, $hidden) ) $classes[] = 'hidden';
 
 					switch ($column) {
 						case 'cb':
@@ -156,44 +156,43 @@
 					?>
 						<tr class="<?php echo esc_attr(join(' ',$rowclasses)); ?>">
 					<?php
-
 						if ( isset($_GET['editline']) && (int)$_GET['editline'] == $id ) {
 							$data = array(
-								'${lineid}' => (int)$_GET['editline'],
-								'${itemname}' => $itemname,
-								'${quantity}' => $Item->quantity,
-								'${unitprice}'     => money($Item->unitprice),
-								'${total}'    => money( $Item->total+($Purchase->taxing != 'inclusive'?$Item->unittax*$Item->quantity:0) )
+								'${lineid}'    => (int)$_GET['editline'],
+								'${itemname}'  => $itemname,
+								'${quantity}'  => $Item->quantity,
+								'${unitprice}' => money($Item->unitprice),
+								'${total}'     => money($Item->total)
 							);
-							echo ShoppUI::template($itemeditor,$data);
+							echo ShoppUI::template($itemeditor, $data);
 						} else {
 
 							foreach ($columns as $column => $column_title) {
-								$classes = array($column,"column-$column");
-								if ( in_array($column,$hidden) ) $classes[] = 'hidden';
+								$classes = array($column, "column-$column");
+								if ( in_array($column, $hidden) ) $classes[] = 'hidden';
 
 								ob_start();
-								switch ($column) {
+								switch ( $column ) {
 									case 'items':
 									ShoppProduct( new ShoppProduct($Item->product) ); // @todo Find a way to make this more efficient by loading product slugs with load_purchased()?
 									$viewurl = shopp('product.get-url');
-									$editurl = ShoppAdminController::url( array('id' => $Purchase->id, 'editline'=>$id) );
-									$rmvurl = ShoppAdminController::url( array('id' => $Purchase->id, 'rmvline'=>$id) );
+									$editurl = ShoppAdminController::url( array('id' => $Purchase->id, 'editline'=> $id) );
+									$rmvurl = ShoppAdminController::url( array('id' => $Purchase->id, 'rmvline'=> $id) );
+									$producturl = add_query_arg( array('page' => 'shopp-products', 'id' => $Item->product), admin_url('admin.php') );
 										?>
 											<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
-												<a href="<?php echo add_query_arg(array('page' => 'shopp-products','id' => $Item->product),admin_url('admin.php')); ?>">
+												<a href="<?php echo $producturl; ?>">
 	                                                <?php
 	                                                $Product = new ShoppProduct($Item->product);
 	                                                $Product->load_data( array('images') );
 	                                                $Image = reset($Product->images);
-	                                                $image_id = apply_filters('shopp_order_item_image_id', $Image->id, $Item, $Product);
 
-	                                                if ( ! empty($Image) ) { ?>
+	                                                if ( ! empty($Image) ) { 
+	                                                    $image_id = apply_filters('shopp_order_item_image_id', $Image->id, $Item, $Product); ?>
 	                                                    <img src="?siid=<?php echo $image_id ?>&amp;<?php echo $Image->resizing(38, 0, 1) ?>" width="38" height="38" class="alignleft" />
 	                                                <?php
 	                                                }
-	                                                echo $Item->name;
-												    if (!empty($Item->optionlabel)) echo "({$Item->optionlabel})"; ?>
+	                                                echo apply_filters('shopp_purchased_item_name', $itemname); ?>
 	                                            </a>
 												<div class="row-actions">
 													<!-- <span class='edit'><a href="<?php echo $editurl; ?>" title="<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($Item->name); ?>&quot;"><?php _e('Edit','Shopp'); ?></a> | </span>
@@ -205,21 +204,21 @@
 												<ul>
 												<?php if (!empty($Item->sku)): ?><li><small><?php _e('SKU','Shopp'); ?>: <strong><?php echo $Item->sku; ?></strong></small></li><?php endif; ?>
 
-												<?php if (isset($Item->addons) && isset($Item->addons->meta)): ?>
-													<?php foreach ((array)$Item->addons->meta as $id => $addon):
-														if ( $Purchase->taxing != "inclusive" )
-															$addonprice = $addon->value->unitprice+($addon->value->unitprice*$taxrate);
+												<?php if ( isset($Item->addons) && isset($Item->addons->meta) ): ?>
+													<?php foreach ( (array)$Item->addons->meta as $id => $addon ):
+														if ( "inclusive" != $Purchase->taxing )
+															$addonprice = $addon->value->unitprice + ( $addon->value->unitprice * $taxrate );
 														else $addonprice = $addon->value->unitprice;
 
 														?>
-														<li><small><?php echo apply_filters('shopp_purchased_addon_name',$addon->name); ?><?php if (!empty($addon->value->sku)) echo apply_filters('shopp_purchased_addon_sku',' [SKU: '.$addon->value->sku.']'); ?>: <strong><?php echo apply_filters('shopp_purchased_addon_unitprice',money($addonprice)); ?></strong></small></li>
+														<li><small><?php echo apply_filters('shopp_purchased_addon_name', $addon->name); ?><?php if ( ! empty($addon->value->sku) ) echo apply_filters('shopp_purchased_addon_sku',' [SKU: ' . $addon->value->sku . ']'); ?>: <strong><?php echo apply_filters('shopp_purchased_addon_unitprice', money($addonprice)); ?></strong></small></li>
 													<?php endforeach; ?>
 												<?php endif; ?>
-												<?php foreach ($Item->data as $name => $value): ?>
-													<li><small><?php echo apply_filters('shopp_purchased_data_name',$name); ?>: <strong><?php echo apply_filters('shopp_purchased_data_value',$value); ?></strong></small></li>
+												<?php foreach ( (array)$Item->data as $name => $value ): ?>
+													<li><small><?php echo apply_filters('shopp_purchased_data_name', $name); ?>: <strong><?php echo apply_filters('shopp_purchased_data_value', $value); ?></strong></small></li>
 												<?php endforeach; ?>
 												<?php endif; ?>
-												<?php do_action_ref_array('shopp_after_purchased_data',array(&$Item,&$Purchase)); ?>
+												<?php do_action_ref_array('shopp_after_purchased_data', array($Item, $Purchase)); ?>
 												</ul>
 											</td>
 										<?php
@@ -228,29 +227,27 @@
 									case 'qty':
 										$classes[] = 'num';
 										?>
-											<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><?php echo $Item->quantity; ?></td>
+											<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php echo $Item->quantity; ?></td>
 										<?php
 										break;
 
 									case 'price':
 									$classes[] = 'money';
 										?>
-											<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><?php $amount = $Item->unitprice+($Purchase->taxing != 'inclusive'?$Item->unittax:0);
-												echo money($amount); ?></td>
+											<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php echo money($Item->unitprice); ?></td>
 										<?php
 										break;
 
 									case 'total':
 										$classes[] = 'money';
 										?>
-											<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><?php $amount = $Item->total+($Purchase->taxing != 'inclusive'?$Item->unittax*$Item->quantity:0);
-												echo money($amount); ?></td>
+											<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php echo money($Item->total); ?></td>
 										<?php
 										break;
 
 									default:
 										?>
-											<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
+											<td class="<?php echo esc_attr(join(' ', $classes)); ?>">
 											<?php do_action( 'shopp_manage_order_' . sanitize_key($column) .'_column_data', $column, $Product, $Item, $Purchase ); ?>
 											</td>
 										<?php
@@ -258,7 +255,7 @@
 								}
 								$output = ob_get_contents();
 								ob_end_clean();
-								echo apply_filters('shopp_manage_order_'.$column.'_column',$output);
+								echo apply_filters('shopp_manage_order_' . $column . '_column', $output);
 							}
 						}
 					?>
@@ -298,7 +295,7 @@
 var carriers = <?php echo json_encode($carriers_json); ?>;
 
 jQuery(document).ready(function() {
-	var $=jqnc(),
+	var $=jQuery,
 		noteurl = '<?php echo wp_nonce_url(admin_url('admin-ajax.php'), 'wp_ajax_shopp_order_note_message'); ?>';
 
 	// close postboxes that should be closed

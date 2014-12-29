@@ -119,15 +119,16 @@ class ShoppAdminAccount extends ShoppAdminController {
 			$Customer->updates($_POST);
 
 			// Reassign WordPress login
-			if ($wp_integration && !empty($_POST['userlogin']) && $_POST['userlogin'] !=  $user->user_login) {
-				$newlogin = get_user_by('login',$_POST['userlogin']);
-				if (!empty($newlogin->ID)) {
+			if ($wp_integration && isset($_POST['userlogin']) && $_POST['userlogin'] !=  $user->user_login) {
+				$newlogin = get_user_by('login', $_POST['userlogin']);
+				if ( ! empty($newlogin->ID) ) {
 					if (sDB::query("SELECT count(*) AS used FROM $Customer->_table WHERE wpuser=$newlogin->ID",'auto','col','used') == 0) {
 						$Customer->wpuser = $newlogin->ID;
 						$updated = sprintf(__('Updated customer login to %s.','Shopp'),"<strong>$newlogin->user_login</strong>");
 					} else $updated = sprintf(__('Could not update customer login to &quot;%s&quot; because that user is already assigned to another customer.','Shopp'),'<strong>'.sanitize_user($_POST['userlogin']).'</strong>');
 
 				} else $updated = sprintf(__('Could not update customer login to &quot;%s&quot; because the user does not exist in WordPress.','Shopp'),'<strong>'.sanitize_user($_POST['userlogin']).'</strong>');
+				if ( empty($_POST['userlogin']) ) $Customer->wpuser = 0;
 			}
 
 			if (!empty($_POST['new-password']) && !empty($_POST['confirm-password'])

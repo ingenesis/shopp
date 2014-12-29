@@ -111,7 +111,6 @@ class ShoppOrder {
 		// Initialize/reinitalize the current location
 		add_action('shopp_init', array($this, 'locate'), 20);
 
-
 	}
 
 	function init () {
@@ -150,6 +149,20 @@ class ShoppOrder {
 	 **/
 	public function request () {
 
+		// Check if an in progress order was already completed
+		if ( ! empty($this->inprogress) ) {
+			$Purchase = new ShoppPurchase($this->inprogress);
+			if ( $Purchase->exists() && in_array($Purchase->txnstatus, array('authed', 'captured')) )
+				return $this->success();
+		}
+
+		// Check if an in progress order processing (from another process/tab/window) completed
+		if ( ! empty($_REQUEST['inprogress']) && ! empty($this->purchase) ) {
+				$Purchase = new ShoppPurchase($this->purchase);
+				if ( $Purchase->exists() ) // Verify it exists and redirect to thanks
+					Shopp::redirect(Shopp::url(false, 'thanks'));
+		}
+
 		if ( ! empty($_REQUEST['rmtpay']) )
 			return do_action('shopp_remote_payment');
 
@@ -181,10 +194,11 @@ class ShoppOrder {
 	 **/
 	public function txnupdates () {
 
-		add_action('shopp_txn_update', create_function('',"status_header('200'); exit();"), 101); // Default shopp_txn_update requests to HTTP status 200
+		if ( empty($_REQUEST['_txnupdate']) ) return;
 
-		if ( ! empty($_REQUEST['_txnupdate']) )
-			return do_action('shopp_txn_update');
+		// Check for remote transaction update messages
+		add_action('shopp_txn_update', create_function('',"status_header('200'); exit();"), 101); // Default shopp_txn_update requests to HTTP status 200
+		do_action('shopp_txn_update');
 
 	}
 
@@ -225,23 +239,47 @@ class ShoppOrder {
 		$locale = empty($this->Billing->locale) ? null : $this->Billing->locale;
 
 		$this->Tax->location($Address->country, $Address->state, $locale); // Update the ShoppTax working location
-
+		$this->Tax->customer($this->Customer);
 	}
 
 	/**
 	 * Submits the order to create a Purchase record
 	 *
-	 * @author Jonathan Davis
+	 * Uses WP Transients API to establish a lock on order creation for the session to
+	 * prevent duplicate orders.
+	 *
 	 * @since 1.2
 	 *
 	 * @return void
 	 **/
 	public function submit () {
+
 		if ( ! $this->Payments->processor() ) return; // Don't do anything if there is no payment processor
+
+		// Duplicate purchase prevention #3142
+		$lockid = 'shopp_order_' . ShoppShopping()->session();
+		if ( get_transient($lockid) ) {
+			shopp_debug("Lock $lockid already established, waiting for other process to complete...");
+
+			// Wait until the lock is cleared
+			$waited = 0; $timeout = SHOPP_GATEWAY_TIMEOUT + 5;
+			while ( get_transient($lockid) && $waited++ < $timeout )
+				sleep(1);
+
+			shopp_debug("Lock $lockid process appears to have completed, redirecting...");
+
+			// Otherwise an error must have occured, bounce back to checkout
+			Shopp::redirect(Shopp::url(array('inprogress' => '1'), 'checkout', $this->security()));
+			return;
+
+		} else set_transient($lockid, true, $timeout);
 
 		shopp_add_order_event(false, 'purchase', array(
 			'gateway' => $this->Payments->processor()
 		));
+
+		delete_transient( $lockid ); // Remove the lock
+
 	}
 
 	/**
@@ -259,7 +297,6 @@ class ShoppOrder {
 		));
 	}
 
-
 	/**
 	 * Fires an unstock order event for a purchase to deduct stock from inventory
 	 *
@@ -275,10 +312,9 @@ class ShoppOrder {
 		if ( ! isset($Purchase->id) || empty($Purchase->id) || $Event->order != $Purchase->id )
 			$Purchase = new ShoppPurchase($Event->order);
 
-		if ( ! isset($Purchase->events) || empty($Purchase->events) ) $Purchase->load_events(); // Load events
-		if ( in_array('unstock', array_keys($Purchase->events)) ) return true; // Unstock already occurred, do nothing
+		if ( $Purchase->did('unstock') ) return true; // Unstock already occurred, do nothing
 
-		$Purchase->load_purchased(); // Reload purchased to esnure we have inventory status
+		$Purchase->load_purchased(); // Reload purchased to ensure we have inventory status
 		if ( ! $Purchase->stocked ) return false;
 
 		shopp_add_order_event($Purchase->id, 'unstock');
@@ -463,7 +499,7 @@ class ShoppOrder {
 		$Purchase->customer = $this->Customer->id;
 		$Purchase->taxing = shopp_setting_enabled('tax_inclusive') ? 'inclusive' : 'exclusive';
 		$Purchase->freight = $this->Cart->total('shipping');
-		$Purchase->shipoption = $shipoption->name;
+		$Purchase->shipoption = isset($shipoption->name) ? $shipoption->name : '';
 		$Purchase->ip = $Shopping->ip;
 		$Purchase->created = current_time('mysql');
 		unset($Purchase->order);
@@ -594,8 +630,11 @@ class ShoppOrder {
 			$this->Billing->copydata($registration['Billing']);
 			$this->Shipping->copydata($registration['Shipping']);
 
-	        add_filter('shopp_validate_registration', create_function('', 'return true;') ); // Validation already conducted during the checkout process
-	        add_filter('shopp_registration_redirect', create_function('', 'return false;') ); // Prevent redirection to account page after registration
+			// Validation already conducted during the checkout process
+	        add_filter('shopp_validate_registration', '__return_true');
+
+			// Prevent redirection to account page after registration
+	        add_filter('shopp_registration_redirect', '__return_false');
 
 		}
 
@@ -643,12 +682,19 @@ class ShoppOrder {
 	 **/
 	public function success () {
 
-		$this->purchase = $this->inprogress;
-		$this->inprogress = false;
+		if ( ! empty($this->inprogress) ) {
 
-		do_action('shopp_order_success', ShoppPurchase());
+			$this->purchase = $this->inprogress;
+			ShoppPurchase(new ShoppPurchase($this->purchase));
+			$this->inprogress = false;
 
-		Shopping::resession();
+			// Remove the order processing lock
+			delete_transient( 'shopp_order_' . ShoppShopping()->session() );
+
+			do_action('shopp_order_success', ShoppPurchase());
+
+			Shopping::resession();
+		}
 
 		if ( false !== $this->purchase )
 			Shopp::redirect( Shopp::url(false, 'thanks') );
@@ -778,12 +824,10 @@ class ShoppOrder {
 	 * @return void
 	 **/
 	public function securecard () {
-		if ( ! empty($this->Billing->card) && strlen($this->Billing->card) > 4 ) {
-			$this->Billing->card = substr($this->Billing->card, -4);
+		$this->Billing->card = '';
 
-			// Card data is truncated, switch the cart to normal mode
-			ShoppShopping()->secured(false);
-		}
+		// Card data is gone, switch the cart to normal mode
+		ShoppShopping()->secured(false);
 	}
 
 	/**

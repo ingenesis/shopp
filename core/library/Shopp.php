@@ -40,8 +40,7 @@ final class Shopp extends ShoppCore {
 		// Initialize application control processing
 		$this->Flow = new ShoppFlow();
 
-		// Init deprecated properties for legacy add-on module compatibility
-		$this->Shopping = ShoppShopping();
+		// Initialize Settings
 		$this->Settings = ShoppSettings();
 
 		// Hooks
@@ -107,6 +106,9 @@ final class Shopp extends ShoppCore {
 		$this->Storage = new StorageEngines();
 		$this->APIs = new ShoppAPIModules();
 
+		// Start the shopping session
+		$this->Shopping = ShoppShopping();
+
 		new ShoppLogin();
 		do_action('shopp_init');
 	}
@@ -120,28 +122,29 @@ final class Shopp extends ShoppCore {
 	 * @return void
 	 **/
 	public function constants () {
-		if ( ! defined('SHOPP_VERSION') )				define( 'SHOPP_VERSION', ShoppVersion::release() );
-		if ( ! defined('SHOPP_GATEWAY_USERAGENT') )		define( 'SHOPP_GATEWAY_USERAGENT', ShoppVersion::agent() );
+		if ( ! defined('SHOPP_VERSION') )              define( 'SHOPP_VERSION', ShoppVersion::release() );
+		if ( ! defined('SHOPP_GATEWAY_USERAGENT') )    define( 'SHOPP_GATEWAY_USERAGENT', ShoppVersion::agent() );
 
 		// @deprecated
-		if ( ! defined('SHOPP_HOME') )					define( 'SHOPP_HOME', ShoppSupport::HOMEPAGE );
-		if ( ! defined('SHOPP_CUSTOMERS') )				define( 'SHOPP_CUSTOMERS', ShoppSupport::FORUMS);
-		if ( ! defined('SHOPP_DOCS') )					define( 'SHOPP_DOCS', ShoppSupport::DOCS );
+		if ( ! defined('SHOPP_HOME') )                 define( 'SHOPP_HOME', ShoppSupport::HOMEPAGE );
+		if ( ! defined('SHOPP_CUSTOMERS') )            define( 'SHOPP_CUSTOMERS', ShoppSupport::FORUMS);
+		if ( ! defined('SHOPP_DOCS') )                 define( 'SHOPP_DOCS', ShoppSupport::DOCS );
 
 		// Helper for line break output
-		if ( ! defined('BR') ) 							define('BR', '<br />');
+		if ( ! defined('BR') )                         define('BR', '<br />');
 
 		// Overrideable config macros
-		if ( ! defined('SHOPP_NOSSL') )					define('SHOPP_NOSSL', false);					// Require SSL to protect transactions, overrideable for development
-		if ( ! defined('SHOPP_PREPAYMENT_DOWNLOADS') )	define('SHOPP_PREPAYMENT_DOWNLOADS', false);	// Require payment capture granting access to downloads
-		if ( ! defined('SHOPP_SESSION_TIMEOUT') )		define('SHOPP_SESSION_TIMEOUT', 172800);		// Sessions live for 2 days
-		if ( ! defined('SHOPP_CART_EXPIRES') )			define('SHOPP_CART_EXPIRES', 1209600);			// Carts are stashed for up to 2 weeks
-		if ( ! defined('SHOPP_QUERY_DEBUG') )			define('SHOPP_QUERY_DEBUG', false);				// Debugging queries is disabled by default
-		if ( ! defined('SHOPP_GATEWAY_TIMEOUT') )		define('SHOPP_GATEWAY_TIMEOUT', 10);			// Gateway connections timeout after 10 seconds
-		if ( ! defined('SHOPP_SHIPPING_TIMEOUT') )		define('SHOPP_SHIPPING_TIMEOUT', 10);			// Shipping provider connections timeout after 10 seconds
-		if ( ! defined('SHOPP_TEMP_PATH') )				define('SHOPP_TEMP_PATH', sys_get_temp_dir());	// Use the system defined temporary directory
-		if ( ! defined('SHOPP_ADDONS') )				define('SHOPP_ADDONS', WP_CONTENT_DIR . '/shopp-addons');	// A configurable directory to keep Shopp addons
-		if ( ! defined('SHOPP_NAMESPACE_TAXONOMIES') )	define('SHOPP_NAMESPACE_TAXONOMIES', true);		// Add taxonomy namespacing for permalinks /shop/category/category-name, /shopp/tag/tag-name
+		if ( ! defined('SHOPP_NOSSL') )                define('SHOPP_NOSSL', false);                             // Require SSL to protect transactions, overrideable for development
+		if ( ! defined('SHOPP_PREPAYMENT_DOWNLOADS') ) define('SHOPP_PREPAYMENT_DOWNLOADS', false);              // Require payment capture granting access to downloads
+		if ( ! defined('SHOPP_SESSION_TIMEOUT') )      define('SHOPP_SESSION_TIMEOUT', 172800);                  // Sessions live for 2 days
+		if ( ! defined('SHOPP_CART_EXPIRES') )         define('SHOPP_CART_EXPIRES', 1209600);                    // Carts are stashed for up to 2 weeks
+		if ( ! defined('SHOPP_QUERY_DEBUG') )          define('SHOPP_QUERY_DEBUG', false);                       // Debugging queries is disabled by default
+		if ( ! defined('SHOPP_GATEWAY_TIMEOUT') )      define('SHOPP_GATEWAY_TIMEOUT', 10);                      // Gateway connections timeout after 10 seconds
+		if ( ! defined('SHOPP_SHIPPING_TIMEOUT') )     define('SHOPP_SHIPPING_TIMEOUT', 10);                     // Shipping provider connections timeout after 10 seconds
+		if ( ! defined('SHOPP_SUBMIT_TIMEOUT') )       define('SHOPP_SUBMIT_TIMEOUT', 20);                       // Order submission timeout
+		if ( ! defined('SHOPP_TEMP_PATH') )            define('SHOPP_TEMP_PATH', sys_get_temp_dir());            // Use the system defined temporary directory
+		if ( ! defined('SHOPP_ADDONS') )               define('SHOPP_ADDONS', WP_CONTENT_DIR . '/shopp-addons'); // A configurable directory to keep Shopp addons
+		if ( ! defined('SHOPP_NAMESPACE_TAXONOMIES') ) define('SHOPP_NAMESPACE_TAXONOMIES', true);               // Add taxonomy namespacing for permalinks /shop/category/category-name, /shopp/tag/tag-name
 
 	}
 
@@ -158,14 +161,7 @@ final class Shopp extends ShoppCore {
 		// This should only run once
 		if ( defined( 'SHOPP_PATH' ) ) return;
 
-		global $plugin, $mu_plugin, $network_plugin;
-
-		if ( isset($plugin) ) $filepath = $plugin;
-		elseif ( isset($mu_plugin) ) $filepath = $mu_plugin;
-		elseif ( isset($network_plugin) ) $filepath = $network_plugin;
-
-		if ( false === strpos($filepath, WP_PLUGIN_DIR) )
-			$filepath = WP_PLUGIN_DIR . "/$filepath";
+		$filepath = dirname(ShoppLoader::basepath()) . "/Shopp.php";
 
 		$path = sanitize_path(dirname($filepath));
 		$file = basename($filepath);
@@ -176,7 +172,7 @@ final class Shopp extends ShoppCore {
 		define('SHOPP_DIR',  $directory );
 
 		define('SHOPP_PLUGINFILE', "$directory/$file" );
-		define('SHOPP_PLUGINURI',  set_url_scheme(WP_PLUGIN_URL . "/$directory") );
+		define('SHOPP_PLUGINURI',  set_url_scheme(plugins_url() . "/$directory") );
 
 		define('SHOPP_ADMIN_DIR', '/core/ui');
 		define('SHOPP_ADMIN_PATH', SHOPP_PATH . SHOPP_ADMIN_DIR);
@@ -358,7 +354,7 @@ final class Shopp extends ShoppCore {
 	 **/
 	public function queryvars ($vars) {
 
-		$vars[] = 's_iid';			// Shopp image id
+		$vars[] = 'siid';			// Shopp image id
 		$vars[] = 's_cs';			// Catalog (search) flag
 		$vars[] = 's_ff';			// Category filters
 		$vars[] = 'src';			// Shopp resource
@@ -378,16 +374,7 @@ final class Shopp extends ShoppCore {
 	 **/
 	public static function services () {
 		if ( WP_DEBUG ) define('SHOPP_MEMORY_PROFILE_BEFORE', memory_get_peak_usage(true) );
-
-		$services = dirname(ShoppLoader()->basepath()) . '/services';
-
-		// Image Server request handling
-		if ( isset($_GET['siid']) || 1 == preg_match('{^/.+?/images/\d+/.*$}', $_SERVER['REQUEST_URI']) )
-			return require "$services/image.php";
-
-		// Script Server request handling
-		if ( isset($_GET['sjsl']) )
-			return require "$services/scripts.php";
+		ShoppServices::serve();
 	}
 
 	// Deprecated properties

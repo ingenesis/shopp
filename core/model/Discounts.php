@@ -131,9 +131,12 @@ class ShoppDiscounts extends ListFramework {
 		} // End promos loop
 
 		// Check for failed promo codes
-
 		if ( empty($this->request) || $this->codeapplied( $this->request ) ) return;
-		else {
+		
+		if( $this->validcode($this->request) ) {
+			shopp_add_error( Shopp::__('&quot;%s&quot; does not apply to the current order.', $this->request) );
+			$this->request = false;	
+		} else {
 			shopp_add_error( Shopp::__('&quot;%s&quot; is not a valid code.', $this->request) );
 			$this->request = false;
 		}
@@ -260,7 +263,7 @@ class ShoppDiscounts extends ListFramework {
 	 **/
 	public function addcode ( $code, ShoppOrderPromo $Promo ) {
 
-		$code = strtolower($code);
+		$code = trim(strtolower($code));
 		$request = strtolower($this->request());
 
 		// Prevent customers from reapplying codes
@@ -290,7 +293,7 @@ class ShoppDiscounts extends ListFramework {
 	 * @param integer $id The discount ID to remove
 	 * @return void
 	 **/
-	private function undiscount ( integer $id ) {
+	private function undiscount ( $id ) {
 
 		if ( ! $this->exists($id) ) return false;
 
@@ -356,14 +359,14 @@ class ShoppDiscounts extends ListFramework {
 	 * @param string $request The request string to set
 	 * @return string The current request
 	 **/
-	public function request ( string $request = null ) {
+	public function request ( $request = null ) {
 
 		if ( isset($request) ) $this->request = $request;
 		return $this->request;
 
 	}
 
-	public function credit ( string $request = null ) {
+	public function credit ( $request = null ) {
 
 		if ( isset($request) ) $this->credit = $request;
 		return $this->credit;
@@ -411,6 +414,8 @@ class ShoppDiscounts extends ListFramework {
 			if ( $Discount->type() != ShoppOrderDiscount::CREDIT ) continue;
 			$Discount->calculate(); // Recalculate based on current total to apply an appropriate amount
 			$credits[] = $Discount->amount();
+			// need to save the credit to the discount register before calculating again
+			$CartTotals->register( new OrderAmountDiscount( array('id' => 'credit', 'amount' => $Discount->amount() ) ) );
 		}
 
 		$amount = array_sum($credits);
@@ -475,8 +480,27 @@ class ShoppDiscounts extends ListFramework {
 	 * @param string $code The code to check
 	 * @return boolean True if the code is applied, false otherwise
 	 **/
-	public function codeapplied ( string $code ) {
+	public function codeapplied ( $code ) {
 		return isset( $this->codes[ strtolower($code) ]);
+	}
+	
+	/**
+	 * Checks if a given code is attached to a valid rule
+	 *
+	 * @author Matthew Sigley
+	 * @since 1.3
+	 *
+	 * @param string $code The code to check
+	 * @return boolean True if the code is valid, false otherwise
+	 **/
+	public function validcode( $code ) {
+		$Promotions = ShoppOrder()->Promotions;
+		
+		foreach($Promotions as $promo) {
+			if( empty($promo->code) ) continue;
+			if( strtolower($code) == strtolower($promo->code) ) return true;
+		}
+		return false;
 	}
 
 	/**
@@ -833,6 +857,10 @@ class ShoppDiscountRule {
 		return stripos($subject,$value) === strlen($subject) - strlen($value);
 
 	}
+	
+	public function get_property() {
+		return $this->property;	
+	}
 
 }
 
@@ -911,7 +939,7 @@ class ShoppOrderDiscount {
 	 * @param integer $id The id of a source promotion object
 	 * @return integer The id of the discount
 	 **/
-	public function id ( integer $id = null ) {
+	public function id ( $id = null ) {
 		if ( isset($id) ) $this->id = $id;
 		return $this->id;
 	}
@@ -927,7 +955,7 @@ class ShoppOrderDiscount {
 	 * @param string $name The name to set
 	 * @return string The name of the discount
 	 **/
-	public function name ( string $name = null ) {
+	public function name ( $name = null ) {
 		if ( isset($name) ) $this->name = $name;
 
 		if ( $this->type() == self::CREDIT ) // Add remaining
@@ -973,10 +1001,14 @@ class ShoppOrderDiscount {
 		}
 
 		if ( ! empty($this->items) ) {
-
+			$removed = array();
 			$discounts = array();
 			foreach ( $this->items as $id => $unitdiscount ) {
 				$Item = $Cart->get($id);
+				if ( empty($Item) ) {
+					$removed[] = $id;
+					continue;
+				}
 
 				if ( self::BOGOF == $this->type() ) {
 					if ( ! is_array( $Item->bogof) ) $Item->bogof = array();
@@ -995,6 +1027,12 @@ class ShoppOrderDiscount {
 					$discounts[] = ($Item->discounts - $itemdiscounts);
 			}
 
+			foreach ( $removed as $id )
+				unset($this->items[ $id ]);
+
+			if ( empty($this->items) )
+				$this->unapply();
+
 			$this->amount = array_sum($discounts);
 
 		}
@@ -1009,7 +1047,7 @@ class ShoppOrderDiscount {
 	 * @param string $code The code to set as the discount code
 	 * @return string The code for the discount
 	 **/
-	public function code ( string $code = null ) {
+	public function code ( $code = null ) {
 		if ( isset($code) ) $this->code = $code;
 		return $this->code;
 	}
@@ -1040,7 +1078,7 @@ class ShoppOrderDiscount {
 	 * @param string $type The discount type
 	 * @return integer The ShoppOrderDiscount type
 	 **/
-	public function type ( string $type = null ) {
+	public function type ( $type = null ) {
 		if ( isset($type) ) {
 			switch ( strtolower($type) ) {
 				case 'percentage off':		$this->type = self::PERCENT_OFF; break;
@@ -1063,7 +1101,7 @@ class ShoppOrderDiscount {
 	 * @param string $target The target string to convert
 	 * @return integer the ShoppOrderDiscount target
 	 **/
-	public function target ( string $target = null ) {
+	public function target ( $target = null ) {
 		if ( isset($target) ) {
 			switch ( strtolower($target) ) {
 				case 'cart item':	$this->target = self::ITEM; break;
@@ -1156,7 +1194,7 @@ class ShoppOrderDiscount {
 	 * @param string $key The item id key
 	 * @return boolean True if it exists, false otherwise
 	 **/
-	public function hasitem ( string $key ) {
+	public function hasitem ( $key ) {
 		return isset($this->items[ $key ]);
 	}
 
@@ -1212,6 +1250,7 @@ class ShoppPurchaseDiscount {
 		$this->discount = $Discount->discount();
 		$this->code = $Discount->code();
 		$this->shipfree = $Discount->shipfree();
+		$this->amount = $Discount->amount();
 
 	}
 

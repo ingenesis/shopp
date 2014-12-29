@@ -94,7 +94,7 @@
 				<label for="billing-city"><?php _e( 'City', 'Shopp' ); ?></label>
 			</div>
 			<div class="right">
-				<?php shopp( 'customer.billing-state', 'title=' . __( 'State/Provice/Region billing address', 'Shopp' ) ); ?>
+				<?php shopp( 'customer.billing-state', 'title=' . __( 'State/Province/Region billing address', 'Shopp' ) ); ?>
 				<label for="billing-state"><?php _e( 'State / Province', 'Shopp' ); ?></label>
 			</div>
 			<div class="left">

@@ -4,21 +4,19 @@
  *
  * plugin api for getting and setting Shopp object meta data
  *
- * @author Jonathan Davis, John Dillick
- * @version 1.0
  * @copyright Ingenesis Limited, June 23, 2011
- * @license GNU GPL version 3 (or later) {@see license.txt}
- * @package shopp
- * @since 1.0
- * @subpackage shopp
+ * @license   GNU GPL version 3 (or later) {@see license.txt}
+ * @package   Shopp/API/Meta
+ * @version   1.0
+ * @since     1.0
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 /**
- * shopp_product_meta - get a product meta entry by product id, type, and name
+ * Get a product meta entry by product id, type, and name
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $product product id
@@ -31,9 +29,9 @@ function shopp_product_meta ( $product = false, $name = false, $type = 'meta' ) 
 }
 
 /**
- * shopp_product_has_meta - check for named meta data for a product.
+ * Check for named meta data for a product.
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $product (required) the product id
@@ -49,12 +47,13 @@ function shopp_product_has_meta ( $product = false, $name = false, $type = 'meta
 }
 
 /**
- * shopp_product_meta_list - get an array of meta values on the product
+ * Get an array of meta values on the product
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
- * @param type $var Description...
+ * @param int $product The ID of the product record
+ * @param string $type The type of meta entries to list
  * @return array list of values keyed by name, false on failure
  **/
 function shopp_product_meta_list ( $product = false, $type = 'meta' ) {
@@ -78,11 +77,11 @@ function shopp_product_meta_list ( $product = false, $type = 'meta' ) {
 /**
  * shopp_product_meta_count - number of meta entries associated with a product
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $product (required) the product id
- * @param type $type (optional default: meta) the meta type to count
+ * @param string $type (optional default: meta) the meta type to count
  * @return int count of meta entries, false on failure
  **/
 function shopp_product_meta_count ( $product = false, $type = 'meta' ) {
@@ -95,9 +94,9 @@ function shopp_product_meta_count ( $product = false, $type = 'meta' ) {
 }
 
 /**
- * shopp_set_product_meta - create or update a new product meta record
+ * Create or update a new product meta record
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $product (required on creation/update) product object to create/update the meta record on
@@ -112,9 +111,9 @@ function shopp_set_product_meta ( $product = false, $name = false, $value = fals
 }
 
 /**
- * shopp_rmv_product_meta - remove a meta entry by product id and name
+ * Remove a meta entry by product id and name
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $product (required) - product id of meta entry to remove
@@ -131,9 +130,9 @@ function shopp_rmv_product_meta ( $product = false, $name = false, $type = 'meta
 }
 
 /**
- * shopp_meta - Returns meta data assigned to an object.
+ * Returns meta data assigned to an object.
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $id (optional) of the meta entry, or object id of the object the Shopp meta is attached to
@@ -202,18 +201,17 @@ function shopp_meta ( $id = false, $context = false, $name = false, $type = 'met
 }
 
 /**
- * shopp_meta_exists - Determine if one or more meta records exist based on some combination of context, and/or type, and/or name of the metadata
+ * Determine if one or more meta records exist based on some combination of context, and/or type, and/or name of the metadata
  *
- * @author John Dillick
+ * One or more of the parameters must be specified.
+ *
+ * @api
  * @since 1.2
  *
  * @param string $name (optional) name of the meta entry
  * @param string $context (optional) object context of the meta entry
  * @param string $type (optional default: meta) type of the meta entry
  * @return bool true if one or more meta entries exist
- *
- * One or more of the parameters must be specified.
- *
  **/
 function shopp_meta_exists ( $name = false, $context = false, $type = 'meta' ) {
 	if ( ! ( $name || $context ) ) return false;
@@ -222,9 +220,9 @@ function shopp_meta_exists ( $name = false, $context = false, $type = 'meta' ) {
 }
 
 /**
- * shopp_set_meta - create or update a new meta record
+ * Create or update a new meta record
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $id (required on creation/update) id of an existing meta entry, or with context the parent object of a new meta entry
@@ -276,9 +274,9 @@ function shopp_set_meta ( $id = false, $context = false, $name = false, $value =
 }
 
 /**
- * shopp_rmv_meta - remove a meta entry by meta id, or parent id, context, type, and name
+ * Remove a meta entry by meta id, or parent id, context, type, and name
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $id (required) - meta entry id or, with context, the parent object id

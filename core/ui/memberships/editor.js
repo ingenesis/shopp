@@ -5,7 +5,7 @@
  */
 
 jQuery(document).ready( function() {
-	var $=jqnc(),stages = [],r_ui = $('#rules'),rulecount = 0;
+	var $=jQuery,stages = [],r_ui = $('#rules'),rulecount = 0;
 
 	postboxes.add_postbox_toggles('shopp_page_shopp-memberships');
 	// close postboxes that should be closed
@@ -17,7 +17,7 @@ jQuery(document).ready( function() {
 	});
 
 	function Rule (parent,content,access,stage,data) {
-		var $=jqnc(),
+		var $=jQuery,
 			_ = this,
 			id = rulecount++,
 			accessMenu = false,

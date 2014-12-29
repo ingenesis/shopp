@@ -209,7 +209,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 	 * @param RefundOrderEvent $Event The 'refund' order event message
 	 * @return void
 	 **/
-	public function refund ( RefundOrderEven8t $Event ) {
+	public function refund ( RefundOrderEvent $Event ) {
 		$Message = $this->Message;
 		if ( ! $Message ) return; // Requires an IPN/PDT message
 
@@ -427,7 +427,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		$_['email']					= $Customer->email;
 
 		$phone = parse_phone($Order->Customer->phone);
-		if ( in_array($Order->Billing->country,array('US', 'CA')) ) {
+		if ( ! empty($phone) && in_array($Order->Billing->country, array('US', 'CA')) ) {
 			$_['night_phone_a']		= $phone['area'];
 			$_['night_phone_b']		= $phone['prefix'];
 			$_['night_phone_c']		= $phone['exchange'];
@@ -824,7 +824,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 	 */
 	public function send ( $data, $url = false ) {
 		$options['httpversion'] = '1.1';
-		return parent::send($data, $this->url());
+		return parent::send($data, $this->url(), $options);
 	}
 
 	/**
@@ -863,12 +863,12 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 			'checked' => $this->settings['testmode']
 		));
 
-		$script = "var s='shopppaypalstandard';jQuery(document).bind(s+'Settings',function(){var $=jqnc(),p='#'+s+'-pdt',v=$(p+'verify'),t=$(p+'token');v.change(function(){v.prop('checked')?t.parent().fadeIn('fast'):t.parent().hide();}).change();});";
+		$script = "var s='shopppaypalstandard';jQuery(document).bind(s+'Settings',function(){var $=jQuery,p='#'+s+'-pdt',v=$(p+'verify'),t=$(p+'token');v.change(function(){v.prop('checked')?t.parent().fadeIn('fast'):t.parent().hide();}).change();});";
 		$this->ui->behaviors($script);
 
 	}
 
-	public static function currencies ( string $currency ) {
+	public static function currencies ( $currency ) {
 
 		if ( in_array($currency, self::$currencies) )
 			return $currency;

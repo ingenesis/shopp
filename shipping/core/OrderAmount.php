@@ -35,12 +35,20 @@ class OrderAmount extends ShippingFramework implements ShippingModule {
 			if ( false === $tiers ) continue; // Skip methods that don't match at all
 
 			$amount = 0;
+			$matched = false;
 			$tiers = array_reverse($tiers);
+			
 			foreach ( $tiers as $tier ) {
 				extract($tier);
 				$amount = Shopp::floatval($rate);			// Capture the rate amount
-				if ( $Order->Cart->total('order') >= Shopp::floatval($threshold) ) break;
+				
+				if ( $Order->Cart->total('order') >= Shopp::floatval($threshold) ) {
+					$matched = true;
+					break;
+				}
 			}
+			
+			if ( ! $matched ) return $options;
 
 			$rate = array(
 				'slug' => $slug,

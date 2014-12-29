@@ -4,13 +4,11 @@
  *
  * Developer api calls for adding file assets programmattically to your site.
  *
- * @author Jonathan Davis, John Dillick
- * @version 1.0
  * @copyright Ingenesis Limited, June 23, 2011
- * @license GNU GPL version 3 (or later) {@see license.txt}
- * @package shopp
- * @since 1.2
- * @subpackage shopp
+ * @license   GNU GPL version 3 (or later) {@see license.txt}
+ * @package   Shopp/API/Asset
+ * @version   1.0
+ * @since     1.2
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -20,7 +18,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  *
  * Add an image by filename, and associate with a user defined context.  Requires full path to the file on your filesystem, or a correct relative path for the scripts current working directory.
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $id Object id to attach the image asset to.
@@ -81,7 +79,7 @@ function shopp_add_image ( $id, $context, $file ) {
  *
  * remove an image record from the database
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $image the image id
@@ -132,7 +130,7 @@ function shopp_add_product_image ( $product, $file ) {
  *
  * Remove a product image by image asset id.
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $image image id to remove from product.
@@ -147,7 +145,7 @@ function shopp_rmv_product_image ( $image ) {
  *
  * Remove a category image by image asset id.
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $image image id to remove from product category.
@@ -178,7 +176,7 @@ function shopp_add_category_image ( $category, $file ) {
  *
  * Add product download file to a product/variation.
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $product id of the product the download asset will be added to
@@ -255,7 +253,7 @@ function shopp_add_product_download ( $product, $file, $variant = false ) {
  *
  * Remove a product download asset
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $download the product asset id

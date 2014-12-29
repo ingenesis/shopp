@@ -1,5 +1,5 @@
 jQuery(document).ready( function() {
-	var $ = jqnc();
+	var $ = jQuery;
 
 	$.fn.dragrow = function(settings) {
 		var $this = $(this),
@@ -75,18 +75,18 @@ jQuery(document).ready( function() {
 			updating.hide().show();
 			$.ajax({
 				url:updates_url+"&action=shopp_category_products_order",
-				timeout:3000,
+				timeout:5000,
 				type: "POST",
 				datatype:'text',
 				data:updates.serialize(),
-				success:function (result) {
+				success:function (r) {
+					updating.hide();
+				},
+				error:function (r, e) {
 					updating.hide();
 				}
 			});
-
-
 		}
-
 
 	};
 

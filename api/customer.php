@@ -4,21 +4,19 @@
  *
  * Plugin api function for customers
  *
- * @author Jonathan Davis
- * @version 1.0
  * @copyright Ingenesis Limited, June 23, 2011
- * @license GNU GPL version 3 ( or later = false ) {@see license.txt}
- * @package shopp
- * @since 1.2
- * @subpackage shopp
+ * @license   GNU GPL version 3 ( or later = false ) {@see license.txt}
+ * @package   Shopp/API/Customer
+ * @version   1.0
+ * @since     1.2
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 /**
- * shopp_customer - get customer information
+ * Get a ShoppCustomer with ShoppBilling and ShoppShipping
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $customer (optional) customer id, WordPress user associated customer, email address associated with customer, or false to load the current global customer object
@@ -57,9 +55,9 @@ function shopp_customer ( $customer = false, $key = 'customer' ) {
 }
 
 /**
- * shopp_customer_exists - find out if the customer exists
+ * Find out if the customer exists
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $customer (required) customer id, WordPress user associated customer, or email address associated with customer.
@@ -76,16 +74,16 @@ function shopp_customer_exists ( $customer = false, $key = 'customer' ) {
 }
 
 /**
- * shopp_customer_marketing - set or get the marketing status for a customer.
+ * Set or get the marketing status for a customer.
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $customer customer id to check or set
  * @param mixed $flag (optional default:null) null to return the marketing status, true to turn on marketing for a customer, false to turn off marketing for a customer
  * @return bool true if marketing accepted, false on failure and if marketing is not accepted.
  **/
-function shopp_customer_marketing (  $customer = false, $flag = null ) {
+function shopp_customer_marketing ( $customer = false, $flag = null ) {
 	$Customer = shopp_customer($customer);
 
 	if ( $Customer ) {
@@ -100,9 +98,9 @@ function shopp_customer_marketing (  $customer = false, $flag = null ) {
 }
 
 /**
- * shopp_customer_marketing_list - get a list of customer names, type, and email addresses for marketing
+ * Get a list of customer names, type, and email addresses for marketing
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param bool $exclude true to exclude customers that do not allow marketing, false to include all customers
@@ -122,9 +120,9 @@ function shopp_customer_marketing_list ( $exclude = false ) {
 }
 
 /**
- * shopp_add_customer - create a new customer record
+ * Create a new customer record
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param array $data data to create the new customer record from, including: wpuser, firstname, lastname, email, phone, company, marketing, type, saddress, sxaddress, scity, sstate, scountry, spostcode, sgeocode, residential, baddress, bxaddress, bcity, bstate, bcountry, bpostcode, bgeocode
@@ -194,7 +192,16 @@ function shopp_add_customer ( $data = array() ) {
 	return $Customer->id;
 } // end shopp_add_customer
 
-
+/**
+ * Update customer information for a given customer record
+ *
+ * @api
+ * @since 1.3
+ *
+ * @param int $customer The ID of the customer record to update
+ * @param array $data An associative array of customer data to update
+ * @return int|bool Customer ID on success, false otherwise
+ **/
 function shopp_set_customer ( $customer = false, $data = array() ) {
 
 	if ( ! $customer ) {
@@ -270,15 +277,27 @@ function shopp_set_customer ( $customer = false, $data = array() ) {
 	return $Customer->id;
 } // end shopp_set_customer
 
-// alias for shopp_add_customer_address
+/**
+ * An alias for shopp_add_customer_address
+ *
+ * @see shopp_add_customer_address
+ *
+ * @api
+ * @since 1.2
+ *
+ * @param int $customer (required) the customer id the address is added to
+ * @param array $data (required) key value pairs for address, values can be keyed 'address', 'xaddress', 'city', 'state', 'postcode', 'country', 'geocode',  and 'residential' (residential added to shipping address)
+ * @param string $type (optional default: billing) billing, shipping, or both
+ * @return mixed int id for one address creation/update, array of ids if created/updated both shipping and billing, bool false on error
+ */
 function shopp_set_customer_address ( $customer = false, $data = false, $type = 'billing' ) {
 	return shopp_add_customer_address ( $customer, $data, $type );
 }
 
 /**
- * shopp_add_customer_address - add or update an address for a customer
+ * Add or update an address for a customer
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $customer (required) the customer id the address is added to
@@ -286,7 +305,7 @@ function shopp_set_customer_address ( $customer = false, $data = false, $type = 
  * @param string $type (optional default: billing) billing, shipping, or both
  * @return mixed int id for one address creation/update, array of ids if created/updated both shipping and billing, bool false on error
  **/
-function shopp_add_customer_address (  $customer = false, $data = false, $type = 'billing' ) {
+function shopp_add_customer_address ( $customer = false, $data = false, $type = 'billing' ) {
 	if ( ! $customer ) {
 		shopp_debug(__FUNCTION__ . " failed: Customer id required.");
 		return false;
@@ -342,15 +361,15 @@ function shopp_add_customer_address (  $customer = false, $data = false, $type =
 }
 
 /**
- * shopp_rmv_customer - remove a customer, and data associated with the customer
+ * Remove a customer, and data associated with the customer
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $customer (required) id of the customer to remove
  * @return bool true on success, false on failure
  **/
-function shopp_rmv_customer (  $customer = false ) {
+function shopp_rmv_customer ( $customer = false ) {
 	if ( ! $customer ) {
 		shopp_debug(__FUNCTION__ . " failed: Customer id required.");
 		return false;
@@ -379,16 +398,16 @@ function shopp_rmv_customer (  $customer = false ) {
 }
 
 /**
- * shopp_address - return an address record by customer id
+ * Return an address record by customer id
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $id (required) the address id to retrieve, or customer id
  * @param string $type (optional default:billing) 'billing' to lookup billing address by customer id, 'shipping' to lookup shipping adress by customer id, or 'id' to lookup by address id
  * @return ShoppAddress object
  **/
-function shopp_address (  $id = false, $type = 'billing' ) {
+function shopp_address ( $id = false, $type = 'billing' ) {
 	if ( ! $id ) {
 		shopp_debug(__FUNCTION__ . " failed: Missing id parameter.");
 		return false;
@@ -414,15 +433,15 @@ function shopp_address (  $id = false, $type = 'billing' ) {
 }
 
 /**
- * shopp_customer_address_count - get count of addresses stored on customer record
+ * Get count of addresses stored on customer record
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $customer (required) the customer id
  * @return int number of address records that exist for the customer
  **/
-function shopp_customer_address_count (  $customer = false ) {
+function shopp_customer_address_count ( $customer = false ) {
 	if ( ! $customer ) {
 		shopp_debug(__FUNCTION__ . " failed: customer id required.");
 		return false;
@@ -434,15 +453,15 @@ function shopp_customer_address_count (  $customer = false ) {
 }
 
 /**
- * shopp_customer_addresses - get list of addresses for a customer
+ * Get list of addresses for a customer
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $customer (required) the customer id
  * @return array list of addresses
  **/
-function shopp_customer_addresses (  $customer = false ) {
+function shopp_customer_addresses ( $customer = false ) {
 	if ( ! $customer ) {
 		shopp_debug(__FUNCTION__ . " failed: customer id required.");
 		return false;
@@ -455,15 +474,15 @@ function shopp_customer_addresses (  $customer = false ) {
 }
 
 /**
- * shopp_rmv_customer_address - remove an address
+ * Remove an address
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $address the address id to remove
  * @return bool true on success, false on failure
  **/
-function shopp_rmv_customer_address (  $address = false ) {
+function shopp_rmv_customer_address ( $address = false ) {
 	if ( ! $address ) {
 		shopp_debug(__FUNCTION__ . " failed: Missing address id parameter.");
 		return false;

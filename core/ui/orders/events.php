@@ -443,8 +443,10 @@ class ShippedOrderEventRenderer extends OrderEventRenderer {
 
 	function trackurl () {
 		$this->carrier();
-		if (isset($this->Carrier->trackurl))
-			return sprintf($this->Carrier->trackurl,$this->tracking);
+		if (isset($this->Carrier->trackurl)) {
+			$params = explode(',',$this->tracking);
+			return vsprintf($this->Carrier->trackurl,$params);
+		}
 	}
 
 	function tracklink () {

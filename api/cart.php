@@ -4,25 +4,24 @@
  *
  * Plugin api calls for manipulating the cart contents.
  *
- * @author Jonathan Davis
- * @version 1.0
  * @copyright Ingenesis Limited, June 23, 2011
- * @license GNU GPL version 3 (or later) {@see license.txt}
- * @package shopp
- * @since 1.2
- * @subpackage shopp
+ * @license   GNU GPL version 3 (or later) {@see license.txt}
+ * @package   Shopp/API/Cart
+ * @version   1.0
+ * @since     1.2
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 /**
- * shopp_add_cart_variant - add a product to the cart by variant id
+ * Add a product to the cart by variant ShoppPrice id
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $variant (required) variant id to add
  * @param int $quantity (optional default: 1) quantity of product to add
+ * @param string $key (optional) specify the column key specified in $variant
  * @return bool true on success, false on failure
  **/
 function shopp_add_cart_variant ( $variant = false, $quantity = 1, $key = 'id') {
@@ -33,7 +32,7 @@ function shopp_add_cart_variant ( $variant = false, $quantity = 1, $key = 'id') 
 	if (!in_array($key,$keys)) {
 		shopp_debug(__FUNCTION__ . " failed: Variant key $key invalid.");
 	}
-	$Price = new ShoppPrice( $variant, $key);
+	$Price = new ShoppPrice($variant, $key);
 	if ( empty($Price->id) ) {
 		shopp_debug(__FUNCTION__ . " failed: Product variant $variant invalid.");
 		return false;
@@ -45,14 +44,14 @@ function shopp_add_cart_variant ( $variant = false, $quantity = 1, $key = 'id') 
 /**
  * shopp_add_cart_product - add a product to the cart
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $product (required) product id to add
  * @param int $quantity (optional default: 1) quantity of product to add
  * @param int $variant (optional) variant id to use
- * @return bool true on success,
- * false on failure
+ * @param array $data (optional) associative array of custom product input name/values
+ * @return bool true on success, false on failure
  **/
 function shopp_add_cart_product ( $product = false, $quantity = 1, $variant = false, $data = array() ) {
 	$Order = ShoppOrder();
@@ -93,7 +92,7 @@ function shopp_add_cart_product ( $product = false, $quantity = 1, $variant = fa
 /**
  * shopp_rmv_cart_item - remove a specific item from the cart
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int|string $item (required) the numeric index or key name of the item to remove
@@ -129,7 +128,7 @@ function shopp_rmv_cart_item ( $item = false ) {
 /**
  * Update the quantity of a specific product (in the cart)
  *
- * @author Hiranthi Molhoek-Herlaar, Jonathan Davis
+ * @api
  * @since 1.3
  *
  * @param int $item Index of the item in Cart contents
@@ -149,13 +148,14 @@ function shopp_set_cart_item_quantity ( $item = false, $quantity = 1 ) {
 /**
  * Change the selected variant of an item in the cart
  *
- * @author Jonathan Davis
+ * @api
  * @since 1.3
  *
  * @param string $item The item fingerprint index identifier
+ * @param int|array|Price $variant ShoppPrice record ID or an array of pricing record IDs or a ShoppPrice object
  * @return bool true for success, false on failure
  **/
-function shopp_set_cart_item_variant ( string $item = null, int $variant = null ) {
+function shopp_set_cart_item_variant ( $item = null, $variant = null ) {
 
 	if ( null === $item ) {
 		shopp_debug(__FUNCTION__ . ' failed: Missing item parameter.');
@@ -180,7 +180,7 @@ function shopp_set_cart_item_variant ( string $item = null, int $variant = null 
 /**
  * shopp_cart_items - get a list of the items in the cart
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @return array list of items in the cart
@@ -195,7 +195,7 @@ function shopp_cart_items () {
 /**
  * shopp_cart_items_count - get count of items in the cart
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @return void
@@ -207,7 +207,7 @@ function shopp_cart_items_count () {
 /**
  * shopp_cart_item - get an object representing the item in the cart.
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int|string $item the integer index of the item in the cart, string 'recent-cartitem' for last added cart item
@@ -241,7 +241,7 @@ function shopp_cart_item ( $item = false ) {
 /**
  * Empty the contents of the cart
  *
- * @author Jonathan Davis
+ * @api
  * @since 1.2
  *
  * @return void
@@ -251,9 +251,14 @@ function shopp_empty_cart () {
 }
 
 /**
+ * Apply a promo code to the cart
+ * 
  * @deprecated Use shopp_add_cart_discount_code
+ * 
+ * @param string $code The promotion code to apply
+ * @return void
  **/
-function shopp_add_cart_promocode ($code = false) {
+function shopp_add_cart_promocode ( $code = false ) {
 	shopp_debug(__FUNCTION__ . " deprecated: Use shopp_add_cart_discount_code() instead.");
 	return shopp_add_cart_discount_code($code);
 }
@@ -262,13 +267,13 @@ function shopp_add_cart_promocode ($code = false) {
 /**
  * Apply a discount code to the cart
  *
- * @author Jonathan Davis
+ * @api
  * @since 1.2
  *
  * @param string $code The promotion code to apply
  * @return void
  **/
-function shopp_add_cart_discount_code( string $code = null ) {
+function shopp_add_cart_discount_code( $code = null ) {
 	if ( null === $code || empty($code) ) {
 		shopp_debug(__FUNCTION__ . " failed: Missing code parameter.");
 	}
@@ -282,8 +287,12 @@ function shopp_add_cart_discount_code( string $code = null ) {
 }
 
 /**
- * Adds an addon to an existing cartitem. The $addonid should be the numeric ID of the addon.
+ * Adds an addon to an existing cartitem. 
+ * 
+ * The $addonid should be the numeric ID of the addon.
  *
+ * @api
+ * 
  * @param mixed $itemkey
  * @param mixed $addonid
  * @return bool
@@ -322,8 +331,10 @@ function shopp_add_cart_item_addon ( $itemkey = false, $addonid = false ) {
 /**
  * Removes an addon from a cartitem. The addonkey should be the numeric ID of the addon.
  *
- * @param mixed $item
- * @param mixed $addon
+ * @api
+ * 
+ * @param mixed $itemkey
+ * @param mixed $addonkey
  * @return bool
  */
 function shopp_rmv_cart_item_addon ( $itemkey = false, $addonkey = false ) {
@@ -359,6 +370,8 @@ function shopp_rmv_cart_item_addon ( $itemkey = false, $addonkey = false ) {
 /**
  * Returns an array of item addons (may be an empty array) or fals if the item does not exist/no item is specified.
  *
+ * @api
+ * 
  * @param bool $itemkey
  * @return array|bool
  */
@@ -378,7 +391,9 @@ function shopp_cart_item_addons ( $itemkey = false ) {
 /**
  * Returns the number of addons added to the cartitem.
  *
- * @param $item
+ * @api
+ * 
+ * @param $itemkey
  * @return bool|int
  */
 function shopp_cart_item_addons_count ($itemkey) {

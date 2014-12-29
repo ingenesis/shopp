@@ -5,7 +5,7 @@
  */
 
 function SearchSelector (settings) {
-	var $ = jqnc(),
+	var $ = jQuery,
 		_ = this,
 		$this = $(this),form,
 		defaults = {

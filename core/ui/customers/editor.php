@@ -40,7 +40,7 @@
 
 jQuery(document).ready( function() {
 
-var $=jqnc(),
+var $=jQuery,
 	regions = <?php echo json_encode($regions); ?>,
 	suggurl = '<?php echo wp_nonce_url(admin_url('admin-ajax.php'),'wp_ajax_shopp_suggestions'); ?>',
 	userlogin = $('#userlogin').unbind('keydown').unbind('keypress').suggest(

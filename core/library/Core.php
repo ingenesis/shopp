@@ -54,7 +54,7 @@ abstract class ShoppCore {
 			array_push($errors, 'wpversion', 'wp35');
 
 		// Check for GD
-		if ( ! function_exists('gd_info') ) $errors[] = 'gd';
+		if ( ! function_exists('gd_info') ) $errors[] = 'gdsupport';
 		elseif ( ! array_keys( gd_info(), array('JPG Support', 'JPEG Support')) ) $errors[] = 'jpgsupport';
 
 		if ( empty($errors) ) {
@@ -326,7 +326,7 @@ abstract class ShoppCore {
 	 * @param int $timestamp (optional) The timestamp to be formatted (defaults to current timestamp)
 	 * @return string The formatted localized date/time
 	 **/
-	public static function _d ( string $format, $timestamp = null ) {
+	public static function _d ( $format, $timestamp = null ) {
 
 		$tokens = array(
 			'D' => array('Mon' => Shopp::__('Mon'), 'Tue' => Shopp::__('Tue'),
@@ -372,7 +372,7 @@ abstract class ShoppCore {
 	 * @param string $text Text to translate
 	 * @return void
 	 **/
-	public static function _jse ( string $text) {
+	public static function _jse ( $text) {
 		echo json_encode(Shopp::translate($text));
 	}
 
@@ -689,16 +689,16 @@ abstract class ShoppCore {
 			'grouping' => 3
 		);
 
-		$default = array_merge($default, $format);
-
-		if ( ! empty($format) ) return $default;
-
+		// Merge base of operations locale settings
 		$locale = shopp_setting('base_operations');
+		if ( ! empty($locale['currency']) && ! empty($locale['currency']['format']) )
+			$default = array_merge($default, $locale['currency']['format']);
 
-		if ( ! isset($locale['currency']) || ! isset($locale['currency']['format']) ) return $default;
-		if ( empty($locale['currency']['format']['currency']) ) return $default;
+		// No format provided, use default
+		if ( empty($format) ) return $default;
 
-		return array_merge($default, $locale['currency']['format']);
+		// Merge the format options with the default
+		return array_merge($default, $format);
 
 	}
 
@@ -1373,16 +1373,15 @@ abstract class ShoppCore {
 	 * @param int $num The number to format
 	 * @return array A list of phone number components
 	 **/
+	public static function parse_phone ( $num ) {
+		if ( empty($num) ) return '';
+		$raw = preg_replace('/[^\d]/', '', $num);
 
-	public static function parse_phone ($num) {
-		if (empty($num)) return '';
-		$raw = preg_replace('/[^\d]/','',$num);
+		if ( strlen($raw) == 7 ) sscanf($raw, "%3s%4s", $prefix, $exchange);
+		if ( strlen($raw) == 10 ) sscanf($raw, "%3s%3s%4s", $area, $prefix, $exchange);
+		if ( strlen($raw) == 11 ) sscanf($raw, "%1s%3s%3s%4s", $country, $area, $prefix, $exchange);
 
-		if (strlen($raw) == 7) sscanf($raw, "%3s%4s", $prefix, $exchange);
-		if (strlen($raw) == 10) sscanf($raw, "%3s%3s%4s", $area, $prefix, $exchange);
-		if (strlen($raw) == 11) sscanf($raw, "%1s%3s%3s%4s",$country, $area, $prefix, $exchange);
-
-		return compact('country','area','prefix','exchange','raw');
+		return compact('country', 'area', 'prefix', 'exchange', 'raw');
 	}
 
 	/**
@@ -1394,17 +1393,19 @@ abstract class ShoppCore {
 	 * @param int $num The number to format
 	 * @return string The formatted telephone number
 	 **/
-	public static function phone ($num) {
-		if (empty($num)) return '';
+	public static function phone ( $num ) {
+		if ( empty($num) ) return '';
+
 		$parsed = Shopp::parse_phone($num);
 		extract($parsed);
 
-		$string = "";
-		$string .= (isset($country))?"$country ":"";
-		$string .= (isset($area))?"($area) ":"";
-		$string .= (isset($prefix))?$prefix:"";
-		$string .= (isset($exchange))?"-$exchange":"";
-		$string .= (isset($ext))?" x$ext":"";
+		$string = '';
+		$string .= ( isset($country) )  ? "$country "  : '';
+		$string .= ( isset($area) )     ? "($area) "   : '';
+		$string .= ( isset($prefix) )   ? $prefix      : '';
+		$string .= ( isset($exchange) ) ? "-$exchange" : '';
+		$string .= ( isset($ext) )      ? " x$ext"     : '';
+
 		return $string;
 	}
 
@@ -1537,7 +1538,7 @@ abstract class ShoppCore {
 	 * @param string $format A currency formatting string such as $#,###.##
 	 * @return array Formatting options list
 	 **/
-	public static function scan_money_format ( string $format ) {
+	public static function scan_money_format ( $format ) {
 		$f = array(
 			'cpos' => true,
 			'currency' => '',
@@ -1685,61 +1686,51 @@ abstract class ShoppCore {
 	 **/
 	public static function email ( $template, array $data = array() ) {
 
-		$debug = false;
-		$in_body = false;
-		$headers = array();
-		$message = '';
-		$to = '';
-		$subject = '';
-		$protected = array('from', 'to', 'subject', 'cc', 'bcc');
+		$debug = defined('SHOPP_DEBUG_EMAIL') && SHOPP_DEBUG_EMAIL;
 
+		$headers = array();
+		$to = $subject = $message = '';
+		$addrs = array('from', 'sender', 'reply-to', 'to', 'cc', 'bcc');
+		$protected = array_merge($addrs, array('subject'));
 		if ( false == strpos($template, "\n") && file_exists($template) ) {
 			$templatefile = $template;
-
 			// Include to parse the PHP and Theme API tags
-
 			ob_start();
 			ShoppStorefront::intemplate($templatefile);
 			include $templatefile;
 			ShoppStorefront::intemplate('');
 			$template = ob_get_clean();
-
 			if ( empty($template) )
 				return shopp_add_error(Shopp::__('Could not open the email template because the file does not exist or is not readable.'), SHOPP_ADMIN_ERR, array('template' => $templatefile));
 		}
 
 		// Sanitize line endings
 		$template = str_replace(array("\r\n", "\r"), "\n", $template);
-		$f = explode("\n", $template);
+		$lines = explode("\n", $template);
 
-		while ( list($linenum, $line) = each($f) ) {
-			$line = rtrim($line);
+		// Collect headers
+		while ( $line = array_shift($lines) ) {
+			if ( false === strpos($line, ':') ) continue; // Skip invalid header lines
 
-			// Header parse
-			if ( ! $in_body && false !== strpos($line, ':') ) {
-				list($header, $value) = explode(':', $line, 2);
+			list($header, $value) = explode(':', $line, 2);
+			$header = strtolower($header);
 
-				// Protect against header injection
-				if ( in_array(strtolower($header), $protected) )
-					$value = str_replace("\n", "", urldecode($value));
+			if ( in_array($header, $protected) ) // Protect against header injection
+				$value = str_replace(array("\n", "\r"), '', rawurldecode($value));
 
-				if ( 'to' == strtolower($header) ) $to = $value;
-				elseif ( 'subject' == strtolower($header) ) $subject = $value;
-				else $headers[] = $line;
-			}
-
-			// Catches the first blank line to begin capturing message body
-			if ( ! $in_body && empty($line) ) $in_body = true;
-			if ( $in_body ) $message .= $line . "\n";
-
+			if ( in_array($header, array('to', 'subject')) )
+				$headers[ $header ] = trim($value);
+			else $headers[ $header ] = $line;
 		}
-
+		$message = join("\n", $lines);
 		// If not already in place, setup default system email filters
 		ShoppEmailDefaultFilters::init();
-
 		// Message filters first
-		$headers = apply_filters('shopp_email_headers', $headers, $message);
 		$message = apply_filters('shopp_email_message', $message, $headers);
+
+		$headers = apply_filters('shopp_email_headers', $headers, $message);
+		$to = $headers['to']; unset($headers['to']);
+		$subject = $headers['subject']; unset($headers['subject']);
 
 		$sent = wp_mail($to, $subject, $message, $headers);
 
@@ -1808,11 +1799,11 @@ abstract class ShoppCore {
 	 *
 	 *     "Supplies Unlimited"
 	 *
-	 * This should return:
+	 * This will return:
 	 *
 	 *     "Supplies Unlimited" <info@merchant.com>, dispatch@merchant.com, partners@other.co"
 	 *
-	 * However, if there is only a single email address rather than several sepeated by
+	 * However, if there is only a single email address rather than several seperated by
 	 * commas it will simply return:
 	 *
 	 *     "Supplies Unlimited" <info@merchant.com>"
@@ -1955,6 +1946,10 @@ abstract class ShoppCore {
 	 **/
 	public static function redirect ($uri,$exit=true,$status=302) {
 		shopp_debug("Redirecting to: $uri");
+
+		remove_action('shutdown', array(ShoppShopping(), 'save'));
+		ShoppShopping()->save();
+
 		wp_redirect($uri, $status);
 		if ($exit) exit();
 	}
@@ -1991,7 +1986,7 @@ abstract class ShoppCore {
 		if ( isset($lp['host']) && ( !in_array($lp['host'], $allowed_hosts) && $lp['host'] != strtolower($wpp['host'])) )
 			$location = Shopp::url(false,'account');
 
-		wp_redirect($location, $status);
+		self::redirect($location, true, $status);
 	}
 
 	/**
@@ -2052,7 +2047,7 @@ abstract class ShoppCore {
 	 * @param string $name The name of the template file
 	 * @return string Prefixed template file
 	 **/
-	public static function template_prefix ( string $name ) {
+	public static function template_prefix ( $name ) {
 		return apply_filters('shopp_template_directory', 'shopp') . '/' . $name;
 	}
 
@@ -2268,14 +2263,14 @@ abstract class ShoppCore {
 	}
 
 	/**
-	 * Trim whitespace from the beggingin
+	 * Trim whitespace from the beginning
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.3
 	 *
 	 * @return void Description...
 	 **/
-	public function trim_deep ( $value ) {
+	public static function trim_deep ( $value ) {
 
 		if ( is_object($value) ) {
 			$vars = get_object_vars( $value );

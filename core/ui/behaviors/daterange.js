@@ -4,7 +4,7 @@
  * Licensed under the GPLv3 {@see license.txt}
  */
 function DateRange (menu, start, end, container) {
-	var $ = jqnc(),
+	var $ = jQuery,
 		_ = this,
 		$this = $(_),
 		range = $(menu),

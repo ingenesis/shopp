@@ -1,5 +1,5 @@
 jQuery.fn.labelset = function (labels,template) {
-	var $=jqnc(),$this = $(this);
+	var $=jQuery,$this = $(this);
 
 	$.template(template,$(template));
 

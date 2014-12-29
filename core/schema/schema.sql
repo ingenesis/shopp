@@ -98,7 +98,7 @@ CREATE TABLE <?php echo $shopping; ?> (							-- Active shopping sessions
 	session varchar(32) NOT NULL,								-- (1-33) PHP Session ID
 	customer bigint(20) unsigned NOT NULL default '0',			-- (8) Related customer record
 	ip varchar(15) NOT NULL default '0.0.0.0',					-- (1-15) IP of client
-	data longtext NOT NULL,										-- (4-4GB) Session data blob
+	data longblob NOT NULL,										-- (4-4GB) Session data blob
 	stash tinyint(3) unsigned NOT NULL default '0',				-- (1) Flag to store a session
 	created datetime NOT NULL default '0000-00-00 00:00:00',	-- (10) Creation date
 	modified datetime NOT NULL default '0000-00-00 00:00:00',	-- (10) Modification date

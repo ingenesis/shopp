@@ -4,29 +4,14 @@
  *
  * Controller for browser script queueing and delivery
  *
- * @author Jonathan Davis
- * @version 1.0
- * @copyright Ingenesis Limited, May  5, 2010
+ * @copyright Ingenesis Limited, May 2010-2014
  * @license GNU GPL version 3 (or later) {@see license.txt}
- * @package shopp
+ * @package Shopp\Scripts
+ * @version 1.0
  * @since 1.0
- * @subpackage scripts
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
-
-/**
- * Scripts
- *
- * @author Jonathan Davis
- * @since 1.1
- * @package shopp
- **/
-/** From BackPress */
-if ( ! class_exists('WP_Scripts') ) {
-	require( ABSPATH . WPINC . '/class.wp-dependencies.php' );
-	require( ABSPATH . WPINC . '/class.wp-scripts.php' );
-}
 
 class ShoppScripts extends WP_Scripts {
 
@@ -92,12 +77,10 @@ class ShoppScripts extends WP_Scripts {
 
 		$debug = ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) ? '&debug=1' : '';
 
-		if ( !empty($this->concat) ) {
-			$ver = md5("$this->concat_version");
-			if (shopp_setting('script_server') == 'plugin') {
-				$src = trailingslashit(get_bloginfo('url')) . "?sjsl=" . trim($this->concat, ', ') . "&c={$zip}&ver=$ver" . $debug;
-				if (is_ssl()) $src = str_replace('http://','https://',$src);
-			} else $src = SHOPP_PLUGINURI . "/services/scripts.php?c={$zip}&load=" . trim($this->concat, ', ') . "&ver=$ver" . $debug;
+		if ( ! empty($this->concat) ) {
+			$ver = md5($this->concat_version);
+			$src = trailingslashit(get_bloginfo('url')) . "sp-scripts.js?load=" . trim($this->concat, ', ') . "&c={$zip}&ver=$ver" . $debug;
+			if ( is_ssl() ) $src = str_replace('http://', 'https://', $src);
 			echo "<script type='text/javascript' src='" . esc_attr($src) . "'></script>\n";
 		}
 
@@ -215,7 +198,7 @@ function shopp_default_scripts (&$scripts) {
 	$scripts->add('jquery-tmpl', '/ui/behaviors/jquery/jquery.tmpl.min.js', array('jquery'), $version);
 	$scripts->add_data('jquery-tmpl', 'group', 1);
 
-	$scripts->add('address', '/ui/behaviors/address.js', array('shopp'), $version);
+	$scripts->add('address', '/ui/behaviors/address.js', array('jquery','shopp'), $version);
 	$scripts->add_data('address', 'group', 1);
 
 	$scripts->add('cart', '/ui/behaviors/cart.js', array('jquery','shopp'), $version);
@@ -345,12 +328,12 @@ function shopp_default_script_settings () {
 		$currency = array(
 			// Currency formatting
 			'cp' => $settings['cpos'],
-			'c' =>  $settings['currency'],
-			'p' =>  (int)$settings['precision'],
-			't' =>  $settings['thousands'],
-			'd' =>  $settings['decimals']
+			'c'  => $settings['currency'],
+			'p'  => (int)$settings['precision'],
+			't'  => $settings['thousands'],
+			'd'  => $settings['decimals']
 		);
-		if (isset($settings['grouping']))
+		if ( isset($settings['grouping']) )
 			$currency['g'] = is_array($settings['grouping']) ? join(',',$settings['grouping']) : $settings['grouping'];
 
 	}
@@ -367,9 +350,13 @@ function shopp_default_script_settings () {
 
 	// Checkout page settings & localization
 	shopp_localize_script('checkout', '$co', array(
-		'ajaxurl' => admin_url('admin-ajax.php'),
-		'loginname' => __('You did not enter a login.','Shopp'),
-		'loginpwd' => __('You did not enter a password to login with.','Shopp'),
+		'ajaxurl' =>    admin_url('admin-ajax.php'),
+		'loginname' =>  Shopp::__('You did not enter a login.'),
+		'loginpwd' =>   Shopp::__('You did not enter a password to login with.'),
+		'badpan' =>     Shopp::__('Not a valid card number.'),
+		'submitting' => Shopp::__('Submitting&hellip;'),
+		'error' =>      Shopp::__('An error occurred while submitting your order. Please try submitting your order again.'),
+		'timeout' =>    (int)SHOPP_SUBMIT_TIMEOUT
 	));
 
 	// Validation alerts

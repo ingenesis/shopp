@@ -118,8 +118,9 @@ jQuery(document).ready( function($) {
 			var $this = $(this),
 				data = address[ type ],
 				ui = $.tmpl('address-ui',data),
-				editorui = $('#'+type+'-address-editor'),
-				display = $('#order-'+type+' .display'),
+				editorui = $('#' + type + '-address-editor'),
+				display = $('#order-' + type + ' .display'),
+
 
 				cancel = ui.find('#cancel-edit-address').click(function (e) {
 					e.preventDefault();
@@ -130,8 +131,8 @@ jQuery(document).ready( function($) {
 
 				});
 
-			ui.find('#address-state-menu').html(data.statemenu);
-			ui.find('#address-country').upstate().html(data.countrymenu);
+			ui.find('#' + type + '-state-menu').html(data.statemenu);
+			ui.find('#' + type + '-country').html(data.countrymenu).upstate();
 
 			display.hide();
 			editorui.hide().empty().append(ui).slideDown('fast');

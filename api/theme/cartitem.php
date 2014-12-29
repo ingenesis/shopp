@@ -5,10 +5,10 @@
  * ShoppCartItemThemeAPI provides shopp('cartitem') Theme API tags
  *
  * @api
- * @copyright Ingenesis Limited, 2012-2013
- * @package shopp
- * @since 1.2
+ * @copyright Ingenesis Limited, 2012-2014
+ * @package Shopp\API\Theme\CartItem
  * @version 1.3
+ * @since 1.2
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -23,6 +23,10 @@ add_filter('shopp_cartitem_input_data', 'wpautop');
  *
  **/
 class ShoppCartItemThemeAPI implements ShoppAPI {
+	/**
+	 * @var array The registry of available `shopp('cart')` properties
+	 * @internal
+	 **/
 	static $register = array(
 		'_cartitem',
 		'id' => 'id',
@@ -62,6 +66,12 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		'saleprices' => 'saleprices',
 	);
 
+	/**
+	 * Provides the API context name
+	 *
+	 * @internal
+	 * @return string The API context name
+	 **/
 	public static function _apicontext () {
 		return 'cartitem';
 	}
@@ -69,14 +79,15 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	/**
 	 * _setobject - returns the global context object used in the shopp('cartitem) call
 	 *
-	 * @author John Dillick
+	 * @internal
 	 * @since 1.2
 	 *
+	 * @return ShoppCartItem|bool The working ShoppCartItem context
 	 **/
 	public static function _setobject ( $Object, $object ) {
 		if ( is_object($Object) && is_a($Object, 'Item') ) return $Object;
 
-		if (strtolower($object) != 'cartitem') return $Object; // not mine, do nothing
+		if ( strtolower($object) != 'cartitem' ) return $Object; // not mine, do nothing
 		else {
 			$Cart = ShoppOrder()->Cart;
 			$Item = false;
@@ -87,6 +98,20 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		}
 	}
 
+	/**
+	 * Filter callback to add standard monetary option behaviors
+	 *
+	 * @internal
+	 * @since 1.2
+	 *
+	 * @param string    $result    The output
+	 * @param array     $options   The options
+	 * - **money**: `on` (on, off) Format the amount in the current currency format
+	 * - **number**: `off` (on, off) Provide the unformatted number (floating point)
+	 * @param string    $property  The tag property name
+	 * @param ShoppCart $O         The working object
+	 * @return ShoppCart The active ShoppCart context
+	 **/
 	public static function _cartitem ( $result, $options, $property, $O ) {
 
 		// Passthru for non-monetary results
@@ -114,36 +139,131 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 
 	}
 
+	/**
+	 * Provides the cart item ID (fingerprint)
+	 *
+	 * @api `shopp('cartitem.id')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The item id (fingerprint)
+	 **/
 	public static function id ( $result, $options, $O ) {
 		return $O->_id;
 	}
 
+	/**
+	 * Provides the product ID (or price record ID)
+	 *
+	 * @api
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **priceline**: Requests the currently selected price record ID for the cart item
+	 * @param ShoppCartItem $O       The working object
+	 * @return int The id for the product
+	 **/
 	public static function product ( $result, $options, $O ) {
 		if ( isset($options['priceline']) && Shopp::str_true($options['priceline']) )
 			return $O->priceline;
 		return $O->product;
 	}
 
+	/**
+	 * Provides the product name of the cart item
+	 *
+	 * @api `shopp('cartitem.name')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return void
+	 **/
 	public static function name ( $result, $options, $O ) {
 		return $O->name;
 	}
 
+	/**
+	 * The type of product for the cart item
+	 *
+	 * This is currently one of: shipped, download, virtual, donation, or recurring
+	 *
+	 * @api `shopp('cartitem.type')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The product type for the cart item
+	 **/
 	public static function type ( $result, $options, $O ) {
 		return $O->type;
 	}
 
+	/**
+	 * The URL of the product for the cart item
+	 *
+	 * @api `shopp('cartitem.url')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The product URL
+	 **/
 	public static function url ( $result, $options, $O ) {
 		return Shopp::url( '' == get_option('permalink_structure') ? array(ShoppProduct::$posttype => $O->slug ) : $O->slug, false );
 	}
 
+	/**
+	 * Provides the product SKU (stock keeping unit)
+	 *
+	 * @api `shopp('cartitem.sku')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The product SKU
+	 **/
 	public static function sku ( $result, $options, $O ) {
 		return $O->sku;
 	}
 
+	/**
+	 * The product description of the cart item
+	 *
+	 * @api `shopp('cartitem.description')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The product description
+	 **/
 	public static function description ( $result, $options, $O ) {
 		return $O->description;
 	}
 
+	/**
+	 * Provides the per-unit discount amount currently applied to the cart item
+	 *
+	 * @api `shopp('cartitem.discount')`
+	 * @since 1.2
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **catalog**: Provide the catalog discount applied (catalog sale price discount amount, not the entire discount)
+	 * - **money**: `on` (on, off) Format the amount in the current currency format
+	 * - **number**: `off` (on, off) Provide the unformatted number (floating point)
+	 * - **show**: (%, percent) Provide the percent discount instead of the amount
+	 * @param ShoppCartItem $O       The working object
+	 * @return void
+	 **/
 	public static function discount ( $result, $options, $O ) {
 
 		$defaults = array(
@@ -165,6 +285,23 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		return (float) $discount;
 	}
 
+	/**
+	 * Provides the total discounts applied to the cart item
+	 *
+	 * This is the unit discount * quantity
+	 *
+	 * @api `shopp('cartitem.discounts')`
+	 * @since 1.2
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **catalog**: Provide the catalog discount applied (catalog sale price discount amount, not the entire discount)
+	 * - **money**: `on` (on, off) Format the amount in the current currency format
+	 * - **number**: `off` (on, off) Provide the unformatted number (floating point)
+	 * - **show**: (%, percent) Provide the percent discount instead of the amount
+	 * @param ShoppCartItem $O       The working object
+	 * @return void
+	 **/
 	public static function discounts ( $result, $options, $O ) {
 		$defaults = array(
 			'catalog' => false,
@@ -185,6 +322,20 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		return (float) $discounts;
 	}
 
+	/**
+	 * The unit price of the cart item
+	 *
+	 * @api `shopp('cartitem.unitprice')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **taxes**: `null` (on, off) On to include taxes in the unit price, off to exclude taxes
+	 * - **money**: `on` (on, off) Format the amount in the current currency format
+	 * - **number**: `off` (on, off) Provide the unformatted number (floating point)
+	 * @param ShoppCartItem $O       The working object
+	 * @return void
+	 **/
 	public static function unitprice ( $result, $options, $O ) {
 
 		$taxes = isset( $options['taxes'] ) ? Shopp::str_true( $options['taxes'] ) : null;
@@ -194,15 +345,51 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		return (float) $unitprice;
 	}
 
+	/**
+	 * The unit tax amount applied to the cart item
+	 *
+	 * @api `shopp('cartitem.unit-tax')`
+	 * @since 1.2
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **money**: `on` (on, off) Format the amount in the current currency format
+	 * - **number**: `off` (on, off) Provide the unformatted number (floating point)
+	 * @param ShoppCartItem $O       The working object
+	 * @return void
+	 **/
 	public static function unittax ( $result, $options, $O ) {
 		return (float) $O->unittax;
 	}
 
-
+	/**
+	 * The total tax applied to the cart item
+	 *
+	 * @api	`shopp('cartitem.tax')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **money**: `on` (on, off) Format the amount in the current currency format
+	 * - **number**: `off` (on, off) Provide the unformatted number (floating point)
+	 * @param ShoppCartItem $O       The working object
+	 * @return void
+	 **/
 	public static function tax ( $result, $options, $O ) {
 		return (float) $O->tax;
 	}
 
+	/**
+	 * The total cost of the cart item
+	 *
+	 * @api `shopp('cartitem.total')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return void
+	 **/
 	public static function total ( $result, $options, $O ) {
 		$taxes = isset( $options['taxes'] ) ? Shopp::str_true( $options['taxes'] ) : null;
 
@@ -212,10 +399,73 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		return (float) $total;
 	}
 
+	/**
+	 * Provides the tax rate percentage
+	 *
+	 * @api	`shopp('cartitem.taxrate')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The tax rate percentage (10.1%)
+	 **/
 	public static function taxrate ( $result, $options, $O ) {
-		return percentage( $O->taxrate * 100, array( 'precision' => 1 ) );
+
+		if ( count($O->taxes) == 1 ) {
+			$Tax = reset($O->taxes);
+			return percentage( $Tax->rate * 100, array( 'precision' => 1 ) );
+		}
+
+		$compounding = false;
+		$rate = 0;
+		foreach ( $O->taxes as $Tax ) {
+			$rate += $Tax->rate;
+			if ( Shopp::str_true($Tax->compound) ) {
+				$compounding = true;
+				break;
+			}
+		}
+
+		if ( $compounding )
+			$rate = $O->unittax / $O->unitprice;
+
+		return percentage( $rate * 100, array( 'precision' => 1 ) );
+
 	}
 
+	/**
+	 * Provides the quantity selector and current cart item quantity
+	 *
+	 * @api `shopp('cartitem.quantity')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **input**: (menu, text, hidden) Sets the type of input element to render. Menu for a `<select>` menu, text for text box, hidden for a hidden input
+	 * - **options**: `1-15,20,25,30,35,40,45,50,60,70,80,90,100` Defines the default options when **input** is set to `menu`. Values are separated by commas. Ranges will automatically generate number options within the range.
+	 * - **autocomplete**: (on, off) Specifies whether an `<input>` element should have autocomplete enabled
+	 * - **accesskey**: Specifies a shortcut key to activate/focus an element. Linux/Windows: `[Alt]`+`accesskey`, Mac: `[Ctrl]``[Opt]`+`accesskey`
+	 * - **alt**: Specifies an alternate text for images (only for type="image")
+	 * - **checked**: Specifies that an `<input>` element should be pre-selected when the page loads (for type="checkbox" or type="radio")
+	 * - **class**: The class attribute specifies one or more class-names for an element
+	 * - **disabled**: Specifies that an `<input>` element should be disabled
+	 * - **format**: Specifies special field formatting class names for JS validation
+	 * - **minlength**: Sets a minimum length for the field enforced by JS validation
+	 * - **maxlength**: Specifies the maximum number of characters allowed in an `<input>` element
+	 * - **placeholder**: Specifies a short hint that describes the expected value of an `<input>` element
+	 * - **readonly**: Specifies that an input field is read-only
+	 * - **required**: Adds a class that specified an input field must be filled out before submitting the form, enforced by JS
+	 * - **size**: `5` Specifies the width, in characters, of an `<input>` element
+	 * - **src**: Specifies the URL of the image to use as a submit button (only for type="image")
+	 * - **tabindex**: Specifies the tabbing order of an element
+	 * - **cols**: Specifies the visible width of a `<textarea>`
+	 * - **rows**: Specifies the visible number of lines in a `<textarea>`
+	 * - **title**: Specifies extra information about an element
+	 * - **value**: Specifies the value of an `<input>` element
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The cart item quantity or quantity element markup
+	 **/
 	public static function quantity ( $result, $options, $O ) {
 		$result = $O->quantity;
 		if ( 'Donation' === $O->type && 'on' === $O->donation['var'] ) return $result;
@@ -249,6 +499,22 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		return $result;
 	}
 
+	/**
+	 * Generates markup for an element to remove a cart item
+	 *
+	 * By default, the remove element is a plain text link.
+	 *
+	 * @api `shopp('cartitem.remove')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **label**: `Remove` The text label shown
+	 * - **class**: The class attribute specifies one or more class-names for an element
+	 * - **input**: (button, checkbox) Display the remove element as an input instead of a link.
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The remove button markup
+	 **/
 	public static function remove ( $result, $options, $O ) {
 		$label = __('Remove', 'Shopp');
 		if ( isset($options['label']) ) $label = $options['label'];
@@ -267,10 +533,36 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		return $result;
 	}
 
+	/**
+	 * Displays the label of a cart item variant option
+	 *
+	 * @api `shopp('cartitem.option-label')`
+	 * @since 1.2
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The variant option label
+	 **/
 	public static function option_label ( $result, $options, $O ) {
 		return $O->option->label;
 	}
 
+	/**
+	 * Displays the currently selected product variation for the item or a drop-down menu to change the selection
+	 *
+	 * @api `shopp('cartitem.options')`
+	 * @since 1.1
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **before**: ` ` Markup to add before the options
+	 * - **after**: ` ` Markup to add after the options
+	 * - **show**: (selected) Set to `selected` to provide the currently selected option label @see `shopp('cartitem.option-label')`
+	 * - **class**: The class attribute specifies one or more class-names for the menu element
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The options markup
+	 **/
 	public static function options ( $result, $options, $O ) {
 		$class = "";
 		if ( ! isset($options['before']) ) $options['before'] = '';
@@ -289,11 +581,33 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		return $result;
 	}
 
+	/**
+	 * Checks if the item has addon options
+	 *
+	 * @api	`shopp('cartitem.has-addons')`
+	 * @since 1.1
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return bool True if the cart item has addon options, false otherwise
+	 **/
 	public static function has_addons ( $result, $options, $O ) {
 		reset($O->addons);
-		return (count($O->addons) > 0);
+		return ( count($O->addons) > 0 );
 	}
 
+	/**
+	 * Iterate over the available addon options for the item
+	 *
+	 * @api `shopp('cartitem.addons')`
+	 * @since 1.1
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return bool True if the next item exists, false otherwise
+	 **/
 	public static function addons ( $result, $options, $O ) {
 		if ( ! isset($O->_addons_loop) ) {
 			reset($O->addons);
@@ -307,6 +621,33 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		return false;
 	}
 
+	/**
+	 * Displays one or more properties of the current cart item addon.
+	 *
+	 *
+	 *
+	 * @api `shopp('cartitem.addon')`
+	 * @since 1.1
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **id**: (on, off) Includes the addon option ID (the ShoppPrice record ID)
+	 * - **inventory**: (on, off) Include the inventory status of the addon option
+	 * - **label**: (on, off) Includes the cart item addon option label
+	 * - **menu**: (on, off) Includes the menu label the addon option is assigned to
+	 * - **price**: (on, off) Include the regular price of the addon option
+	 * - **sale**: (on, off) Include the sale status of the addon option
+	 * - **saleprice**: (on, off) Include the sale price of the addon option
+	 * - **separator**: The separator to use beteween requested fields
+	 * - **shipfee**: (on, off) Include the shipping fee of the addon option
+	 * - **sku**: (on, off) Include the SKU (Stock Keeping Unit) of the addon option
+	 * - **stock**: (on, off) Include the stock level of the addon option
+	 * - **type: (on, off) Includes the addon type (Shipped, Download, Donation, Subscription, Virtual)
+	 * - **unitprice**: (on, off) Include the actual unit price of the addon option
+	 * - **weight**: (on, off) Include the weight of the cart item addon option
+	 * @param ShoppCartItem $O       The working object
+	 * @return void
+	 **/
 	public static function addon ( $result, $options, $O ) {
 		if ( empty($O->addons) ) return false;
 		$addon = current($O->addons);
@@ -321,8 +662,8 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		if ( empty($fieldset) ) $fieldset = array('label');
 
 		$_ = array();
-		foreach ($fieldset as $field) {
-			switch ($field) {
+		foreach ( $fieldset as $field ) {
+			switch ( $field ) {
 				case 'menu':
 					list($menus, $menumap) = self::_addon_menus();
 					$_[] = isset( $menumap[ $addon->options ]) ? $menus[ $menumap[ $addon->options ] ] : '';
@@ -339,14 +680,32 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 					}
 					break;
 				default:
-					if (isset($addon->$field))
+					if ( isset($addon->$field) )
 						$_[] = $addon->$field;
 			}
 
 		}
-		return join($options['separator'],$_);
+		return join($options['separator'], $_);
 	}
 
+	/**
+	 * Displays all of the product addons for the cart item in an unordered list
+	 *
+	 * @api `shopp('cartitem.addons-list')`
+	 * @since 1.1
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **before**: ` ` Markup to add before the list
+	 * - **after**: ` ` Markup to add after the list
+	 * - **class**: The class attribute specifies one or more class-names for the list
+	 * - **exclude**: Used to specify addon labels to exclude from the list. Multiple addons can be excluded by separating them with a comma: `Addon Label 1,Addon Label 2...`
+	 * - **separator**: `: ` The separator to use between the menu name and the addon options
+	 * - **prices**: `on` (on, off) Shows or hides prices with the addon label
+	 * - **taxes**: `on` (on, off) Include taxes in the addon option price shown when `prices=on`
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The addon list markup
+	 **/
 	public static function addons_list ( $result, $options, $O ) {
 		if ( empty($O->addons) ) return false;
 		$defaults = array(
@@ -361,7 +720,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults, $options);
 		extract($options);
 
-		$classes = !empty($class) ? ' class="' . esc_attr($class) . '"' : '';
+		$classes = ! empty($class) ? ' class="' . esc_attr($class) . '"' : '';
 		$excludes = explode(',', $exclude);
 		$prices = Shopp::str_true($prices);
 		$taxes = Shopp::str_true($taxes);
@@ -376,10 +735,10 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 			$menu = isset( $menumap[ $addon->options ]) ? $menus[ $menumap[ $addon->options ] ] . $separator : false;
 
 			$price = ( Shopp::str_true($addon->sale) ? $addon->promoprice : $addon->price );
-			if ($taxes && $O->taxrate > 0)
+			if ( $taxes && $O->taxrate > 0 )
 				$price = $price + ( $price * $O->taxrate );
 
-			if ($prices) $pricing = " (" . ( $addon->price < 0 ?'-' : '+' ) . money($price) . ')';
+			if ( $prices ) $pricing = " (" . ( $addon->price < 0 ?'-' : '+' ) . money($price) . ')';
 			$result .= '<li>' . $menu . $addon->label . $pricing . '</li>';
 		}
 		$result .= '</ul>' . $after;
@@ -389,7 +748,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	/**
 	 * Helper function that maps the current cart item's addons to the cart item's configured product menu options
 	 *
-	 * @author Jonathan Davis
+	 * @internal
 	 * @since 1.3
 	 *
 	 * @return array A combined list of the menu labels list and addons menu map
@@ -399,20 +758,44 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		$addonmenus = array();
 		$menulabels = array();
 		if ( isset($menus['a']) ) {
-			foreach ($menus['a'] as $addonmenu) {
+			foreach ( $menus['a'] as $addonmenu ) {
 				$menulabels[ $addonmenu['id'] ] = $addonmenu['name'];
-				foreach ( $addonmenu['options'] as $menuoption)
+				foreach ( $addonmenu['options'] as $menuoption )
 					$addonmenus[ $menuoption['id'] ] = $addonmenu['id'];
 			}
 		}
 		return array($menulabels, $addonmenus);
 	}
 
+	/**
+	 * Checks if the cart item has any custom product input data assigned to it
+	 *
+	 * @api `shopp('cartitem.has-inputs')`
+	 * @since 1.1
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return bool True if the cart item has custom input data, false otherwise
+	 **/
 	public static function has_inputs ( $result, $options, $O ) {
 		reset($O->data);
-		return (count($O->data) > 0);
+		return ( count($O->data) > 0 );
 	}
 
+	/**
+	 * Checks if the cart item is in a specified category
+	 *
+	 * @api `shopp('cartitem.in-category')`
+	 * @since 1.1
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **id**: Specify a category ID to check if the cart item is assigned to the category
+	 * - **name**: Specify a category name to check if the cart item is assigned to the category
+	 * @param ShoppCartItem $O       The working object
+	 * @return bool True if the cart item is assigned to the category, false otherwise
+	 **/
 	public static function in_category ( $result, $options, $O ) {
 		if ( empty($O->categories) ) return false;
 		if ( isset($options['id']) ) $field = "id";
@@ -426,6 +809,17 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		return false;
 	}
 
+	/**
+	 * Iterates over the custom input data set on the cart item
+	 *
+	 * @api `shopp('cartitem.inputs')`
+	 * @since 1.1
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return bool True if the next input exists, false otherwise
+	 **/
 	public static function inputs ( $result, $options, $O ) {
 		if ( ! isset($O->_data_loop) ) {
 			reset($O->data);
@@ -439,13 +833,44 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		return false;
 	}
 
+	/**
+	 * Displays the current input data (or name)
+	 *
+	 * Used when looping through the cart item custom input data.
+	 * To show the name instead of the data use `shopp('cartitem.input', 'name')`
+	 *
+	 * @api `shopp('cartitem.input')`
+	 * @since 1.1
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **name**: Show the name of the input instead of the data
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The input name or data
+	 **/
 	public static function input ( $result, $options, $O ) {
 		$data = current($O->data);
 		$name = key($O->data);
-		if ( isset($options['name']) ) return $name;
-		return apply_filters('shopp_cartitem_input_data', $data);
+		if ( isset($options['name']) ) return apply_filters('shopp_cartitem_input_name', $name);
+		return apply_filters('shopp_cartitem_input_data', $data, $name);
 	}
 
+	/**
+	 * Displays all of the custom data inputs for the item in an unordered list
+	 *
+	 * @api `shopp('cartitem.inputs-list')`
+	 * @since 1.1
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **before**: ` ` Markup to add before the list
+	 * - **after**: ` ` Markup to add after the list
+	 * - **class**: The class attribute specifies one or more class-names for the list
+	 * - **exclude**: Used to specify the inputs to exclude from the list. Multiple inputs can be excluded by separating them with a comma: `Custom Input,Custom Input 2...`
+	 * - **separator**: `<br />` The separator to use between the input name and the input data
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The markup of the input list
+	 **/
 	public static function inputs_list ( $result, $options, $O ) {
 		if ( empty($O->data) ) return false;
 		$defaults = array(
@@ -467,12 +892,27 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		foreach ( $O->data as $name => $data ) {
 			if (in_array($name,$exclude)) continue;
 			if (is_array($data)) $data = join($separator, $data);
-			$result .= '<li><strong>' . $name . '</strong>: ' . apply_filters('shopp_cartitem_input_data', $data) . '</li>';
+			$result .= '<li><strong>' . apply_filters('shopp_cartitem_input_name', $name) . '</strong>: ' . apply_filters('shopp_cartitem_input_data', $data, $name) . '</li>';
 		}
 		$result .= '</ul>'.$after;
 		return $result;
 	}
 
+	/**
+	 * Provides the markup to show the cover image for the cart item's product
+	 *
+	 * The **cover image** of a product is the image that is set as the first image
+	 * when using a customer image order, or which ever image is automatically sorted
+	 * to be first when using other image order settings in the Presentation settings screen.
+	 *
+	 * @api `shopp('cartitem.coverimage')`
+	 * @since 1.2
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The image markup
+	 **/
 	public static function coverimage ( $result, $options, $O ) {
 		if ( false === $O->image ) return false;
 		$O->images = array($O->image);
@@ -480,30 +920,93 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		return ShoppStorefrontThemeAPI::image( $result, $options, $O );
 	}
 
+	/**
+	 * Detects if the cart item is on sale
+	 *
+	 * An on sale item either has the sale price enabled or a discount is applied
+	 * to it.
+	 *
+	 * @api `shopp('cartitem.onsale')`
+	 * @since 1.2
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return bool True if the cart item is on sale, false otherwise
+	 *
+	 **/
 	public static function onsale ( $result, $options, $O ) {
 		return Shopp::str_true( $O->sale );
 	}
 
-	// Returns the non-discounted price on an item
+	/**
+	 * Provides the regular, non-discounted price of the cart item
+	 *
+	 * @api `shopp('cartitem.price')`
+	 * @since 1.0
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The price of the current cart item (or selected variant)
+	 **/
 	public static function price ( $result, $options, $O ) {
 		return $O->option->price;
 	}
 
-	// Returns the non-discounted line item total
+	/**
+	 * Provides the regular, non-discounted line item total price (price * quantity)
+	 *
+	 * @api `shopp('cartitem.prices')`
+	 * @since 1.2
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The total cart line item price
+	 */
 	public static function prices ( $result, $options, $O ) {
 		return ( $O->option->price * $O->quantity );
 	}
 
-	// Returns the sale price on an item
+	/**
+	 * Returns the sale price of the cart item
+	 *
+	 * @api `shopp('cartitem.saleprice')`
+	 * @since 1.0
+	 *
+	 * @param string      $result  The output
+	 * @param array       $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The sale price of the cart item (or selected variant)
+	 **/
 	public static function saleprice ( $result, $options, $O ) {
 		return $O->option->promoprice;
 	}
 
-	// Returns the total sale price on a line item
+	/**
+	 * Provides the total line item sale price
+	 *
+	 * @api `shopp('cartitem.saleprices')`
+	 * @since 1.2
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * @param ShoppCartItem $O       The working object
+	 * @return string The line item total price with discounts
+	 **/
 	public static function saleprices ( $result, $options, $O ) {
 		return ( $O->option->promoprice * $O->quantity );
 	}
 
+	/**
+	 * Helper to determine when inclusive taxes apply
+	 *
+	 * @internal
+	 *
+	 * @param ShoppCartItem $O The cart item to evaluate
+	 * @return bool True if inclusive taxes apply, false otherwise
+	 **/
 	private static function _inclusive_taxes ( ShoppCartItem $O ) {
 		return shopp_setting_enabled('tax_inclusive') && $O->includetax;
 	}
@@ -511,7 +1014,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	/**
 	 * Helper to apply or exclude taxes from a single amount based on inclusive tax settings and the tax option
 	 *
-	 * @author Jonathan Davis
+	 * @internal
 	 * @since 1.3
 	 *
 	 * @param float $amount The amount to add taxes to, or exclude taxes from

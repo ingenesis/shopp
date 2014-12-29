@@ -395,7 +395,6 @@ class ShoppCustomer extends ShoppDatabaseObject {
 		if ( isset($this->passhash) ) {
 			global $wpdb;
 			$wpdb->update( $wpdb->users, array('user_pass' => $this->passhash), array('ID' => $wpuser) );
-			error_log("updated password to the pre-hashed version");
 		}
 
 		if ( apply_filters('shopp_notify_new_wpuser', true) ) {
@@ -482,17 +481,29 @@ class ShoppCustomer extends ShoppDatabaseObject {
 	 *
 	 * @return bool
 	 */
-	public function has_downloads () {
-		$this->load_downloads();
+	public function has_downloads ( array $options ) {
+		$this->load_downloads($options);
 		return ( ! empty($this->downloads) );
 	}
 
 	/**
 	 * Loads downloadable purchase data for this customer (populates the downloads property).
 	 */
-	public function load_downloads () {
-		// Bail out if the downloads property is already populated or we can't load customer order data
-		if ( /*! empty($this->downloads) ||*/ ! ($purchases = shopp_customer_orders($this->id)) ) return; // Decomment before commit!
+	public function load_downloads ( array $options = array() ) {
+		$defaults = array(
+			'show' => false,
+			'from' => false,
+			'to' => false,
+			'orderby' => 'created',
+			'order' => 'DESC'
+		);
+		$options = array_merge($defaults, $options);
+		extract($options, EXTR_SKIP);
+
+		$paidonly = $downloads = true;
+
+		// Bail out if we can't load customer order data
+		if ( ! ( $purchases = shopp_orders($from, $to, true, array($this->id), $show, $order, $orderby, $paidonly, $downloads) ) ) return;
 		$this->downloads = array();
 
 		foreach ( $purchases as $Purchase ) {
@@ -596,6 +607,7 @@ class ShoppCustomer extends ShoppDatabaseObject {
 			$prefix.'email' => __('Customer\'s Email Address','Shopp'),
 			$prefix.'phone' => __('Customer\'s Phone Number','Shopp'),
 			$prefix.'company' => __('Customer\'s Company','Shopp'),
+			$prefix.'type' => __('Customer Type','Shopp'),
 			$prefix.'marketing' => __('Customer\'s Marketing Preference','Shopp'),
 			// $prefix.'info' => __('Customer\'s Custom Information','Shopp'), @todo Re-enable by switching to customer meta data in 1.2
 			$prefix.'created' => __('Customer Created Date','Shopp'),

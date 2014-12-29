@@ -194,16 +194,17 @@ class ShoppResources {
 				$forbidden = true;
 			}
 
-			if ( __('Guest','Shopp') != ShoppCustomer()->type ) {
+			// If accounts are used and this is not a guest account
+			if ( $accounts && Shopp::__('Guest') != ShoppCustomer()->type ) {
 
-				// Account restriction checks
-				if ( $accounts && ! ShoppCustomer()->loggedin() ) {
+				// User must be logged in when accounts are being used
+				if ( ! ShoppCustomer()->loggedin() ) {
 					shopp_add_error(Shopp::__('You must login to download purchases.'));
 					$forbidden = true;
 				}
 
-				// File owner authorization check
-				if ($accounts && ShoppCustomer()->id != $Purchase->customer) {
+				// Logged in account must be the owner of the purchase
+				if ( ShoppCustomer()->id != $Purchase->customer ) {
 					shopp_add_error(Shopp::__('You are not authorized to download the requested file.'));
 					$forbidden = true;
 				}
@@ -212,7 +213,7 @@ class ShoppResources {
 
 			// Download limit checking
 			if (shopp_setting('download_limit') // Has download credits available
-					&& $Purchased->downloads+1 > shopp_setting('download_limit')) {
+					&& $Purchased->downloads + 1 > shopp_setting('download_limit')) {
 				shopp_add_error(Shopp::__('&quot;%s&quot; is no longer available for download because the download limit has been reached.', $name));
 				$forbidden = true;
 			}
@@ -270,7 +271,7 @@ class ShoppResources {
 
 		echo ShoppSupport::callhome(array(
 			'ShoppScreencast' => $_GET['id'],
-			'site' => get_bloginfo('siteurl')
+			'site' => get_bloginfo('url')
 		));
 
 		exit;

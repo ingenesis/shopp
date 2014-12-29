@@ -558,10 +558,10 @@ class CoreTests extends ShoppTestCase {
 		$result = Shopp::findfile('ball.png', SHOPP_PATH);
 		$this->assertTrue($result);
 
-		// We can expect at least 5 of these (WP 3.5 + Shopp 1.3)
-		$result = Shopp::findfile('admin.php', ABSPATH, $files);
+		// We can expect at least 4 of these (Shopp 1.3)
+		$result = Shopp::findfile('product.php', SHOPP_PATH, $files);
 		$this->assertTrue($result);
-		$this->assertGreaterThanOrEqual(5, count($files));
+		$this->assertGreaterThanOrEqual(4, count($files));
 
 		// We may wish it to operate efficiently and stop at the first match
 		$files = array();

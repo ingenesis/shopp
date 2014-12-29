@@ -9,47 +9,48 @@ class DiscountsReport extends ShoppReportFramework implements ShoppReport {
 			'yaxis' => array('tickFormatter' => 'asMoney')
 		));
 
-		$this->chartseries( __('Discounts','Shopp'), array('column' => 'discounts') );
+		$this->chartseries( __('Discounts', 'Shopp'), array('column' => 'discounts') );
 	}
 
 	function query () {
-		extract($this->options,EXTR_SKIP);
-		$where = array();
-		$where[] = "$starts < " . self::unixtime('o.created');
-		$where[] = "$ends > " . self::unixtime('o.created');
+		extract($this->options, EXTR_SKIP);
 
-		$where = join(" AND ",$where);
+		$where = array();
+		$where[] = "o.created BETWEEN '" . sDB::mkdatetime($starts) . "' AND '" . sDB::mkdatetime($ends) . "'";
+
+		$where = join(" AND ", $where);
 		$id = $this->timecolumn('o.created');
 		$orders_table = ShoppDatabaseObject::tablename('purchase');
 		$purchased_table = ShoppDatabaseObject::tablename('purchased');
 		$query = "SELECT CONCAT($id) AS id,
 							UNIX_TIMESTAMP(o.created) as period,
-							COUNT(DISTINCT p.id) AS items,
+							SUM( ( SELECT SUM(p.quantity) FROM $purchased_table AS p WHERE o.id = p.purchase ) ) AS items,
 							COUNT(DISTINCT o.id) AS orders,
+							SUM(o.subtotal) as subtotal,
 							SUM(o.discount) as discounts
-					FROM $purchased_table AS p
-					LEFT JOIN $orders_table AS o ON p.purchase=o.id
+					FROM $orders_table AS o
 					WHERE $where
 					GROUP BY CONCAT($id)";
+
 		return $query;
 	}
 
 	function columns () {
 	 	return array(
-			'period'=>__('Period','Shopp'),
-			'orders'=>__('Orders','Shopp'),
-			'items'=>__('Items','Shopp'),
-			'subtotal'=>__('Subtotal','Shopp'),
-			'discounts'=>__('Discounts','Shopp')
+			'period'    => __('Period', 'Shopp'),
+			'orders'    => __('Orders', 'Shopp'),
+			'items'     => __('Items', 'Shopp'),
+			'subtotal'  => __('Subtotal', 'Shopp'),
+			'discounts' => __('Discounts', 'Shopp')
 		);
 	}
 
-	static function orders ($data) { return intval($data->orders); }
+	static function orders ( $data ) { return intval($data->orders); }
 
-	static function items ($data) { return intval($data->items); }
+	static function items ( $data ) { return intval($data->items); }
 
-	static function subtotal ($data) { return money($data->subtotal); }
+	static function subtotal ( $data ) { return money($data->subtotal); }
 
-	static function discounts ($data) { return money($data->discounts); }
+	static function discounts ( $data ) { return money($data->discounts); }
 
 }

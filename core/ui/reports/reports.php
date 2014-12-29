@@ -42,7 +42,7 @@
 			$columns = $Report->columns();
 			$settings = shopp_setting("{$report}_report_export");
 
-			$selected = $settings['columns'];
+			$selected = (array)$settings['columns'];
 			?>
 			<button type="button" id="export-settings-button" name="export-settings" class="button-secondary"><?php _e('Export Options','Shopp'); ?></button>
 			<div id="export-settings" class="hidden">

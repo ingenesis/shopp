@@ -17,10 +17,6 @@
 .shopp_page select.hidden {display:none;}
 
 .shopp_page div.description,
-.shopp_page .products,
-.shopp_page .products ul,
-.shopp_page .products li.row,
-.shopp_page .category,
 .shopp_page .cart,
 .shopp_page .cart table {overflow:hidden;}
 
@@ -59,13 +55,21 @@
 .shopp_grid-7 .products .product {width:14.288%;}
 
 /* Category Products */
-.shopp_page .products {text-indent:0;text-align:left;padding:0;margin:0;}
-.shopp_page .products li {background:none;padding:0;margin:0;list-style:none;}
+.shopp_page .products {text-indent:0;text-align:left;padding:0;margin:0;list-style:none;zoom:1;}
+.shopp_page .products:before,
+.shopp_page .products:after {content:"";display: table;}
+.shopp_page .products:after {clear:both;}
+
+.shopp_page .products .product {background:none;padding:0;margin:0;list-style:none;}
 
 .shopp_page  .frame { border: none; }
-.shopp_page .products, .shopp_page .products ul { position: relative; width: 100%; margin: 0; padding: 0; overflow: hidden; }
-.shopp_page .products li.product { float: left; position: relative; }
-.shopp_page .products li.product.first { clear: both; }
+.shopp_page .products, .shopp_page .products ul { position: relative; width: 100%; margin: 0; padding: 0; }
+.shopp_page .products > .product { float: left; position: relative; }
+.shopp_page .products > .product.first { clear: both; margin-left: 0; }
+.shopp-product ul,
+.shopp-product ol { display: inline-block; }
+.shopp-product ul.breadcrumb,
+.shopp-product ul.variations { padding-left: 0; }
 
 /* Deprecated row class support */
 .shopp_page .products ul li.product { display: block; float: left; border: none; }
@@ -80,13 +84,13 @@
 .shopp.tagcloud {padding:0;width:100%;}
 .shopp_page .tagcloud li,
 .shopp.tagcloud li {display:inline;margin-right:10px;line-height:1.2;padding:0;background-image:none;}
-.shopp.tagcloud li.level-1 {font-size: 2em;}
-.shopp.tagcloud li.level-2 {font-size: 1.5em;}
-.shopp.tagcloud li.level-3 {font-size: 1.25em;}
-.shopp.tagcloud li.level-4 {font-size: 1em;}
-.shopp.tagcloud li.level-5 {font-size: 0.875em;}
-.shopp.tagcloud li.level-6 {font-size: 0.75em;}
-.shopp.tagcloud li.level-7 {font-size: 0.688em;}
+.shopp.tagcloud .level-1 {font-size: 2em;}
+.shopp.tagcloud .level-2 {font-size: 1.5em;}
+.shopp.tagcloud .level-3 {font-size: 1.25em;}
+.shopp.tagcloud .level-4 {font-size: 1em;}
+.shopp.tagcloud .level-5 {font-size: 0.875em;}
+.shopp.tagcloud .level-6 {font-size: 0.75em;}
+.shopp.tagcloud .level-7 {font-size: 0.688em;}
 
 
 /*.shopp_page .catalog .carousel .frame li { margin: 0; padding: 0; }*/

@@ -5,7 +5,7 @@ function manage_meta_box ($Purchase) {
 ?>
 <form action="<?php echo ShoppAdminController::url( array('id'=>$Purchase->id) ); ?>" method="post">
 
-<?php if ($Purchase->shipable): ?>
+<?php if ($Purchase->shippable): ?>
 <script id="shipment-ui" type="text/x-jquery-tmpl">
 <?php ob_start(); ?>
 <li class="inline-fields">
@@ -241,7 +241,7 @@ function manage_meta_box ($Purchase) {
 		<?php endif; ?>
 		&nbsp;
 		<?php if ( $Purchase->authorized || 0 == $Purchase->balance ): ?>
-			<?php if ( $Purchase->shipable && 'ship-notice' != $action && is_array(shopp_setting('shipping_carriers')) ): ?>
+			<?php if ( $Purchase->shippable && 'ship-notice' != $action && is_array(shopp_setting('shipping_carriers')) ): ?>
 			<input type="submit" id="shipnote-button" name="ship-notice" value="<?php _e('Send Shipment Notice','Shopp'); ?>" class="button-primary" />
 			<?php endif; ?>
 			<?php if ( current_user_can('shopp_capture') && ! $Purchase->captured && $Gateway && $Gateway->captures ): ?>
@@ -255,55 +255,59 @@ function manage_meta_box ($Purchase) {
 }
 ShoppUI::addmetabox('order-manage', __('Management','Shopp') . $Admin->boxhelp('order-manager-manage'), 'manage_meta_box', 'toplevel_page_shopp-orders', 'normal', 'core');
 
+function order_address_editor () {
+	 ob_start(); ?>
+
+	<div class="editor">
+	<p class="inline-fields">
+		<span>
+		<input type="text" name="${type}[firstname]" id="${type}-firstname" value="${firstname}" /><br />
+		<label for="address-city"><?php _e('First Name','Shopp'); ?></label>
+		</span>
+		<span>
+		<input type="text" name="${type}[lastname]" id="${type}-lastname" value="${lastname}" /><br />
+		<label for="address-city"><?php _e('Last Name','Shopp'); ?></label>
+		</span>
+	</p>
+	<p>
+		<input type="text" name="${type}[address]" id="${type}-address" value="${address}" /><br />
+		<input type="text" name="${type}[xaddress]" id="${type}-xaddress" value="${xaddress}" /><br />
+		<label for="address-address"><?php _e('Street Address','Shopp'); ?></label>
+	</p>
+	<p class="inline-fields">
+		<span>
+		<input type="text" name="${type}[city]" id="${type}-city" value="${city}" size="14" /><br />
+		<label for="address-city"><?php _e('City','Shopp'); ?></label>
+		</span>
+		<span id="${type}-state-inputs">
+			<select name="${type}[state]" id="${type}-state-menu">${statemenu}</select>
+			<input type="text" name="${type}[state]" id="${type}-state" value="${state}" size="12" disabled="disabled"  class="hidden" />
+		<label for="address-state"><?php _e('State / Province','Shopp'); ?></label>
+		</span>
+		<span>
+		<input type="text" name="${type}[postcode]" id="${type}-postcode" value="${postcode}" size="10" /><br />
+		<label for="address-postcode"><?php _e('Postal Code','Shopp'); ?></label>
+		</span>
+		<span>
+			<select name="${type}[country]" id="${type}-country">${countrymenu}</select>
+			<label for="address-country"><?php _e('Country','Shopp'); ?></label>
+		</span>
+	</p>
+		<input type="submit" id="cancel-edit-address" name="cancel-edit-address" value="<?php Shopp::_e('Cancel'); ?>" class="button-secondary" />
+		<div class="alignright">
+		<input type="submit" name="submit-address" value="<?php Shopp::_e('Update'); ?>" class="button-primary" />
+		</div>
+	</div>
+
+	<?php
+	return ob_get_clean();
+}
 function billto_meta_box ($Purchase) {
 	?>
 		<script id="address-editor" type="text/x-jquery-tmpl">
-		<?php ob_start(); ?>
-
-		<div class="editor">
-			<input type="hidden" name="order-action" value="${action}" />
-			<input type="hidden" name="address[type]" id="address-type" value="${type}" />
-		<p class="inline-fields">
-			<span>
-			<input type="text" name="address[firstname]" id="address-firstname" value="${firstname}" /><br />
-			<label for="address-city"><?php _e('First Name','Shopp'); ?></label>
-			</span>
-			<span>
-			<input type="text" name="address[lastname]" id="address-lastname" value="${lastname}" /><br />
-			<label for="address-city"><?php _e('Last Name','Shopp'); ?></label>
-			</span>
-		</p>
-		<p>
-			<input type="text" name="address[address]" id="address-address" value="${address}" /><br />
-			<input type="text" name="address[xaddress]" id="address-xaddress" value="${xaddress}" /><br />
-			<label for="address-address"><?php _e('Street Address','Shopp'); ?></label>
-		</p>
-		<p class="inline-fields">
-			<span>
-			<input type="text" name="address[city]" id="address-city" value="${city}" size="14" /><br />
-			<label for="address-city"><?php _e('City','Shopp'); ?></label>
-			</span>
-			<span id="address-state-inputs">
-				<select name="address[state]" id="address-state-menu">${statemenu}</select>
-				<input type="text" name="address[state]" id="address-state" value="${state}" size="12" disabled="disabled"  class="hidden" />
-			<label for="address-state"><?php _e('State / Province','Shopp'); ?></label>
-			</span>
-			<span>
-			<input type="text" name="address[postcode]" id="address-postcode" value="${postcode}" size="10" /><br />
-			<label for="address-postcode"><?php _e('Postal Code','Shopp'); ?></label>
-			</span>
-			<span>
-				<select name="address[country]" id="address-country">${countrymenu}</select>
-				<label for="address-country"><?php _e('Country','Shopp'); ?></label>
-			</span>
-		</p>
-				<input type="submit" id="cancel-edit-address" name="cancel-edit-address" value="<?php _e('Cancel','Shopp'); ?>" class="button-secondary" />
-				<div class="alignright">
-				<input type="submit" name="submit-address" value="<?php _e('Update Address','Shopp'); ?>" class="button-primary" />
-				</div>
-		</div>
 		<?php
-			$editaddress = ob_get_contents(); ob_end_clean(); echo $editaddress;
+			$editaddress = order_address_editor();
+			echo $editaddress;
 			$address = array(
 				'${action}' => 'update-address',
 				'${type}' => 'billing',
@@ -315,11 +319,11 @@ function billto_meta_box ($Purchase) {
 				'${state}' => $Purchase->state,
 				'${postcode}' => $Purchase->postcode,
 				'${country}' => $Purchase->country,
-				'${statemenu}' => Shopp::menuoptions($Purchase->_billing_states,$Purchase->state,true),
-				'${countrymenu}' => Shopp::menuoptions($Purchase->_countries,$Purchase->country,true)
+				'${statemenu}' => Shopp::menuoptions($Purchase->_billing_states, $Purchase->state, true),
+				'${countrymenu}' => Shopp::menuoptions($Purchase->_countries, $Purchase->country, true)
 			);
-			$js = preg_replace('/\${([-\w]+)}/','$1',json_encode($address));
-			shopp_custom_script('orders','var address = []; address["billing"] = '.$js.';');
+			$js = preg_replace('/\${([-\w]+)}/', '$1', json_encode($address));
+			shopp_custom_script('orders', 'var address = []; address["billing"] = ' . $js . ';');
 		?>
 		</script>
 
@@ -360,10 +364,33 @@ function billto_meta_box ($Purchase) {
 }
 ShoppUI::addmetabox('order-billing', __('Billing Address','Shopp').$Admin->boxhelp('order-manager-billing'), 'billto_meta_box', 'toplevel_page_shopp-orders', 'side', 'core');
 
-function shipto_meta_box ($Purchase) { ?>
-	<form action="<?php echo ShoppAdminController::url(array('id'=>$Purchase->id)); ?>" method="post" id="shipping-address-editor"></form>
+function shipto_meta_box ( $Purchase ) { ?>
+	<?php if ( isset($_POST['edit-shipping-address']) || empty(ShoppPurchase()->shipping) ): ?>
+		<form action="<?php echo ShoppAdminController::url( array('page' => $page, 'id' => $Purchase->id) ); ?>" method="post" id="shipping-address-editor">
+		<?php
+		$names = explode(' ', $Purchase->shipname);
+		$firstname = array_shift($names);
+		$lastname = join(' ', $names);
+		$address = array(
+			'${type}' => 'shipping',
+			'${firstname}' => $firstname,
+			'${lastname}' => $lastname,
+			'${address}' => $Purchase->shipaddress,
+			'${xaddress}' => $Purchase->shipxaddress,
+			'${city}' => $Purchase->shipcity,
+			'${state}' => $Purchase->shipstate,
+			'${postcode}' => $Purchase->shippostcode,
+			'${country}' => $Purchase->shipcountry,
+			'${statemenu}' => Shopp::menuoptions($Purchase->_shipping_states,$Purchase->shipstate,true),
+			'${countrymenu}' => Shopp::menuoptions($Purchase->_countries,$Purchase->shipcountry,true)
+		);
+		echo ShoppUI::template(order_address_editor(), $address); ?>
+		</form>
+	<?php return; endif; ?>
+
+	<form action="<?php echo ShoppAdminController::url(array('id' => $Purchase->id)); ?>" method="post" id="shipping-address-editor"></form>
 	<div class="display">
-		<form>
+		<form action="<?php echo ShoppAdminController::url( array('id' => $Purchase->id) ); ?>" method="post">
 		<?php $targets = shopp_setting('target_markets'); ?>
 			<input type="hidden" id="edit-shipping-address-data" value="<?php
 				$shipname = explode(' ',$Purchase->shipname);
@@ -399,7 +426,7 @@ function shipto_meta_box ($Purchase) { ?>
 	</div>
 <?php
 }
-if (!empty(ShoppPurchase()->shipaddress))
+if ( ! empty(ShoppPurchase()->shipaddress) )
 	ShoppUI::addmetabox('order-shipping', __('Shipping Address','Shopp').$Admin->boxhelp('order-manager-shipto'), 'shipto_meta_box', 'toplevel_page_shopp-orders', 'side', 'core');
 
 function contact_meta_box ($Purchase) {

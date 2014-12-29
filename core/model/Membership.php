@@ -170,7 +170,7 @@ class MemberPlan extends ShoppDatabaseObject  {
 		// sDB::query("DELETE FROM $this->_table WHERE parent='$id' AND context='membership'");
 
 		// Delete all meta data related to this entry
-		sDB::->query("DELETE FROM $this->_table WHERE parent='$this->id' AND context='membership'");
+		sDB::query("DELETE FROM $this->_table WHERE parent='$this->id' AND context='membership'");
 
 		parent::delete();
 	}

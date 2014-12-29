@@ -130,7 +130,7 @@ class CatalogAPITests extends ShoppTestCase {
 		$this->assertTag($expected, $actual, 'category-list childof failed');
 
 		ob_start();
-		shopp('storefront.category-list', 'section=on&sectionterm=' . self::$HeavyCruiser);
+		shopp('storefront.category-list', 'wraplist=off&section=on&sectionterm=' . self::$HeavyCruiser);
 		$actual = ob_get_clean();
 		$expected = array('tag' => 'ul', 'children' => array('count' => count(self::$ships) - 1));
 		$this->assertTag($expected, $actual, 'category-list section failed');

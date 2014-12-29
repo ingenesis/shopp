@@ -2,13 +2,11 @@
 /**
  * Collection API
  *
- * @author Jonathan Davis
- * @version 1.0
  * @copyright Ingenesis Limited, February 25, 2011
- * @license GNU GPL version 3 (or later) {@see license.txt}
- * @package Shopp
- * @since 1.2
- * @subpackage Collection
+ * @license   GNU GPL version 3 (or later) {@see license.txt}
+ * @package   Shopp/API/Collection
+ * @version   1.0
+ * @since     1.2
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -16,7 +14,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 /**
  * Registers a smart collection of products
  *
- * @author Jonathan Davis
+ * @api
  * @since 1.2
  *
  * @param string $name Class name of the smart collection
@@ -66,7 +64,7 @@ function shopp_register_collection ( $name = '' ) {
 /**
  * Register a Shopp product taxonomy
  *
- * @author Jonathan Davis
+ * @api
  * @since 1.2
  *
  * @param string $taxonomy The taxonomy name
@@ -85,9 +83,9 @@ function shopp_register_taxonomy ( $taxonomy, $args = array() ) {
 }
 
 /**
- * shopp_add_product_category - Add a product category
+ * Add a product category
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param string $name (required) The category name.
@@ -122,9 +120,9 @@ function shopp_add_product_category ( $name = '', $description = '', $parent = f
 }
 
 /**
- * shopp_product_category - get a ProductCategory object
+ * Get a ShoppProductCategory object
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $cat the category id
@@ -151,9 +149,9 @@ function shopp_product_category ( $cat = false, $options = array() ) {
 }
 
 /**
- * shopp_rmv_product_category - remove a product category by id
+ * Remove a product category by id
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $id (required) The category id
@@ -171,9 +169,9 @@ function shopp_rmv_product_category ( $id = false ) {
 }
 
 /**
- * shopp_product_tag - get a ProductTag object
+ * Get a ShoppProductTag object
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param mixed $tag tag id or tag name
@@ -197,9 +195,11 @@ function shopp_product_tag ( $tag = false, $options = array() ) {
 
 
 /**
- * shopp_add_product_tag - add a product tag term.  If the tag already exists, will return the id of that tag.
+ * Add a product tag term.
  *
- * @author John Dillick
+ * If the tag already exists, will return the id of that tag.
+ *
+ * @api
  * @since 1.2
  *
  * @param string $tag (required) The tag term to add.
@@ -219,9 +219,9 @@ function shopp_add_product_tag ( $tag = '' ) {
 }
 
 /**
- * shopp_rmv_product_tag - remove a tag term by name or id
+ * Remove a tag term by name or id
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param mixed $tag (required) int tag term_id or string tag name
@@ -243,9 +243,9 @@ function shopp_rmv_product_tag ( $tag = '' ) {
 }
 
 /**
- * shopp_add_product_term - create a new taxonimical term.
+ * Create a new taxonimical term.
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param string $term (required) the new term name.
@@ -282,9 +282,9 @@ function shopp_add_product_term ( $term = '', $taxonomy = 'shopp_category', $par
 }
 
 /**
- * shopp_product_term - get a ProductTaxonomy object.
+ * Get a ShoppProductTaxonomy object.
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $term the term id
@@ -319,9 +319,9 @@ function shopp_product_term ( $term = false, $taxonomy = 'shopp_category', $opti
 }
 
 /**
- * shopp_rmv_product_term - remove a taxonomical term
+ * Remove a taxonomical term
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $term (required) The term id
@@ -342,11 +342,11 @@ function shopp_rmv_product_term ( $term = '', $taxonomy = 'shopp_category' ) {
 }
 
 /**
- * shopp_product_categories - get an array of all product categories
+ * Get an array of all product categories
  *
- * @uses get_terms - defaults get=>all, hide_empty=>false
- * @author John Dillick
+ * @api
  * @since 1.2
+ * @uses get_terms - defaults get=>all, hide_empty=>false
  *
  * @param array $args get_terms parameters
  * @return array ProductCategoy objects
@@ -384,11 +384,11 @@ function shopp_product_categories ( $args = array() ) {
 }
 
 /**
- * shopp_product_tags - get an array of all product tags
+ * Get an array of all product tags
  *
- * @uses get_terms - defaults get=>all, hide_empty=>false
- * @author John Dillick
+ * @api
  * @since 1.2
+ * @uses get_terms - defaults get=>all, hide_empty=>false
  *
  * @param array $args get_terms parameters
  * @return array ProductTags objects
@@ -426,9 +426,9 @@ function shopp_product_tags ( $args = array() ) {
 }
 
 /**
- * shopp_subcategories - get array of category objects that are children of specified category
+ * Get array of category objects that are children of specified category
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $category id of the category you wish to get subcategories for
@@ -442,9 +442,9 @@ function shopp_subcategories ( $category = 0, $args = array() ) {
 }
 
 /**
- * shopp_category_products - get a list of product objects for the given category
+ * Get a list of product objects for the given category
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $category (required) The category id
@@ -470,9 +470,9 @@ function shopp_category_products ( $category = 0, $options = array() ) {
 }
 
 /**
- * shopp_tag_products - get a list of product objects for the given tag
+ * Get a list of product objects for the given tag
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int|string $tag (required) The product tag name/id
@@ -499,9 +499,9 @@ function shopp_tag_products ( $tag = false, $options = array() ) {
 }
 
 /**
- * shopp_term_products - get a list of product objects for the given term and taxonomy
+ * Get a list of product objects for the given term and taxonomy
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $term (required) The term id
@@ -537,9 +537,9 @@ function shopp_term_products ( $term = false, $taxonomy = 'shopp_category', $opt
 }
 
 /**
- * shopp_catalog_count - get a count of all products in the catalog
+ * Get a count of all products in the catalog
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param string $status (optional default:publish) the product's publish status
@@ -561,9 +561,9 @@ function shopp_catalog_count ( $status = 'publish' ) {
 }
 
 /**
- * shopp_category_count - get a count of all products in the category
+ * Get a count of all products in the category
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $category (required) the category id
@@ -584,9 +584,9 @@ function shopp_category_count (	$category = 0, $children = false ) {
 }
 
 /**
- * shopp_subcategory_count - get count of sub categories in a product category
+ * Get count of sub categories in a product category
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $category (required) the category id
@@ -604,9 +604,9 @@ function shopp_subcategory_count ( $category = 0 ) {
 }
 
 /**
- * shopp_product_categories_count - get count of categories associated with a product
+ * Get count of categories associated with a product
  *
- * @author John Dillick
+ * @api
  * @since 1.2
  *
  * @param int $product (required) the product id

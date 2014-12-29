@@ -60,7 +60,7 @@
 		$hidden = get_hidden_columns($this->screen);
 
 		$even = false;
-		foreach ($Products as $key => $Product):
+		foreach ( $Products as $key => $Product ):
 
 			$editor_url = remove_query_arg(array('s','cat','sl'),$url);
 			$editurl = esc_url( add_query_arg( array('id'=>$Product->id,'view'=>null),$editor_url ) );
@@ -243,7 +243,7 @@
 <script type="text/javascript">
 /* <![CDATA[ */
 jQuery(document).ready( function() {
-	var $=jqnc(),
+	var $=jQuery,
 		featureurl = '<?php echo wp_nonce_url(admin_url('admin-ajax.php'),'wp_ajax_shopp_feature_product'); ?>';
 
 	$('input.current-page').unbind('mouseup.select').bind('mouseup.select',function () { this.select(); });
