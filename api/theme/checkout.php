@@ -303,9 +303,8 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
 
 		$menu = array();
-		$label = ( ! empty($options['label']) ) ? $options['label'] : '';
 		$menu[] = '<select name="' . $name . '" id="' . $id . '">';
-		$menu[] = '<option>' . $label . '</option>';
+		$menu[] = '<option></option>';
 		$menu[] = menuoptions($months, $options['value']);
 		$menu[] = '</select>';
 
@@ -337,9 +336,8 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$years = array_map( create_function('$n','return sprintf("%02d", $n);'), range((int)$thisyear, (int)$thisyear + $options['max'] ) );
 
 		$menu = array();
-		$label = ( ! empty($options['label']) ) ? $options['label'] : '';
 		$menu[] = '<select name="' . $name . '" id="' . $id . '">';
-		$menu[] = '<option>' . $label . '</option>';
+		$menu[] = '<option></option>';
 		$menu[] = menuoptions($years, $options['value']);
 		$menu[] = '</select>';
 
