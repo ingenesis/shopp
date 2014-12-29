@@ -303,23 +303,55 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
 
 		$menu = array();
-		$label = ( ! empty($options['label']) ) ? $options['label'] : '';
-		$menu[] = '<select name="' . $name . '" id="' . $id . '">';
-		$menu[] = '<option>' . $label . '</option>';
+		$menu[] = '<select name="' . $name . '" id="' . $id . '" ' . inputattrs($options, $select_attrs) . '>';
+		$menu[] = '<option></option>';
 		$menu[] = menuoptions($months, $options['value']);
 		$menu[] = '</select>';
 
 		return join('', $menu);
 	}
 
+	/**
+	 * Provides the billing payment card expiration year input or current value of the billing card expiration year
+	 *
+	 * @api `shopp('checkout.billing-card-expires-yy')`
+	 * @since 1.0
+	 *
+	 * @param string     $result  The output
+	 * @param array      $options The options
+	 * - **mode**: `input` (input, value) Displays the field `input` or the current value of the property
+	 * - **type**: `menu` (menu, text) The type of input to generate
+	 * - **autocomplete**: `off` (on, off) Specifies whether an `<input>` element should have autocomplete enabled
+	 * - **accesskey**: Specifies a shortcut key to activate/focus an element. Linux/Windows: `[Alt]`+`accesskey`, Mac: `[Ctrl]``[Opt]`+`accesskey`
+	 * - **alt**: Specifies an alternate text for images (only for type="image")
+	 * - **checked**: Specifies that an `<input>` element should be pre-selected when the page loads (for type="checkbox" or type="radio")
+	 * - **class**: `paycard` The class attribute specifies one or more class-names for an element
+	 * - **disabled**: Specifies that an `<input>` element should be disabled
+	 * - **format**: Specifies special field formatting class names for JS validation
+	 * - **minlength**: Sets a minimum length for the field enforced by JS validation
+	 * - **maxlength**: Specifies the maximum number of characters allowed in an `<input>` element
+	 * - **placeholder**: Specifies a short hint that describes the expected value of an `<input>` element
+	 * - **readonly**: Specifies that an input field is read-only
+	 * - **required**: Adds a class that specified an input field must be filled out before submitting the form, enforced by JS
+	 * - **size**: Specifies the width, in characters, of an `<input>` element
+	 * - **src**: Specifies the URL of the image to use as a submit button (only for type="image")
+	 * - **tabindex**: Specifies the tabbing order of an element
+	 * - **cols**: Specifies the visible width of a `<textarea>`
+	 * - **rows**: Specifies the visible number of lines in a `<textarea>`
+	 * - **title**: Specifies extra information about an element
+	 * - **value**: Specifies the value of an `<input>` element
+	 * @param ShoppOrder $O       The working object
+	 * @return string The generated markup or value
+	 **/
 	public static function billing_card_expires_yy ( $result, $options, $O ) {
-
+		$select_attrs = array( 'title', 'class', 'disabled', 'required', 'tabindex', 'accesskey', 'placeholder' );
 		$name = 'billing[cardexpires-yy]';
 		$id = 'billing-cardexpires-yy';
 
 		$defaults = array(
 			'mode' => 'input',
 			'class' => 'paycard',
+			'required' => true,
 			'autocomplete' => 'off',
 			'type' => 'menu',
 			'value' => $O->Billing->cardexpires > 0 ? date('y', $O->Billing->cardexpires) : '',
@@ -337,9 +369,8 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$years = array_map( create_function('$n','return sprintf("%02d", $n);'), range((int)$thisyear, (int)$thisyear + $options['max'] ) );
 
 		$menu = array();
-		$label = ( ! empty($options['label']) ) ? $options['label'] : '';
-		$menu[] = '<select name="' . $name . '" id="' . $id . '">';
-		$menu[] = '<option>' . $label . '</option>';
+		$menu[] = '<select name="' . $name . '" id="' . $id . '" ' . inputattrs($options, $select_attrs) . '>';
+		$menu[] = '<option></option>';
 		$menu[] = menuoptions($years, $options['value']);
 		$menu[] = '</select>';
 
