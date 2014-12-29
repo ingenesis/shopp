@@ -75,7 +75,6 @@ class ShoppAjax {
 		add_action('wp_ajax_shopp_gateway', array($this, 'gateway_ajax'));
 		add_action('wp_ajax_shopp_debuglog', array($this, 'logviewer'));
 		add_action('wp_ajax_shopp_nonag', array($this, 'nonag'));
-
 	}
 
 	public function receipt () {
@@ -86,29 +85,24 @@ class ShoppAjax {
 
 		echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 		\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
-		<html><head><title>" . get_bloginfo('name') . ' &mdash; ' . __('Order','Shopp') . ' #' . shopp('purchase','get-id') . "</title>";
+		<html><head><title>" . get_bloginfo('name') . ' &mdash; ' . __('Order(s)','Shopp') . ' #' . implode(', #', $orders) . "</title>";
 		echo '<style type="text/css">body { padding: 20px; font-family: Arial,Helvetica,sans-serif; }</style>';
 		echo "<link rel='stylesheet' href='" . shopp_template_url('shopp.css') . "' type='text/css' />";
-		echo "</head><body>";
+		echo "</head><body id=\"shopp\" class=\"print\">";
 
 		$orders = array_filter($orders);
 		$orders = array_values($orders);
 		$order_count = count($orders);
 		$order_count ++;
 		foreach( $orders as $key => $id ) {
-			$style = 'width:100%; height:100%;';
-			if( $key < $order_count )
-			$style .= 'page-break-after:always;';
-			echo '<div style="' . $style . '">';
-			$Purchase = new ShoppPurchase((int)$id)
+			$Purchase = new ShoppPurchase((int)$id);
 			if( ! $Purchase->exists() ) continue;
 			ShoppPurchase($Purchase);
 			echo apply_filters('shopp_admin_order_receipt', shopp('purchase','get-receipt','template=receipt-admin.php'));
-			echo '</div>';
 		}
 
 		if ( isset($_GET['print']) && $_GET['print'] == 'auto' )
-		echo '<script type="text/javascript">window.onload = function () { window.print(); window.close(); }</script>';
+			echo '<script type="text/javascript">window.onload = function () { window.print(); window.close(); }</script>';
 		echo "</body></html>";
 		exit();
 	}
