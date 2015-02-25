@@ -18,12 +18,12 @@ add_filter('shopp_purchase_item_input_name', 'esc_html');
 add_filter('shopp_purchase_item_input_data', 'esc_html');
 add_filter('shopp_purchase_item_input_data', 'wptexturize');
 add_filter('shopp_purchase_item_input_data', 'convert_chars');
-add_filter('shopp_purchase_item_input_data', 'wpautop');
+add_filter('shopp_purchase_item_input_data', 'nl2br');
 
 add_filter('shopp_purchase_order_data', 'esc_html');
 add_filter('shopp_purchase_order_data', 'wptexturize');
 add_filter('shopp_purchase_order_data', 'convert_chars');
-add_filter('shopp_purchase_order_data', 'wpautop');
+add_filter('shopp_purchase_order_data', 'nl2br');
 
 add_filter('shopp_themeapi_purchase_emailnote', 'esc_html');
 add_filter('shopp_themeapi_purchase_emailnote', 'wptexturize');

@@ -13,7 +13,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-add_filter('shopp_cartitem_input_data', 'wpautop');
+add_filter('shopp_cartitem_input_data', 'nl2br');
 
 /**
  * Provides support for the shopp('cartitem') tags
