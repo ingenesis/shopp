@@ -133,7 +133,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		$defaults = array(
 			'wrap'   => 'on',
 			'money'  => 'on',
-			'number' => false,
+			'number' => false
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -284,8 +284,8 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		if ( ! $Discount->applies() ) return false;
 
 		$defaults = array(
-			'label'       => __('%s off', 'Shopp'),
-			'creditlabel' => __('%s applied', 'Shopp'),
+			'label'       => Shopp::__('%s off'),
+			'creditlabel' => Shopp::__('%s applied'),
 			'before'      => '',
 			'after'       => '',
 			'remove'      => 'on'
@@ -293,7 +293,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
 
-		if ( false === strpos($label, '%s') ) $label = "%s $label";
+		if ( false === strpos($label, '%s') ) $label = '%s $label';
 
 		$string = $before;
 
