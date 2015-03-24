@@ -2156,7 +2156,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 				$_->r = $pricing->promoprice != $pricing->price ? money($pricing->price) : false;
 				$_->d = $discount > 0 ? $discount : false;
 
-				if ( $disable && 'show' == $disabled )
+				if ( ! $disable || 'show' == $disabled )
 					$string .= '<option value="' . $pricing->id . '"' . ( $disable ? ' disabled="disabled"' : '' ) . '>' . esc_html(self::_variant_formatlabel($format, $_)) . '</option>' . "\n";
 			}
 			$string .= '</select>';
