@@ -1613,7 +1613,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		foreach ( $buttons as $label => $button )
 			$_[] = '<span class="payoption-button payoption-' . sanitize_title_with_dashes($label) . ( $label === 0 ? $wrapclass : '' ) . '">' . $button . '</span>';
 
-		return join('\n', $_);
+		return join("\n", $_);
 	}
 
 	/**
