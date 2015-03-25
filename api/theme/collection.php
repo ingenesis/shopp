@@ -34,51 +34,51 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 * @internal
 	 **/
 	static $register = array(
-		'carousel' => 'carousel',
-		'coverimage' => 'coverimage',
-		'description' => 'description',
-		'feedurl' => 'feed_url',
-		'hascategories' => 'has_categories',
-		'hasimages' => 'has_images',
-		'hasproducts' => 'load_products',
-		'loadproducts' => 'load_products',
-		'id' => 'id',
-		'image' => 'image',
-		'images' => 'images',
-		'issubcategory' => 'is_subcategory',
-		'link' => 'url',
-		'name' => 'name',
-		'pagination' => 'pagination',
-		'parent' => 'parent',
-		'products' => 'products',
-		'row' => 'row',
-		'sectionlist' => 'section_list',
-		'slideshow' => 'slideshow',
-		'slug' => 'slug',
-		'subcategories' => 'subcategories',
+		'carousel'        => 'carousel',
+		'coverimage'      => 'coverimage',
+		'description'     => 'description',
+		'feedurl'         => 'feed_url',
+		'hascategories'   => 'has_categories',
+		'hasimages'       => 'has_images',
+		'hasproducts'     => 'load_products',
+		'loadproducts'    => 'load_products',
+		'id'              => 'id',
+		'image'           => 'image',
+		'images'          => 'images',
+		'issubcategory'   => 'is_subcategory',
+		'link'            => 'url',
+		'name'            => 'name',
+		'pagination'      => 'pagination',
+		'parent'          => 'parent',
+		'products'        => 'products',
+		'row'             => 'row',
+		'sectionlist'     => 'section_list',
+		'slideshow'       => 'slideshow',
+		'slug'            => 'slug',
+		'subcategories'   => 'subcategories',
 		'subcategorylist' => 'subcategory_list',
-		'total' => 'total',
-		'url' => 'url',
+		'total'           => 'total',
+		'url'             => 'url',
 
 		// Faceted menu tags
-		'hasfacetedmenu' => 'has_faceted_menu',
-		'facetedmenu' => 'faceted_menu',
-		'isfacetfiltered' => 'is_facet_filtered',
-		'facetfilters' => 'facet_filters',
-		'facetfilter' => 'facet_filter',
-		'facetfiltered' => 'facet_filtered',
-		'facetmenus' => 'facet_menus',
-		'facetname' => 'facet_name',
-		'facetlabel' => 'facet_label',
-		'facetslug' => 'facet_slug',
-		'facetlink' => 'facet_link',
+		'hasfacetedmenu'      => 'has_faceted_menu',
+		'facetedmenu'         => 'faceted_menu',
+		'isfacetfiltered'     => 'is_facet_filtered',
+		'facetfilters'        => 'facet_filters',
+		'facetfilter'         => 'facet_filter',
+		'facetfiltered'       => 'facet_filtered',
+		'facetmenus'          => 'facet_menus',
+		'facetname'           => 'facet_name',
+		'facetlabel'          => 'facet_label',
+		'facetslug'           => 'facet_slug',
+		'facetlink'           => 'facet_link',
 		'facetmenuhasoptions' => 'facet_menu_has_options',
-		'facetoptions' => 'facet_options',
-		'facetoptionlink' => 'facet_option_link',
-		'facetoptionlabel' => 'facet_option_label',
-		'facetoptioninput' => 'facet_option_input',
-		'facetoptionvalue' => 'facet_option_value',
-		'facetoptioncount' => 'facet_option_count'
+		'facetoptions'        => 'facet_options',
+		'facetoptionlink'     => 'facet_option_link',
+		'facetoptionlabel'    => 'facet_option_label',
+		'facetoptioninput'    => 'facet_option_input',
+		'facetoptionvalue'    => 'facet_option_value',
+		'facetoptioncount'    => 'facet_option_count'
 	);
 
 	/**
@@ -94,8 +94,8 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			case 'collection':
 			case 'category':
 			case 'subcategory':
-			return 'collection';
-			break;
+				return 'collection';
+				break;
 		}
 		return $name;
 	}
@@ -119,8 +119,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 				return ShoppCollection();
 				break;
 			case 'subcategory':
-				if ( isset(ShoppCollection()->child) )
-					return ShoppCollection()->child;
+				if ( isset(ShoppCollection()->child) ) return ShoppCollection()->child;
 				break;
 		}
 		return $Object;
@@ -157,23 +156,22 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	public static function carousel ( $result, $options, $O ) {
 		$options['load'] = array('images');
 		if ( ! $O->loaded ) $O->load($options);
-		if ( count($O->products) == 0 ) return false;
+		if ( 0 == count($O->products) ) return false;
 
 		// Supported arrow styles
 		$styles = array('arrow', 'chevron-sign', 'circle-arrow', 'caret');
 
 		$defaults = array(
-			'imagewidth' => '96',
+			'imagewidth'  => '96',
 			'imageheight' => '96',
-			'fit' => 'all',
-			'duration' => 500,
-			'style' => 'chevron-sign'
+			'fit'         => 'all',
+			'duration'    => 500,
+			'style'       => 'chevron-sign'
 		);
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
 
-		if ( ! in_array($style, $styles) )
-			$style = $defaults['style'];
+		if ( ! in_array($style, $styles) ) $style = $defaults['style'];
 
 		$_  = '<div class="carousel duration-' . $duration . '">';
 		$_ .= '<div class="frame">';
@@ -247,11 +245,11 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	public static function description ( $result, $options, $O ) {
 		$defaults = array(
 			'collapse' => true,
-			'wrap' => true,
-			'before' => '<div class="category-description">' . "\n\n",
-			'after' => '</div>'
+			'wrap'     => true,
+			'before'   => '<div class="category-description">' . "\n\n",
+			'after'    => '</div>'
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
 
 		if ( ( Shopp::str_true($collapse) && empty($O->description)) || ! isset($O->description) ) return '';
@@ -295,7 +293,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		if ( isset($O->facets[ $slug ]) )
 			$O->facet = $O->facets[ $slug ];
 
-		if ( current($O->filters) !== false ) return true;
+		if ( false !== current($O->filters) ) return true;
 		else {
 			unset($O->_filters_loop, $O->facet);
 			return false;
@@ -335,7 +333,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			$O->_facets_loop = true;
 		} else next($O->facets);
 
-		if ( current($O->facets) !== false ) return true;
+		if ( false !== current($O->facets) ) return true;
 		else {
 			unset($O->_facets_loop);
 			return false;
@@ -463,7 +461,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			$O->_facetoptions_loop = true;
 		} else next($facet->filters);
 
-		if ( current($facet->filters) !== false ) return true;
+		if ( false !== current($facet->filters) ) return true;
 		else {
 			unset($O->_facetoptions_loop);
 			return false;
@@ -649,10 +647,10 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		if ( ! $wp_rewrite->using_permalinks() ) return add_query_arg(array('src' => 'category_rss'), $url);
 
 		$query = false;
-		if ( strpos($url, '?') !== false ) list($url, $query) = explode('?', $url);
+		if ( false !== strpos($url, '?') ) list($url, $query) = explode('?', $url);
 		$url = trailingslashit($url) . 'feed';
 		if ( $query ) $url = "$url?$query";
-			return $url;
+		return $url;
 	}
 
 	/**
@@ -689,7 +687,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	public static function has_faceted_menu ( $result, $options, $O ) {
 		if ( ! is_a($O, 'ProductCategory') ) return false;
 		if ( empty($O->meta) ) $O->load_meta();
-		if ( property_exists($O,'facetedmenus') && Shopp::str_true($O->facetedmenus) ) {
+		if ( property_exists($O, 'facetedmenus') && Shopp::str_true($O->facetedmenus) ) {
 			$O->load_facets();
 			return true;
 		}
@@ -770,7 +768,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			$O->_images_loop = true;
 		} else next($O->images);
 
-		if ( current($O->images) !== false ) return true;
+		if ( false !== current($O->images) ) return true;
 		else {
 			unset($O->_images_loop);
 			return false;
@@ -790,7 +788,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 **/
 	public static function is_subcategory ( $result, $options, $O ) {
 		if ( isset($options['id']) ) return ( $this->parent == $options['id'] );
-		return ( $O->parent != 0 );
+		return ( 0 != $O->parent );
 	}
 
 	/**
@@ -811,8 +809,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			$dataset = explode(',', $options['load']);
 			$options['load'] = array();
 			foreach ( $dataset as $name ) {
-				if ( 'description' == trim(strtolower($name)) )
-					$options['columns'] = 'p.post_content';
+				if ( 'description' == trim(strtolower($name)) ) $options['columns'] = 'p.post_content';
 				$options['load'][] = trim($name);
 			}
 		 } else {
@@ -861,14 +858,14 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		if ( ! $O->paged ) return '';
 
 		$defaults = array(
-			'after' => '</div>',
-			'before' => '<div>',
+			'after'    => '</div>',
+			'before'   => '<div>',
 			'jumpback' => '&laquo;',
-			'jumpfwd' => '&raquo;',
-			'label' => Shopp::__('Pages:'),
-			'next' => Shopp::__('next'),
+			'jumpfwd'  => '&raquo;',
+			'label'    => Shopp::__('Pages:'),
+			'next'     => Shopp::__('next'),
 			'previous' => Shopp::__('previous'),
-			'show' => 1000
+			'show'     => 1000
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -985,12 +982,11 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			$O->_rindex = false;
 			$O->_product_loop = true;
 		} else {
-			if ( $Product = next($O->products) )
-				ShoppProduct($Product);
+			if ( $Product = next($O->products) ) ShoppProduct($Product);
 			$O->_pindex++;
 		}
 
-		if ( current($O->products) !== false ) return true;
+		if ( false !== current($O->products) ) return true;
 		else {
 			unset($O->_product_loop);
 			ShoppProduct($null);
@@ -1013,13 +1009,13 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 * @return bool True if a new row is needed, false otherwise
 	 **/
 	public static function row ( $result, $options, $O ) {
-		if ( ! isset($O->_rindex) || $O->_rindex === false ) $O->_rindex = 0;
+		if ( ! isset($O->_rindex) || false === $O->_rindex ) $O->_rindex = 0;
 		else $O->_rindex++;
 
 		if ( empty($options['products']) )
 			$options['products'] = shopp_setting('row_products');
 
-		return ( 0 == $O->_rindex || $O->_rindex > 0 && $O->_rindex % $options['products'] == 0 );
+		return ( 0 == $O->_rindex || 0 < $O->_rindex && 0 == $O->_rindex % $options['products'] );
 	}
 
 	/**
@@ -1057,23 +1053,23 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	public static function slideshow ( $result, $options, $O ) {
 		$options['load'] = array('images');
 		if ( ! $O->loaded ) $O->load($options);
-		if ( count($O->products) == 0 ) return false;
+		if ( 0 == count($O->products) ) return false;
 
 		$defaults = array(
-			'fx' => 'fade',
+			'fx'       => 'fade',
 			'duration' => 1000,
-			'delay' => 7000,
-			'order' => 'normal'
+			'delay'    => 7000,
+			'order'    => 'normal'
 		);
 		$imgdefaults = array(
 			'setting' => false,
-			'width' => '580',
-			'height' => '200',
-			'size' => false,
-			'fit' => 'crop',
+			'width'   => '580',
+			'height'  => '200',
+			'size'    => false,
+			'fit'     => 'crop',
 			'sharpen' => false,
 			'quality' => false,
-			'bg' => false,
+			'bg'      => false
 		);
 
 		$options = array_merge($defaults, $imgdefaults, $options);
@@ -1087,7 +1083,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		foreach ( $O->products as $Product ) {
 			if ( empty($Product->images) ) continue;
 			$string .= '<li><a href="' . $Product->tag('url') . '">';
-			$imgoptions = array_filter(array_intersect_key($options, $imgdefaults));
+			$imgoptions = array_filter( array_intersect_key($options, $imgdefaults) );
 			$string .= shopp($Product, 'get-image', $imgoptions);
 			$string .= '</a></li>';
 		}
@@ -1133,7 +1129,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			$O->_cindex++;
 		}
 
-		if ( $O->child !== false ) return true;
+		if ( false !== $O->child ) return true;
 		else {
 			unset($O->_children_loop);
 			$O->_cindex = 0;
@@ -1154,7 +1150,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 * @return string The subcategory list markup
 	 **/
 	public static function subcategory_list ( $result, $options, $O ) {
-		if (!isset($O->id) || empty($O->id)) return false;
+		if ( ! isset($O->id) || empty($O->id) ) return false;
 		$options['childof'] = $O->id;
 		$options['default'] = Shopp::__('Select a sub-category&hellip;');
 		return ShoppStorefrontThemeAPI::category_list( $result, $options, $O );
