@@ -48,65 +48,65 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	 * @internal
 	 **/
 	static $register = array(
-		'addon' => 'addon',
-		'addons' => 'addons',
-		'addtocart' => 'add_to_cart',
-		'availability' => 'availability',
-		'buynow' => 'buy_now',
-		'categories' => 'categories',
-		'category' => 'category',
-		'coverimage' => 'coverimage',
-		'description' => 'description',
-		'donation' => 'quantity',
-		'amount' => 'quantity',
-		'quantity' => 'quantity',
-		'found' => 'found',
-		'freeshipping' => 'free_shipping',
-		'gallery' => 'gallery',
-		'hasaddons' => 'has_addons',
+		'addon'         => 'addon',
+		'addons'        => 'addons',
+		'addtocart'     => 'add_to_cart',
+		'availability'  => 'availability',
+		'buynow'        => 'buy_now',
+		'categories'    => 'categories',
+		'category'      => 'category',
+		'coverimage'    => 'coverimage',
+		'description'   => 'description',
+		'donation'      => 'quantity',
+		'amount'        => 'quantity',
+		'quantity'      => 'quantity',
+		'found'         => 'found',
+		'freeshipping'  => 'free_shipping',
+		'gallery'       => 'gallery',
+		'hasaddons'     => 'has_addons',
 		'hascategories' => 'has_categories',
-		'hassavings' => 'has_savings',
-		'hasvariants' => 'has_variants',
-		'hasimages' => 'has_images',
-		'hasspecs' => 'has_specs',
-		'hastags' => 'has_tags',
-		'id' => 'id',
-		'image' => 'image',
-		'thumbnail' => 'image',
-		'images' => 'images',
-		'incart' => 'in_cart',
-		'incategory' => 'in_category',
-		'input' => 'input',
-		'isfeatured' => 'is_featured',
-		'link' => 'url',
-		'url' => 'url',
-		'name' => 'name',
-		'onsale' => 'on_sale',
-		'outofstock' => 'out_of_stock',
-		'price' => 'price',
-		'saleprice' => 'saleprice',
-		'relevance' => 'relevance',
-		'savings' => 'savings',
-		'schema' => 'schema',
-		'slug' => 'slug',
-		'spec' => 'spec',
-		'specs' => 'specs',
-		'summary' => 'summary',
-		'sku' => 'sku',
-		'stock' => 'stock',
-		'tag' => 'tag',
-		'tagged' => 'tagged',
-		'tags' => 'tags',
-		'taxrate' => 'taxrate',
-		'type' => 'type',
-		'variant' => 'variant',
-		'variants' => 'variants',
-		'weight' => 'weight',
+		'hassavings'    => 'has_savings',
+		'hasvariants'   => 'has_variants',
+		'hasimages'     => 'has_images',
+		'hasspecs'      => 'has_specs',
+		'hastags'       => 'has_tags',
+		'id'            => 'id',
+		'image'         => 'image',
+		'thumbnail'     => 'image',
+		'images'        => 'images',
+		'incart'        => 'in_cart',
+		'incategory'    => 'in_category',
+		'input'         => 'input',
+		'isfeatured'    => 'is_featured',
+		'link'          => 'url',
+		'url'           => 'url',
+		'name'          => 'name',
+		'onsale'        => 'on_sale',
+		'outofstock'    => 'out_of_stock',
+		'price'         => 'price',
+		'saleprice'     => 'saleprice',
+		'relevance'     => 'relevance',
+		'savings'       => 'savings',
+		'schema'        => 'schema',
+		'slug'          => 'slug',
+		'spec'          => 'spec',
+		'specs'         => 'specs',
+		'summary'       => 'summary',
+		'sku'           => 'sku',
+		'stock'         => 'stock',
+		'tag'           => 'tag',
+		'tagged'        => 'tagged',
+		'tags'          => 'tags',
+		'taxrate'       => 'taxrate',
+		'type'          => 'type',
+		'variant'       => 'variant',
+		'variants'      => 'variants',
+		'weight'        => 'weight',
 
 		// Deprecated
 		'hasvariations' => 'has_variants',
-		'variation' => 'variant',
-		'variations' => 'variants',
+		'variation'     => 'variant',
+		'variations'    => 'variants'
 	);
 
 	/**
@@ -152,7 +152,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	public static function _setobject ($Object, $object) {
 		if ( is_object($Object) && is_a($Object, 'ShoppProduct') ) return $Object;
 
-		if ( strtolower($object) != 'product' ) return $Object; // not mine, do nothing
+		if ( 'product' != strtolower($object) ) return $Object; // not mine, do nothing
 		else {
 			return ShoppProduct();
 		}
@@ -183,20 +183,20 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 		$defaults = array(
 			'separator' => ' ',
-			'units' => 'on',
+			'units'     => 'on',
 			// 'promos' => 'on', @deprecated option use 'discounts'
 			'discounts' => 'on',
-			'taxes' => null,
-			'input' => null,
-			'money' => 'on',
-			'number' => 'off'
+			'taxes'     => null,
+			'input'     => null,
+			'money'     => 'on',
+			'number'    => 'off'
 		);
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
 
 		if ( isset($promos) ) $discounts = $promos; // @deprecated support for deprecated `promos` option
 
-		$types = array('hidden','checkbox','radio');
+		$types = array('hidden', 'checkbox', 'radio');
 
 		$addon = current($O->prices);
 
@@ -232,14 +232,10 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			else $_[] = $shipfee;
 		}
 
-		if ( array_key_exists('sale', $options) )
-			return Shopp::str_true($addon->sale);
-		if ( array_key_exists('shipping', $options) )
-			return Shopp::str_true($addon->shipping);
-		if ( array_key_exists('tax', $options) )
-			return Shopp::str_true($addon->tax);
-		if ( array_key_exists('inventory', $options) )
-			return Shopp::str_true($addon->inventory);
+		if ( array_key_exists('sale', $options) ) return Shopp::str_true($addon->sale);
+		if ( array_key_exists('shipping', $options) ) return Shopp::str_true($addon->shipping);
+		if ( array_key_exists('tax', $options) ) return Shopp::str_true($addon->tax);
+		if ( array_key_exists('inventory', $options) ) return Shopp::str_true($addon->inventory);
 
 		if ( in_array($input, $types) )
 			$_[] = '<input type="' . $input . '" name="products[' . (int)$O->id . '][addons][]" value="' . esc_attr($addon->id) . '"' . inputattrs($options) . ' />';
@@ -299,16 +295,16 @@ class ShoppProductThemeAPI implements ShoppAPI {
 		if ( ! isset($O->options['a']) ) return false; // There are no addons, don't render menus
 
 		$defaults = array(
-			'defaults' => '',
-			'before_menu' => '',
-			'after_menu' => '',
-			'mode' => 'menu',
-			'label' => true,
-			'format' => '%l (+%p)',
-			'required' => false,
+			'defaults'       => '',
+			'before_menu'    => '',
+			'after_menu'     => '',
+			'mode'           => 'menu',
+			'label'          => true,
+			'format'         => '%l (+%p)',
+			'required'       => false,
 			'required_error' => Shopp::__('You must select addon options for this item before you can add it to your shopping cart.'),
-			'taxes' => null,
-			'class' => '',
+			'taxes'          => null,
+			'class'          => ''
 			);
 
 		$options = array_merge($defaults, $options);
@@ -436,10 +432,10 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	public static function add_to_cart ( $result, $options, $O ) {
 		if ( ! shopp_setting_enabled('shopping_cart') ) return '';
 		$defaults = array(
-			'ajax' => false,
-			'class' => 'addtocart',
-			'label' => Shopp::__('Add to Cart'),
-			'redirect' => false,
+			'ajax'     => false,
+			'class'    => 'addtocart',
+			'label'    => Shopp::__('Add to Cart'),
+			'redirect' => false
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
