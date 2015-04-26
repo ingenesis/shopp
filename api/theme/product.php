@@ -1143,7 +1143,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	public static function in_cart ( $result, $options, $O ) {
 		$Cart = ShoppOrder()->Cart;
 
-		if ( $Cart->count == 0 ) return false; // Cart is empty
+		if ( $Cart->count() == 0 ) return false; // Cart is empty
 
 		foreach ( $Cart as $Item )
 			if ( $Item->product == $O->id ) return true;
