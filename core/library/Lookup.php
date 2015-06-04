@@ -162,7 +162,7 @@ class Lookup {
 		$_['GA'] = array('name'=>__('Gabon','Shopp'),'currency'=>array('code'=>'XAF','format'=>'# ### FCFA'),'units'=>'metric','region'=>5);
 		$_['GM'] = array('name'=>__('Gambia','Shopp'),'currency'=>array('code'=>'GMD','format'=>'GMD#,###.##'),'units'=>'metric','region'=>5);
 		$_['GE'] = array('name'=>__('Georgia','Shopp'),'currency'=>array('code'=>'GEL','format'=>'GEL #.###,##'),'units'=>'metric','region'=>6);
-		$_['DE'] = array('name'=>__('Germany','Shopp'),'currency'=>array('code'=>'EUR','format'=>'#,###,## €'),'units'=>'metric','region'=>3);
+		$_['DE'] = array('name'=>__('Germany','Shopp'),'currency'=>array('code'=>'EUR','format'=>'#.###,## €'),'units'=>'metric','region'=>3);
 		$_['GH'] = array('name'=>__('Ghana','Shopp'),'currency'=>array('code'=>'GHS','format'=>'₵#,###.##'),'units'=>'metric','region'=>5);
 		$_['GI'] = array('name'=>__('Gibraltar','Shopp'),'currency'=>array('code'=>'GBP','format'=>'£#,###.##'),'units'=>'metric','region'=>3);
 		$_['GR'] = array('name'=>__('Greece','Shopp'),'currency'=>array('code'=>'EUR','format'=>'€#,###.##'),'units'=>'metric','region'=>3);
