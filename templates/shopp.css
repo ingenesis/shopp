@@ -186,3 +186,8 @@ ul.shopp_categories li ul.active { display: block; }
 #shopp #receipt .order .buttons td { text-align: right; }
 #shopp #receipt .order .totals.total th,
 #shopp #receipt .order .totals.total td { font-size: 130%; }
+
+/** Order Print Receipt **/
+#shopp.print { padding: 0; }
+#shopp.print #receipt { width: 100%; height: 100%; page-break-before: always; margin: 0; }
+#shopp.print #receipt:first-child { page-break-before: auto; }
