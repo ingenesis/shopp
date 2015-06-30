@@ -2003,7 +2003,9 @@ class RelatedProducts extends SmartCollection {
 			if ( empty($scope) ) $scope = array_keys($this->product->tags);
 		}
 
-		if ( !empty($scope) ) {
+		if ( empty($scope) ) {
+			$loading = compact('where');
+		} else {
 			$this->name = __("Products related to","Shopp")." &quot;".stripslashes($name)."&quot;";
 			$this->uri = urlencode($slug);
 			$this->controls = false;
@@ -2015,9 +2017,9 @@ class RelatedProducts extends SmartCollection {
 			$columns = 'COUNT(p.ID) AS score';
 			$groupby = 'p.ID';
 			$orderby = 'score DESC';
+			$loading = compact('columns', 'joins', 'where', 'groupby', 'orderby');
 		}
 
-		$loading = compact('columns', 'joins', 'where', 'groupby', 'orderby', 'order');
 		$this->loading = array_merge($options, $loading);
 
 		if ( isset($options['order']) ) $this->loading['order'] = $options['order'];
