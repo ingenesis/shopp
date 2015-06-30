@@ -2003,14 +2003,7 @@ class RelatedProducts extends SmartCollection {
 			if ( empty($scope) ) $scope = array_keys($this->product->tags);
 		}
 
-		if ( empty($scope) ) {
-			if ( isset($options['order']) )
-				$order = $options['order'];
-
-			$where = array("p.id != {$this->product->id}");
-			$loading = compact('where','order');
-			$this->loading = array_merge($options, $loading);
-		} else {
+		if ( !empty($scope) ) {
 			$this->name = __("Products related to","Shopp")." &quot;".stripslashes($name)."&quot;";
 			$this->uri = urlencode($slug);
 			$this->controls = false;
@@ -2022,16 +2015,15 @@ class RelatedProducts extends SmartCollection {
 			$columns = 'COUNT(p.ID) AS score';
 			$groupby = 'p.ID';
 			$orderby = 'score DESC';
-			$loading = compact('columns', 'joins', 'where', 'groupby', 'orderby');
-
-			$this->loading = array_merge($options, $loading);
-
-			if ( isset($options['order']) ) $this->loading['order'] = $options['order'];
-			if ( isset($options['controls']) && Shopp::str_true($options['controls']) )
-				unset($this->controls);
 		}
-	}
 
+		$loading = compact('columns', 'joins', 'where', 'groupby', 'orderby', 'order');
+		$this->loading = array_merge($options, $loading);
+
+		if ( isset($options['order']) ) $this->loading['order'] = $options['order'];
+		if ( isset($options['controls']) && Shopp::str_true($options['controls']) )
+			unset($this->controls);
+	}
 }
 
 /**
