@@ -83,9 +83,10 @@
 				break;
 
 				case 'products':
+					$adminurl = add_query_arg(array_merge($_GET, array('page' => $this->Admin->pagename('products'))), admin_url('admin.php'));
 					$classes[] = 'num';
 				?>
-					<td width="5%" class="<?php echo esc_attr(join(' ',$classes)); ?>"><?php echo $Category->count; ?></td>
+					<td width="5%" class="<?php echo esc_attr(join(' ',$classes)); ?>"><a href="<?php echo $adminurl . '&shopp_category=' . $Category->slug; ?>"><?php echo $Category->count; ?></a></td>
 				<?php
 				break;
 
