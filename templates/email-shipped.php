@@ -5,7 +5,7 @@ Subject: <?php shopp( 'purchase.email-subject' ); ?>
 
 <html>
 	<div id="header">
-		<h1><?php bloginfo( 'name' ); ?></h1>
+		<h1><?php shopp('storefront.business-name'); ?></h1>
 		<h2><?php _e( 'Order Shipment Notification', 'Shopp' ); ?> <?php shopp( 'purchase','id' ); ?></h2>
 	</div>
 	<div id="body">
