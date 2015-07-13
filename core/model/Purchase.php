@@ -318,7 +318,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 
 		$Purchase = $Event->order();
 		if ( ! $Purchase->stocked ) return true; // no inventory in purchase
-
+		
 		$prices = array();
 		$allocated = array();
 		foreach ( $Purchase->purchased as $Purchased ) {
@@ -373,6 +373,11 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		}
 
 		$Event->unstocked($allocated);
+		
+		// If out of stock products should be hidden from catalog, 
+		// go ahead and invalidate the cache after unstock
+		if ( ! Shopp::str_true( shopp_setting('outofstock_catalog') ) )
+			Shopp::invalidate_cache();
 	}
 
 	/**

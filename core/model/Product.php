@@ -106,6 +106,8 @@ class ShoppProduct extends WPShoppObject {
 	public function savepost () {
 		if ( empty($this->id)) return;
 		do_action('save_post', $this->id, get_post($this->id));
+		if( function_exists('clean_post_cache') )
+			clean_post_cache($this->id);
 	}
 
 	public static function posttype () {
@@ -1028,7 +1030,11 @@ class ShoppProduct extends WPShoppObject {
 	public function delete () {
 		$id = $this->id;
 		if (empty($id)) return false;
-
+		
+		if ( false === has_action('shopp_product_delete',array($this,'deletepost')))
+			add_action('shopp_product_delete',array($this,'deletepost'));
+		do_action_ref_array('shopp_product_delete',array($this));
+		
 		// Delete assignment to taxonomies (categories, tags, custom taxonomies)
 		wp_delete_object_term_relationships($id, get_object_taxonomies(ShoppProduct::$posttype));
 
@@ -1068,6 +1074,21 @@ class ShoppProduct extends WPShoppObject {
 		do_action_ref_array('shopp_product_deleted',array($this));
 
 	}
+	
+	/**
+	 * Provides compatibility with other plugins that handle custom post types
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @return void
+	 **/
+	public function deletepost () {
+		if ( empty($this->id)) return;
+		do_action('delete_post', $this->id);
+		if( function_exists('clean_post_cache') )
+			clean_post_cache($this->id);
+	}
 
 	/**
 	 * Moves the product to the trash
@@ -1080,6 +1101,24 @@ class ShoppProduct extends WPShoppObject {
 	public function trash () {
 		$id = $this->{$this->_key};
 		sDB::query("UPDATE $this->_table SET post_status='trash' WHERE ID='$id'");
+		if ( false === has_action('shopp_product_trashed',array($this,'trashpost')))
+			add_action('shopp_product_trashed',array($this,'trashpost'));
+		do_action_ref_array('shopp_product_trashed',array($this));
+	}
+	
+	/**
+	 * Provides compatibility with other plugins that handle custom post types
+	 *
+	 * @author Jonathan Davis
+	 * @since 1.2
+	 *
+	 * @return void
+	 **/
+	public function trashpost () {
+		if ( empty($this->id)) return;
+		do_action('wp_trash_post', $this->id);
+		if( function_exists('clean_post_cache') )
+			clean_post_cache($this->id);
 	}
 
 	/**
@@ -1220,11 +1259,19 @@ class ShoppProduct extends WPShoppObject {
 		sDB::query("UPDATE $table SET post_status='$status', post_date='$post_date', post_date_gmt='$post_date_gmt', post_modified='$post_date', post_modified_gmt='$post_date_gmt' WHERE ID in (" . join(',', $ids) . ")");
 
 		foreach ( $ids as $id ) { // Recount taxonomy counts #2968
-			$laststatus = get_post_status($id);
-			$Post = new StdClass;
-			$Post->ID = $id;
-			$Post->post_type = ShoppProduct::$posttype;
-			wp_transition_post_status($status, $laststatus, $Post);
+			$Post = get_post($id);
+			switch ($status) {
+				case 'trash':
+					do_action('wp_trash_post', $id);
+					break;
+				default:
+					do_action('save_post', $id, $Post);
+					break;
+			}
+			if( function_exists('clean_post_cache') )
+				clean_post_cache($id);
+			
+			wp_transition_post_status($status, $Product->status, $Post);
 		}
 
 		return true;

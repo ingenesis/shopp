@@ -2320,6 +2320,66 @@ abstract class ShoppCore {
 		return $value;
 
 	}
+	
+	/**
+	 * Keyed wrapper for wp_cache_set
+	 * 
+	 * @author Clifton Griffin
+	 * @since 1.4
+	 *
+	 * @param mixed $key
+	 * @param mixed $data
+	 * @param mixed $group (default: null)
+	 * @param mixed $expire (default: null)
+	 *
+	 * @return True
+	 */
+	public static function cache_set ( $key, $data, $group = null, $expire = null ) {
+		// Allows us to gracefully expire cache when required
+		$ns_key = wp_cache_get( 'shopp_cache_key' );
+
+		// If cache key doesn't exist, create it
+		if ( $ns_key === false ) {
+			$ns_key = 1;
+			wp_cache_set( 'shopp_cache_key', $ns_key );
+		}
+			
+		return wp_cache_set($key . $ns_key, $data, $group, $expire);
+	}
+	
+	/**
+	 * Keyed wrapper for wp_cache_get function.
+	 * 
+	 * @author Clifton Griffin
+	 * @since 1.4
+	 *
+	 * @param mixed $key
+	 * @param mixed $group (default: null)
+	 * @param mixed $force (default: null)
+	 * @param mixed $found (default: null)
+	 *
+	 * @return False on failure to retrieve contents or the cache contents on success
+	 */
+	public static function cache_get ( $key, $group = null, $force = null, $found = null ) {
+		// Seed request for cache
+		$ns_key = wp_cache_get( 'shopp_cache_key' );
+		
+		return wp_cache_get( $key . $ns_key, $group, $force, $found );
+	}
+	
+	/**
+	 * Increment the cache key to gracefully invalidate Shopp specific caches
+	 *
+	 * @author Clifton Griffin
+	 * @since 1.4
+	 *
+	 * @return void
+	 */
+	public static function invalidate_cache() {
+		wp_cache_incr( 'shopp_cache_key' );
+		
+		do_action('shopp_invalidate_cache');
+	}
 
 } // End abstract class ShoppCore
 

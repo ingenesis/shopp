@@ -147,14 +147,14 @@ class ImageServer {
 	public function load () {
 
 		$cache = 'image_' . $this->request . ($this->valid ? '_' . $this->valid : '');
-		$cached = wp_cache_get($cache, 'shopp_image');
+		$cached = Shopp::cache_get($cache, 'shopp_image');
 		if ( $cached ) return ($this->Image = $cached);
 
 		$this->Image = new ImageAsset($this->request);
 
 		if ( max($this->width, $this->height) > 0 ) $this->loadsized();
 
-		wp_cache_set($cache, $this->Image, 'shopp_image');
+		Shopp::cache_set($cache, $this->Image, 'shopp_image');
 
 		do_action('shopp_imageserver_load', $this->Image);
 

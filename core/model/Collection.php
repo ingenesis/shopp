@@ -197,14 +197,15 @@ class ProductCollection implements Iterator {
 			$alphaquery = sDB::select($a);
 
 			$cachehash = 'collection_alphanav_' . md5($alphaquery);
-			$cached = wp_cache_get($cachehash, 'shopp_collection');
+			$cached = Shopp::cache_get($cachehash, 'shopp_collection_alphanav');
 			if ($cached) { // Load from object cache,  if available
 				$this->alpha = $cached;
 				$cached = false;
 			} else { // Run query and cache results
 				$expire = apply_filters('shopp_collection_cache_expire', 43200);
 				$alpha = sDB::query($alphaquery, 'array', array($this, 'alphatable'));
-				wp_cache_set($cachehash, $alpha, 'shopp_collection_alphanav');
+
+				Shopp::cache_set($cachehash, $alpha, 'shopp_collection_alphanav', $expire);
 			}
 
 			$this->paged = true;
@@ -221,7 +222,7 @@ class ProductCollection implements Iterator {
 
 		// Load from cached results if available, or run the query and cache the results
 		$cachehash = 'collection_' . md5($query);
-		$cached = wp_cache_get($cachehash, 'shopp_collection');
+		$cached = Shopp::cache_get($cachehash, 'shopp_collection');
 		if ( $cached ) {
 			$this->products = $cached->products;
 			$this->total = $cached->total;
@@ -239,7 +240,7 @@ class ProductCollection implements Iterator {
 			// Don't use the limit if it is offset
 			if ($limited && false === strpos($limit, ',')) $cache->total = $this->total = min($limit, $this->total);
 
-			wp_cache_set($cachehash,$cache,'shopp_collection');
+			Shopp::cache_set($cachehash,$cache,'shopp_collection', $expire);
 		}
 		if ( false === $this->products ) $this->products = array();
 
@@ -955,11 +956,11 @@ class ProductCategory extends ProductTaxonomy {
 
 		// Support cache accelleration
 		$cachehash = 'collection_facet_' . md5($query);
-		$cached = wp_cache_get($cachehash, 'shopp_collection_facet');
+		$cached = Shopp::cache_get($cachehash, 'shopp_collection_facet');
 		if ( $cached ) $set = $cached;
 		else {
 			$set = sDB::query($query, 'array', 'col', 'parent');
-			wp_cache_set($cachehash, $set, 'shopp_collection_facet');
+			Shopp::cache_set($cachehash, $set, 'shopp_collection_facet');
 		}
 
 		if ( ! empty($set) ) {
@@ -2097,11 +2098,11 @@ class AlsoBoughtProducts extends SmartCollection {
 								ORDER BY r DESC, n DESC";
 
 		$cachehash = 'alsobought_' . md5($query);
-		$cached = wp_cache_get($cachehash, 'shopp_collection_alsobought');
+		$cached = Shopp::cache_get($cachehash, 'shopp_collection_alsobought');
 		if ( $cached ) $matches = $cached;
 		else {
 			$matches = sDB::query($query, 'array', 'col', 'p2');
-			wp_cache_set($cachehash, $matches, 'shopp_collection_alsobought');
+			Shopp::cache_set($cachehash, $matches, 'shopp_collection_alsobought', 14400); //Expires in 4 hours
 		}
 
 		if ( empty($matches) ) {
