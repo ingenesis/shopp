@@ -476,6 +476,7 @@ class ShoppCustomer extends ShoppDatabaseObject {
 		$this->updated(self::PROFILE, true);
 
 		if ( $this->_password_change )
+			new ShoppError(__('Your password has been changed. Please log in again below.'), 'password_change_redirect', SHOPP_ERR);
 			Shopp::redirect(Shopp::url(false, 'account'));
 
 	}
