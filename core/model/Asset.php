@@ -295,9 +295,9 @@ class ImageAsset extends FileAsset {
 
 
 	public function output ( $headers = true ) {
-
+$Engine = $this->engine();
 		if ( $headers ) {
-			$Engine = $this->engine();
+			
 			$data = $this->retrieve($this->uri);
 
 			$etag = md5($data);
