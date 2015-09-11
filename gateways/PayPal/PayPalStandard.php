@@ -511,6 +511,16 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 				$_[ 'amount_' . $id ]			= $this->amount($Item->unitprice);
 				$_[ 'quantity_' . $id ]			= $Item->quantity;
 				// $_['weight_'.$id]			= $Item->quantity;
+				
+				if ( $Item->quantity > 1 ) {
+		               		$pp_price   = $this->amount($_[ 'amount_' . $id ] * $_[ 'quantity_' . $id ]) ;
+		               		$shopp_price    = $this->amount($Item->totald);
+					if ( $pp_price != $shopp_price ) {
+						$_[ 'item_name_' . $id ]        = Shopp::__('Set of') . ' ' . $Item->quantity . ' ' . $Item->name . ( ! empty($Item->option->label) ? ' ' . $Item->option->label : '');
+						$_[ 'amount_' . $id ]           = $shopp_price;
+						$_[ 'quantity_' . $id ]         = 1;
+					}
+				}
 			}
 
 			// Workaround a PayPal limitation of not correctly handling no subtotals or
