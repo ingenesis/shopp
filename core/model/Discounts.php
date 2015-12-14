@@ -303,8 +303,9 @@ class ShoppDiscounts extends ListFramework {
 		if ( $this->shipping($Discount) ) // Flag shipping changes
 			$Discount->shipfree(false);   // Remove free shipping if this is a free shipping discount (@see #2885)
 
-		if ( isset($this->codes[ $Discount->code() ]) ) {
-			unset($this->codes[ $Discount->code() ]);
+		$code = trim(strtolower($Discount->code()));
+		if ( isset($this->codes[ $code ]) ) {
+			unset($this->codes[ $code ]);
 			return;
 		}
 
