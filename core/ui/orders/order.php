@@ -54,12 +54,26 @@
 				</div>
 				<div id="topic" class="third-column  box-stretch">
 					<?php do_meta_boxes($this->id, 'topic', $Purchase); ?>
-								</div>
+				</div>
+				
 				<div id="topsider" class="third-column  box-stretch">
 					<?php do_meta_boxes($this->id, 'topsider', $Purchase); ?>
-								</div>
+				</div>
 
-												</div>
+			</div>
+			<?php endif; ?>
+
+<?php
+/*
+												<?php if ( (is_array($Item->data) && ! empty($Item->data))  || ! empty($Item->sku) || (! empty($Item->addons) && 'no' != $Item->addons) ): ?>
+												<ul>
+												<?php if (!empty($Item->sku)): ?><li><small><?php _e('SKU','Shopp'); ?>: <strong><?php echo $Item->sku; ?></strong></small></li><?php endif; ?>
+
+												<?php if ( isset($Item->addons) && isset($Item->addons->meta) ): ?>
+													<?php foreach ( (array)$Item->addons->meta as $id => $addon ):
+														if ( "inclusive" != $Purchase->taxing )
+															$addonprice = $addon->value->unitprice + ( $addon->value->unitprice * $taxrate );
+														else $addonprice = $addon->value->unitprice;
 
 														?>
 														<li><small><?php echo apply_filters('shopp_purchased_addon_name', $addon->name); ?><?php if ( ! empty($addon->value->sku) ) echo apply_filters('shopp_purchased_addon_sku',' [SKU: ' . $addon->value->sku . ']'); ?>: <strong><?php echo apply_filters('shopp_purchased_addon_unitprice', money($addonprice)); ?></strong></small></li>
@@ -69,7 +83,8 @@
 													<li><small><?php echo apply_filters('shopp_purchased_data_name', $name); ?>: <strong><?php echo apply_filters('shopp_purchased_data_value', $value, $name); ?></strong></small></li>
 												<?php endforeach; ?>
 												<?php endif; ?>
-
+*/?>
+												
 			<?php include $this->ui('editor.php'); ?>
 
 			<?php if ( $this->request('new') ): ?>

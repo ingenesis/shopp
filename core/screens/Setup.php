@@ -64,7 +64,7 @@ class ShoppScreenSetup extends ShoppSettingsScreenController {
 			$states = ShoppLookup::country_zones(array($country));
 
 			// Validate the state
-			if ( ! isset($states[ $country ][ $state ]) )
+			if ( ! empty($states) && ! isset($states[ $country ][ $state ]) )
 				return $this->notice(Shopp::__('The %s provided is not valid.', ShoppBaseLocale()->division()), 'error');
 
 			$update = true;
@@ -90,7 +90,9 @@ class ShoppScreenSetup extends ShoppSettingsScreenController {
 		$basecountry = ShoppBaseLocale()->country();
 		$countrymenu = Shopp::menuoptions($countries, $basecountry, true);
 		$basestates = ShoppLookup::country_zones(array($basecountry));
-		$statesmenu = Shopp::menuoptions($basestates[ $basecountry ], ShoppBaseLocale()->state(), true);
+		$statesmenu = '';
+		if ( ! empty($basestates) )
+			$statesmenu = Shopp::menuoptions($basestates[ $basecountry ], ShoppBaseLocale()->state(), true);
 
 		$targets = shopp_setting('target_markets');
 		if ( is_array($targets) )

@@ -309,19 +309,20 @@ class ShoppUI {
 
 class ShoppAdminListTable extends WP_List_Table {
 
+	public $screen;
 	public $_screen;
 	public $_columns;
 	public $_sortable;
 
 	public function __construct ( $screen, $columns = array()) {
 		if ( is_string( $screen ) )
-			$screen = convert_to_screen( $screen );
+			$this->screen = convert_to_screen( $screen );
 
-		$this->_screen = $screen;
+		$this->_screen = $this->screen;
 
 		if ( !empty( $columns ) ) {
 			$this->_columns = $columns;
-			add_filter( 'manage_' . $screen->id . '_columns', array( &$this, 'get_columns' ), 0 );
+			add_filter( 'manage_' . $this->screen->id . '_columns', array( $this, 'get_columns' ), 0 );
 		}
 
 	}

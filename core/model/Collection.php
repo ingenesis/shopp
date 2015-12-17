@@ -784,6 +784,20 @@ class ProductTaxonomy extends ProductCollection {
 
 	}
 
+	/**
+	 * Sanitizes term fields, according to the filter type provided.
+	 *
+	 * Stub functionality from WP_Term
+	 *
+	 * @since 1.4.0
+	 * @access public
+	 *
+	 * @param string $filter Filter context. Accepts 'edit', 'db', 'display', 'attribute', 'js', 'raw'.
+	 */
+	public function filter( $filter ) {
+		sanitize_term( $this, $this->taxonomy, $filter );
+	}
+
 }
 
 /**
