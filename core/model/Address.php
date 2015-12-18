@@ -97,7 +97,8 @@ class ShoppAddress extends ShoppDatabaseObject {
 		if ( $data ) $this->updates($data);
 
 		if ( empty($this->country) ) {
-
+			$markets = shopp_setting('target_markets');
+			
 			if ( 1 == count($markets) )          // If the target markets are set to single country,
 				$this->country = key($markets);  // use it as the default country, otherwise use the
 			else $this->country = ShoppBaseLocale()->country(); // base of operations

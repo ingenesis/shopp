@@ -1174,23 +1174,26 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 		$Product = $this->Model;
 		$Product->load_data();
 
-		new ShoppAdminProductSaveBox(ShoppProduct::posttype(), 'side', 'core', array('Product' => $Product));
+		new ShoppAdminProductSaveBox($this, 'side', 'core', array('Product' => $Product, 'posttype' => ShoppProduct::posttype()));
 
 		// Load all Shopp product taxonomies
-		foreach ( get_object_taxonomies(ShoppProduct::$posttype) as $taxonomy_name ) {
+		foreach ( get_object_taxonomies(ShoppProduct::posttype()) as $taxonomy_name ) {
 			$taxonomy = get_taxonomy($taxonomy_name);
 			$label = $taxonomy->labels->name;
+
+			if ( is_taxonomy_hierarchical($taxonomy_name) )
+
 			if ( is_taxonomy_hierarchical($taxonomy_name) )
 				new ShoppAdminProductCategoriesBox(ShoppProduct::posttype(), 'side', 'core', array( 'Product' => $Product, 'taxonomy' => $taxonomy_name, 'label' => $label ));
 			else new ShoppAdminProductTaggingBox(ShoppProduct::posttype(), 'side', 'core', array( 'Product' => $Product, 'taxonomy' => $taxonomy_name, 'label' => $label ));
 
 		}
 
-		new ShoppAdminProductSettingsBox(ShoppProduct::posttype(), 'side', 'core', array('Product' => $Product));
-		new ShoppAdminProductSummaryBox(ShoppProduct::posttype(), 'normal', 'core', array('Product' => $Product));
-		new ShoppAdminProductDetailsBox(ShoppProduct::posttype(), 'normal', 'core', array('Product' => $Product));
-		new ShoppAdminProductImagesBox(ShoppProduct::posttype(), 'normal', 'core', array('Product' => $Product));
-		new ShoppAdminProductPricingBox(ShoppProduct::posttype(), 'normal', 'core', array('Product' => $Product));
+		new ShoppAdminProductSettingsBox($this, 'side', 'core', array('Product' => $Product, 'posttype' => ShoppProduct::posttype()));
+		new ShoppAdminProductSummaryBox($this, 'normal', 'core', array('Product' => $Product, 'posttype' => ShoppProduct::posttype()));
+		new ShoppAdminProductDetailsBox($this, 'normal', 'core', array('Product' => $Product, 'posttype' => ShoppProduct::posttype()));
+		new ShoppAdminProductImagesBox($this, 'normal', 'core', array('Product' => $Product, 'posttype' => ShoppProduct::posttype()));
+		new ShoppAdminProductPricingBox($this, 'normal', 'core', array('Product' => $Product, 'posttype' => ShoppProduct::posttype()));
 
 	}
 

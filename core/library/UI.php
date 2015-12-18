@@ -39,10 +39,12 @@ abstract class ShoppAdminMetabox extends ShoppRequestFormFramework {
 	public function __construct ( ShoppScreenController $Screen, $context, $priority, array $args = array() ) {
 		Shopping::restore('admin_notices', $this->notices);
 
-		$this->Screen = $Screen;
 		$this->references = $args;
+		$this->Screen = $Screen;
 
-		add_meta_box($this->id, $this->title() . self::help($this->id), array($this, 'box'), $Screen->id, $context, $priority, $args);
+		$screenid = isset($args['posttype']) ? $args['posttype'] : $Screen->id;
+
+		add_meta_box($this->id, $this->title() . self::help($this->id), array($this, 'box'), $screenid, $context, $priority, $args);
 
 		// Parse query request
 		if ( $this->query() ) {
