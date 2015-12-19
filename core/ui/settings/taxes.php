@@ -1,3 +1,4 @@
+<?php shopp_admin_screen_tabs(); ?>
 <?php
 	if ( count(shopp_setting('target_markets')) == 0 )
 		echo '<div class="error"><p>' . Shopp::__('No target markets have been selected in your store setup.') . '</p></div>';
