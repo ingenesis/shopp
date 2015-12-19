@@ -1,3 +1,4 @@
+<?php shopp_admin_screen_tabs(); ?>
 <script id="delivery-menu" type="text/x-jquery-tmpl">
 <?php echo Shopp::menuoptions(ShoppLookup::timeframes_menu(), false, true); ?>
 </script>
