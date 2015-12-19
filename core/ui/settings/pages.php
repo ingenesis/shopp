@@ -1,3 +1,4 @@
+<?php shopp_admin_screen_tabs(); ?>
 <script id="editor" type="text/x-jquery-tmpl">
 <?php ob_start(); ?>
 <tr class="inline-edit-row ${classnames}" id="${id}">
