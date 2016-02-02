@@ -80,6 +80,10 @@ class ShoppProduct extends WPShoppObject {
 		$this->init(self::$table, $key);
 		$this->type = self::$posttype;
 		$this->load($id, $key);
+		if ( ! $id ) { 
+			$this->ping_status = get_option('default_ping_status');
+			$this->comment_status = get_option('default_comment_status');			
+		}		
 	}
 
 	public function save () {
