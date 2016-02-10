@@ -64,7 +64,6 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 
 		$form = $this->form();
 		if ( empty($form) ) return;
-		check_admin_referer('shopp_edit_gateway');
 
 		do_action('shopp_save_payment_settings');
 		$Gateways = Shopp::object()->Gateways;
