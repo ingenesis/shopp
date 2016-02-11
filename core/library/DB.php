@@ -765,49 +765,49 @@ class ShoppMySQLEngine implements ShoppDBInterface {
 	}
 
 	public function connect ( $host, $user, $password ) {
-		$this->connection = @mysqli_connect($host, $user, $password);
+		$this->connection = @mysql_connect($host, $user, $password);
 		return $this->connection;
 	}
 
 	public function db ( $database ) {
-		return @mysqli_select_db($this->connection, $database);
+		return @mysql_select_db($database, $this->connection);
 	}
 
 	public function ping () {
-		return mysqli_ping($this->connection);
+		return mysql_ping($this->connection);
 
 	}
 
 	public function close () {
-		return @mysqli_close($this->connection);
+		return @mysql_close($this->connection);
 	}
 
 	public function query ( $query ) {
-		$this->result = @mysqli_query($this->connection, $query);
+		$this->result = @mysql_query($query, $this->connection);
 		return $this->result;
 	}
 
 	public function error () {
-		return mysqli_error($this->connection);
+		return mysql_error($this->connection);
 	}
 
 	public function affected () {
-		return mysqli_affected_rows($this->connection);
+		return mysql_affected_rows($this->connection);
 	}
 
 	public function object ( $results = null ) {
 		if ( empty($results) ) $results = $this->results;
 		if ( ! is_resource($results) ) return false;
-		return @mysqli_fetch_object($results);
+		return @mysql_fetch_object($results);
 	}
 
 	public function free () {
 		if ( ! is_resource($this->result) ) return false;
-		return mysqli_free_result($this->result);
+		return mysql_free_result($this->result);
 	}
 
 	public function escape ( $string ) {
-		return mysqli_real_escape_string($this->connection, $string);
+		return mysql_real_escape_string($string, $this->connection);
 	}
 
 }
