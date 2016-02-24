@@ -972,11 +972,11 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 	 */
 	protected function display_tablenav( $which ) {
 		if ( 'top' == $which )
-			wp_nonce_field( 'bulk-' . $this->_args['plural'] );
+			wp_nonce_field( 'bulk-' . $this->_args['plural'], '_bulk_nonce' );
 
 		echo '<div class="tablenav ' . esc_attr( $which ) . '">';
 
-		if ( ! empty($this->get_bulk_actions($which)) ) {
+		if ( $this->get_bulk_actions($which) ) {
 			echo '	<div class="alignleft actions bulkactions">';
 				$this->bulk_actions( $which );
 			echo '	</div>';;

@@ -56,7 +56,7 @@ if (!Array.prototype.indexOf) {
 /**
  * Provides a feature limited, fast implementation of sprintf
  **/
-if ( ! sprintf ) {
+if ( typeof sprintf != 'function' ) {
 	function sprintf (format, args) {
 		if ( ! format ) return;
 		var result, i, type, prev = 0, arg = 0,

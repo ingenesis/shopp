@@ -22,7 +22,7 @@ jQuery(document).ready( function($) {
 		var $this = $(this),
 			ratesidx = rates.length, rulesidx = 0,
 			row = $this.parents('tr').hide(),
-			setting = $.getQueryVar('id', $this.attr('href')),
+			setting = $.getQueryVar('id', $this.attr('href')).trim(),
 			settings = rates[setting]?rates[setting]:{},
 			data = $.extend({
 				'id'       : setting ? setting : 'new',
@@ -187,6 +187,11 @@ jQuery(document).ready( function($) {
 
 		editing = $this;
 
+	});
+
+	$('#the-list a.delete').click(function() {
+		if (confirm($tr.confirm)) return true;
+		else return false; 
 	});
 
 });

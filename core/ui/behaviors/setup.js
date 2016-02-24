@@ -53,4 +53,5 @@ jQuery(document).ready(function ($) {
 		else $('#target_markets input').not(this).attr('checked',false);
 	});
 
+    $('#target_markets ul').sortable({'axis':'y', 'items': 'li:has(input:checked):not(.quick-select)'});
 });

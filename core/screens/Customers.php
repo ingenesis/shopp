@@ -18,7 +18,7 @@ class ShoppAdminCustomers extends ShoppAdminController {
 	protected $ui = 'customers';
 
 	protected function route () {
-		if ( ! empty($this->request('id') ) )
+		if ( $this->request('id') )
 			return 'ShoppScreenCustomerEditor';
 		else return 'ShoppScreenCustomers';
 	}

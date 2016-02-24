@@ -216,8 +216,9 @@ class ShoppInstallation extends ShoppFlowController {
 		foreach ($tests as $testquery) {
 			$db = sDB::get();
 			sDB::query($testquery);
-			$error = mysqli_error($db->dbh);
-			if (!empty($error)) $this->error('dbprivileges');
+			$error = $db->api->error();
+
+			if ( ! empty($error) ) $this->error('dbprivileges');
 		}
 
 		// Make sure dbDelta() is available
@@ -528,7 +529,7 @@ class ShoppInstallation extends ShoppFlowController {
 				$value->uri = $name;
 			}
 
-			$value = mysqli_real_escape_string(sDB::get()->dbh, serialize($value));
+			$value = sDB::escape( serialize($value) );
 			sDB::query("UPDATE $meta_table set name='original', value='$value' WHERE id=$r->id");
 		}
 
@@ -553,7 +554,7 @@ class ShoppInstallation extends ShoppFlowController {
 				$value->storage = "FSStorage";
 				$value->uri = $name;
 			}
-			$value = mysqli_real_escape_string(sDB::get()->dbh, serialize($value));
+			$value = sDB::escape( serialize($value) );
 			sDB::query("UPDATE $meta_table set name='$name', value='$value' WHERE id=$r->id");
 		}
 

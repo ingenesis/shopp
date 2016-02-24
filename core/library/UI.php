@@ -333,6 +333,9 @@ class ShoppAdminListTable extends WP_List_Table {
 		$columns = get_column_headers( $this->_screen );
 		$hidden = get_hidden_columns( $this->_screen );
 		$screen = get_current_screen();
+		$primary = method_exists($this, "get_primary_column_name")
+			? $this->get_primary_column_name()
+			: null;
 
 		$_sortable = apply_filters( "manage_{$screen->id}_sortable_columns", $this->get_sortable_columns() );
 
@@ -348,8 +351,7 @@ class ShoppAdminListTable extends WP_List_Table {
 			$sortable[$id] = $data;
 		}
 
-
-		return array( $columns, $hidden, $sortable );
+		return array( $columns, $hidden, $sortable, $primary );
 	}
 
 	public function get_columns() {

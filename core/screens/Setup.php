@@ -22,6 +22,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 class ShoppScreenSetup extends ShoppSettingsScreenController {
 
 	public function assets () {
+		wp_enqueue_script('jquery-ui-draggable');
+		wp_enqueue_script('jquery-ui-sortable');
 		shopp_enqueue_script('setup');
 		shopp_localize_script('setup', '$ss', array(
 			'loading' => Shopp::__('Loading&hellip;'),
@@ -36,8 +38,6 @@ class ShoppScreenSetup extends ShoppSettingsScreenController {
 	}
 
 	public function updates () {
-		if ( ! isset($_POST['settings']['target_markets']) )
-			asort($_POST['settings']['target_markets']);
 
 		// Save all other settings
 		shopp_set_formsettings();

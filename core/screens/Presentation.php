@@ -37,7 +37,7 @@ class ShoppScreenPresentation extends ShoppSettingsScreenController {
 			$this->notice(Shopp::__("Shopp theme templates can't be used because they don't exist."), 'error');
 		}
 
-		if ( empty($this->form('catalog_pagination')) )
+		if ( ! $this->form('catalog_pagination') )
 			$this->form['catalog_pagination'] = 0;
 
 		// Recount terms when this setting changes

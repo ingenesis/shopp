@@ -53,6 +53,12 @@ class ShoppScreenPages extends ShoppSettingsScreenController {
 		include $this->ui('pages.php');
 
 	}
+	
+	public function url ( $params = array() ) {
+		$url = parent::url($params);
+		return remove_query_arg('edit', $url);
+	}
+	
 
 } // class ShoppScreenPages
 
@@ -70,16 +76,18 @@ class ShoppPagesSettingsTable extends ShoppAdminTable {
 
 		$template = array(
 			'id'          => '',
+			'name'        => '',
 			'title'       => '',
 			'slug'        => '',
 			'description' => ''
 		);
 
 		foreach ( $settings as $name => $page ) {
+			$page['name'] = $name;
 			$page['id'] = $name;
 			$this->items[ $name ] = (object) array_merge($template, $page);
 		}
-
+		
 		$per_page = 25;
 		$total = count($this->items);
 		$this->set_pagination_args( array(
@@ -105,19 +113,18 @@ class ShoppPagesSettingsTable extends ShoppAdminTable {
 	}
 
 	protected function editing( $Item ) {
-		return false; ( $Item->id == $this->request('id') );
+		return ( $Item->id == $this->request('edit') );
 	}
 
 	public function editor( $Item ) {
 		$data = array(
-			'${id}' => $Item->id,
+			'${id}' => "edit-{$Item->name}-page",
 			'${name}' => $Item->name,
-			'${width}' => $Item->width,
-			'${height}' => $Item->height,
-			'${sharpen}' => $Item->sharpen,
-			'${select_fit_' . $Item->fit . '}' => ' selected="selected"',
-			'${select_quality_' . $Item->quality . '}' => ' selected="selected"'
+			'${title}' => $Item->title,
+			'${slug}' => $Item->slug,
+			'${description}' => $Item->description
 		);
+		
 		echo ShoppUI::template($this->editor, $data);
 	}
 

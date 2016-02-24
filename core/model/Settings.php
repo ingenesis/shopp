@@ -134,7 +134,7 @@ class ShoppSettings extends ShoppDatabaseObject {
 	 **/
 	public function update ($name,$value) {
 
-		if ($this->get($name) == $value) return true;
+		if ( $this->get($name) === $value ) return true;
 
 		$Setting = $this->setting();
 		$Setting->name = $name;

@@ -304,6 +304,7 @@ class ShoppAjax {
 
 			$source = strtolower($_GET['s']);
 			$q = $_GET['q'];
+			$orderlimit = '';
 
 			do_action('shopp_suggestions_from_'.$source);
 
@@ -408,7 +409,8 @@ class ShoppAjax {
 						$joins[] = "INNER JOIN  $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id";
 						$where[] = "tt.taxonomy = '" . $taxonomy . "'";
 						if ( 'shopp_popular_tags' == strtolower($q) ) {
-							$q = ''; $orderlimit = "ORDER BY tt.count DESC LIMIT 15";
+							$q = ''; 
+							$orderlimit = "ORDER BY tt.count DESC LIMIT 15";
 						}
 					}
 					break;
@@ -416,11 +418,11 @@ class ShoppAjax {
 
 			if ( ! empty($q) )
 				$where[] = "$name LIKE '%".sDB::escape($q)."%'";
-			$where = join(' AND ',$where);
-			$joins = join(' ',$joins);
+			$where = join(' AND ', $where);
+			$joins = join(' ', $joins);
 
 			$query = "SELECT $id AS id, $name AS name FROM $table $joins WHERE $where $orderlimit";
-			$items = sDB::query($query,'array');
+			$items = sDB::query($query, 'array');
 			echo json_encode($items);
 			exit();
 		}

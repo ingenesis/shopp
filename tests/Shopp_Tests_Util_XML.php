@@ -2,7 +2,7 @@
 /**
  * XML helpers.
  *
- * Copy of PHPUnit_Util_XML from older version of PHPUnit. 
+ * Copy of PHPUnit_Util_XML from older version of PHPUnit.
  *
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  Sebastian Bergmann <sebastian@phpunit.de>
@@ -199,7 +199,7 @@ class Shopp_Tests_Util_XML
 
         switch ($element->tagName) {
             case 'array': {
-                $variable = [];
+                $variable = array();
 
                 foreach ($element->getElementsByTagName('element') as $element) {
                     $value = self::xmlToVariable($element->childNodes->item(1));
@@ -218,7 +218,7 @@ class Shopp_Tests_Util_XML
 
                 if ($element->hasChildNodes()) {
                     $arguments       = $element->childNodes->item(1)->childNodes;
-                    $constructorArgs = [];
+                    $constructorArgs = array();
 
                     foreach ($arguments as $argument) {
                         if ($argument instanceof DOMElement) {
@@ -265,7 +265,7 @@ class Shopp_Tests_Util_XML
      */
     public static function assertValidKeys(array $hash, array $validKeys)
     {
-        $valids = [];
+        $valids = array();
 
         // Normalize validation keys so that we can use both indexed and
         // associative arrays.
@@ -325,27 +325,27 @@ class Shopp_Tests_Util_XML
         if (strstr($selector, ' ')) {
             $elements = explode(' ', $selector);
         } else {
-            $elements = [$selector];
+            $elements = array($selector);
         }
 
-        $previousTag = [];
+        $previousTag = array();
 
         foreach (array_reverse($elements) as $element) {
             $element = str_replace('__SPACE__', ' ', $element);
 
             // child selector
             if ($element == '>') {
-                $previousTag = ['child' => $previousTag['descendant']];
+                $previousTag = array('child' => $previousTag['descendant']);
                 continue;
             }
 
             // adjacent-sibling selector
             if ($element == '+') {
-                $previousTag = ['adjacent-sibling' => $previousTag['descendant']];
+                $previousTag = array('adjacent-sibling' => $previousTag['descendant']);
                 continue;
             }
 
-            $tag = [];
+            $tag = array();
 
             // match element tag
             preg_match("/^([^\.#\[]*)/", $element, $eltMatches);
@@ -363,8 +363,8 @@ class Shopp_Tests_Util_XML
             );
 
             if (!empty($matches[1])) {
-                $classes = [];
-                $attrs   = [];
+                $classes = array();
+                $attrs   = array();
 
                 foreach ($matches[1] as $match) {
                     // id matched
@@ -420,7 +420,7 @@ class Shopp_Tests_Util_XML
                 unset($tag['content']);
             }
 
-            $previousTag = ['descendant' => $tag];
+            $previousTag = array('descendant' => $tag);
         }
 
         return $tag;
@@ -471,12 +471,12 @@ class Shopp_Tests_Util_XML
      */
     public static function findNodes(DOMDocument $dom, array $options, $isHtml = true)
     {
-        $valid = [
+        $valid = array(
           'id', 'class', 'tag', 'content', 'attributes', 'parent',
           'child', 'ancestor', 'descendant', 'children', 'adjacent-sibling'
-        ];
+        );
 
-        $filtered = [];
+        $filtered = array();
         $options  = self::assertValidKeys($options, $valid);
 
         // find the element by id
@@ -488,7 +488,7 @@ class Shopp_Tests_Util_XML
             $options['attributes']['class'] = $options['class'];
         }
 
-        $nodes = [];
+        $nodes = array();
 
         // find the element by a tag type
         if ($options['tag']) {
@@ -510,7 +510,7 @@ class Shopp_Tests_Util_XML
             }
         } // no tag selected, get them all
         else {
-            $tags = [
+            $tags = array(
               'a', 'abbr', 'acronym', 'address', 'area', 'b', 'base', 'bdo',
               'big', 'blockquote', 'body', 'br', 'button', 'caption', 'cite',
               'code', 'col', 'colgroup', 'dd', 'del', 'div', 'dfn', 'dl',
@@ -528,7 +528,7 @@ class Shopp_Tests_Util_XML
               'footer', 'header', 'hgroup', 'keygen', 'mark', 'meter', 'nav',
               'output', 'progress', 'ruby', 'rt', 'rp', 'track', 'section',
               'source', 'summary', 'time', 'video', 'wbr'
-            ];
+            );
 
             foreach ($tags as $tag) {
                 if ($isHtml) {
@@ -595,7 +595,7 @@ class Shopp_Tests_Util_XML
             }
 
             $nodes    = $filtered;
-            $filtered = [];
+            $filtered = array();
 
             if (empty($nodes)) {
                 return false;
@@ -628,7 +628,7 @@ class Shopp_Tests_Util_XML
             }
 
             $nodes    = $filtered;
-            $filtered = [];
+            $filtered = array();
 
             if (empty($nodes)) {
                 return false;
@@ -649,7 +649,7 @@ class Shopp_Tests_Util_XML
             }
 
             $nodes    = $filtered;
-            $filtered = [];
+            $filtered = array();
 
             if (empty($nodes)) {
                 return false;
@@ -659,7 +659,7 @@ class Shopp_Tests_Util_XML
         // filter by child node
         if ($options['child']) {
             $childNodes = self::findNodes($dom, $options['child'], $isHtml);
-            $childNodes = !empty($childNodes) ? $childNodes : [];
+            $childNodes = !empty($childNodes) ? $childNodes : array();
 
             foreach ($nodes as $node) {
                 foreach ($node->childNodes as $child) {
@@ -672,7 +672,7 @@ class Shopp_Tests_Util_XML
             }
 
             $nodes    = $filtered;
-            $filtered = [];
+            $filtered = array();
 
             if (empty($nodes)) {
                 return false;
@@ -682,7 +682,7 @@ class Shopp_Tests_Util_XML
         // filter by adjacent-sibling
         if ($options['adjacent-sibling']) {
             $adjacentSiblingNodes = self::findNodes($dom, $options['adjacent-sibling'], $isHtml);
-            $adjacentSiblingNodes = !empty($adjacentSiblingNodes) ? $adjacentSiblingNodes : [];
+            $adjacentSiblingNodes = !empty($adjacentSiblingNodes) ? $adjacentSiblingNodes : array();
 
             foreach ($nodes as $node) {
                 $sibling = $node;
@@ -704,7 +704,7 @@ class Shopp_Tests_Util_XML
             }
 
             $nodes    = $filtered;
-            $filtered = [];
+            $filtered = array();
 
             if (empty($nodes)) {
                 return false;
@@ -729,7 +729,7 @@ class Shopp_Tests_Util_XML
             }
 
             $nodes    = $filtered;
-            $filtered = [];
+            $filtered = array();
 
             if (empty($nodes)) {
                 return false;
@@ -739,7 +739,7 @@ class Shopp_Tests_Util_XML
         // filter by descendant
         if ($options['descendant']) {
             $descendantNodes = self::findNodes($dom, $options['descendant'], $isHtml);
-            $descendantNodes = !empty($descendantNodes) ? $descendantNodes : [];
+            $descendantNodes = !empty($descendantNodes) ? $descendantNodes : array();
 
             foreach ($nodes as $node) {
                 foreach (self::getDescendants($node) as $descendant) {
@@ -752,7 +752,7 @@ class Shopp_Tests_Util_XML
             }
 
             $nodes    = $filtered;
-            $filtered = [];
+            $filtered = array();
 
             if (empty($nodes)) {
                 return false;
@@ -761,7 +761,7 @@ class Shopp_Tests_Util_XML
 
         // filter by children
         if ($options['children']) {
-            $validChild   = ['count', 'greater_than', 'less_than', 'only'];
+            $validChild   = array('count', 'greater_than', 'less_than', 'only');
             $childOptions = self::assertValidKeys(
                 $options['children'],
                 $validChild
@@ -839,7 +839,7 @@ class Shopp_Tests_Util_XML
         }
 
         // return the first node that matches all criteria
-        return !empty($nodes) ? $nodes : [];
+        return !empty($nodes) ? $nodes : array();
     }
 
     /**
@@ -853,8 +853,8 @@ class Shopp_Tests_Util_XML
      */
     protected static function getDescendants(DOMNode $node)
     {
-        $allChildren = [];
-        $childNodes  = $node->childNodes ? $node->childNodes : [];
+        $allChildren = array();
+        $childNodes  = $node->childNodes ? $node->childNodes : array();
 
         foreach ($childNodes as $child) {
             if ($child->nodeType === XML_CDATA_SECTION_NODE ||
@@ -863,10 +863,10 @@ class Shopp_Tests_Util_XML
             }
 
             $children    = self::getDescendants($child);
-            $allChildren = array_merge($allChildren, $children, [$child]);
+            $allChildren = array_merge($allChildren, $children, array($child));
         }
 
-        return isset($allChildren) ? $allChildren : [];
+        return isset($allChildren) ? $allChildren : array();
     }
 
     /**

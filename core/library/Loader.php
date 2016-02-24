@@ -436,7 +436,7 @@ ShoppLoader::map(array(
 	'shoppadmin' => '/flow/Admin.php',
 	'shoppadminmetabox' => '/library/UI.php',
 	'shoppadminmenusmetabox' => '/library/UI.php',
-	'shopppagesmenusbox' => '/Library/UI.php',
+	'shopppagesmenusbox' => '/library/UI.php',
 
 	'shoppadmincustomers' => '/screens/Customers.php',
 	'shoppadmincategories' => '/screens/Categories.php',

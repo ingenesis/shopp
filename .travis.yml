@@ -8,11 +8,11 @@ language: php
 
 # PHP version used in first build configuration.
 php:
-    - "5.5"
+    - "5.6"
 
 # WordPress version used in first build configuration.
 env:
-    - WP_VERSION=master
+    - WP_VERSION=4.4.2
 
 # Next we define our matrix of additional build configurations to test against.
 # The versions listed above will automatically create our first configuration,
@@ -31,8 +31,8 @@ matrix:
   include:
      - php: "7.0"
        env: WP_VERSION=master
-     - php: "5.6"
-       env: WP_VERSION=4.4
+     - php: "5.3"
+       env: WP_VERSION=4.0
 
 # Clones WordPress and configures our testing environment.
 before_script:

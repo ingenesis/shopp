@@ -64,7 +64,6 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 
 		$form = $this->form();
 		if ( empty($form) ) return;
-		check_admin_referer('shopp_edit_gateway');
 
 		do_action('shopp_save_payment_settings');
 		$Gateways = Shopp::object()->Gateways;
@@ -215,14 +214,15 @@ class ShoppPaymentsSettingsTable extends ShoppAdminTable {
 
 	public function column_name( $Item ) {
 		$label = empty($Item->settings['label']) ? Shopp::__('(no label)') : $Item->settings['label'];
-		echo '<a class="row-title edit" href="' . $editurl . '" title="' . Shopp::__('Edit') . ' &quot;' . esc_attr($label) . '&quot;">' . esc_html($label) . '</a>';
 
 		$edit_link = wp_nonce_url(add_query_arg('id', $Item->payid), 'shopp_edit_gateway');
 		$delete_link = wp_nonce_url(add_query_arg('delete', $Item->payid), 'shopp_delete_gateway');
 
+		echo '<a class="row-title edit" href="' . esc_url($edit_link) . '" title="' . Shopp::__('Edit') . ' &quot;' . esc_attr($label) . '&quot;">' . esc_html($label) . '</a>';
+
 		echo $this->row_actions( array(
 			'edit' => '<a class="edit" href="' . $edit_link . '">' . __( 'Edit' ) . '</a>',
-			'delete' => '<a class="delete" href="' . $delete_link . '">' . __( 'Delete' ) . '</a>',
+			'delete' => '<a class="delete" href="' . $delete_link . '">' . __( 'Delete' ) . '</a>', 
 		) );
 
 	}

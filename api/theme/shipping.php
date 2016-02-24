@@ -338,7 +338,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 	 * @return string The button markup
 	 **/
 	public static function update_button ( $result, $options, $O ) {
-		$submit_attrs = array('title','label','disabled','tabindex','accesskey','class');
+		$submit_attrs = array('title', 'label', 'disabled', 'tabindex', 'accesskey', 'class'); 
 		$stdclasses = 'update-button hide-if-js';
 		$defaults = array(
 			'label' => Shopp::__('Update Shipping'),
