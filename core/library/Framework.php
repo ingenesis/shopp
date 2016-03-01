@@ -487,6 +487,7 @@ abstract class ShoppFormPostFramework {
 abstract class ShoppRequestFormFramework extends ShoppFormPostFramework {
 
 	public function request ( $key = null ) {
+		if ( ! empty($key) )
 		return ShoppRequestProcessing::get($key, $this->request);
 	}
 
