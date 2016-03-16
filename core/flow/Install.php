@@ -81,7 +81,7 @@ class ShoppInstallation extends ShoppFlowController {
 
 		shopp_set_setting('updates', false);
 
-		add_action('init', 'flush_rewrite_rules', 99);
+		flush_rewrite_rules();
 		return true;
 	}
 
