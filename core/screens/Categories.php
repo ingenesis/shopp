@@ -27,7 +27,22 @@ class ShoppAdminCategories extends ShoppAdminPostController {
 
 }
 
-class ShoppScreenCategories extends ShoppScreenController {
+/**
+ * Contains methods common to a number of different category screen classes.
+ */
+class ShoppScreenCategoriesBase extends ShoppScreenController {
+	/**
+	 * @param WP_Term $term
+	 * @return ProductCategory
+	 */
+	public function load_category( $term ) {
+		$Category = new ProductCategory();
+		$Category->populate( $term );
+		return $Category;
+	}
+}
+
+class ShoppScreenCategories extends ShoppScreenCategoriesBase {
 
 	public $worklist = array();
 
@@ -422,7 +437,7 @@ class ShoppScreenCategoryArrangeProducts extends ShoppScreenController {
 	}
 }
 
-class ShoppScreenCategoryEditor extends ShoppScreenController {
+class ShoppScreenCategoryEditor extends ShoppScreenCategoriesBase {
 
 	public function assets () {
 		wp_enqueue_script('postbox');
