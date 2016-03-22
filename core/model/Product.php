@@ -155,7 +155,7 @@ class ShoppProduct extends WPShoppObject {
 			'meta' 		  => 'load_meta',
 			'prices' 	  => 'load_prices',
 			'specs' 	  => 'load_meta',
-			'images' 	  => 'load_meta',
+			'images' 	  => 'load_images',
 			'coverimages' => 'load_coverimages',
 			'categories'  => 'load_taxonomies',
 			'tags' 		  => 'load_taxonomies'
@@ -188,7 +188,6 @@ class ShoppProduct extends WPShoppObject {
 		foreach ( $loadcalls as $loadmethod )
 			if ( method_exists($this, $loadmethod) )
 				call_user_func_array(array($this, $loadmethod), array($ids));
-
 	}
 
 	/**
@@ -253,7 +252,7 @@ class ShoppProduct extends WPShoppObject {
 	}
 
 	/**
-	 * Loads all product meta data (meta,specs,images)
+	 * Loads all product meta data (meta,specs)
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.2
@@ -263,17 +262,32 @@ class ShoppProduct extends WPShoppObject {
 	public function load_meta ( $ids ) {
 		if ( empty($ids) ) return;
 		$table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
-
-		$imagesort = $this->image_order();
-		$metasort = array('sortorder','sortorder ASC');
-		if ( in_array($imagesort, $metasort) )
-			sDB::query("SELECT * FROM $table WHERE context='product' AND parent IN ($ids) ORDER BY sortorder", 'array', array($this, 'metasetloader'), 'parent', 'metatype', 'name', false);
-		else { // Separate sort order for images
-			sDB::query("SELECT * FROM $table WHERE context='product' AND type != 'image' AND parent IN ($ids) ORDER BY sortorder", 'array', array($this, 'metasetloader'), 'parent', 'metatype', 'name', false);
-			sDB::query("SELECT * FROM $table WHERE context='product' AND type = 'image' AND parent IN ($ids) ORDER BY $imagesort", 'array', array($this, 'metasetloader'), 'parent', 'metatype', 'name', false);
-		}
-
+		sDB::query("SELECT * FROM $table WHERE context='product' AND parent IN ($ids) ORDER BY sortorder", 'array', array($this, 'metasetloader'), 'parent', 'metatype', 'name', false);
 		do_action('shopp_product_load_meta', $ids, $this);
+	}
+
+	/**
+	 * Loads the product images.
+	 *
+	 * @since 1.4
+	 */
+	public function load_images( $ids ) {
+		if ( empty($ids) ) return;
+
+		$table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
+		$imagesort = $this->image_order();
+
+		sDB::query(
+			"SELECT * FROM $table WHERE context='product' AND type = 'image' AND parent IN ($ids) ORDER BY $imagesort",
+			'array', array( $this, 'metasetloader' ), 'parent', 'metatype', 'name', false
+		);
+
+		// Cleanup: remove any non-ProductImage objects (we may have some strings containing
+		// image IDs which we have no need to retain)
+		foreach ( $this->images as $key => $image_object )
+			if ( ! is_object( $image_object ) ) unset( $this->images[$key] );
+
+		do_action('shopp_product_load_images', $ids, $this);
 	}
 
 	/**
