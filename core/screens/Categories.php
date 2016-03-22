@@ -526,13 +526,6 @@ class ShoppScreenCategoryEditor extends ShoppScreenCategoriesBase {
 		$ids = array_keys($Categories);
 		return $ids;
 	}
-
-	public function load_category ( $term, $taxonomy ) {
-		$Category = new ProductCategory();
-		$Category->populate($term);
-
-		return $Category;
-	}
 	
 	public function load () {
 
