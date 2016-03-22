@@ -135,7 +135,7 @@ class ShoppPagesSettingsTable extends ShoppAdminTable {
 	public function column_title( $Item ) {
 		$title = empty($Item->title) ? '(' . Shopp::__('not set') . ')' : $Item->title;
 
-		$edit_link = wp_nonce_url(add_query_arg('edit', $Item->id), 'shopp-settings-images');
+		$edit_link = wp_nonce_url(add_query_arg('edit', $Item->id), 'shopp-settings-pages');
 
 		echo '<a class="row-title edit" href="' . $edit_link . '" title="' . Shopp::__('Edit') . ' &quot;' . esc_attr($title) . '&quot;">' . esc_html($title) . '</a>';
 

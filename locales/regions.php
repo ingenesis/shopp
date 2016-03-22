@@ -14,7 +14,7 @@
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 return array(
-	Shopp::__('North America') => array('CA', 'US', 'USAF', 'USAT', 'BB', 'BS', 'BH', 'BM', 'CW', 'GP', 'JM', 'MX', 'PR', 'PM'),
+	Shopp::__('North America') => array('US', 'USAF', 'USAT', 'CA', 'BB', 'BS', 'BH', 'BM', 'CW', 'GP', 'JM', 'MX', 'PR', 'PM'),
 	Shopp::__('Central America') => array('AI', 'AG', 'BZ', 'VG', 'KY', 'CR', 'CU', 'DM', 'DO', 'SV', 'GL', 'GT', 'HT', 'HN', 'MQ', 'MS', 'NI', 'PA', 'BL', 'KN', 'LC', 'MF', 'SX', 'TC'),
 	Shopp::__('South America') => array('AR', 'AW', 'BO', 'BR', 'CL', 'CO', 'EC', 'FK', 'GF', 'GD', 'GY', 'PY', 'PE', 'VC', 'GS', 'SR', 'TT', 'UY', 'VE'),
 	Shopp::__('Europe') => array('GB', 'AX', 'AL', 'AD', 'AT', 'BY', 'BE', 'BA', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FO', 'FI', 'FR', 'DE', 'GI', 'GR', 'GG', 'HU', 'IS', 'IE', 'IM', 'IT', 'JE', 'LV', 'LI', 'LT', 'LU', 'MK', 'MT', 'MD', 'MC', 'ME', 'NL', 'NO', 'PL', 'PT', 'RO', 'SM', 'RS', 'SK', 'SI', 'ES', 'SJ', 'SE', 'CH', 'UA', 'VA'),

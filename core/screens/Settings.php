@@ -162,10 +162,18 @@ class ShoppSettingsScreenController extends ShoppScreenController {
 	}
 
 	public function posted () {
+		parent::posted();
+		$this->posted = $this->form;
+		
 		if ( ! empty($_POST['settings']) )
 			$this->form = ShoppRequestProcessing::process($_POST['settings'], $this->defaults);
-		else return parent::posted();
+
 		return true;
+	}
+	
+	public function saveform () {
+		$_POST['settings'] = $this->form;
+		return shopp_set_formsettings();
 	}
 
 	public function formattrs () {

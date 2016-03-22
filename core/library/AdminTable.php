@@ -976,10 +976,10 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 
 		echo '<div class="tablenav ' . esc_attr( $which ) . '">';
 
-		if ( $this->get_bulk_actions($which) ) {
+		if ( $actions = $this->get_bulk_actions($which) ) {
 			echo '	<div class="alignleft actions bulkactions">';
-				$this->bulk_actions( $which );
-			echo '	</div>';;
+			echo $actions;
+			echo '	</div>';
 		}
 
 		echo '	' . $this->extra_tablenav( $which );

@@ -1289,6 +1289,11 @@ class ShoppAdminProductSettingsBox extends ShoppAdminMetabox {
 		return Shopp::__('Settings');
 	}
 
+	protected function init () {
+		$Shopp = Shopp::object();
+		$this->references['shiprealtime'] = $Shopp->Shipping->realtime;
+	}
+
 }
 
 class ShoppAdminProductSummaryBox extends ShoppAdminMetabox {

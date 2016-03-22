@@ -4,12 +4,18 @@
  * Licensed under the GPLv3 {@see license.txt}
  */
 
-jQuery(document).ready(function ($) {
+jQuery(document).ready(function($) {
 
 	var xhr,
-		$states = $('#base_operations_zone').selectize(),
-		states = $states[0].selectize,
-		$base = $('#base_operations').selectize({
+		$states = $('#base_operations_zone').selectize({
+		    onInitialize: function () {
+                if ( Object.keys(this.options).length < 1 )
+                    this.$control.hide();
+		    }
+		}),
+        states = $states[0].selectize;
+    
+		$('#base_operations').selectize({
 			onChange: function (value) {
 				if ( value == '' ) {
 					states.disable();
@@ -54,4 +60,5 @@ jQuery(document).ready(function ($) {
 		else $('#target_markets input').not(this).attr('checked',false);
 	});
 
+    $('#target_markets ul').sortable({'axis':'y', 'items': 'li:has(input:checked):not(.quick-select)'});
 });

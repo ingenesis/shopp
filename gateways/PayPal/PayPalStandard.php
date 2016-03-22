@@ -415,7 +415,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 			$_['last_name'] = join(' ', $shipname);
 		}
 
-		$_['address_override'] 		= 1;
+		$_['address_override'] 		= apply_filters( 'shopp_paypalstandard_addressoverride', 1 );
 
 		$_['address1']				= $Address->address;
 		if (!empty($Address->xaddress))

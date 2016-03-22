@@ -27,7 +27,6 @@ class ShoppScreenAdvanced extends ShoppSettingsScreenController {
 	public function screen () {
 
 		if ( ! empty($_POST['save']) ) {
-			check_admin_referer('shopp-system-advanced');
 
 			if ( ! isset($_POST['settings']['error_notifications']) )
 				$_POST['settings']['error_notifications'] = array();
@@ -47,22 +46,18 @@ class ShoppScreenAdvanced extends ShoppSettingsScreenController {
 			$this->notice(Shopp::__('Advanced settings saved.'));
 
 		} elseif ( ! empty($_POST['rebuild']) ) {
-			check_admin_referer('shopp-system-advanced');
 			$assets = ShoppDatabaseObject::tablename(ProductImage::$table);
 			$query = "DELETE FROM $assets WHERE context='image' AND type='image'";
 			if ( sDB::query($query) )
 				$this->notice(Shopp::__('All cached images have been cleared.'));
 
 		} elseif ( ! empty($_POST['resum']) ) {
-			check_admin_referer('shopp-system-advanced');
 			$summaries = ShoppDatabaseObject::tablename(ProductSummary::$table);
 			$query = "UPDATE $summaries SET modified='" . ProductSummary::RECALCULATE . "'";
 			if ( sDB::query($query) )
 				$this->notice(Shopp::__('Product summaries are set to recalculate.'));
 
 		} elseif ( isset($_POST['shopp_services_helper']) ) {
-			check_admin_referer('shopp-system-advanced');
-
 			$plugin = 'ShoppServices.php';
 			$source = SHOPP_PATH . "/core/library/$plugin";
 			$install = WPMU_PLUGIN_DIR . '/' . $plugin;

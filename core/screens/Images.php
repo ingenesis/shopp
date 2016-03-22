@@ -21,6 +21,17 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 class ShoppScreenImages extends ShoppSettingsScreenController {
 
+	/**
+	 * Lookout for image size delete requests or else defer to the parent class's
+	 * posted() method.
+	 *
+	 * @return bool
+	 */
+	public function posted() {
+		if ( $this->request( 'delete' ) ) return true;
+		else return parent::posted();
+	}
+
 	public function assets() {
 		shopp_enqueue_script('jquery-tmpl');
 		shopp_enqueue_script('imageset');

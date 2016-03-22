@@ -192,7 +192,7 @@ class ShoppScreenReports extends ShoppScreenController {
 
 		$Report = $this->Report;
 		$Report->pagination();
-		$ListTable = ShoppUI::table_set_pagination ($this->screen, $Report->total, $Report->pages, $per_page );
+		$ListTable = ShoppUI::table_set_pagination ($screen, $Report->total, $Report->pages, $per_page );
 
 		$ranges = array(
 			'all' => __('Show All Orders','Shopp'),

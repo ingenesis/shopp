@@ -21,7 +21,16 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 class ShoppScreenSetup extends ShoppSettingsScreenController {
 
+	/**
+	 * Setup extra js/css assets needed.
+	 * 
+	 * @since 1.4
+	 * 
+	 * @return void
+	 */
 	public function assets () {
+		wp_enqueue_script('jquery-ui-draggable');
+		wp_enqueue_script('jquery-ui-sortable');
 		shopp_enqueue_script('setup');
 		shopp_localize_script('setup', '$ss', array(
 			'loading' => Shopp::__('Loading&hellip;'),
@@ -31,27 +40,38 @@ class ShoppScreenSetup extends ShoppSettingsScreenController {
 		$this->nonce($this->request('page'));
 	}
 
+	/**
+	 * Queue up operation handlers.
+	 * 
+	 * @since 1.4
+	 * 
+	 * @return void
+	 */
 	public function ops () {
 		add_action('shopp_admin_settings_ops', array($this, 'updates') );
 	}
 
+	/**
+	 * Process setting changes.
+	 * 
+	 * @since 1.4
+	 * 
+	 * @return void
+	 */
 	public function updates () {
-		if ( isset($_POST['settings']['target_markets']) )
-			asort($_POST['settings']['target_markets']);
-
+			
 		// Save all other settings
-		shopp_set_formsettings();
+		$this->saveform();
 
 		$update = false;
 
 		// Update country changes
-		$country = ShoppBaseLocale()->country();
-		if ( $country != $this->form('country') ) {
-			$country = strtoupper($this->form('country'));
+		$country = strtoupper($this->form('country'));
+		if ( ShoppBaseLocale()->country() != $country ) {
 			$countries = ShoppLookup::countries();
 
 			// Validate the country
-			if ( ! isset($countries[ $country ]) )
+			if ( ! empty($country) && ! isset($countries[ $country ]) )
 				return $this->notice(Shopp::__('The country provided is not valid.'), 'error');
 
 			$update = true;
@@ -73,10 +93,31 @@ class ShoppScreenSetup extends ShoppSettingsScreenController {
 		// Save base locale changes
 		if ( $update )
 			ShoppBaseLocale()->save($country, $state);
-
-		$this->notice(Shopp::__('Shopp settings saved.'));
+		
+		// Sort target_markets, if requested, before saving
+		if ( isset($this->posted['sort_markets']) ) {
+			$sort = $this->posted['sort_markets'];
+			
+			if ( 'alpha' == $sort ) 
+				asort($this->form['target_markets']);
+			elseif ( 'region' == $sort )
+				$this->form['target_markets'] = $this->regionsort($this->form['target_markets']);
+			
+			$this->saveform(); // Save form again after sorting target markets
+			
+		}
+		
+		if ( $updated )
+			$this->notice(Shopp::__('Shopp settings saved.'));
 	}
 
+	/**
+	 * Prepare data and show the UI.
+	 * 
+	 * @since 1.4
+	 * 
+	 * @return void
+	 */
 	public function screen () {
 
 		if ( ! current_user_can('shopp_settings') )
@@ -103,6 +144,42 @@ class ShoppScreenSetup extends ShoppSettingsScreenController {
 
 		include $this->ui('setup.php');
 
+	}
+	
+	/**
+	 * Helper method to sort target markets by region.
+	 * 
+	 * Note that the sort order within the region is defined by the order specified in
+	 * the core/locales/regions.php file.
+	 * 
+	 * @since 1.4
+	 * 
+	 * @param array $targets The list of enabled target markets
+	 * @return array The region-sorted list of enabled target markets
+	 */
+	private static function regionsort ( array $targets ) {
+		$locale = ShoppBaseLocale()->region();
+		$base = ShoppBaseLocale()->country();
+		
+		$regionsdata = ShoppLookup::regions(true);
+		
+		$baselocale = $regionsdata[ $locale ];
+		unset($regionsdata[ $locale ]);
+
+		$regions = array($locale => $baselocale) + $regionsdata;
+		
+		$marketcodes = array_keys($targets);
+		$sorted = array();
+		$sorted[ $base ] = $targets[ $base ]; // Add base locale country first
+		foreach ( $regions as $name => $countries ) {
+			foreach ( $countries as $country ) {
+				if ( $country == $base ) continue; // Skip base locale
+				if ( in_array($country, $marketcodes) )
+					$sorted[ $country ] = $targets[ $country ];
+			}
+		}
+
+		return $sorted;
 	}
 
 } // class ShoppScreenSetup
