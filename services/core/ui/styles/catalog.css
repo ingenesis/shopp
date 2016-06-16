@@ -1,0 +1,168 @@
+/**
+ * catalog.css
+ *
+ * The catalog CSS file provides core styling used to initialize foundational
+ * elements of the Shopp catalog layout.
+ *
+ * DO NOT EDIT! Setup custom theme tempaltes and edit shopp.css to override
+ * styles here as necessary.
+ *
+ **/
+
+/* Core Generics */
+.js-on .hide-if-js,
+.widget span.hidden,
+.shopp_page div.hidden,
+.shopp_page span.hidden,
+.shopp_page select.hidden {display:none;}
+
+.shopp_page div.description,
+.shopp_page .cart,
+.shopp_page .cart table {overflow:hidden;}
+
+/* No table borders by default in Shopp forms */
+.shopp_page form table,
+.shopp_page form table td,
+.shopp_product form table,
+.shopp_product form table td {border:none;}
+
+/* Fixes for theme shenanigans */
+.shopp_product h1,.shopp_product h2,.shopp_product h3,.shopp_product h4,.shopp_product h5,.shopp_product h6 {clear:none;}
+
+#hidden-update {position:absolute;left:-999em;} /* IE workaround to hide a 'default button' but keep it active */
+
+/* Shopp Account Widget */
+#login.shopp li { list-style: none; }
+
+/* Core Pagination */
+.shopp_page ul.paging {clear:none;display:inline;}
+.shopp_page ul.paging li {display:inline-block;margin-left:5px;}
+
+/* View Controls */
+.shopp_page .views {margin-left:0;}
+.shopp_page .views li {display:inline;margin:0;padding:0;}
+.shopp_page .views button {font-size:100%;display:inline-block;padding:3px;overflow:hidden;position:relative;vertical-align:bottom;border:1px solid #aaa;white-space:nowrap;line-height:1em;color:#444;text-decoration:none;-webkit-box-sizing:border-box;-khtml-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;-webkit-background-clip:padding-box;-moz-background-clip:padding;background-clip:padding-box;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-color:#fff;background-size:100%;background-position:bottom center;background-repeat:repeat-x;background:-moz-linear-gradient(top, #fff, #F7F7F7 50%, #E8E8E9 55%, #E8E8E9);background:-webkit-linear-gradient(top, #fff, #F7F7F7 50%, #E8E8E9 55%, #E8E8E9);}
+.shopp_page .views button > span:before {font-family:'shopp-icons';speak:none;font-style:normal;font-weight:normal;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;}
+.shopp_page .views .grid > span:before {content:"\e002";}
+.shopp_page .views .list > span:before {content:"\e003";}
+
+.shopp_grid-1 .products .product {width:100%;}
+.shopp_grid-2 .products .product {width:50%;}
+.shopp_grid-3 .products .product {width:33.333%;}
+.shopp_grid-4 .products .product {width:25%;}
+.shopp_grid-5 .products .product {width:20%;}
+.shopp_grid-6 .products .product {width:16.667%;}
+.shopp_grid-7 .products .product {width:14.288%;}
+
+/* Category Products */
+.shopp_page .products {text-indent:0;text-align:left;padding:0;margin:0;list-style:none;zoom:1;}
+.shopp_page .products:before,
+.shopp_page .products:after {content:"";display: table;}
+.shopp_page .products:after {clear:both;}
+
+.shopp_page .products .product {background:none;padding:0;margin:0;list-style:none;}
+
+.shopp_page  .frame { border: none; }
+.shopp_page .products, .shopp_page .products ul { position: relative; width: 100%; margin: 0; padding: 0; }
+.shopp_page .products > .product { float: left; position: relative; }
+.shopp_page .products > .product.first { clear: both; margin-left: 0; }
+.shopp-product ul,
+.shopp-product ol { display: inline-block; }
+.shopp-product ul.breadcrumb,
+.shopp-product ul.variations { padding-left: 0; }
+
+/* Deprecated row class support */
+.shopp_page .products ul li.product { display: block; float: left; border: none; }
+.shopp_page .products li.row { display: block; width: 100%; }
+
+.shopp_page .products .frame { text-align: center; overflow: hidden; }
+.shopp_page .products .frame img { display: inline; margin-left: auto; margin-right: auto; }
+
+/* Tag Cloud */
+/** Shopp Catalog Tag Cloud **/
+.shopp_page .tagcloud,
+.shopp.tagcloud {padding:0;width:100%;}
+.shopp_page .tagcloud li,
+.shopp.tagcloud li {display:inline;margin-right:10px;line-height:1.2;padding:0;background-image:none;}
+.shopp.tagcloud .level-1 {font-size: 2em;}
+.shopp.tagcloud .level-2 {font-size: 1.5em;}
+.shopp.tagcloud .level-3 {font-size: 1.25em;}
+.shopp.tagcloud .level-4 {font-size: 1em;}
+.shopp.tagcloud .level-5 {font-size: 0.875em;}
+.shopp.tagcloud .level-6 {font-size: 0.75em;}
+.shopp.tagcloud .level-7 {font-size: 0.688em;}
+
+
+/*.shopp_page .catalog .carousel .frame li { margin: 0; padding: 0; }*/
+/*.shopp_page .catalog .listview form { margin: 0; padding: 0; }*/
+
+/* Shopp Forms */
+.shopp_page .checkout,
+.shopp_page .checkout form > ul,
+.shopp_page .checkout form > ul ul,
+.shopp_page .checkout form > ul li,
+.shopp_page .account,
+.shopp_page .account form > ul,
+.shopp_page .account form > ul ul,
+.shopp_page .account form > ul li { margin: 0; padding: 0; }
+
+.shopp_page form ul { width: 100%; overflow: hidden; line-height: 1; }
+.shopp_page form ul li { text-indent: 0; clear: both; display: block; padding: 4px 0; margin: 0; }
+.shopp_page form label { clear: both; display: block; }
+.shopp_page form ul label.inline { display: inline; clear: none; }
+.shopp_page form ul li:before { content: ""; }
+.shopp_page form ul div.inline { width: auto; clear: both; }
+.shopp_page form ul div.inline input { width: auto;  }
+.shopp_page form ul div.inline label { clear: none; display: inline; }
+.shopp_page form ul input,
+.shopp_page form ul select { margin: 0 0 5px 0; }
+.shopp_page form ul div input,
+.shopp_page form ul div select { width: 100%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+.shopp_page form ul div.left { display: inline; width: 47%; float: left; margin: 0; clear: left; }
+.shopp_page form ul div.right { display: inline; width: 47%; float: right; margin: 0; clear: right; }
+.shopp_page form ul li.half { display: inline; width: 47%; float: left; clear: none; }
+.shopp_page form ul li.half.right { display: inline; float: right; }
+.shopp_page form ul span { float: left; padding: 0 5px 0 0; display: inline-block; text-align: left; }
+
+.shopp_page form ul .shoppui-cards,
+.shopp_page form ul .shoppui-cards span { float: none; display: inline-block; padding: 0; }
+.shopp_page form ul .shoppui-cards span { margin-right: 0.1em; }
+
+.scrollable { overflow: auto; }
+.clickwrap-terms { height: 200px; border: 1px solid #dfdfdf; padding: 0.5em; margin-bottom: 1em; }
+
+/** Product Page Gallery **/
+.shopp_page .gallery { float: left; display: block; }
+.shopp_page .gallery ul { display: block; margin: 0; padding: 0 !important; position: relative; list-style: none !important; text-indent: 0; width: auto; }
+.shopp_page .gallery ul li:before { content: ""; }
+.shopp_page .gallery li a { margin: 0; padding: 0; float: none; }
+.shopp_page .gallery .previews { position: relative;  margin: 0 !important; overflow: hidden; }
+.shopp_page .gallery .previews li { position: absolute; visibility: hidden; top: 0; left: 0; margin: 0; display: block; text-align: center; min-width: 100%; }
+.shopp_page .gallery .previews li.fill { position: relative; }
+.shopp_page .gallery .previews li.fill img { margin: 0; padding: 0; }
+.shopp_page .gallery .previews li.active { visibility: visible; }
+.shopp_page .gallery .thumbnails { margin-top: 10px; overflow: hidden; text-align: justify; text-align-last: justify; display: block; }
+.shopp_page .gallery .thumbnails:after { content:"."; display:inline-block; width:100%; height:0; visibility:hidden; }
+.shopp_page .gallery .thumbnails ul { padding: 0; }
+.shopp_page .gallery .thumbnails li { position: relative; display: inline; visibility: visible; height: auto; top: auto; left: auto; }
+.shopp_page .gallery .thumbnails li.first { margin-left: 0; }
+.shopp_page .gallery .thumbnails li img { cursor: pointer; display: inline; }
+
+.shopp_product form.product label { clear: none; display: inline; }
+
+/** Category Slideshow **/
+.shopp_page .slideshow { position: relative; margin: 0; clear: both; width: 100%; overflow: auto; }
+.shopp_page .slideshow li { position: absolute; top: 0; left: 0; margin: 0; display: block; text-align: center; visibility: hidden; }
+.shopp_page .slideshow li.clear { position: relative; clear: both; visibility: visible; }
+.shopp_page .slideshow li.clear:after { clear: both; }
+
+/** Category Carousel **/
+.shopp_page .carousel { position: relative; margin: 0; clear: both; width: 100%; }
+.shopp_page .carousel .frame { font-size: 100%; position: relative; margin: 0 2em; overflow: hidden; }
+.shopp_page .carousel ul { position: relative; width: 999em; }
+.shopp_page .carousel li { display: inline-block; vertical-align: middle;}
+.shopp_page .carousel button { position: absolute; bottom: 45%; font-family: 'shopp-icons'; border: none; cursor: pointer; background: none; font-size: 1.5em; line-height: 1; padding: 0; margin: 0;}
+.shopp_page .carousel button.left { left: 0; }
+.shopp_page .carousel button.right { right: 0; }
+.shopp_page .carousel button.left:hover { color: #444; }
+.shopp_page .carousel button.right:hover { color: #444; }

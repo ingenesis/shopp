@@ -28,12 +28,12 @@
 	<div class="panel_wrapper">
 		<table border="0" cellpadding="4" cellspacing="0">
 		<tr>
-		<th nowrap="nowrap"><label for="category-menu"><?php _e('Category', 'Shopp'); ?></label></th>
-		<td><?php wp_dropdown_categories( array( 'id' => 'category-menu','taxonomy' => ProductCategory::$taxon, 'hide_empty' => 0, 'name' => ProductCategory::$taxon, 'orderby' => 'name', 'hierarchical' => 1, 'show_option_all' => __('Select a category&hellip;','Shopp'), 'show_option_none' => __('Uncategorized','Shopp'), 'tab_index' => 1 ) ); ?></td>
+		<th nowrap="nowrap"><label for="category-menu"><?php Shopp::_e('Category'); ?></label></th>
+		<td><?php wp_dropdown_categories( array( 'id' => 'category-menu', 'taxonomy' => ProductCategory::$taxon, 'hide_empty' => 0, 'name' => ProductCategory::$taxon, 'orderby' => 'name', 'hierarchical' => 1, 'show_option_all' => Shopp::__('Select a category&hellip;'), 'show_option_none' => Shopp::__('Uncategorized'), 'tab_index' => 1 ) ); ?></td>
 		</tr>
 		<tr id="product-selector">
-		<th nowrap="nowrap"><label for="product-menu"><?php _e('Product', 'Shopp'); ?></label></th>
-		<td><select id="product-menu" name="product" size="7"><option value=""><?php _e('Insert entire catalog&hellip;','Shopp'); ?></option></select></td>
+		<th nowrap="nowrap"><label for="product-menu"><?php Shopp::_e('Product'); ?></label></th>
+		<td><select id="product-menu" name="product" size="7"><option value=""><?php Shopp::_e('Insert entire catalog&hellip;'); ?></option></select></td>
 		</tr>
 		</table>
 	</div>
@@ -64,7 +64,7 @@ tinyMCEPopup.onInit.add(function(ed) {
 		var pm = $('#product-menu'),
 
 			cm = $('#category-menu').change(function () {
-				var sc = '<option value="0"><?php _e('Insert','Shopp'); ?> "'+cm.find('option:selected').text().trim()+'" <?php _e('category','Shopp'); ?></option>';
+				var sc = '<option value="0"><?php Shopp::_e('Insert'); ?> "'+cm.find('option:selected').text().trim()+'" <?php Shopp::_e('category'); ?></option>';
 				$.get("<?php echo wp_nonce_url(admin_url('admin-ajax.php'),'wp_ajax_shopp_category_products'); ?>&action=shopp_category_products",
 					{category:cm.val()},function (r) { pm.empty().html(sc+r); },'html'
 				);

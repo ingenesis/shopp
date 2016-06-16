@@ -1,0 +1,69 @@
+/**
+ * rtl.css
+ * Provides right-to-left adjustments for the Shopp admin
+ **/
+#shopp dl dt,
+#shopp .products ul li,
+#shopp.list ul.products li .details,
+#shopp.list ul.products li img,
+#shopp form ul li span,
+#shopp form ul li div.left,
+#shopp form ul li.half,
+#shopp .gallery {
+	float: right;
+}
+
+#shopp form ul li.half.right,
+#shopp form ul li div.right,
+#shopp #cart big a.right {
+	float: left;
+}
+
+#shopp ul,
+#shopp.list ul.products li div.frame,
+#shopp form,
+#shopp form ul li span,
+#shopp #cart th {
+	text-align: right;
+}
+
+#shopp dl dt {
+	clear: right;
+	margin-right: 0;
+	margin-left: 10px;
+}
+
+#shopp dl dd,
+#shopp form ul li div.right {
+	clear: left;
+}
+
+#shopp.list ul.products li img {
+	margin-right: 0;
+	margin-left: 10px;
+}
+
+#shopp form ul li span {
+	padding: 0 0 0 5px;
+}
+
+#shopp form ul li div.left {
+	clear: right;
+}
+
+#shopp .gallery {
+	margin: 5px 0 5px 10px;
+}
+
+#shopp .gallery .previews li {
+	left: auto;
+	right: 0;
+}
+
+#shopp .gallery .thumbnails li {
+	right: auto;
+}
+
+#shopp #cart .money, #shopp #cart .totals th, #shopp #cart .buttons td {
+	text-align: left;
+}

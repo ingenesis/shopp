@@ -1,0 +1,32 @@
+/** Dashboard Widgets **/
+#dashboard_shopp_stats h4,
+#dashboard_shopp_products.postbox h4 { font-family:'Lucida Grande',Verdana,Arial,'Bitstream Vera Sans',sans-serif; }
+
+#dashboard_shopp_stats ul,
+#dashboard_shopp_inventory ul { list-style:none;padding:0;line-height:1;font-size:12px;margin-top:10px; }
+#dashboard_shopp_stats ul li,
+#dashboard_shopp_inventory ul li { list-style:none;padding:0;line-height:1; }
+#dashboard_shopp_stats table,
+#dashboard_shopp_stats.postbox table,
+#dashboard_shopp_inventory table,
+#dashboard_shopp_inventory.postbox table { width:100%; }
+
+
+#dashboard_shopp_stats .table { background:#f9f9f9;border-top:#ececec 1px solid;border-bottom:#ececec 1px solid;margin:0 -9px 10px;padding:0 10px; }
+#dashboard_shopp_stats th { text-align:left;padding:5px 0; }
+#dashboard_shopp_stats td { border-top:#ececec 1px solid;padding:6px 0 3px 0;color:#777; }
+#dashboard_shopp_stats td.label { white-space:nowrap; }
+#dashboard_shopp_inventory td.amount,
+#dashboard_shopp_stats td.amount { white-space:nowrap; width:10%;padding:3px 6px 3px 0;text-align:right;font-family:Georgia,"Times New Roman","Bitstream Charter",Times,serif;font-size:18px; }
+
+#dashboard_shopp_stats table td.salesgraph { padding:3px 6px 3px 0;text-align:right; vertical-align:middle; }
+#dashboard_shopp_stats td.salesgraph .bar { display:inline-block; border:none; background:#21759b; color: #fff; min-width: 1.2em; font-weight: bold;-moz-border-radius:3px;-khtml-border-radius:3px;-webkit-border-radius:3px;border-radius:3px; }
+#dashboard_shopp_stats td.salesgraph .bar:after {content:"\00a0";}
+
+#dashboard_shopp_inventory span.stock { padding: 0px 3px 1px; }
+#dashboard_shopp_inventory span.stock.lowstock { color: #fff; font-weight: bold; -moz-border-radius:3px;-khtml-border-radius:3px;-webkit-border-radius:3px;border-radius:2px; }
+#dashboard_shopp_inventory span.lowstock.critical { background: #900; }
+#dashboard_shopp_inventory span.lowstock.warning { background: #C60; }
+#dashboard_shopp_inventory span.lowstock.backorder { background: #C00; }
+
+.orders.list .refunded td { text-decoration: line-through; }

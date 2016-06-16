@@ -1,0 +1,10 @@
+/** Admin Menu Icons **/
+#toplevel_page_shopp-orders div.wp-menu-image,
+#toplevel_page_shopp-products div.wp-menu-image { background: transparent url('../icons/menu.png') no-repeat scroll 0px -64px; }
+
+#toplevel_page_shopp-orders.wp-menu-open div.wp-menu-image,
+#toplevel_page_shopp-orders:hover div.wp-menu-image { background-position: 0px -32px; }
+
+#toplevel_page_shopp-products div.wp-menu-image { background-position: -32px -64px; }
+#toplevel_page_shopp-products.wp-menu-open div.wp-menu-image,
+#toplevel_page_shopp-products:hover div.wp-menu-image { background-position: -32px -32px; }
