@@ -12,7 +12,7 @@
 
 	<div class="tablenav">
 		<div class="alignleft actions">
-			<a href="<?php echo esc_url(add_query_arg(array_merge(stripslashes_deep($_GET),array('page'=>$this->Admin->pagename('categories'),'a'=>null)),admin_url('admin.php'))); ?>" class="button add-new">&larr; <?php printf(__('Return to %s','Shopp'),$CategoryProducts->name); ?></a>
+			<a href="<?php echo esc_url(add_query_arg(array_merge(stripslashes_deep($_GET),array('page'=>$this->Admin->pagename('categories'),'a'=>null)),admin_url('admin.php'))); ?>" class="button add-new">&larr; <?php Shopp::_e('Return to %s', $CategoryProducts->name); ?></a>
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -52,9 +52,9 @@
 								'id'=>$Product->id)),
 								admin_url('admin.php'))));
 
-					$ProductName = empty($Product->name)?'('.__('no product name','Shopp').')':$Product->name;
+					$ProductName = empty($Product->name)?'(' . Shopp::__('no product name') . ')' : $Product->name;
 				?>
-				<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($ProductName); ?>&quot;'><?php echo esc_html($ProductName); ?></a>
+				<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit'); ?> &quot;<?php echo esc_attr($ProductName); ?>&quot;'><?php echo esc_html($ProductName); ?></a>
 				<input type="hidden" name="position[<?php echo $Product->id; ?>]" value="<?php echo $Product->priority; ?>" /></td>
 				<?php
 				break;
@@ -111,16 +111,16 @@
 
 			} // end switch ($column)
 		} // end foreach ($columns)
-		?>
 
-			<!-- <th scope="row" class='move-column'><button type="button" name="top" alt="<?php $title = Shopp::__('Move to the top&hellip;'); echo $title; ?>" class="moveto shoppui-step-top"><span class="hidden"><?php echo $title; ?></span></button><button type="button" name="bottom" alt="<?php $title = Shopp::__('Move to the bottom&hellip;'); echo $title; ?>" class="moveto shoppui-step-bottom"><span class="hidden"><?php echo $title; ?></span></button></th>
-			<td><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit','Shopp'); ?> &quot;<?php echo $ProductName; ?>&quot;'><?php echo $ProductName; ?></a>
-			<input type="hidden" name="position[<?php echo $Product->id; ?>]" value="<?php echo $Product->priority; ?>" /></td> -->
+			/*<!-- <th scope="row" class='move-column'><button type="button" name="top" alt="<?php $title = Shopp::__('Move to the top&hellip;'); echo $title; ?>" class="moveto shoppui-step-top"><span class="hidden"><?php echo $title; ?></span></button><button type="button" name="bottom" alt="<?php $title = Shopp::__('Move to the bottom&hellip;'); echo $title; ?>" class="moveto shoppui-step-bottom"><span class="hidden"><?php echo $title; ?></span></button></th>
+			<td><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit'); ?> &quot;<?php echo $ProductName; ?>&quot;'><?php echo $ProductName; ?></a>
+			<input type="hidden" name="position[<?php echo $Product->id; ?>]" value="<?php echo $Product->priority; ?>" /></td> --> */
+		?>
 		</tr>
 		<?php endforeach; ?>
 		</tbody>
 	<?php else: ?>
-		<tbody><tr><td colspan="6"><?php _e('No products found.','Shopp'); ?></td></tr></tbody>
+		<tbody><tr><td colspan="6"><?php Shopp::_e('No products found.'); ?></td></tr></tbody>
 	<?php endif; ?>
 	</table>
 	</form>
