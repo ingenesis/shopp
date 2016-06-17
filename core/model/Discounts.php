@@ -24,11 +24,11 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 class ShoppDiscounts extends ListFramework {
 
-	private $removed = array(); // List of removed discounts
-	private $codes = array();	// List of applied codes
-	private $request = false;	// Current code request
-	private $credit = false;	// Credit request types
-	private $shipping = false;	// Track shipping discount changes
+	private $removed  	= array(); // List of removed discounts
+	private $code 		= array();	// List of applied codes
+	private $request 	= false;	// Current code request
+	private $credit 	= false;	// Credit request types
+	private $shipping 	= false;	// Track shipping discount changes
 
 	/**
 	 * Calculate the discount amount
@@ -546,10 +546,10 @@ class ShoppDiscounts extends ListFramework {
  **/
 class ShoppDiscountRule {
 
-	private $promo = false;			// A reference to the originating promotion object
-	private $property = false;		// The rule property name
-	private $logic = false;			// The logical comparison operation to match with
-	private $value = false;			// The value to match
+	private $promo 		= false;		// A reference to the originating promotion object
+	private $property 	= false;		// The rule property name
+	private $logic 		= false;		// The logical comparison operation to match with
+	private $value 		= false;		// The value to match
 
 	/**
 	 * Constructs a ShoppDiscountRule
@@ -619,6 +619,7 @@ class ShoppDiscountRule {
 			case 'discount amount':
 			case 'name':
 			case 'quantity':
+			case 'sku':
 			case 'tag name':
 			case 'total price':
 			case 'unit price':
@@ -707,6 +708,7 @@ class ShoppDiscountRule {
 			case 'any item quantity':	$subject = (int) $Item->quantity; break;
 			case 'category':			$subject = (array) $Item->categories; break;
 			case 'discount amount':		$subject = (float) $Item->discount; break;
+			case 'sku':					$subject = $Item->sku; break;
 			case 'tag name':			$subject = (array) $Item->tags; break;
 			case 'unit price':			$subject = (float) $Item->unitprice; break;
 			case 'variant':
@@ -874,25 +876,25 @@ class ShoppDiscountRule {
 class ShoppOrderDiscount {
 
 	// Discount types
-	const AMOUNT_OFF = 1;
-	const PERCENT_OFF = 2;
-	const SHIP_FREE = 4;
-	const BOGOF = 8;
-	const CREDIT = 16;
+	const AMOUNT_OFF 	= 1;
+	const PERCENT_OFF 	= 2;
+	const SHIP_FREE 	= 4;
+	const BOGOF 		= 8;
+	const CREDIT 		= 16;
 
 	// Discount targets
-	const ITEM = 1;
+	const ITEM 	= 1;
 	const ORDER = 2;
 
-	private $id = false;					// The originating promotion object id
-	private $name = '';						// The name of the promotion
-	private $amount = 0.00;					// The total amount of the discount
-	private $type = self::AMOUNT_OFF;		// The discount type
-	private $target = self::ORDER;			// The discount target
-	private $discount = false;				// The calculated discount amount
-	private $code = false;					// The code associated with the discount
-	private $shipfree = false;				// A flag for free shipping
-	private $items = array();				// A list of items the discount applies to
+	private $id 		= false;				// The originating promotion object id
+	private $name 		= '';					// The name of the promotion
+	private $amount 	= 0.00;					// The total amount of the discount
+	private $type 		= self::AMOUNT_OFF;		// The discount type
+	private $target 	= self::ORDER;			// The discount target
+	private $discount 	= false;				// The calculated discount amount
+	private $code 		= false;				// The code associated with the discount
+	private $shipfree 	= false;				// A flag for free shipping
+	private $items 		= array();				// A list of items the discount applies to
 
 	/**
 	 * Converts a ShoppOrderPromo object to a Discount object
@@ -1232,25 +1234,25 @@ class ShoppOrderDiscount {
  **/
 class ShoppPurchaseDiscount {
 
-	public $id = false;								// The originating promotion object id
-	public $name = '';								// The name of the promotion
-	public $amount = 0.00;							// The total amount of the discount
-	public $type = ShoppOrderDiscount::AMOUNT_OFF;	// The discount type
-	public $target = ShoppOrderDiscount::ORDER;		// The discount target
-	public $discount = false;						// The calculated discount amount (float or array for BOGOFs)
-	public $code = false;							// The code associated with the discount
-	public $shipfree = false;						// A flag for free shipping
+	public $id 			= false;							// The originating promotion object id
+	public $name 		= '';								// The name of the promotion
+	public $amount 		= 0.00;								// The total amount of the discount
+	public $type 		= ShoppOrderDiscount::AMOUNT_OFF;	// The discount type
+	public $target 		= ShoppOrderDiscount::ORDER;		// The discount target
+	public $discount 	= false;							// The calculated discount amount (float or array for BOGOFs)
+	public $code 		= false;							// The code associated with the discount
+	public $shipfree 	= false;							// A flag for free shipping
 
 	public function __construct ( ShoppOrderDiscount $Discount ) {
 
-		$this->id = $Discount->id();
-		$this->name = $Discount->name();
-		$this->type = $Discount->type();
-		$this->target = $Discount->target();
+		$this->id 		= $Discount->id();
+		$this->name 	= $Discount->name();
+		$this->type 	= $Discount->type();
+		$this->target 	= $Discount->target();
 		$this->discount = $Discount->discount();
-		$this->code = $Discount->code();
+		$this->code 	= $Discount->code();
 		$this->shipfree = $Discount->shipfree();
-		$this->amount = $Discount->amount();
+		$this->amount 	= $Discount->amount();
 
 	}
 

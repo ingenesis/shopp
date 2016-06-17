@@ -55,9 +55,9 @@ class PaymentTypesReport extends ShoppReportFramework implements ShoppReport {
 
 	function columns () {
 		return array(
-			'paymenttype' => __('Payment Type', 'Shopp'),
-			'orders'      => __('Orders', 'Shopp'),
-			'grossed'     => __('Grossed', 'Shopp')
+			'paymenttype' => Shopp::__('Payment Type'),
+			'orders'      => Shopp::__('Orders'),
+			'grossed'     => Shopp::__('Grossed')
 		);
 	}
 

@@ -67,10 +67,10 @@ class CustomersReport extends ShoppReportFramework implements ShoppReport {
 
 	function columns () {
 		return array(
-			'customer' => __('Customer', 'Shopp'),
-			'orders'   => __('Orders', 'Shopp'),
-			'sold'     => __('Items', 'Shopp'),
-			'grossed'  => __('Grossed', 'Shopp')
+			'customer' => Shopp::__('Customer'),
+			'orders'   => Shopp::__('Orders'),
+			'sold'     => Shopp::__('Items'),
+			'grossed'  => Shopp::__('Grossed')
 		);
 	}
 

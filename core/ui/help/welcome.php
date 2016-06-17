@@ -23,7 +23,7 @@
 	<div class="feature-section col two-col">
 		<div>
 			<h4><?php Shopp::_e( 'System & Setup' ); ?></h4>
-			<p><?php Shopp::_e( 'The menus have been simplified to organize features across Shopp into System integrations and Setup configurations.' ); ?></p>
+			<p><?php Shopp::_e( 'The menus have been simplified to organize features across Webshop1310 into System integrations and Setup configurations.' ); ?></p>
 		</div>
 		<div class="last-feature">
 			<h4><?php Shopp::_e( 'Discounts' ); ?></h4>
@@ -37,7 +37,7 @@
 
 	<div class="feature-section images-stagger-right">
 		<h4><?php Shopp::_e( 'So Sharp You Can&#8217;t See the Pixels' ); ?></h4>
-		<p><?php Shopp::_e( 'Following in the footsteps of WordPress, the Shopp admin and storefront features have been painstakingly polished to look beautiful on high-resolution screens like those found on the iPad, Kindle Fire HD, Nexus 10, and MacBook Pro with Retina Display. Icons and other visual elements are crystal clear.' ); ?></p>
+		<p><?php Shopp::_e( 'Following in the footsteps of WordPress, the Webshop1310 admin and storefront features have been painstakingly polished to look beautiful on high-resolution screens like those found on the iPad, Kindle Fire HD, Nexus 10, and MacBook Pro with Retina Display. Icons and other visual elements are crystal clear.' ); ?></p>
 	</div>
 </div>
 
@@ -60,7 +60,7 @@
 		</div>
 		<div>
 			<h4><?php Shopp::_e( 'Smart Loading' ); ?></h4>
-			<p><?php Shopp::_e( 'Shopp implements the PHP autoload features to vastly reduce the amount of memory used.' ); ?></p>
+			<p><?php Shopp::_e( 'Webshop1310 implements the PHP autoload features to vastly reduce the amount of memory used.' ); ?></p>
 		</div>
 		<div class="last-feature">
 			<h4><?php Shopp::_e( 'Order Totals' ); ?></h4>
@@ -79,14 +79,14 @@
 		</div>
 		<div class="last-feature">
 			<h4><?php Shopp::_e( 'API Improvements' ); ?></h4>
-			<p><?php Shopp::_e( 'New improvements to the API make it easier than ever to extend the Shopp admin screens, taxes, and discounts.' ); ?></p>
+			<p><?php Shopp::_e( 'New improvements to the API make it easier than ever to extend the Webshop1310 admin screens, taxes, and discounts.' ); ?></p>
 		</div>
 	</div>
 </div>
 
 <div class="return-to-dashboard">
 	<?php if ( current_user_can( 'shopp_settings' ) ) : ?>
-	<a href="<?php echo esc_url( add_query_arg('page', 'shopp-setup', admin_url( 'admin.php' )) ); ?>"><?php Shopp::_e('Continue to Shopp Setup'); ?></a> |
+	<a href="<?php echo esc_url( add_query_arg('page', 'shopp-setup', admin_url( 'admin.php' )) ); ?>"><?php Shopp::_e('Continue to Webshop1310 Setup'); ?></a> |
 	<?php endif; ?>
 	<a href="<?php echo esc_url( self_admin_url() ); ?>"><?php
 		is_blog_admin() ? Shopp::_e( 'Go to Dashboard &rarr; Home' ) : Shopp::_e( 'Go to Dashboard' ); ?></a>

@@ -19,15 +19,15 @@
 	<?php ob_start(); ?>
 	<tr class="inline-edit-row ${classnames}" id="${id}">
 		<td>
-		<label><input type="text" name="settings[storefront_pages][${name}][title]" value="${title}" /><br /><?php _e('Title','Shopp'); ?></label>
+		<label><input type="text" name="settings[storefront_pages][${name}][title]" value="${title}" /><br /><?php Shopp::_e('Title'); ?></label>
 		<p class="submit">
-		<a href="<?php echo $this->url; ?>" class="button-secondary cancel"><?php _e('Cancel','Shopp'); ?></a>
+		<a href="<?php echo $this->url; ?>" class="button-secondary cancel"><?php Shopp::_e('Cancel'); ?></a>
 		</p>
 		</td>
 		<td class="slug column-slug">
-		<label><input type="text" name="settings[storefront_pages][${name}][slug]" value="${slug}" /><br /><?php _e('Slug','Shopp'); ?></label>
+		<label><input type="text" name="settings[storefront_pages][${name}][slug]" value="${slug}" /><br /><?php Shopp::_e('Slug'); ?></label>
 		<p class="submit">
-		<input type="submit" class="button-primary" name="save" value="<?php _e('Save Changes','Shopp'); ?>" />
+		<input type="submit" class="button-primary" name="save" value="<?php Shopp::_e('Save Changes'); ?>" />
 		</p>
 		</td>
 		<td class="description column-description">
@@ -54,34 +54,34 @@
 
 			$even = false;
 			foreach ($pages as $name => $page):
-				$title = empty($page['title'])?'('.__('not set','Shopp').')':$page['title'];
+				$title = empty($page['title'])?'(' . Shopp::__('not set') . ')':$page['title'];
 				$slug = empty($page['slug'])?'':$page['slug'];
-				$description = empty($page['description'])?'':$page['description'];
-				$editurl = add_query_arg(array('edit'=>$name),$this->url);
+				$description = empty($page['description']) ? '' : $page['description'];
+				$editurl = add_query_arg(array('edit' => $name), $this->url);
 
 				$classes = array();
-				if (!$even) $classes[] = 'alternate'; $even = !$even;
+				if ( ! $even ) $classes[] = 'alternate'; $even = !$even;
 
-				if ($edit == $name) {
+				if ( $edit == $name ) {
 					$template_data = array(
-						'${id}' => "edit-$name-page",
-						'${name}' => $name,
-						'${title}' => $page['title'],
-						'${slug}' => $page['slug'],
-						'${description}' => $page['description'],
-						'${classnames}' => join(' ',$classes)
+						'${id}'	            => "edit-$name-page",
+						'${name}'	        => $name,
+						'${title}'	        => $page['title'],
+						'${slug}'	        => $page['slug'],
+						'${description}'	=> $page['description'],
+						'${classnames}'	    => join(' ', $classes)
 					);
 
-					$editor = str_replace(array_keys($template_data),$template_data,$editor);
+					$editor = str_replace(array_keys($template_data), $template_data, $editor);
 					echo $editor;
 					continue;
 				}
 
 			?>
 		<tr class="<?php echo join(' ',$classes); ?>" id="page-<?php echo $name; ?>">
-			<td class="title column-title"><a class="row-title edit" href="<?php echo $editurl; ?>" title="<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($title); ?>&quot;" class="edit"><?php echo esc_html($title); ?></a>
+			<td class="title column-title"><a class="row-title edit" href="<?php echo $editurl; ?>" title="<?php Shopp::_e('Edit'); ?> &quot;<?php echo esc_attr($title); ?>&quot;" class="edit"><?php echo esc_html($title); ?></a>
 				<div class="row-actions">
-					<span class='edit'><a href="<?php echo esc_url($editurl); ?>" title="<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($title); ?>&quot;" class="edit"><?php _e('Edit','Shopp'); ?></a></span>
+					<span class='edit'><a href="<?php echo esc_url($editurl); ?>" title="<?php Shopp::_e('Edit'); ?> &quot;<?php echo esc_attr($title); ?>&quot;" class="edit"><?php Shopp::_e('Edit'); ?></a></span>
 				</div>
 			</td>
 			<td class="slug column-slug"><?php echo esc_html($slug); ?></td>
@@ -90,7 +90,7 @@
 		<?php endforeach; ?>
 		</tbody>
 	<?php else: ?>
-		<tbody><tr><td colspan="6"><?php _e('No Shopp pages available! The sky is falling! Contact the Help Desk, stat!','Shopp'); ?></td></tr></tbody>
+		<tbody><tr><td colspan="6"><?php Shopp::_e('No Shopp pages available! The sky is falling! Contact the Help Desk, stat!'); ?></td></tr></tbody>
 	<?php endif; ?>
 	</table>
 	

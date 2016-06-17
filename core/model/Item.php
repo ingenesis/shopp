@@ -283,13 +283,13 @@ class ShoppCartItem {
 	public function valid () {
 		// no product or no price specified
 		if ( ! $this->product || ! $this->priceline ) {
-			new ShoppError(__('The product could not be added to the cart because it could not be found.','Shopp'), 'cart_item_invalid', SHOPP_ERR);
+			new ShoppError(Shopp::__('The product could not be added to the cart because it could not be found.'), 'cart_item_invalid', SHOPP_ERR);
 			return false;
 		}
 
 		// the item is not in stock
 		if ( ! $this->instock() ) {
-			new ShoppError(__('The product could not be added to the cart because it is not in stock.','Shopp'), 'cart_item_invalid', SHOPP_ERR);
+			new ShoppError(Shopp::__('The product could not be added to the cart because it is not in stock.'), 'cart_item_invalid', SHOPP_ERR);
 			return false;
 		}
 		return true;
@@ -335,11 +335,11 @@ class ShoppCartItem {
 			$qty = 1;
 		}
 
-		if ( in_array($this->type, array('Membership','Subscription')) || 'Download' == $this->type && ! shopp_setting_enabled('download_quantity') ) {
+		if ( in_array($this->type, array('Membership', 'Subscription')) || 'Download' == $this->type && ! shopp_setting_enabled('download_quantity') ) {
 			return ($this->quantity = 1);
 		}
 
-		$qty = preg_replace('/[^\d+]/','',$qty);
+		$qty = preg_replace('/[^\d+]/', '', $qty);
 		$this->quantity = (int)$qty;
 
 		if ( ! $this->instock($qty) ) {
@@ -393,25 +393,25 @@ class ShoppCartItem {
 	 * @return string
 	 **/
 	public function options ($selection = '') {
-		if (empty($this->variants)) return '';
+		if ( empty($this->variants) ) return '';
 
 		$string = '';
-		foreach($this->variants as $option) {
-			if ($option->type == 'N/A') continue;
+		foreach( $this->variants as $option ) {
+			if ( $option->type == 'N/A' ) continue;
 			$currently = (Shopp::str_true($option->sale)?$option->promoprice:$option->price)+$this->addonsum;
 			$difference = (float)($currently+$this->unittax)-($this->unitprice+$this->unittax);
 
 			$price = '';
-			if ($difference > 0) $price = '  (+'.money($difference).')';
-			if ($difference < 0) $price = '  (-'.money(abs($difference)).')';
+			if ( $difference > 0 ) $price = '  (+' . money($difference) . ')';
+			if ( $difference < 0 ) $price = '  (-' . money(abs($difference)) . ')';
 
 			$selected = '';
-			if ($selection == $option->id) $selected = ' selected="selected"';
+			if ( $selection == $option->id ) $selected = ' selected="selected"';
 			$disabled = '';
 			if ( Shopp::str_true($option->inventory) && $option->stock < $this->quantity )
 				$disabled = ' disabled="disabled"';
 
-			$string .= '<option value="'.$option->id.'"'.$selected.$disabled.'>'.$option->label.$price.'</option>';
+			$string .= '<option value="' . $option->id . '"' . $selected.$disabled . '>' . $option->label . $price . '</option>';
 		}
 		return $string;
 
@@ -427,10 +427,10 @@ class ShoppCartItem {
 	 * @return void
 	 **/
 	public function variants ($prices) {
-		foreach ($prices as $price)	{
-			if ('N/A' == $price->type || 'variation' != $price->context) continue;
+		foreach ( $prices as $price )	{
+			if ( 'N/A' == $price->type || 'variation' != $price->context ) continue;
 			$pricing = $this->mapprice($price);
-			if ($pricing) $this->variants[] = $pricing;
+			if ( $pricing ) $this->variants[] = $pricing;
 		}
 	}
 
@@ -455,7 +455,7 @@ class ShoppCartItem {
 				continue;
 			}
 
-			if ( ! in_array($pricing->id, $addons)) continue;
+			if ( ! in_array($pricing->id, $addons) ) continue;
 
 			if ( 'Shipped' == $p->type ) $this->shipped = true;
 
@@ -496,14 +496,14 @@ class ShoppCartItem {
 	 **/
 	public function mapprice ($price) {
 		$map = array(
-			'id','type','label','sale','promoprice','price',
-			'tax','inventory','stock','sku','options','dimensions',
-			'shipfee','download','recurring'
+			'id', 'type', 'label', 'sale', 'promoprice', 'price',
+			'tax', 'inventory', 'stock', 'sku', 'options', 'dimensions',
+			'shipfee', 'download', 'recurring'
 		);
 		$_ = new stdClass();
-		foreach ($map as $property) {
-			if (empty($price->options) && $property == 'label') continue;
-			if (isset($price->{$property})) $_->{$property} = $price->{$property};
+		foreach ( $map as $property ) {
+			if ( empty($price->options) && $property == 'label') continue;
+			if ( isset($price->{$property}) ) $_->{$property} = $price->{$property};
 		}
 		return $_;
 	}
@@ -519,7 +519,7 @@ class ShoppCartItem {
 	 **/
 	public function namelist ($items) {
 		$list = array();
-		foreach ($items as $item) $list[$item->id] = $item->name;
+		foreach ( $items as $item ) $list[$item->id] = $item->name;
 		return $list;
 	}
 
@@ -532,7 +532,7 @@ class ShoppCartItem {
 	 * @return void
 	 **/
 	public function recurrences () {
-		if (empty($this->option->recurring)) return;
+		if ( empty($this->option->recurring) ) return;
 
 		// if free subscription, don't process as subscription
 		if ( 0 == $this->option->promoprice ) return;
@@ -567,14 +567,14 @@ class ShoppCartItem {
 		);
 
 		$rebill_labels = array(
-			0 => __('Subscription rebilled unlimited times.', 'Shopp'),
+			0 => Shopp::__('Subscription rebilled unlimited times.'),
 			1 => _n_noop('Subscription rebilled once.', 'Subscription rebilled %s times.'),
 		);
 
 		// Build Trial Label
 		if ( Shopp::str_true($trial) ) {
 			// pick untranlated label
-			$trial_label = ( $trialprice > 0 ? $term_labels['trial'][$trialperiod] : $term_labels['freetrial'][$trialperiod] );
+			$trial_label = ( $trialprice > 0 ? $term_labels['trial'][ $trialperiod ] : $term_labels['freetrial'][ $trialperiod ] );
 
 			// pick singular or plural translation
 			$trial_label = translate_nooped_plural($trial_label, $trialint, 'Shopp');
@@ -586,12 +586,12 @@ class ShoppCartItem {
 				$trial_label = sprintf($trial_label, $trialint);
 			}
 
-			$this->data[_x('Trial Period','Item trial period label','Shopp')] = $trial_label;
+			$this->data[_x('Trial Period', 'Item trial period label', 'Shopp')] = $trial_label;
 		}
 
 		// pick untranslated label
 		$normal = Shopp::str_true($trial) ? 'aftertrial' : 'period';
-		$subscription_label = $term_labels[$normal][$period];
+		$subscription_label = $term_labels[ $normal ][ $period ];
 
 		// pick singular or plural translation
 		$subscription_label = translate_nooped_plural($subscription_label, $interval);
@@ -601,7 +601,7 @@ class ShoppCartItem {
 		$rebill_label = sprintf(translate_nooped_plural($rebill_labels[1], $cycles, 'Shopp'), $cycles);
 		if ( ! $cycles ) $rebill_label =  $rebill_labels[0];
 
-		$this->data[_x('Subscription','Subscription terms label','Shopp')] = array($subscription_label,$rebill_label);
+		$this->data[_x('Subscription', 'Subscription terms label', 'Shopp')] = array($subscription_label, $rebill_label);
 
 		$this->recurring = true;
 	}
@@ -622,7 +622,7 @@ class ShoppCartItem {
 		$ids = array();
 		if ( $this->inventory ) $ids[] = $this->priceline;
 		if ( ! empty($this->addons) ) {
-			foreach ($this->addons as $addon) {
+			foreach ( $this->addons as $addon ) {
 				if ( Shopp::str_true($addon->inventory) )
 					$ids[] = $addon->id;
 			}
@@ -634,12 +634,12 @@ class ShoppCartItem {
 		// Update stock in the database
 		$pricetable = ShoppDatabaseObject::tablename(ShoppPrice::$table);
 		foreach ( $ids as $priceline ) {
-			db::query("UPDATE $pricetable SET stock=stock-{$this->quantity} WHERE id='{$priceline}'");
+			sDB::query("UPDATE $pricetable SET stock=stock-{$this->quantity} WHERE id='{$priceline}'");
 		}
 
 		// Force summary update to get new stock warning levels on next load
 		$summarytable = ShoppDatabaseObject::tablename(ProductSummary::$table);
-		db::query("UPDATE $summarytable SET modified='".ProductSummary::$_updates."' WHERE product='{$this->product}'");
+		sDB::query("UPDATE $summarytable SET modified='" . ProductSummary::$_updates . "' WHERE product='{$this->product}'");
 
 		// Update
 		if ( ! empty($this->addons) ) {
@@ -695,7 +695,7 @@ class ShoppCartItem {
 	 * @return int The amount of stock available
 	 **/
 	public function getstock () {
-		$stock = apply_filters('shopp_cartitem_stock',false,$this);
+		$stock = apply_filters('shopp_cartitem_stock', false, $this);
 		if ($stock !== false) return $stock;
 
 		$table = ShoppDatabaseObject::tablename(ShoppPrice::$table);
@@ -708,7 +708,7 @@ class ShoppCartItem {
 			}
 		}
 
-		$result = db::query("SELECT min(stock) AS stock FROM $table WHERE 0 < FIND_IN_SET(id,'".join(',',$ids)."')");
+		$result = sDB::query("SELECT min(stock) AS stock FROM $table WHERE 0 < FIND_IN_SET(id,'" . join(',', $ids) . "')");
 		if (isset($result->stock)) return $result->stock;
 
 		return $this->option->stock;
@@ -788,9 +788,9 @@ class ShoppCartItem {
 
 		if ( $this->is_recurring() ) {
 			$recurring = array(
-				'interval' => $this->option->recurring['interval'],
-				'period' => $this->option->recurring['period'],
-				'cycles' => $this->option->recurring['cycles']
+				'interval'	=> $this->option->recurring['interval'],
+				'period'	=> $this->option->recurring['period'],
+				'cycles'	=> $this->option->recurring['cycles']
 			);
 		}
 
@@ -841,15 +841,15 @@ class ShoppCartItem {
 			case 'Discount amount': $subject = $this->discount; break;
 
 		}
-		return ShoppPromo::match_rule($subject,$logic,$value,$property);
+		return ShoppPromo::match_rule($subject, $logic, $value, $property);
 	}
 
 	// @deprecated
 	public function taxrule ($rule) {
 		switch ($rule['p']) {
 			case 'product-name': return ($rule['v'] == $this->name); break;
-			case 'product-tags': return (in_array($rule['v'],$this->tags)); break;
-			case 'product-category': return (in_array($rule['v'],$this->categories)); break;
+			case 'product-tags': return (in_array($rule['v'], $this->tags)); break;
+			case 'product-category': return (in_array($rule['v'], $this->categories)); break;
 		}
 		return false;
 	}

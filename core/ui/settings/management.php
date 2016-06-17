@@ -41,33 +41,33 @@
 
 		<table class="form-table">
 			<tr>
-				<th scope="row" valign="top"><label for="dashboard-toggle"><?php _e('Dashboard Widgets','Shopp'); ?></label></th>
-				<td><input type="hidden" name="settings[dashboard]" value="off" /><input type="checkbox" name="settings[dashboard]" value="on" id="dashboard-toggle"<?php if (shopp_setting('dashboard') == "on") echo ' checked="checked"'?> /><label for="dashboard-toggle"> <?php _e('Enabled','Shopp'); ?></label><br />
-	            <?php _e('Check this to display store performance metrics and more on the WordPress Dashboard.','Shopp'); ?></td>
+				<th scope="row" valign="top"><label for="dashboard-toggle"><?php Shopp::_e('Dashboard Widgets'); ?></label></th>
+				<td><input type="hidden" name="settings[dashboard]" value="off" /><input type="checkbox" name="settings[dashboard]" value="on" id="dashboard-toggle"<?php if (shopp_setting('dashboard') == "on") echo ' checked="checked"'?> /><label for="dashboard-toggle"> <?php Shopp::_e('Enabled'); ?></label><br />
+	            <?php Shopp::_e('Check this to display store performance metrics and more on the WordPress Dashboard.'); ?></td>
 			</tr>
 			<tr>
-				<th scope="row" valign="top"><label for="cart-toggle"><?php _e('Order Status Labels','Shopp'); ?></label></th>
+				<th scope="row" valign="top"><label for="cart-toggle"><?php Shopp::_e('Order Status Labels'); ?></label></th>
 				<td>
 				<ol id="order-statuslabels" class="labelset">
 
 				</ol>
-				<?php _e('Set custom order status labels. Map them to order states for automatic order handling. Remember to click <strong>Save Changes</strong> below!','Shopp'); ?></td>
+				<?php Shopp::_e('Set custom order status labels. Map them to order states for automatic order handling. Remember to click <strong>Save Changes</strong> below!'); ?></td>
 			</tr>
 			<tr>
-				<th scope="row" valign="top"><label for="cart-toggle"><?php _e('Order Cancellation Reasons','Shopp'); ?></label></th>
+				<th scope="row" valign="top"><label for="cart-toggle"><?php Shopp::_e('Order Cancellation Reasons'); ?></label></th>
 				<td>
 				<ol id="order-cancelreasons" class="labelset">
 				</ol>
-				<?php _e('Set custom order cancellation reasons. Remember to click <strong>Save Changes</strong> below!','Shopp'); ?></td>
+				<?php Shopp::_e('Set custom order cancellation reasons. Remember to click <strong>Save Changes</strong> below!'); ?></td>
 			</tr>
 			<tr>
-				<th scope="row" valign="top"><label for="accounting-serial"><?php _e('Next Order Number','Shopp'); ?></label></th>
+				<th scope="row" valign="top"><label for="accounting-serial"><?php Shopp::_e('Next Order Number'); ?></label></th>
 				<td><input type="number" name="settings[next_order_id]" id="accounting-serial" value="<?php echo esc_attr($next_setting); ?>" size="7" class="selectall" /><br />
-					<?php _e('Set the next order number to sync with your accounting systems.','Shopp'); ?></td>
+					<?php Shopp::_e('Set the next order number to sync with your accounting systems.'); ?></td>
 			</tr>
 		</table>
 
-		<p class="submit"><input type="submit" class="button-primary" name="save" value="<?php _e('Save Changes','Shopp'); ?>" /></p>
+		<p class="submit"><input type="submit" class="button-primary" name="save" value="<?php Shopp::_e('Save Changes'); ?>" /></p>
 	</form>
 </div>
 

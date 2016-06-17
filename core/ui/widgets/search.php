@@ -18,15 +18,15 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppSearchWidget') ) {
 	    function __construct () {
 	        parent::__construct(
 			'shopp-search',
-			__('Shopp Search','Shopp'),
-			array('description' => __('A search form for your store','Shopp')));
+			Shopp::__('Shopp Search'),
+			array('description' => Shopp::__('A search form for your store')));
 	    }
 
 	    function widget($args, $options) {
 			$Shopp = Shopp::object();
 			if (!empty($args)) extract($args);
 
-			if (empty($options['title'])) $options['title'] = __('Shop Search','Shopp');
+			if (empty($options['title'])) $options['title'] = Shopp::__('Shop Search');
 			$title = $before_title.$options['title'].$after_title;
 
 			$content = shopp('catalog','get-searchform');
@@ -38,6 +38,11 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppSearchWidget') ) {
 	    }
 
 	    function form($options) {
+	    	$defaults = array(
+				'title' => '',
+				);
+	    	
+			$options = array_merge($defaults, $options);	    	
 			?>
 			<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title'); ?></label>
 			<input type="text" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>" class="widefat" value="<?php echo $options['title']; ?>"></p>

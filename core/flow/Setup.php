@@ -42,7 +42,7 @@ class ShoppAdminSetup extends ShoppAdminController {
 				shopp_enqueue_script('jquery-tmpl');
 				shopp_enqueue_script('imageset');
 				shopp_localize_script( 'imageset', '$is', array(
-					'confirm' => __('Are you sure you want to remove this image preset?','Shopp'),
+					'confirm' => Shopp::__('Are you sure you want to remove this image preset?'),
 				));
 				$this->images_ui();
 				break;
@@ -50,7 +50,7 @@ class ShoppAdminSetup extends ShoppAdminController {
 				shopp_enqueue_script('jquery-tmpl');
 				shopp_enqueue_script('labelset');
 				shopp_localize_script('labelset', '$sl', array(
-					'prompt' => __('Are you sure you want to remove this order status label?','Shopp'),
+					'prompt' => Shopp::__('Are you sure you want to remove this order status label?'),
 				));
 				break;
 			case 'core':
@@ -99,7 +99,7 @@ class ShoppAdminSetup extends ShoppAdminController {
 			shopp_set_formsettings();
 		}
 
-		$country = (isset($_POST['settings']) && isset($_POST['settings']['base_operations']))?$_POST['settings']['base_operations']['country']:'';
+		$country = ( isset($_POST['settings']) && isset($_POST['settings']['base_operations']) ) ? $_POST['settings']['base_operations']['country'] : '';
 		$countries = array();
 		$countrydata = Lookup::countries();
 		$country_zones = Lookup::country_zones();
@@ -115,7 +115,7 @@ class ShoppAdminSetup extends ShoppAdminController {
 			if (isset($_POST['settings']['base_operations'])) {
 				$baseop = &$_POST['settings']['base_operations'];
 
-				$zone = isset($baseop['zone']) && isset($country_zones[ $country ]) && isset($country_zones[ $country ][ $baseop['zone'] ]) ? $baseop['zone']:false;
+				$zone = isset($baseop['zone']) && isset($country_zones[ $country ]) && isset($country_zones[ $country ][ $baseop['zone'] ]) ? $baseop['zone'] : false;
 				if (isset($countrydata[$country])) $baseop = $countrydata[$country];
 				$baseop['country'] = $country;
 				$baseop['zone'] = $zone;
@@ -131,11 +131,11 @@ class ShoppAdminSetup extends ShoppAdminController {
 				);
 			}
 
-			if (!isset($_POST['settings']['target_markets']))
+			if ( ! isset($_POST['settings']['target_markets']) )
 				asort($_POST['settings']['target_markets']);
 
 			shopp_set_formsettings();
-			$updated = __('Shopp settings saved.', 'Shopp');
+			$updated = Shopp::__('Shopp settings saved.');
 		}
 
 		$operations = shopp_setting('base_operations');
@@ -143,8 +143,8 @@ class ShoppAdminSetup extends ShoppAdminController {
 			$zones = $country_zones[ $operations['country'] ];
 
 		$targets = shopp_setting('target_markets');
-		if (is_array($targets))	$targets = array_map('stripslashes',$targets);
-		if (!$targets) $targets = array();
+		if ( is_array($targets) )	$targets = array_map('stripslashes', $targets);
+		if ( ! $targets ) $targets = array();
 
 		include $this->ui('setup.php');
 	}
@@ -158,15 +158,15 @@ class ShoppAdminSetup extends ShoppAdminController {
 
 		$term_recount = false;
 
-		if (!empty($_POST['save'])) {
+		if ( ! empty($_POST['save']) ) {
 			check_admin_referer('shopp-settings-presentation');
-			$updated = __('Shopp presentation settings saved.','Shopp');
+			$updated = Shopp::__('Shopp presentation settings saved.');
 
 			if (isset($_POST['settings']['theme_templates'])
 				&& $_POST['settings']['theme_templates'] == 'on'
 				&& !is_dir($theme_path)) {
 					$_POST['settings']['theme_templates'] = 'off';
-					$updated = __('Shopp theme templates can\'t be used because they don\'t exist.','Shopp');
+					$updated = Shopp::__('Shopp theme templates can\'t be used because they don\'t exist.');
 			}
 
 			if (empty($_POST['settings']['catalog_pagination']))
@@ -184,7 +184,7 @@ class ShoppAdminSetup extends ShoppAdminController {
 
 		if ($term_recount) {
 			$taxonomy = ProductCategory::$taxon;
-			$terms = get_terms( $taxonomy, array('hide_empty' => 0,'fields'=>'ids') );
+			$terms = get_terms( $taxonomy, array('hide_empty' => 0, 'fields'=>'ids') );
 			if ( ! empty($terms) )
 				wp_update_term_count_now( $terms, $taxonomy );
 		}
@@ -207,17 +207,21 @@ class ShoppAdminSetup extends ShoppAdminController {
 			}
 		}
 
-		$category_views = array('grid' => __('Grid','Shopp'),'list' => __('List','Shopp'));
-		$row_products = array(2,3,4,5,6,7);
+		$category_views = array(
+			'grid' => Shopp::__('Grid'),
+			'list' => Shopp::__('List'));
+		$row_products = array(2, 3, 4, 5, 6, 7);
 		$productOrderOptions = ProductCategory::sortoptions();
-		$productOrderOptions['custom'] = __('Custom','Shopp');
+		$productOrderOptions['custom'] = Shopp::__('Custom');
 
-		$orderOptions = array('ASC' => __('Order','Shopp'),
-							  'DESC' => __('Reverse Order','Shopp'),
-							  'RAND' => __('Shuffle','Shopp'));
+		$orderOptions = array(
+			'ASC'	=> Shopp::__('Order'),
+			'DESC'	=> Shopp::__('Reverse Order'),
+			'RAND'	=> Shopp::__('Shuffle'));
 
-		$orderBy = array('sortorder' => __('Custom arrangement','Shopp'),
-						 'created' => __('Upload date','Shopp'));
+		$orderBy = array(
+			'sortorder'	=>	Shopp::__('Custom arrangement'),
+			'created'	=>	Shopp::__('Upload date'));
 
 
 		include $this->ui('presentation.php');
@@ -251,23 +255,23 @@ class ShoppAdminSetup extends ShoppAdminController {
 		}
 
 		$states = array(
-			__('Map the label to an order state:','Shopp') => array_merge(array('' => ''),Lookup::txnstatus_labels())
+			Shopp::__('Map the label to an order state:') => array_merge(array('' => ''), Lookup::txnstatus_labels())
 		);
 		$statusLabels = shopp_setting('order_status');
 		$statesLabels = shopp_setting('order_states');
 		$reasonLabels = shopp_setting('cancel_reasons');
 
-		if (empty($reasonLabels)) $reasonLabels = array(
-			__('Not as described or expected','Shopp'),
-			__('Wrong size','Shopp'),
-			__('Found better prices elsewhere','Shopp'),
-			__('Product is missing parts','Shopp'),
-			__('Product is defective or damaaged','Shopp'),
-			__('Took too long to deliver','Shopp'),
-			__('Item out of stock','Shopp'),
-			__('Customer request to cancel','Shopp'),
-			__('Item discontinued','Shopp'),
-			__('Other reason','Shopp')
+		if ( empty($reasonLabels) ) $reasonLabels = array(
+			Shopp::__('Not as described or expected'),
+			Shopp::__('Wrong size'),
+			Shopp::__('Found better prices elsewhere'),
+			Shopp::__('Product is missing parts'),
+			Shopp::__('Product is defective or damaaged'),
+			Shopp::__('Took too long to deliver'),
+			Shopp::__('Item out of stock'),
+			Shopp::__('Customer request to cancel'),
+			Shopp::__('Item discontinued'),
+			Shopp::__('Other reason')
 		);
 
 		include $this->ui('management.php');
@@ -287,7 +291,7 @@ class ShoppAdminSetup extends ShoppAdminController {
 
 		}
 
-		$promolimit = array('1','2','3','4','5','6','7','8','9','10','15','20','25');
+		$promolimit = array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '15', '20', '25');
 
 		include $this->ui('checkout.php');
 	}
@@ -298,22 +302,22 @@ class ShoppAdminSetup extends ShoppAdminController {
 		if ( ! current_user_can('shopp_settings_checkout') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
-		$downloads = array('1','2','3','5','10','15','25','100');
+		$downloads = array('1', '2', '3', '5', '10', '15', '25', '100');
 		$time = array(
-			'1800' => Shopp::__('%d minutes', 30),
-			'3600' => Shopp::__('%d hour', 1),
-			'7200' => Shopp::__('%d hours', 2),
-			'10800' => Shopp::__('%d hours', 3),
-			'21600' => Shopp::__('%d hours', 6),
-			'43200' => Shopp::__('%d hours', 12),
-			'86400' => Shopp::__('%d day', 1),
-			'172800' => Shopp::__('%d days', 2),
-			'259200' => Shopp::__('%d days', 3),
-			'604800' => Shopp::__('%d week', 1),
-			'2678400' => Shopp::__('%d month', 1),
-			'7952400' => Shopp::__('%d months', 3),
-			'15901200' => Shopp::__('%d months', 6),
-			'31536000' => Shopp::__('%d year', 1),
+			'1800'	    => Shopp::__('%d minutes', 30),
+			'3600'	    => Shopp::__('%d hour', 1),
+			'7200'	    => Shopp::__('%d hours', 2),
+			'10800'	    => Shopp::__('%d hours', 3),
+			'21600'	    => Shopp::__('%d hours', 6),
+			'43200'	    => Shopp::__('%d hours', 12),
+			'86400'	    => Shopp::__('%d day', 1),
+			'172800'	=> Shopp::__('%d days', 2),
+			'259200'	=> Shopp::__('%d days', 3),
+			'604800'	=> Shopp::__('%d week', 1),
+			'2678400'	=> Shopp::__('%d month', 1),
+			'7952400'	=> Shopp::__('%d months', 3),
+			'15901200'	=> Shopp::__('%d months', 6),
+			'31536000'	=> Shopp::__('%d year', 1),
 		);
 
 		if ( ! empty($_POST['save']) ) {
@@ -363,9 +367,9 @@ class ShoppAdminSetup extends ShoppAdminController {
 
 	public function pages_ui () {
 		register_column_headers('shopp_page_shopp-settings-pages', array(
-			'title'=>__('Title','Shopp'),
-			'slug'=>__('Slug','Shopp'),
-			'decription'=>__('Description','Shopp')
+			'title'	        =>	Shopp::__('Title'),
+			'slug'	        =>	Shopp::__('Slug'),
+			'decription'	=>	Shopp::__('Description')
 		));
 	}
 
@@ -375,21 +379,21 @@ class ShoppAdminSetup extends ShoppAdminController {
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$defaults = array(
-			'paged' => 1,
-			'per_page' => 25,
-			'action' => false,
-			'selected' => array(),
+			'paged'	    => 1,
+			'per_page'	=> 25,
+			'action'	=> false,
+			'selected'	=> array(),
 		);
-		$args = array_merge($defaults,$_REQUEST);
-		extract($args,EXTR_SKIP);
+		$args = array_merge($defaults, $_REQUEST);
+		extract($args, EXTR_SKIP);
 
 		$edit = false;
-		if (isset($_GET['id']))  {
+		if ( isset($_GET['id']) )  {
 			$edit = (int)$_GET['id'];
-			if ('new' == $_GET['id']) $edit = 'new';
+			if ( 'new' == $_GET['id'] ) $edit = 'new';
 		}
 
-		if (isset($_GET['delete']) || 'delete' == $action) {
+		if ( isset($_GET['delete']) || 'delete' == $action ) {
 			check_admin_referer('shopp-settings-images');
 
 			if (!empty($_GET['delete'])) $selected[] = (int)$_GET['delete'];
@@ -405,9 +409,9 @@ class ShoppAdminSetup extends ShoppAdminController {
 
 			$ImageSetting = new ImageSetting($edit);
 			$_POST['name'] = sanitize_title_with_dashes($_POST['name']);
-			$_POST['sharpen'] = floatval(str_replace('%','',$_POST['sharpen']));
+			$_POST['sharpen'] = floatval(str_replace('%', '', $_POST['sharpen']));
 			$ImageSetting->updates($_POST);
-			if (!empty($ImageSetting->name)) $ImageSetting->save();
+			if ( ! empty($ImageSetting->name) ) $ImageSetting->save();
 		}
 
 		$start = ($per_page * ($paged-1));
@@ -421,9 +425,9 @@ class ShoppAdminSetup extends ShoppAdminController {
 		);
 		$limit = "$start,$per_page";
 
-		$options = compact('columns','useindex','table','joins','where','groupby','having','limit','orderby');
+		$options = compact('columns', 'useindex', 'table', 'joins', 'where', 'groupby', 'having', 'limit', 'orderby');
 		$query = sDB::select($options);
-		$settings = sDB::query($query,'array',array($ImageSetting,'loader'));
+		$settings = sDB::query($query, 'array', array($ImageSetting, 'loader'));
 		$total = sDB::found();
 
 		$num_pages = ceil($total / $per_page);
@@ -433,13 +437,13 @@ class ShoppAdminSetup extends ShoppAdminController {
 		$quality_menu = $ImageSetting->quality_menu();
 
 		$actions_menu = array(
-			'delete' => __('Delete','Shopp')
+			'delete'	=>	Shopp::__('Delete')
 		);
 
 		$json_settings = array();
-		$skip = array('created','modified','numeral','context','type','sortorder','parent');
+		$skip = array('created', 'modified', 'numeral', 'context', 'type', 'sortorder', 'parent');
 		foreach ($settings as &$Setting)
-			if (method_exists($Setting,'json'))
+			if (method_exists($Setting, 'json'))
 				$json_settings[$Setting->id] = $Setting->json($skip);
 
 		include $this->ui('images.php');
@@ -447,12 +451,12 @@ class ShoppAdminSetup extends ShoppAdminController {
 
 	public function images_ui () {
 		ShoppUI::register_column_headers('shopp_page_shopp-settings-images', array(
-			'cb'=>'<input type="checkbox" />',
-			'name'=>__('Name','Shopp'),
-			'dimensions'=>__('Dimensions','Shopp'),
-			'fit'=>__('Fit','Shopp'),
-			'quality'=>__('Quality','Shopp'),
-			'sharpness'=>__('Sharpness','Shopp')
+			'cb'	        =>	'<input type="checkbox" />',
+			'name'	        =>	Shopp::__('Name'),
+			'dimensions'	=>	Shopp::__('Dimensions'),
+			'fit'	        =>	Shopp::__('Fit'),
+			'quality'	    =>	Shopp::__('Quality'),
+			'sharpness'	    =>	Shopp::__('Sharpness')
 		));
 	}
 

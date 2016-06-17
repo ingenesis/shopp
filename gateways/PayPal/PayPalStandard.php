@@ -154,13 +154,13 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		}
 
 		$authed = array(
-			'txnid' => $Message->txnid(),						// Transaction ID
-			'amount' => $Message->amount(),						// Gross amount authorized
-			'gateway' => $this->module,							// Gateway handler name (module name from @subpackage)
-			'paymethod' => $this->settings['label'],			// Payment method (payment method label from payment settings)
-			'paytype' => $Message->paytype(),					// Type of payment (eCheck, or instant payment)
-			'payid' => $Message->email(),						// PayPal account email address
-			'capture' => ( $captured = $Message->captured() )	// Capture flag
+			'txnid'	    => $Message->txnid(),					// Transaction ID
+			'amount'	=> $Message->amount(),					// Gross amount authorized
+			'gateway'	=> $this->module,						// Gateway handler name (module name from @subpackage)
+			'paymethod'	=> $this->settings['label'],			// Payment method (payment method label from payment settings)
+			'paytype'	=> $Message->paytype(),					// Type of payment (eCheck, or instant payment)
+			'payid'	    => $Message->email(),					// PayPal account email address
+			'capture'	=> ( $captured = $Message->captured() )	// Capture flag
 		);
 
 		if ( $captured && $fees = $Message->fees() )
@@ -192,10 +192,10 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		}
 
 		shopp_add_order_event($Event->order, 'captured', array(
-			'txnid' => $Message->txnid(),		// Transaction ID of the CAPTURE event
-			'amount' => $Event->amount,		// Amount captured
-			'fees' => $Event->fees,			// Transaction fees taken by the gateway net revenue = amount-fees
-			'gateway' => $this->module		// Gateway handler name (module name from @subpackage)
+			'txnid'	    => $Message->txnid(),	// Transaction ID of the CAPTURE event
+			'amount'	=> $Event->amount,		// Amount captured
+			'fees'	    => $Event->fees,		// Transaction fees taken by the gateway net revenue = amount-fees
+			'gateway'	=> $this->module		// Gateway handler name (module name from @subpackage)
 		));
 	}
 
@@ -243,9 +243,9 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		if ( ! $Message ) return; // Requires an IPN/PDT message
 
 		shopp_add_order_event($Event->order, 'voided', array(
-			'txnid' => $Message->txnid(),			// Transaction ID
-			'txnorigin' => $Message->txnorigin(),	// Original Transaction ID
-			'gateway' => $this->module				// Gateway handler name (module name from @subpackage)
+			'txnid'	    => $Message->txnid(),		// Transaction ID
+			'txnorigin'	=> $Message->txnorigin(),	// Original Transaction ID
+			'gateway'	=> $this->module			// Gateway handler name (module name from @subpackage)
 		));
 	}
 
@@ -418,7 +418,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		$_['address_override'] 		= 1;
 
 		$_['address1']				= $Address->address;
-		if (!empty($Address->xaddress))
+		if ( ! empty($Address->xaddress) )
 			$_['address2']			= $Address->xaddress;
 		$_['city']					= $Address->city;
 		$_['state']					= $Address->state;
@@ -455,7 +455,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 			$recurring['period'] = strtoupper( $recurring['period'] );
 
 			//normalize recurring interval
-			$recurring['interval'] = min( max( $recurring['interval'], $tranges[$recurring['period']]['min'] ), $tranges[$recurring['period']]['max'] );
+			$recurring['interval'] = min( max( $recurring['interval'], $tranges[ $recurring['period'] ]['min'] ), $tranges[ $recurring['period'] ]['max'] );
 
 			$_['cmd']	= '_xclick-subscriptions';
 			$_['rm']	= 2; // Return with transaction data
@@ -475,7 +475,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 					$trialprice -= $this->amount('discount');
 
 				// normalize trial interval
-				$trial['interval'] = min( max( $trial['interval'], $tranges[$trial['period']]['min'] ), $tranges[$trial['period']]['max'] );
+				$trial['interval'] = min( max( $trial['interval'], $tranges[ $trial['period'] ]['min'] ), $tranges[ $trial['period'] ]['max'] );
 
 				$_['a1']	= $this->amount( $trial['price'] );
 				$_['p1']	= $trial['interval'];
@@ -511,6 +511,21 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 				$_[ 'amount_' . $id ]			= $this->amount($Item->unitprice);
 				$_[ 'quantity_' . $id ]			= $Item->quantity;
 				// $_['weight_'.$id]			= $Item->quantity;
+
+				// Workaround to solve mismatch between PayPal subtotal and Shopp subtotal
+				// due to rounding when selling a product with quantity > 1 and VAT included price is sold
+				// to customers outside the VAT region
+				// When the issue occurs the product will be set to be one set with one price
+				if ( $Item->quantity > 1 ) {
+		            $pp_price   = $this->amount($_[ 'amount_' . $id ] * $_[ 'quantity_' . $id ]) ;
+		            $shopp_price    = $this->amount($Item->totald);
+
+					if ( $pp_price != $shopp_price ) {
+						$_[ 'item_name_' . $id ]        = Shopp::__('Set of %d %s', $Item->quantity, $_[ 'item_name_' . $id ]);
+						$_[ 'amount_' . $id ]           = $shopp_price;
+						$_[ 'quantity_' . $id ]         = 1;
+					}
+				}				
 			}
 
 			// Workaround a PayPal limitation of not correctly handling no subtotals or
@@ -523,7 +538,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 				$id++;
 				$_['item_number_'.$id]		= $id;
 				$_['item_name_'.$id]		= apply_filters('paypal_freeorder_handling_label',
-															__('Shipping & Handling','Shopp'));
+															Shopp::__('Shipping & Handling'));
 				$_['amount_'.$id]			= $this->amount( max((float)$this->amount('shipping'), 0.01) );
 				$_['quantity_'.$id]			= 1;
 			} else

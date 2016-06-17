@@ -44,26 +44,26 @@
 
 			$selected = (array)$settings['columns'];
 			?>
-			<button type="button" id="export-settings-button" name="export-settings" class="button-secondary"><?php _e('Export Options','Shopp'); ?></button>
+			<button type="button" id="export-settings-button" name="export-settings" class="button-secondary"><?php Shopp::_e('Export Options'); ?></button>
 			<div id="export-settings" class="hidden">
 			<div id="export-columns" class="multiple-select">
 				<ul>
-					<li<?php $even = true; if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="checkbox" name="selectall_columns" id="selectall_columns" /><label for="selectall_columns"><strong><?php _e('Select All','Shopp'); ?></strong></label></li>
-					<li<?php if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="hidden" name="settings[<?php echo $report; ?>_report_export][headers]" value="off" /><input type="checkbox" name="settings[<?php echo $report; ?>_report_export][headers]" id="export_headers" value="on" <?php echo Shopp::str_true($settings['headers'])?' checked="checked"':''; ?> /><label for="export_headers"><strong><?php _e('Include column headings','Shopp'); ?></strong></label></li>
+					<li<?php $even = true; if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="checkbox" name="selectall_columns" id="selectall_columns" /><label for="selectall_columns"><strong><?php Shopp::_e('Select All'); ?></strong></label></li>
+					<li<?php if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="hidden" name="settings[<?php echo $report; ?>_report_export][headers]" value="off" /><input type="checkbox" name="settings[<?php echo $report; ?>_report_export][headers]" id="export_headers" value="on" <?php echo Shopp::str_true($settings['headers'])?' checked="checked"':''; ?> /><label for="export_headers"><strong><?php Shopp::_e('Include column headings'); ?></strong></label></li>
 					<?php
 					$even = true;
 					foreach ($columns as $name => $label): ?>
-						<li<?php if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="checkbox" name="settings[<?php echo $report; ?>_report_export][columns][]" value="<?php echo $name; ?>" id="column-<?php echo $name; ?>" <?php echo in_array($name,$selected)?' checked="checked"':''; ?> /><label for="column-<?php echo $name; ?>" ><?php echo $label; ?></label></li>
+						<li<?php if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="checkbox" name="settings[<?php echo $report; ?>_report_export][columns][]" value="<?php echo $name; ?>" id="column-<?php echo $name; ?>" <?php echo in_array($name, $selected)?' checked="checked"':''; ?> /><label for="column-<?php echo $name; ?>" ><?php echo $label; ?></label></li>
 					<?php endforeach; ?>
 
 				</ul>
 			</div>
 			<br />
 			<select name="settings[report_export_format]" id="report-format">
-				<?php echo menuoptions($exports,shopp_setting('report_export_format'),true); ?>
+				<?php echo menuoptions($exports, shopp_setting('report_export_format'),true); ?>
 			</select>
 			</div>
-			<button type="submit" id="download-button" name="download" value="export" class="button-secondary"<?php if ($Report->total < 1) echo ' disabled="disabled"'; ?>><?php _e('Download','Shopp'); ?></button>
+			<button type="submit" id="download-button" name="download" value="export" class="button-secondary"<?php if ($Report->total < 1) echo ' disabled="disabled"'; ?>><?php Shopp::_e('Download'); ?></button>
 			<div class="clear"></div>
 			</form>
 		</div>

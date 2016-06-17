@@ -44,9 +44,9 @@ th.textright { text-align: right; }
 .column-featured .shoppui-star:hover { font-family: 'shopp-icons'; color: #B1B1B1; background: -webkit-linear-gradient(top, #fff, #E8E8E8 50%, #CDCDCD 60%, #BDBDBD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; }
 .column-featured .shoppui-star.featured { color: #EFCB3A; background: -webkit-linear-gradient(top, #FFF, #F8DB8F 50%, #FDB14F 60%, #E78C35); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .column-featured button.shoppui-star:hover { color: #FDDE5F; background: -webkit-linear-gradient(top, #FFF, #FDFAF1 50%, #F8DF4E 60%, #F2C84A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.column-featured .shoppui-star:after {  background: #b1b1b1; content: "\e019"; position: absolute; top: 0px;left: 0px; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.column-featured .shoppui-star.featured:after { background: #EA883F; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.column-featured button.shoppui-star:hover:after { background: #FDA132; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.column-featured .shoppui-star:after { content: "\e019"; position: absolute; top: 0px;left: 0px; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.column-featured .shoppui-star.featured:after { -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.column-featured button.shoppui-star:hover:after { -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .column-price.sale .shoppui-tag { color: #4F7E20; }
 
 .shopp .column-featured,

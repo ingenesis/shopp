@@ -17,15 +17,15 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppCartWidget') ) {
 
 	    function __construct () {
 	        parent::__construct(false,
-				$name =__('Shopp Cart','Shopp'),
-				array('description' => __('The customer\'s shopping cart','Shopp'))
+				$name = Shopp::__('Shopp Cart'),
+				array('description' => Shopp::__('The customer\'s shopping cart'))
 			);
 	    }
 
 	    function widget($args, $options) {
 			if (!empty($args)) extract($args);
 
-			if (empty($options['title'])) $options['title'] = __('Your Cart','Shopp');
+			if (empty($options['title'])) $options['title'] = Shopp::__('Your Cart');
 			$title = $before_title.$options['title'].$after_title;
 
 			if ('on' == $options['hide-empty'] && shopp_cart_items_count() == 0) return;
@@ -40,12 +40,18 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppCartWidget') ) {
 	    }
 
 	    function form($options) {
+	    	$defaults = array(
+				'title'	        => '',
+				'hide-empty'	=> '',
+				);
+	    	
+			$options = array_merge($defaults, $options);	    	
 			?>
 			<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title'); ?></label>
 			<input type="text" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>" class="widefat" value="<?php echo $options['title']; ?>"></p>
 
 			<p>
-			<input type="hidden" name="<?php echo $this->get_field_name('hide-empty'); ?>" value="off" /><input type="checkbox" id="<?php echo $this->get_field_id('hide-empty'); ?>" name="<?php echo $this->get_field_name('hide-empty'); ?>" value="on"<?php echo $options['hide-empty'] == "on"?' checked="checked"':''; ?> /><label for="<?php echo $this->get_field_id('hide-empty'); ?>"> <?php _e('Hide when cart is empty','Shopp'); ?></label></p>
+			<input type="hidden" name="<?php echo $this->get_field_name('hide-empty'); ?>" value="off" /><input type="checkbox" id="<?php echo $this->get_field_id('hide-empty'); ?>" name="<?php echo $this->get_field_name('hide-empty'); ?>" value="on"<?php echo $options['hide-empty'] == "on"?' checked="checked"':''; ?> /><label for="<?php echo $this->get_field_id('hide-empty'); ?>"> <?php Shopp::_e('Hide when cart is empty'); ?></label></p>
 			<?php
 	    }
 

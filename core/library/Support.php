@@ -260,6 +260,8 @@ class ShoppSupport {
 	 * @return boolean True if activated, false otherwise
 	 **/
 	public static function activated () {
+		return true;
+		// Disable Shopp update notice
 		if ( class_exists('ShoppSupportKey', false) )
 			return ShoppSupportKey::activated();
 		return false;

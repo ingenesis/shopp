@@ -13,7 +13,7 @@
  * @subpackage shopp
  **/
 
-add_action('shopp_order_manager_event',array('OrderEventRenderer','display'));
+add_action('shopp_order_manager_event', array('OrderEventRenderer', 'display'));
 
 /**
  * OrderEventDisplay
@@ -45,20 +45,20 @@ class OrderEventRenderer {
 
 		// Remap event object information for formatting
 		$map = array(
-			'type' => 'name',
+			'type'   => 'name',
 			'amount' => 'amount',
-			'date' => 'created'
+			'date'   => 'created'
 		);
-		$message = array_combine($this->Event->_xcols,$this->Event->_xcols);
-		if (!empty($message)) $map = array_merge($map,$message);
+		$message = ! empty($this->Event->_xcols) ? array_combine($this->Event->_xcols, $this->Event->_xcols) : array();
+		if ( ! empty($message) ) $map = array_merge($map, $message);
 
-		foreach ($map as $property => $data)
+		foreach ( $map as $property => $data )
 			$this->$property = $this->Event->$data;
 
 	}
 
 	static function renderer (OrderEventMessage $Event) {
-		$Renderer = get_class($Event).'Renderer';
+		$Renderer = get_class($Event) . 'Renderer';
 		if ( ! class_exists($Renderer) ) $Renderer = __CLASS__;
 
 		return new $Renderer($Event);
@@ -82,24 +82,24 @@ class OrderEventRenderer {
 		$markup = $this->content();
 
 		// Format into table cells
-		foreach ($markup as $name => &$content)
-			$content = $this->cell($content,$name);
+		foreach ( $markup as $name => &$content )
+			$content = $this->cell($content, $name);
 
 		// Format into table row
-		$markup = $this->row($markup);
+		$markup = $this->row( $markup );
 		echo $markup;
 	}
 
-	function cell ($content,$name) {
-		return '<td class="'.$name.'">'.$content.'</td>';
+	function cell ($content, $name) {
+		return '<td class="' . $name . '">' . $content . '</td>';
 	}
 
 	function row ($content) {
-		return '<tr class="'.str_replace('-',' ',$this->type).'">'.join('',$content).'</tr>';
+		return '<tr class="' . str_replace('-', ' ', $this->type) . '">' . join('', $content) . '</tr>';
 	}
 
 	function strong ($content) {
-		return '<strong>'.$content.'</strong>';
+		return '<strong>' . $content . '</strong>';
 	}
 
 	function name () {
@@ -116,35 +116,35 @@ class OrderEventRenderer {
 
 	function date () {
 		$ts = current_time('timestamp');
-		$today = mktime(0,0,0,date('m',$ts),date('d',$ts),date('Y',$ts));
+		$today = mktime(0, 0, 0, date('m', $ts), date('d', $ts), date('Y', $ts));
 
 		$date_format = get_option('date_format');
 
 		// Remove year from the date format if it's the current year
-		if (date('Y',$this->date) == date('Y',$today))
-			$date_format = preg_replace('/([^\d\w]\s[LoYy])/','',$date_format);
+		if (date('Y', $this->date) == date('Y', $today))
+			$date_format = preg_replace('/([^\d\w]\s[LoYy])/', '', $date_format);
 
-		$date = date($date_format,$this->date);
-		$time = date(get_option('time_format'),$this->date);
+		$date = date($date_format, $this->date);
+		$time = date(get_option('time_format'), $this->date);
 
 		$weekdays = array(
-			__('Sunday','Shopp'),
-			__('Monday','Shopp'),
-			__('Tuesday','Shopp'),
-			__('Wednesday','Shopp'),
-			__('Thursday','Shopp'),
-			__('Friday','Shopp'),
-			__('Saturday','Shopp')
+			Shopp::__('Sunday'),
+			Shopp::__('Monday'),
+			Shopp::__('Tuesday'),
+			Shopp::__('Wednesday'),
+			Shopp::__('Thursday'),
+			Shopp::__('Friday'),
+			Shopp::__('Saturday')
 		);
 
-		if ($this->date > $today-(86400*7))
-			$date = $weekdays[date('w',$this->date)];
-		if ($this->date > $today-86400)
-			$date = __('Yesterday','Shopp');
-		if ($this->date > $today)
-			$date = __('Today','Shopp');
+		if ( $this->date > $today-(86400*7) )
+			$date = $weekdays[date('w', $this->date)];
+		if ( $this->date > $today-86400 )
+			$date = Shopp::__('Yesterday');
+		if ( $this->date > $today )
+			$date = Shopp::__('Today');
 
-		return '<span class="day">'.$date.'</span> <span class="time">'.$time.'</span>';
+		return '<span class="day">' . $date . '</span> <span class="time">' . $time . '</span>';
 	}
 
 } // END class OrderEventDisplay
@@ -164,7 +164,7 @@ class TxnOrderEventRenderer extends OrderEventRenderer {
 	}
 
 	function name () {
-		return sprintf(__('Transaction %s successful','Shopp'),$this->type);
+		return Shopp::__('Transaction %s successful', $this->type);
 	}
 
 	function details () {
@@ -176,7 +176,7 @@ class TxnOrderEventRenderer extends OrderEventRenderer {
 			$details[] = $payment;
 		}
 		if (isset($this->txnid) && !empty($this->txnid))
-			$details[] = sprintf(__('Transaction: %s','Shopp'),$this->txnid);
+			$details[] = Shopp::__('Transaction: %s', $this->txnid);
 
 		return join(' | ',$details);
 	}
@@ -200,7 +200,7 @@ class FailureOrderEventRender extends OrderEventRenderer {
 class TxnFailOrderEventRenderer extends TxnOrderEventRenderer {
 
 	function name () {
-		return sprintf(__('Transaction %s failed','Shopp'),$this->type);
+		return Shopp::__('Transaction %s failed', $this->type);
 	}
 
 	function details () {
@@ -218,7 +218,7 @@ class TxnFailOrderEventRenderer extends TxnOrderEventRenderer {
 class InvoicedOrderEventRenderer extends TxnOrderEventRenderer {
 
 	function name () {
-		return __('Order invoiced','Shopp');
+		return Shopp::__('Order invoiced');
 	}
 
 }
@@ -226,7 +226,7 @@ class InvoicedOrderEventRenderer extends TxnOrderEventRenderer {
 class AuthOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Payment authorization','Shopp');
+		return Shopp::__('Payment authorization');
 	}
 
 }
@@ -234,7 +234,7 @@ class AuthOrderEventRenderer extends OrderEventRenderer {
 class AuthedOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Payment authorized','Shopp');
+		return Shopp::__('Payment authorized');
 	}
 
 	function details () {
@@ -246,7 +246,7 @@ class AuthedOrderEventRenderer extends OrderEventRenderer {
 			$details[] = $payment;
 		}
 		if (isset($this->txnid) && !empty($this->txnid))
-			$details[] = sprintf(__('Transaction: %s','Shopp'),$this->txnid);
+			$details[] = Shopp::__('Transaction: %s', $this->txnid);
 
 		return join(' | ',$details);
 	}
@@ -256,7 +256,7 @@ class AuthedOrderEventRenderer extends OrderEventRenderer {
 class AuthFailOrderEventRenderer extends FailureOrderEventRender {
 
 	function name () {
-		return __('Authorization failed','Shopp');
+		return Shopp::__('Authorization failed');
 	}
 
 }
@@ -264,7 +264,7 @@ class AuthFailOrderEventRenderer extends FailureOrderEventRender {
 class SaleOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Payment authorization & capture','Shopp');
+		return Shopp::__('Payment authorization & capture');
 	}
 
 }
@@ -272,7 +272,7 @@ class SaleOrderEventRenderer extends OrderEventRenderer {
 class CaptureOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Charge initiated','Shopp');
+		return Shopp::__('Charge initiated');
 	}
 
 	function details () {
@@ -284,7 +284,7 @@ class CaptureOrderEventRenderer extends OrderEventRenderer {
 				"mailto:$user->user_email?subject=RE: Order #{$this->Event->order}",
 				"$user->user_firstname $user->user_lastname",
 				add_query_arg(array('user_id'=>$this->user),
-				admin_url('user-edit.php')),$user->user_login
+				admin_url('user-edit.php')), $user->user_login
 			));
 
 		}
@@ -298,7 +298,7 @@ class CaptureOrderEventRenderer extends OrderEventRenderer {
 class AmountVoidedEventRenderer extends TxnOrderEventRenderer {
 
 	function name () {
-		return __('Amount voided','Shopp');
+		return Shopp::__('Amount voided');
 	}
 
 }
@@ -306,7 +306,7 @@ class AmountVoidedEventRenderer extends TxnOrderEventRenderer {
 class CapturedOrderEventRenderer extends TxnOrderEventRenderer {
 
 	function name () {
-		return __('Payment received','Shopp');
+		return Shopp::__('Payment received');
 	}
 
 }
@@ -314,7 +314,7 @@ class CapturedOrderEventRenderer extends TxnOrderEventRenderer {
 class CaptureFailOrderEventRenderer extends FailureOrderEventRender {
 
 	function name () {
-		return __('Payment failed','Shopp');
+		return Shopp::__('Payment failed');
 	}
 
 }
@@ -322,7 +322,7 @@ class CaptureFailOrderEventRenderer extends FailureOrderEventRender {
 class RefundOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Refund initiated','Shopp');
+		return Shopp::__('Refund initiated');
 	}
 
 	function details () {
@@ -339,7 +339,7 @@ class RefundOrderEventRenderer extends OrderEventRenderer {
 
 		}
 
-		return sprintf('by %s', $this->user);
+		return Shopp::__('by %s', $this->user);
 
 	}
 
@@ -349,7 +349,7 @@ class RefundOrderEventRenderer extends OrderEventRenderer {
 class RefundedOrderEventRenderer extends TxnOrderEventRenderer {
 
 	function name () {
-		return __('Refund completed','Shopp');
+		return Shopp::__('Refund completed');
 	}
 
 	function amount () {
@@ -361,7 +361,7 @@ class RefundedOrderEventRenderer extends TxnOrderEventRenderer {
 class RefundFailOrderEventRenderer extends FailureOrderEventRender {
 
 	function name () {
-		return __('Refund failed','Shopp');
+		return Shopp::__('Refund failed');
 	}
 
 	function amount () {
@@ -373,7 +373,7 @@ class RefundFailOrderEventRenderer extends FailureOrderEventRender {
 class ReviewOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Payment review','Shopp');
+		return Shopp::__('Payment review');
 	}
 
 	function details () {
@@ -384,11 +384,11 @@ class ReviewOrderEventRenderer extends OrderEventRenderer {
 class VoidOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Order cancellation initiated','Shopp');
+		return Shopp::__('Order cancellation initiated');
 	}
 
 	function details () {
-		$user = get_user_by('id',$this->user);
+		$user = get_user_by('id', $this->user);
 
 		return sprintf('by <a href="%s">%s</a> (<a href="%s">%s</a>)',
 			"mailto:$user->user_email?subject=RE: Order #{$this->Event->order}",
@@ -403,7 +403,7 @@ class VoidOrderEventRenderer extends OrderEventRenderer {
 class VoidedOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Order cancelled','Shopp');
+		return Shopp::__('Order cancelled');
 	}
 
 }
@@ -411,7 +411,7 @@ class VoidedOrderEventRenderer extends OrderEventRenderer {
 class VoidFailOrderEventRenderer extends FailureOrderEventRender {
 
 	function name () {
-		return __('Order cancellation failed','Shopp');
+		return Shopp::__('Order cancellation failed');
 	}
 
 }
@@ -419,40 +419,40 @@ class VoidFailOrderEventRenderer extends FailureOrderEventRender {
 class ShippedOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Order shipped','Shopp');
+		return Shopp::__('Order shipped');
 	}
 
 	function details () {
 		if ( 'NOTRACKING' == $this->carrier_name() )
 			return Shopp::__('No Tracking');
-		return sprintf('%s: %s',$this->carrier_name(),$this->tracklink());
+		return sprintf('%s: %s', $this->carrier_name(), $this->tracklink());
 	}
 
 	function carrier () {
-		if (isset($this->Carrier)) return;
+		if ( isset($this->Carrier) ) return;
 		$carriers = Lookup::shipcarriers();
-		$this->Carrier = $carriers[$this->carrier];
+		$this->Carrier = $carriers[ $this->carrier ];
 	}
 
 	function carrier_name () {
 		$this->carrier();
-		if (isset($this->Carrier->name) && !empty($this->Carrier->name))
+		if ( isset($this->Carrier->name) && !empty($this->Carrier->name) )
 			return $this->Carrier->name;
 		return $this->carrier;
 	}
 
 	function trackurl () {
 		$this->carrier();
-		if (isset($this->Carrier->trackurl)) {
-			$params = explode(',',$this->tracking);
-			return vsprintf($this->Carrier->trackurl,$params);
+		if ( isset($this->Carrier->trackurl) ) {
+			$params = explode(',', $this->tracking);
+			return vsprintf($this->Carrier->trackurl, $params);
 		}
 	}
 
 	function tracklink () {
 		$url = $this->trackurl();
-		if (empty($url)) return $this->tracking;
-		return sprintf('<a href="%s" target="_top">%s</a>',$url,$this->tracking);
+		if ( empty($url) ) return $this->tracking;
+		return sprintf('<a href="%s" target="_top">%s</a>', $url, $this->tracking);
 	}
 
 }
@@ -460,7 +460,7 @@ class ShippedOrderEventRenderer extends OrderEventRenderer {
 class UnstockOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Inventory updated','Shopp');
+		return Shopp::__('Inventory updated');
 	}
 
 	function details () {
@@ -469,7 +469,7 @@ class UnstockOrderEventRenderer extends OrderEventRenderer {
 		$total = 0;
 		foreach ($allocated as $items) $total += (int)$items->quantity;
 
-		return sprintf(_n('Allocated %d item from inventory','Allocated %d items from inventory',$total,'Shopp'),$total);
+		return sprintf(_n('Allocated %d item from inventory', 'Allocated %d items from inventory', $total, 'Shopp'), $total);
 	}
 
 }
@@ -477,7 +477,7 @@ class UnstockOrderEventRenderer extends OrderEventRenderer {
 class DecryptOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Payment details accessed','Shopp');
+		return Shopp::__('Payment details accessed');
 	}
 
 	function details () {
@@ -486,8 +486,8 @@ class DecryptOrderEventRenderer extends OrderEventRenderer {
 		return sprintf('by <a href="%s">%s</a> (<a href="%s">%s</a>)',
 			"mailto:$user->user_email?subject=RE: Order #{$this->Event->order}",
 			"$user->user_firstname $user->user_lastname",
-			add_query_arg(array('user_id'=>$this->user),
-			admin_url('user-edit.php')),$user->user_login
+			add_query_arg(array('user_id' => $this->user),
+			admin_url('user-edit.php')), $user->user_login
 		);
 	}
 
@@ -498,7 +498,7 @@ class DownloadOrderEventRenderer extends OrderEventRenderer {
 	function name () {
 		$Purchased = new ShoppPurchased($this->purchased);
 		$Download = new ProductDownload($this->download);
-		return sprintf(__('%s downloaded','Shopp'),'<strong>'.$Purchased->name.' ('.$Download->name.')</strong>');
+		return Shopp::__('%s downloaded', '<strong>' . $Purchased->name . ' (' . $Download->name . ')</strong>');
 	}
 
 	function details () {
@@ -506,7 +506,7 @@ class DownloadOrderEventRenderer extends OrderEventRenderer {
 
 		return sprintf('by <a href="%2$s">%1$s</a> from %3$s',
 			"$Customer->firstname $Customer->lastname",
-			add_query_arg(array('page'=>'','id'=>$this->customer),admin_url('admin.php') ),
+			add_query_arg(array('page'=>'', 'id'=>$this->customer), admin_url('admin.php') ),
 			$this->ip
 		);
 	}
@@ -515,16 +515,15 @@ class DownloadOrderEventRenderer extends OrderEventRenderer {
 class NoteOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Message Sent','Shopp');
+		return Shopp::__('Message Sent');
 	}
 
 	function details () {
-		if (!empty($this->user) && (int)$this->user > 0) {
-			$user = get_user_by('id',$this->user);
-			return sprintf(
-				__('by %s (%s)','Shopp'),
-				'<a href="'.add_query_arg(array('user_id'=>$this->user),admin_url('user-edit.php')).'">'.$user->display_name.'</a>',
-				'<a href="'."mailto:$user->user_email?subject=RE: Order #{$this->Event->order}".'">'.$user->user_email.'</a>'
+		if ( ! empty($this->user) && (int)$this->user > 0 ) {
+			$user = get_user_by('id', $this->user);
+			return Shopp::__('by %s (%s)',
+				'<a href="' . add_query_arg(array('user_id' => $this->user), admin_url('user-edit.php')).'">' . $user->display_name . '</a>',
+				'<a href="' . "mailto:$user->user_email?subject=RE: Order #{$this->Event->order}" . '">' . $user->user_email . '</a>'
 			);
 		}
 
@@ -536,23 +535,22 @@ class NoteOrderEventRenderer extends OrderEventRenderer {
 class NoticeOrderEventRenderer extends OrderEventRenderer {
 
 	function name () {
-		return __('Notice','Shopp');
+		return Shopp::__('Notice');
 	}
 
 	function details () {
 		$_ = array();
-		if (!empty($this->notice)) $_[] = $this->notice;
+		if ( ! empty($this->notice) ) $_[] = $this->notice;
 
-		if (!empty($this->user) && (int)$this->user > 0) {
-			$user = get_user_by('id',$this->user);
-			$_[] = sprintf(
-				__('by %s (%s)','Shopp'),
+		if ( ! empty($this->user) && (int)$this->user > 0 ) {
+			$user = get_user_by('id', $this->user);
+			$_[] = Shopp::__('by %s (%s)',
 				'<a href="'.add_query_arg(array('user_id'=>$this->user),admin_url('user-edit.php')).'">'.$user->display_name.'</a>',
 				'<a href="'."mailto:$user->user_email?subject=RE: Order #{$this->Event->order}".'">'.$user->user_email.'</a>'
 			);
 		}
 
-		return join(' ',$_);
+		return join(' ', $_);
 	}
 
 }

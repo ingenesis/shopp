@@ -12,33 +12,33 @@
 
 		<table class="form-table">
 			<tr>
-				<th scope="row" valign="top"><label for="download-limit"><?php _e('Download Limit','Shopp'); ?></label></th>
+				<th scope="row" valign="top"><label for="download-limit"><?php Shopp::_e('Download Limit'); ?></label></th>
 				<td><select name="settings[download_limit]" id="download-limit">
 					<option value="">&infin;</option>
-					<?php echo menuoptions($downloads,shopp_setting('download_limit')); ?>
+					<?php echo menuoptions($downloads, shopp_setting('download_limit')); ?>
 					</select>
 				</td>
 			</tr>
 			<tr>
-				<th scope="row" valign="top"><label for="download-timelimit"><?php _e('Time Limit','Shopp'); ?></label></th>
+				<th scope="row" valign="top"><label for="download-timelimit"><?php Shopp::_e('Time Limit'); ?></label></th>
 				<td><select name="settings[download_timelimit]" id="download-timelimit">
-					<option value=""><?php _e('No Limit','Shopp'); ?></option>
+					<option value=""><?php Shopp::_e('No Limit'); ?></option>
 					<?php echo menuoptions($time,shopp_setting('download_timelimit'),true); ?>
 					</select>
 				</td>
 			</tr>
 			<tr>
-				<th scope="row" valign="top"><label for="download-restriction"><?php _e('IP Restriction','Shopp'); ?></label></th>
+				<th scope="row" valign="top"><label for="download-restriction"><?php Shopp::_e('IP Restriction'); ?></label></th>
 				<td><input type="hidden" name="settings[download_restriction]" value="off" />
-					<label for="download-restriction"><input type="checkbox" name="settings[download_restriction]" id="download-restriction" value="ip" <?php echo (shopp_setting('download_restriction') == "ip")?'checked="checked" ':'';?> /> <?php _e('Restrict to the computer the product is purchased from','Shopp'); ?></label></td>
+					<label for="download-restriction"><input type="checkbox" name="settings[download_restriction]" id="download-restriction" value="ip" <?php echo (shopp_setting('download_restriction') == "ip")?'checked="checked" ':'';?> /> <?php Shopp::_e('Restrict to the computer the product is purchased from'); ?></label></td>
 			</tr>
 			<tr>
-				<th scope="row" valign="top"><label for="download-quantity"><?php _e('Download Quantity','Shopp'); ?></label></th>
+				<th scope="row" valign="top"><label for="download-quantity"><?php Shopp::_e('Download Quantity'); ?></label></th>
 				<td><input type="hidden" name="settings[download_quantity]" value="off" />
-					<label for="download-quantity"><input type="checkbox" name="settings[download_quantity]" id="download-quantity" value="on" <?php echo (shopp_setting_enabled('download_quantity') ? 'checked="checked" ':'');?> /> <?php _e('Enable quantity selection for download products','Shopp'); ?></label></td>
+					<label for="download-quantity"><input type="checkbox" name="settings[download_quantity]" id="download-quantity" value="on" <?php echo (shopp_setting_enabled('download_quantity') ? 'checked="checked" ':'');?> /> <?php Shopp::_e('Enable quantity selection for download products'); ?></label></td>
 			</tr>
 		</table>
 
-		<p class="submit"><input type="submit" class="button-primary" name="save" value="<?php _e('Save Changes','Shopp'); ?>" /></p>
+		<p class="submit"><input type="submit" class="button-primary" name="save" value="<?php Shopp::_e('Save Changes'); ?>" /></p>
 	</form>
 </div>

@@ -19,7 +19,7 @@ class SalesReport extends ShoppReportFramework implements ShoppReport {
 		$this->setchart(array(
 			'yaxis' => array('tickFormatter' => 'asMoney')
 		));
-		$this->chartseries( __('Total','Shopp'), array('column' => 'total') );
+		$this->chartseries( Shopp::__('Total'), array('column' => 'total') );
 	}
 
 	function query () {
@@ -57,24 +57,24 @@ class SalesReport extends ShoppReportFramework implements ShoppReport {
 
 	function columns () {
 		return array(
-			'period'=>__('Period','Shopp'),
-			'orders'=>__('Orders','Shopp'),
-			'items'=>__('Items','Shopp'),
-			'subtotal'=>__('Subtotal','Shopp'),
-			'tax'=>__('Tax','Shopp'),
-			'shipping'=>__('Shipping','Shopp'),
-			'discounts'=>__('Discounts','Shopp'),
-			'total'=>__('Total','Shopp'),
-			'orderavg'=>__('Average Order','Shopp'),
-			'itemavg'=>__('Average Items','Shopp')
+			'period'	=> Shopp::__('Period'),
+			'orders'	=> Shopp::__('Orders'),
+			'items'	    => Shopp::__('Items'),
+			'subtotal'	=> Shopp::__('Subtotal'),
+			'tax'	    => Shopp::__('Tax'),
+			'shipping'	=> Shopp::__('Shipping'),
+			'discounts'	=> Shopp::__('Discounts'),
+			'total'	    => Shopp::__('Total'),
+			'orderavg'	=> Shopp::__('Average Order'),
+			'itemavg'	=> Shopp::__('Average Items')
 		);
 	}
 
 	function scores () {
 		return array(
-			__('Total','Shopp') => money( isset($this->totals->total) ? $this->totals->total : 0 ),
-			__('Orders','Shopp') => intval( isset($this->totals->orders) ? $this->totals->orders : 0 ),
-			__('Average Order','Shopp') => money( isset($this->totals->total) && isset($this->totals->orders) ? $this->totals->total/$this->totals->orders : 0)
+			Shopp::__('Total') => money( isset($this->totals->total) ? $this->totals->total : 0 ),
+			Shopp::__('Orders') => intval( isset($this->totals->orders) ? $this->totals->orders : 0 ),
+			Shopp::__('Average Order') => money( isset($this->totals->total) && isset($this->totals->orders) ? $this->totals->total/$this->totals->orders : 0)
 		);
 	}
 

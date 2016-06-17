@@ -33,19 +33,19 @@ class ShoppInstallation extends ShoppFlowController {
 		add_action('shopp_setup', array($this, 'maintenance'));
 
 		self::$errors = array(
-			'header' => __('Shopp Activation Error','Shopp'),
-			'intro' => __('Sorry! Shopp cannot be activated for this WordPress install.'),
-			'dbprivileges' => __('Shopp cannot be installed because the database privileges do not allow Shopp to create new tables.', 'Shopp'),
-			'nodbschema-install' => sprintf(__('Could not install the Shopp database tables because the table definitions file is missing. (%s)', 'Shopp'), SHOPP_DBSCHEMA),
-			'nodbschema-upgrade' => sprintf(__('Could not upgrade the Shopp database tables because the table definitions file is missing. (%s)', 'Shopp'), SHOPP_DBSCHEMA),
-			'nextstep' => sprintf(__('Try contacting your web hosting provider or server administrator for help. For more information about this error, see the %sShopp Documentation%s', 'Shopp'), '<a href="' . SHOPP_DOCS . '">', '</a>'),
-			'continue' => __('Return to Plugins page')
+			'header' 				=> Shopp::__('Shopp Activation Error'),
+			'intro' 				=> Shopp::__('Sorry! Shopp cannot be activated for this WordPress install.'),
+			'dbprivileges' 			=> Shopp::__('Shopp cannot be installed because the database privileges do not allow Shopp to create new tables.'),
+			'nodbschema-install' 	=> Shopp::__('Could not install the Shopp database tables because the table definitions file is missing. (%s)', SHOPP_DBSCHEMA),
+			'nodbschema-upgrade' 	=> Shopp::__('Could not upgrade the Shopp database tables because the table definitions file is missing. (%s)', SHOPP_DBSCHEMA),
+			'nextstep' 				=> Shopp::__('Try contacting your web hosting provider or server administrator for help. For more information about this error, see the %sShopp Documentation%s', '<a href="' . SHOPP_DOCS . '">', '</a>'),
+			'continue' 				=> __('Return to Plugins page')
 		);
 
 		self::$nextstep = array(
-			'dbprivileges' => sprintf(__('Try contacting your web hosting provider or server administrator for help. For more information about this error, see the %sShopp Documentation%s', 'Shopp'), '<a href="' . SHOPP_DOCS . '">', '</a>'),
-			'nodbschema-install' => sprintf(__('For more information about this error, see the %sShopp Documentation%s', 'Shopp'), '<a href="' . SHOPP_DOCS . '">', '</a>'),
-			'nodbschema-upgrade' => sprintf(__('For more information about this error, see the %sShopp Documentation%s', 'Shopp'), '<a href="' . SHOPP_DOCS . '">', '</a>'),
+			'dbprivileges' 			=> Shopp::__('Try contacting your web hosting provider or server administrator for help. For more information about this error, see the %sShopp Documentation%s', '<a href="' . SHOPP_DOCS . '">', '</a>'),
+			'nodbschema-install' 	=> Shopp::__('For more information about this error, see the %sShopp Documentation%s', '<a href="' . SHOPP_DOCS . '">', '</a>'),
+			'nodbschema-upgrade' 	=> Shopp::__('For more information about this error, see the %sShopp Documentation%s', '<a href="' . SHOPP_DOCS . '">', '</a>'),
 		);
 	}
 
@@ -216,8 +216,8 @@ class ShoppInstallation extends ShoppFlowController {
 		foreach ($tests as $testquery) {
 			$db = sDB::get();
 			sDB::query($testquery);
-			$error = mysql_error($db->dbh);
-			if (!empty($error)) $this->error('dbprivileges');
+			$error = ( extension_loaded(mysqli) ) ? mysqli_error($db->dbh) : mysql_error($db->dbh);
+			if ( ! empty($error) ) $this->error('dbprivileges');
 		}
 
 		// Make sure dbDelta() is available
@@ -282,8 +282,8 @@ class ShoppInstallation extends ShoppFlowController {
 
 		$shopp_roles = apply_filters('shopp_user_roles', array(
 			'administrator'		=>	'Administrator',
-			'shopp-merchant'	=>	__('Merchant', 'Shopp'),
-			'shopp-csr'			=>	__('Customer Service Rep', 'Shopp')
+			'shopp-merchant'	=>	Shopp::__('Merchant'),
+			'shopp-csr'			=>	Shopp::__('Customer Service Rep')
 		));
 
 		$caps['shopp-csr'] = array(
@@ -376,7 +376,7 @@ class ShoppInstallation extends ShoppFlowController {
 
 		// General Settings
 		$Settings->setup('shipping', 'on');
-		$Settings->setup('order_status', array(__('Pending', 'Shopp'), __('Completed', 'Shopp')));
+		$Settings->setup('order_status', array(Shopp::__('Pending'), Shopp::__('Completed')));
 		$Settings->setup('shopp_setup', 'completed');
 		$Settings->setup('maintenance', 'off');
 		$Settings->setup('dashboard', 'on');
@@ -387,16 +387,16 @@ class ShoppInstallation extends ShoppFlowController {
 		$Settings->setup('account_system', 'none');
 		$Settings->setup('shopping_cart', 'on');
 		$Settings->setup('cancel_reasons', array(
-			__('Not as described or expected', 'Shopp'),
-			__('Wrong size', 'Shopp'),
-			__('Found better prices elsewhere', 'Shopp'),
-			__('Product is missing parts', 'Shopp'),
-			__('Product is defective or damaged', 'Shopp'),
-			__('Took too long to deliver', 'Shopp'),
-			__('Item out of stock', 'Shopp'),
-			__('Customer request to cancel', 'Shopp'),
-			__('Item discontinued', 'Shopp'),
-			__('Other reason', 'Shopp')
+			Shopp::__('Not as described or expected'),
+			Shopp::__('Wrong size'),
+			Shopp::__('Found better prices elsewhere'),
+			Shopp::__('Product is missing parts'),
+			Shopp::__('Product is defective or damaged'),
+			Shopp::__('Took too long to deliver'),
+			Shopp::__('Item out of stock'),
+			Shopp::__('Customer request to cancel'),
+			Shopp::__('Item discontinued'),
+			Shopp::__('Other reason')
 		));
 
 		// Shipping
@@ -526,7 +526,7 @@ class ShoppInstallation extends ShoppFlowController {
 				$value->storage = "FSStorage";
 				$value->uri = $name;
 			}
-			$value = mysql_real_escape_string(serialize($value));
+			$value = sDB::escape(serialize($value));
 			sDB::query("UPDATE $meta_table set name='original', value='$value' WHERE id=$r->id");
 		}
 
@@ -551,7 +551,7 @@ class ShoppInstallation extends ShoppFlowController {
 				$value->storage = "FSStorage";
 				$value->uri = $name;
 			}
-			$value = mysql_real_escape_string(serialize($value));
+			$value = sDB::escape(serialize($value));
 			sDB::query("UPDATE $meta_table set name='$name', value='$value' WHERE id=$r->id");
 		}
 
@@ -890,30 +890,30 @@ class ShoppInstallation extends ShoppFlowController {
 
 					// Move the term into the terms table
 					$wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->terms (name, slug, term_group) VALUES (%s, %s, %d)", $name, $slug, $term_group) );
-					$mapping[$taxonomy][$term_id] = (int) $wpdb->insert_id; // Map the old id to the new id
-					$term_id = $mapping[$taxonomy][$term_id]; // Update the working id to the new id
-					if (!isset($tt_ids[$taxonomy])) $tt_ids[$taxonomy] = array();
+					$mapping[ $taxonomy ][ $term_id ] = (int) $wpdb->insert_id; // Map the old id to the new id
+					$term_id = $mapping[ $taxonomy ][ $term_id ]; // Update the working id to the new id
+					if ( ! isset($tt_ids[ $taxonomy ]) ) $tt_ids[ $taxonomy ] = array();
 
 					if ( 'shopp_category' == $taxonomy ) {
 
 						// If the parent term has already been added to the terms table, set the new parent id
-						if (isset($mapping[$taxonomy][$parent])) $parent = $mapping[$taxonomy][$parent];
+						if ( isset($mapping[ $taxonomy ][ $parent ]) ) $parent = $mapping[ $taxonomy ][ $parent ];
 						else { // Parent hasn't been created, keep track of children for the parent to do a mass update when the parent term record is created
-							if (!isset($children[$taxonomy][$parent])) $children[$taxonomy][$parent] = array();
-							$children[$taxonomy][$parent][] = $term_id;
+							if ( ! isset($children[ $taxonomy ][ $parent ]) ) $children[ $taxonomy ][ $parent ] = array();
+							$children[ $taxonomy ][ $parent ][] = $term_id;
 						}
 
-						if (!empty($children[$taxonomy][$term->id])) // If there are children already created for this term, update their parent to our new id
-							$wpdb->query( "UPDATE $wpdb->term_taxonomy SET parent=$term_id WHERE term_id IN (".join(', ', $children[$taxonomy][$term->id]).")" );
+						if ( ! empty($children[ $taxonomy ][ $term->id ])) // If there are children already created for this term, update their parent to our new id
+							$wpdb->query( "UPDATE $wpdb->term_taxonomy SET parent=$term_id WHERE term_id IN (" . join(', ', $children[ $taxonomy ][ $term->id ]) . ")" );
 
 						// Associate the term to the proper taxonomy and parent terms
 						$wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->term_taxonomy (term_id, taxonomy, description, parent, count) VALUES ( %d, %s, %s, %d, %d)", $term_id, $taxonomy, $description, $parent, 0) );
-						$tt_ids[$taxonomy][$term_id] = (int) $wpdb->insert_id;
+						$tt_ids[ $taxonomy ][ $term_id ] = (int) $wpdb->insert_id;
 
-						if (!empty($term_id)) {
+						if ( ! empty($term_id) ) {
 							// Move category settings to meta
 							$metafields = array('spectemplate', 'facetedmenus', 'variations', 'pricerange', 'priceranges', 'specs', 'options', 'prices');
-							foreach ($metafields as $field)
+							foreach ( $metafields as $field )
 								sDB::query("INSERT INTO $meta_table (parent, context, type, name, value)
 											SELECT $term_id, 'category', 'meta', '$field', $field
 											FROM $category_table
@@ -921,13 +921,13 @@ class ShoppInstallation extends ShoppFlowController {
 
 
 							// Update category images to new term ids
-							sDB::query("UPDATE $meta_table set parent='$term_id' WHERE parent='".((int)$term->id+$category_image_offset)."' AND context='category' AND type='image'");
+							sDB::query("UPDATE $meta_table set parent='$term_id' WHERE parent='" . ((int)$term->id+$category_image_offset) . "' AND context='category' AND type='image'");
 						}
 					}
 
 					if ( 'shopp_tag' == $taxonomy ) {
 						$wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->term_taxonomy (term_id, taxonomy, description, parent, count) VALUES ( %d, %s, %s, %d, %d)", $term_id, $taxonomy, $description, $parent, 0) );
-						$tt_ids[$taxonomy][$term_id] = (int) $wpdb->insert_id;
+						$tt_ids[ $taxonomy ][ $term_id ] = (int) $wpdb->insert_id;
 					}
 
 				}				update_option('shopp_category_children', '');
@@ -935,38 +935,38 @@ class ShoppInstallation extends ShoppFlowController {
 			// Re-catalog custom post type_products term relationships (new taxonomical catalog) from old Shopp catalog table
 
 				$wp_taxonomies = array(
-					0 => 'shopp_category',
-					1 => 'shopp_tag',
-					'category' => 'shopp_category',
-					'tag' => 'shopp_tag'
+					0 	        => 'shopp_category',
+					1 	        => 'shopp_tag',
+					'category'	=> 'shopp_category',
+					'tag'	    => 'shopp_tag'
 				);
 
 				$cols = 'wp.ID AS product, c.parent, c.type';
 				$where = "type='category' OR type='tag'";
-				if ($db_version >= 1125) {
+				if ( $db_version >= 1125 ) {
 					$cols = 'wp.ID AS product, c.parent, c.taxonomy, c.type';
 					$where = "taxonomy=0 OR taxonomy=1";
 				}
 
 				$rels = sDB::query("SELECT $cols FROM $catalog_table AS c LEFT JOIN $wpdb->posts AS wp ON c.product=wp.post_parent AND wp.post_type='$post_type' WHERE $where", 'array');
 
-				foreach ((array)$rels as $r) {
+				foreach ( (array)$rels as $r ) {
 					$object_id = $r->product;
-					$taxonomy = $wp_taxonomies[($db_version >= 1125?$r->taxonomy:$r->type)];
-					$term_id = $mapping[$taxonomy][$r->parent];
-					if ( !isset($tt_ids[$taxonomy]) ) continue;
-					if ( !isset($tt_ids[$taxonomy][$term_id]) ) continue;
+					$taxonomy = $wp_taxonomies[ ($db_version >= 1125 ? $r->taxonomy : $r->type) ];
+					$term_id = $mapping[ $taxonomy ][ $r->parent ];
+					if ( !isset($tt_ids[ $taxonomy ]) ) continue;
+					if ( !isset($tt_ids[ $taxonomy ][ $term_id ]) ) continue;
 
-					$tt_id = $tt_ids[$taxonomy][$term_id];
+					$tt_id = $tt_ids[ $taxonomy ][ $term_id ];
 					if ( empty($tt_id) ) continue;
 
 					sDB::query("INSERT $wpdb->term_relationships (object_id, term_taxonomy_id) VALUES ($object_id, $tt_id)");
 				}
 
-				if (isset($tt_ids['shopp_category']))
+				if ( isset($tt_ids['shopp_category']) )
 					wp_update_term_count_now($tt_ids['shopp_category'], 'shopp_category');
 
-				if (isset($tt_ids['shopp_tag']))
+				if ( isset($tt_ids['shopp_tag']) )
 					wp_update_term_count_now($tt_ids['shopp_tag'], 'shopp_tag');
 
 				// Clear custom post type parents
@@ -974,7 +974,7 @@ class ShoppInstallation extends ShoppFlowController {
 
 		} // END if ($db_version <= 1131)
 
-		if ($db_version <= 1133) {
+		if ( $db_version <= 1133 ) {
 
 			// Ditch old WP pages for pseudorific new ones
 			$search = array();
@@ -983,12 +983,12 @@ class ShoppInstallation extends ShoppFlowController {
 			$results = sDB::query("SELECT ID, post_title AS title, post_name AS slug, post_content FROM $wpdb->posts WHERE post_type='page' AND (".join(" OR ", $search).")", 'array');
 
 			$pages = $trash = array();
-			foreach ($results as $post) {
+			foreach ( $results as $post ) {
 				$trash[] = $post->ID;
-				foreach ($shortcodes as $code) {
+				foreach ( $shortcodes as $code ) {
 					if (strpos($post->post_content, $code) === false) continue;
 					$pagename = trim($code, '[]');
-					$pages[$pagename] = array('title' => $post->title, 'slug' => $post->slug);
+					$pages[ $pagename ] = array('title' => $post->title, 'slug' => $post->slug);
 				} // end foreach $shortcodes
 			} // end foreach $results
 
@@ -1021,29 +1021,29 @@ class ShoppInstallation extends ShoppFlowController {
 
 		} // END if ($db_version <= 1135)
 
-		if ($db_version <= 1145) {
+		if ( $db_version <= 1145 ) {
 			// Update purchase gateway property to use gateway class names
 			// for proper order event handling on 1.1-generated orders
 			$gateways = array(
-				'PayPal Standard' => 'PayPalStandard',
-				'PayPal Expresss' => 'PayPalExpress',
-				'PayPal Pro' => 'PayPalPro',
-				'2Checkout.com' => '_2Checkout',
-				'Authorize.Net' => 'AuthorizeNet',
-				'Google Checkout' => 'GoogleCheckout',
-				'HSBC ePayments' => 'HSBCepayments',
-				'iDeal Mollie' => 'iDealMollie',
-				'Manual Processing' => 'ManualProcessing',
-				'Merchant Warrior' => 'MerchantWarrior',
-				'Offline Payment' => 'OfflinePayment',
-				'PayPal Payflow Pro' => 'PayflowPro',
-				'Test Mode' => 'TestMode'
+				'PayPal Standard'	    => 'PayPalStandard',
+				'PayPal Expresss'	    => 'PayPalExpress',
+				'PayPal Pro'	        => 'PayPalPro',
+				'2Checkout.com'	        => '_2Checkout',
+				'Authorize.Net'	        => 'AuthorizeNet',
+				'Google Checkout'	    => 'GoogleCheckout',
+				'HSBC ePayments'	    => 'HSBCepayments',
+				'iDeal Mollie'	        => 'iDealMollie',
+				'Manual Processing'     => 'ManualProcessing',
+				'Merchant Warrior'	    => 'MerchantWarrior',
+				'Offline Payment'	    => 'OfflinePayment',
+				'PayPal Payflow Pro'	=> 'PayflowPro',
+				'Test Mode'	            => 'TestMode'
 			);
-			foreach ($gateways as $name => $classname)
+			foreach ( $gateways as $name => $classname )
 				sDB::query("UPDATE $purchase_table SET gateway='$classname' WHERE gateway='$name'");
 		} // END if ($db_version <= 1145)
 
-		if ($db_version <= 1148) {
+		if ( $db_version <= 1148 ) {
 			$price_table = ShoppDatabaseObject::tablename('price');
 			sDB::query("UPDATE $price_table SET optionkey=(options*7001) WHERE context='addon'");
 		}
@@ -1081,11 +1081,11 @@ class ShoppInstallation extends ShoppFlowController {
 
 			// Update purchase gateway values to match new prefixed class names
 			$gateways = array(
-				'PayPalStandard' => 'ShoppPayPalStandard',
-				'_2Checkout' => 'Shopp2Checkout',
-				'OfflinePayment' => 'ShoppOfflinePayment',
-				'TestMode' => 'ShoppTestMode',
-				'FreeOrder' => 'ShoppFreeOrder'
+				'PayPalStandard'	=> 'ShoppPayPalStandard',
+				'_2Checkout'	    => 'Shopp2Checkout',
+				'OfflinePayment'	=> 'ShoppOfflinePayment',
+				'TestMode'	        => 'ShoppTestMode',
+				'FreeOrder'	        => 'ShoppFreeOrder'
 
 			);
 			foreach ( $gateways as $name => $classname )

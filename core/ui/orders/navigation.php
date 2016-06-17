@@ -9,6 +9,7 @@
 			$classes = $status === $id?' class="current"':'';
 			$separator = is_null($id)?'':'| ';
 	?>
-		<li><?php echo $separator; ?><a href="<?php echo esc_url($url); ?>"<?php echo $classes; ?>><?php esc_html_e($state->label); ?></a> <span class="count">(<?php esc_html_e($state->total); ?>)</span></li>
+
+		<li><?php echo $separator; ?><a href="<?php echo esc_url($url); ?>"<?php echo $classes; ?>><?php esc_html_e($state->label); ?></a> <span class="count">(<?php echo esc_html($state->total); ?>)</span></li>		
 	<?php endforeach; ?>
 </ul>

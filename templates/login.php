@@ -15,14 +15,14 @@
 	<form action="<?php shopp( 'customer.url' ); ?>" method="post" class="shopp shopp_page" id="login">
 		<ul>
 			<li>
-				<label for="login"><?php _e( 'Account Login', 'Shopp' ); ?></label>
+				<label for="login"><?php Shopp::_e( 'Account Login' ); ?></label>
 				<span>
 					<label for="login"><?php shopp( 'customer.login-label' ); ?></label>
-					<?php shopp( 'customer.account-login', 'size=20&title=' . __( 'Login', 'Shopp' ) ); ?>
+					<?php shopp( 'customer.account-login', 'size=20&title=' . Shopp::__( 'Login' ) ); ?>
 				</span>
 				<span>
-					<label for="password"><?php _e( 'Password', 'Shopp' ); ?></label>
-					<?php shopp( 'customer.password-login', 'size=20&title=' . __( 'Password', 'Shopp' ) ); ?>
+					<label for="password"><?php Shopp::_e( 'Password' ); ?></label>
+					<?php shopp( 'customer.password-login', 'size=20&title=' . Shopp::__( 'Password' ) ); ?>
 				</span>
 				<span>
 					<label>&nbsp;</label>
@@ -30,7 +30,7 @@
 				</span>
 			</li>
 			<li>
-				<a href="<?php shopp( 'customer.recover-url' ); ?>"><?php _e( 'Lost your password?', 'Shopp' ); ?></a>
+				<a href="<?php shopp( 'customer.recover-url' ); ?>"><?php Shopp::_e( 'Lost your password?' ); ?></a>
 			</li>
 		</ul>
 	</form>

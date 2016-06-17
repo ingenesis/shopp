@@ -25,11 +25,11 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @return bool true on success, false on failure
  **/
 function shopp_add_cart_variant ( $variant = false, $quantity = 1, $key = 'id') {
-	$keys = array('id','optionkey','label','sku');
+	$keys = array('id' => 'id', 'optionkey' => 'optionkey', 'label' => 'label', 'sku' => 'sku');
 	if ( false === $variant ) {
 		shopp_debug(__FUNCTION__ . " failed: Variant parameter required.");
 	}
-	if (!in_array($key,$keys)) {
+	if ( ! isset( $keys[ $key ]) ) {
 		shopp_debug(__FUNCTION__ . " failed: Variant key $key invalid.");
 	}
 	$Price = new ShoppPrice($variant, $key);

@@ -31,17 +31,17 @@ class ShoppAdminDashboard {
 
 		if ( ! ( current_user_can('shopp_financials') && Shopp::str_true($dashboard) ) ) return false;
 
-		wp_add_dashboard_widget('dashboard_shopp_stats', __('Sales Stats','Shopp'), array(__CLASS__,'stats_widget'),
-			array('all_link' => '','feed_link' => '','width' => 'half','height' => 'single')
+		wp_add_dashboard_widget('dashboard_shopp_stats', Shopp::__('Sales Stats'), array(__CLASS__, 'stats_widget'),
+			array('all_link' => '', 'feed_link' => '', 'width' => 'half', 'height' => 'single')
 		);
 
-		wp_add_dashboard_widget('dashboard_shopp_orders', __('Recent Orders','Shopp'), array(__CLASS__, 'orders_widget'),
-			array('all_link' => 'admin.php?page=' . ShoppAdmin()->pagename('orders'),'feed_link' => '','width' => 'half','height' => 'single')
+		wp_add_dashboard_widget('dashboard_shopp_orders', Shopp::__('Recent Orders'), array(__CLASS__, 'orders_widget'),
+			array('all_link' => 'admin.php?page=' . ShoppAdmin()->pagename('orders'), 'feed_link' => '', 'width' => 'half', 'height' => 'single')
 		);
 
 		if ( shopp_setting_enabled('inventory') ) {
-			wp_add_dashboard_widget('dashboard_shopp_inventory', __('Inventory Monitor','Shopp'), array(__CLASS__, 'inventory_widget'),
-				array('all_link' => 'admin.php?page=' . ShoppAdmin()->pagename('products'),'feed_link' => '','width' => 'half','height' => 'single')
+			wp_add_dashboard_widget('dashboard_shopp_inventory', Shopp::__('Inventory Monitor'), array(__CLASS__, 'inventory_widget'),
+				array('all_link' => 'admin.php?page=' . ShoppAdmin()->pagename('products'), 'feed_link' => '', 'width' => 'half', 'height' => 'single')
 			);
 		}
 
@@ -75,26 +75,26 @@ class ShoppAdminDashboard {
 	public static function stats_widget ( $args = false ) {
 
 		$ranges = array(
-			'today' => __('Today','Shopp'),
-			'week' => __('This Week','Shopp'),
-			'month' => __('This Month','Shopp'),
-			'quarter' => __('This Quarter','Shopp'),
-			'year' => __('This Year','Shopp'),
-			'yesterday' => __('Yesterday','Shopp'),
-			'lastweek' => __('Last Week','Shopp'),
-			'last30' => __('Last 30 Days','Shopp'),
-			'last90' => __('Last 3 Months','Shopp'),
-			'lastmonth' => __('Last Month','Shopp'),
-			'lastquarter' => __('Last Quarter','Shopp'),
-			'lastyear' => __('Last Year','Shopp'),
+			'today'	        => Shopp::__('Today'),
+			'week'	        => Shopp::__('This Week'),
+			'month'	        => Shopp::__('This Month'),
+			'quarter'	    => Shopp::__('This Quarter'),
+			'year'	        => Shopp::__('This Year'),
+			'yesterday'	    => Shopp::__('Yesterday'),
+			'lastweek'	    => Shopp::__('Last Week'),
+			'last30'	    => Shopp::__('Last 30 Days'),
+			'last90'	    => Shopp::__('Last 3 Months'),
+			'lastmonth'	    => Shopp::__('Last Month'),
+			'lastquarter'	=> Shopp::__('Last Quarter'),
+			'lastyear'	    => Shopp::__('Last Year'),
 		);
 
 		$defaults = array(
-			'before_widget' => '',
-			'before_title' => '',
-			'widget_name' => '',
-			'after_title' => '',
-			'after_widget' => '',
+			'before_widget'	=> '',
+			'before_title'	=> '',
+			'widget_name'	=> '',
+			'after_title'	=> '',
+			'after_widget'	=> '',
 			'range' => isset($_GET['shopp-stats-range']) ? $_GET['shopp-stats-range'] : ''
 		);
 		$args = array_merge($defaults, (array) $args);
@@ -129,10 +129,10 @@ class ShoppAdminDashboard {
 		}
 
 		// Include authorizations, captures and old 1.1 tranaction status CHARGED in sales data
-		$salestatus = array("'authed'","'captured'","'CHARGED'");
+		$salestatus = array("'authed'", "'captured'", "'CHARGED'");
 
-		$txnstatus = "txnstatus IN (".join(',',$salestatus).")";
-		$daterange = "created BETWEEN '".sDB::mkdatetime($start)."' AND '".sDB::mkdatetime($end)."'";
+		$txnstatus = "txnstatus IN (" . join(',', $salestatus) . ")";
+		$daterange = "created BETWEEN '" . sDB::mkdatetime($start) . "' AND '" . sDB::mkdatetime($end) . "'";
 
 		$query = "SELECT count(id) AS orders,
 						SUM(total) AS sales,
@@ -177,24 +177,24 @@ class ShoppAdminDashboard {
 			<select name="shopp-stats-range" id="shopp-stats-range">
 				<?php echo menuoptions($ranges,$range,true); ?>
 			</select>
-			<button type="submit" id="filter-button" name="filter" value="order" class="button-secondary hide-if-js"><?php _e('Filter','Shopp'); ?></button>
+			<button type="submit" id="filter-button" name="filter" value="order" class="button-secondary hide-if-js"><?php Shopp::_e('Filter'); ?></button>
 		</form>
-		</th><th colspan="2"><?php _e('Lifetime','Shopp'); ?></th></tr>
+		</th><th colspan="2"><?php Shopp::_e('Lifetime'); ?></th></tr>
 
 		<tbody>
 		<tr><td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo (int)$results->wkorders; ?></a></td><td class="label"><?php echo _n('Order', 'Orders', (int)$results->wkorders, 'Shopp'); ?></td>
 		<td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo (int)$results->orders; ?></a></td><td class="label"><?php echo _n('Order', 'Orders', (int)$results->orders, 'Shopp'); ?></td></tr>
 
-		<tr><td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo money($results->wksales); ?></a></td><td class="label"><?php _e('Sales','Shopp'); ?></td>
-		<td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo money($results->sales); ?></a></td><td class="label"><?php _e('Sales','Shopp'); ?></td></tr>
+		<tr><td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo money($results->wksales); ?></a></td><td class="label"><?php Shopp::_e('Sales'); ?></td>
+		<td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo money($results->sales); ?></a></td><td class="label"><?php Shopp::_e('Sales'); ?></td></tr>
 
-		<tr><td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo money($results->wkavg); ?></a></td><td class="label"><?php _e('Average Order','Shopp'); ?></td>
-		<td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo money($results->average); ?></a></td><td class="label"><?php _e('Average Order','Shopp'); ?></td></tr>
+		<tr><td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo money($results->wkavg); ?></a></td><td class="label"><?php Shopp::_e('Average Order'); ?></td>
+		<td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo money($results->average); ?></a></td><td class="label"><?php Shopp::_e('Average Order'); ?></td></tr>
 
 		<?php if (!empty($RecentBestsellers->products) || !empty($LifeBestsellers->products)): ?>
 		<tr>
-			<th colspan="2"><?php printf(__('Bestsellers %s','Shopp'),$ranges[$range]); ?></th>
-			<th colspan="2"><?php printf(__('Lifetime Bestsellers','Shopp'),$ranges[$range]); ?></th>
+			<th colspan="2"><?php Shopp::_e('Bestsellers %s', $ranges[ $range ]); ?></th>
+			<th colspan="2"><?php Shopp::_e('Lifetime Bestsellers', $ranges[ $range ]); ?></th>
 		</tr>
 		<?php
 			reset($RecentBestsellers);
@@ -206,7 +206,7 @@ class ShoppAdminDashboard {
 				if ( ! $recent && ! $lifetime) break;
 			?>
 			<tr>
-				<?php if (empty($RecentBestsellers->products) && $firstrun) echo '<td colspan="2" rowspan="5">'.__('None','Shopp').'</td>'; ?>
+				<?php if (empty($RecentBestsellers->products) && $firstrun) echo '<td colspan="2" rowspan="5">' . Shopp::__('None') . '</td>'; ?>
 				<?php if ( ! empty($recent->id) ): ?>
 				<td class="salesgraph">
 					<div class="bar" style="width:<?php echo ($recent->sold/$RecentBestsellers->maxsold)*100; ?>%;"><?php echo $recent->sold; ?></div>
@@ -215,7 +215,7 @@ class ShoppAdminDashboard {
 				<a href="<?php echo esc_url(add_query_arg('view','bestselling',$productscreen)); ?>"><?php echo esc_html($recent->name); ?></a>
 				</td>
 				<?php endif; ?>
-				<?php if (empty($LifeBestsellers->products) && $firstrun) echo '<td colspan="2" rowspan="5">'.__('None','Shopp').'</td>'; ?>
+				<?php if (empty($LifeBestsellers->products) && $firstrun) echo '<td colspan="2" rowspan="5">' . Shopp::__('None') . '</td>'; ?>
 				<?php if (!empty($lifetime->id)): ?>
 				<td class="salesgraph">
 					<div class="bar" style="width:<?php echo ($lifetime->sold/$LifeBestsellers->maxsold)*100; ?>%;"><?php echo $lifetime->sold; ?></div>
@@ -277,8 +277,8 @@ class ShoppAdminDashboard {
 			echo  '<table class="widefat">'
 				. '<thead>'
 				. '	<tr>'
-				. '		<th scope="col">' . __('Name','Shopp') . '</th>'
-				. '		<th scope="col">' . __('Date','Shopp') . '</th>'
+				. '		<th scope="col">' . Shopp::__('Name') . '</th>'
+				. '		<th scope="col">' . Shopp::__('Date') . '</th>'
 				. '		<th scope="col" class="num">' . Shopp::__('Items') . '</th>'
 				. '		<th scope="col" class="num">' . Shopp::__('Total') . '</th>'
 				. '		<th scope="col" class="num">' . Shopp::__('Status') . '</th>'
@@ -329,10 +329,10 @@ class ShoppAdminDashboard {
 	public static function inventory_widget ( $args = false ) {
 
 		$warnings = array(
-			'none' => __('OK','Shopp'),
-			'warning' => __('warning','Shopp'),
-			'critical' => __('critical','Shopp'),
-			'backorder' => __('backorder','Shopp')
+			'none' => Shopp::__('OK'),
+			'warning' => Shopp::__('warning'),
+			'critical' => Shopp::__('critical'),
+			'backorder' => Shopp::__('backorder')
 		);
 
 		$defaults = array(

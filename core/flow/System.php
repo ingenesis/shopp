@@ -38,16 +38,16 @@ class ShoppAdminSystem extends ShoppAdminController {
 				shopp_enqueue_script('taxrates');
 				shopp_enqueue_script('suggest');
 				shopp_localize_script('taxrates', '$tr', array(
-					'confirm' => __('Are you sure you want to remove this tax rate?','Shopp'),
+					'confirm' => Shopp::__('Are you sure you want to remove this tax rate?'),
 				));
 
 				$this->subscreens = array(
-					'rates' => __('Rates','Shopp'),
-					'settings' => __('Settings','Shopp')
+					'rates'	    => Shopp::__('Rates'),
+					'settings'	=> Shopp::__('Settings')
 				);
 
-				if (isset($_GET['sub'])) $this->url = add_query_arg(array('sub'=>esc_attr($_GET['sub'])),$this->url);
-				else $_GET['sub'] = shopp_setting_enabled('taxes')?'rates':'settings';
+				if ( isset($_GET['sub']) ) $this->url = add_query_arg(array('sub' => esc_attr($_GET['sub'])), $this->url);
+				else $_GET['sub'] = shopp_setting_enabled('taxes') ? 'rates' : 'settings';
 
 				if (shopp_setting_enabled('taxes'))
 					$this->taxrate_ui();
@@ -57,8 +57,8 @@ class ShoppAdminSystem extends ShoppAdminController {
 				shopp_enqueue_script('colorbox');
 				shopp_enqueue_script('system');
 				shopp_localize_script( 'system', '$sys', array(
-					'indexing' => __('Product Indexing','Shopp'),
-					'indexurl' => wp_nonce_url(add_query_arg('action','shopp_rebuild_search_index',admin_url('admin-ajax.php')),'wp_ajax_shopp_rebuild_search_index')
+					'indexing' => Shopp::__('Product Indexing'),
+					'indexurl' => wp_nonce_url(add_query_arg('action', 'shopp_rebuild_search_index', admin_url('admin-ajax.php')), 'wp_ajax_shopp_rebuild_search_index')
 				));
 				break;
 			case 'storage':
@@ -70,18 +70,18 @@ class ShoppAdminSystem extends ShoppAdminController {
 				shopp_enqueue_script('jquery-tmpl');
 				shopp_enqueue_script('shiprates');
 				shopp_localize_script( 'shiprates', '$ps', array(
-					'confirm' => __('Are you sure you want to remove this shipping rate?','Shopp'),
+					'confirm' => Shopp::__('Are you sure you want to remove this shipping rate?'),
 				));
 
 				$this->subscreens = array(
-					'rates' => __('Rates','Shopp'),
-					'settings' => __('Settings','Shopp')
+					'rates'	    => Shopp::__('Rates'),
+					'settings'	=> Shopp::__('Settings')
 				);
 
-				if (isset($_GET['sub'])) $this->url = add_query_arg(array('sub'=>esc_attr($_GET['sub'])),$this->url);
-				else $_GET['sub'] = shopp_setting_enabled('taxes')?'rates':'settings';
+				if ( isset($_GET['sub']) ) $this->url = add_query_arg(array('sub' => esc_attr($_GET['sub'])), $this->url);
+				else $_GET['sub'] = shopp_setting_enabled('taxes') ? 'rates' : 'settings';
 
-				if (shopp_setting_enabled('shipping'))
+				if ( shopp_setting_enabled('shipping') )
 					$this->shipping_ui();
 
 				break;
@@ -90,7 +90,7 @@ class ShoppAdminSystem extends ShoppAdminController {
 				shopp_enqueue_script('jquery-tmpl');
 				shopp_enqueue_script('payments');
 				shopp_localize_script( 'payments', '$ps', array(
-					'confirm' => __('Are you sure you want to remove this payment system?','Shopp'),
+					'confirm' => Shopp::__('Are you sure you want to remove this payment system?'),
 				));
 
 				add_action("load-$this->screen", array($this, 'payments_help'), 20);
@@ -138,7 +138,7 @@ class ShoppAdminSystem extends ShoppAdminController {
 		$sub = 'settings';
 		$term_recount = false;
 		if (shopp_setting_enabled('shipping')) $sub = 'rates';
-		if ( isset($_GET['sub']) && in_array( $_GET['sub'],array_keys($this->subscreens) ) )
+		if ( isset($_GET['sub']) && in_array( $_GET['sub'], array_keys($this->subscreens) ) )
 			$sub = $_GET['sub'];
 
 		if (!empty($_POST['save']) && empty($_POST['module']) ) {
@@ -153,16 +153,16 @@ class ShoppAdminSystem extends ShoppAdminController {
 			}
 
 	 		shopp_set_formsettings();
-			$updated = __('Shipping settings saved.','Shopp');
+			$updated = Shopp::__('Shipping settings saved.');
 		}
 
 		// Handle ship rates UI
-		if ('rates' == $sub && 'on' == shopp_setting('shipping')) return $this->shiprates();
+		if ( 'rates' == $sub && 'on' == shopp_setting('shipping') ) return $this->shiprates();
 
 
 		if ($term_recount) {
 			$taxonomy = ProductCategory::$taxon;
-			$terms = get_terms( $taxonomy, array('hide_empty' => 0,'fields'=>'ids') );
+			$terms = get_terms( $taxonomy, array('hide_empty' => 0, 'fields' => 'ids') );
 			if ( ! empty($terms) )
 				wp_update_term_count_now( $terms, $taxonomy );
 		}
@@ -173,26 +173,26 @@ class ShoppAdminSystem extends ShoppAdminController {
 		$useRegions = shopp_setting('shipping_regions');
 
 		$areas = Lookup::country_areas();
-		if (is_array($areas[$base['country']]) && $useRegions == 'on')
+		if ( isset($areas[ $base['country'] ]) && is_array($areas[ $base['country'] ]) && $useRegions == 'on' )
 			$areas = array_keys($areas[$base['country']]);
 		else $areas = array($base['country'] => $base['name']);
-		unset($countries,$regions);
+		unset($countries, $regions);
 
 		$carrierdata = Lookup::shipcarriers();
-		$serviceareas = array('*',substr($base['country'],0,2));
+		$serviceareas = array('*', substr($base['country'], 0, 2));
 		foreach ($carrierdata as $c => $record) {
-			if (!in_array($record->areas,$serviceareas)) continue;
+			if ( ! in_array($record->areas, $serviceareas) ) continue;
 			$carriers[$c] = $record->name;
 		}
 		unset($carrierdata);
 		$shipping_carriers = shopp_setting('shipping_carriers');
-		if (empty($shipping_carriers)) $shipping_carriers = array_keys($carriers);
+		if ( empty($shipping_carriers) ) $shipping_carriers = array_keys($carriers);
 
 		$rates = shopp_setting('shipping_rates');
-		if (!empty($rates)) ksort($rates);
+		if ( ! empty($rates) ) ksort($rates);
 
 		$lowstock = shopp_setting('lowstock_level');
-		if (empty($lowstock)) $lowstock = 0;
+		if ( empty($lowstock) ) $lowstock = 0;
 
 		include $this->ui('shipping.php');
 	}
@@ -212,54 +212,54 @@ class ShoppAdminSystem extends ShoppAdminController {
 		if ( isset($_REQUEST['id']) ) $edit = (int)$_REQUEST['id'];
 
 		$active = shopp_setting('active_shipping');
-		if (!$active) $active = array();
+		if ( ! $active ) $active = array();
 
-		if (!empty($_GET['delete'])) {
+		if ( ! empty($_GET['delete']) ) {
 			check_admin_referer('shopp_delete_shiprate');
 			$delete = $_GET['delete'];
 			$index = false;
-			if (strpos($delete,'-') !== false)
-				list($delete,$index) = explode('-',$delete);
+			if ( strpos($delete, '-') !== false )
+				list($delete, $index) = explode('-', $delete);
 
-			if (array_key_exists($delete,$active))  {
-				if (is_array($active[$delete])) {
-					if (array_key_exists($index,$active[$delete])) {
+			if ( array_key_exists($delete, $active) )  {
+				if ( is_array($active[$delete]) ) {
+					if ( array_key_exists($index, $active[$delete]) ) {
 						unset($active[$delete][$index]);
-						if (empty($active[$delete])) unset($active[$delete]);
+						if ( empty($active[$delete]) ) unset($active[$delete]);
 					}
 				} else unset($active[$delete]);
-				$updated = __('Shipping method setting removed.','Shopp');
+				$updated = Shopp::__('Shipping method setting removed.');
 
-				shopp_set_setting('active_shipping',$active);
+				shopp_set_setting('active_shipping', $active);
 			}
 		}
 
-		if (isset($_POST['module'])) {
+		if ( isset($_POST['module']) ) {
 			check_admin_referer('shopp-settings-shiprate');
 
 			$setting = false;
-			$module = isset($_POST['module'])?$_POST['module']:false;
-			$id = isset($_POST['id'])?$_POST['id']:false;
+			$module = isset($_POST['module']) ? $_POST['module'] : false;
+			$id = isset($_POST['id']) ? $_POST['id'] : false;
 
 			if ($id == $module) {
-				if (isset($_POST['settings'])) shopp_set_formsettings();
+				if ( isset($_POST['settings']) ) shopp_set_formsettings();
 				/** Save shipping service settings **/
 				$active[$module] = true;
-				shopp_set_setting('active_shipping',$active);
-				$updated = __('Shipping settings saved.','Shopp');
+				shopp_set_setting('active_shipping', $active);
+				$updated = Shopp::__('Shipping settings saved.');
 				// Cancel editing if saving
-				if (isset($_POST['save'])) unset($_REQUEST['id']);
+				if ( isset($_POST['save']) ) unset($_REQUEST['id']);
 
 				$Errors = ShoppErrors();
 				do_action('shopp_verify_shipping_services');
 
-				if ($Errors->exist()) {
+				if ( $Errors->exist() ) {
 					// Get all addon related errors
 					$failures = $Errors->level(SHOPP_ADDON_ERR);
-					if (!empty($failures)) {
-						$updated = __('Shipping settings saved but there were errors: ','Shopp');
-						foreach ($failures as $error)
-							$updated .= '<p>'.$error->message(true,true).'</p>';
+					if ( ! empty($failures) ) {
+						$updated = Shopp::__('Shipping settings saved but there were errors: ');
+						foreach ( $failures as $error )
+							$updated .= '<p>' . $error->message(true, true) . '</p>';
 					}
 				}
 
@@ -267,36 +267,36 @@ class ShoppAdminSystem extends ShoppAdminController {
 				/** Save shipping calculator settings **/
 
 				$setting = $_POST['id'];
-				if (empty($setting)) { // Determine next available setting ID
+				if ( empty($setting) ) { // Determine next available setting ID
 					$index = 0;
-					if (is_array($active[$module])) $index = count($active[$module]);
+					if ( is_array($active[$module]) ) $index = count($active[$module]);
 					$setting = "$module-$index";
 				}
 
 				// Cancel editing if saving
-				if (isset($_POST['save'])) unset($_REQUEST['id']);
+				if ( isset($_POST['save']) ) unset($_REQUEST['id']);
 
 				$setting_module = $setting; $id = 0;
-				if (false !== strpos($setting,'-'))
-					list($setting_module,$id) = explode('-',$setting);
+				if ( false !== strpos($setting, '-') )
+					list($setting_module,$id) = explode('-', $setting);
 
 				// Prevent fishy stuff from happening
 				if ($module != $setting_module) $module = false;
 
 				// Save shipping calculator settings
 				$Shipper = $Shipping->get($module);
-				if ($Shipper && isset($_POST[$module])) {
+				if ( $Shipper && isset($_POST[$module]) ) {
 					$Shipper->setting($id);
 
 					$_POST[$module]['label'] = stripslashes($_POST[$module]['label']);
 
 					// Sterilize $values
-					foreach ($_POST[$module]['table'] as $i => &$row) {
-						if (isset($row['rate'])) $row['rate'] = Shopp::floatval($row['rate']);
-						if (!isset($row['tiers'])) continue;
+					foreach ( $_POST[$module]['table'] as $i => &$row ) {
+						if ( isset($row['rate']) ) $row['rate'] = Shopp::floatval($row['rate']);
+						if ( ! isset($row['tiers']) ) continue;
 
-						foreach ($row['tiers'] as &$tier) {
-							if (isset($tier['rate'])) $tier['rate'] = Shopp::floatval($tier['rate']);
+						foreach ( $row['tiers'] as &$tier ) {
+							if ( isset($tier['rate']) ) $tier['rate'] = Shopp::floatval($tier['rate']);
 						}
 					}
 
@@ -304,8 +304,8 @@ class ShoppAdminSystem extends ShoppAdminController {
 					ShippingFramework::sensibleestimates($_POST[$module]['mindelivery'], $_POST[$module]['maxdelivery']);
 
 					shopp_set_setting($Shipper->setting, $_POST[$module]);
-					if (!array_key_exists($module, $active)) $active[$module] = array();
-					$active[$module][(int) $id] = true;
+					if ( ! array_key_exists($module, $active) ) $active[$module] = array();
+					$active[ $module ][(int) $id] = true;
 					shopp_set_setting('active_shipping', $active);
 					$this->notice(Shopp::__('Shipping settings saved.'));
 				}
@@ -321,38 +321,38 @@ class ShoppAdminSystem extends ShoppAdminController {
 		$settings = array();	// Registry of loaded settings for table-based shipping rates for JS
 
 		foreach ($Shipping->active as $name => $module) {
-			if (version_compare($Shipping->modules[$name]->since,'1.2') == -1) continue; // Skip 1.1 modules, they are incompatible
+			if ( version_compare($Shipping->modules[$name]->since, '1.2') == -1 ) continue; // Skip 1.1 modules, they are incompatible
 
 			$default_name = strtolower($name);
 			$fullname = $module->methods();
-			$installed[$name] = $fullname;
+			$installed[ $name ] = $fullname;
 
-			if ($module->ui->tables) {
+			if ( $module->ui->tables ) {
 				$defaults[$default_name] = $module->ui->settings();
 				$defaults[$default_name]['name'] = $fullname;
-				$defaults[$default_name]['label'] = __('Shipping Method','Shopp');
+				$defaults[$default_name]['label'] = Shopp::__('Shipping Method');
 			}
 
-			if (array_key_exists($name,$active)) $ModuleSetting = $active[$name];
+			if ( array_key_exists($name, $active) ) $ModuleSetting = $active[$name];
 			else continue; // Not an activated shipping module, go to the next one
 
 			// Setup shipping service shipping rate entries and settings
-			if (!is_array($ModuleSetting)) {
-				$shiprates[$name] = $name;
+			if ( ! is_array($ModuleSetting) ) {
+				$shiprates[ $name ] = $name;
 				continue;
 			}
 
 			// Setup shipping calcualtor shipping rate entries and settings
 			foreach ($ModuleSetting as $id => $m) {
 				$setting = "$name-$id";
-				$shiprates[$setting] = $name;
+				$shiprates[ $setting ] = $name;
 
-				$settings[$setting] = shopp_setting($setting);
-				$settings[$setting]['id'] = $setting;
-				$settings[$setting] = array_merge($defaults[$default_name],$settings[$setting]);
-				if ( isset($settings[$setting]['table']) ) {
-					usort($settings[$setting]['table'],array('ShippingFramework','_sorttier'));
-					foreach ( $settings[$setting]['table'] as &$r ) {
+				$settings[ $setting ] = shopp_setting($setting);
+				$settings[ $setting ]['id'] = $setting;
+				$settings[ $setting ] = array_merge($defaults[ $default_name ], $settings[ $setting ]);
+				if ( isset($settings[ $setting ]['table']) ) {
+					usort($settings[ $setting ]['table'], array('ShippingFramework', '_sorttier'));
+					foreach ( $settings[ $setting ]['table'] as &$r ) {
 						if ( isset($r['tiers']) ) usort($r['tiers'],array('ShippingFramework','_sorttier'));
 					}
 				}
@@ -363,14 +363,14 @@ class ShoppAdminSystem extends ShoppAdminController {
 		if ( isset($_REQUEST['id']) ) {
 			$edit = $_REQUEST['id'];
 			$id = false;
-			if (strpos($edit,'-') !== false)
-				list($module,$id) = explode('-',$edit);
+			if ( strpos($edit, '-') !== false )
+				list($module, $id) = explode('-', $edit);
 			else $module = $edit;
-			if (isset($Shipping->active[ $module ]) ) {
+			if ( isset($Shipping->active[ $module ]) ) {
 				$Shipper = $Shipping->get($module);
-				if (!$Shipper->singular) {
+				if ( ! $Shipper->singular ) {
 					$Shipper->setting($id);
-					$Shipper->initui($Shipping->modules[$module]->name); // Re-init setting UI with loaded settings
+					$Shipper->initui($Shipping->modules[ $module ]->name); // Re-init setting UI with loaded settings
 				}
 				$editor = $Shipper->ui();
 			}
@@ -382,13 +382,13 @@ class ShoppAdminSystem extends ShoppAdminController {
 		$countrydata = Lookup::countries();
 		$countries = $regionmap = $postcodes = array();
 		$postcodedata = Lookup::postcodes();
-		foreach ($countrydata as $code => $country) {
+		foreach ( $countrydata as $code => $country ) {
 			$countries[$code] = $country['name'];
-			if ( !isset($regionmap[ $country['region'] ]) ) $regionmap[ $country['region'] ] = array();
+			if ( ! isset($regionmap[ $country['region'] ]) ) $regionmap[ $country['region'] ] = array();
 			$regionmap[ $country['region'] ][] = $code;
-			if ( isset($postcodedata[$code])) {
-				if ( !isset($postcodes[ $code ]) ) $postcodes[ $code ] = array();
-				$postcodes[$code] = true;
+			if ( isset($postcodedata[$code]) ) {
+				if ( ! isset($postcodes[ $code ]) ) $postcodes[ $code ] = array();
+				$postcodes[ $code ] = true;
 			}
 		}
 		unset($countrydata);
@@ -396,12 +396,12 @@ class ShoppAdminSystem extends ShoppAdminController {
 
 
 		$lookup = array(
-			'regions' => array_merge(array('*' => __('Anywhere','Shopp')),Lookup::regions()),
-			'regionmap' => $regionmap,
-			'countries' => $countries,
-			'areas' => Lookup::country_areas(),
-			'zones' => Lookup::country_zones(),
-			'postcodes' => $postcodes
+			'regions'	=> array_merge(array('*' => Shopp::__('Anywhere')), Lookup::regions()),
+			'regionmap'	=> $regionmap,
+			'countries'	=> $countries,
+			'areas'	    => Lookup::country_areas(),
+			'zones'	    => Lookup::country_zones(),
+			'postcodes'	=> $postcodes
 		);
 
 		$ShippingTemplates = new TemplateShippingUI();
@@ -410,11 +410,11 @@ class ShoppAdminSystem extends ShoppAdminController {
 	}
 
 	public function shipping_menu () {
-		if (!shopp_setting_enabled('shipping')) return;
+		if ( ! shopp_setting_enabled('shipping') ) return;
 		?>
 		<ul class="subsubsub">
-			<?php $i = 0; foreach ($this->subscreens as $screen => $label):  $url = add_query_arg(array('sub'=>$screen),$this->url); ?>
-				<li><a href="<?php echo esc_url($url); ?>"<?php if ($_GET['sub'] == $screen) echo ' class="current"'; ?>><?php echo $label; ?></a><?php if (count($this->subscreens)-1!=$i++): ?> | <?php endif; ?></li>
+			<?php $i = 0; foreach ( $this->subscreens as $screen => $label ):  $url = add_query_arg(array('sub' => $screen), $this->url); ?>
+				<li><a href="<?php echo esc_url($url); ?>"<?php if ( $_GET['sub'] == $screen ) echo ' class="current"'; ?>><?php echo $label; ?></a><?php if (count($this->subscreens)-1!=$i++): ?> | <?php endif; ?></li>
 			<?php endforeach; ?>
 		</ul>
 		<br class="clear" />
@@ -423,9 +423,9 @@ class ShoppAdminSystem extends ShoppAdminController {
 
 	public function shipping_ui () {
 		register_column_headers('shopp_page_shopp-settings-shipping', array(
-			'name'=>__('Name','Shopp'),
-			'type'=>__('Type','Shopp'),
-			'destinations'=>__('Destinations','Shopp')
+			'name'	        =>	Shopp::__('Name'),
+			'type'	        =>	Shopp::__('Type'),
+			'destinations'	=>	Shopp::__('Destinations')
 		));
 	}
 
@@ -434,14 +434,14 @@ class ShoppAdminSystem extends ShoppAdminController {
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$sub = 'settings';
-		if (shopp_setting_enabled('taxes')) $sub = 'rates';
+		if ( shopp_setting_enabled('taxes') ) $sub = 'rates';
 		if ( isset($_GET['sub']) && in_array( $_GET['sub'],array_keys($this->subscreens) ) )
 			$sub = $_GET['sub'];
 
-		if (!empty($_POST['save'])) {
+		if ( ! empty($_POST['save']) ) {
 			check_admin_referer('shopp-settings-taxes');
 			shopp_set_formsettings();
-			$updated = __('Tax settings saved.','Shopp');
+			$updated = Shopp::__('Tax settings saved.');
 		}
 
 		// Handle ship rates UI
@@ -451,10 +451,10 @@ class ShoppAdminSystem extends ShoppAdminController {
 	}
 
 	public function taxes_menu () {
-		if (!shopp_setting_enabled('taxes')) return;
+		if ( ! shopp_setting_enabled('taxes') ) return;
 		?>
 		<ul class="subsubsub">
-			<?php $i = 0; foreach ($this->subscreens as $screen => $label):  $url = add_query_arg(array('sub'=>$screen),$this->url); ?>
+			<?php $i = 0; foreach ($this->subscreens as $screen => $label):  $url = add_query_arg(array('sub' => $screen), $this->url); ?>
 				<li><a href="<?php echo esc_url($url); ?>"<?php if ($_GET['sub'] == $screen) echo ' class="current"'; ?>><?php echo $label; ?></a><?php if (count($this->subscreens)-1!=$i++): ?> | <?php endif; ?></li>
 			<?php endforeach; ?>
 		</ul>
@@ -464,9 +464,9 @@ class ShoppAdminSystem extends ShoppAdminController {
 
 	public function taxrate_ui () {
 		register_column_headers('shopp_page_shopp-settings-taxrates', array(
-			'rate'=>__('Rate','Shopp'),
-			'local'=>__('Local Rates','Shopp'),
-			'conditional'=>__('Conditional','Shopp')
+			'rate'	        =>	Shopp::__('Rate'),
+			'local'	        =>	Shopp::__('Local Rates'),
+			'conditional'	=>	Shopp::__('Conditional')
 		));
 	}
 
@@ -479,49 +479,49 @@ class ShoppAdminSystem extends ShoppAdminController {
 		$localerror = false;
 
 		$rates = shopp_setting('taxrates');
-		if (!is_array($rates)) $rates = array();
+		if ( ! is_array($rates) ) $rates = array();
 
-		if (isset($_GET['delete'])) {
+		if ( isset($_GET['delete']) ) {
 			check_admin_referer('shopp_delete_taxrate');
 			$delete = (int)$_GET['delete'];
-			if (isset($rates[$delete]))
-				array_splice($rates,$delete,1);
-			shopp_set_setting('taxrates',$rates);
+			if ( isset($rates[$delete]) )
+				array_splice($rates, $delete,1);
+			shopp_set_setting('taxrates', $rates);
 		}
 
-		if (isset($_POST['editing'])) $rates[$edit] = $_POST['settings']['taxrates'][ $edit ];
-		if (isset($_POST['addrule'])) $rates[$edit]['rules'][] = array('p'=>'','v'=>'');
-		if (isset($_POST['deleterule'])) {
+		if ( isset($_POST['editing']) ) $rates[ $edit ] = $_POST['settings']['taxrates'][ $edit ];
+		if ( isset($_POST['addrule']) ) $rates[ $edit ]['rules'][] = array('p' => '', 'v' => '');
+		if ( isset($_POST['deleterule']) ) {
 			check_admin_referer('shopp-settings-taxrates');
-			list($rateid,$row) = explode(',',$_POST['deleterule']);
-			if (isset($rates[$rateid]) && isset($rates[$rateid]['rules'])) {
-				array_splice($rates[$rateid]['rules'],$row,1);
-				shopp_set_setting('taxrates',$rates);
+			list($rateid, $row) = explode(',', $_POST['deleterule']);
+			if ( isset($rates[$rateid]) && isset($rates[$rateid]['rules']) ) {
+				array_splice($rates[$rateid]['rules'], $row, 1);
+				shopp_set_setting('taxrates', $rates);
 			}
 		}
 
-		if (isset($rates[$edit]['haslocals']))
-			$rates[$edit]['haslocals'] = ($rates[$edit]['haslocals'] == 'true' || $rates[$edit]['haslocals'] == '1');
-		if (isset($_POST['add-locals'])) $rates[$edit]['haslocals'] = true;
-		if (isset($_POST['remove-locals'])) {
+		if ( isset($rates[ $edit ]['haslocals']) )
+			$rates[$edit]['haslocals'] = ($rates[ $edit ]['haslocals'] == 'true' || $rates[ $edit ]['haslocals'] == '1');
+		if (isset($_POST['add-locals']) ) $rates[ $edit ]['haslocals'] = true;
+		if (isset($_POST['remove-locals']) ) {
 			$rates[$edit]['haslocals'] = false;
 			$rates[$edit]['locals'] = array();
 		}
 
 		$upload = $this->taxrate_upload();
-		if ($upload !== false) {
-			if (isset($upload['error'])) $localerror = $upload['error'];
-			else $rates[$edit]['locals'] = $upload;
+		if ( $upload !== false ) {
+			if ( isset($upload['error']) ) $localerror = $upload['error'];
+			else $rates[ $edit ]['locals'] = $upload;
 		}
 
-		if (isset($_POST['editing'])) {
+		if ( isset($_POST['editing']) ) {
 			// Re-sort taxes from generic to most specific
-			usort($rates,array($this,'taxrates_sorting'));
+			usort($rates, array($this, 'taxrates_sorting'));
 			$rates = stripslashes_deep($rates);
-			shopp_set_setting('taxrates',$rates);
+			shopp_set_setting('taxrates', $rates);
 		}
-		if (isset($_POST['addrate'])) $edit = count($rates);
-		if (isset($_POST['submit'])) $edit = false;
+		if ( isset($_POST['addrate']) ) $edit = count($rates);
+		if ( isset($_POST['submit']) ) $edit = false;
 
 		$base = shopp_setting('base_operations');
 		$specials = array(ShoppTax::ALL => Shopp::__('All Markets'));
@@ -561,11 +561,11 @@ class ShoppAdminSystem extends ShoppAdminController {
 			$score += count($rate['rules']);
 
 			// If there are local rates add to specificity
-			if (isset($rate['haslocals']) && $rate['haslocals']) $score++;
+			if ( isset($rate['haslocals']) && $rate['haslocals'] ) $score++;
 
-			if (isset($rate['zone']) && $rate['zone']) $score++;
+			if ( isset($rate['zone']) && $rate['zone'] ) $score++;
 
-			if ('*' != $rate['country']) $score++;
+			if ( '*' != $rate['country'] ) $score++;
 
 			$score += $rate['rate'] / 100;
 		}
@@ -575,27 +575,27 @@ class ShoppAdminSystem extends ShoppAdminController {
 	}
 
 	public function taxrate_upload () {
-		if (!isset($_FILES['ratefile'])) return false;
+		if ( ! isset($_FILES['ratefile']) ) return false;
 
 		$upload = $_FILES['ratefile'];
 		$filename = $upload['tmp_name'];
-		if (empty($filename) && empty($upload['name']) && !isset($_POST['upload'])) return false;
+		if ( empty($filename) && empty($upload['name']) && ! isset($_POST['upload']) ) return false;
 
 		$error = false;
 
-		if ($upload['error'] != 0) return array('error' => Lookup::errors('uploads',$upload['error']));
-		if (!is_readable($filename)) return array('error' => Lookup::errors('uploadsecurity','is_readable'));
-		if (empty($upload['size'])) return array('error' => Lookup::errors('uploadsecurity','is_empty'));
-		if ($upload['size'] != filesize($filename)) return array('error' => Lookup::errors('uploadsecurity','filesize_mismatch'));
-		if (!is_uploaded_file($filename)) return array('error' => Lookup::errors('uploadsecurity','is_uploaded_file'));
+		if ( $upload['error'] != 0 ) return array('error' => Lookup::errors('uploads', $upload['error']));
+		if ( ! is_readable($filename) ) return array('error' => Lookup::errors('uploadsecurity', 'is_readable'));
+		if ( empty($upload['size']) ) return array('error' => Lookup::errors('uploadsecurity', 'is_empty'));
+		if ( $upload['size'] != filesize($filename) ) return array('error' => Lookup::errors('uploadsecurity', 'filesize_mismatch'));
+		if ( ! is_uploaded_file($filename) ) return array('error' => Lookup::errors('uploadsecurity', 'is_uploaded_file'));
 
 		$data = file_get_contents($upload['tmp_name']);
 		$cr = array("\r\n", "\r");
 
-		$formats = array(0=>false,3=>'xml',4=>'tab',5=>'csv');
-		preg_match('/((<[^>]+>.+?<\/[^>]+>)|(.+?\t.+?[\n|\r])|(.+?,.+?[\n|\r]))/',$data,$_);
+		$formats = array(0 => false, 3 => 'xml', 4 => 'tab', 5 => 'csv');
+		preg_match('/((<[^>]+>.+?<\/[^>]+>)|(.+?\t.+?[\n|\r])|(.+?,.+?[\n|\r]))/', $data, $_);
 		$format = $formats[count($_)];
-		if (!$format) return array('error' => __('The uploaded file is not properly formatted as an XML, CSV or tab-delimmited file.','Shopp'));
+		if ( ! $format ) return array('error' => Shopp::__('The uploaded file is not properly formatted as an XML, CSV or tab-delimmited file.'));
 
 		$_ = array();
 		switch ($format) {
@@ -615,38 +615,38 @@ class ShoppAdminSystem extends ShoppAdminController {
 					1.25	= 1.25%	(0.0125)
 					10		= 10%	(0.1)
 				*/
-				if (!class_exists('xmlQuery'))
-					require(SHOPP_MODEL_PATH.'/XML.php');
+				if ( ! class_exists('xmlQuery') )
+					require(SHOPP_MODEL_PATH . '/XML.php');
 				$XML = new xmlQuery($data);
 				$taxrates = $XML->tag('taxrate');
-				while($rate = $taxrates->each()) {
-					$name = $rate->attr(false,'name');
+				while( $rate = $taxrates->each() ) {
+					$name = $rate->attr(false, 'name');
 					$value = $rate->content();
 					$_[$name] = $value;
 				}
 				break;
 			case 'csv':
-				ini_set('auto_detect_line_endings',true);
+				ini_set('auto_detect_line_endings', true);
 				if (($csv = fopen($upload['tmp_name'], 'r')) === false)
-					return array('error' => Lookup::errors('uploadsecurity','is_readable'));
+					return array('error' => Lookup::errors('uploadsecurity', 'is_readable'));
 				while ( ($data = fgetcsv($csv, 1000)) !== false )
-					$_[$data[0]] = !empty($data[1])?$data[1]:0;
+					$_[$data[0]] = !empty($data[1]) ? $data[1] : 0;
 				fclose($csv);
-				ini_set('auto_detect_line_endings',false);
+				ini_set('auto_detect_line_endings', false);
 				break;
 			case 'tab':
 			default:
-				$data = str_replace($cr,"\n",$data);
-				$lines = explode("\n",$data);
+				$data = str_replace($cr, "\n", $data);
+				$lines = explode("\n", $data);
 				foreach ($lines as $line) {
-					list($key,$value) = explode("\t",$line);
+					list($key, $value) = explode("\t", $line);
 					$_[$key] = $value;
 				}
 		}
 
-		if (empty($_)) array('error' => __('No useable tax rates could be found. The uploaded file may not be properly formatted.','Shopp'));
+		if ( empty($_) ) array('error' => Shopp::__('No useable tax rates could be found. The uploaded file may not be properly formatted.'));
 
-		return apply_filters('shopp_local_taxrates_upload',$_);
+		return apply_filters('shopp_local_taxrates_upload', $_);
 	}
 
 	public function payments () {
@@ -655,6 +655,7 @@ class ShoppAdminSystem extends ShoppAdminController {
 
 		$Shopp = Shopp::object();
 		$Gateways = $Shopp->Gateways;
+		$editor = '';
 
 	 	$active_gateways = shopp_setting('active_gateways');
 		if ( ! $active_gateways ) $gateways = array();
@@ -706,10 +707,10 @@ class ShoppAdminSystem extends ShoppAdminController {
 					shopp_set_setting('active_gateways', join(',', $gateways));
 				}
 
-			} // END isset($_POST['gateway])
+			} // END isset($_POST['gateway'])
 
 			shopp_set_formsettings();
-			$updated = __('Shopp payments settings saved.','Shopp');
+			$updated = Shopp::__('Shopp payments settings saved.');
 		}
 
 		$Gateways->settings();	// Load all installed gateways for settings UIs
@@ -722,15 +723,15 @@ class ShoppAdminSystem extends ShoppAdminController {
 		$edit = false;
 		$Gateways->ui();		// Setup setting UIs
 
-		if ( isset($_REQUEST['id']) ) {
+		if ( isset($_REQUEST['id']) && Shopp::__('Add a payment system...') != $_REQUEST['id'] ) {
 			$edit = $_REQUEST['id'];
 			$gateway = $edit;
 			$id = false;		// Instance ID for multi-instance gateways
-			if (false !== strpos($edit,'-')) list($gateway,$id) = explode('-',$gateway);
+			if (false !== strpos($edit, '-')) list($gateway, $id) = explode('-', $gateway);
 			if (isset($Gateways->active[ $gateway ]) ) {
 				$Gateway = $Gateways->get($gateway);
 				if ($Gateway->multi && false === $id) {
-					unset($Gateway->settings['cards'],$Gateway->settings['label']);
+					unset($Gateway->settings['cards'], $Gateway->settings['label']);
 					$id = count($Gateway->settings);
 				}
 				$editor = $Gateway->ui($id);
@@ -739,7 +740,7 @@ class ShoppAdminSystem extends ShoppAdminController {
 
 		asort($installed);
 
-		add_action('shopp_gateway_module_settings',array($Gateways,'templates'));
+		add_action('shopp_gateway_module_settings', array($Gateways, 'templates'));
 		include $this->ui('payments.php');
 	}
 
@@ -752,13 +753,13 @@ class ShoppAdminSystem extends ShoppAdminController {
 
 	public function payments_ui () {
 		register_column_headers('shopp_page_shopp-settings-payments', array(
-			'name'=>__('Name','Shopp'),
-			'processor'=>__('Processor','Shopp'),
-			'payments'=>__('Payments','Shopp'),
-			'ssl'=>__('SSL','Shopp'),
-			'captures'=>__('Captures','Shopp'),
-			'recurring'=>__('Recurring','Shopp'),
-			'refunds'=>__('Refunds','Shopp')
+			'name'	    =>	Shopp::__('Name'),
+			'processor'	=>	Shopp::__('Processor'),
+			'payments'	=>	Shopp::__('Payments'),
+			'ssl'	    =>	Shopp::__('SSL'),
+			'captures'	=>	Shopp::__('Captures'),
+			'recurring'	=>	Shopp::__('Recurring'),
+			'refunds'	=>	Shopp::__('Refunds')
 		));
 	}
 
@@ -930,32 +931,32 @@ class ShoppAdminSystem extends ShoppAdminController {
 
 			$this->notice(Shopp::__('Shopp system settings saved.'));
 
-		} elseif (!empty($_POST['rebuild'])) {
+		} elseif ( ! empty($_POST['rebuild']) ) {
 			$assets = ShoppDatabaseObject::tablename(ProductImage::$table);
 			$query = "DELETE FROM $assets WHERE context='image' AND type='image'";
 			if (sDB::query($query))
-				$updated = __('All cached images have been cleared.','Shopp');
+				$updated = Shopp::__('All cached images have been cleared.');
 		}
 
 		// Build the storage options menu
 		$storage = $engines = $storageset = array();
-		foreach ($Storage->active as $module) {
-			$storage[$module->module] = $module->name;
-			$engines[$module->module] = sanitize_title_with_dashes($module->module);
-			$storageset[$module->module] = $Storage->get($module->module)->settings;
+		foreach ( $Storage->active as $module ) {
+			$storage[ $module->module ] = $module->name;
+			$engines[ $module->module ] = sanitize_title_with_dashes($module->module);
+			$storageset[ $module->module ] = $Storage->get($module->module)->settings;
 		}
 
 		$Storage->ui();		// Setup setting UIs
 
 		$ImageStorage = false;
 		$DownloadStorage = false;
-		if (isset($_POST['image-settings']))
+		if ( isset($_POST['image-settings']) )
 			$ImageStorage = $Storage->get(shopp_setting('image_storage'));
 
-		if (isset($_POST['download-settings']))
+		if ( isset($_POST['download-settings']) )
 			$DownloadStorage = $Storage->get(shopp_setting('product_storage'));
 
-		add_action('shopp_storage_engine_settings',array($Storage,'templates'));
+		add_action('shopp_storage_engine_settings', array($Storage, 'templates'));
 
 		include $this->ui('storage.php');
 	}
@@ -990,7 +991,7 @@ class ShoppAdminSystem extends ShoppAdminController {
 
 	public static function reindex_progress ( $indexed, $total, $start ) {
 		if ( $total == 0 ) return;
-		echo str_pad('<script type="text/javascript">indexProgress = '.$indexed/(int)$total.';</script>'."\n", 2048, ' ');
+		echo str_pad('<script type="text/javascript">indexProgress = ' . $indexed/(int)$total . ';</script>' . "\n", 2048, ' ');
 		if ( ob_get_length() ) {
 			@ob_flush();
 			@flush();
@@ -998,7 +999,7 @@ class ShoppAdminSystem extends ShoppAdminController {
 	}
 
 	public static function reindex_completed ( $indexed, $total, $start ) {
-		echo str_pad('</body><html>'."\n",2048,' ');
+		echo str_pad('</body><html>'."\n", 2048, ' ');
 		if ( ob_get_length() )
 			@ob_end_flush();
 	}

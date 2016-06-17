@@ -9,7 +9,7 @@ class ShippingReport extends ShoppReportFramework implements ShoppReport {
 			'yaxis' => array('tickFormatter' => 'asMoney')
 		));
 
-		$this->chartseries( __('Shipping', 'Shopp'), array('column' => 'shipping') );
+		$this->chartseries( Shopp::__('Shipping'), array('column' => 'shipping') );
 	}
 
 	function query () {
@@ -38,11 +38,11 @@ class ShippingReport extends ShoppReportFramework implements ShoppReport {
 
 	function columns () {
 	 	return array(
-			'period'   => __('Period', 'Shopp'),
-			'orders'   => __('Orders', 'Shopp'),
-			'items'    => __('Items', 'Shopp'),
-			'subtotal' => __('Subtotal', 'Shopp'),
-			'shipping' => __('Shipping', 'Shopp')
+			'period'   => Shopp::__('Period'),
+			'orders'   => Shopp::__('Orders'),
+			'items'    => Shopp::__('Items'),
+			'subtotal' => Shopp::__('Subtotal'),
+			'shipping' => Shopp::__('Shipping')
 		);
 	}
 

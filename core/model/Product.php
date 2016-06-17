@@ -18,8 +18,8 @@ class ShoppProduct extends WPShoppObject {
 
 	static $table = 'posts';
 	static $_taxonomies = array(
-		'shopp_category' => 'categories',
-		'shopp_tag' => 'tags'
+		'shopp_category'	=> 'categories',
+		'shopp_tag'	        => 'tags'
 	);
 	static $posttype = 'shopp_product';
 
@@ -37,6 +37,7 @@ class ShoppProduct extends WPShoppObject {
 	public $sale = false;
 	public $outofstock = false;
 	public $excludetax = false;
+	public $featured = 'off';
 	public $variants = 'off';
 	public $addons = 'off';
 	public $freeship = 'off';
@@ -46,22 +47,22 @@ class ShoppProduct extends WPShoppObject {
 	public $options = 0;
 
 	protected $_map = array(
-		'id' => 'ID',
-		'name' => 'post_title',
-		'slug' => 'post_name',
-		'summary' => 'post_excerpt',
-		'description' => 'post_content',
-		'status' => 'post_status',
-		'type' => 'post_type',
-		'publish' => 'post_date',
-		'modified' => 'post_modified',
-		'post_date_gmt' => 'post_date_gmt',
-		'post_modified_gmt' => 'post_modified_gmt',
-		'post_content_filtered' => 'post_content_filtered',
-		'comment_status' => 'comment_status',
-		'ping_status' => 'ping_status',
-		'to_ping' => 'to_ping',
-		'pinged' => 'pinged'
+		'id'	                => 'ID',
+		'name'	                => 'post_title',
+		'slug'	                => 'post_name',
+		'summary'	            => 'post_excerpt',
+		'description'	        => 'post_content',
+		'status'	            => 'post_status',
+		'type'	                => 'post_type',
+		'publish'	            => 'post_date',
+		'modified'	            => 'post_modified',
+		'post_date_gmt'	        => 'post_date_gmt',
+		'post_modified_gmt'	    => 'post_modified_gmt',
+		'post_content_filtered'	=> 'post_content_filtered',
+		'comment_status'	    => 'comment_status',
+		'ping_status'	        => 'ping_status',
+		'to_ping'	            => 'to_ping',
+		'pinged'	            => 'pinged'
 	);
 
 	// Keep track of data load efforts
@@ -80,6 +81,11 @@ class ShoppProduct extends WPShoppObject {
 		$this->init(self::$table, $key);
 		$this->type = self::$posttype;
 		$this->load($id, $key);
+		// use default WordPress setting on new product
+		if ( ! $id ) { 
+ 			$this->ping_status = get_option('default_ping_status');
+ 			$this->comment_status = get_option('default_comment_status');			
+ 		}
 	}
 
 	public function save () {
@@ -90,8 +96,8 @@ class ShoppProduct extends WPShoppObject {
 		$this->post_modified_gmt = current_time('timestamp')+$gmtoffset;
 		if (is_null($this->publish)) $this->post_date_gmt = $this->post_modified_gmt;
 		else $this->post_date_gmt = $this->publish+$gmtoffset;
-		if ( false === has_action('shopp_save_product',array($this,'savepost')))
-			add_action('shopp_save_product',array($this,'savepost'));
+		if ( false === has_action('shopp_save_product', array($this, 'savepost')))
+			add_action('shopp_save_product', array($this, 'savepost'));
 		parent::save();
 	}
 
@@ -116,17 +122,17 @@ class ShoppProduct extends WPShoppObject {
 
 	public static function labels () {
 		return apply_filters( 'shopp_product_labels', array(
-			'name' => __('Products', 'Shopp'),
-			'singular_name' => __('Product', 'Shopp'),
-			'edit_item' => __('Edit Product', 'Shopp'),
-			'new_item' => __('New Product', 'Shopp')
+			'name'	        => Shopp::__('Products'),
+			'singular_name'	=> Shopp::__('Product'),
+			'edit_item'	    => Shopp::__('Edit Product'),
+			'new_item'	    => Shopp::__('New Product')
 		));
 	}
 
 	public static function capabilities () {
 		return apply_filters( 'shopp_product_capabilities', array(
-			'edit_post' => 'shopp_products',
-			'delete_post' => 'shopp_products'
+			'edit_post'	    => 'shopp_products',
+			'delete_post'	=> 'shopp_products'
 		) );
 	}
 
@@ -182,7 +188,7 @@ class ShoppProduct extends WPShoppObject {
 			$this->_loaded = array_unique(array_merge($this->_loaded, $options));
 		}
 
-		if ( empty($ids) ) return;
+		if ( empty( $ids ) ) return;
 
 		foreach ( $loadcalls as $loadmethod )
 			if ( method_exists($this, $loadmethod) )
@@ -219,7 +225,7 @@ class ShoppProduct extends WPShoppObject {
 		$this->prices = array();
 
 		// Reset summary properties for correct price range and stock sums in single product (product page) loading contexts
-		if (!empty($this->id) && $this->id == $ids) {
+		if ( ! empty($this->id) && $this->id == $ids ) {
 			$this->load_summary($ids);
 			$this->resum();
 		}
@@ -232,8 +238,8 @@ class ShoppProduct extends WPShoppObject {
 		sDB::query("SELECT * FROM $Object->_table WHERE product IN ($ids) ORDER BY product,sortorder", 'array', array($this, 'pricing'));
 
 		// Load price metadata that exists
-		if (!empty($this->priceid)) {
-			$prices = join(',',array_keys($this->priceid));
+		if ( ! empty($this->priceid) ) {
+			$prices = join(',', array_keys($this->priceid));
 			$Object->prices = $this->priceid;
 			$Object->products = ( isset($this->products) && ! empty($this->products) ) ? $this->products : $this;
 			$ObjectMeta = new ObjectMeta();
@@ -328,7 +334,7 @@ class ShoppProduct extends WPShoppObject {
 		} else $ids = array($this->id);
 
 		$taxonomies = get_object_taxonomies( self::$posttype );
-		$terms = wp_get_object_terms($ids,$taxonomies,array('fields' => 'all_with_object_id'));
+		$terms = wp_get_object_terms($ids, $taxonomies, array('fields' => 'all_with_object_id'));
 
 		foreach ( $terms as $term ) { // Map WP taxonomy data to object meta
 			if ( ! isset($term->term_id) || empty($term->term_id) ) continue; 		// Skip invalid entries
@@ -336,7 +342,7 @@ class ShoppProduct extends WPShoppObject {
 			if ( isset(ShoppProduct::$_taxonomies[$term->taxonomy]) ) {
 				$property = ShoppProduct::$_taxonomies[$term->taxonomy];
 			} else {
-				$property = $term->taxonomy.'s';
+				$property = $term->taxonomy . 's';
 			}
 
 			if ( isset($products[$term->object_id]) )
@@ -367,12 +373,12 @@ class ShoppProduct extends WPShoppObject {
 	 **/
 	public function loader ( array &$records, &$record, $DatabaseObject = false, $index = 'id', $collate = false ) {
 
-		if (isset($this)) {
+		if ( isset($this) ) {
 			$index = $this->_key;
 			$DatabaseObject = get_class($this);
 		} else $DatabaseObject = __CLASS__;
 		$index = isset($record->$index)?$record->$index:'!NO_INDEX!';
-		if (!isset($DatabaseObject) || !class_exists($DatabaseObject)) return;
+		if ( ! isset($DatabaseObject) || !class_exists($DatabaseObject) ) return;
 		$Object = new $DatabaseObject();
 		$Object->populate($record);
 
@@ -385,7 +391,7 @@ class ShoppProduct extends WPShoppObject {
 		}
 
 		$resum = false;
-		if (isset($record->summed)) { // Loaded from the collection loader
+		if ( isset($record->summed) ) { // Loaded from the collection loader
 			$Object->sumloader($records, $record);
 
 			$update = sDB::mktime(ProductSummary::$_updates);
@@ -395,16 +401,16 @@ class ShoppProduct extends WPShoppObject {
 
 		if ($resum) {
 			// Keep track products that need resum build run
-			if (!isset($this->resum)) $this->resum = array();
-			$this->resum[$index] = $Object;
+			if ( ! isset($this->resum) ) $this->resum = array();
+			$this->resum[ $index ] = $Object;
 		}
 
 		$Object = apply_filters('shopp_product_loader', $Object, $record);
 
-		if ($collate) {
-			if (!isset($records[$index])) $records[$index] = array();
-			$records[$index][] = $Object;
-		} else $records[$index] = $Object;
+		if ( $collate ) {
+			if ( ! isset($records[ $index ]) ) $records[ $index ] = array();
+			$records[ $index ][] = $Object;
+		} else $records[ $index ] = $Object;
 	}
 
 	/**
@@ -421,34 +427,34 @@ class ShoppProduct extends WPShoppObject {
 		else $products = array();
 
 		$metamap = array(
-			'image' => 'images',
-			'setting' => 'settings',
-			'spec' => 'specs'
+			'image'	    => 'images',
+			'setting'	=> 'settings',
+			'spec'	    => 'specs'
 		);
 
 		$metaclass = array(
 			'image' => 'ProductImage',
-			'spec' => 'Spec',
-			'meta' => 'ShoppMetaObject'
+			'spec'  => 'Spec',
+			'meta'  => 'ShoppMetaObject'
 		);
 
-		if ($property == 'metatype')
-			$property = isset($metamap[$record->type])?$metamap[$record->type]:'meta';
+		if ( $property == 'metatype' )
+			$property = isset($metamap[ $record->type ]) ? $metamap[ $record->type ] : 'meta';
 
-		if (isset($metaclass[$record->type])) {
+		if ( isset($metaclass[$record->type]) ) {
 			$ObjectClass = $metaclass[$record->type];
 			$Object = new $ObjectClass();
 			$Object->populate($record);
-			if (method_exists($Object,'expopulate'))
+			if ( method_exists($Object, 'expopulate') )
 				$Object->expopulate();
 
 			$target = false;
-			if (is_array($products) && isset($products[$Object->{$id}]))
+			if ( is_array($products) && isset($products[$Object->{$id}]) )
 				$target = $products[$Object->{$id}];
-			elseif (isset($this))
+			elseif ( isset($this) )
 				$target = $this;
 
-			if (!empty($Object->name) && $target)
+			if ( ! empty($Object->name) && $target )
 				$target->{$Object->name} =& $Object->value;
 
 			$record = $Object;
@@ -458,6 +464,7 @@ class ShoppProduct extends WPShoppObject {
 		if ( 'images' == $property ) {
 			// Prevent double-loading images (can occur when images are specifically loaded, then all meta is generically loaded)
 			if ( isset($target->$property) && isset($target->{$property}[ $record->id ]) ) return;
+
 			$collate = 'id';
 			// Prevent extra image queries since we already tried
 		}
@@ -487,41 +494,41 @@ class ShoppProduct extends WPShoppObject {
 		$properties = array_keys($Summary->_datatypes);
 		$ignore = array('product','modified');
 
-		foreach ($properties as $property) {
-			if ($property{0} == '_') continue;
-			if (in_array($property,$ignore)) continue;
+		foreach ( $properties as $property ) {
+			if ( $property{0} == '_' ) continue;
+			if ( in_array($property, $ignore) ) continue;
 
 			switch ($property) {
 				case 'ranges':
-					$ranges = explode(',',$data->{$property});
-					$minmax = array('min','max'); $i = 0;
-					foreach ($minmax as $m) {
+					$ranges = explode(',', $data->{$property});
+					$minmax = array('min', 'max'); $i = 0;
+					foreach ( $minmax as $m ) {
 						$range = &$this->$m;
-						foreach (ProductSummary::$_ranges as $prop) {
-							if (isset($ranges[$i])) $range[$prop] = (float)$ranges[$i++];
+						foreach ( ProductSummary::$_ranges as $prop ) {
+							if ( isset($ranges[ $i ]) ) $range[ $prop ] = (float)$ranges[ $i++ ];
 						}
 					}
 					break;
 				case 'taxed':
-					$taxed = explode(',',$data->{$property});
-					foreach ($taxed as $pricetag) {
+					$taxed = explode(',', $data->{$property});
+					foreach ( $taxed as $pricetag ) {
 						if ( ! $pricetag ) continue;
-						list($m,$name) = explode(' ',$pricetag);
+						list($m, $name) = explode(' ', $pricetag);
 
-						if (empty($m)) continue;
+						if ( empty($m) ) continue;
 						$range = &$this->$m;
-						$range[$name.'_tax'] = true;
+						$range[ $name . '_tax' ] = true;
 					}
-				default: $this->{$property} = isset($data->{$property})?($data->{$property}):false;
+				default: $this->{$property} = isset($data->{$property}) ? ($data->{$property}) : false;
 			}
 			if ( isset($this->$property) ) {
-				if ('float' == $Summary->_datatypes[$property]) $this->checksum .= (float)$this->$property;
+				if ('float' == $Summary->_datatypes[ $property ]) $this->checksum .= (float)$this->$property;
 				else $this->checksum .= $this->$property;
 			}
 		}
 		$this->checksum = md5($this->checksum);
 
-		if (isset($data->summed)) $this->summed = sDB::mktime($data->summed);
+		if ( isset($data->summed) ) $this->summed = sDB::mktime($data->summed);
 		if (shopp_setting_enabled('inventory') && Shopp::str_true($this->inventory) && $this->stock <= 0) $this->outofstock = true;
 	}
 
@@ -537,20 +544,20 @@ class ShoppProduct extends WPShoppObject {
 	public function pricing (&$records,&$price,$restat=false) {
 
 		if ( isset($this->products) && !empty($this->products) ) {
-			if ( !isset($this->products[$price->product]) ) return false;
+			if ( !isset($this->products[ $price->product ]) ) return false;
 
-			if (!isset($this->_last_product)) $this->_last_product = false;
+			if ( ! isset($this->_last_product) ) $this->_last_product = false;
 
 			if ( $this->_last_product != false
 					&& $this->_last_product != $price->product
-					&& isset($this->products[$this->_last_product]) ) {
+					&& isset($this->products[ $this->_last_product ]) ) {
 				$this->products[$this->_last_product]->sumup();
 			}
 
-			if ($this->_last_product != $price->product)
-				$this->products[$price->product]->resum();
+			if ( $this->_last_product != $price->product )
+				$this->products[ $price->product ]->resum();
 
-			$target = &$this->products[$price->product];
+			$target = &$this->products[ $price->product ];
 
 			$this->_last_product = $price->product;
 		} else $target = &$this;
@@ -570,16 +577,16 @@ class ShoppProduct extends WPShoppObject {
 		$target->priceid[$price->id] = $price;
 
 		// Set promoprice before data aggregation
-		if (Shopp::str_true($price->sale)) $price->promoprice = $price->saleprice;
+		if ( Shopp::str_true($price->sale) ) $price->promoprice = $price->saleprice;
 
 		// Do not count disabled price lines or addon price lines in aggregate summary stats
-		if ('N/A' == $price->type || 'addon' ==  $price->context) return;
+		if ( 'N/A' == $price->type || 'addon' ==  $price->context ) return;
 
 		// Simple product or variant product is on sale
-		if (Shopp::str_true($price->sale)) $target->sale = $price->sale;
+		if ( Shopp::str_true($price->sale) ) $target->sale = $price->sale;
 
 		// Build third lookup table using the combined optionkey
-		$target->pricekey[$price->optionkey] = $price;
+		$target->pricekey[ $price->optionkey ] = $price;
 
 		if (Shopp::str_true($price->inventory)) {
 			$target->stock += $price->stock;
@@ -591,7 +598,7 @@ class ShoppProduct extends WPShoppObject {
 		if ( ! Shopp::str_true($price->shipping) && 'Shipped' == $price->type ) $freeshipping = true;
 
 		// Calculate catalog discounts if not already calculated
-		if (!empty($price->discounts)) {
+		if ( ! empty($price->discounts) ) {
 			$discount = ShoppPromo::pricing($price->promoprice,$price->discounts);
 			if ($discount->freeship) $freeshipping = true;
 			$price->promoprice = $discount->pricetag;
@@ -601,26 +608,26 @@ class ShoppProduct extends WPShoppObject {
 		if ($price->promoprice < $price->price) $target->sale = $price->sale = 'on';
 
 		// Grab price and saleprice ranges (minimum - maximum)
-		if (!$price->price) $price->price = 0;
+		if ( ! $price->price ) $price->price = 0;
 
 		// Variation range index/properties
-		$varranges = array('price' => 'price','saleprice'=>'promoprice');
-		if (Shopp::str_true($price->inventory)) $varranges['stock'] = 'stock';
+		$varranges = array('price' => 'price', 'saleprice'=>'promoprice');
+		if ( Shopp::str_true($price->inventory) ) $varranges['stock'] = 'stock';
 
-		foreach ($varranges as $name => $prop) {
-			if (!isset($price->$prop)) continue;
+		foreach ( $varranges as $name => $prop ) {
+			if ( ! isset($price->$prop) ) continue;
 
-			if (!isset($target->min[$name]) || $target->min[$name] == 0) $target->min[$name] = $price->$prop;
-			else $target->min[$name] = min($target->min[$name],$price->$prop);
-			if ($target->min[$name] == $price->$prop) $target->min[$name.'_tax'] = ($price->tax == "on");
+			if ( ! isset($target->min[ $name ]) || $target->min[ $name ] == 0) $target->min[ $name ] = $price->$prop;
+			else $target->min[ $name ] = min($target->min[ $name ], $price->$prop);
+			if ( $target->min[ $name ] == $price->$prop ) $target->min[$name . '_tax'] = ($price->tax == "on");
 
-			if (!isset($target->max[$name])) $target->max[$name] = $price->$prop;
-			else $target->max[$name] = max($target->max[$name],$price->$prop);
-			if ($target->max[$name] == $price->$prop) $target->max[$name.'_tax'] = ($price->tax == "on");
+			if ( ! isset($target->max[ $name ]) ) $target->max[ $name ] = $price->$prop;
+			else $target->max[ $name ] = max($target->max[ $name ], $price->$prop);
+			if ($target->max[ $name ] == $price->$prop) $target->max[ $name . '_tax' ] = ($price->tax == "on");
 		}
 
 		// Determine savings ranges
-		if (Shopp::str_true($target->sale)) {
+		if ( Shopp::str_true($target->sale) ) {
 
 			if ( ! isset($target->min['saved']) || $target->min['saved'] === false ) {
 				$target->min['saved'] = $price->price;
@@ -628,8 +635,8 @@ class ShoppProduct extends WPShoppObject {
 				$target->max['saved'] = $target->max['savings'] = 0;
 			}
 
-			$target->min['saved'] = min($target->min['saved'],($price->price-$price->promoprice));
-			$target->max['saved'] = max($target->max['saved'],($price->price-$price->promoprice));
+			$target->min['saved'] = min($target->min['saved'], ($price->price-$price->promoprice));
+			$target->max['saved'] = max($target->max['saved'], ($price->price-$price->promoprice));
 
 			// Find lowest savings percentage
 			$delta = $price->price - $price->promoprice;
@@ -699,17 +706,17 @@ class ShoppProduct extends WPShoppObject {
 		if ($Price->type == 'N/A' || $Price->context == 'addon') return;
 
 		if ($this->maxprice === false) $this->maxprice = (float)$Price->promoprice;
-		else $this->maxprice = max($this->maxprice,$Price->promoprice);
+		else $this->maxprice = max($this->maxprice, $Price->promoprice);
 
 		if ($this->minprice === false) $this->minprice = (float)$Price->promoprice;
-		else $this->minprice = min($this->minprice,$Price->promoprice);
+		else $this->minprice = min($this->minprice, $Price->promoprice);
 
 		if (Shopp::str_true($Price->sale)) $this->sale = $Price->sale;
 
 		if (Shopp::str_true($Price->inventory)) {
 			$this->inventory = $Price->inventory;
 			$this->stock += $Price->stock;
-			$this->lowstock($Price->stock,$Price->stocked);
+			$this->lowstock($Price->stock, $Price->stocked);
 		} elseif (!$this->inventory) $this->inventory = 'off';
 
 	}
@@ -730,8 +737,8 @@ class ShoppProduct extends WPShoppObject {
 		$this->min = $this->max = array();
 		$this->freeship = 'off';
 		foreach ( ProductSummary::$_ranges as $index ) {
-			$this->min[$index] = false;
-			$this->max[$index] = false;
+			$this->min[ $index ] = false;
+			$this->max[ $index ] = false;
 		}
 	}
 
@@ -749,31 +756,31 @@ class ShoppProduct extends WPShoppObject {
 
 		$Summary = new ProductSummary();
 		$properties = array_keys($Summary->_datatypes);
-		$minmax = array('min','max');
-		$ignore = array('product','modified');
+		$minmax = array('min', 'max');
+		$ignore = array('product', 'modified');
 
 		$checksum = false;
-		foreach ($properties as $property) {
-			if ($property{0} == '_') continue;
-			if (in_array($property,$ignore)) continue;
+		foreach ( $properties as $property ) {
+			if ( $property{0} == '_' ) continue;
+			if ( in_array($property, $ignore) ) continue;
 			switch ($property) {
-				case 'minprice': $this->minprice = (float)$this->min[ Shopp::str_true($this->sale)?'saleprice':'price' ]; break;
-				case 'maxprice': $this->maxprice = (float)$this->max[ Shopp::str_true($this->sale)?'saleprice':'price' ]; break;
+				case 'minprice': $this->minprice = (float)$this->min[ Shopp::str_true($this->sale) ? 'saleprice' : 'price' ]; break;
+				case 'maxprice': $this->maxprice = (float)$this->max[ Shopp::str_true($this->sale) ? 'saleprice' : 'price' ]; break;
 				case 'ranges':
 					$ranges = array();
-					foreach ($minmax as $m) {
+					foreach ( $minmax as $m ) {
 						$attr = $this->$m;
-						foreach (ProductSummary::$_ranges as $name)
-							if (isset($attr[$name])) $ranges[] = (float)$attr[$name];
+						foreach ( ProductSummary::$_ranges as $name )
+							if ( isset($attr[$name]) ) $ranges[] = (float)$attr[ $name ];
 					}
 					break;
 				case 'taxed':
 					$taxable = array('price','saleprice');
 					$taxed = array();
-					foreach ($minmax as $m) {
+					foreach ( $minmax as $m ) {
 						$attr = $this->$m;
-						foreach ($taxable as $name)
-							if (isset($attr[$name.'_tax']) && $attr[$name.'_tax']) $taxed[] = "$m $name";
+						foreach ( $taxable as $name )
+							if ( isset($attr[ $name . '_tax' ]) && $attr[ $name . '_tax' ] ) $taxed[] = "$m $name";
 					}
 					break;
 				default:
@@ -781,19 +788,19 @@ class ShoppProduct extends WPShoppObject {
 			}
 
 			if ( isset($this->$property) ) {
-				if ('float' == $Summary->_datatypes[$property]) $checksum .= (float)$this->$property;
+				if ('float' == $Summary->_datatypes[ $property ]) $checksum .= (float)$this->$property;
 				else $checksum .= $this->$property;
 			}
 		}
 
-		if (md5($checksum) == $this->checksum) return;
+		if ( md5($checksum) == $this->checksum ) return;
 
 		$Summary->copydata($this);
-		if (isset($this->summed))
+		if ( isset($this->summed) )
 			$Summary->modified = $this->summed;
 		$Summary->product = $this->id;
-		$Summary->ranges = join(',',$ranges);
-		$Summary->taxed = join(',',$taxed);
+		$Summary->ranges = join(',', $ranges);
+		$Summary->taxed = join(',', $taxed);
 		$Summary->save();
 	}
 
@@ -816,11 +823,11 @@ class ShoppProduct extends WPShoppObject {
 
 		$x = count($factors);
 		foreach ($factors as $factor) {
-			if ($stock < min(1,$setting*$factor) * $stocked ) break;
+			if ($stock < min(1, $setting * $factor) * $stocked ) break;
 			$x--;
 		}
 
-		$this->lowstock = $levels[max($max,$x)];
+		$this->lowstock = $levels[ max($max, $x) ];
 	}
 
 	/**
@@ -834,13 +841,13 @@ class ShoppProduct extends WPShoppObject {
 	 * @param array option ids
 	 * @return int option key
 	 **/
-	public function optionkey ($ids=array(),$deprecated=false) {
-		if ($deprecated) $factor = 101;
+	public function optionkey ( $ids = array(), $deprecated = false ) {
+		if ( $deprecated ) $factor = 101;
 		else $factor = 7001;
-		if (empty($ids)) return 0;
+		if ( empty($ids) ) return 0;
 		$key = 0;
-		foreach ($ids as $set => $id)
-			$key = $key ^ ($id*$factor);
+		foreach ( $ids as $set => $id )
+			$key = $key ^ ($id * $factor);
 		return $key;
 	}
 
@@ -871,14 +878,14 @@ class ShoppProduct extends WPShoppObject {
 					if ( $poption['name'] == $option ) break;
 
 				$id = isset($poption['id']) ? $poption['id'] : $count++;
-				$mapping[$menuname][$option] = $id;
+				$mapping[ $menuname ][ $option ] = $id;
 			}
 		}
 		if ( 'addon' == $type) {
 			$type = key($variant);
 			$option = current($variant);
 
-			$selection[] = $mapping[$type][$option];
+			$selection[] = $mapping[ $type ][ $option ];
 			if ( 'optionkey' == $return ) return $this->optionkey($selection);
 			return array( $this->optionkey($selection), $selection[0], $option, $mapping );
 		}
@@ -901,9 +908,9 @@ class ShoppProduct extends WPShoppObject {
 	 * @param array image ids
 	 * @return void
 	 **/
-	public function save_imageorder ($ordering) {
+	public function save_imageorder ( $ordering ) {
 		$table = ShoppDatabaseObject::tablename(ProductImage::$table);
-		foreach ($ordering as $i => $id)
+		foreach ( $ordering as $i => $id )
 			sDB::query("UPDATE $table SET sortorder='$i' WHERE (id='$id' AND parent='$this->id' AND context='product' AND type='image')");
 	}
 
@@ -916,16 +923,16 @@ class ShoppProduct extends WPShoppObject {
 	 * @return string
 	 **/
 	public function image_order () {
-		$orderings = array('ASC','DESC','RAND');
+		$orderings = array('ASC', 'DESC', 'RAND');
 		$ordering = shopp_setting('product_image_order');
-		if (!in_array($ordering,$orderings)) $ordering = '';
+		if ( ! in_array($ordering, $orderings) ) $ordering = '';
 
-		$columns = array('sortorder','created');
+		$columns = array('sortorder', 'created');
 		$column = shopp_setting('product_image_orderby');
-		if (!in_array($column,$columns)) $column = reset($columns);
+		if ( ! in_array($column,$columns) ) $column = reset($columns);
 
 		$sortorder = trim("$column $ordering");
-		if ('RAND' == $ordering) $sortorder = 'RAND()';
+		if ( 'RAND' == $ordering ) $sortorder = 'RAND()';
 
 		return $sortorder;
 	}
@@ -940,9 +947,9 @@ class ShoppProduct extends WPShoppObject {
 	 * @return void
 	 **/
 	public function link_images ($images) {
-		if (empty($images)) return;
+		if ( empty($images) ) return;
 		$table = ShoppDatabaseObject::tablename(ProductImage::$table);
-		sDB::query("UPDATE $table SET parent='$this->id',context='product' WHERE id IN (".join(',',$images).")");
+		sDB::query("UPDATE $table SET parent='$this->id',context='product' WHERE id IN (" . join(',', $images) . ")");
 	}
 
 	/**
@@ -955,20 +962,20 @@ class ShoppProduct extends WPShoppObject {
  	 * @return void
 	 **/
 	public function update_images ($images) {
-		if (!is_array($images)) return;
+		if ( ! is_array($images) ) return;
 
-		foreach ($images as $img) {
+		foreach ( $images as $img ) {
 
 			$Image = new ProductImage($img['id']);
 			$Image->title = stripslashes($img['title']);
 			$Image->alt = stripslashes($img['alt']);
 
-			if (!empty($img['cropping'])) {
-				if (!class_exists('ImageProcessor'))
-					require(SHOPP_MODEL_PATH."/Image.php");
+			if ( ! empty($img['cropping']) ) {
+				if ( ! class_exists('ImageProcessor') )
+					require(SHOPP_MODEL_PATH . "/Image.php");
 
-				foreach ($img['cropping'] as $id => $cropping) {
-					if (empty($cropping)) continue;
+				foreach ( $img['cropping'] as $id => $cropping ) {
+					if ( empty($cropping) ) continue;
 					$Cropped = new ProductImage($id);
 
 					list($Cropped->settings['dx'],
@@ -981,15 +988,15 @@ class ShoppProduct extends WPShoppObject {
 					$scale = ImageAsset::$defaults['scaling'][$scale];
 					$quality = ($quality === false) ? ImageAsset::$defaults['quality'] : $quality;
 
-					$Resized->scale($scaled['width'],$scaled['height'],$scale,$alpha,$fill,(int)$dx,(int)$dy,(float)$cropscale);
+					$Resized->scale($scaled['width'], $scaled['height'], $scale, $alpha, $fill, (int)$dx, (int)$dy, (float)$cropscale);
 
 					// Post sharpen
-					if ($sharpen !== false) $Resized->UnsharpMask($sharpen);
-					$Cropped->data = $Resized->imagefile($quality);
-					if (empty($Cropped->data)) return false;
+					if ( $sharpen !== false ) $Resized->UnsharpMask( $sharpen );
+					$Cropped->data = $Resized->imagefile( $quality );
+					if ( empty($Cropped->data) ) return false;
 
 					$Cropped->size = strlen($Cropped->data);
-					if ($Cropped->store( $Cropped->data ) === false)
+					if ( $Cropped->store( $Cropped->data ) === false )
 						return false;
 					$Cropped->save();
 
@@ -1009,8 +1016,8 @@ class ShoppProduct extends WPShoppObject {
 	public function delete_images ($images) {
 		$imagetable = ShoppDatabaseObject::tablename(ProductImage::$table);
 		$imagesets = "";
-		foreach ($images as $image) {
-			$imagesets .= (!empty($imagesets)?" OR ":"");
+		foreach ( $images as $image ) {
+			$imagesets .= ( ! empty($imagesets) ? " OR " : "" );
 			$imagesets .= "((context='product' AND parent='$this->id' AND id='$image') OR (context='image' AND parent='$image'))";
 		}
 		if (!empty($imagesets))
@@ -1029,7 +1036,7 @@ class ShoppProduct extends WPShoppObject {
 	 **/
 	public function delete () {
 		$id = $this->id;
-		if (empty($id)) return false;
+		if ( empty($id) ) return false;
 		
 		if ( false === has_action('shopp_product_delete',array($this,'deletepost')))
 			add_action('shopp_product_delete',array($this,'deletepost'));
@@ -1053,8 +1060,8 @@ class ShoppProduct extends WPShoppObject {
 		// Delete images
 		$images = array();
 		$src = sDB::query("SELECT id FROM $table WHERE parent='$id' AND context='product' AND type='image'",'array');
-		foreach ($src as $img) $images[] = $img->id;
-		$this->delete_images($images);
+		foreach ( $src as $img ) $images[] = $img->id;
+		$this->delete_images( $images );
 
 		// Delete product meta (specs, images, downloads)
 		$table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
@@ -1071,7 +1078,7 @@ class ShoppProduct extends WPShoppObject {
 		// Delete record
 		sDB::query("DELETE FROM $this->_table WHERE ID='$id'");
 
-		do_action_ref_array('shopp_product_deleted',array($this));
+		do_action_ref_array('shopp_product_deleted', array($this));
 
 	}
 	
@@ -1084,10 +1091,10 @@ class ShoppProduct extends WPShoppObject {
 	 * @return void
 	 **/
 	public function deletepost () {
-		if ( empty($this->id)) return;
+		if ( empty($this->id) ) return;
 		do_action('delete_post', $this->id);
 		if( function_exists('clean_post_cache') )
-			clean_post_cache($this->id);
+			clean_post_cache( $this->id );
 	}
 
 	/**
@@ -1101,9 +1108,9 @@ class ShoppProduct extends WPShoppObject {
 	public function trash () {
 		$id = $this->{$this->_key};
 		sDB::query("UPDATE $this->_table SET post_status='trash' WHERE ID='$id'");
-		if ( false === has_action('shopp_product_trashed',array($this,'trashpost')))
-			add_action('shopp_product_trashed',array($this,'trashpost'));
-		do_action_ref_array('shopp_product_trashed',array($this));
+		if ( false === has_action('shopp_product_trashed', array($this,'trashpost')) )
+			add_action('shopp_product_trashed', array($this, 'trashpost'));
+		do_action_ref_array('shopp_product_trashed', array($this));
 	}
 	
 	/**
@@ -1115,10 +1122,10 @@ class ShoppProduct extends WPShoppObject {
 	 * @return void
 	 **/
 	public function trashpost () {
-		if ( empty($this->id)) return;
+		if ( empty($this->id) ) return;
 		do_action('wp_trash_post', $this->id);
 		if( function_exists('clean_post_cache') )
-			clean_post_cache($this->id);
+			clean_post_cache( $this->id );
 	}
 
 	/**
@@ -1136,7 +1143,7 @@ class ShoppProduct extends WPShoppObject {
 
 		$this->load_data(); // Load everything
 		$this->id = '';
-		$this->name = $this->name.' '.__('copy','Shopp');
+		$this->name = $this->name . ' ' . Shopp::__('copy');
 		$slug = sanitize_title_with_dashes($this->name);
 		$this->slug = wp_unique_post_slug($slug, $this->id, $this->status, ShoppProduct::posttype(), 0);
 		$this->created = '';
@@ -1154,14 +1161,14 @@ class ShoppProduct extends WPShoppObject {
 			$Price->save();
 
 			// Copy Price record meta entries
-			$meta = array('donation','recurring','membership','dimensions');
+			$meta = array('donation', 'recurring', 'membership', 'dimensions');
 			$priceline['settings'] = array();
 			$settings = array();
 			foreach ($meta as $name)
-				if ( isset($price->$name) ) $settings[$name] = $price->$name;
+				if ( isset($price->$name) ) $settings[ $name ] = $price->$name;
 
-			shopp_set_meta($Price->id,'price','settings',$settings);
-			shopp_set_meta($Price->id,'price','options',$price->options);
+			shopp_set_meta($Price->id, 'price', 'settings', $settings);
+			shopp_set_meta($Price->id, 'price', 'options', $price->options);
 
 		}
 
@@ -1180,7 +1187,7 @@ class ShoppProduct extends WPShoppObject {
 		foreach ($terms as $taxonomy => $termlist)
 			wp_set_object_terms( $this->id, $termlist, $taxonomy );
 
-		$metadata = array('specs','images','settings','meta');
+		$metadata = array('specs', 'images', 'settings', 'meta');
 		foreach ( $metadata as $metaset ) {
 			if ( ! is_array($this->$metaset) ) continue;
 			foreach ( $this->$metaset as $metaobjects ) {
@@ -1202,7 +1209,7 @@ class ShoppProduct extends WPShoppObject {
 		$Summary->save();
 
 		// Re-summarize product pricing
-		$this->load_data(array('prices','summary'));
+		$this->load_data(array('prices', 'summary'));
 
 		// Duplicate (WP) post meta data
 		foreach ( get_post_custom( $original ) as $key => $values ) {
@@ -1220,16 +1227,16 @@ class ShoppProduct extends WPShoppObject {
 	 * @param array Conditional rule to match against
 	 * @return boolean Match or no match
 	 **/
-	public function taxrule ($rule) {
+	public function taxrule ( $rule ) {
 		switch ($rule['p']) {
 			case "product-name": return ($rule['v'] == $this->name); break;
 			case "product-tags":
-				if (empty($this->tags)) $this->load_data(array('tags'));
-				foreach ($this->tags as $tag) if ($rule['v'] == $tag->name) return true;
+				if ( empty($this->tags) ) $this->load_data(array('tags'));
+				foreach ( $this->tags as $tag ) if ( $rule['v'] == $tag->name ) return true;
 				break;
 			case "product-category":
-				if (empty($this->categories)) $this->load_data(array('categories'));
-				foreach ($this->categories as $category) if ($rule['v'] == $category->name) return true;
+				if ( empty($this->categories) ) $this->load_data(array('categories'));
+				foreach ( $this->categories as $category ) if ( $rule['v'] == $category->name ) return true;
 		}
 		return false;
 	}
@@ -1287,11 +1294,11 @@ class ShoppProduct extends WPShoppObject {
 	 * @param string $setting Either 'on' or 'off'
 	 * @return boolean
 	 **/
-	static function featureset ($ids,$setting) {
-		if (empty($ids) || !is_array($ids)) return false;
+	static function featureset ( $ids, $setting ) {
+		if ( empty($ids) || !is_array($ids) ) return false;
 		$settings = array('on','off');
-		if (!in_array($setting,$settings)) return false;
-		foreach ($ids as $id) {
+		if ( ! in_array($setting, $settings) ) return false;
+		foreach ( $ids as $id ) {
 			$Product = new ProductSummary((int)$id);
 			$Product->featured = $setting;
 			$Product->save();
@@ -1319,30 +1326,30 @@ class ProductSummary extends ShoppDatabaseObject {
 	const RECALCULATE = '0000-00-00 00:00:01';
 
 	static $table = 'summary';
-	static $_ranges = array('price','saleprice','saved','savings','weight');
+	static $_ranges = array('price', 'saleprice', 'saved', 'savings', 'weight');
 	static $_updates = self::RECALCULATE;
 
-	public function __construct ($id=false,$key='product') {
-		$this->init(self::$table);
+	public function __construct ( $id = false, $key = 'product' ) {
+		$this->init( self::$table );
 		$this->_key = 'product';
-		$this->load($id,$key);
+		$this->load( $id, $key );
 	}
 
 	public function save () {
-		$data = sDB::prepare($this,$this->_map);
+		$data = sDB::prepare( $this, $this->_map );
 
 		$id = $this->{$this->_key};
-		if (!empty($this->_map)) {
-			$remap = array_flip($this->_map);
-			if (isset($remap[$this->_key]))
+		if ( ! empty($this->_map) ) {
+			$remap = array_flip( $this->_map );
+			if ( isset( $remap[ $this->_key ] ) )
 				$id = $this->{$remap[$this->_key]};
 		}
 
 		// Insert new record
 		$data['modified'] = "'".current_time('mysql')."'";
-		$dataset = ShoppDatabaseObject::dataset($data);
+		$dataset = ShoppDatabaseObject::dataset( $data );
 		$query = "INSERT $this->_table SET $dataset ON DUPLICATE KEY UPDATE $dataset";
-		$id = sDB::query($query);
+		$id = sDB::query( $query );
 		do_action_ref_array('shopp_save_productsummary', array(&$this));
 		return $id;
 

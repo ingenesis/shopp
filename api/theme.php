@@ -32,6 +32,8 @@ function shopp ( $context, $property = false, $options = false ) {
 
 	$parameters = array('first', 'second', 'third'); // Parameter prototype
 	$num = func_num_args();							 // Determine number of arguments provided
+	
+	$fargs = func_get_args();						 // Grab the arguments (up to 3) before resetting $context and $options
 	$context = $tag = false;						 // object API to use and tag name
 	$options = array();								 // options to pass to API call
 
@@ -40,8 +42,6 @@ function shopp ( $context, $property = false, $options = false ) {
 		return;
 	}
 
-	// Grab the arguments (up to 3)
-	$fargs = func_get_args();
 	$args = array_combine( array_slice($parameters, 0, $num), $fargs);
 	extract($args);
 

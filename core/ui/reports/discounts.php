@@ -9,7 +9,7 @@ class DiscountsReport extends ShoppReportFramework implements ShoppReport {
 			'yaxis' => array('tickFormatter' => 'asMoney')
 		));
 
-		$this->chartseries( __('Discounts', 'Shopp'), array('column' => 'discounts') );
+		$this->chartseries( Shopp::__('Discounts'), array('column' => 'discounts') );
 	}
 
 	function query () {
@@ -37,11 +37,11 @@ class DiscountsReport extends ShoppReportFramework implements ShoppReport {
 
 	function columns() {
 	 	return array(
-			'period'    => __('Period', 'Shopp'),
-			'orders'    => __('Orders', 'Shopp'),
-			'items'     => __('Items', 'Shopp'),
-			'subtotal'  => __('Subtotal', 'Shopp'),
-			'discounts' => __('Discounts', 'Shopp')
+			'period'    => Shopp::__('Period'),
+			'orders'    => Shopp::__('Orders'),
+			'items'     => Shopp::__('Items'),
+			'subtotal'  => Shopp::__('Subtotal'),
+			'discounts' => Shopp::__('Discounts')
 		);
 	}
 

@@ -66,25 +66,25 @@ class LocationsReport extends ShoppReportFramework implements ShoppReport {
 
 	function columns () {
 		return array(
-			'country'=>__('Country','Shopp'),
-			'orders'=>__('Orders','Shopp'),
-			'items'=>__('Items','Shopp'),
-			'grossed'=>__('Grossed','Shopp')
+			'country'   => Shopp::__('Country'),
+			'orders'	=> Shopp::__('Orders'),
+			'items'	    => Shopp::__('Items'),
+			'grossed'	=> Shopp::__('Grossed')
 		);
 	}
 
 	function sortcolumns () {
 		return array(
-			'orders'=>__('Orders','Shopp'),
-			'items'=>__('Items','Shopp'),
-			'grossed'=>__('Grossed','Shopp')
+			'orders'	=> Shopp::__('Orders'),
+			'items'	    => Shopp::__('Items'),
+			'grossed'	=> Shopp::__('Grossed')
 		);
 	}
 
 	static function country ($data) {
 		$countries = Lookup::countries();
-		if ( isset($countries[$data->country]) )
-			return $countries[$data->country]['name'];
+		if ( isset($countries[ $data->country ]) )
+			return $countries[ $data->country ]['name'];
 		return $data->country;
 	}
 

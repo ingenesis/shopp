@@ -133,8 +133,8 @@ class ShoppOfflinePayment extends GatewayFramework implements GatewayModule {
 
 		$this->ui->p(1,array(
 			'name' => 'help',
-			'label' => __('Offline Payment Instructions', 'Shopp'),
-			'content' => __('Use this area to provide your customers with instructions on how to make payments offline.', 'Shopp')
+			'label' => Shopp::__('Offline Payment Instructions'),
+			'content' => Shopp::__('Use this area to provide your customers with instructions on how to make payments offline.')
 		));
 
 	}

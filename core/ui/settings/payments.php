@@ -15,10 +15,10 @@
 
 <div class="tablenav"><div class=" actions">
 	<select name="id" id="payment-option-menu">
-	<option><?php _e('Add a payment system&hellip;','Shopp'); ?></option>
-	<?php echo Shopp::menuoptions($installed,false,true); ?>
+	<option><?php Shopp::_e('Add a payment system&hellip;'); ?></option>
+	<?php echo Shopp::menuoptions($installed, false, true); ?>
 	</select>
-	<button type="submit" name="add-payment-option" id="add-payment-option" class="button-secondary hide-if-js" tabindex="9999"><?php _e('Add Payment Option','Shopp'); ?></button>
+	<button type="submit" name="add-payment-option" id="add-payment-option" class="button-secondary hide-if-js" tabindex="9999"><?php Shopp::_e('Add Payment Option'); ?></button>
 	</div>
 </div>
 
@@ -32,16 +32,16 @@
 	<tbody id="payments-settings-table" class="list">
 	<?php
 
-		if ($edit && !in_array($edit,$gateways)) {
+		if ($edit && !in_array($edit, $gateways)) {
 			$template_data = array(
 				'${cancel_href}' => $this->url,
 				'${instance}' => $id
 			);
-			echo ShoppUI::template($editor,$template_data);
+			echo ShoppUI::template($editor, $template_data);
 		}
 
 		if (count($gateways) == 0 && !$edit): ?>
-			<tr id="no-payment-settings"><td colspan="7"><?php _e('No payment methods, yet.','Shopp'); ?></td></tr>
+			<tr id="no-payment-settings"><td colspan="7"><?php Shopp::_e('No payment methods, yet.'); ?></td></tr>
 		<?php
 		endif;
 
@@ -85,20 +85,20 @@
 				);
 				// Handle payment data value substitution for multi-instance payment systems
 				foreach ($payment as $name => $value)
-					$template_data['${'.$name.'}'] = $value;
+					$template_data['${' . $name . '}'] = $value;
 
-				echo ShoppUI::template($editor,$template_data);
+				echo ShoppUI::template($editor, $template_data);
 
 				if ( $edit == $slug ) continue;
 			}
 
-			$label = empty($payment['label'])?__('(no label)','Shopp'):$payment['label'];
+			$label = empty($payment['label']) ? Shopp::__('(no label)') : $payment['label'];
 
 		?>
-	<tr class="<?php echo join(' ',$classes); ?>" id="payment-setting-<?php echo sanitize_title_with_dashes($gateway); ?>">
-		<td class="name column-name"><a class="row-title" href="<?php echo $editurl; ?>" title="<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($label); ?>&quot;" class="edit"><?php echo esc_html($label); ?></a>
+	<tr class="<?php echo join(' ', $classes); ?>" id="payment-setting-<?php echo sanitize_title_with_dashes($gateway); ?>">
+		<td class="name column-name"><a class="row-title" href="<?php echo $editurl; ?>" title="<?php Shopp::_e('Edit'); ?> &quot;<?php echo esc_attr($label); ?>&quot;" class="edit"><?php echo esc_html($label); ?></a>
 			<div class="row-actions">
-				<span class='edit'><a href="<?php echo esc_url($editurl); ?>" title="<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($label); ?>&quot;" class="edit"><?php _e('Edit','Shopp'); ?></a> | </span><span class='delete'><a href="<?php echo esc_url($deleteurl); ?>" title="<?php _e('Delete','Shopp'); ?> &quot;<?php echo esc_attr($label); ?>&quot;" class="delete"><?php _e('Delete','Shopp'); ?></a></span>
+				<span class='edit'><a href="<?php echo esc_url($editurl); ?>" title="<?php Shopp::_e('Edit'); ?> &quot;<?php echo esc_attr($label); ?>&quot;" class="edit"><?php Shopp::_e('Edit'); ?></a> | </span><span class='delete'><a href="<?php echo esc_url($deleteurl); ?>" title="<?php Shopp::_e('Delete'); ?> &quot;<?php echo esc_attr($label); ?>&quot;" class="delete"><?php Shopp::_e('Delete'); ?></a></span>
 			</div>
 		</td>
 		<?php // @todo Add title hover labels for accessibility/instructions ?>

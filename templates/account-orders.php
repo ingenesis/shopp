@@ -12,7 +12,7 @@
 ?>
 
 <p>
-	<a href="<?php shopp( 'customer.url' ); ?>">&laquo; <?php _e( 'Return to Account Management', 'Shopp' ); ?></a>
+	<a href="<?php shopp( 'customer.url' ); ?>">&laquo; <?php Shopp::_e( 'Return to Account Management' ); ?></a>
 </p>
 
 <?php if ( shopp( 'purchase.get-id' ) ) : ?>
@@ -25,10 +25,10 @@
 		<table cellspacing="0" cellpadding="0">
 			<thead>
 				<tr>
-					<th scope="col"><?php _e( 'Date', 'Shopp' ); ?></th>
-					<th scope="col"><?php _e( 'Order', 'Shopp' ); ?></th>
-					<th scope="col"><?php _e( 'Status', 'Shopp' ); ?></th>
-					<th scope="col"><?php _e( 'Total', 'Shopp' ); ?></th>
+					<th scope="col"><?php Shopp::_e( 'Date' ); ?></th>
+					<th scope="col"><?php Shopp::_e( 'Order' ); ?></th>
+					<th scope="col"><?php Shopp::_e( 'Status' ); ?></th>
+					<th scope="col"><?php Shopp::_e( 'Total' ); ?></th>
 				</tr>
 			</thead>
 			<?php while( shopp( 'customer.purchases' ) ) : ?>
@@ -37,15 +37,15 @@
 					<td><?php shopp( 'purchase.id' ); ?></td>
 					<td><?php shopp( 'purchase.status' ); ?></td>
 					<td><?php shopp( 'purchase.total' ); ?></td>
-					<td><a href="<?php shopp( 'customer.order' ); ?>"><?php _e( 'View Order', 'Shopp' ); ?></a></td>
+					<td><a href="<?php shopp( 'customer.order' ); ?>"><?php Shopp::_e( 'View Order' ); ?></a></td>
 				</tr>
 			<?php endwhile; ?>
 		</table>
 	<?php else: ?>
-		<p><?php _e( 'You have no orders, yet.', 'Shopp' ); ?></p>
+		<p><?php Shopp::_e( 'You have no orders, yet.' ); ?></p>
 	<?php endif; // end 'has-purchases' ?>
 </form>
 
 <p>
-	<a href="<?php shopp( 'customer.url' ); ?>">&laquo; <?php _e( 'Return to Account Management', 'Shopp' ); ?></a>
+	<a href="<?php shopp( 'customer.url' ); ?>">&laquo; <?php Shopp::_e( 'Return to Account Management' ); ?></a>
 </p>

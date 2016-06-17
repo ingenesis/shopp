@@ -40,14 +40,12 @@ class ShoppAdminWelcome extends ShoppAdminController {
 
 	public function heading () {
 		$display_version = ShoppVersion::release();
-
 		Shopp::_em('
 # Welcome to Shopp %s
-
 Thank you for using Shopp! E-commerce just got a little easier and more secure. Enjoy!', $display_version);
 ?>
 
-		<div class="shopp-badge"><div class="logo">Shopp</div><span class="version"><?php printf( __( 'Version %s' ), $display_version ); ?></span></div>
+		<div class="shopp-badge"><div class="logo">Shopp</div><span class="version"><?php Shopp::_e( 'Version %s', $display_version ); ?></span></div>
 
 		<?php
 			$this->tabs(array(

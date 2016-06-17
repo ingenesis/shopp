@@ -1011,7 +1011,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			foreach ( $menuoptions as $value => $label ) {
 				$href = esc_url(add_query_arg(array('sort' => $value),$request));
 				$class = ($default == $value?' class="current"':'');
-				$_[] = '<li><a href="'.$href.'"'.$class.'>'.$label.'</a></li>';
+				$_[] = '<li><a href="' . $href . '"' . $class . '>' . $label . '</a></li>';
 			}
 		}
 
@@ -1164,13 +1164,13 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		$defaults = array(
 			'type' => 'hidden',
 			'option' => 'shopp',
-			'blog_option' => __('Search the blog','Shopp'),
-			'shop_option' => __('Search the shop','Shopp'),
+			'blog_option' => Shopp::__('Search the blog'),
+			'shop_option' => Shopp::__('Search the shop'),
 			'label_before' => '',
 			'label_after' => '',
 			'checked' => false
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract($options);
 
 		$searching = is_search(); // Flag when searching (the blog or shopp)
@@ -1531,51 +1531,51 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	 **/
 	public static function zoom_options ( $result, $options, $O ) {
 		$defaults = array(				// Colorbox 1.3.15
-			'transition' => 'elastic',	// The transition type. Can be set to 'elastic', 'fade', or 'none'.
-			'speed' => 350,				// Sets the speed of the fade and elastic transitions, in milliseconds.
-			'href' => false,			// This can be used as an alternative anchor URL or to associate a URL for non-anchor elements such as images or form buttons. Example: $('h1').colorbox({href:'welcome.html'})
-			'title' => false,			// This can be used as an anchor title alternative for ColorBox.
-			'rel' => false,				// This can be used as an anchor rel alternative for ColorBox. This allows the user to group any combination of elements together for a gallery, or to override an existing rel so elements are not grouped together. Example: $('#example a').colorbox({rel:'group1'}) Note: The value can also be set to 'nofollow' to disable grouping.
-			'width' => false,			// Set a fixed total width. This includes borders and buttons. Example: '100%', '500px', or 500
-			'height' => false,			// Set a fixed total height. This includes borders and buttons. Example: '100%', '500px', or 500
-			'innerWidth' => false,		// This is an alternative to 'width' used to set a fixed inner width. This excludes borders and buttons. Example: '50%', '500px', or 500
-			'innerHeight' => false,		// This is an alternative to 'height' used to set a fixed inner height. This excludes borders and buttons. Example: '50%', '500px', or 500
-			'initialWidth' => 300,		// Set the initial width, prior to any content being loaded.
-			'initialHeight' => 100,		// Set the initial height, prior to any content being loaded.
-			'maxWidth' => false,		// Set a maximum width for loaded content. Example: '100%', 500, '500px'
-			'maxHeight' => false,		// Set a maximum height for loaded content. Example: '100%', 500, '500px'
-			'scalePhotos' => true,		// If 'true' and if maxWidth, maxHeight, innerWidth, innerHeight, width, or height have been defined, ColorBox will scale photos to fit within the those values.
-			'scrolling' => true,		// If 'false' ColorBox will hide scrollbars for overflowing content. This could be used on conjunction with the resize method (see below) for a smoother transition if you are appending content to an already open instance of ColorBox.
-			'iframe' => false,			// If 'true' specifies that content should be displayed in an iFrame.
-			'inline' => false,			// If 'true' a jQuery selector can be used to display content from the current page. Example:  $('#inline').colorbox({inline:true, href:'#myForm'});
-			'html' => false,			// This allows an HTML string to be used directly instead of pulling content from another source (ajax, inline, or iframe). Example: $.colorbox({html:'<p>Hello</p>'});
-			'photo' => false,			// If true, this setting forces ColorBox to display a link as a photo. Use this when automatic photo detection fails (such as using a url like 'photo.php' instead of 'photo.jpg', 'photo.jpg#1', or 'photo.jpg?pic=1')
-			'opacity' => 0.85,			// The overlay opacity level. Range: 0 to 1.
-			'open' => false,			// If true, the lightbox will automatically open with no input from the visitor.
-			'returnFocus' => true,		// If true, focus will be returned when ColorBox exits to the element it was launched from.
-			'preloading' => true,		// Allows for preloading of 'Next' and 'Previous' content in a shared relation group (same values for the 'rel' attribute), after the current content has finished loading. Set to 'false' to disable.
-			'overlayClose' => true,		// If false, disables closing ColorBox by clicking on the background overlay.
-			'escKey' => true, 			// If false, will disable closing colorbox on esc key press.
-			'arrowKey' => true, 		// If false, will disable the left and right arrow keys from navigating between the items in a group.
-			'loop' => true, 			// If false, will disable the ability to loop back to the beginning of the group when on the last element.
-			'slideshow' => false, 		// If true, adds an automatic slideshow to a content group / gallery.
-			'slideshowSpeed' => 2500, 	// Sets the speed of the slideshow, in milliseconds.
-			'slideshowAuto' => true, 	// If true, the slideshow will automatically start to play.
+			'transition'	    => 'elastic',	// The transition type. Can be set to 'elastic', 'fade', or 'none'.
+			'speed'	            => 350,			// Sets the speed of the fade and elastic transitions, in milliseconds.
+			'href'              => false,		// This can be used as an alternative anchor URL or to associate a URL for non-anchor elements such as images or form buttons. Example: $('h1').colorbox({href:'welcome.html'})
+			'title'	            => false,		// This can be used as an anchor title alternative for ColorBox.
+			'rel'	            => false,		// This can be used as an anchor rel alternative for ColorBox. This allows the user to group any combination of elements together for a gallery, or to override an existing rel so elements are not grouped together. Example: $('#example a').colorbox({rel:'group1'}) Note: The value can also be set to 'nofollow' to disable grouping.
+			'width'	            => false,		// Set a fixed total width. This includes borders and buttons. Example: '100%', '500px', or 500
+			'height'	        => false,		// Set a fixed total height. This includes borders and buttons. Example: '100%', '500px', or 500
+			'innerWidth'	    => false,		// This is an alternative to 'width' used to set a fixed inner width. This excludes borders and buttons. Example: '50%', '500px', or 500
+			'innerHeight'	    => false,		// This is an alternative to 'height' used to set a fixed inner height. This excludes borders and buttons. Example: '50%', '500px', or 500
+			'initialWidth'	    => 300,			// Set the initial width, prior to any content being loaded.
+			'initialHeight'	    => 100,			// Set the initial height, prior to any content being loaded.
+			'maxWidth'	        => false,		// Set a maximum width for loaded content. Example: '100%', 500, '500px'
+			'maxHeight'	        => false,		// Set a maximum height for loaded content. Example: '100%', 500, '500px'
+			'scalePhotos'	    => true,		// If 'true' and if maxWidth, maxHeight, innerWidth, innerHeight, width, or height have been defined, ColorBox will scale photos to fit within the those values.
+			'scrolling'	        => true,		// If 'false' ColorBox will hide scrollbars for overflowing content. This could be used on conjunction with the resize method (see below) for a smoother transition if you are appending content to an already open instance of ColorBox.
+			'iframe'	        => false,		// If 'true' specifies that content should be displayed in an iFrame.
+			'inline'	        => false,		// If 'true' a jQuery selector can be used to display content from the current page. Example:  $('#inline').colorbox({inline:true, href:'#myForm'});
+			'html'	            => false,		// This allows an HTML string to be used directly instead of pulling content from another source (ajax, inline, or iframe). Example: $.colorbox({html:'<p>Hello</p>'});
+			'photo'	            => false,		// If true, this setting forces ColorBox to display a link as a photo. Use this when automatic photo detection fails (such as using a url like 'photo.php' instead of 'photo.jpg', 'photo.jpg#1', or 'photo.jpg?pic=1')
+			'opacity'	        => 0.85,		// The overlay opacity level. Range: 0 to 1.
+			'open'	            => false,		// If true, the lightbox will automatically open with no input from the visitor.
+			'returnFocus'	    => true,		// If true, focus will be returned when ColorBox exits to the element it was launched from.
+			'preloading'	    => true,		// Allows for preloading of 'Next' and 'Previous' content in a shared relation group (same values for the 'rel' attribute), after the current content has finished loading. Set to 'false' to disable.
+			'overlayClose'	    => true,		// If false, disables closing ColorBox by clicking on the background overlay.
+			'escKey'	        => true, 		// If false, will disable closing colorbox on esc key press.
+			'arrowKey'	        => true, 		// If false, will disable the left and right arrow keys from navigating between the items in a group.
+			'loop'	            => true, 		// If false, will disable the ability to loop back to the beginning of the group when on the last element.
+			'slideshow'	        => false, 		// If true, adds an automatic slideshow to a content group / gallery.
+			'slideshowSpeed'	=> 2500, 		// Sets the speed of the slideshow, in milliseconds.
+			'slideshowAuto'	    => true, 		// If true, the slideshow will automatically start to play.
 
-			'slideshowStart' => __('start slideshow','Shopp'),	// Text for the slideshow start button.
-			'slideshowStop' => __('stop slideshow','Shopp'),	// Text for the slideshow stop button
-			'previous' => __('previous','Shopp'), 				// Text for the previous button in a shared relation group (same values for 'rel' attribute).
-			'next' => __('next','Shopp'), 						// Text for the next button in a shared relation group (same values for 'rel' attribute).
-			'close' => __('close','Shopp'),						// Text for the close button. The 'Esc' key will also close ColorBox.
+			'slideshowStart'	=> Shopp::__('start slideshow'),	// Text for the slideshow start button.
+			'slideshowStop'	    => Shopp::__('stop slideshow'),		// Text for the slideshow stop button
+			'previous'	        => Shopp::__('previous'), 			// Text for the previous button in a shared relation group (same values for 'rel' attribute).
+			'next'	            => Shopp::__('next'), 				// Text for the next button in a shared relation group (same values for 'rel' attribute).
+			'close'	            => Shopp::__('close'),				// Text for the close button. The 'Esc' key will also close ColorBox.
 
 			// Text format for the content group / gallery count. {current} and {total} are detected and replaced with actual numbers while ColorBox runs.
-			'current' => sprintf(__('image %s of %s','Shopp'),'{current}','{total}'),
+			'current'	        => Shopp::__('image %s of %s', '{current}', '{total}'),
 
-			'onOpen' => false,			// Callback that fires right before ColorBox begins to open.
-			'onLoad' => false,			// Callback that fires right before attempting to load the target content.
-			'onComplete' => false,		// Callback that fires right after loaded content is displayed.
-			'onCleanup' => false,		// Callback that fires at the start of the close process.
-			'onClosed' => false			// Callback that fires once ColorBox is closed.
+			'onOpen'	        => false,		// Callback that fires right before ColorBox begins to open.
+			'onLoad'	        => false,		// Callback that fires right before attempting to load the target content.
+			'onComplete'	    => false,		// Callback that fires right after loaded content is displayed.
+			'onCleanup'	        => false,		// Callback that fires at the start of the close process.
+			'onClosed'	        => false		// Callback that fires once ColorBox is closed.
 		);
 
 		$booleans = array('scalePhotos', 'scrolling', 'iframe', 'inline', 'photo', 'open', 'returnFocus', 'overlayClose', 'escKey', 'arrowKey', 'loop', 'slideshow', 'slideshowAuto');
@@ -1591,10 +1591,10 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		$options = array_combine($settings, $options);
 
 		// Convert strings to booleans
-		foreach ($options as $name => &$value)
+		foreach ( $options as $name => &$value )
 			if ( in_array($name, $booleans) ) $value = Shopp::str_true($value);
 
-		$js = 'var cbo = '.json_encode($options).';';
+		$js = 'var cbo = ' . json_encode($options).';';
 		add_storefrontjs($js, true);
 	}
 

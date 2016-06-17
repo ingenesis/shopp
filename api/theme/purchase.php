@@ -710,7 +710,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 				case 'download':
 					$link = false;
 					if ( isset($addon->download) && isset($addon->dkey) ) {
-						$label = __('Download', 'Shopp');
+						$label = Shopp::__('Download');
 						if ( isset($options['linktext']) && $options['linktext'] != '' ) $label = $options['linktext'];
 
 						$dkey = $addon->dkey;

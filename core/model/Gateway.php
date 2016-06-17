@@ -106,7 +106,7 @@ abstract class GatewayFramework {
 		}
 
 		if ( ! isset($this->settings['label']) && $this->cards )
-			$this->settings['label'] = __('Credit Card', 'Shopp');
+			$this->settings['label'] = Shopp::__('Credit Card');
 
 		$this->baseop = shopp_setting('base_operations');
 		$this->currency = $this->baseop['currency']['code'];
@@ -682,7 +682,7 @@ class GatewaySettingsUI extends ModuleSettingsUI {
 		$_[] = '<th scope="row" colspan="4">' . $this->name . '<input type="hidden" name="gateway" value="' . $this->module . $instance . '" /></th>';
 		$_[] = '</tr><tr>';
 		$_[] = '<td><input type="text" name="settings[' . $this->module . ']' . $instance . '[label]" value="' . $label . '" id="' . $this->id . '-label" size="16" class="selectall" /><br />';
-		$_[] = '<label for="' . $this->id . '-label">'.__('Option Name','Shopp').'</label></td>';
+		$_[] = '<label for="' . $this->id . '-label">' . Shopp::__('Option Name') . '</label></td>';
 
 		foreach ( $this->markup as $markup ) {
 			$_[] = '<td>';
@@ -694,8 +694,8 @@ class GatewaySettingsUI extends ModuleSettingsUI {
 		$_[] = '</tr><tr>';
 		$_[] = '<td colspan="4">';
 		$_[] = '<p class="textright">';
-		$_[] = '<a href="${cancel_href}" class="button-secondary cancel alignleft">'.__('Cancel','Shopp').'</a>';
-		$_[] = '<input type="submit" name="save" value="'.__('Save Changes','Shopp').'" class="button-primary" /></p>';
+		$_[] = '<a href="${cancel_href}" class="button-secondary cancel alignleft">' . Shopp::__('Cancel') . '</a>';
+		$_[] = '<input type="submit" name="save" value="' . Shopp::__('Save Changes') . '" class="button-primary" /></p>';
 		$_[] = '</td>';
 		$_[] = '</tr></table>';
 		$_[] = '</td></tr>';
@@ -771,7 +771,7 @@ class ShoppFreeOrder extends GatewayFramework {
 	 **/
 	public function __construct () {
 		parent::__construct();
-		$this->name = __('Free Order', 'Shopp');
+		$this->name = Shopp::__('Free Order');
 
 		add_action('shopp_freeorder_sale', array($this, 'capture'));
 		add_action('shopp_freeorder_refund', array($this, 'void'));
@@ -780,22 +780,22 @@ class ShoppFreeOrder extends GatewayFramework {
 
 	public function capture ( OrderEventMessage $Event ) {
 		shopp_add_order_event($Event->order, 'captured', array(
-			'txnid' => time(),
-			'fees' => 0,
-			'paymethod' => __('Free Order','Shopp'),
-			'paytype' => '',
-			'payid' => '',
-			'amount' => $Event->amount,
-			'gateway' => $this->module
+			'txnid'	    => time(),
+			'fees'	    => 0,
+			'paymethod'	=> Shopp::__('Free Order'),
+			'paytype'	=> '',
+			'payid'	    => '',
+			'amount'	=> $Event->amount,
+			'gateway'	=> $this->module
 		));
 	}
 
 	public function void ( OrderEventMessage $Event ) {
 		$Purchase = new ShoppPurchase($Event->order);
 		shopp_add_order_event($Purchase->id, 'voided', array(
-			'txnorigin' =>  $Purchase->txnid,	// Original transaction ID (txnid of original Purchase record)
-			'txnid' => time(),					// Transaction ID for the VOID event
-			'gateway' => $Event->gateway		// Gateway handler name (module name from @subpackage)
+			'txnorigin'	=>  $Purchase->txnid,	// Original transaction ID (txnid of original Purchase record)
+			'txnid'	    => time(),					// Transaction ID for the VOID event
+			'gateway'	=> $Event->gateway		// Gateway handler name (module name from @subpackage)
 		));
 
 	}

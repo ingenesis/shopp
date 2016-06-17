@@ -73,6 +73,9 @@ abstract class ShoppEmailFilters {
 	}
 
 	static function AltBody ( $phpmailer ) {
+		// If DOMDocument isn't available, don't implement Textify (no alternate plaintext body will be sent)
+ 		if ( ! class_exists('DOMDocument') ) return;
+
 		$Textify = new Textify($phpmailer->Body);
 		$phpmailer->AltBody = $Textify->render();
 	}

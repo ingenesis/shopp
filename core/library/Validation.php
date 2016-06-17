@@ -117,7 +117,7 @@ class ShoppFormValidation {
 			return shopp_add_error( Shopp::__('You must enter a valid street address for your billing information.') );
 
 		if ( apply_filters('shopp_billing_postcode_required', isset($fields['postcode']) && empty($fields['postcode'])) )
-			return shopp_add_error( Shopp::__('You must enter a valid postal code for your billing information.','Shopp ') );
+			return shopp_add_error( Shopp::__('You must enter a valid postal code for your billing information.') );
 
 		if ( apply_filters('shopp_billing_country_required', isset($fields['country']) && empty($fields['country']) ) )
 			return shopp_add_error( Shopp::__('You must select a country for your billing information.') );

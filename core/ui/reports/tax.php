@@ -9,8 +9,8 @@ class TaxReport extends ShoppReportFramework implements ShoppReport {
 			'yaxis' => array('tickFormatter' => 'asMoney')
 		));
 
-		$this->chartseries( __('Taxable','Shopp'), array('column' => 'taxable') );
-		$this->chartseries( __('Total Tax','Shopp'), array('column' => 'tax') );
+		$this->chartseries( Shopp::__('Taxable'), array('column' => 'taxable') );
+		$this->chartseries( Shopp::__('Total Tax'), array('column' => 'tax') );
 	}
 
 	public function query () {

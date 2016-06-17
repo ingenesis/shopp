@@ -1,7 +1,7 @@
 <div class="wrap shopp">
 
 	<div class="icon32"></div>
-	<h2><?php _e('Inventory','Shopp'); ?></h2>
+	<h2><?php Shopp::_e('Inventory'); ?></h2>
 
 	<?php do_action('shopp_admin_notice'); ?>
 
@@ -15,7 +15,7 @@
 
 	<p id="post-search" class="search-box">
 		<input type="text" id="products-search-input" class="search-input" name="s" value="<?php echo stripslashes(esc_attr($s)); ?>" />
-		<input type="submit" value="<?php _e('Search Products','Shopp'); ?>" class="button" />
+		<input type="submit" value="<?php Shopp::_e('Search Products'); ?>" class="button" />
 	</p>
 
 	<div class="tablenav">
@@ -23,7 +23,7 @@
 		<div class="alignleft actions filters">
 		<?php echo $categories_menu; ?>
 		<?php echo $inventory_menu; ?>
-		<input type="submit" id="filter-button" value="<?php _e('Filter','Shopp'); ?>" class="button-secondary" />
+		<input type="submit" id="filter-button" value="<?php Shopp::_e('Filter'); ?>" class="button-secondary" />
 		</div>
 
 		<?php $ListTable->page_navigation('top'); ?>
@@ -39,7 +39,7 @@
 		<tr><?php ShoppUI::print_column_headers('toplevel_page_shopp-products'); ?></tr>
 		</thead>
 		<tfoot>
-		<tr><?php ShoppUI::print_column_headers('toplevel_page_shopp-products',false); ?></tr>
+		<tr><?php ShoppUI::print_column_headers('toplevel_page_shopp-products', false); ?></tr>
 		</tfoot>
 	<?php if ($Products->size() > 0): ?>
 		<tbody id="products" class="list products">
@@ -54,21 +54,21 @@
 					'f'=>null)),
 					admin_url('admin.php'))));
 
-		$ProductName = empty($Product->name)?'('.__('no product name','Shopp').')':$Product->name;
+		$ProductName = empty($Product->name) ? '(' . Shopp::__('no product name') . ')' : $Product->name;
 		?>
-		<tr<?php if (!$even) echo " class='alternate'"; $even = !$even; ?>>
+		<tr<?php if ( ! $even ) echo " class='alternate'"; $even = !$even; ?>>
 			<td class="inventory column-inventory">
 			<input type="text" name="stock[<?php echo $Product->stockid; ?>]" value="<?php echo $Product->stock; ?>" size="6" class="stock selectall" />
 			<input type="hidden" name="db[<?php echo $Product->stockid; ?>]" value="<?php echo $Product->stock; ?>" class="db" />
 			</td>
-			<td class="sku column-sku<?php echo in_array('sku',$hidden)?' hidden':''; ?>"><?php echo $Product->sku; ?></td>
-			<td class="name column-name"><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit','Shopp'); ?> &quot;<?php echo $ProductName; ?>&quot;'><?php echo $ProductName; ?></a></td>
+			<td class="sku column-sku<?php echo in_array('sku', $hidden) ? ' hidden' : ''; ?>"><?php echo $Product->sku; ?></td>
+			<td class="name column-name"><a class='row-title' href='<?php echo $editurl; ?>' title='<?php Shopp::_e('Edit'); ?> &quot;<?php echo $ProductName; ?>&quot;'><?php echo $ProductName; ?></a></td>
 
 		</tr>
 		<?php endforeach; ?>
 		</tbody>
 	<?php else: ?>
-		<tbody><tr><td colspan="6"><?php _e('No products found.','Shopp'); ?></td></tr></tbody>
+		<tbody><tr><td colspan="6"><?php Shopp::_e('No products found.'); ?></td></tr></tbody>
 	<?php endif; ?>
 	</table>
 	</form>

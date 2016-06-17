@@ -2,7 +2,7 @@
 
 	<?php $this->heading(); ?>
 
-	<p class="about-description"><?php Shopp::_e( 'Shopp is crafted by a talented team of professionals practicing the art and engineering of e-commerce.'); ?></p>
+	<p class="about-description"><?php Shopp::_e( 'Webshop1310 is forked from Shopp, which is crafted by a talented team of professionals practicing the art and engineering of e-commerce.'); ?></p>
 
 	<?php $contributors = $this->contributors(); ?>
 

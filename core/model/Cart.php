@@ -260,9 +260,9 @@ class ShoppCart extends ListFramework {
 
 		$AjaxCart = new StdClass();
 		$AjaxCart->url = Shopp::url(false, 'cart');
-		$AjaxCart->label = __('Edit shopping cart', 'Shopp');
+		$AjaxCart->label = Shopp::__('Edit shopping cart');
 		$AjaxCart->checkouturl = Shopp::url(false, 'checkout', ShoppOrder()->security());
-		$AjaxCart->checkoutLabel = __('Proceed to Checkout', 'Shopp');
+		$AjaxCart->checkoutLabel = Shopp::__('Proceed to Checkout');
 		$AjaxCart->imguri = '' != get_option('permalink_structure') ? trailingslashit(Shopp::url('images')) : Shopp::url() . '&siid=';
 		$AjaxCart->Totals = json_decode( (string)$this->Totals );
 		$AjaxCart->Contents = array();
@@ -416,7 +416,7 @@ class ShoppCart extends ListFramework {
 
 		// Subscription products must be alone in the cart
 		if ( 'Subscription' == $Item->type && $this->count() > 0 || $this->recurring() ) {
-			new ShoppError(__('A subscription must be purchased separately. Complete your current transaction and try again.','Shopp'),'cart_valid_add_failed',SHOPP_ERR);
+			new ShoppError(Shopp::__('A subscription must be purchased separately. Complete your current transaction and try again.'), 'cart_valid_add_failed', SHOPP_ERR);
 			return false;
 		}
 
@@ -465,13 +465,13 @@ class ShoppCart extends ListFramework {
 
 		// Reduce ordered amount or remove item with error
 		if ($overage < $Item->quantity) {
-			new ShoppError(__('Not enough of the product is available in stock to fulfill your request.','Shopp'),'item_low_stock');
+			new ShoppError(Shopp::__('Not enough of the product is available in stock to fulfill your request.'), 'item_low_stock');
 			$Item->quantity -= $overage;
 			$Item->qtydelta -= $overage;
 			return true;
 		}
 
-		new ShoppError(__('The product could not be added to the cart because it is not in stock.','Shopp'),'cart_item_invalid',SHOPP_ERR);
+		new ShoppError(Shopp::__('The product could not be added to the cart because it is not in stock.'), 'cart_item_invalid', SHOPP_ERR);
 		return false;
 
 	}

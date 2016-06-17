@@ -1,7 +1,7 @@
 	<div class="wrap shopp">
 
 		<div class="icon32"></div>
-		<h2><?php _e('Discount Editor','Shopp'); ?> <a href="<?php echo esc_url(add_query_arg(array_merge($_GET,array('page'=>'shopp-discounts','id'=>'new')),admin_url('admin.php'))); ?>" class="add-new-h2"><?php _e('Add New','Shopp'); ?></a> </h2>
+		<h2><?php Shopp::_e('Discount Editor'); ?> <a href="<?php echo esc_url(add_query_arg(array_merge($_GET,array('page'=>'shopp-discounts','id'=>'new')),admin_url('admin.php'))); ?>" class="add-new-h2"><?php Shopp::_e('Add New'); ?></a> </h2>
 
 		<?php do_action('shopp_admin_notices'); ?>
 
@@ -26,7 +26,7 @@
 
 					<div id="titlediv">
 						<div id="titlewrap">
-							<label class="hide-if-no-js<?php if (!empty($Promotion->name)) echo ' hidden'; ?>" id="title-prompt-text" for="title"><?php _e('Enter discount name','Shopp'); ?></label>
+							<label class="hide-if-no-js<?php if (!empty($Promotion->name)) echo ' hidden'; ?>" id="title-prompt-text" for="title"><?php Shopp::_e('Enter discount name'); ?></label>
 
 							<input name="name" id="title" type="text" value="<?php echo esc_attr($Promotion->name); ?>" size="30" tabindex="1" autocomplete="off" />
 						</div>

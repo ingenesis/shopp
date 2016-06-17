@@ -1375,7 +1375,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			'number' => false,
 			'high' => false,
 			'low' => false,
-			'disabled' => __('Currently unavailable', 'Shopp')
+			'disabled' => Shopp::__('Currently unavailable')
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -2121,7 +2121,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			'label' => 'on',
 			'mode' => 'multiple',
 			'taxes' => null,
-			'required' => __('You must select the options for this item before you can add it to your shopping cart.','Shopp')
+			'required' => Shopp::__('You must select the options for this item before you can add it to your shopping cart.')
 			);
 		$options = array_merge($defaults, $options);
 		extract($options);
