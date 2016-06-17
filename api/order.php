@@ -145,7 +145,7 @@ function shopp_order_count ( $from = false, $to = false ) {
  **/
 function shopp_customer_orders ( $customer = false, $from = false, $to = false, $items = true ) {
 	if ( ! $customer || ! shopp_customer_exists($customer) ) {
-		shopp_debug(__FUNCTION__ . " failed: Invalid or missing customer id.");
+		shopp_debug(__FUNCTION__ . ' failed: Invalid or missing customer id.');
 		return false;
 	}
 
@@ -168,10 +168,10 @@ function shopp_customer_orders ( $customer = false, $from = false, $to = false, 
  * @return array of Purchase objects
  **/
 function shopp_recent_orders ($time = 1, $period = 'day') {
-	$periods = array('day', 'days', 'week', 'weeks', 'month', 'months', 'year', 'years');
+	$periods = array('day' => 'day', 'days' => 'days', 'week' => 'week', 'weeks' => 'weeks', 'month' => 'month', 'months' => 'months', 'year' => 'year', 'years' => 'years');
 
-	if ( ! in_array($period, $periods) ) {
-		shopp_debug(__FUNCTION__." failed: Invalid period $period.  Use one of (".implode(", ", $periods).")");
+	if ( ! isset($periods[ $period ]) ) {
+		shopp_debug(__FUNCTION__ . " failed: Invalid period $period.  Use one of (" . implode(", ", $periods) . ")");
 		return false;
 	}
 
@@ -195,14 +195,14 @@ function shopp_recent_orders ($time = 1, $period = 'day') {
  **/
 function shopp_recent_customer_orders ($customer = false, $time = 1, $period = 'day') {
 	if ( ! $customer || ! shopp_customer_exists($customer) ) {
-		shopp_debug(__FUNCTION__ . " failed: Invalid or missing customer id.");
+		shopp_debug(__FUNCTION__ . ' failed: Invalid or missing customer id.');
 		return false;
 	}
 
 	$periods = array('day', 'days', 'week', 'weeks', 'month', 'months', 'year', 'years');
 
 	if ( ! in_array($period, $periods) ) {
-		shopp_debug(__FUNCTION__." failed: Invalid period $period.  Use one of (".implode(", ", $periods).")");
+		shopp_debug(__FUNCTION__." failed: Invalid period $period.  Use one of (" . implode(", ", $periods) . ")");
 		return false;
 	}
 
@@ -239,7 +239,7 @@ function shopp_last_order () {
  **/
 function shopp_last_customer_order ( $customer = false ) {
 	if ( ! $customer || ! shopp_customer_exists($customer) ) {
-		shopp_debug(__FUNCTION__ . " failed: Invalid or missing customer id.");
+		shopp_debug(__FUNCTION__ . ' failed: Invalid or missing customer id.');
 		return false;
 	}
 	$orders = shopp_orders ( false, false, true, array($customer), 1);
@@ -260,7 +260,7 @@ function shopp_last_customer_order ( $customer = false ) {
  **/
 function shopp_order ( $id = false, $by = 'id' ) {
 	if ( ! $id || ! $Purchase = shopp_order_exists($id, $by) ) {
-		shopp_debug(__FUNCTION__ . " failed: Invalid or missing order id.");
+		shopp_debug(__FUNCTION__ . ' failed: Invalid or missing order id.');
 		return false;
 	}
 
@@ -391,7 +391,7 @@ function shopp_order_exists ( $id = false, $by = 'id' ) {
 	$Purchase = new ShoppPurchase();
 
 	if ( $by == 'trans' ) {
-		$Purchase->load($id,'txnid');
+		$Purchase->load($id, 'txnid');
 	} else {
 		$Purchase->load($id);
 	}
@@ -412,20 +412,20 @@ function shopp_order_exists ( $id = false, $by = 'id' ) {
 function shopp_add_order ( $customer = false ) {
 	// check customer
 	if ( ! $Customer = shopp_customer( (int) $customer) ) {
-		shopp_debug(__FUNCTION__ . " failed: Invalid customer.");
+		shopp_debug(__FUNCTION__ . ' failed: Invalid customer.');
 		return false;
 	}
 
 	if ( ! shopp_cart_items_count() ) {
-		shopp_debug(__FUNCTION__ . " failed: No items in cart.");
+		shopp_debug(__FUNCTION__ . ' failed: No items in cart.');
 		return false;
 	}
 
 	$Order = ShoppOrder();
-	$Order->Customer = $Customer;
-	$Order->Billing = $Customer->Billing;
+	$Order->Customer          = $Customer;
+	$Order->Billing           = $Customer->Billing;
 	$Order->Billing->cardtype = 'api';
-	$Order->Shipping = $Customer->Shipping;
+	$Order->Shipping          = $Customer->Shipping;
 
 	shopp_add_order_event(false, 'purchase', array(
 		'gateway' => 'GatewayFramework'
@@ -471,27 +471,27 @@ function shopp_rmv_order ($id) {
  **/
 function shopp_add_order_line ( $order = false, $data = array() ) {
 	$item_fields = array(
-		'product', // product id of line item
-		'price', // variant id of line item
-		'download', // download asset id for line item
-		'dkey', // unique download key to assign to download item
-		'name', // name of item
-		'description', // description of item
-		'optionlabel', // string label of variant combination of this item
-		'sku', // sku of item
-		'quantity', // quantity of items on this line
-		'unitprice', // unit price
-		'unittax', // unit tax
-		'shipping', // line item shipping cost
-		'total', // line item total cost
-		'type', // Shipped, Download, Virtual, Membership, Subscription
-		'addons', // array of addons
-		'variation', // array of key => value (optionmenu => option) pairs for the variant combination
-		'data' // associative array of item "data" key value pairs
+		'product',		// product id of line item
+		'price',		// variant id of line item
+		'download',		// download asset id for line item
+		'dkey',			// unique download key to assign to download item
+		'name',			// name of item
+		'description',	// description of item
+		'optionlabel',	// string label of variant combination of this item
+		'sku',			// sku of item
+		'quantity',		// quantity of items on this line
+		'unitprice',	// unit price
+		'unittax',		// unit tax
+		'shipping',		// line item shipping cost
+		'total',		// line item total cost
+		'type',			// Shipped, Download, Virtual, Membership, Subscription
+		'addons',		// array of addons
+		'variation',	// array of key => value (optionmenu => option) pairs for the variant combination
+		'data'			// associative array of item "data" key value pairs
 		);
 
 	if ( ! $Purchase = shopp_order_exists($order) ) {
-		shopp_debug(__FUNCTION__ . " failed: Invalid order id.");
+		shopp_debug(__FUNCTION__ . ' failed: Invalid order id.');
 		return false;
 	}
 
@@ -499,7 +499,7 @@ function shopp_add_order_line ( $order = false, $data = array() ) {
 	$Purchased = new ShoppPurchased;
 	if ( is_object($data) && is_a($data, 'Item') ) {
 		$Purchased->copydata($data);
-		if ($data->inventory) $data->unstock();
+		if ( $data->inventory ) $data->unstock();
 	} else {
 		// build purchased line item
 		$Purchased->unitprice = $Purchased->unittax = $Purchased->shipping = $Purchased->total = 0;
@@ -510,7 +510,7 @@ function shopp_add_order_line ( $order = false, $data = array() ) {
 		if ( ! isset($Purchased->type) ) $Purchase->type = 'Shipped';
 	}
 	$Purchased->purchase = $order;
-	if (!empty($Purchased->download)) $Purchased->keygen();
+	if ( ! empty($Purchased->download) ) $Purchased->keygen();
 	$Purchased->save();
 
 	// Update the Purchase
@@ -524,9 +524,9 @@ function shopp_add_order_line ( $order = false, $data = array() ) {
 	$Purchase->save();
 
 	// invoice new amount
-	shopp_add_order_event($Purchase->id,'invoiced',array(
+	shopp_add_order_event($Purchase->id, 'invoiced', array(
 		'gateway' => $Purchase->gateway,			// Gateway handler name (module name from @subpackage)
-		'amount' => $total_added					// Capture of entire order amount
+		'amount'  => $total_added					// Capture of entire order amount
 	));
 
 	return ( ! empty($Purchased->id) ? $Purchased : false );
@@ -546,27 +546,27 @@ function shopp_rmv_order_line ( $order = false, $line = 0 ) {
 	$Lines = shopp_order_lines($order);
 
 	$ids = array_keys($Lines);
-	if (!isset($ids[$line])) return false;
+	if ( ! isset($ids[ $line ]) ) return false;
 
-	$id = $ids[$line];
+	$id = $ids[ $line ];
 
 	if ( empty($Lines) || $line >= count($Lines) ) return false;
 
 	$Purchased = new ShoppPurchased();
-	$Purchased->populate($Lines[$id]);
+	$Purchased->populate($Lines[ $id ]);
 	$Purchase = shopp_order($order);
 
 	$Purchase->subtotal -= $Purchased->unitprice * $Purchased->quantity;
-	$Purchase->tax -= $Purchased->unittax * $Purchased->quantity;
-	$Purchase->freight -= $Purchased->shipping;
-	$total_removed = $Purchased->total + ($Purchased->unittax * $Purchased->quantity) + $Purchased->shipping;
-	$Purchase->total -= $total_removed;
+	$Purchase->tax      -= $Purchased->unittax * $Purchased->quantity;
+	$Purchase->freight  -= $Purchased->shipping;
+	$total_removed       = $Purchased->total + ($Purchased->unittax * $Purchased->quantity) + $Purchased->shipping;
+	$Purchase->total    -= $total_removed;
 	$Purchased->delete();
 	$Purchase->save();
 
 	if ( $Purchase->balance && $Purchase->balance >= $total_removed ) {
 		// invoice new amount
-		shopp_add_order_event($Purchase->id,'amt-voided',array(
+		shopp_add_order_event($Purchase->id, 'amt-voided', array(
 			'amount' => $total_removed					// Capture of entire order amount
 		));
 	}
@@ -620,19 +620,19 @@ function shopp_add_order_line_download ( $order = false, $line = 0, $download = 
 
 	$ids = array_keys($Lines);
 
-	if ( empty($Lines) || $line >= count($Lines) || ! isset($ids[$line]) )
+	if ( empty($Lines) || $line >= count($Lines) || ! isset($ids[ $line ]) )
 		return false;
 
-	$id = $ids[$line];
+	$id = $ids[ $line ];
 
 	$DL = new ProductDownload($download);
 	if ( empty($DL->id) ) {
-		shopp_debug(__FUNCTION__ . " failed: Invalid or missing download asset id.");
+		shopp_debug(__FUNCTION__ . ' failed: Invalid or missing download asset id.');
 		return false;
 	}
 
 	$Purchased = new ShoppPurchased;
-	$Purchased->populate($Lines[$id]);
+	$Purchased->populate($Lines[ $id ]);
 
 	$Purchased->download = $download;
 	$Purchased->keygen();
@@ -654,12 +654,12 @@ function shopp_rmv_order_line_download ( $order = false, $line = 0 ) {
 	$Lines = shopp_order_lines($order);
 	$ids = array_keys($Lines);
 
-	if ( empty($Lines) || $line >= count($Lines) || ! isset($ids[$line]) )
+	if ( empty($Lines) || $line >= count($Lines) || ! isset($ids[ $line ]) )
 		return false;
 
-	$id = $ids[$line];
+	$id = $ids[ $line ];
 	$Purchased = new ShoppPurchased;
-	$Purchased->populate($Lines[$id]);
+	$Purchased->populate($Lines[ $id ]);
 
 	$Purchase->download = 0;
 	$Purchase->dkey = '';
@@ -682,7 +682,7 @@ function shopp_rmv_order_line_download ( $order = false, $line = 0 ) {
 function shopp_order_data ( $order = false, $name = false ) {
 	if ( ($Purchase = shopp_order_exists($order)) && isset($Purchase->data) && is_array($Purchase->data) ) {
 		if ( false === $name ) return $Purchase->data;
-		if ( isset($Purchase->data[$name]) ) return $Purchase->data[$name];
+		if ( isset($Purchase->data[ $name ]) ) return $Purchase->data[ $name ];
 	}
 	return false;
 }
@@ -702,13 +702,13 @@ function shopp_order_data ( $order = false, $name = false ) {
  **/
 function shopp_set_order_data ( $order = false, $name = false, $value = false ) {
 	if ( ! ( $Purchase = shopp_order_exists($order) ) || ! $name ) {
-		shopp_debug(__FUNCTION__ . " failed: Order id and name parameters are required.");
+		shopp_debug(__FUNCTION__ . ' failed: Order id and name parameters are required.');
 		return false;
 	}
 
 	if ( ! isset($Purchase->data) || ! is_array($Purchase->data) ) $Purchase->data = array();
 
-	$Purchase->data[$name] = $value;
+	$Purchase->data[ $name ] = $value;
 	$Purchase->save();
 	return true;
 }
@@ -727,11 +727,11 @@ function shopp_set_order_data ( $order = false, $name = false, $value = false ) 
  **/
 function shopp_rmv_order_data ( $order = false, $name = false ) {
 	if ( ! $order || ! ( $Purchase = shopp_order_exists($order) ) ) {
-		shopp_debug(__FUNCTION__ . " failed: Order id parameter is required.");
+		shopp_debug(__FUNCTION__ . ' failed: Order id parameter is required.');
 		return false;
 	}
 	if ( ! $name ) $Purchase->data = array();
-	else if ( isset($Purchase->data[$name]) ) unset($Purchase->data[$name]);
+	else if ( isset($Purchase->data[ $name ]) ) unset($Purchase->data[ $name ]);
 	$Purchase->save();
 	return true;
 }
@@ -748,10 +748,10 @@ function shopp_rmv_order_data ( $order = false, $name = false ) {
  **/
 function shopp_order_line_data_count ($order = false, $line = 0 ) {
 	$Lines = shopp_order_lines($order);
-	if ( empty($Lines) || $line >= count($Lines) || ! isset($Lines[$line]) )
+	if ( empty($Lines) || $line >= count($Lines) || ! isset($Lines[ $line ]) )
 		return false;
 
-	if ( is_array($Lines[$line]->data) ) return count($Lines[$line]->data);
+	if ( is_array($Lines[ $line ]->data) ) return count($Lines[ $line ]->data);
 	return 0;
 }
 
@@ -768,12 +768,12 @@ function shopp_order_line_data_count ($order = false, $line = 0 ) {
  **/
 function shopp_order_line_data ($order = false, $line = 0, $name = false) {
 	$Lines = shopp_order_lines($order);
-	if ( empty($Lines) || $line >= count($Lines) || ! isset($Lines[$line]) )
+	if ( empty($Lines) || $line >= count($Lines) || ! isset($Lines[ $line ]) )
 		return false;
 
-	if ( is_array($Lines[$line]->data) && ! empty($Lines[$line]->data) ) {
-		if ( $name && in_array($name, array_keys($Lines[$line]->data)) ) return $Lines[$line]->data[$name];
-		return $Lines[$line]->data;
+	if ( is_array($Lines[ $line ]->data) && ! empty($Lines[ $line ]->data) ) {
+		if ( $name && in_array($name, array_keys($Lines[ $line ]->data)) ) return $Lines[ $line ]->data[ $name ];
+		return $Lines[ $line ]->data;
 	}
 	return false;
 }
@@ -791,10 +791,10 @@ function shopp_order_line_data ($order = false, $line = 0, $name = false) {
  **/
 function shopp_add_order_line_data ( $order = false, $line = 0, $data = array() ) {
 	$Lines = shopp_order_lines($order);
-	if ( empty($Lines) || $line >= count($Lines) || ! isset($Lines[$line]) )
+	if ( empty($Lines) || $line >= count($Lines) || ! isset($Lines[ $line ]) )
 		return false;
 	$Purchased = new ShoppPurchased();
-	$Purchased->populate($Lines[$line]);
+	$Purchased->populate($Lines[ $line ]);
 
 	if ( ! is_array($Purchased->data) ) $Purchased->data = array();
 
@@ -816,13 +816,13 @@ function shopp_add_order_line_data ( $order = false, $line = 0, $data = array() 
  **/
 function shopp_rmv_order_line_data ($order = false, $line = 0, $name = false) {
 	$Lines = shopp_order_lines($order);
-	if ( empty($Lines) || $line >= count($Lines) || ! isset($Lines[$line]) )
+	if ( empty($Lines) || $line >= count($Lines) || ! isset($Lines[ $line ]) )
 		return false;
 	$Purchased = new ShoppPurchased();
-	$Purchased->populate($Lines[$line]);
+	$Purchased->populate($Lines[ $line ]);
 
 	if ( ! is_array($Purchased->data) ) $Purchased->data = array();
-	if ( $name && in_array($name, array_keys($Purchased->data) ) ) unset($Purchased->data[$name]);
+	if ( $name && in_array($name, array_keys($Purchased->data) ) ) unset($Purchased->data[ $name ]);
 
 	$Purchased->save();
 }
@@ -845,9 +845,9 @@ function shopp_add_order_event ( $order = false, $type = false, $message = array
 	}
 
 	if ( ! $type || ! OrderEvent::handler($type)) {
-		shopp_debug(__FUNCTION__ . " failed: Missing or invalid order event type");
+		shopp_debug(__FUNCTION__ . ' failed: Missing or invalid order event type');
 		return false;
 	}
 
-	return OrderEvent::add($order,$type,$message);
+	return OrderEvent::add($order, $type,$message);
 }
