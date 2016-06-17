@@ -20,7 +20,7 @@ class PercentageAmount extends ShippingFramework implements ShippingModule {
 	public function calcitem ( $id, $Item ) { /* Not implemented */ }
 
 	public function methods () {
-		return __('Percentage Rate Tiers','Shopp');
+		return Shopp::__('Percentage Rate Tiers');
 	}
 
 	public function calculate ( &$options, $Order ) {
@@ -47,11 +47,11 @@ class PercentageAmount extends ShippingFramework implements ShippingModule {
 			if ( ! $matched ) return $options;
 
 			$rate = array(
-				'slug' => $slug,
-				'name' => $method['label'],
-				'amount' => $amount,
+				'slug'     => $slug,
+				'name'     => $method['label'],
+				'amount'   => $amount,
 				'delivery' => $this->delivery($method),
-				'items' => false
+				'items'    => false
 			);
 
 			$options[ $slug ] = new ShippingOption($rate);
@@ -66,10 +66,10 @@ class PercentageAmount extends ShippingFramework implements ShippingModule {
 		$this->setup('table');
 
 		$this->ui->tablerates(0,array(
-			'unit' => array(Shopp::__('Order Subtotal')),
-			'table' => $this->settings['table'],
+			'unit'            => array(Shopp::__('Order Subtotal')),
+			'table'           => $this->settings['table'],
 			'threshold_class' => 'money',
-			'rate_class' => 'percentage'
+			'rate_class'      => 'percentage'
 		));
 
 	}
