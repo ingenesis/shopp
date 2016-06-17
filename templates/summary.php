@@ -15,10 +15,10 @@
 	<div id="cart" class="shopp">
 		<table>
 			<tr>
-				<th scope="col" class="item"><?php _e( 'Cart Items', 'Shopp' ); ?></th>
-				<th scope="col"><?php _e( 'Quantity', 'Shopp' ); ?></th>
-				<th scope="col" class="money"><?php _e( 'Item Price', 'Shopp' ); ?></th>
-				<th scope="col" class="money"><?php _e( 'Item Total', 'Shopp' ); ?></th>
+				<th scope="col" class="item"><?php Shopp::_e( 'Cart Items' ); ?></th>
+				<th scope="col"><?php Shopp::_e( 'Quantity' ); ?></th>
+				<th scope="col" class="money"><?php Shopp::_e( 'Item Price' ); ?></th>
+				<th scope="col" class="money"><?php Shopp::_e( 'Item Total' ); ?></th>
 			</tr>
 
 			<?php while ( shopp( 'cart.items' ) ) : ?>
@@ -44,7 +44,7 @@
 			<tr class="totals">
 				<td colspan="2" rowspan="5">
 					<?php if ( ( shopp( 'cart.has-shipping-methods' ) ) ) : ?>
-						<small><?php _e( 'Select a shipping method:', 'Shopp' ); ?></small>
+						<small><?php Shopp::_e( 'Select a shipping method:' ); ?></small>
 						<form action="<?php shopp( 'shipping.url' ); ?>" method="post">
 							<ul id="shipping-methods">
 								<?php while ( shopp( 'shipping.methods' ) ) : ?>
@@ -62,30 +62,30 @@
 						</form>
 					<?php endif; ?>
 				</td>
-				<th scope="row"><?php _e( 'Subtotal', 'Shopp' ); ?></th>
+				<th scope="row"><?php Shopp::_e( 'Subtotal' ); ?></th>
 				<td class="money"><?php shopp( 'cart.subtotal' ); ?></td>
 			</tr>
 
 			<?php if ( shopp( 'cart.hasdiscount' ) ) : ?>
 				<tr class="totals">
-					<th scope="row"><?php _e( 'Discount', 'Shopp' ); ?></th>
+					<th scope="row"><?php Shopp::_e( 'Discount' ); ?></th>
 					<td class="money">-<?php shopp( 'cart.discount' ); ?></td>
 				</tr>
 			<?php endif; ?>
 
 			<?php if ( shopp( 'cart.needs-shipped' ) ) : ?>
 				<tr class="totals">
-					<th scope="row"><?php shopp( 'cart.shipping', 'label=' . __( 'Shipping', 'Shopp' ) ); ?></th>
+					<th scope="row"><?php shopp( 'cart.shipping', 'label=' . Shopp::__( 'Shipping' ) ); ?></th>
 					<td class="money"><?php shopp( 'cart.shipping' ); ?></td>
 				</tr>
 			<?php endif; ?>
 
 			<tr class="totals">
-				<th scope="row"><?php shopp( 'cart.tax', 'label=' . __( 'Taxes', 'Shopp' ) ); ?></th>
+				<th scope="row"><?php shopp( 'cart.tax', 'label=' . Shopp::__( 'Taxes' ) ); ?></th>
 				<td class="money"><?php shopp('cart','tax' ); ?></td>
 			</tr>
 			<tr class="totals total">
-				<th scope="row"><?php _e( 'Total', 'Shopp' ); ?></th>
+				<th scope="row"><?php Shopp::_e( 'Total' ); ?></th>
 				<td class="money"><?php shopp( 'cart.total' ); ?></td>
 			</tr>
 		</table>
@@ -99,6 +99,6 @@
 		<?php endif; ?>
 	</div>
 <?php else : ?>
-	<p class="notice"><?php _e( 'There are currently no items in your shopping cart.', 'Shopp' ); ?></p>
-	<p><a href="<?php shopp( 'storefront.url' ); ?>">&laquo; <?php _e( 'Continue Shopping', 'Shopp' ); ?></a></p>
+	<p class="notice"><?php Shopp::_e( 'There are currently no items in your shopping cart.' ); ?></p>
+	<p><a href="<?php shopp( 'storefront.url' ); ?>">&laquo; <?php Shopp::_e( 'Continue Shopping' ); ?></a></p>
 <?php endif; ?>
