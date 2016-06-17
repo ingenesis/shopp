@@ -16,13 +16,13 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class ShoppOfflinePayment extends GatewayFramework implements GatewayModule {
 
-	public $secure = false;		// SSL not required
+	public $secure   = false;	// SSL not required
 	public $authonly = true;	// Auth only transactions
-	public $multi = true;		// Support multiple methods
+	public $multi    = true;	// Support multiple methods
 	public $captures = true;	// Supports Auth-only
-	public $refunds = true;		// Supports refunds
+	public $refunds  = true;	// Supports refunds
 
-	public $methods = array(); // List of active OfflinePayment payment methods
+	public $methods  = array(); // List of active OfflinePayment payment methods
 
 	/**
 	 * Setup the Offline Payment module
@@ -76,38 +76,38 @@ class ShoppOfflinePayment extends GatewayFramework implements GatewayModule {
 		$Paymethod = $Order->Payments->selected();
 
 		shopp_add_order_event($Event->order, 'authed', array(
-			'txnid' => time(),
-			'amount' => $this->amount('total'),
-			'fees' => 0,
-			'gateway' => $Paymethod->processor,
+			'txnid'     => time(),
+			'amount'    => $this->amount('total'),
+			'fees'      => 0,
+			'gateway'   => $Paymethod->processor,
 			'paymethod' => $Paymethod->label,
-			'paytype' => $Billing->cardtype,
-			'payid' => $Billing->card
+			'paytype'   => $Billing->cardtype,
+			'payid'     => $Billing->card
 		));
 	}
 
 	public function capture ( $Event ) {
 		shopp_add_order_event($Event->order, 'captured', array(
-			'txnid' => time(),			// Transaction ID of the CAPTURE event
-			'amount' => $Event->amount,	// Amount captured
-			'fees' => 0,
-			'gateway' => $this->module	// Gateway handler name (module name from @subpackage)
+			'txnid'   => time(),			// Transaction ID of the CAPTURE event
+			'amount'  => $Event->amount,	// Amount captured
+			'fees'    => 0,
+			'gateway' => $this->module	    // Gateway handler name (module name from @subpackage)
 		));
 	}
 
 	public function refund ( $Event ) {
 		shopp_add_order_event($Event->order, 'refunded', array(
-			'txnid' => time(),			// Transaction ID for the REFUND event
-			'amount' => $Event->amount,	// Amount refunded
-			'gateway' => $this->module	// Gateway handler name (module name from @subpackage)
+			'txnid'   => time(),			// Transaction ID for the REFUND event
+			'amount'  => $Event->amount,	// Amount refunded
+			'gateway' => $this->module 		// Gateway handler name (module name from @subpackage)
 		));
 	}
 
 	public function void ( $Event ) {
 		shopp_add_order_event($Event->order, 'voided', array(
 			'txnorigin' => $Event->txnid,	// Original transaction ID (txnid of original Purchase record)
-			'txnid' => time(),				// Transaction ID for the VOID event
-			'gateway' => $this->module		// Gateway handler name (module name from @subpackage)
+			'txnid'     => time(),			// Transaction ID for the VOID event
+			'gateway'   => $this->module	// Gateway handler name (module name from @subpackage)
 		));
 	}
 
@@ -127,14 +127,14 @@ class ShoppOfflinePayment extends GatewayFramework implements GatewayModule {
 		$instructions = isset($this->settings['instructions']) ? $this->settings['instructions'] : '';
 
 		$this->ui->textarea(0,array(
-			'name' => 'instructions',
+			'name'  => 'instructions',
 			'value' => stripslashes_deep($instructions)
 		));
 
-		$this->ui->p(1,array(
-			'name' => 'help',
-			'label' => __('Offline Payment Instructions', 'Shopp'),
-			'content' => __('Use this area to provide your customers with instructions on how to make payments offline.', 'Shopp')
+		$this->ui->p(1, array(
+			'name'    => 'help',
+			'label'   => Shopp::__('Offline Payment Instructions'),
+			'content' => Shopp::__('Use this area to provide your customers with instructions on how to make payments offline.')
 		));
 
 	}
