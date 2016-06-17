@@ -34,51 +34,51 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 * @internal
 	 **/
 	static $register = array(
-		'carousel' => 'carousel',
-		'coverimage' => 'coverimage',
-		'description' => 'description',
-		'feedurl' => 'feed_url',
-		'hascategories' => 'has_categories',
-		'hasimages' => 'has_images',
-		'hasproducts' => 'load_products',
-		'loadproducts' => 'load_products',
-		'id' => 'id',
-		'image' => 'image',
-		'images' => 'images',
-		'issubcategory' => 'is_subcategory',
-		'link' => 'url',
-		'name' => 'name',
-		'pagination' => 'pagination',
-		'parent' => 'parent',
-		'products' => 'products',
-		'row' => 'row',
-		'sectionlist' => 'section_list',
-		'slideshow' => 'slideshow',
-		'slug' => 'slug',
-		'subcategories' => 'subcategories',
+		'carousel'        => 'carousel',
+		'coverimage'      => 'coverimage',
+		'description'     => 'description',
+		'feedurl'         => 'feed_url',
+		'hascategories'   => 'has_categories',
+		'hasimages'       => 'has_images',
+		'hasproducts'     => 'load_products',
+		'loadproducts'    => 'load_products',
+		'id'              => 'id',
+		'image'           => 'image',
+		'images'          => 'images',
+		'issubcategory'   => 'is_subcategory',
+		'link'            => 'url',
+		'name'            => 'name',
+		'pagination'      => 'pagination',
+		'parent'          => 'parent',
+		'products'        => 'products',
+		'row'             => 'row',
+		'sectionlist'     => 'section_list',
+		'slideshow'       => 'slideshow',
+		'slug'            => 'slug',
+		'subcategories'   => 'subcategories',
 		'subcategorylist' => 'subcategory_list',
-		'total' => 'total',
-		'url' => 'url',
+		'total'           => 'total',
+		'url'             => 'url',
 
 		// Faceted menu tags
-		'hasfacetedmenu' => 'has_faceted_menu',
-		'facetedmenu' => 'faceted_menu',
-		'isfacetfiltered' => 'is_facet_filtered',
-		'facetfilters' => 'facet_filters',
-		'facetfilter' => 'facet_filter',
-		'facetfiltered' => 'facet_filtered',
-		'facetmenus' => 'facet_menus',
-		'facetname' => 'facet_name',
-		'facetlabel' => 'facet_label',
-		'facetslug' => 'facet_slug',
-		'facetlink' => 'facet_link',
+		'hasfacetedmenu'      => 'has_faceted_menu',
+		'facetedmenu'         => 'faceted_menu',
+		'isfacetfiltered'     => 'is_facet_filtered',
+		'facetfilters'        => 'facet_filters',
+		'facetfilter'         => 'facet_filter',
+		'facetfiltered'       => 'facet_filtered',
+		'facetmenus'          => 'facet_menus',
+		'facetname'           => 'facet_name',
+		'facetlabel'          => 'facet_label',
+		'facetslug'           => 'facet_slug',
+		'facetlink'           => 'facet_link',
 		'facetmenuhasoptions' => 'facet_menu_has_options',
-		'facetoptions' => 'facet_options',
-		'facetoptionlink' => 'facet_option_link',
-		'facetoptionlabel' => 'facet_option_label',
-		'facetoptioninput' => 'facet_option_input',
-		'facetoptionvalue' => 'facet_option_value',
-		'facetoptioncount' => 'facet_option_count'
+		'facetoptions'        => 'facet_options',
+		'facetoptionlink'     => 'facet_option_link',
+		'facetoptionlabel'    => 'facet_option_label',
+		'facetoptioninput'    => 'facet_option_input',
+		'facetoptionvalue'    => 'facet_option_value',
+		'facetoptioncount'    => 'facet_option_count'
 	);
 
 	/**
@@ -163,11 +163,11 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		$styles = array('arrow', 'chevron-sign', 'circle-arrow', 'caret');
 
 		$defaults = array(
-			'imagewidth' => '96',
+			'imagewidth'  => '96',
 			'imageheight' => '96',
-			'fit' => 'all',
-			'duration' => 500,
-			'style' => 'chevron-sign'
+			'fit'         => 'all',
+			'duration'    => 500,
+			'style'       => 'chevron-sign'
 		);
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
@@ -178,12 +178,16 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		$_  = '<div class="carousel duration-' . $duration . '">';
 		$_ .= '<div class="frame">';
 		$_ .= '<ul>';
+
 		foreach ( $O->products as $Product ) {
+
 			if ( empty($Product->images) ) continue;
+
 			$_ .= '<li><a href="' . $Product->tag('url') . '">';
 			$_ .= $Product->tag('image', array('width' => $imagewidth, 'height' => $imageheight, 'fit' => $fit));
 			$_ .= '</a></li>';
 		}
+
 		$_ .= '</ul></div>';
 		$_ .= '<button type="button" name="left" class="left shoppui-' . $style . '-left"><span class="hidden">' . Shopp::__('Previous Page') . '</span></button>';
 		$_ .= '<button type="button" name="right" class="right shoppui-' . $style . '-right"><span class="hidden">' . Shopp::__('Next Page') . '</span></button>';
@@ -247,9 +251,9 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	public static function description ( $result, $options, $O ) {
 		$defaults = array(
 			'collapse' => true,
-			'wrap' => true,
-			'before' => '<div class="category-description">' . "\n\n",
-			'after' => '</div>'
+			'wrap'     => true,
+			'before'   => '<div class="category-description">' . "\n\n",
+			'after'    => '</div>'
 		);
 		$options = array_merge($defaults,$options);
 		extract($options, EXTR_SKIP);
@@ -455,7 +459,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 * @param ShoppCollection $O       The working object
 	 * @return bool True if the next option exists, false otherwise
 	 **/
-	public static function facet_options   ( $result, $options, $O ) {
+	public static function facet_options ( $result, $options, $O ) {
 		$facet = current($O->facets);
 
 		if ( ! isset($O->_facetoptions_loop) ) {
@@ -481,7 +485,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 * @param ShoppCollection $O       The working object
 	 * @return string The current filter option link
 	 **/
-	public static function facet_option_link  ( $result, $options, $O ) {
+	public static function facet_option_link ( $result, $options, $O ) {
 		$facet = current($O->facets);
 		$option = current($facet->filters);
 		return add_query_arg(urlencode($facet->slug), $option->param, $facet->link);
@@ -498,7 +502,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 * @param ShoppCollection $O       The working object
 	 * @return string The current filter option label
 	 **/
-	public static function facet_option_label  ( $result, $options, $O ) {
+	public static function facet_option_label ( $result, $options, $O ) {
 		$facet = current($O->facets);
 		$option = current($facet->filters);
 		return $option->label;
@@ -515,7 +519,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 * @param ShoppCollection $O       The working object
 	 * @return string The current filter option value
 	 **/
-	public static function facet_option_value  ( $result, $options, $O ) {
+	public static function facet_option_value ( $result, $options, $O ) {
 		$facet = current($O->facets);
 		$option = current($facet->filters);
 		return $option->param;
@@ -532,7 +536,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 * @param ShoppCollection $O       The working object
 	 * @return string The product count of the current filter option
 	 **/
-	public static function facet_option_count  ( $result, $options, $O ) {
+	public static function facet_option_count ( $result, $options, $O ) {
 		$facet = current($O->facets);
 		$option = current($facet->filters);
 		return $option->count;
@@ -553,7 +557,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 * @param ShoppCollection $O       The working object
 	 * @return string Markup for the current filter option input
 	 **/
-	public static function facet_option_input  ( $result, $options, $O ) {
+	public static function facet_option_input ( $result, $options, $O ) {
 		$facet = current($O->facets);
 		$option = current($facet->filters);
 
@@ -617,12 +621,14 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			$_[] = '<li>';
 			$_[] = '<h4>' . self::facet_name(false, false, $O) . '</h4>';
 			$_[] = '<ul class="facet-option ' . self::facet_slug(false, false, $O) . '">';
+
 			while ( self::facet_options(false, false, $O) ) {
 				$_[] = '<li>';
 				$_[] = sprintf('<a href="%s">%s</a>', esc_url(self::facet_option_link(false, false, $O)), self::facet_option_label(false, false, $O));
 				$_[] = ' <span class="count">' . self::facet_option_count(false, false, $O) . '</span>';
 				$_[] = '</li>';
 			}
+
 			$_[] = '</ul>';
 			$_[] = '</li>';
 
@@ -810,9 +816,12 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		if ( isset($options['load']) ) {
 			$dataset = explode(',', $options['load']);
 			$options['load'] = array();
+
 			foreach ( $dataset as $name ) {
+			
 				if ( 'description' == trim(strtolower($name)) )
 					$options['columns'] = 'p.post_content';
+			
 				$options['load'][] = trim($name);
 			}
 		 } else {
@@ -861,14 +870,14 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		if ( ! $O->paged ) return '';
 
 		$defaults = array(
-			'after' => '</div>',
-			'before' => '<div>',
+			'after'    => '</div>',
+			'before'   => '<div>',
 			'jumpback' => '&laquo;',
-			'jumpfwd' => '&raquo;',
-			'label' => Shopp::__('Pages:'),
-			'next' => Shopp::__('next'),
+			'jumpfwd'  => '&raquo;',
+			'label'    => Shopp::__('Pages:'),
+			'next'     => Shopp::__('next'),
 			'previous' => Shopp::__('previous'),
-			'show' => 1000
+			'show'     => 1000
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -877,11 +886,14 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		if ( isset($O->alpha) && $O->paged ) {
 			$_[] = $before . $label;
 			$_[] = '<ul class="paging">';
+
 			foreach ( $O->alpha as $letter => $products ) {
 				$link = $O->pagelink($letter);
+
 				if ( $products > 0 ) $_[] = '<li><a href="' . esc_url_raw($link) . '">' . $letter . '</a></li>';
 				else $_[] = '<li><span>' . $letter . '</span></li>';
 			}
+
 			$_[] = '</ul>';
 			$_[] = $after;
 			return join("\n", $_);
@@ -895,6 +907,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			$_[] = $before . $label;
 
 			$_[] = '<ul class="paging">';
+
 			if ( $O->page <= floor( $show / 2) ) {
 				$i = 1;
 			} else {
@@ -903,7 +916,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 				if ( $visible_pages > $O->pages ) $visible_pages = $O->pages + 1;
 				if ( $i > 1 ) {
 					$link = $O->pagelink(1);
-					$_[] = '<li><a href="' . esc_url_raw($link) . '">1</a></li>';
+					$_[]  = '<li><a href="' . esc_url_raw($link) . '">1</a></li>';
 
 					$pagenum = ( $O->page - $jumps );
 					if ( $pagenum < 1 ) $pagenum = 1;
@@ -916,7 +929,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			if ( ! empty($previous) && $O->page > 1 ) {
 				$prev = $O->page-1;
 				$link = $O->pagelink($prev);
-				$_[] = '<li class="previous"><a href="' . esc_url_raw($link) . '" rel="prev">' . $previous . '</a></li>';
+				$_[]  = '<li class="previous"><a href="' . esc_url_raw($link) . '" rel="prev">' . $previous . '</a></li>';
 			} else $_[] = '<li class="previous disabled">' . $previous . '</li>';
 			// end previous button
 
@@ -1060,30 +1073,31 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		if ( count($O->products) == 0 ) return false;
 
 		$defaults = array(
-			'fx' => 'fade',
+			'fx'       => 'fade',
 			'duration' => 1000,
-			'delay' => 7000,
-			'order' => 'normal'
+			'delay'    => 7000,
+			'order'    => 'normal'
 		);
 		$imgdefaults = array(
 			'setting' => false,
-			'width' => '580',
-			'height' => '200',
-			'size' => false,
-			'fit' => 'crop',
+			'width'   => '580',
+			'height'  => '200',
+			'size'    => false,
+			'fit'     => 'crop',
 			'sharpen' => false,
 			'quality' => false,
-			'bg' => false,
+			'bg'      => false,
 		);
 
 		$options = array_merge($defaults, $imgdefaults, $options);
 		extract($options, EXTR_SKIP);
 
 		$href = Shopp::url( '' != get_option('permalink_structure') ? trailingslashit('000') : '000', 'images');
-		$imgsrc = add_query_string("$width,$height", $href);
+		$imgsrc = add_query_string("$width, $height", $href);
 
 		$string = '<ul class="slideshow ' . $fx . '-fx ' . $order . '-order duration-' . $duration . ' delay-' . $delay . '">';
 		$string .= '<li class="clear"><img src="' . $imgsrc . '" width="' . $width . '" height="' . $height . '" /></li>';
+
 		foreach ( $O->products as $Product ) {
 			if ( empty($Product->images) ) continue;
 			$string .= '<li><a href="' . $Product->tag('url') . '">';
@@ -1091,6 +1105,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 			$string .= shopp($Product, 'get-image', $imgoptions);
 			$string .= '</a></li>';
 		}
+
 		$string .= '</ul>';
 		return $string;
 	}
@@ -1154,7 +1169,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 * @return string The subcategory list markup
 	 **/
 	public static function subcategory_list ( $result, $options, $O ) {
-		if (!isset($O->id) || empty($O->id)) return false;
+		if ( ! isset($O->id) || empty($O->id) ) return false;
 		$options['childof'] = $O->id;
 		$options['default'] = Shopp::__('Select a sub-category&hellip;');
 		return ShoppStorefrontThemeAPI::category_list( $result, $options, $O );
