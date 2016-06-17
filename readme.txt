@@ -3,7 +3,7 @@ Contributors: jond, barry.hughes, clifgriffin, jdillick, lorenzocaum, chaoix, cr
 Donate link: http://shopp.me/shopp-donate
 Tags: ecommerce, e-commerce, wordpress ecommerce, shopp, shop, shopping, cart, store, storefront, sales, sell, catalog, checkout, accounts, secure, variations, variants, reports, downloads, digital, downloadable, inventory, stock, shipping, taxes, shipped, addons, widgets, shortcodes
 Requires at least: 3.5
-Tested up to: 4.4
+Tested up to: 4.5.2
 Stable tag: trunk
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
