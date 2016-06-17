@@ -34,13 +34,13 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 function shopp_add_product ( $data = array() ) {
 	if ( empty($data) ) {
-		shopp_debug(__FUNCTION__ . " failed: Empty data parameter.");
+		shopp_debug(__FUNCTION__ . ' failed: Empty data parameter.');
 		return false;
 	}
 	$problems = _validate_product_data ( $data );
 
 	if ( ! empty($problems) ) {
-		shopp_debug("Problems detected: ".Shopp::object_r($problems));
+		shopp_debug('Problems detected: ' . Shopp::object_r($problems));
 		return false;
 	}
 
@@ -54,7 +54,7 @@ function shopp_add_product ( $data = array() ) {
 
 	// Set Product name
 	if ( empty($data['name']) ) {
-		shopp_debug(__FUNCTION__ . " failed: Missing product name.");
+		shopp_debug(__FUNCTION__ . ' failed: Missing product name.');
 	}
 	$Product->name = $data['name'];
 
@@ -63,25 +63,25 @@ function shopp_add_product ( $data = array() ) {
 	if (empty($Product->slug)) $Product->slug = sanitize_title($Product->name);
 	$Product->slug = wp_unique_post_slug($Product->slug, $Product->id, $Product->status, ShoppProduct::posttype(), 0);
 
-	$Product->updates($data, array('meta','categories','prices','tags', 'publish'));
+	$Product->updates($data, array('meta', 'categories', 'prices', 'tags', 'publish'));
 	$Product->save();
 
 	ShoppProduct::publishset(array($Product->id), $data['publish']['flag'] ? 'publish' : 'draft');
 
 	if ( empty($Product->id) ) {
-		shopp_debug(__FUNCTION__ . " failed: Failure to create new Product object.");
+		shopp_debug(__FUNCTION__ . ' failed: Failure to create new Product object.');
 		return false;
 	}
 
 	// Product-wide settings
-	$Product->featured = ( isset($data['featured']) && true === $data['featured'] ? "on" : "off" );
-	$Product->variants = ( isset($data['variants']) ? "on" : "off" );
-	$Product->addons = ( isset($data['addons']) ? "on" : "off" );
+	$Product->featured = ( isset($data['featured']) && true === $data['featured'] ? 'on' : 'off' );
+	$Product->variants = ( isset($data['variants']) ? 'on' : 'off' );
+	$Product->addons   = ( isset($data['addons']) ? 'on' : 'off' );
 
 	if ( isset($data['packaging']) ) {
 		$packaging_set = shopp_product_set_packaging($Product->id, $data['packaging']);
 		if ( ! $packaging_set ) {
-			shopp_debug(__FUNCTION__ . " failed: Failure to set packaging setting.");
+			shopp_debug(__FUNCTION__ . ' failed: Failure to set packaging setting.');
 			return false;
 		}
 	}
@@ -91,7 +91,7 @@ function shopp_add_product ( $data = array() ) {
 	if ( isset($data['categories']) && isset($data['categories']['terms']) ) {
 		$cats_set = shopp_product_add_categories ( $Product->id, $data['categories']['terms'] );
 		if ( ! $cats_set ) {
-			shopp_debug(__FUNCTION__ . " failed: Failure to add product categories to product.");
+			shopp_debug(__FUNCTION__ . ' failed: Failure to add product categories to product.');
 			return false;
 		}
 	}
@@ -100,7 +100,7 @@ function shopp_add_product ( $data = array() ) {
 	if ( isset($data['tags']) && isset($data['tags']['terms']) ) {
 		$tags_set = shopp_product_add_tags ( $Product->id, $data['tags']['terms'] );
 		if ( ! $tags_set ) {
-			shopp_debug(__FUNCTION__ . " failed: Failure to add product tags to product.");
+			shopp_debug(__FUNCTION__ . ' failed: Failure to add product tags to product.');
 			return false;
 		}
 	}
@@ -109,7 +109,7 @@ function shopp_add_product ( $data = array() ) {
 	if ( isset($data['terms']) && isset($data['terms']['terms']) && isset($data['terms']['taxonomy']) ) {
 		$terms_set = shopp_product_add_terms ( $Product->id, $data['terms']['terms'], $data['terms']['taxonomy'] );
 		if ( ! $terms_set ) {
-			shopp_debug(__FUNCTION__ . " failed: Failure to add product taxonomy terms to product.");
+			shopp_debug(__FUNCTION__ . ' failed: Failure to add product taxonomy terms to product.');
 			return false;
 		}
 	}
@@ -118,7 +118,7 @@ function shopp_add_product ( $data = array() ) {
 	if ( isset($data['specs']) ) {
 		$specs_set = shopp_product_set_specs ( $Product->id, $data['specs'] );
 		if ( ! $specs_set ) {
-			shopp_debug(__FUNCTION__ . " failed: Failure to add product specs to product.");
+			shopp_debug(__FUNCTION__ . ' failed: Failure to add product specs to product.');
 			return false;
 		}
 	}
@@ -131,16 +131,16 @@ function shopp_add_product ( $data = array() ) {
 		if ( ! empty($data['single']) ) $subjects['product'] = array($data['single']);
 	} else if ( isset($data['variants']) ) {  // Construct and Populate variants
 		if ( ! isset($data['variants']['menu']) || empty($data['variants']['menu']) ) {
-			shopp_debug(__FUNCTION__ . " failed: variants menu is empty.");
+			shopp_debug(__FUNCTION__ . ' failed: variants menu is empty.');
 			return false;
 		}
 		$new_variants = shopp_product_set_variant_options ( $Product->id, $data['variants']['menu'], false );
 
 		$pricekeys = $prices = array();
-		foreach ( $new_variants as $Price ) $prices[$Price->id] = $pricekeys[$Price->optionkey] = $Price;
+		foreach ( $new_variants as $Price ) $prices[ $Price->id ] = $pricekeys[ $Price->optionkey ] = $Price;
 
 		if ( ! $prices ) {
-			shopp_debug(__FUNCTION__ . " failed: Unable to set variant options.");
+			shopp_debug(__FUNCTION__ . ' failed: Unable to set variant options.');
 			return false;
 		}
 
@@ -148,27 +148,27 @@ function shopp_add_product ( $data = array() ) {
 	}
 
 	// Create the "product" Price
-	$Price = new ShoppPrice();
-	$Price->label = __('Price & Delivery', 'Shopp');
+	$Price          = new ShoppPrice();
+	$Price->label   = Shopp::__('Price & Delivery');
 	$Price->context = 'product';
 	$Price->product = $Product->id;
 	if ( isset($subjects['variants']) ) $Price->type = 'N/A'; // disabled
 	$Price->save();
-	$prices[$Price->id] = $productprice = $Price;
+	$prices[ $Price->id ] = $productprice = $Price;
 
 	// Create Addons
 	if ( isset($data['addons']) ) {
 		if ( ! isset($data['addons']['menu']) || empty($data['addons']['menu']) ) {
-			shopp_debug(__FUNCTION__ . " failed: addons menu is empty");
+			shopp_debug(__FUNCTION__ . ' failed: addons menu is empty');
 			return false;
 		}
 
 		$new_addons = shopp_product_set_addon_options ( $Product->id, $data['addons']['menu'], false );
 		$addon_prices = array();
-		foreach ( $new_addons as $Addon ) $addon_prices[$Addon->id] = $Addon;
+		foreach ( $new_addons as $Addon ) $addon_prices[ $Addon->id ] = $Addon;
 
 		if ( ! $addon_prices ) {
-			shopp_debug(__FUNCTION__ . " failed: Unable to set addon options.");
+			shopp_debug(__FUNCTION__ . ' failed: Unable to set addon options.');
 			return false;
 		}
 
@@ -194,7 +194,7 @@ function shopp_add_product ( $data = array() ) {
 				}
 
 				list( $optionkey, $options, $label, $mapping ) = $Product->optionmap( $variant['option'], $variants['menu'], ('variants' == $pricetype ? 'variant' : 'addon') );
-				if ( 'variants' == $pricetype && isset($pricekeys[$optionkey]) ) $price = $pricekeys[$optionkey]->id;
+				if ( 'variants' == $pricetype && isset($pricekeys[ $optionkey ]) ) $price = $pricekeys[ $optionkey ]->id;
 				else {
 					// Find the correct Price
 					foreach ( $addon_prices as $index => $Price ) {
@@ -206,24 +206,24 @@ function shopp_add_product ( $data = array() ) {
 				}
 			}
 
-			if ( null === $price || ! isset($prices[$price]) ) {
+			if ( null === $price || ! isset($prices[ $price ]) ) {
 				shopp_debug(__FUNCTION__ . " failed: Variant $key not valid for this option set.");
 				return false;
 			}
 
 			// modify each priceline
-			$prices[$price] = shopp_product_set_variant ( $prices[$price], $variant, $contexts[$pricetype] );
-			if ( ! $prices[$price] ) {
-				shopp_debug(__FUNCTION__ . " failed: Product variant setup failed.");
+			$prices[ $price ] = shopp_product_set_variant ( $prices[ $price ], $variant, $contexts[ $pricetype ] );
+			if ( ! $prices[ $price ] ) {
+				shopp_debug(__FUNCTION__ . ' failed: Product variant setup failed.');
 				return false;
 			}
 
 			// save priceline settings
-			if ( isset($prices[$price]->settings) )
-				shopp_set_meta ( $prices[$price]->id, 'price', 'settings', $prices[$price]->settings );
+			if ( isset($prices[ $price ]->settings) )
+				shopp_set_meta ( $prices[ $price ]->id, 'price', 'settings', $prices[ $price ]->settings );
 
 			// We have everything we need to complete this price line
-			$prices[$price]->save();
+			$prices[ $price ]->save();
 
 		} //end variants foreach
 	} // end subjects foreach
@@ -269,7 +269,7 @@ function shopp_add_product ( $data = array() ) {
  **/
 function shopp_update_product ( $product, $data = array() ) {
 	if ( empty($data) ) {
-		shopp_debug(__FUNCTION__ . " failed: revisions to the product definition must be passed.");
+		shopp_debug(__FUNCTION__ . ' failed: revisions to the product definition must be passed.');
 		return false;
 	}
 
@@ -277,7 +277,7 @@ function shopp_update_product ( $product, $data = array() ) {
 		$Product = $product;
 	}
 	elseif ( ! ( $Product = shopp_product($product) ) ) {
-		shopp_debug(__FUNCTION__ . " failed: invalid product or product ID specified.");
+		shopp_debug(__FUNCTION__ . ' failed: invalid product or product ID specified.');
 		return false;
 	}
 
@@ -298,7 +298,7 @@ function shopp_update_product ( $product, $data = array() ) {
  **/
 function shopp_duplicate_product ( $product = false, $load_by = 'id' ) {
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 
@@ -333,7 +333,7 @@ function shopp_duplicate_product ( $product = false, $load_by = 'id' ) {
  **/
 function shopp_publish_product ( $product = false, $flag = true, $timestamp = false ) {
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 
@@ -397,47 +397,47 @@ function _validate_product_data ( $data, $types = 'data', $problems = array() ) 
 
 	// data properties needed to populate a product
 	$_data = array(
-		'name' => 'string', 		// string - the product name
-		'slug' => 'string', 		// string - the product slug (optional)
-		'publish' => 'publish',		// array - flag => bool, publishtime => array(month => int, day => int, year => int, hour => int, minute => int, meridian => AM/PM)
-		'categories' => 'terms',	// array of shopp category terms
-		'tags' => 'terms', 			// array of shopp tag terms
-		'terms' => 'terms', 		// array of taxonomy_type => type, terms => array of terms
-		'description' => 'string', 	// string - the product description text
-		'summary' => 'string', 		// string - the product summary text
-		'specs' => 'array', 		// array - spec name => spec value pairs
-		'single' => 'variant',		// array - single variant
-		'variants' => 'variants', 	// array - menu => options, count => # of variants, 0-# => variant
-		'addons' => 'variants', 	// array of addon arrays
-		'featured' => 'bool', 		// bool - product flag
-		'packaging' => 'bool', 		// bool - packaging flag
-		'processing' => 'processing'// array - flag => bool, min => days, max => days)
+		'name'        => 'string', 		// string - the product name
+		'slug'        => 'string', 		// string - the product slug (optional)
+		'publish'     => 'publish',		// array - flag => bool, publishtime => array(month => int, day => int, year => int, hour => int, minute => int, meridian => AM/PM)
+		'categories'  => 'terms',		// array of shopp category terms
+		'tags'        => 'terms', 		// array of shopp tag terms
+		'terms'       => 'terms', 		// array of taxonomy_type => type, terms => array of terms
+		'description' => 'string', 		// string - the product description text
+		'summary'     => 'string', 		// string - the product summary text
+		'specs'       => 'array', 		// array - spec name => spec value pairs
+		'single'      => 'variant',		// array - single variant
+		'variants'    => 'variants', 	// array - menu => options, count => # of variants, 0-# => variant
+		'addons'      => 'variants', 	// array of addon arrays
+		'featured'    => 'bool', 		// bool - product flag
+		'packaging'   => 'bool', 		// bool - packaging flag
+		'processing'  => 'processing'	// array - flag => bool, min => days, max => days)
 	);
 
 	$_publish = array(
-		'flag' => 'bool',			// bool - publish or not
-		'publishtime' => 'timestamp'// array - array(month => int, day => int, year => int, hour => int, minute => int, meridian => AM/PM)
+		'flag'        => 'bool',		// bool - publish or not
+		'publishtime' => 'timestamp'	// array - array(month => int, day => int, year => int, hour => int, minute => int, meridian => AM/PM)
 	);
 
 	$_timestamp = array(
-		'month' => 'int',			// int - month
-		'day' => 'int',				// int - day
-		'year' => 'int',			// int - year
-		'hour' => 'int',			// int - hour
-		'minute' => 'int',			// int - minute
-		'meridian' => 'enum'		// array (AM, PM)
+		'month'    => 'int',			// int - month
+		'day'      => 'int',			// int - day
+		'year'     => 'int',			// int - year
+		'hour'     => 'int',			// int - hour
+		'minute'   => 'int',			// int - minute
+		'meridian' => 'enum'			// array (AM, PM)
 	);
 
 	$_meridian = array('AM', 'PM');
 
 	$_terms = array(
-		'terms' => 'array',			// array of terms
+		'terms'    => 'array',		// array of terms
 		'taxonomy' => 'string'		// string - name of taxonomy (not needed for categories and tags)
 	);
 
 	// variants structure
 	$_variants = array(
-		'menu' => 'array',		// two dimensional array creates option permutations
+		'menu'  => 'array',		// two dimensional array creates option permutations
 								// examples:
 								// $option['Color']['Blue']
 								// $option['Color']['Red]
@@ -445,27 +445,27 @@ function _validate_product_data ( $data, $types = 'data', $problems = array() ) 
 								// $option['Size']['Small']
 
 		'count' => 'int',		// Number of variants
-		'#'	=> 'variant'		// number indexed elements are each a variant
+		'#'	    => 'variant'	// number indexed elements are each a variant
 	);
 
 	// single/variant/addon structure
 	$_variant = array(
-		'option' => 'array',	// array option example: Color=>Blue, Size=>Small
-		'type' => 'enum',		// string - Shipped, Virtual, Download, Donation, Subscription, Disabled ( ShoppPrice::types() )
-		'taxed' => 'bool',		// bool - flag variant as taxable
-		'price' => 'float',		// float - Price of variant
-		'sale' => 'sale',		// array - flag => bool, price => Sale price of variant
-		'shipping' => 'shipping', 	// array - flag => bool, fee, weight, height, width, length
-		'inventory'=> 'inventory',	// array - flag => bool, stock, sku
-		'donation'=> 'donation',	// (optional - needed only for Donation type) array of settings (variable, minumum)
-		'subscription'=>'subscription'	// (optional - needed only for Subscription type) array of subscription settings
+		'option'       => 'array',		// array option example: Color=>Blue, Size=>Small
+		'type'         => 'enum',		// string - Shipped, Virtual, Download, Donation, Subscription, Disabled ( ShoppPrice::types() )
+		'taxed'        => 'bool',		// bool - flag variant as taxable
+		'price'        => 'float',		// float - Price of variant
+		'sale'         => 'sale',		// array - flag => bool, price => Sale price of variant
+		'shipping'     => 'shipping', 	// array - flag => bool, fee, weight, height, width, length
+		'inventory'    => 'inventory',	// array - flag => bool, stock, sku
+		'donation'     => 'donation',	// (optional - needed only for Donation type) array of settings (variable, minumum)
+		'subscription' =>'subscription'	// (optional - needed only for Subscription type) array of subscription settings
 	);
 
 	// order processing estimate
 	$_processing = array(
-		'flag'=>'bool',			// bool - processing time setting on/off
-		'min'=>'cycle',			// array('interval'=># of time units, 'period'=> one of d, w, m, y)
-		'max'=>'cycle'			// array('interval'=># of time units, 'period'=> one of d, w, m, y)
+		'flag' => 'bool',			// bool - processing time setting on/off
+		'min'  => 'cycle',			// array('interval'=># of time units, 'period'=> one of d, w, m, y)
+		'max'  => 'cycle'			// array('interval'=># of time units, 'period'=> one of d, w, m, y)
 	);
 
 	// variant types
@@ -477,55 +477,55 @@ function _validate_product_data ( $data, $types = 'data', $problems = array() ) 
 
 	// sale price
 	$_sale = array(
-		'flag' => 'bool', 	// sale price on/off
-		'price' => 'float' // sale price
+		'flag'  => 'bool', 	// sale price on/off
+		'price' => 'float' 	// sale price
 	);
 
 	// variant shipping settings
 	$_shipping = array(
-		'flag'=>'bool',				// bool - charge shipping on or off
-		'fee'=>'float',				// float - shipping fee for variant
-		'weight'=>'float',			// float - weight of variant
-		'height'=>'float',			// float - height of variant
-		'width'=>'float',			// float - width of variatn
-		'length'=>'float'			// float - length of variant
+		'flag'   => 'bool',			// bool - charge shipping on or off
+		'fee'    => 'float',		// float - shipping fee for variant
+		'weight' => 'float',		// float - weight of variant
+		'height' => 'float',		// float - height of variant
+		'width'  => 'float',		// float - width of variatn
+		'length' => 'float'			// float - length of variant
 	);
 
 	// variant inventory settings
 	$_inventory = array(
-		'flag' => 'bool',	// bool - inventory settings on/off
-		'stock' => 'int',	// int - stock level
-		'sku'	=> 'string' // sku - stock keeping unit label
+		'flag'  => 'bool',		// bool - inventory settings on/off
+		'stock' => 'int',		// int - stock level
+		'sku'	=> 'string'		// sku - stock keeping unit label
 	);
 
 	// variant donation settings
 	$_donation = array(
 		'variable' => 'bool',	// bool - variable prices allowed
-		'minimum' => 'bool'		// bool - price is the minimum allowed
+		'minimum'  => 'bool'	// bool - price is the minimum allowed
 	);
 
 	// variant subscription settings
 	$_subscription = array(
-		'trial' => 'trial',
+		'trial' 	=> 'trial',
 		'billcycle' => 'billcycle'
 	);
 
 	// subscriptions billing cycle
 	$_billcycle = array(
-		'cycle' => 'cycle', // billing cycle
-		'cycles' => 'int'	// number of cycles
+		'cycle'  => 'cycle',	// billing cycle
+		'cycles' => 'int'		// number of cycles
 	);
 
 	// subscription trial settings
 	$_trial = array(
-		'cycle' => 'cycle',	// trial cycle
-		'price' => 'float'	// price during trial
+		'cycle' => 'cycle',		// trial cycle
+		'price' => 'float'		// price during trial
 	);
 
 	// time cycles
 	$_cycle = array(
 		'interval' => 'int',	// int number of units
-		'period' => 'enum'		// string d for day, w for week, m for month, y for year
+		'period'   => 'enum'	// string d for day, w for week, m for month, y for year
 	);
 
 	$_periods = ShoppPrice::periods();
@@ -538,26 +538,26 @@ function _validate_product_data ( $data, $types = 'data', $problems = array() ) 
 		if ( is_numeric($key) && 'variants' == $types ) {
 			$key = '#';
 		}
-		$k = '_'.$key;
-		$recurse = ${$t}[$key];
-		$r = '_'.$recurse;
+		$k       = '_' . $key;
+		$recurse = ${$t}[ $key ];
+		$r       = '_' . $recurse;
 
-		if ( in_array(${$t}[$key], array_keys($known_types) )  ) { // check known types first
-			if ( ! $known_types[${$t}[$key]]( $value ) ) {
+		if ( in_array(${$t}[ $key ], array_keys($known_types) )  ) { // check known types first
+			if ( ! $known_types[ ${$t}[ $key ] ]( $value ) ) {
 				if ( ! isset($problems['type mismatch']) ) $problems['type mismatch'] = array();
-				if ( ! isset($problems['type mismatch'][$types]) ) $problems['type mismatch'][$types] = array();
-				$problems['type mismatch'][$types][$key] = ${$t}[$key];
+				if ( ! isset($problems['type mismatch'][ $types ]) ) $problems['type mismatch'][ $types ] = array();
+				$problems['type mismatch'][ $types ][ $key ] = ${$t}[ $key ];
 			}
-		} else if ( 'enum' == ${$t}[$key] && ! in_array( $value, $$k) ) {  // check enumerated types
+		} else if ( 'enum' == ${$t}[ $key ] && ! in_array( $value, $$k) ) {  // check enumerated types
 			if ( ! isset($problems['out of range']) ) $problems['out of range'] = array();
-			if ( ! isset($problems['out of range'][$types]) ) $problems['out of range'][$types] = array();
-			$problems['out of range'][$types][$key] = implode(', ', $$k);
+			if ( ! isset($problems['out of range'][ $types ]) ) $problems['out of range'][ $types ] = array();
+			$problems['out of range'][ $types ][ $key ] = implode(', ', $$k);
 		} else if ( isset($$r) ) { // recurse into provided data structure, and validate
 			$problems = _validate_product_data($value, $recurse, $problems);
 		} else if ( ! in_array($key, array_keys($$t) ) ) { // unknown data type
 			if ( ! isset($problems['unknown data type']) ) $problems['unknown data type'] = array();
-			if ( ! isset($problems['unknown data type'][$types]) ) $problems['unknown data type'][$types] = array();
-			$problems['unknown data type'][$types][] = $key;
+			if ( ! isset($problems['unknown data type'][ $types ]) ) $problems['unknown data type'][ $types ] = array();
+			$problems['unknown data type'][ $types ][] = $key;
 		}
 
 		if ( 'single' == $key && isset($data['variants']) || 'variants' == $key && isset($data['single']) ) {
@@ -582,7 +582,7 @@ function _validate_product_data ( $data, $types = 'data', $problems = array() ) 
  **/
 function shopp_product ( $product = false, $load_by = 'id' ) {
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 
@@ -607,10 +607,10 @@ function shopp_product ( $product = false, $load_by = 'id' ) {
  * @return bool true on success, false on failure
  **/
 function shopp_product_publish ( $product = false, $flag = false, $datetime = false ) {
-	shopp_debug(__FUNCTION__ . " has been deprecated. Use shopp_publish_product() instead.");
+	shopp_debug(__FUNCTION__ . ' has been deprecated. Use shopp_publish_product() instead.');
 
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 
@@ -629,7 +629,7 @@ function shopp_product_publish ( $product = false, $flag = false, $datetime = fa
 
 		if ( $datetime && $datetime > $Product->publish ) {
 			$Product->publish = $datetime;
-			$Product->status = 'future';
+			$Product->status  = 'future';
 		}
 	}
 	$Product->save();
@@ -649,14 +649,14 @@ function shopp_product_publish ( $product = false, $flag = false, $datetime = fa
  **/
 function shopp_product_specs ( $product = false ) {
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 
 	$Specs = shopp_product_meta ( $product, false, 'spec' );
 	foreach ( $Specs as $id => $spec) {
-		$Specs[$spec->name] = $spec;
-		unset($Specs[$id]);
+		$Specs[ $spec->name ] = $spec;
+		unset($Specs[ $id ]);
 	}
 
 	return ! empty($Specs) ? $Specs : array();
@@ -674,11 +674,11 @@ function shopp_product_specs ( $product = false ) {
  **/
 function shopp_product_variants ( $product = false, $load_by = 'id' ) {
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 
-	$Product = new ShoppProduct($product,$load_by);
+	$Product = new ShoppProduct($product, $load_by);
 	if ( empty($Product->id) ) {
 		shopp_debug(__FUNCTION__ . " failed: Unable to load product $product.");
 		return false;
@@ -704,16 +704,16 @@ function shopp_product_variants ( $product = false, $load_by = 'id' ) {
  **/
 function shopp_product_addons ( $product = false, $load_by = 'id' ) {
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 
-	$Product = new ShoppProduct($product,$load_by);
+	$Product = new ShoppProduct($product, $load_by);
 	if ( empty($Product->id) ) {
 		shopp_debug(__FUNCTION__ . " failed: Unable to load product $product.");
 		return false;
 	}
-	$Product->load_data(array('prices','summary'));
+	$Product->load_data(array('prices', 'summary'));
 	$prices = array();
 	foreach( $Product->prices as $Price ) {
 		if ( 'addon' != $Price->context ) continue;
@@ -750,7 +750,7 @@ function shopp_product_has_addon ( $product = false, $addon ) {
  **/
 function shopp_product_variant ( $variant = false, $pricetype = 'variant' ) {
 	if ( false === $variant ) {
-		shopp_debug(__FUNCTION__ . " failed: Variant id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Variant id required.');
 		return false;
 	}
 	if ( is_numeric($variant) ) {
@@ -763,25 +763,25 @@ function shopp_product_variant ( $variant = false, $pricetype = 'variant' ) {
 		$Product = new stdClass;
 		if ( isset($variant['product']) && is_numeric($variant['product']) ) {
 			$Product = new ShoppProduct($variant['product']);
-			$Product->load_data(array('prices','meta','summary'));
+			$Product->load_data(array('prices', 'meta', 'summary'));
 		}
 
 		if ( empty($Product->id) || empty($Product->prices) ) {
-			shopp_debug(__FUNCTION__ . " failed: Unable to load variant.  Invalid Product.");
+			shopp_debug(__FUNCTION__ . ' failed: Unable to load variant.  Invalid Product.');
 			return false;
 		}
 
-		$pricetype = ($pricetype == 'variant' ? 'variation' : $pricetype);
+		$pricetype = ( $pricetype == 'variant' ? 'variation' : $pricetype );
 		$pricetypes = array('product', 'variation', 'addon');
 		if ( ! in_array($pricetype, $pricetypes) ) {
-			shopp_debug(__FUNCTION__ . " failed: Invalid pricetype.  Can be product, variant, or addon.");
+			shopp_debug(__FUNCTION__ . ' failed: Invalid pricetype.  Can be product, variant, or addon.');
 			return false;
 		}
 
 		if ( 'product' == $pricetype ) {
 			// No product context for product with variants
 			if ( 'on' == $Product->variants ) {
-				shopp_debug(__FUNCTION__ . " failed: Invalid pricetype for this product.");
+				shopp_debug(__FUNCTION__ . ' failed: Invalid pricetype for this product.');
 				return false;
 			}
 
@@ -796,35 +796,35 @@ function shopp_product_variant ( $variant = false, $pricetype = 'variant' ) {
 			}
 		} else { // addon or variant
 			if ( ! isset($variant['option']) || ! is_array($variant['option']) || empty($variant['option']) ) {
-				shopp_debug(__FUNCTION__ . " failed: Missing option array.");
+				shopp_debug(__FUNCTION__ . ' failed: Missing option array.');
 				return false;
 			}
 
 			$menukey = substr($pricetype, 0, 1);
 			$flag = ($pricetype == 'variation' ? 'variants' : 'addons');
 
-			if ( ! isset($Product->options[$menukey]) || $Product->$flag == 'off' ) {
+			if ( ! isset($Product->options[ $menukey ]) || $Product->$flag == 'off' ) {
 				shopp_debug(__FUNCTION__ . " failed: No product variant options of type $pricetype for product {$Product->id}");
 				return false;
 			}
 
 			// build simple option menu array
 			$menu = array();
-			foreach ( $Product->options[$menukey] as $optionmenu ) {
+			foreach ( $Product->options[ $menukey ] as $optionmenu ) {
 				$key = $optionmenu['name'];
-				$menu[$key] = array();
+				$menu[ $key ] = array();
 				foreach ( $optionmenu['options'] as $option ) {
-					$menu[$key][] = $option['name'];
+					$menu[ $key ][] = $option['name'];
 				}
 			}
 
 			list( $optionkey, $options, $label, $mapping ) = $Product->optionmap( $variant['option'], $menu , $pricetype );
-			if ( 'variation' == $pricetype && ! isset($Product->pricekey[$optionkey]) || ! $options ) {
-				shopp_debug(__FUNCTION__ . " failed: Invalid option.");
+			if ( 'variation' == $pricetype && ! isset($Product->pricekey[ $optionkey ]) || ! $options ) {
+				shopp_debug(__FUNCTION__ . ' failed: Invalid option.');
 				return false;
 			}
 
-			if ( 'variation' == $pricetype ) $price = $Product->pricekey[$optionkey];
+			if ( 'variation' == $pricetype ) $price = $Product->pricekey[ $optionkey ];
 			else {
 				// Find the option
 				foreach ( $Product->prices as $price ) {
@@ -841,7 +841,7 @@ function shopp_product_variant ( $variant = false, $pricetype = 'variant' ) {
 		} // end if product type / addon/variants type
 	}
 	if ( ! isset($Price) ) {
-		shopp_debug(__FUNCTION__ . " failed: Product, Variant, or Addon Price object could not be found.");
+		shopp_debug(__FUNCTION__ . ' failed: Product, Variant, or Addon Price object could not be found.');
 		return false;
 	}
 
@@ -871,7 +871,7 @@ function shopp_product_variant_to_item ( $Variant, $quantity = 1 ) {
 		return $Item;
 	}
 
-	shopp_debug(__FUNCTION__ . " failed: Variant object missing or invalid.");
+	shopp_debug(__FUNCTION__ . ' failed: Variant object missing or invalid.');
 	return false;
 }
 
@@ -900,7 +900,7 @@ function shopp_product_addon ( $addon = false ) {
  **/
 function shopp_product_variant_options ( $product = false ) {
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 
@@ -918,9 +918,9 @@ function shopp_product_variant_options ( $product = false ) {
 
 	$options = array();
 	foreach ( $v as $menus ) {
-		$options[$menus['name']] = array();
+		$options[ $menus['name'] ] = array();
 		foreach ( $menus['options'] as $option ) {
-			$options[$menus['name']][] = $option['name'];
+			$options[ $menus['name'] ][] = $option['name'];
 		}
 	}
 	return $options;
@@ -937,7 +937,7 @@ function shopp_product_variant_options ( $product = false ) {
  **/
 function shopp_product_addon_options ( $product = false ) {
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 
@@ -955,9 +955,9 @@ function shopp_product_addon_options ( $product = false ) {
 
 	$options = array();
 	foreach ( $a as $menus ) {
-		$options[$menus['name']] = array();
+		$options[ $menus['name'] ] = array();
 		foreach ( $menus['options'] as $option ) {
-			$options[$menus['name']][] = $option['name'];
+			$options[ $menus['name'] ][] = $option['name'];
 		}
 	}
 	return $options;
@@ -1008,12 +1008,12 @@ function shopp_product_add_tags ( $product = false, $tags = array() ) {
  **/
 function shopp_product_add_terms ( $product = false, $terms = array(), $taxonomy = 'shopp_category', $behavior = 'append' ) {
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	$Product = new ShoppProduct($product);
 	if ( empty($Product->id) ) {
-		shopp_debug(__FUNCTION__ . " failed: No specs set.");
+		shopp_debug(__FUNCTION__ . ' failed: No specs set.');
 		return false;
 	}
 	if ( ! taxonomy_exists($taxonomy) ) {
@@ -1044,7 +1044,7 @@ function shopp_product_add_terms ( $product = false, $terms = array(), $taxonomy
  **/
 function shopp_product_set_specs ( $product = false, $specs = array() ) {
 	if ( empty($specs) ) {
-		shopp_debug(__FUNCTION__ . " failed: No specs set.");
+		shopp_debug(__FUNCTION__ . ' failed: No specs set.');
 		return false;
 	}
 
@@ -1068,11 +1068,11 @@ function shopp_product_set_specs ( $product = false, $specs = array() ) {
  **/
 function shopp_product_set_spec ( $product = false, $name = '', $value = '' ) {
 	if ( false === $product) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	if ( empty($name) ) {
-		shopp_debug(__FUNCTION__ . " failed: Spec name required.");
+		shopp_debug(__FUNCTION__ . ' failed: Spec name required.');
 		return false;
 	}
 	$Product = new ShoppProduct($product);
@@ -1096,11 +1096,11 @@ function shopp_product_set_spec ( $product = false, $name = '', $value = '' ) {
  **/
 function shopp_product_rmv_spec ( $product = false, $name = '' ) {
 	if ( false === $product) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	if ( empty($name) ) {
-		shopp_debug(__FUNCTION__ . " failed: Spec name required.");
+		shopp_debug(__FUNCTION__ . ' failed: Spec name required.');
 		return false;
 	}
 	$Product = new ShoppProduct($product);
@@ -1131,7 +1131,7 @@ function shopp_product_set_variant ( $variant = false, $data = array(), $context
 		$save = false;
 	} else {
 		if ( false == $variant ) {
-			shopp_debug(__FUNCTION__ . " failed: Variant id required.");
+			shopp_debug(__FUNCTION__ . ' failed: Variant id required.');
 			return false;
 		}
 		$Price = new ShoppPrice($variant);
@@ -1142,21 +1142,21 @@ function shopp_product_set_variant ( $variant = false, $data = array(), $context
 
 	// 'type' => 'enum',		// string - Shipped, Virtual, Download, Donation, Subscription, Disabled ( ShoppPrice::types() )
 	if ( ! isset($data['type']) ) {
-		shopp_debug(__FUNCTION__ . " failed: Required variant type missing.");
+		shopp_debug(__FUNCTION__ . ' failed: Required variant type missing.');
 		return false;
 	}
 
 	$Price->type = $data['type'];
 
 	// 'taxed' => 'bool',		// bool - flag variant as taxable
-	if ( ! isset($data['taxed']) ) $Price->tax == "on"; // default to on
-	else $Price->tax = ( true == $data['taxed'] ? "on" : "off" );
+	if ( ! isset($data['taxed']) ) $Price->tax == 'on'; // default to on
+	else $Price->tax = ( true == $data['taxed'] ? 'on' : 'off' );
 
 	// 'price' => 'float',		// float - Price of variant
 	if ( isset($data['price']) ) {
 		$Price = shopp_product_variant_set_price ($Price, $data['price'], $context);
 		if ( ! $Price ) {
-			shopp_debug(__FUNCTION__ . " failed: Failure setting variant price.");
+			shopp_debug(__FUNCTION__ . ' failed: Failure setting variant price.');
 			return false;
 		}
 	}
@@ -1165,7 +1165,7 @@ function shopp_product_set_variant ( $variant = false, $data = array(), $context
 	if ( isset($data['sale']) && isset($data['sale']['flag']) ) {
 		$Price = shopp_product_variant_set_saleprice ($Price, $data['sale'], isset($data['sale']['price']) ? $data['sale']['price'] : 0.0, $context );
 		if ( ! $Price ) {
-			shopp_debug(__FUNCTION__ . " failed: Failure setting variant sale price.");
+			shopp_debug(__FUNCTION__ . ' failed: Failure setting variant sale price.');
 			return false;
 		}
 	}
@@ -1174,7 +1174,7 @@ function shopp_product_set_variant ( $variant = false, $data = array(), $context
 	if ( isset($data['shipping']) && isset($data['shipping']['flag']) ) {
 		$Price = shopp_product_variant_set_shipping ( $Price, $data['shipping']['flag'], $data['shipping'], $context );
 		if ( ! $Price ) {
-			shopp_debug(__FUNCTION__ . " failed: Failure setting variant shipping settings.");
+			shopp_debug(__FUNCTION__ . ' failed: Failure setting variant shipping settings.');
 			return false;
 		}
 	}
@@ -1183,7 +1183,7 @@ function shopp_product_set_variant ( $variant = false, $data = array(), $context
 	if ( isset($data['inventory']) && isset($data['inventory']['flag']) ) {
 		$Price = shopp_product_variant_set_inventory ( $Price, $data['inventory']['flag'], $data['inventory'], $context );
 		if ( ! $Price ) {
-			shopp_debug(__FUNCTION__ . " failed: Failure setting variant price settings.");
+			shopp_debug(__FUNCTION__ . ' failed: Failure setting variant price settings.');
 			return false;
 		}
 	}
@@ -1196,7 +1196,7 @@ function shopp_product_set_variant ( $variant = false, $data = array(), $context
 		}
 		$Price = shopp_product_variant_set_donation ( $Price, $data['donation'], $context );
 		if ( ! $Price ) {
-			shopp_debug(__FUNCTION__ . " failed: Failure setting variant donation settings.");
+			shopp_debug(__FUNCTION__ . ' failed: Failure setting variant donation settings.');
 			return false;
 		}
 	}
@@ -1209,7 +1209,7 @@ function shopp_product_set_variant ( $variant = false, $data = array(), $context
 		}
 		$Price = shopp_product_variant_set_subscription ( $Price, $data['subscription'], $context );
 		if ( ! $Price ) {
-			shopp_debug(__FUNCTION__ . " failed: Failure setting variant subscription settings.");
+			shopp_debug(__FUNCTION__ . ' failed: Failure setting variant subscription settings.');
 			return false;
 		}
 	}
@@ -1248,11 +1248,11 @@ function shopp_product_rmv_variant_option ( $product, $targetids ) {
 	foreach ( $options['v'] as $varindex => $variable ) {
 		foreach ( $variable['options'] as $optindex => $option ) {
 			if ( in_array($option['id'], $targetids) ) {
-				unset($options['v'][$varindex]['options'][$optindex]);
+				unset($options['v'][ $varindex ]['options'][ $optindex ]);
 			}
 		}
-		if ( empty($options['v'][$varindex]['options']) ) {
-			unset($options['v'][$varindex]);
+		if ( empty($options['v'][ $varindex ]['options']) ) {
+			unset($options['v'][ $varindex ]);
 		}
 	}
 
@@ -1299,7 +1299,7 @@ function shopp_product_set_addon ( $addon = false, $data = array() ) {
  **/
 function shopp_product_set_featured ( $product = false, $flag = false ) {
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	$Product = new ShoppProduct($product);
@@ -1308,7 +1308,7 @@ function shopp_product_set_featured ( $product = false, $flag = false ) {
 		return false;
 	}
 
-	return ShoppProduct::featureset ( array($product), $flag ? "on" : "off");
+	return ShoppProduct::featureset ( array($product), $flag ? 'on' : 'off');
 }
 
 /**
@@ -1325,7 +1325,7 @@ function shopp_product_set_featured ( $product = false, $flag = false ) {
  **/
 function shopp_product_set_packaging ( $product = false, $flag = false ) {
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	$Product = new ShoppProduct($product);
@@ -1360,7 +1360,7 @@ function shopp_product_set_packaging ( $product = false, $flag = false ) {
  **/
 function shopp_product_set_processing ( $product, $flag, $minimum = '', $maximum = '' ) {
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 
@@ -1378,7 +1378,7 @@ function shopp_product_set_processing ( $product, $flag, $minimum = '', $maximum
 	foreach ( (array) $settings as $name => $value ) {
 		if ( empty($value) ) continue;
 		if ( false == preg_match('/\d+[hdwm]/', $value) ) {
-			if(SHOPP_DEBUG) new ShoppError(__FUNCTION__." failed: Product $name setting '$value' is not formatted properly ('3d' for 3 days, '2w' for 2 weeks, '1m' for 1 month).",__FUNCTION__,SHOPP_DEBUG_ERR);
+			if ( SHOPP_DEBUG ) new ShoppError(__FUNCTION__ . " failed: Product $name setting '$value' is not formatted properly ('3d' for 3 days, '2w' for 2 weeks, '1m' for 1 month).",__FUNCTION__,SHOPP_DEBUG_ERR);
 			return false;
 		}
 		shopp_set_product_meta ( $product, $name, $value );
@@ -1403,12 +1403,12 @@ function shopp_product_set_processing ( $product, $flag, $minimum = '', $maximum
  **/
 function shopp_product_set_exclude_taxes ( $product, $flag ) {
 	if ( false === $product ) {
-		if(SHOPP_DEBUG) new ShoppError(__FUNCTION__." failed: Product id required.",__FUNCTION__,SHOPP_DEBUG_ERR);
+		if ( SHOPP_DEBUG ) new ShoppError(__FUNCTION__ . ' failed: Product id required.', __FUNCTION__, SHOPP_DEBUG_ERR);
 		return false;
 	}
 	$Product = new ShoppProduct($product);
 	if ( empty($Product->id) ) {
-		if(SHOPP_DEBUG) new ShoppError(__FUNCTION__." failed: Product id $product not found.",__FUNCTION__,SHOPP_DEBUG_ERR);
+		if ( SHOPP_DEBUG ) new ShoppError(__FUNCTION__ . " failed: Product id $product not found." , __FUNCTION__, SHOPP_DEBUG_ERR);
 		return false;
 	}
 
@@ -1430,7 +1430,7 @@ function shopp_product_set_exclude_taxes ( $product, $flag ) {
  **/
 function shopp_product_set_type ( $product = false, $type = 'N/A' ) {
 	if ( false == $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	if ( is_array(shopp_product_variant_options($product)) ) {
@@ -1439,7 +1439,7 @@ function shopp_product_set_type ( $product = false, $type = 'N/A' ) {
 	}
 	$Price = new ShoppPrice(array('product' => $product, 'context' => 'product'));
 	if ( empty($Price->id) ) {
-		shopp_debug(__FUNCTION__ . " failed: Unable to load.");
+		shopp_debug(__FUNCTION__ . ' failed: Unable to load.');
 		return false;
 	}
 	return shopp_product_variant_set_type ( $Price->id, $type, 'product' );
@@ -1458,7 +1458,7 @@ function shopp_product_set_type ( $product = false, $type = 'N/A' ) {
  **/
 function shopp_product_set_taxed ( $product = false, $taxed = true ) {
 	if ( false == $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	if ( is_array(shopp_product_variant_options($product)) ) {
@@ -1467,7 +1467,7 @@ function shopp_product_set_taxed ( $product = false, $taxed = true ) {
 	}
 	$Price = new ShoppPrice(array('product' => $product, 'context' => 'product'));
 	if ( empty($Price->id) ) {
-		shopp_debug(__FUNCTION__ . " failed: Unable to load.");
+		shopp_debug(__FUNCTION__ . ' failed: Unable to load.');
 		return false;
 	}
 	return shopp_product_variant_set_taxed ( $Price->id, $taxed, $context = 'product' );
@@ -1486,7 +1486,7 @@ function shopp_product_set_taxed ( $product = false, $taxed = true ) {
  **/
 function shopp_product_set_price ( $product = false, $price = 0.0 ) {
 	if ( false == $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	if ( is_array(shopp_product_variant_options($product)) ) {
@@ -1495,7 +1495,7 @@ function shopp_product_set_price ( $product = false, $price = 0.0 ) {
 	}
 	$Price = new ShoppPrice(array('product' => $product, 'context' => 'product'));
 	if ( empty($Price->id) ) {
-		shopp_debug(__FUNCTION__ . " failed: Unable to load.");
+		shopp_debug(__FUNCTION__ . ' failed: Unable to load.');
 		return false;
 	}
 	return shopp_product_variant_set_price ( $Price->id, $price, 'product' );
@@ -1515,7 +1515,7 @@ function shopp_product_set_price ( $product = false, $price = 0.0 ) {
  **/
 function shopp_product_set_saleprice ( $product = false, $flag = false, $price = 0.0 ) {
 	if ( false == $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	if ( is_array(shopp_product_variant_options($product)) ) {
@@ -1524,7 +1524,7 @@ function shopp_product_set_saleprice ( $product = false, $flag = false, $price =
 	}
 	$Price = new ShoppPrice(array('product' => $product, 'context' => 'product'));
 	if ( empty($Price->id) ) {
-		shopp_debug(__FUNCTION__ . " failed: Unable to load.");
+		shopp_debug(__FUNCTION__ . ' failed: Unable to load.');
 		return false;
 	}
 
@@ -1546,7 +1546,7 @@ function shopp_product_set_saleprice ( $product = false, $flag = false, $price =
  **/
 function shopp_product_set_shipping ( $product = false, $flag = false, $settings = array() ) {
 	if ( false == $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	if ( is_array(shopp_product_variant_options($product)) ) {
@@ -1555,7 +1555,7 @@ function shopp_product_set_shipping ( $product = false, $flag = false, $settings
 	}
 	$Price = new ShoppPrice(array('product' => $product, 'context' => 'product'));
 	if ( empty($Price->id) ) {
-		shopp_debug(__FUNCTION__ . " failed: Unable to load.");
+		shopp_debug(__FUNCTION__ . ' failed: Unable to load.');
 		return false;
 	}
 
@@ -1577,7 +1577,7 @@ function shopp_product_set_shipping ( $product = false, $flag = false, $settings
  **/
 function shopp_product_set_inventory ( $product = false, $flag = false, $settings = array() ) {
 	if ( false == $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	if ( is_array(shopp_product_variant_options($product)) ) {
@@ -1586,7 +1586,7 @@ function shopp_product_set_inventory ( $product = false, $flag = false, $setting
 	}
 	$Price = new ShoppPrice(array('product' => $product, 'context' => 'product'));
 	if ( empty($Price->id) ) {
-		shopp_debug(__FUNCTION__ . " failed: Unable to load.");
+		shopp_debug(__FUNCTION__ . ' failed: Unable to load.');
 		return false;
 	}
 
@@ -1608,7 +1608,7 @@ function shopp_product_set_inventory ( $product = false, $flag = false, $setting
  **/
 function shopp_product_set_stock ( $product = false, $stock = 0, $action = 'adjust' ) {
 	if ( false == $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	if ( is_array(shopp_product_variant_options($product)) ) {
@@ -1617,7 +1617,7 @@ function shopp_product_set_stock ( $product = false, $stock = 0, $action = 'adju
 	}
 	$Price = new ShoppPrice(array('product' => $product, 'context' => 'product'));
 	if ( empty($Price->id) ) {
-		shopp_debug(__FUNCTION__ . " failed: Unable to load.");
+		shopp_debug(__FUNCTION__ . ' failed: Unable to load.');
 		return false;
 	}
 
@@ -1638,7 +1638,7 @@ function shopp_product_set_stock ( $product = false, $stock = 0, $action = 'adju
  **/
 function shopp_product_set_donation ( $product = false, $settings = array() ) {
 	if ( false == $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	if ( is_array(shopp_product_variant_options($product)) ) {
@@ -1647,7 +1647,7 @@ function shopp_product_set_donation ( $product = false, $settings = array() ) {
 	}
 	$Price = new ShoppPrice(array('product' => $product, 'context' => 'product'));
 	if ( empty($Price->id) ) {
-		shopp_debug(__FUNCTION__ . " failed: Unable to load.");
+		shopp_debug(__FUNCTION__ . ' failed: Unable to load.');
 		return false;
 	}
 
@@ -1679,7 +1679,7 @@ function shopp_product_set_donation ( $product = false, $settings = array() ) {
  **/
 function shopp_product_set_subscription ( $product = false, $settings = array() ) {
 	if ( false == $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product id required.');
 		return false;
 	}
 	if ( is_array(shopp_product_variant_options($product)) ) {
@@ -1688,7 +1688,7 @@ function shopp_product_set_subscription ( $product = false, $settings = array() 
 	}
 	$Price = new ShoppPrice(array('product' => $product, 'context' => 'product'));
 	if ( empty($Price->id) ) {
-		shopp_debug(__FUNCTION__ . " failed: Unable to load.");
+		shopp_debug(__FUNCTION__ . ' failed: Unable to load.');
 		return false;
 	}
 
@@ -1714,7 +1714,7 @@ function shopp_product_set_subscription ( $product = false, $settings = array() 
  **/
 function shopp_product_set_variant_options ( $product = false, array $options = array(), $summary = 'save' ) {
 	if ( ! $product || empty($options) ) {
-		shopp_debug(__FUNCTION__ . " failed: Missing required parameters.");
+		shopp_debug(__FUNCTION__ . ' failed: Missing required parameters.');
 		return false;
 	}
 	$Product = new ShoppProduct($product);
@@ -1729,12 +1729,13 @@ function shopp_product_set_variant_options ( $product = false, array $options = 
 	$meta_table = ShoppDatabaseObject::tablename(MetasetObject::$table);
 	sDB::query("DELETE p,m FROM $price_table p LEFT JOIN $meta_table m ON m.parent = p.id AND m.context='price' WHERE p.product='$product' AND p.context='variation'");
 
-	$prices = array();
-	$combos = _optioncombinations(array(), $options);
+	$prices  = array();
+	$combos  = _optioncombinations(array(), $options);
 	$mapping = array();
+
 	foreach ( $combos as $combo ) {
-		$Price = new ShoppPrice();
-		$Price->type = 'Shipped';
+		$Price          = new ShoppPrice();
+		$Price->type    = 'Shipped';
 		$Price->product = $product;
 		$Price->context = 'variation';
 		list($Price->optionkey, $Price->options, $Price->label, $mapping) = $Product->optionmap($combo, $options);
@@ -1783,8 +1784,8 @@ function _optioncombinations ($combos=array(), $options, $menu = false, &$result
 		$results[] = $combos;
 		return $results;
 	} else {
-		foreach ( $options[$menus[$menu]] as $option ) {
-			_optioncombinations( $combos + array( $menus[$menu] => $option ) , $options, $menu + 1, $results);
+		foreach ( $options[ $menus[ $menu ] ] as $option ) {
+			_optioncombinations( $combos + array( $menus[ $menu ] => $option ) , $options, $menu + 1, $results);
 		}
 		return $results;
 	}
@@ -1809,7 +1810,7 @@ function shopp_product_variant_set_type ( $variant = false, $type = 'N/A', $cont
 		$save = false;
 	} else {
 		if ( false == $variant ) {
-			shopp_debug(__FUNCTION__ . " failed: Variant id required.");
+			shopp_debug(__FUNCTION__ . ' failed: Variant id required.');
 			return false;
 		}
 		$Price = new ShoppPrice($variant);
@@ -1852,7 +1853,7 @@ function shopp_product_variant_set_taxed ( $variant = false, $taxed = true, $con
 		$save = false;
 	} else {
 		if ( false == $variant ) {
-			shopp_debug(__FUNCTION__ . " failed: Variant id required.");
+			shopp_debug(__FUNCTION__ . ' failed: Variant id required.');
 			return false;
 		}
 		$Price = new ShoppPrice($variant);
@@ -1861,7 +1862,7 @@ function shopp_product_variant_set_taxed ( $variant = false, $taxed = true, $con
 		}
 	}
 
-	$Price->tax = ( $taxed ? "on" : "off" );
+	$Price->tax = ( $taxed ? 'on' : 'off' );
 
 	if ( $save ) return $Price->save();
 	return $Price;
@@ -1886,7 +1887,7 @@ function shopp_product_variant_set_price ( $variant = false, $price = 0.0, $cont
 		$save = false;
 	} else {
 		if ( false == $variant ) {
-			shopp_debug(__FUNCTION__ . " failed: Variant id required.");
+			shopp_debug(__FUNCTION__ . ' failed: Variant id required.');
 			return false;
 		}
 		$Price = new ShoppPrice($variant);
@@ -1927,7 +1928,7 @@ function shopp_product_variant_set_saleprice ( $variant = false, $flag = false, 
 		$save = false;
 	} else {
 		if ( false == $variant ) {
-			shopp_debug(__FUNCTION__ . " failed: Variant id required.");
+			shopp_debug(__FUNCTION__ . ' failed: Variant id required.');
 			return false;
 		}
 		$Price = new ShoppPrice($variant);
@@ -1936,14 +1937,14 @@ function shopp_product_variant_set_saleprice ( $variant = false, $flag = false, 
 		}
 	}
 
-	$Price->sale = "off";
+	$Price->sale = 'off';
 	if ( $flag ) {
-		$Price->sale = "on";
+		$Price->sale = 'on';
 
 		if ( shopp_setting_enabled('tax_inclusive') && isset($Price->tax) && Shopp::str_true($Price->tax) ) {
 			$Product = new ShoppProduct($Price->product);
-			$taxrate = shopp_taxrate(null,true,$Product);
-			$price = ( Shopp::floatval( $price / ( 1 + $taxrate ) ) );
+			$taxrate = shopp_taxrate(null, true, $Product);
+			$price   = ( Shopp::floatval( $price / ( 1 + $taxrate ) ) );
 		}
 
 		$Price->saleprice = $price;
@@ -1974,7 +1975,7 @@ function shopp_product_variant_set_shipping ( $variant = false, $flag = false, $
 		$save = false;
 	} else {
 		if ( false == $variant ) {
-			shopp_debug(__FUNCTION__ . " failed: Variant id required.");
+			shopp_debug(__FUNCTION__ . ' failed: Variant id required.');
 			return false;
 		}
 		$Price = new ShoppPrice($variant);
@@ -1984,12 +1985,12 @@ function shopp_product_variant_set_shipping ( $variant = false, $flag = false, $
 		}
 	}
 
-	$Price->shipping = "off";
+	$Price->shipping = 'off';
 	if ( $flag && ! empty($settings) ) {
-		$Price->shipping = "on";
+		$Price->shipping = 'on';
 		if ( isset($settings['weight']) ) {
 			if ( 0.0 > $settings['weight'] ) {
-				shopp_debug(__FUNCTION__ . " failed: Weight must be 0 or greater.");
+				shopp_debug(__FUNCTION__ . ' failed: Weight must be 0 or greater.');
 				return false;
 			}
 
@@ -2002,7 +2003,7 @@ function shopp_product_variant_set_shipping ( $variant = false, $flag = false, $
 
 		if ( isset($settings['height']) && isset($settings['width']) && isset($settings['length']) ) {
 			if ( 0.0 > $settings['height'] || 0.0 > $settings['width'] || 0.0 > $settings['length'] ) {
-				shopp_debug(__FUNCTION__ . " failed: Height, width, and length must be 0 or greater.");
+				shopp_debug(__FUNCTION__ . ' failed: Height, width, and length must be 0 or greater.');
 				return false;
 			}
 
@@ -2011,7 +2012,7 @@ function shopp_product_variant_set_shipping ( $variant = false, $flag = false, $
 			if ( ! isset($Price->settings) ) $Price->settings = array();
 			$Price->settings['dimensions'] = $Price->dimensions;
 		} else if ( $Shopp->Shipping->dimensions ) {
-			shopp_debug(__FUNCTION__ . " failed: Height, width, and length are required for one or more installed shipping module.");
+			shopp_debug(__FUNCTION__ . ' failed: Height, width, and length are required for one or more installed shipping module.');
 			return false;
 		}
 		if ( isset($settings['fee']) ) $Price->shipfee = $settings['fee'];
@@ -2044,7 +2045,7 @@ function shopp_product_variant_set_inventory ( $variant = false, $flag = false, 
 		$save = false;
 	} else {
 		if ( false == $variant ) {
-			shopp_debug(__FUNCTION__ . " failed: Variant id required.");
+			shopp_debug(__FUNCTION__ . ' failed: Variant id required.');
 			return false;
 		}
 		$Price = new ShoppPrice($variant);
@@ -2053,9 +2054,9 @@ function shopp_product_variant_set_inventory ( $variant = false, $flag = false, 
 		}
 	}
 
-	$Price->inventory = "off";
+	$Price->inventory = 'off';
 	if ( $flag ) {
-		$Price->inventory = "on";
+		$Price->inventory = 'on';
 		if ( isset($settings['stock']) ) {
 			$Price = shopp_product_variant_set_stock( $Price, $settings['stock'], 'restock', $context );
 		}
@@ -2088,7 +2089,7 @@ function shopp_product_variant_set_stock ( $variant = false, $stock = 0, $action
 		$save = false;
 	} else {
 		if ( false == $variant ) {
-			shopp_debug(__FUNCTION__ . " failed: Variant id required.");
+			shopp_debug(__FUNCTION__ . ' failed: Variant id required.');
 			return false;
 		}
 		$Price = new ShoppPrice($variant);
@@ -2133,7 +2134,7 @@ function shopp_product_variant_set_donation ( $variant = false, $settings = arra
 		$save = false;
 	} else {
 		if ( false == $variant ) {
-			shopp_debug(__FUNCTION__ . " failed: Variant id required.");
+			shopp_debug(__FUNCTION__ . ' failed: Variant id required.');
 			return false;
 		}
 		$Price = new ShoppPrice($variant);
@@ -2155,8 +2156,8 @@ function shopp_product_variant_set_donation ( $variant = false, $settings = arra
 		$variant_settings['donation'] = array();
 	}
 
-	$variant_settings['donation']['var'] = ( isset($settings['variable']) && $settings['variable'] ? "on" : "off" );
-	$variant_settings['donation']['min'] = ( isset($settings['minimum']) && $settings['minimum'] ? "on" : "off" );
+	$variant_settings['donation']['var'] = ( isset($settings['variable']) && $settings['variable'] ? 'on' : 'off' );
+	$variant_settings['donation']['min'] = ( isset($settings['minimum']) && $settings['minimum'] ? 'on' : 'off' );
 
 	$Price->donation = $variant_settings['donation'];
 	$Price->settings = $variant_settings;
@@ -2197,7 +2198,7 @@ function shopp_product_variant_set_subscription ( $variant = false, $settings = 
 		$save = false;
 	} else {
 		if ( false == $variant ) {
-			shopp_debug(__FUNCTION__ . " failed: Variant id required.");
+			shopp_debug(__FUNCTION__ . ' failed: Variant id required.');
 			return false;
 		}
 		$Price = new ShoppPrice($variant);
@@ -2218,8 +2219,8 @@ function shopp_product_variant_set_subscription ( $variant = false, $settings = 
 	}
 
 	if ( isset($settings['trial']) && is_array($settings['trial']) && ! empty($settings['trial']) ) {
-		$Price->trial = "on";
-		$variant_settings['recurring']['trial'] = "on";
+		$Price->trial = 'on';
+		$variant_settings['recurring']['trial'] = 'on';
 		foreach ( $settings['trial'] as $name => $setting ) {
 			if ( is_array($setting) && empty($setting) ) continue;
 
@@ -2236,7 +2237,7 @@ function shopp_product_variant_set_subscription ( $variant = false, $settings = 
 	}
 
 	if ( ! isset($settings['billcycle']) || empty($settings['billcycle']) ) {
-		shopp_debug(__FUNCTION__ . " failed: Billing cycle required.");
+		shopp_debug(__FUNCTION__ . ' failed: Billing cycle required.');
 		return false;
 	}
 	foreach ( $settings['billcycle'] as $name => $setting ) {
@@ -2284,7 +2285,7 @@ function shopp_product_variant_set_subscription ( $variant = false, $settings = 
  **/
 function shopp_product_set_addon_options ( $product = false, $options = array(), $summary = 'save' ) {
 	if ( ! $product || empty($options) ) {
-		shopp_debug(__FUNCTION__ . " failed: Missing required parameters.");
+		shopp_debug(__FUNCTION__ . ' failed: Missing required parameters.');
 		return false;
 	}
 
@@ -2324,12 +2325,12 @@ function shopp_product_set_addon_options ( $product = false, $options = array(),
 
 	$i = 1;
 	foreach ($options as $optname => $option) {
-		if ( ! isset($metaopts['a'][$i]) )
-			$metaopts['a'][$i] = array('id' => $i, 'name' => $optname, 'options' => array() );
+		if ( ! isset($metaopts['a'][ $i ]) )
+			$metaopts['a'][ $i ] = array('id' => $i, 'name' => $optname, 'options' => array() );
 
 		foreach ($option as $value) {
-			$metaopts['a'][$i]['options'][$mapping[$optname][$value]]
-				= array('id' => $mapping[$optname][$value], 'name' => $value, 'linked' => "off");
+			$metaopts['a'][ $i ]['options'][ $mapping[ $optname ][ $value ] ]
+				= array('id' => $mapping[ $optname ][ $value ], 'name' => $value, 'linked' => "off");
 		}
 
 		$i++;
@@ -2337,7 +2338,7 @@ function shopp_product_set_addon_options ( $product = false, $options = array(),
 
 	shopp_set_product_meta ( $product, 'options', $metaopts);
 
-	$Product->addons = "on";
+	$Product->addons = 'on';
 	if ( 'save' == $summary ) $Product->sumup();
 
 	return $prices;
@@ -2445,7 +2446,7 @@ function shopp_product_addon_set_stock ( $addon = false, $stock = 0, $action = '
  *
  * @param int/Price $addon (required) The priceline id to setup the inventory tracking on, or the Price object to change.  If Price object is specified, the object will be returned, but not saved to the database.
  * @param bool $flag (optional default:false) true for on, false for off. Turns on or off the inventory tracking on the addon.  If false, settings are ignored.
- * @param array $settings array of inventory settings (stock => int, sku => sting)
+ * @param array $settings array of inventory settings (stock => int, sku => string)
  * @return bool/Price false on failure, true if Price saved, else the modified Price object.
  **/
 function shopp_product_addon_set_inventory ( $addon = false, $flag = false, $settings = array() ) {
@@ -2514,7 +2515,7 @@ function shopp_product_weights ( $product ) {
 	foreach ( $product->prices as $price ) {
 		$weight = isset($price->dimensions['weight']) ? $price->dimensions['weight'] : 0;
 		if ( 'product' === $price->context ) $weights[0] = $weight;
-		if ( 'variation' === $price->context ) $weights[$price->id] = $weight;
+		if ( 'variation' === $price->context ) $weights[ $price->id ] = $weight;
 	}
 
 	if ( count($weights) > 1 ) unset($weights[0]); // Do not return the 'base' weight if there are variants
