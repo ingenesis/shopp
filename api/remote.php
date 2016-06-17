@@ -28,6 +28,6 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 function shopp_add_remoteapi ( $request, $callback, $capabilities = '' ) {
 	if ( ! class_exists('ShoppRemoteAPIServer') ) return false;
-	$capabilities = explode(',',$capabilities);
+	$capabilities = explode(',', $capabilities);
 	return ShoppRemoteAPIServer::register( $request, $callback, $capabilities);
 }
