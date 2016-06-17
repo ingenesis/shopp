@@ -26,7 +26,7 @@ class ShoppLogin {
 	const PROCESS = 'submit-login';
 
 	public $Customer = false;
-	public $Billing = false;
+	public $Billing  = false;
 	public $Shipping = false;
 
 	/**
@@ -40,7 +40,7 @@ class ShoppLogin {
 	public function __construct () {
 
 		$this->Customer = &ShoppOrder()->Customer;
-		$this->Billing = &ShoppOrder()->Billing;
+		$this->Billing  = &ShoppOrder()->Billing;
 		$this->Shipping = &ShoppOrder()->Shipping;
 
 		if ( 'none' == shopp_setting('account_system') ) return; // Disabled
@@ -104,7 +104,7 @@ class ShoppLogin {
 		remove_all_actions('shopp_process_checkout');
 
 		if ( ! isset($_POST['account-login']) || empty($_POST['account-login']) )
-			return shopp_add_error( __('You must provide a valid login name or email address to proceed.','Shopp'), SHOPP_AUTH_ERR );
+			return shopp_add_error( Shopp::__('You must provide a valid login name or email address to proceed.'), SHOPP_AUTH_ERR );
 
 		// Add a login redirect as the very last action if a redirect parameter is provided in the request; Props @alansherwood
 		if ( isset($_REQUEST['redirect']) )
@@ -132,11 +132,11 @@ class ShoppLogin {
 		do_action('shopp_auth');
 
 		$errors = array(
-			'empty_username' => __('The login field is empty.','Shopp'),
-			'empty_password' => __('The password field is empty.','Shopp'),
-			'invalid_email' => __('No customer account was found with that email.','Shopp'),
-			'invalid_username' => __('No customer account was found with that login.','Shopp'),
-			'incorrect_password' => __('The password is incorrect.','Shopp')
+			'empty_username'     => Shopp::__('The login field is empty.'),
+			'empty_password'     => Shopp::__('The password field is empty.'),
+			'invalid_email'      => Shopp::__('No customer account was found with that email.'),
+			'invalid_username'   => Shopp::__('No customer account was found with that login.'),
+			'incorrect_password' => Shopp::__('The password is incorrect.')
 		);
 
 		switch( shopp_setting('account_system') ) {
@@ -173,7 +173,7 @@ class ShoppLogin {
 					else {
 						$messages = $user->get_error_messages();
 						foreach ( $messages as $message )
-							new ShoppError( sprintf(__('Unknown login error: %s'), $message), 'unknown_login_error', SHOPP_AUTH_ERR);
+							new ShoppError( Shopp::__('Unknown login error: %s', $message), 'unknown_login_error', SHOPP_AUTH_ERR);
 					}
 					return;
 				} else self::wpuser($user);
@@ -209,6 +209,7 @@ class ShoppLogin {
 	 */
 	public static function wpuser ( WP_User $User ) {
 		if ( ! is_a($User, 'WP_User') ) return false;
+
 		wp_set_auth_cookie($User->ID, false, is_ssl());
 		do_action('wp_login', $User->user_login, $User);
 		wp_set_current_user($User->ID, $User->user_login);
@@ -255,8 +256,8 @@ class ShoppLogin {
 	 * @return void
 	 **/
 	public function logout () {
-		$Shopp = Shopp::object();
-		$Order = ShoppOrder();
+		$Shopp    = Shopp::object();
+		$Order    = ShoppOrder();
 		$Shopping = ShoppShopping();
 
 
