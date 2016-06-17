@@ -69,22 +69,22 @@ abstract class ShoppCore {
 
 		// Define translated messages
 		$_ = array(
-			'header' => Shopp::_x('Shopp Activation Error', 'Shopp activation error'),
-			'intro' => Shopp::_x('Sorry! Shopp cannot be activated for this WordPress install.', 'Shopp activation error'),
-			'phpversion' => sprintf(Shopp::_x('Your server is running PHP %s!', 'Shopp activation error'), PHP_VERSION),
-			'php524' => Shopp::_x('Shopp requires PHP 5.2.4+.', 'Shopp activation error'),
-			'wpversion' => sprintf(Shopp::_x('This site is running WordPress %s!', 'Shopp activation error'), get_bloginfo('version')),
-			'wp35' => Shopp::_x('Shopp requires WordPress 3.5.', 'Shopp activation error'),
-			'gdsupport' => Shopp::_x('Your server does not have GD support! Shopp requires the GD image library with JPEG support for generating gallery and thumbnail images.', 'Shopp activation error'),
-			'jpgsupport' => Shopp::_x('Your server does not have JPEG support for the GD library! Shopp requires JPEG support in the GD image library to generate JPEG images.', 'Shopp activation error'),
-			'nextstep' => sprintf(Shopp::_x('Try contacting your web hosting provider or server administrator to upgrade your server. For more information about the requirements for running Shopp, see the %sShopp Documentation%s', 'Shopp activation error'), '<a href="' . ShoppSupport::DOCS . 'system-requirements">', '</a>'),
-			'continue' => Shopp::_x('Return to Plugins page', 'Shopp activation error')
+			'header'	    => Shopp::_x('Shopp Activation Error', 'Shopp activation error'),
+			'intro'	        => Shopp::_x('Sorry! Shopp cannot be activated for this WordPress install.', 'Shopp activation error'),
+			'phpversion'	=> sprintf(_x('Your server is running PHP %s!', 'Shopp activation error', 'Shopp'), PHP_VERSION),
+			'php524'	    => Shopp::_x('Shopp requires PHP 5.2.4+.', 'Shopp activation error'),
+			'wpversion'	    => sprintf(_x('This site is running WordPress %s!', 'Shopp activation error', 'Shopp'), get_bloginfo('version')),
+			'wp35'	        => Shopp::_x('Shopp requires WordPress 3.5.', 'Shopp activation error'),
+			'gdsupport'	    => Shopp::_x('Your server does not have GD support! Shopp requires the GD image library with JPEG support for generating gallery and thumbnail images.', 'Shopp activation error'),
+			'jpgsupport'	=> Shopp::_x('Your server does not have JPEG support for the GD library! Shopp requires JPEG support in the GD image library to generate JPEG images.', 'Shopp activation error'),
+			'nextstep'	    => sprintf(_x('Try contacting your web hosting provider or server administrator to upgrade your server. For more information about the requirements for running Shopp, see the %sShopp Documentation%s', 'Shopp activation error', 'Shopp'), '<a href="' . ShoppSupport::DOCS . 'system-requirements">', '</a>'),
+			'continue'	    => Shopp::_x('Return to Plugins page', 'Shopp activation error')
 		);
 
 		if ( $activation ) {
 			$string = '<h1>'.$_['header'].'</h1><p>'.$_['intro'].'</h1></p><ul>';
-			foreach ((array)$errors as $error) if (isset($_[$error])) $string .= "<li>{$_[$error]}</li>";
-			$string .= '</ul><p>'.$_['nextstep'].'</p><p><a class="button" href="'.admin_url('plugins.php').'">&larr; '.$_['continue'].'</a></p>';
+			foreach ( (array)$errors as $error ) if ( isset($_[ $error ]) ) $string .= "<li>{$_[$error]}</li>";
+			$string .= '</ul><p>' . $_['nextstep'] . '</p><p><a class="button" href="' . admin_url('plugins.php') . '">&larr; ' . $_['continue'] . '</a></p>';
 			wp_die($string);
 		}
 
@@ -1293,25 +1293,28 @@ abstract class ShoppCore {
 	 * @param boolean $extend (optional) Use to add the selected value if it doesn't exist in the specified list of options
 	 * @return string The markup of option elements
 	 **/
-	public static function menuoptions ($list,$selected=null,$values=false,$extend=false) {
-		if (!is_array($list)) return "";
+	public static function menuoptions ( $list, $selected = null, $values = false, $extend = false ) {
+		if ( ! is_array($list) ) return "";
 
 		$_ = array();
 		// Extend the options if the selected value doesn't exist
-		if ((!in_array($selected,$list) && !isset($list[$selected])) && $extend)
-			$_[] = '<option value="'.esc_attr($selected).'">'.esc_html($selected).'</option>';
-		foreach ($list as $value => $text) {
+		if ( ( ! in_array($selected, $list) && ! isset($list[ $selected ])) && $extend )
+			$_[] = '<option value="' . esc_attr($selected) . '">' . esc_html($selected) . '</option>';
+		
+		foreach ( $list as $value => $text ) {
 
 			$valueattr = $selectedattr = '';
 
-			if ($values) $valueattr = ' value="'.esc_attr($value).'"';
-			if (($values && (string)$value === (string)$selected)
-				|| (!$values && (string)$text === (string)$selected))
+			if ( $values ) $valueattr = ' value="' . esc_attr($value) . '"';
+
+			if ( ($values && (string)$value === (string)$selected)
+				|| (! $values && (string)$text === (string)$selected) )
 					$selectedattr = ' selected="selected"';
-			if (is_array($text)) {
+
+			if ( is_array($text) ) {
 				$label = $value;
-				$_[] = '<optgroup label="'.esc_attr($label).'">';
-				$_[] = self::menuoptions($text,$selected,$values);
+				$_[] = '<optgroup label="' . esc_attr($label) . '">';
+				$_[] = self::menuoptions($text, $selected, $values);
 				$_[] = '</optgroup>';
 				continue;
 			}
@@ -1522,13 +1525,13 @@ abstract class ShoppCore {
 	 * @param int $bytes The number of bytes
 	 * @return string The formatted unit size
 	 **/
-	public static function readableFileSize($bytes,$precision=1) {
-		$units = array(__('bytes','Shopp'),'KB','MB','GB','TB','PB');
+	public static function readableFileSize($bytes, $precision=1) {
+		$units = array(Shopp::__('bytes'), 'KB', 'MB', 'GB', 'TB', 'PB');
 		$sized = $bytes*1;
-		if ($sized == 0) return $sized;
+		if ( $sized == 0 ) return $sized;
 		$unit = 0;
-		while ($sized >= 1024 && ++$unit) $sized = $sized/1024;
-		return round($sized,$precision)." ".$units[$unit];
+		while ( $sized >= 1024 && ++$unit ) $sized = $sized/1024;
+		return round($sized, $precision) . " " . $units[ $unit ];
 	}
 
 	/**
