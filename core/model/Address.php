@@ -78,7 +78,7 @@ class ShoppAddress extends ShoppDatabaseObject {
 		if ( ! isset($patterns[ $this->country ]) || empty($patterns[ $this->country ]) ) return false;
 
 		$pattern = $patterns[ $this->country ];
-		if (!preg_match("/$pattern/",$postcode)) return false;
+		if ( ! preg_match("/$pattern/", $postcode) ) return false;
 
 		do_action('shopp_map_' . strtolower($this->country) . '_postcode', $this);
 	}
@@ -143,11 +143,11 @@ class BillingAddress extends ShoppAddress {
 	public static function exportcolumns () {
 		$prefix = 'b.';
 		return array(
-			$prefix . 'address' => Shopp::__('Billing Street Address'),
+			$prefix . 'address'  => Shopp::__('Billing Street Address'),
 			$prefix . 'xaddress' => Shopp::__('Billing Street Address 2'),
-			$prefix . 'city' => Shopp::__('Billing City'),
-			$prefix . 'state' => Shopp::__('Billing State/Province'),
-			$prefix . 'country' => Shopp::__('Billing Country'),
+			$prefix . 'city'     => Shopp::__('Billing City'),
+			$prefix . 'state'    => Shopp::__('Billing State/Province'),
+			$prefix . 'country'  => Shopp::__('Billing Country'),
 			$prefix . 'postcode' => Shopp::__('Billing Postal Code'),
 		);
 	}
@@ -176,8 +176,8 @@ class BillingAddress extends ShoppAddress {
  **/
 class ShippingAddress extends ShoppAddress {
 
-	public $type = 'shipping';
-	public $method = false;
+	public $type        = 'shipping';
+	public $method      = false;
 	public $residential = 'on';
 
 	/**
@@ -191,11 +191,11 @@ class ShippingAddress extends ShoppAddress {
 	public static function exportcolumns () {
 		$prefix = 's.';
 		return array(
-			$prefix . 'address' => Shopp::__('Shipping Street Address'),
+			$prefix . 'address'  => Shopp::__('Shipping Street Address'),
 			$prefix . 'xaddress' => Shopp::__('Shipping Street Address 2'),
-			$prefix . 'city' => Shopp::__('Shipping City'),
-			$prefix . 'state' => Shopp::__('Shipping State/Province'),
-			$prefix . 'country' => Shopp::__('Shipping Country'),
+			$prefix . 'city'     => Shopp::__('Shipping City'),
+			$prefix . 'state'    => Shopp::__('Shipping State/Province'),
+			$prefix . 'country'  => Shopp::__('Shipping Country'),
 			$prefix . 'postcode' => Shopp::__('Shipping Postal Code'),
 		);
 	}
@@ -204,15 +204,15 @@ class ShippingAddress extends ShoppAddress {
 
 class PostcodeMapping {
 
-	public static function uszip ($Address) {
+	public static function uszip ( $Address ) {
 		PostcodeMapping::prefixcode(substr($Address->postcode, 0, 3), $Address);
 	}
 
-	public static function capost ($Address) {
+	public static function capost ( $Address ) {
 		PostcodeMapping::prefixcode(strtoupper($Address->postcode{0}), $Address);
 	}
 
-	public static function aupost ($Address) {
+	public static function aupost ( $Address ) {
 		PostcodeMapping::numericrange($Address);
 	}
 
@@ -221,8 +221,8 @@ class PostcodeMapping {
 	 *
 	 * @param ShoppAddress $Address
 	 */
-	public static function numericrange (Address $Address) {
-		$postcode = $Address->postcode;
+	public static function numericrange ( Address $Address ) {
+		$postcode  = $Address->postcode;
 		$postcodes = Lookup::postcodes();
 		if ( ! isset($postcodes[$Address->country]) ) return;
 
@@ -253,7 +253,7 @@ class PostcodeMapping {
 	 * @param ShoppAddress $Address
 	 * @return void
 	 **/
-	public static function prefixcode ($prefix, ShoppAddress $Address) {
+	public static function prefixcode ( $prefix, ShoppAddress $Address ) {
 		$postcodes = Lookup::postcodes();
 		if ( ! isset($postcodes[ $Address->country ]) ) return;
 
