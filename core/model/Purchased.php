@@ -100,33 +100,33 @@ class ShoppPurchased extends ShoppDatabaseObject {
 	}
 
 	public function keygen () {
-		$message = ShoppCustomer()->email.serialize($this).current_time('mysql');
+		$message = ShoppCustomer()->email . serialize($this) . current_time('mysql');
 		$key = sha1($message);
 
 		$limit = 25; $c = 0;
-		while ((int)sDB::query("SELECT count(*) AS found FROM $this->_table WHERE dkey='$key'",'auto','col','found') > 0) {
+		while ( (int)sDB::query("SELECT count(*) AS found FROM $this->_table WHERE dkey='$key'",'auto','col','found') > 0 ) {
 			$key = sha1($message.rand());
-			if ($c++ > $limit) break;
+			if ( $c++ > $limit ) break;
 		}
 
 		$this->dkey = $key;
-		do_action_ref_array('shopp_download_keygen',array(&$this));
+		do_action_ref_array('shopp_download_keygen', array(&$this));
 	}
 
 	public static function exportcolumns () {
 		$prefix = "p.";
 		return array(
-			$prefix.'id' => __('Line Item ID','Shopp'),
-			$prefix.'name' => __('Product Name','Shopp'),
-			$prefix.'optionlabel' => __('Product Variation Name','Shopp'),
-			'addons.name' => __('Product Add-on Name', 'Shopp'),
-			$prefix.'description' => __('Product Description','Shopp'),
-			$prefix.'sku' => __('Product SKU','Shopp'),
-			$prefix.'quantity' => __('Product Quantity Purchased','Shopp'),
-			$prefix.'unitprice' => __('Product Unit Price','Shopp'),
-			$prefix.'total' => __('Product Total Price','Shopp'),
-			$prefix.'data' => __('Product Data','Shopp'),
-			$prefix.'downloads' => __('Product Downloads','Shopp')
+			$prefix . 'id'	        => Shopp::__('Line Item ID'),
+			$prefix . 'name'	    => Shopp::__('Product Name'),
+			$prefix . 'optionlabel'	=> Shopp::__('Product Variation Name'),
+			'addons.name'	        => Shopp::__('Product Add-on Name'),
+			$prefix . 'description'	=> Shopp::__('Product Description'),
+			$prefix . 'sku'	        => Shopp::__('Product SKU'),
+			$prefix . 'quantity'	=> Shopp::__('Product Quantity Purchased'),
+			$prefix . 'unitprice'	=> Shopp::__('Product Unit Price'),
+			$prefix . 'total'	    => Shopp::__('Product Total Price'),
+			$prefix . 'data'	    => Shopp::__('Product Data'),
+			$prefix . 'downloads'	=> Shopp::__('Product Downloads')
 			);
 	}
 
