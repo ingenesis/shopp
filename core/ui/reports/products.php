@@ -74,13 +74,19 @@ class ProductsReport extends ShoppReportFramework implements ShoppReport {
 
 	public function columns () {
 		return array(
-			'product' => __('Product', 'Shopp'),
-			'sku'     => __('SKU', 'Shopp'),
-			'orders'  => __('Orders', 'Shopp'),
-			'sold'    => __('Items', 'Shopp'),
-			'grossed' => __('Grossed', 'Shopp')
+			'product' => Shopp::__('Product'),
+			'sku'     => Shopp::__('SKU'),
+			'orders'  => Shopp::__('Orders'),
+			'sold'    => Shopp::__('Items'),
+			'grossed' => Shopp::__('Grossed')
 		);
 	}
+
+	function excludecolumns () {
+			return array(
+			'sku' => 'SKU',
+		);
+	}	
 
 	public function sortcolumns () {
 		return array(
