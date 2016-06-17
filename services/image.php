@@ -13,7 +13,7 @@
 // Reduce image display issues by hiding warnings/notices
 ini_set('display_errors', 0);
 
-if ( ! defined('SHORTINIT') ) define('SHORTINIT',true);
+if ( ! defined('SHORTINIT') ) define('SHORTINIT', true);
 define('SHOPP_IMGSERVER_LOADED', true);
 
 $path = ImageServer::path();
@@ -37,14 +37,14 @@ if ( ! defined('ABSPATH') && $loadfile = ShoppLoader::find_wpload()) {
 
 
 // Stub i18n for compatibility
-if ( ! function_exists('__')) {
+if ( ! function_exists('__') ) {
 	// Localization API is not available at this point
-	function __ ($string,$domain=false) {
+	function __ ($string, $domain = false) {
 		return $string;
 	}
 }
 
-ShoppDeveloperAPI::load( dirname(ShoppLoader::basepath()), array('core','settings') );
+ShoppDeveloperAPI::load( dirname(ShoppLoader::basepath()), array('core', 'settings') );
 
 // Start the server
 new ImageServer;
@@ -65,8 +65,8 @@ class ImageServer {
 
 	private $request = false;
 	private $parameters = array();
-	private $args = array('width','height','scale','sharpen','quality','fill');
-	private $scaling = array('all','matte','crop','width','height');
+	private $args = array('width', 'height', 'scale', 'sharpen', 'quality', 'fill');
+	private $scaling = array('all', 'matte', 'crop', 'width', 'height');
 	private $width;
 	private $height;
 	private $scale = 0;
@@ -167,10 +167,10 @@ class ImageServer {
 		if ( $this->Image->width == $this->width && $this->Image->height == $this->height ) return;
 
 		$Cached = new ImageAsset(array(
-			'parent' => $this->Image->id,
-			'context'=>'image',
-			'type'=>'image',
-			'name'=>'cache_' . implode('_', $this->parameters)
+			'parent'  => $this->Image->id,
+			'context' =>'image',
+			'type'    =>'image',
+			'name'    =>'cache_' . implode('_', $this->parameters)
 		));
 
 		// Use the cached version if it exists, otherwise resize the image
@@ -200,14 +200,15 @@ class ImageServer {
 
 		$ResizedImage = new ImageAsset();
 		$ResizedImage->copydata($this->Image, false, array());
-		$ResizedImage->name = 'cache_' . implode('_', $this->parameters);
+
+		$ResizedImage->name     = 'cache_' . implode('_', $this->parameters);
 		$ResizedImage->filename = $ResizedImage->name . '_' . $ResizedImage->filename;
-		$ResizedImage->parent = $this->Image->id;
-		$ResizedImage->context = 'image';
-		$ResizedImage->mime = 'image/jpeg';
-		$ResizedImage->id = false;
-		$ResizedImage->width = $Resized->width();
-		$ResizedImage->height = $Resized->height();
+		$ResizedImage->parent   = $this->Image->id;
+		$ResizedImage->context  = 'image';
+		$ResizedImage->mime     = 'image/jpeg';
+		$ResizedImage->id       = false;
+		$ResizedImage->width    = $Resized->width();
+		$ResizedImage->height   = $Resized->height();
 		$ResizedImage->settings = $this->parameters;
 
 		do_action('shopp_imageserver_processed', $ResizedImage, $this->parameters);
@@ -261,7 +262,7 @@ class ImageServer {
 		$notfound = ImageServer::path() . '/core/ui/icons/notfound.png';
 		if ( defined('SHOPP_NOTFOUND_IMAGE') && file_exists(SHOPP_NOTFOUND_IMAGE) )
 			$notfound = SHOPP_NOTFOUND_IMAGE;
-		if ( ! file_exists($notfound)) die('<h1>404 Image Not Found</h1>');
+		if ( ! file_exists($notfound) ) die('<h1>404 Image Not Found</h1>');
 		else {
 			header( 'HTTP/1.1 404 Image Not Found' );
 			$this->headers(basename($notfound), @filesize($notfound));
@@ -282,11 +283,13 @@ class ImageServer {
 	 * @return void
 	 **/
 	public function clearpng () {
-		$max = 1920;
-		$this->width = min($max,$this->width);
+		$max          = 1920;
+		$this->width  = min($max,$this->width);
 		$this->height = min($max,$this->height);
-		$ImageData = new ImageProcessor(false,$this->width,$this->height);
-		$ImageData->canvas($this->width,$this->height,true);
+
+		$ImageData    = new ImageProcessor(false, $this->width, $this->height);
+		$ImageData->canvas($this->width, $this->height, true);
+
 		$image = $ImageData->imagefile(100);
 		$this->headers('clear.png', @strlen($image));
 		ob_clean(); // try to catch errant data in buffer
