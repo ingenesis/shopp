@@ -48,7 +48,7 @@ class ShoppCheckout extends FormPostFramework {
 	 *
 	 * @return void
 	 **/
-	public function __construct() {
+	public function __construct () {
 
 		Shopping::restore('confirmed', $this->confirmed);
 
@@ -89,7 +89,7 @@ class ShoppCheckout extends FormPostFramework {
 	 *
 	 * @return void
 	 **/
-	public function data() {
+	public function data () {
 
 		if ( $this->form('data') )
 			ShoppOrder()->data = $this->form('data');
@@ -103,7 +103,7 @@ class ShoppCheckout extends FormPostFramework {
 	 *
 	 * @return void
 	 **/
-	public function customer() {
+	public function customer () {
 
 		$Customer = ShoppOrder()->Customer;
 
@@ -124,7 +124,7 @@ class ShoppCheckout extends FormPostFramework {
 	 *
 	 * @return void
 	 **/
-	public function shipaddress() {
+	public function shipaddress () {
 
 		$Cart = ShoppOrder()->Cart;
 		$ShippingAddress = ShoppOrder()->Shipping;
@@ -149,8 +149,8 @@ class ShoppCheckout extends FormPostFramework {
 	 *
 	 * @return void
 	 **/
-	public function shipmethod() {
-		$Shiprates = ShoppOrder()->Shiprates;
+	public function shipmethod () {
+		$Shiprates       = ShoppOrder()->Shiprates;
 		$ShippingAddress = ShoppOrder()->Shipping;
 
 		if ( $Shiprates->disabled() ) return;
@@ -159,7 +159,7 @@ class ShoppCheckout extends FormPostFramework {
 			$ShippingAddress = new ShippingAddress();
 
 		$selection = $this->form('shipmethod');
-		$selected = isset($Shiprates->selected()->slug) ? $Shiprates->selected()->slug : '';
+		$selected  = isset($Shiprates->selected()->slug) ? $Shiprates->selected()->slug : '';
 		if ( $selection == $selected ) return;
 
 		// Verify shipping method exists first
@@ -179,8 +179,8 @@ class ShoppCheckout extends FormPostFramework {
 	 *
 	 * @return void
 	 **/
-	public function billaddress() {
-		$Cart = ShoppOrder()->Cart;
+	public function billaddress () {
+		$Cart           = ShoppOrder()->Cart;
 		$BillingAddress = ShoppOrder()->Billing;
 
 		$this->Register->billaddress();
@@ -202,12 +202,12 @@ class ShoppCheckout extends FormPostFramework {
 	 *
 	 * @return void
 	 **/
-	public function payment() {
+	public function payment () {
 		if ( ! $this->paycard() ) return;
 
 		add_filter('shopp_validate_checkout', array('ShoppFormValidation', 'paycard'));
 
-		$Billing = ShoppOrder()->Billing;
+		$Billing  = ShoppOrder()->Billing;
 		$Payments = ShoppOrder()->Payments;
 		$form = $this->form('billing');
 
@@ -249,7 +249,7 @@ class ShoppCheckout extends FormPostFramework {
 	 *
 	 * @return boolean True if payment card information was submitted, false otherwise.
 	 **/
-	public function paycard() {
+	public function paycard () {
 		$fields = array('card', 'cardexpires-mm', 'cardexpires-yy', 'cvv');
 		$billing = $this->form('billing');
 		foreach ( $fields as $field )
@@ -274,11 +274,11 @@ class ShoppCheckout extends FormPostFramework {
 		if ( 'process' != $action ) return;
 
 		$Payments = ShoppOrder()->Payments;
-		$Cart = ShoppOrder()->Cart;
+		$Cart     = ShoppOrder()->Cart;
 
 		$forcedconfirm = 'always' == shopp_setting('order_confirmation');
-		$wasfree = $Cart->orderisfree(); // Get current free status
-		$estimated = $Cart->total();     // Get current total
+		$wasfree       = $Cart->orderisfree(); // Get current free status
+		$estimated     = $Cart->total();     // Get current total
 
 		$Cart->totals(); // Retotal after checkout to capture order total changes
 
@@ -310,7 +310,7 @@ class ShoppCheckout extends FormPostFramework {
 	 *
 	 * @since 1.3
 	 **/
-	public function registration() {
+	public function registration () {
 
 		// Validation already conducted during the checkout process
         add_filter('shopp_validate_registration', '__return_true');
@@ -329,7 +329,7 @@ class ShoppCheckout extends FormPostFramework {
 	 *
 	 * @return void
 	 **/
-	public function confirmed() {
+	public function confirmed () {
 
 		if ( 'confirmed' == $this->form('checkout') ) {
 			$this->confirmed = true;
@@ -346,7 +346,7 @@ class ShoppCheckout extends FormPostFramework {
 	 * @param string $string The string to filter
 	 * @return string The string of digits
 	 **/
-	protected static function digitsonly( $string ) {
+	protected static function digitsonly ( $string ) {
 		$filtered = filter_var($string, FILTER_SANITIZE_NUMBER_INT);
 		return str_replace(array('+', '-'), '', $filtered);
 	}
