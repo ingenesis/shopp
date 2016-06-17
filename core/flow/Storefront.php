@@ -24,20 +24,20 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 class ShoppStorefront extends ShoppFlowController {
 
-	public $behaviors = array();	// Runtime JavaScript behaviors
+	public $behaviors = array();		// Runtime JavaScript behaviors
 	public $searching = false;		// Flags if a search request has been made
 	public $Requested = false;		// Property for tracking the originally requested content
 
-	public $shortcoded = array();	// WordPress post IDs that have already been shortcoded
-	public $account = false;		// Account dashboard requests
-	public $dashboard = array();	// Registry of account dashboard pages
-	public $menus = array();		// Account dashboard menu registry
+	public $shortcoded = array();		// WordPress post IDs that have already been shortcoded
+	public $account    = false;		// Account dashboard requests
+	public $dashboard  = array();		// Registry of account dashboard pages
+	public $menus      = array();		// Account dashboard menu registry
 
 	// Session properties
-	public $search = false;			// The search query string
+	public $search   = false;		// The search query string
 	public $browsing = array();		// Browsing session settings (sortorder, current page slug)
 	public $referrer = false;		// The referring page
-	public $viewed = array();		// List of recent products viewed by customer
+	public $viewed   = array();		// List of recent products viewed by customer
 
 	static $template = '';			// Content template context
 
@@ -53,11 +53,11 @@ class ShoppStorefront extends ShoppFlowController {
 		Shopping::restore( 'viewed',	$this->viewed );
 
 		// Setup WP_Query overrides
-		add_action( 'parse_query',		array($this, 'query') );
+		add_action( 'parse_query',	array($this, 'query') );
 		add_filter( 'posts_request',	array($this, 'noquery'), 10, 2 );
 		add_filter( 'posts_request',	array($this, 'onfront'), 10, 2 );
 		add_filter( 'posts_results',	array($this, 'found'), 10, 2);
-		add_filter( 'the_posts', 		array($this, 'posts'), 10, 2);
+		add_filter( 'the_posts', 	array($this, 'posts'), 10, 2);
 
 		add_action( 'wp', array($this, 'loaded') );
 		add_action( 'wp', array($this, 'security') );
@@ -68,26 +68,26 @@ class ShoppStorefront extends ShoppFlowController {
 		add_action( 'wp', array($this, 'shortcodes') );
 		add_action( 'wp', array($this, 'behaviors') );
 
-		add_filter( 'wp_get_nav_menu_items', array($this,'menulinks'), 10, 2 );
-		add_filter( 'wp_list_pages', array($this,'securelinks') );
+		add_filter( 'wp_get_nav_menu_items', array($this, 'menulinks'), 10, 2 );
+		add_filter( 'wp_list_pages', array($this, 'securelinks') );
 
 		// Wrap Shopp content in #shopp div  to enable CSS and Javascript
-		add_filter( 'shopp_order_lookup',		array('Storefront', 'wrapper') );
+		add_filter( 'shopp_order_lookup',	array('Storefront', 'wrapper') );
 		add_filter( 'shopp_order_confirmation',	array('Storefront', 'wrapper') );
-		add_filter( 'shopp_errors_page',		array('Storefront', 'wrapper') );
+		add_filter( 'shopp_errors_page',	array('Storefront', 'wrapper') );
 		add_filter( 'shopp_catalog_template',	array('Storefront', 'wrapper') );
-		add_filter( 'shopp_cart_template',		array('Storefront', 'wrapper') );
-		add_filter( 'shopp_checkout_page',		array('Storefront', 'wrapper') );
+		add_filter( 'shopp_cart_template',	array('Storefront', 'wrapper') );
+		add_filter( 'shopp_checkout_page',	array('Storefront', 'wrapper') );
 		add_filter( 'shopp_account_template',	array('Storefront', 'wrapper') );
 		add_filter( 'shopp_category_template',	array('Storefront', 'wrapper') );
-		add_filter( 'shopp_order_receipt',		array('Storefront', 'wrapper') );
+		add_filter( 'shopp_order_receipt',	array('Storefront', 'wrapper') );
 		add_filter( 'shopp_account_manager',	array('Storefront', 'wrapper') );
 		add_filter( 'shopp_account_vieworder',	array('Storefront', 'wrapper') );
-		add_filter( 'the_content',				array($this, 'autowrap'), 99 );
+		add_filter( 'the_content',		array($this, 'autowrap'), 99 );
 
-		add_action( 'wp_enqueue_scripts',		'shopp_dependencies' );
+		add_action( 'wp_enqueue_scripts',	'shopp_dependencies' );
 		add_action( 'shopp_storefront_init',	array($this, 'account') );
-		add_filter( 'wp_nav_menu_objects',		array($this, 'menus') );
+		add_filter( 'wp_nav_menu_objects',	array($this, 'menus') );
 
 		// Maintenance mode overrides
 		add_filter( 'search_template',		array($this, 'maintenance') );
@@ -96,7 +96,7 @@ class ShoppStorefront extends ShoppFlowController {
 		add_filter( 'single_template',		array($this, 'maintenance') );
 
 		// Template rendering
-		add_action( 'do_feed_rss2',			array($this, 'feed'), 1 );
+		add_action( 'do_feed_rss2',		array($this, 'feed'), 1 );
 		add_filter( 'search_template',		array($this, 'pages') );
 		add_filter( 'page_template',		array($this, 'pages') );
 		add_filter( 'archive_template',		array($this, 'pages') );
@@ -140,7 +140,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 **/
 	public function found ( $found_posts, WP_Query $wp_query ) {
 		if ( $this->request($wp_query) ) {
-			$Page = new stdClass();
+			$Page     = new stdClass();
 			$Page->ID = 0;
 			return array( $Page ); // Short page stub to prevent PHP Notices in wp_query
 		}
@@ -201,7 +201,7 @@ class ShoppStorefront extends ShoppFlowController {
 		$page	 	= $wp_query->get( ShoppPages::QUERYVAR );
 		$posttype 	= $wp_query->get( 'post_type' );
 		$product 	= $wp_query->get( ShoppProduct::$posttype );
-		$collection = $wp_query->get( 'shopp_collection' );
+		$collection     = $wp_query->get( 'shopp_collection' );
 		$searching 	= $wp_query->get( 's_cs' );
 		$search 	= $wp_query->get( 's' );
 
@@ -239,7 +239,7 @@ class ShoppStorefront extends ShoppFlowController {
 		$options = array();
 		if ( $searching ) { // Catalog search
 			$collection = 'search-results';
-			$options = array('search' => $search);
+			$options    = array('search' => $search);
 		}
 
 		// Handle Shopp Smart Collections
@@ -258,12 +258,12 @@ class ShoppStorefront extends ShoppFlowController {
 			if ( ! is_feed() ) ShoppCollection()->load( array( 'load' => array('coverimages') ) );
 
 			// Provide a stub to the queried object for smart collections since WP has no parallel
-			$post_archive = new stdClass();
-			$post_archive->labels = new stdClass();
-			$post_archive->labels->name = ShoppCollection()->name;
-			$post_archive->post_title = ShoppCollection()->name; // Added so single_post_title will return the title properly
-			$wp_query->queried_object = $post_archive;
-			$wp_query->queried_object_id = 0;
+			$post_archive 			= new stdClass();
+			$post_archive->labels 		= new stdClass();
+			$post_archive->labels->name 	= ShoppCollection()->name;
+			$post_archive->post_title 	= ShoppCollection()->name; // Added so single_post_title will return the title properly
+			$wp_query->queried_object 	= $post_archive;
+			$wp_query->queried_object_id 	= 0;
 		}
 
 		$Collection = ShoppCollection();
@@ -277,11 +277,11 @@ class ShoppStorefront extends ShoppFlowController {
 		if ( ! empty($page) ) {
 			// Overrides to enforce page behavior
 			$wp_query->set( ShoppPages::QUERYVAR, $page );
-			$wp_query->is_page = true;
-			$wp_query->is_singular = true;
-			$wp_query->post_count = true;
-			$wp_query->shopp_page = true;
-			$wp_query->is_archive = false;
+			$wp_query->is_page 	= true;
+			$wp_query->is_singular 	= true;
+			$wp_query->post_count 	= true;
+			$wp_query->shopp_page 	= true;
+			$wp_query->is_archive 	= false;
 		}
 
 	}
@@ -340,7 +340,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 **/
 	public function trackurl ( WP $wp ) {
 
-		if ( ! is_catalog_page() ) return;
+		if ( ! is_shopp_catalog_page() || is_shopp_cart_page() ) return;
 
 		 // Track referrer for the cart referrer URL
 		$referrer = get_bloginfo('url') . '/' . $wp->request;
@@ -391,11 +391,11 @@ class ShoppStorefront extends ShoppFlowController {
 			if ( ShoppCatalogPage::frontid() == $wp_query->get('page_id') ) {
 				// Overrides to enforce page behavior
 				$wp_query->set( ShoppPages::QUERYVAR, ShoppPages()->baseslug() );
-				$wp_query->is_page = true;
+				$wp_query->is_page     = true;
 				$wp_query->is_singular = true;
-				$wp_query->post_count = true;
-				$wp_query->shopp_page = true;
-				$wp_query->is_archive = false;
+				$wp_query->post_count  = true;
+				$wp_query->shopp_page  = true;
+				$wp_query->is_archive  = false;
 				$request = str_replace('.ID = shopp', '.ID = NULL', $request);
 			}
 
@@ -453,7 +453,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @param string $template The template
 	 * @return string The output of the templates
 	 **/
-	public function single ($template) {
+	public function single ( $template ) {
 		if ( ! is_shopp_product() ) return $template;
 
 		$Page = new ShoppProductPage();
@@ -470,7 +470,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @return void
 	 **/
 	public function feed () {
-		if ( ! is_shopp_collection()) return;
+		if ( ! is_shopp_collection() ) return;
 		$Collection = ShoppCollection();
 
 	    $base = shopp_setting('base_operations');
@@ -485,15 +485,16 @@ class ShoppStorefront extends ShoppFlowController {
 
 		do_action_ref_array( 'shopp_collection_feed', array($Collection) );
 
-		$rss = array( 'title' => trim( get_bloginfo('name') . ' ' . $Collection->name ),
-			 			'link' => shopp($Collection, 'get-feed-url'),
-					 	'description' => $Collection->description,
-						'sitename' => get_bloginfo('name') . ' (' . get_bloginfo('url') . ')',
-						'xmlns' => array( 'shopp'=>'http://shopplugin.net/xmlns',
-							'g' => 'http://base.google.com/ns/1.0',
-							'atom' => 'http://www.w3.org/2005/Atom',
-							'content' => 'http://purl.org/rss/1.0/modules/content/')
-						);
+		$rss = array( 
+			'title'       => trim( get_bloginfo('name') . ' ' . $Collection->name ),
+		 	'link'        => shopp($Collection, 'get-feed-url'),
+		 	'description' => $Collection->description,
+			'sitename'    => get_bloginfo('name') . ' (' . get_bloginfo('url') . ')',
+			'xmlns'       => array( 'shopp'=>'http://shopplugin.net/xmlns',
+			'g'           => 'http://base.google.com/ns/1.0',
+			'atom'        => 'http://www.w3.org/2005/Atom',
+			'content'     => 'http://purl.org/rss/1.0/modules/content/')
+			);
 		$rss = apply_filters('shopp_rss_meta', $rss);
 
 		$tax_inclusive = shopp_setting_enabled('tax_inclusive');
@@ -516,7 +517,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 **/
 	public function feedlinks () {
 		if ( empty( ShoppCollection()->name ) ) return;
-		$title = apply_filters('shopp_collection_feed_title', sprintf('%s %s %s', get_bloginfo('name'), ShoppCollection()->name, __('Feed','Shopp')) );
+		$title = apply_filters('shopp_collection_feed_title', sprintf('%s %s %s', get_bloginfo('name'), ShoppCollection()->name, Shopp::__('Feed')) );
 		echo '<link rel="alternate" type="' . feed_content_type('rss') . '" title="' . esc_attr($title) . '" href="' . esc_attr(shopp('collection.get-feed-url')) . '" />' . "\n";
 	}
 
@@ -609,7 +610,7 @@ class ShoppStorefront extends ShoppFlowController {
 			shopp_enqueue_script('shopp');
 			shopp_enqueue_script('catalog');
 			shopp_enqueue_script('cart');
-			if ( is_catalog_page() )
+			if ( is_shopp_catalog_page() )
 				shopp_custom_script('catalog', "var pricetags = {};\n" );
 		}
 
@@ -625,7 +626,7 @@ class ShoppStorefront extends ShoppFlowController {
 		if ( is_account_page() ) {
 			shopp_enqueue_script('address');
 			$regions = Lookup::country_zones();
-			$js = 'var regions=' . json_encode($regions);
+			$js      = 'var regions=' . json_encode($regions);
 			add_storefrontjs($js, true);
 		}
 
@@ -647,7 +648,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @return void
 	 **/
 	public function metadata () {
-		$keywords = false;
+		$keywords    = false;
 		$description = false;
 		if ( ! empty(ShoppProduct()->id) ) {
 			if ( empty(ShoppProduct()->tags) ) ShoppProduct()->load_data( array('tags') );
@@ -657,7 +658,7 @@ class ShoppStorefront extends ShoppFlowController {
 		} elseif ( isset(ShoppCollection()->description) ) {
 			$description = ShoppCollection()->description;
 		}
-		$keywords = esc_attr( apply_filters('shopp_meta_keywords', $keywords) );
+		$keywords    = esc_attr( apply_filters('shopp_meta_keywords', $keywords) );
 		$description = esc_attr( apply_filters('shopp_meta_description', $description) );
 		?>
 		<?php if ( $keywords ): ?><meta name="keywords" content="<?php echo $keywords; ?>" />
@@ -675,17 +676,17 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @param string $url The current url
 	 * @return string The canonical url
 	 **/
-	public function canonurls ($url) {
+	public function canonurls ( $url ) {
 		// Product catalog archive (landing) page URL
 		if ( is_post_type_archive() && is_shopp_page('catalog') )
-			return shopp('catalog.get-url');
+			return shopp('storefront.get-url');
 
 		// Specific product/category URLs
 		if ( ! empty($Shopp->Product->slug) ) return shopp('product.get-url');
 		if ( ! empty($Shopp->Category->slug) ) {
 			$paged = (int)get_query_var('paged');
-			$url = shopp('category.get-url');
-			if ( $paged > 1 ) $url = shopp('category.get-url',"page=$paged");
+			$url   = shopp('collection.get-url');
+			if ( $paged > 1 ) $url = shopp('collection.get-url', "page=$paged");
 		}
 		return $url;
 	}
@@ -729,7 +730,7 @@ class ShoppStorefront extends ShoppFlowController {
 		if ( ! empty($globals) ) $script .= "\t" . join("\n\t", $globals) . "\n";
 		if ( ! empty($this->behaviors) ) {
 			$script .= 'jQuery(window).ready(function($){' . "\n";
-			$script .= "\t".join("\t\n",$this->behaviors) . "\n";
+			$script .= "\t" . join("\t\n", $this->behaviors) . "\n";
 			$script .= '});' . "\n";
 		}
 		shopp_custom_script('shopp', $script);
@@ -744,11 +745,11 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @param array $menuitems The provided WordPress menu items
 	 * @return array Updated menu items with proper relationship classes
 	 **/
-	public function menus ($menuitems) {
+	public function menus ( $menuitems ) {
 
 		$is_shopp_page = is_shopp_page();
-		$keymap = array();
-		$parents = array();
+		$keymap        = array();
+		$parents       = array();
 		foreach ( $menuitems as $key => $item ) {
 			$page = false;
 			// Remove the faulty wp_page_menu (deprecated) class for Shopp pages
@@ -766,7 +767,7 @@ class ShoppStorefront extends ShoppFlowController {
 				if ( 'catalog' == $item->object && ( $is_shopp_page || is_shopp_product() ) )
 					$item->classes[] = 'current-page-parent';
 
-				$keymap[$item->db_id] = $key;
+				$keymap[ $item->db_id ] = $key;
 			}
 
 			if ( 'shopp_collection' == $item->type ) {
@@ -777,7 +778,7 @@ class ShoppStorefront extends ShoppFlowController {
 			if ( $page == $item->object ) {
 				$item->classes[] = 'current-page-item';
 				$item->classes[] = 'current-menu-item';
-				$parents[] = $item->menu_item_parent;
+				$parents[]       = $item->menu_item_parent;
 			}
 
 		}
@@ -811,14 +812,14 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @return array Shopp-enabled menu items
 	 **/
 	public function menulinks ( array $items ) {
-		foreach ( $items as &$item) {
+		foreach ( $items as &$item ) {
 			switch ( strtolower($item->type) ) {
-				case ShoppPages::QUERYVAR: $item->url = Shopp::url(false,$item->object); break;
+				case ShoppPages::QUERYVAR: $item->url = Shopp::url(false, $item->object); break;
 				case SmartCollection::$taxon:
-					$namespace = get_class_property( 'SmartCollection' ,'namespace');
-					$taxonomy = get_class_property( 'SmartCollection' ,'taxon');
+					$namespace  = get_class_property( 'SmartCollection' ,'namespace');
+					$taxonomy   = get_class_property( 'SmartCollection' ,'taxon');
 					$prettyurls = ( '' != get_option('permalink_structure') );
-					$item->url = Shopp::url( $prettyurls ? "$namespace/$item->object" : array($taxonomy=>$item->object), false );
+					$item->url  = Shopp::url( $prettyurls ? "$namespace/$item->object" : array($taxonomy => $item->object), false );
 					break;
 			}
 		}
@@ -838,16 +839,16 @@ class ShoppStorefront extends ShoppFlowController {
 		if ( ! $Shopp->Gateways->secure ) return $items;
 
 		$hrefs = array(
-			'checkout' => Shopp::url(false,'checkout'),
-			'account' => Shopp::url(false,'account')
+			'checkout' => Shopp::url(false, 'checkout'),
+			'account'  => Shopp::url(false, 'account')
 		);
 
 		if ( empty($Shopp->Gateways->active) )
-			return str_replace($hrefs['checkout'],Shopp::url(false,'cart'),$items);
+			return str_replace($hrefs['checkout'], Shopp::url(false, 'cart'), $items);
 
-		foreach ($hrefs as $href) {
-			$secure_href = str_replace('http://','https://',$href);
-			$items = str_replace($href,$secure_href,$items);
+		foreach ( $hrefs as $href ) {
+			$secure_href = str_replace('http://', 'https://', $href);
+			$items       = str_replace($href, $secure_href, $items);
 		}
 		return $items;
 	}
@@ -881,7 +882,7 @@ class ShoppStorefront extends ShoppFlowController {
 
 		$redirect = false;
 		if ( isset($_REQUEST['redirect']) ) $redirect = $_REQUEST['redirect'];
-		switch ($redirect) {
+		switch ( $redirect ) {
 			case 'checkout': Shopp::redirect( Shopp::url(false, $redirect, ShoppOrder()->security()) ); break;
 			default:
 				if ( ! empty($_REQUEST['redirect']) )
@@ -903,16 +904,16 @@ class ShoppStorefront extends ShoppFlowController {
 	public function dashboard () {
 		$Order = ShoppOrder();
 
-		$this->add_dashboard( 'logout', __('Logout', 'Shopp') );
-		$this->add_dashboard( 'orders', __('Your Orders', 'Shopp'), true, array(ShoppCustomer(), 'load_orders') );
-		$this->add_dashboard( 'downloads', __('Downloads', 'Shopp'), true, array(ShoppCustomer(), 'load_downloads') );
-		$this->add_dashboard( 'profile', __('My Account', 'Shopp'), true );
+		$this->add_dashboard( 'logout', Shopp::__('Logout') );
+		$this->add_dashboard( 'orders', Shopp::__('Your Orders'), true, array(ShoppCustomer(), 'load_orders') );
+		$this->add_dashboard( 'downloads', Shopp::__('Downloads'), true, array(ShoppCustomer(), 'load_downloads') );
+		$this->add_dashboard( 'profile', Shopp::__('My Account'), true );
 
 		// Pages not in menu navigation
 		$this->add_dashboard( 'login', __('Login to your Account'), false );
 		$this->add_dashboard( 'recover', __('Password Recovery'), false );
 		$this->add_dashboard( 'rp', __('Password Recovery'), false );
-		$this->add_dashboard( 'menu', __('Dashboard', 'Shopp'), false );
+		$this->add_dashboard( 'menu', __('Dashboard'), false );
 
 		do_action( 'shopp_account_menu' );
 
@@ -927,7 +928,7 @@ class ShoppStorefront extends ShoppFlowController {
 		$query = explode('&', $query);
 
 		$request = 'menu';
-		$id = false;
+		$id      = false;
 
 		foreach ( $query as $queryvar ) {
 			$value = false;
@@ -936,7 +937,7 @@ class ShoppStorefront extends ShoppFlowController {
 
 			if ( in_array($key, array_keys($this->dashboard)) ) {
 				$request = $key;
-				$id = $value;
+				$id      = $value;
 			}
 		}
 
@@ -967,9 +968,9 @@ class ShoppStorefront extends ShoppFlowController {
 	public function dashboard_handler () {
 		$request = $this->account['request'];
 
-		if ( isset($this->dashboard[$request])
-			&& is_callable($this->dashboard[$request]->handler))
-				call_user_func($this->dashboard[$request]->handler);
+		if ( isset($this->dashboard[ $request ])
+			&& is_callable($this->dashboard[ $request ]->handler) )
+				call_user_func($this->dashboard[ $request ]->handler);
 
 	}
 
@@ -987,8 +988,8 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @return void
 	 **/
 	public function add_dashboard ( $request, $label, $visible = true, $callback = false, $position = 0 ) {
-		$this->dashboard[$request] = new ShoppAccountDashboardPage($request, $label, $callback);
-		if ($visible) array_splice($this->menus, $position, 0, array($this->dashboard[$request]) );
+		$this->dashboard[ $request ] = new ShoppAccountDashboardPage($request, $label, $callback);
+		if ( $visible ) array_splice($this->menus, $position, 0, array($this->dashboard[ $request ]) );
 	}
 
 	/**
@@ -1070,7 +1071,7 @@ class ShoppStorefront extends ShoppFlowController {
 		$Product = ShoppProduct();
 		if ( ! empty($Product) ) {
 			if ( $productid = shopp('product.get-id') ) $classes[] = 'product-' . $productid;
-			if ( $product = shopp('product.get-slug') ) $classes[] = $product;
+			if ( $product   = shopp('product.get-slug') ) $classes[] = $product;
 		}
 
 		$classes = apply_filters( 'shopp_content_container_classes', $classes);
