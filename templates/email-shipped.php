@@ -5,8 +5,8 @@ Subject: <?php shopp( 'purchase.email-subject' ); ?>
 
 <html>
 	<div id="header">
-		<h1><?php shopp('storefront.business-name'); ?></h1>
-		<h2><?php _e( 'Order Shipment Notification', 'Shopp' ); ?> <?php shopp( 'purchase','id' ); ?></h2>
+		<h1><?php shopp( 'storefront.business-name' ); ?></h1>
+		<h2><?php Shopp::_e( 'Order Shipment Notification' ); ?> <?php shopp( 'purchase.id' ); ?></h2>
 	</div>
 	<div id="body">
 		<div id="receipt" class="shopp">
@@ -14,7 +14,7 @@ Subject: <?php shopp( 'purchase.email-subject' ); ?>
 				<tr>
 					<td>
 						<fieldset class="shipping">
-							<legend><?php _e( 'Ship to', 'Shopp' ); ?></legend>
+							<legend><?php Shopp::_e( 'Ship to' ); ?></legend>
 							<address><?php shopp( 'purchase.shipname' ); ?><br /><br />
 								<?php shopp( 'purchase.shipaddress' ); ?><br />
 								<?php shopp( 'purchase.shipxaddress' ); ?>
@@ -24,18 +24,18 @@ Subject: <?php shopp( 'purchase.email-subject' ); ?>
 					</td>
 					<td>
 						<fieldset class="shipping">
-							<legend><?php _e( 'Shipment', 'Shopp' ); ?></legend>
+							<legend><?php Shopp::_e( 'Shipment' ); ?></legend>
 							<table class="transaction">
 								<tr>
-									<th><?php _e( 'Tracking Number:', 'Shopp' ); ?></th>
+									<th><?php Shopp::_e( 'Tracking Number:' ); ?></th>
 									<td><?php shopp( 'purchase.email-event', 'name=tracking&link=on' ); ?></td>
 								</tr>
 								<tr>
-									<th><?php _e( 'Carrier:', 'Shopp' ); ?></th>
+									<th><?php Shopp::_e( 'Carrier:' ); ?></th>
 									<td><?php shopp( 'purchase.email-event', 'name=carrier' ); ?></td>
 								</tr>
 								<tr>
-									<th><?php _e( 'Order Date:', 'Shopp' ); ?></th>
+									<th><?php Shopp::_e( 'Order Date:' ); ?></th>
 									<td><?php shopp( 'purchase.date' ); ?></td>
 								</tr>
 							</table>
@@ -47,8 +47,8 @@ Subject: <?php shopp( 'purchase.email-subject' ); ?>
 				<table class="order widefat">
 					<thead>
 						<tr>
-							<th scope="col" class="item"><?php _e( 'Items', 'Shopp' ); ?></th>
-							<th scope="col"><?php _e( 'Quantity', 'Shopp' ); ?></th>
+							<th scope="col" class="item"><?php Shopp::_e( 'Items' ); ?></th>
+							<th scope="col"><?php Shopp::_e( 'Quantity' ); ?></th>
 						</tr>
 					</thead>
 
