@@ -607,18 +607,17 @@ class ShoppCustomer extends ShoppDatabaseObject {
 	public static function exportcolumns () {
 		$prefix = "c.";
 		return array(
-			$prefix.'firstname' => __('Customer\'s First Name','Shopp'),
-			$prefix.'lastname' => __('Customer\'s Last Name','Shopp'),
-			$prefix.'email' => __('Customer\'s Email Address','Shopp'),
-			$prefix.'phone' => __('Customer\'s Phone Number','Shopp'),
-			$prefix.'company' => __('Customer\'s Company','Shopp'),
-			$prefix.'type' => __('Customer Type','Shopp'),
-			$prefix.'marketing' => __('Customer\'s Marketing Preference','Shopp'),
-			// $prefix.'info' => __('Customer\'s Custom Information','Shopp'), @todo Re-enable by switching to customer meta data in 1.2
-			$prefix.'created' => __('Customer Created Date','Shopp'),
-			$prefix.'modified' => __('Customer Last Updated Date','Shopp'),
-			);
-	}
+			$prefix.'firstname'	    => Shopp::__('Customer\'s First Name'),
+			$prefix.'lastname'	    => Shopp::__('Customer\'s Last Name'),
+			$prefix.'email'	        => Shopp::__('Customer\'s Email Address'),
+			$prefix.'phone'	        => Shopp::__('Customer\'s Phone Number'),
+			$prefix.'company'	    => Shopp::__('Customer\'s Company'),
+			$prefix.'type'	        => Shopp::__('Customer Type'),
+			$prefix.'marketing'	    => Shopp::__('Customer\'s Marketing Preference'),
+			// $prefix.'info' => Shopp::__('Customer\'s Custom Information'), @todo Re-enable by switching to customer meta data in 1.2
+			$prefix . 'created'	    => Shopp::__('Customer Created Date'),
+			$prefix . 'modified'	=> Shopp::__('Customer Last Updated Date'),
+			);	}
 
 } // END class ShoppCustomer
 
@@ -646,27 +645,27 @@ class CustomersExport {
 		$this->defined = array_merge($this->customer_cols, $this->billing_cols, $this->shipping_cols);
 
 		$this->sitename = get_bloginfo('name');
-		$this->headings = (shopp_setting('customerexport_headers') == "on");
+		$this->headings = (shopp_setting('customerexport_headers') == 'on');
 		$this->selected = shopp_setting('customerexport_columns');
-		shopp_set_setting('customerexport_lastexport',current_time('timestamp'));
+		shopp_set_setting('customerexport_lastexport', current_time('timestamp'));
 	}
 
 	public function query ($request=array()) {
-		if (empty($request)) $request = $_GET;
+		if ( empty($request) ) $request = $_GET;
 
-		if (!empty($request['start'])) {
-			list($month,$day,$year) = explode("/",$request['start']);
-			$starts = mktime(0,0,0,$month,$day,$year);
+		if ( ! empty($request['start']) ) {
+			list($month, $day, $year) = explode("/", $request['start']);
+			$starts = mktime(0, 0, 0, $month, $day, $year);
 		}
 
-		if (!empty($request['end'])) {
-			list($month,$day,$year) = explode("/",$request['end']);
-			$ends = mktime(0,0,0,$month,$day,$year);
+		if ( ! empty($request['end']) ) {
+			list($month, $day, $year) = explode("/", $request['end']);
+			$ends = mktime(0, 0, 0, $month, $day, $year);
 		}
 
 		$where = "WHERE c.id IS NOT NULL ";
-		if (isset($request['s']) && !empty($request['s'])) $where .= " AND (id='{$request['s']}' OR firstname LIKE '%{$request['s']}%' OR lastname LIKE '%{$request['s']}%' OR CONCAT(firstname,' ',lastname) LIKE '%{$request['s']}%' OR transactionid LIKE '%{$request['s']}%')";
-		if (!empty($request['start']) && !empty($request['end'])) $where .= " AND  (UNIX_TIMESTAMP(c.created) >= $starts AND UNIX_TIMESTAMP(c.created) <= $ends)";
+		if ( isset($request['s']) && !empty($request['s']) ) $where .= " AND (id='{$request['s']}' OR firstname LIKE '%{$request['s']}%' OR lastname LIKE '%{$request['s']}%' OR CONCAT(firstname,' ',lastname) LIKE '%{$request['s']}%' OR transactionid LIKE '%{$request['s']}%')";
+		if ( ! empty($request['start']) && !empty($request['end']) ) $where .= " AND  (UNIX_TIMESTAMP(c.created) >= $starts AND UNIX_TIMESTAMP(c.created) <= $ends)";
 
 		$customer_table = ShoppDatabaseObject::tablename(Customer::$table);
 		$billing_table = ShoppDatabaseObject::tablename(BillingAddress::$table);
@@ -674,15 +673,15 @@ class CustomersExport {
 		$offset = $this->set*$this->limit;
 
 		$c = 0; $columns = array();
-		foreach ($this->selected as $column) $columns[] = "$column AS col".$c++;
-		$query = "SELECT ".join(",",$columns)." FROM $customer_table AS c LEFT JOIN $billing_table AS b ON c.id=b.customer LEFT JOIN $shipping_table AS s ON c.id=s.customer $where GROUP BY c.id ORDER BY c.created ASC LIMIT $offset,$this->limit";
-		$this->data = sDB::query($query,'array');
+		foreach ($this->selected as $column) $columns[] = "$column AS col" . $c++;
+		$query = "SELECT " . join(",", $columns)." FROM $customer_table AS c LEFT JOIN $billing_table AS b ON c.id=b.customer LEFT JOIN $shipping_table AS s ON c.id=s.customer $where GROUP BY c.id ORDER BY c.created ASC LIMIT $offset,$this->limit";
+		$this->data = sDB::query($query, 'array');
 	}
 
 	// Implement for exporting all the data
 	public function output () {
-		if (!$this->data) $this->query();
-		if (!$this->data) return false;
+		if ( ! $this->data) $this->query();
+		if ( ! $this->data) return false;
 		header("Content-type: $this->content_type; charset=UTF-8");
 		header("Content-Disposition: attachment; filename=\"$this->sitename Customer Export.$this->extension\"");
 		header("Content-Description: Delivered by " . ShoppVersion::agent());
@@ -698,15 +697,15 @@ class CustomersExport {
 	public function begin() {}
 
 	public function heading () {
-		foreach ($this->selected as $name)
+		foreach ( $this->selected as $name )
 			$this->export($this->defined[$name]);
 		$this->record();
 	}
 
 	public function records () {
-		while (!empty($this->data)) {
-			foreach ($this->data as $record) {
-				foreach(get_object_vars($record) as $column)
+		while ( ! empty($this->data) ) {
+			foreach ( $this->data as $record ) {
+				foreach( get_object_vars($record) as $column )
 					$this->export($this->parse($column));
 				$this->record();
 			}
@@ -716,11 +715,11 @@ class CustomersExport {
 	}
 
 	public function parse ($column) {
-		if (preg_match("/^[sibNaO](?:\:.+?\{.*\}$|\:.+;$|;$)/",$column)) {
+		if (preg_match("/^[sibNaO](?:\:.+?\{.*\}$|\:.+;$|;$)/", $column)) {
 			$list = unserialize($column);
 			$column = "";
 			foreach ($list as $name => $value)
-				$column .= (empty($column)?"":";")."$name:$value";
+				$column .= (empty($column)?"":";") . "$name:$value";
 		}
 
 		return $this->escape($column);
@@ -730,7 +729,7 @@ class CustomersExport {
 
 	// Implement for exporting a single value
 	public function export ($value) {
-		echo ($this->recordstart?"":"\t").$this->escape($value);
+		echo ($this->recordstart?"":"\t") . $this->escape($value);
 		$this->recordstart = false;
 	}
 
@@ -771,14 +770,14 @@ class CustomersCSVExport extends CustomersExport {
 	}
 
 	public function export ($value) {
-		echo ($this->recordstart?"":",").$value;
+		echo ($this->recordstart?"":",") . $value;
 		$this->recordstart = false;
 	}
 
 	public function escape ($value) {
-		$value = str_replace('"','""',$value);
-		if ( preg_match('/^\s|[,"\n\r]|\s$/',$value) )
-			$value = '"'.$value.'"';
+		$value = str_replace('"','""', $value);
+		if ( preg_match('/^\s|[,"\n\r]|\s$/', $value) )
+			$value = '"' . $value . '"';
 		return $value;
 	}
 
