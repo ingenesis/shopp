@@ -65,10 +65,10 @@ if ( ! defined('SHORTINIT') ) {
 $ShoppScripts = new ShoppScripts();
 shopp_default_scripts($ShoppScripts);
 
-$compress = ( isset($_GET['c']) && $_GET['c'] );
-$force_gzip = ( $compress && 'gzip' == $_GET['c'] );
+$compress       = ( isset($_GET['c']) && $_GET['c'] );
+$force_gzip     = ( $compress && 'gzip' == $_GET['c'] );
 $expires_offset = 31536000;
-$out = '';
+$out            = '';
 
 foreach( $load as $handle ) {
 	if ( ! isset( $ShoppScripts->registered[ $handle ] ) )
