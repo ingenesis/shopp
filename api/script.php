@@ -34,7 +34,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  */
 function shopp_register_script( $handle, $src, $deps = array(), $ver = false, $in_footer = false ) {
 	global $ShoppScripts;
-	if ( !is_a($ShoppScripts, 'ShoppScripts') )
+	if ( ! is_a($ShoppScripts, 'ShoppScripts') )
 		$ShoppScripts = new ShoppScripts();
 
 	$ShoppScripts->add( $handle, $src, $deps, $ver );
@@ -58,7 +58,7 @@ function shopp_register_script( $handle, $src, $deps = array(), $ver = false, $i
  **/
 function shopp_localize_script( $handle, $object_name, $l10n ) {
 	global $ShoppScripts;
-	if ( !is_a($ShoppScripts, 'ShoppScripts') )
+	if ( ! is_a($ShoppScripts, 'ShoppScripts') )
 		return false;
 
 	return $ShoppScripts->localize( $handle, $object_name, $l10n );
@@ -78,10 +78,10 @@ function shopp_localize_script( $handle, $object_name, $l10n ) {
  **/
 function shopp_custom_script ( $handle, $code ) {
 	global $ShoppScripts;
-	if ( !is_a($ShoppScripts, 'ShoppScripts') )
+	if ( ! is_a($ShoppScripts, 'ShoppScripts') )
 		return false;
 
-	$code = !empty($ShoppScripts->registered[$handle]->extra['code'])?$ShoppScripts->registered[$handle]->extra['code'].$code:$code;
+	$code = ! empty($ShoppScripts->registered[ $handle ]->extra['code']) ? $ShoppScripts->registered[ $handle ]->extra['code'] . $code : $code;
 	return $ShoppScripts->add_data( $handle, 'code', $code );
 }
 
@@ -98,7 +98,7 @@ function shopp_custom_script ( $handle, $code ) {
  **/
 function shopp_deregister_script( $handle ) {
 	global $ShoppScripts;
-	if ( !is_a($ShoppScripts, 'ShoppScripts') )
+	if ( ! is_a($ShoppScripts, 'ShoppScripts') )
 		$ShoppScripts = new ShoppScripts();
 
 	$ShoppScripts->remove( $handle );
@@ -126,7 +126,7 @@ function shopp_deregister_script( $handle ) {
  */
 function shopp_enqueue_script( $handle, $src = false, $deps = array(), $ver = false, $in_footer = false ) {
 	global $ShoppScripts;
-	if ( !is_a($ShoppScripts, 'ShoppScripts') )
+	if ( ! is_a($ShoppScripts, 'ShoppScripts') )
 		$ShoppScripts = new ShoppScripts();
 
 	if ( $src ) {
@@ -155,7 +155,7 @@ function shopp_enqueue_script( $handle, $src = false, $deps = array(), $ver = fa
  */
 function shopp_script_is( $handle, $list = 'queue' ) {
 	global $ShoppScripts;
-	if ( !is_a($ShoppScripts, 'ShoppScripts') )
+	if ( ! is_a($ShoppScripts, 'ShoppScripts') )
 		$ShoppScripts = new ShoppScripts();
 
 	$query = $ShoppScripts->query( $handle, $list );
