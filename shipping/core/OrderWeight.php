@@ -32,7 +32,7 @@ class OrderWeight extends ShippingFramework implements ShippingModule {
 
 	public function calculate ( &$options, $Order ) {
 
-		foreach ($this->methods as $slug => $method) {
+		foreach ( $this->methods as $slug => $method ) {
 
 			$tiers = isset($method['table']) ? $this->tablerate($method['table']) : false;
 			if ( false === $tiers ) continue; // Skip methods that don't match at all
@@ -54,11 +54,11 @@ class OrderWeight extends ShippingFramework implements ShippingModule {
 			if ( ! $matched ) return $options;
 
 			$rate = array(
-				'slug' => $slug,
-				'name' => $method['label'],
-				'amount' => $amount,
+				'slug'     => $slug,
+				'name'     => $method['label'],
+				'amount'   => $amount,
 				'delivery' => $this->delivery($method),
-				'items' => false
+				'items'    => false
 			);
 
 			$options[ $slug ] = new ShippingOption($rate);
@@ -73,8 +73,8 @@ class OrderWeight extends ShippingFramework implements ShippingModule {
 		$this->setup('table');
 
 		$this->ui->tablerates(0, array(
-			'unit' => array(Shopp::__('Weight'), shopp_setting('weight_unit')),
-			'table' => $this->settings['table'],
+			'unit'       => array(Shopp::__('Weight'), shopp_setting('weight_unit')),
+			'table'      => $this->settings['table'],
 			'rate_class' => 'money'
 		));
 
