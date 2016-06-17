@@ -38,80 +38,80 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	static $register = array(
 
 		// Aliased methods
-		'accountlogin' => array('ShoppCustomerThemeAPI', 'account_login'),
-		'billingaddress' => array('ShoppCustomerThemeAPI', 'billing_address'),
-		'billingcity' => array('ShoppCustomerThemeAPI', 'billing_city'),
-		'billingcountry' => array('ShoppCustomerThemeAPI', 'billing_country'),
-		'billingpostcode' => array('ShoppCustomerThemeAPI', 'billing_postcode'),
-		'billingprovince' => array('ShoppCustomerThemeAPI', 'billing_state'),
-		'billingstate' => array('ShoppCustomerThemeAPI', 'billing_state'),
-		'billingxaddress' => array('ShoppCustomerThemeAPI', 'billing_xaddress'),
-		'company' => array('ShoppCustomerThemeAPI', 'company'),
-		'email' => array('ShoppCustomerThemeAPI', 'email'),
-		'emaillogin' => array('ShoppCustomerThemeAPI', 'account_login'),
-		'firstname' => array('ShoppCustomerThemeAPI', 'first_name'),
-		'lastname' => array('ShoppCustomerThemeAPI', 'last_name'),
-		'loggedin' => array('ShoppCustomerThemeAPI', 'logged_in'),
-		'loginname' => array('ShoppCustomerThemeAPI', 'login_name'),
-		'loginnamelogin' => array('ShoppCustomerThemeAPI', 'account_login'),
-		'marketing' => array('ShoppCustomerThemeAPI', 'marketing'),
-		'organization' => array('ShoppCustomerThemeAPI', 'company'),
-		'password' => array('ShoppCustomerThemeAPI', 'password'),
-		'passwordlogin' => array('ShoppCustomerThemeAPI', 'password_login'),
-		'phone' => array('ShoppCustomerThemeAPI', 'phone'),
+		'accountlogin'        => array('ShoppCustomerThemeAPI', 'account_login'),
+		'billingaddress'      => array('ShoppCustomerThemeAPI', 'billing_address'),
+		'billingcity'         => array('ShoppCustomerThemeAPI', 'billing_city'),
+		'billingcountry'      => array('ShoppCustomerThemeAPI', 'billing_country'),
+		'billingpostcode'     => array('ShoppCustomerThemeAPI', 'billing_postcode'),
+		'billingprovince'     => array('ShoppCustomerThemeAPI', 'billing_state'),
+		'billingstate'        => array('ShoppCustomerThemeAPI', 'billing_state'),
+		'billingxaddress'     => array('ShoppCustomerThemeAPI', 'billing_xaddress'),
+		'company'             => array('ShoppCustomerThemeAPI', 'company'),
+		'email'               => array('ShoppCustomerThemeAPI', 'email'),
+		'emaillogin'          => array('ShoppCustomerThemeAPI', 'account_login'),
+		'firstname'           => array('ShoppCustomerThemeAPI', 'first_name'),
+		'lastname'            => array('ShoppCustomerThemeAPI', 'last_name'),
+		'loggedin'            => array('ShoppCustomerThemeAPI', 'logged_in'),
+		'loginname'           => array('ShoppCustomerThemeAPI', 'login_name'),
+		'loginnamelogin'      => array('ShoppCustomerThemeAPI', 'account_login'),
+		'marketing'           => array('ShoppCustomerThemeAPI', 'marketing'),
+		'organization'        => array('ShoppCustomerThemeAPI', 'company'),
+		'password'            => array('ShoppCustomerThemeAPI', 'password'),
+		'passwordlogin'       => array('ShoppCustomerThemeAPI', 'password_login'),
+		'phone'               => array('ShoppCustomerThemeAPI', 'phone'),
 		'sameshippingaddress' => array('ShoppCustomerThemeAPI', 'same_shipping_address'),
-		'shipping' => array('ShoppCustomerThemeAPI', 'shipping'),
-		'shippingaddress' => array('ShoppCustomerThemeAPI', 'shipping_address'),
-		'shippingcity' => array('ShoppCustomerThemeAPI', 'shipping_city'),
-		'shippingcountry' => array('ShoppCustomerThemeAPI', 'shipping_country'),
-		'shippingpostcode' => array('ShoppCustomerThemeAPI', 'shipping_postcode'),
-		'shippingprovince' => array('ShoppCustomerThemeAPI', 'shipping_state'),
-		'shippingstate' => array('ShoppCustomerThemeAPI', 'shipping_state'),
-		'shippingxaddress' => array('ShoppCustomerThemeAPI', 'shipping_xaddress'),
-		'submitlogin' => array('ShoppCustomerThemeAPI', 'submit_login'),
-		'loginbutton' => array('ShoppCustomerThemeAPI', 'submit_login'),
+		'shipping'            => array('ShoppCustomerThemeAPI', 'shipping'),
+		'shippingaddress'     => array('ShoppCustomerThemeAPI', 'shipping_address'),
+		'shippingcity'        => array('ShoppCustomerThemeAPI', 'shipping_city'),
+		'shippingcountry'     => array('ShoppCustomerThemeAPI', 'shipping_country'),
+		'shippingpostcode'    => array('ShoppCustomerThemeAPI', 'shipping_postcode'),
+		'shippingprovince'    => array('ShoppCustomerThemeAPI', 'shipping_state'),
+		'shippingstate'       => array('ShoppCustomerThemeAPI', 'shipping_state'),
+		'shippingxaddress'    => array('ShoppCustomerThemeAPI', 'shipping_xaddress'),
+		'submitlogin'         => array('ShoppCustomerThemeAPI', 'submit_login'),
+		'loginbutton'         => array('ShoppCustomerThemeAPI', 'submit_login'),
 
 		// Native methods
-		'billingcard' => 'billing_card',
-		'billingcardexpiresmm' => 'billing_card_expires_mm',
-		'billingcardexpiresyy' => 'billing_card_expires_yy',
-		'billingcardholder' => 'billing_card_holder',
-		'billingcardtype' => 'billing_card_type',
-		'billingcvv' => 'billing_cvv',
-		'billinglocale' => 'billing_locale',
-		'billinglocalities' => 'billing_localities',
-		'billingname' => 'billing_name',
-		'billingrequired' => 'card_required',
-		'cardrequired' => 'card_required',
-		'billingxcsc' => 'billing_xcsc',
-		'billingxcscrequired' => 'billing_xcsc_required',
-		'cartsummary' => 'cart_summary',
-		'clickwrap' => 'clickwrap',
-		'completed' => 'completed',
-		'confirmbutton' => 'confirm_button',
-		'confirmpassword' => 'confirm_password',
-		'customerinfo' => 'customer_info',
-		'data' => 'data',
-		'errors' => 'error',
-		'error' => 'error',
-		'function' => 'checkout_function',
-		'gatewayinputs' => 'gateway_inputs',
-		'guest' => 'guest',
-		'hasdata' => 'has_data',
-		'localpayment' => 'local_payment',
-		'notloggedin' => 'not_logged_in',
-		'orderdata' => 'order_data',
-		'payoption' => 'payoption',
-		'paymentoption' => 'payoption',
-		'payoptions' => 'payoptions',
-		'paymentoptions' => 'payoptions',
-		'receipt' => 'receipt',
+		'billingcard'                => 'billing_card',
+		'billingcardexpiresmm'       => 'billing_card_expires_mm',
+		'billingcardexpiresyy'       => 'billing_card_expires_yy',
+		'billingcardholder'          => 'billing_card_holder',
+		'billingcardtype'            => 'billing_card_type',
+		'billingcvv'                 => 'billing_cvv',
+		'billinglocale'              => 'billing_locale',
+		'billinglocalities'          => 'billing_localities',
+		'billingname'                => 'billing_name',
+		'billingrequired'            => 'card_required',
+		'cardrequired'               => 'card_required',
+		'billingxcsc'                => 'billing_xcsc',
+		'billingxcscrequired'        => 'billing_xcsc_required',
+		'cartsummary'                => 'cart_summary',
+		'clickwrap'                  => 'clickwrap',
+		'completed'                  => 'completed',
+		'confirmbutton'              => 'confirm_button',
+		'confirmpassword'            => 'confirm_password',
+		'customerinfo'               => 'customer_info',
+		'data'                       => 'data',
+		'errors'                     => 'error',
+		'error'                      => 'error',
+		'function'                   => 'checkout_function',
+		'gatewayinputs'              => 'gateway_inputs',
+		'guest'                      => 'guest',
+		'hasdata'                    => 'has_data',
+		'localpayment'               => 'local_payment',
+		'notloggedin'                => 'not_logged_in',
+		'orderdata'                  => 'order_data',
+		'payoption'                  => 'payoption',
+		'paymentoption'              => 'payoption',
+		'payoptions'                 => 'payoptions',
+		'paymentoptions'             => 'payoptions',
+		'receipt'                    => 'receipt',
 		'residentialshippingaddress' => 'residential_shipping_address',
-		'samebillingaddress' => 'same_billing_address',
-		'shippingname' => 'shipping_name',
-		'submit' => 'submit',
-		'url' => 'url',
-		'xcobuttons' => 'xco_buttons'
+		'samebillingaddress'         => 'same_billing_address',
+		'shippingname'               => 'shipping_name',
+		'submit'                     => 'submit',
+		'url'                        => 'url',
+		'xcobuttons'                 => 'xco_buttons'
 	);
 
 	/**
@@ -222,14 +222,14 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	 * @return string The generated markup or value
 	 **/
 	public static function billing_card ( $result, $options, $O ) {
-		$card = $O->Billing->card;
-		$modes = array('input', 'value');
+		$card    = $O->Billing->card;
+		$modes   = array('input', 'value');
 		$classes = array('paycard');
 
 		$defaults = array(
 			'class' => '',
-			'mode' => 'input',
-			'mask' => 'X',
+			'mode'  => 'input',
+			'mask'  => 'X',
 		);
 		$options = array_merge($defaults, $options);
 
@@ -286,12 +286,12 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$id = 'billing-cardexpires-mm';
 
 		$defaults = array(
-			'mode' => 'input',
-			'class' => 'paycard',
-			'required' => true,
+			'mode'         => 'input',
+			'class'        => 'paycard',
+			'required'     => true,
 			'autocomplete' => 'off',
-			'type' => 'menu',
-			'value' => $O->Billing->cardexpires > 0 ? date("m",$O->Billing->cardexpires) : '',
+			'type'         => 'menu',
+			'value'        => $O->Billing->cardexpires > 0 ? date("m",$O->Billing->cardexpires) : '',
 		);
 		$options = array_merge($defaults, $options);
 
@@ -345,17 +345,17 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	 **/
 	public static function billing_card_expires_yy ( $result, $options, $O ) {
 		$select_attrs = array( 'title', 'class', 'disabled', 'required', 'tabindex', 'accesskey', 'placeholder' );
-		$name = 'billing[cardexpires-yy]';
-		$id = 'billing-cardexpires-yy';
+		$name         = 'billing[cardexpires-yy]';
+		$id           = 'billing-cardexpires-yy';
 
 		$defaults = array(
-			'mode' => 'input',
-			'class' => 'paycard',
-			'required' => true,
+			'mode'         => 'input',
+			'class'        => 'paycard',
+			'required'     => true,
 			'autocomplete' => 'off',
-			'type' => 'menu',
-			'value' => $O->Billing->cardexpires > 0 ? date('y', $O->Billing->cardexpires) : '',
-			'max' => 20
+			'type'         => 'menu',
+			'value'        => $O->Billing->cardexpires > 0 ? date('y', $O->Billing->cardexpires) : '',
+			'max'          => 20
 		);
 		$options = array_merge($defaults, $options);
 
@@ -364,11 +364,11 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if ( 'text' == $options['type'] )
 			return '<input type="text" name="' . $name . '" id="' . $id . '" ' . inputattrs($options) . ' />';
 
-		$time = current_time('timestamp');
+		$time     = current_time('timestamp');
 		$thisyear = date('y', $time);
-		$years = array_map( create_function('$n','return sprintf("%02d", $n);'), range((int)$thisyear, (int)$thisyear + $options['max'] ) );
+		$years    = array_map( create_function('$n','return sprintf("%02d", $n);'), range((int)$thisyear, (int)$thisyear + $options['max'] ) );
 
-		$menu = array();
+		$menu   = array();
 		$menu[] = '<select name="' . $name . '" id="' . $id . '" ' . inputattrs($options, $select_attrs) . '>';
 		$menu[] = '<option></option>';
 		$menu[] = menuoptions($years, $options['value']);
@@ -410,9 +410,11 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	 * @return string The generated markup or value
 	 **/
 	public static function billing_card_holder ( $result, $options, $O ) {
-		if ( ! isset($options['mode'])) $options['mode'] = 'input';
+		if ( ! isset($options['mode']) ) $options['mode'] = 'input';
 		if ( 'value' == $options['mode'] ) return $O->Billing->cardholder;
+
 		$options['class'] = isset($options['class']) ? $options['class'] .' paycard' : 'paycard';
+
 		if ( ! isset($options['autocomplete']) ) $options['autocomplete'] = 'off';
 		if ( ! empty($O->Billing->cardholder) )
 			$options['value'] = $O->Billing->cardholder;
@@ -444,7 +446,9 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		if ( ! isset($options['mode']) ) $options['mode'] = 'input';
 		if ( 'value' == $options['mode'] ) return $O->Billing->cardtype;
+
 		$options['class'] = isset($options['class']) ? $options['class'] . ' paycard' : 'paycard';
+
 		if ( ! isset($options['selected']) ) $options['selected'] = false;
 		if ( ! empty($O->Billing->cardtype) )
 			$options['selected'] = $O->Billing->cardtype;
@@ -464,7 +468,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$output .= '</select>';
 
 		$js = array("var paycards = {};");
-		foreach ($accepted as $slug => $paycard)
+		foreach ( $accepted as $slug => $paycard )
 			$js[] = "paycards['" . $slug . "'] = " . json_encode($paycard) . ";";
 		add_storefrontjs(join('', $js), true);
 
@@ -506,6 +510,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if ( ! isset($options['required']) ) $options['required'] = true;
 		if ( ! empty($_POST['billing']['cvv']) )
 			$options['value'] = $_POST['billing']['cvv'];
+
 		$options['class'] = isset($options['class']) ? $options['class'] . ' paycard' : 'paycard';
 		return '<input type="text" name="billing[cvv]" id="billing-cvv" ' . inputattrs($options) . ' />';
 	}
@@ -536,7 +541,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$output = false;
 
 		$defaults = array(
-			'mode' => 'input',
+			'mode'     => 'input',
 			'selected' => $O->Billing->locale ? $O->Billing->locale : false
 
 		);
@@ -547,6 +552,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		$rates = shopp_setting('taxrates');
 		foreach ( $rates as $rateset ) { // @todo - what if more than one set of local rates applies to current country/zone? ie. conditions
+
 			if ( isset( $rateset['locals'] ) ) {
 				$locales[ $rateset['country'] . $rateset['zone'] ] = array_keys($rateset['locals']);
 			}
@@ -564,6 +570,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 			$settings = $Tax->settings();
 			foreach ( $settings as $setting ) {
+
 				if ( isset($setting['locals']) ) {
 					$localities = array_keys($setting['locals']);
 					break;
@@ -607,6 +614,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	public static function billing_localities ( $result, $options, $O ) {
 		$rates = shopp_setting('taxrates');
 		foreach ( (array) $rates as $rate )
+
 			if ( isset($rate['locals']) && is_array($rate['locals']) ) return true;
 		return false;
 	}
@@ -665,7 +673,9 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if ( ! $valid ) {
 			$cards = $Payments->accepted();
 			foreach ( $cards as $card ) {
+
 				if ( empty($card->inputs) ) continue;
+
 				foreach ( $card->inputs as $field => $size )
 					$valid[ $field ] = $size;
 			}
@@ -720,7 +730,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if ($O->Cart->total() == 0) return false;
 
 		$Payments = $O->Payments;
-		$cards = $Payments->accepted();
+		$cards    = $Payments->accepted();
 		return ! empty($cards);
 	}
 
@@ -739,6 +749,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		$templates = array('summary.php');
 		$context = ShoppStorefront::intemplate(); // Set summary context
+
 		if ( ! empty($context) ) // Prepend the summary-context.php template file
 			array_unshift($templates, "summary-$context");
 
@@ -884,12 +895,12 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	public static function customer_info ( $result, $options, $O ) {
 		$fields = $O->Customer->info;
 		$defaults = array(
-			'name' => false, // REQUIRED
-			'info' => false,
-			'mode' => false,
-			'title' => '',
-			'type' => 'hidden',
-			'value' => '',
+			'name'    => false, // REQUIRED
+			'info'    => false,
+			'mode'    => false,
+			'title'   => '',
+			'type'    => 'hidden',
+			'value'   => '',
 			'options' => ''
 		);
 
@@ -911,7 +922,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		/// Allowable attributes for textarea inputs
 		$textarea_attrs = array('accesskey', 'title', 'tabindex', 'class', 'disabled', 'required');
-		$select_attrs = array( 'title', 'class', 'disabled', 'required', 'size', 'tabindex', 'accesskey', 'placeholder' );
+		$select_attrs   = array('title', 'class', 'disabled', 'required', 'size', 'tabindex', 'accesskey', 'placeholder');
 
 		if ( ! $name ) {// Iterator for customer info fields
 			if ( ! isset($O->_customer_info_loop) ) {
@@ -963,7 +974,9 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	 **/
 	public static function data ( $result, $options, $O ) {
 		if ( ! is_array($O->data) ) return false;
+
 		$data = current($O->data);
+
 		if ( isset($options['name']) )
 			return key($O->data);
 		return $data;
@@ -1010,8 +1023,10 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 				  "d_pm='" . $Payments->selected()->slug . "'," .
 				  "pm_cards={};";
 
-		foreach ($Payments as $slug => $option) {
+		foreach ( $Payments as $slug => $option ) {
+
 			if (empty($option->cards)) continue;
+
 			$js .= "pm_cards['" . $slug . "'] = " . json_encode($option->cards) . ";";
 		}
 		add_storefrontjs($js, true);
@@ -1056,7 +1071,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	public static function guest ( $result, $options, $O ) {
 		$allowed = array('class', 'checked', 'title');
 		$defaults = array(
-			'label' => Shopp::__('Checkout as a guest'),
+			'label'   => Shopp::__('Checkout as a guest'),
 			'checked' => 'off'
 		);
 		$options = array_merge($defaults, $options);
@@ -1209,12 +1224,12 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	public static function order_data ( $result, $options, $O ) {
 		$select_attrs = array('title', 'class', 'disabled', 'required', 'size', 'tabindex', 'accesskey');
 		$defaults = array(
-			'name' => false, // REQUIRED
-			'data' => false,
-			'mode' => false,
-			'title' => '',
-			'type' => 'hidden',
-			'value' => '',
+			'name'    => false, // REQUIRED
+			'data'    => false,
+			'mode'    => false,
+			'title'   => '',
+			'type'    => 'hidden',
+			'value'   => '',
 			'options' => ''
 		);
 
@@ -1226,55 +1241,55 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 			$defaults['rows'] = '3';
 		}
 
-		$op = array_merge($defaults,$options);
+		$op = array_merge($defaults, $options);
 		extract($op);
 
 		// Allowed input types
-		$allowed_types = array("text","hidden","password","checkbox","radio","textarea","menu");
+		$allowed_types = array('text', 'hidden', 'password', 'checkbox', 'radio', 'textarea', 'menu');
 
 		// Input types that can override option-specified value with the loaded data value
-		$value_override = array("text","hidden","password","textarea","menu");
+		$value_override = array('text', 'hidden', 'password', 'textarea', 'menu');
 
 		/// Allowable attributes for textarea inputs
-		$textarea_attrs = array('accesskey','title','tabindex','class','disabled','required','maxlength');
+		$textarea_attrs = array('accesskey', 'title', 'tabindex', 'class', 'disabled', 'required', 'maxlength');
 
-		if (!$name) { // Iterator for order data
-			if (!isset($O->_data_loop)) {
+		if ( ! $name ) { // Iterator for order data
+			if ( ! isset($O->_data_loop) ) {
 				reset($O->data);
 				$O->_data_loop = true;
 			} else next($O->data);
 
-			if (current($O->data) !== false) return true;
+			if ( current($O->data) !== false ) return true;
 			else {
 				unset($O->_data_loop);
 				return false;
 			}
 		}
 
-		if (isset($O->data[$name])) $data = $O->data[$name];
-		if ($name && $mode == "value") return apply_filters('shopp_checkout_order_data', $data);
+		if ( isset($O->data[ $name ]) ) $data = $O->data[ $name ];
+		if ( $name && $mode == 'value') return apply_filters('shopp_checkout_order_data', $data);
 
-		if (!in_array($type,$allowed_types)) $type = 'hidden';
-		if (empty($title)) $title = $name;
-		$id = 'order-data-'.sanitize_title_with_dashes($name);
+		if ( ! in_array($type, $allowed_types) ) $type = 'hidden';
+		if ( empty($title) ) $title = $name;
+		$id = 'order-data-' . sanitize_title_with_dashes($name);
 
-		if (in_array($type,$value_override) && !empty($data))
+		if ( in_array($type, $value_override) && !empty($data) )
 			$op['value'] = $value = $data;
 
 		switch (strtolower($type)) {
 			case "textarea":
-				return '<textarea name="data['.$name.']" cols="'.$cols.'" rows="'.$rows.'" id="'.$id.'" '.inputattrs($op,$textarea_attrs).'>'.$value.'</textarea>';
+				return '<textarea name="data[' . $name . ']" cols="' . $cols . '" rows="' . $rows . '" id="' . $id . '" ' . inputattrs($op, $textarea_attrs) . '>' . $value . '</textarea>';
 				break;
 			case "menu":
 				$menuvalues = true;
 				if ( is_string($options) ) {
 					$menuvalues = false;
-					$options = explode(',',$options);
+					$options    = explode(',', $options);
 				}
-				return '<select name="data['.$name.']" id="'.$id.'" '.inputattrs($op,$select_attrs).'>'.menuoptions($options,$value,$menuvalues).'</select>';
+				return '<select name="data[' . $name . ']" id="' . $id . '" ' . inputattrs($op, $select_attrs) . '>' . menuoptions($options, $value, $menuvalues) . '</select>';
 				break;
 			default:
-				return '<input type="'.$type.'" name="data['.$name.']" id="'.$id.'" '.inputattrs($op).' />';
+				return '<input type="' . $type . '" name="data[' . $name . ']" id="' . $id . '" ' . inputattrs($op) . ' />';
 				break;
 		}
 	}
@@ -1318,10 +1333,10 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$defaults = array(
 			'labelpos' => 'after',
 			'labeling' => false,
-			'type' => 'hidden',
-			'value' => $payoption->slug
+			'type'     => 'hidden',
+			'value'    => $payoption->slug
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
 
 		if ( isset($options['slug']) ) return $value;
@@ -1388,9 +1403,9 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$defaults = array(
 			'default' => null,
 			'exclude' => false,
-			'type' => 'menu',
-			'mode' => false,
-			'logos' => false
+			'type'    => 'menu',
+			'mode'    => false,
+			'logos'   => false
 		);
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
@@ -1424,8 +1439,10 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 				if ( $logos ) { // Add payment logos
 					$logos = explode(' ', strtolower($logos) );
 					$logoclasses = array('shoppui-cards');
+
 					foreach ( $logos as $ls ) {
-						if ( in_array($ls, array('icon','small','big','huge','shadow')) )
+
+						if ( in_array($ls, array('icon', 'small', 'big', 'huge', 'shadow')) )
 							$logoclasses[] = $ls;
 					}
 					$logoclasses = join(' ', $logoclasses);
@@ -1433,16 +1450,21 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 				foreach ( $payoptions as $value ) {
 					if ( in_array($value, $excludes) ) continue;
-					$Payoption = $Payments->get($value);
-					$options['value'] = $value;
+
+					$Payoption          = $Payments->get($value);
+					$options['value']   = $value;
 					$options['checked'] = ( $SelectedPayment->slug == $Payoption->slug ) ? true : false;
+
 					if ( false === $options['checked'] ) unset($options['checked']);
+					
 					$label = $Payoption->label;
 
 					if ( $logos ) {
 						$label = '&nbsp;<span class="' . esc_attr($logoclasses) . '">';
+					
 						if ( empty($Payoption->cards) ) $label .= '<span class="shoppui-' . esc_attr($Payoption->slug) . '">' . esc_html($Payoption->label) . '</span>&nbsp;';
 						else {
+					
 							foreach ( $Payoption->cards as $card )
 								$label .= '<span class="shoppui-' . esc_attr($card) . '">' . esc_html($card) . '</span>';
 						}
@@ -1453,15 +1475,17 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 				$output .= '</ul></span>';
 				break;
 			case "hidden":
-				if (!isset($options['value']) && $default) $options['value'] = $O->paymethod;
+				if ( ! isset($options['value']) && $default ) $options['value'] = $O->paymethod;
 				$output .= '<input type="hidden" name="paymethod"' . Shopp::inputattrs($options) . ' />';
 				break;
 			default:
 				$output .= '<select name="paymethod" ' . Shopp::inputattrs($options, $select_attrs) . '>';
 				foreach ( $payoptions as $value ) {
+
 					if ( in_array($value, $excludes) ) continue;
+					
 					$Payoption = $Payments->get($value);
-					$selected = ( $SelectedPayment->slug == $Payoption->slug ) ? ' selected="selected"' : '';
+					$selected  = ( $SelectedPayment->slug == $Payoption->slug ) ? ' selected="selected"' : '';
 					$output .= '<option value="' . $value . '"' . $selected . '>' . $Payoption->label . '</option>';
 				}
 				$output .= '</select>';
@@ -1507,7 +1531,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	public static function residential_shipping_address ( $result, $options, $O ) {
 		$allowed = array('class', 'checked', 'title');
 		$defaults = array(
-			'label' => Shopp::__('Residential shipping address'),
+			'label'   => Shopp::__('Residential shipping address'),
 			'checked' => 'on'
 		);
 		$options = array_merge($defaults, $options);
@@ -1542,10 +1566,10 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	public static function same_billing_address ( $result, $options, $O ) {
 		$allowed = array('class', 'checked');
 		$defaults = array(
-			'label' => Shopp::__('Same billing address'),
+			'label'   => Shopp::__('Same billing address'),
 			'checked' => 'on',
-			'type' => 'billing',
-			'class' => ''
+			'type'    => 'billing',
+			'class'   => ''
 		);
 		$options = array_merge($defaults, $options);
 		$options['type'] = 'billing';
@@ -1584,11 +1608,11 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	 * @return string The generated markup or value
 	 **/
 	public static function shipping_name ( $result, $options, $O ) {
-		if (!isset($options['mode'])) $options['mode'] = "input";
-		if ($options['mode'] == "value") return $O->Shipping->name;
-		if (!empty($O->Shipping->name))
+		if ( ! isset($options['mode']) ) $options['mode'] = "input";
+		if ( $options['mode'] == 'value') return $O->Shipping->name;
+		if ( ! empty($O->Shipping->name) )
 			$options['value'] = $O->Shipping->name;
-		return '<input type="text" name="shipping[name]" id="shipping-name" '.inputattrs($options).' />';
+		return '<input type="text" name="shipping[name]" id="shipping-name" ' . inputattrs($options) . ' />';
 	}
 
 	/**
