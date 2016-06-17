@@ -32,7 +32,7 @@ class Members extends ShoppAdminController {
 	 **/
 	function __construct () {
 		parent::__construct();
-		if (!empty($_GET['id'])) {
+		if ( ! empty($_GET['id']) ) {
 			wp_enqueue_script('postbox');
 			wp_enqueue_script('jquery-ui-draggable');
 			shopp_enqueue_script('jquery-tmpl');
@@ -41,8 +41,9 @@ class Members extends ShoppAdminController {
 			shopp_enqueue_script('membership-editor');
 			shopp_enqueue_script('colorbox');
 			do_action('shopp_membership_editor_scripts');
-			add_action('admin_head',array(&$this,'layout'));
-		} else add_action('admin_print_scripts',array(&$this,'columns'));
+			add_action('admin_head', array(&$this, 'layout'));
+		} else add_action('admin_print_scripts', array(&$this, 'columns'));
+
 		do_action('shopp_membership_admin_scripts');
 	}
 
@@ -70,12 +71,12 @@ class Members extends ShoppAdminController {
 		$Shopp = Shopp::object();
 
 		$defaults = array(
-			'page' => false,
+			'page'     => false,
 			'deleting' => false,
-			'delete' => false,
-			'pagenum' => 1,
+			'delete'   => false,
+			'pagenum'  => 1,
 			'per_page' => 20,
-			's' => '',
+			's'        => '',
 		);
 
 		$args = array_merge($defaults,$_GET);
@@ -96,7 +97,7 @@ class Members extends ShoppAdminController {
 		if (!empty($_POST['save'])) {
 			check_admin_referer('shopp-save-membership');
 
-			if ($_POST['id'] != "new") {
+			if ( 'new' != $_POST['id'] ) {
 				$MemberPlan = new MemberPlan($_POST['id']);
 			} else $MemberPlan = new MemberPlan();
 
@@ -108,10 +109,10 @@ class Members extends ShoppAdminController {
 
 
 			// Process updates
-			foreach ($_POST['stages'] as $i => $stage) {
+			foreach ( $_POST['stages'] as $i => $stage ) {
 
-				if (empty($stage['id'])) {
-					$Stage = new MemberStage($MemberPlan->id);
+				if ( empty($stage['id']) ) {
+					$Stage           = new MemberStage($MemberPlan->id);
 					$stage['parent'] = $MemberPlan->id;
 				} else $Stage = new MemberStage($MemberPlan->id,$stage['id']);
 
@@ -119,25 +120,25 @@ class Members extends ShoppAdminController {
 				$Stage->sortorder = $i;
 				$Stage->save();
 
-				$Stage->content = array();
+				$Stage->content  = array();
 				$stage_updates[] = $Stage->id;
 
 				// If the stage data did not save, go to the next stage record
-				if (empty($Stage->id)) continue;
+				if ( empty($Stage->id) ) continue;
 
-				foreach ($stage['rules'] as $type => $rules) {
-					foreach ($rules as $rule) {
-						$AccessRule = new MemberAccess($Stage->id,$type,$rule['access']);
-						if (empty($AccessRule->id)) $AccessRule->save();
+				foreach ( $stage['rules'] as $type => $rules ) {
+					foreach ( $rules as $rule ) {
+						$AccessRule = new MemberAccess($Stage->id, $type, $rule['access']);
+						if ( empty($AccessRule->id) ) $AccessRule->save();
 
 						// If access rule applies to all content, skip content cataloging
-						if (strpos($AccessRule->value,'-all') !== false) continue;
+						if ( strpos($AccessRule->value, '-all') !== false) continue;
 
 						// Catalog content access rules for this access taxonomy
-						foreach ($rule['content'] as $id => $name) {
-							$CatalogEntry = new MemberContent($id,$AccessRule->id,$Stage->id);
-							if (empty($CatalogEntry->id)) $CatalogEntry->save();
-							$Stage->content[$AccessRule->id][$id] = $name;
+						foreach ( $rule['content'] as $id => $name ) {
+							$CatalogEntry = new MemberContent($id,$AccessRule->id, $Stage->id);
+							if ( empty($CatalogEntry->id) ) $CatalogEntry->save();
+							$Stage->content[ $AccessRule->id ][ $id ] = $name;
 						} // endforeach $rule['content']
 
 					}// endforeach $rules
@@ -148,9 +149,9 @@ class Members extends ShoppAdminController {
 			} // endforeach $_POST['stages']
 		}
 
-		$stageids = array_diff($stages,$stage_updates);
-		if (!empty($stageids)) {
-			$stagelist = join(',',$stageids);
+		$stageids = array_diff($stages, $stage_updates);
+		if ( ! empty($stageids) ) {
+			$stagelist = join(',', $stageids);
 
 			// Delete Catalog entries
 			$ContentRemoval = new MemberContent();
@@ -170,23 +171,23 @@ class Members extends ShoppAdminController {
 		$pagenum = absint( $pagenum );
 		if ( empty($pagenum) )
 			$pagenum = 1;
-		if( !$per_page || $per_page < 0 )
+		if( ! $per_page || $per_page < 0 )
 			$per_page = 20;
 		$index = ($per_page * ($pagenum-1));
 
-		if (!empty($start)) {
-			$startdate = $start;
-			list($month,$day,$year) = explode("/",$startdate);
-			$starts = mktime(0,0,0,$month,$day,$year);
+		if ( ! empty($start) ) {
+			$startdate                = $start;
+			list($month, $day, $year) = explode('/', $startdate);
+			$starts                   = mktime(0, 0, 0, $month, $day, $year);
 		}
-		if (!empty($end)) {
-			$enddate = $end;
-			list($month,$day,$year) = explode("/",$enddate);
-			$ends = mktime(23,59,59,$month,$day,$year);
+		if ( ! empty($end) ) {
+			$enddate                  = $end;
+			list($month, $day, $year) = explode('/', $enddate);
+			$ends                     = mktime(23, 59, 59, $month, $day, $year);
 		}
 
 		$membership_table = ShoppDatabaseObject::tablename(MemberPlan::$table);
-		$MemberPlan = new MemberPlan();
+		$MemberPlan       = new MemberPlan();
 
 		$where = '';
 		// if (!empty($s)) {
@@ -226,16 +227,16 @@ class Members extends ShoppAdminController {
 
 		$num_pages = ceil($count->total / $per_page);
 		$page_links = paginate_links( array(
-			'base' => add_query_arg( 'pagenum', '%#%' ),
-			'format' => '',
-			'total' => $num_pages,
+			'base'    => add_query_arg( 'pagenum', '%#%' ),
+			'format'  => '',
+			'total'   => $num_pages,
 			'current' => $pagenum
 		));
 
 		$authentication = shopp_setting('account_system');
 
 
-		include(SHOPP_ADMIN_PATH."/memberships/memberships.php");
+		include(SHOPP_ADMIN_PATH . "/memberships/memberships.php");
 
 	}
 
@@ -248,11 +249,11 @@ class Members extends ShoppAdminController {
 	function columns () {
 		shopp_enqueue_script('calendar');
 		register_column_headers('shopp_page_shopp-memberships', array(
-			'cb'=>'<input type="checkbox" />',
-			'name'=>__('Name','Shopp'),
-			'type'=>__('Type','Shopp'),
-			'products'=>__('Products','Shopp'),
-			'members'=>__('Members','Shopp')
+			'cb'       => '<input type="checkbox" />',
+			'name'     => __('Name'),
+			'type'     => Shopp::__('Type'),
+			'products' => Shopp::__('Products'),
+			'members'  => Shopp::__('Members')
 		));
 
 	}
@@ -267,23 +268,23 @@ class Members extends ShoppAdminController {
 		global $Shopp,$ruletypes,$rulegroups;
 		$Admin =& $Shopp->Flow->Admin;
 
-		$rulegroups = apply_filters('shopp_access_rule_groups',array(
-			'wp' => __('WordPress','Shopp'),
-			'shopp' => __('Shopp','Shopp')
+		$rulegroups = apply_filters('shopp_access_rule_groups', array(
+			'wp'    => Shopp::__('WordPress'),
+			'shopp' => Shopp::__('Shopp')
 		));
-		$ruletypes = apply_filters('shopp_access_rule_types',array(
-			'wp_posts' => __('Posts','Shopp'),
-			'wp_pages' => __('Pages','Shopp'),
-			'wp_categories' => __('Categories','Shopp'),
-			'wp_tags' => __('Tags','Shopp'),
-			'wp_media' => __('Media','Shopp'),
+		$ruletypes = apply_filters('shopp_access_rule_types', array(
+			'wp_posts'      => Shopp::__('Posts'),
+			'wp_pages'      => Shopp::__('Pages'),
+			'wp_categories' => Shopp::__('Categories'),
+			'wp_tags'       => Shopp::__('Tags'),
+			'wp_media'      => Shopp::__('Media'),
 
-			'shopp_memberships' => __('Memberships','Shopp'),
-			'shopp_products' => __('Products','Shopp'),
-			'shopp_categories' => __('Categories','Shopp'),
-			'shopp_tags' => __('Tags','Shopp'),
-			'shopp_promotions' => __('Promotions','Shopp'),
-			'shopp_downloads' => __('Downloads','Shopp')
+			'shopp_memberships' => Shopp::__('Memberships'),
+			'shopp_products'    => Shopp::__('Products'),
+			'shopp_categories'  => Shopp::__('Categories'),
+			'shopp_tags'        => Shopp::__('Tags'),
+			'shopp_promotions'  => Shopp::__('Promotions'),
+			'shopp_downloads'   => Shopp::__('Downloads')
 		));
 
 		include(SHOPP_ADMIN_PATH."/memberships/ui.php");
@@ -305,24 +306,24 @@ class Members extends ShoppAdminController {
 		if ( ! current_user_can('shopp_memberships') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
-		if ($_GET['id'] != "new") {
+		if ( 'new' != $_GET['id'] ) {
 			$MemberPlan = new MemberPlan($_GET['id']);
-			if (empty($MemberPlan->id))
-				wp_die(__('The requested membership record does not exist.','Shopp'));
+			if ( empty($MemberPlan->id) )
+				wp_die(Shopp::__('The requested membership record does not exist.'));
 			$MemberPlan->load_stages();
 			$MemberPlan->load_access();
 		} else $MemberPlan = new MemberPlan();
 
-		$skip = array('created','modified','numeral','context','type','sortorder','parent');
-		foreach ($MemberPlan->stages as &$Stage) {
-			foreach ($Stage->rules as &$rules) {
-				foreach ($rules as &$Access)
-					if (method_exists($Access,'json'))
+		$skip = array('created', 'modified', 'numeral', 'context', 'type', 'sortorder', 'parent');
+		foreach ( $MemberPlan->stages as &$Stage ) {
+			foreach ( $Stage->rules as &$rules ) {
+				foreach ( $rules as &$Access )
+					if ( method_exists($Access, 'json') )
 						$Access = $Access->json($skip);
 			}
 			$Stage = $Stage->json($skip);
 		}
-		include(SHOPP_ADMIN_PATH."/memberships/editor.php");
+		include(SHOPP_ADMIN_PATH . "/memberships/editor.php");
 	}
 
 
