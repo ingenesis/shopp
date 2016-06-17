@@ -128,7 +128,7 @@ function ShoppSettings () {
  *
  * @return Shopping
  **/
-function ShoppShopping() {
+function ShoppShopping () {
 	return Shopping::object();
 }
 
@@ -221,8 +221,8 @@ function shopp_register_page ( $classname ) {
  * @param object $e The object to test
  * @return boolean True if the object is a ShoppError
  **/
-function is_shopperror ($e) {
-	return ( get_class($e) == 'ShoppError' );
+function is_shopperror ( $e ) {
+	return ( 'ShoppError' == get_class($e) );
 }
 
 /**
@@ -431,7 +431,7 @@ function is_shopp_page ( $page = false, $wp_query = false ) {
 	$is_shopp_page = false;
 	$Page = ShoppPages()->requested();
 
-	if ( false === $page ) { // Check if the current request is a shopp page request
+	if ( 'catalog' == $page || false === $page ) { // Check if the current request is a shopp page request
 		// Product and collection pages are considered a Shopp page request
 		if ( is_shopp_product($wp_query) || $wp_query->get('post_type') == ShoppProduct::$posttype ) $is_shopp_page = true;
 		if ( is_shopp_collection($wp_query) ) $is_shopp_page = true;
