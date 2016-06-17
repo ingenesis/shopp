@@ -28,13 +28,13 @@ class ShoppErrorThemeAPI implements ShoppAPI {
 	 * @internal
 	 **/
 	static $register = array(
-		'trxn' => 'trxn',
-		'auth' => 'auth',
+		'trxn'  => 'trxn',
+		'auth'  => 'auth',
 		'addon' => 'addon',
-		'comm' => 'comm',
+		'comm'  => 'comm',
 		'stock' => 'stock',
 		'admin' => 'admin',
-		'db' => 'db',
+		'db'    => 'db',
 		'debug' => 'debug'
 	);
 
