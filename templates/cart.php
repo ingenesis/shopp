@@ -14,18 +14,18 @@
 <?php if ( shopp( 'cart.hasitems' ) ) : ?>
 	<form id="cart" action="<?php shopp( 'cart.url' ); ?>" method="post">
 		<div>
-			<a href="<?php shopp( 'cart.referrer' ); ?>">&laquo; <?php _e( 'Continue Shopping', 'Shopp' ); ?></a>
-			<a href="<?php shopp( 'checkout.url' ); ?>" class="right"><?php _e( 'Proceed to Checkout', 'Shopp' ); ?> &raquo;</a>
+			<a href="<?php shopp( 'cart.referrer' ); ?>">&laquo; <?php Shopp::_e( 'Continue Shopping' ); ?></a>
+			<a href="<?php shopp( 'checkout.url' ); ?>" class="right"><?php Shopp::_e( 'Proceed to Checkout' ); ?> &raquo;</a>
 		</div>
 
 		<?php shopp( 'cart.function' ); ?>
 
 		<table class="cart">
 			<tr>
-				<th scope="col" class="item"><?php _e( 'Cart Items', 'Shopp' ); ?></th>
-				<th scope="col"><?php _e( 'Quantity', 'Shopp' ); ?></th>
-				<th scope="col" class="money"><?php _e( 'Item Price', 'Shopp' ); ?></th>
-				<th scope="col" class="money"><?php _e( 'Item Total', 'Shopp' ); ?></th>
+				<th scope="col" class="item"><?php Shopp::_e( 'Cart Items' ); ?></th>
+				<th scope="col"><?php Shopp::_e( 'Quantity' ); ?></th>
+				<th scope="col" class="money"><?php Shopp::_e( 'Item Price' ); ?></th>
+				<th scope="col" class="money"><?php Shopp::_e( 'Item Total' ); ?></th>
 			</tr>
 
 			<?php while ( shopp( 'cart.items' ) ) : ?>
@@ -57,35 +57,35 @@
 			<tr class="totals">
 				<td colspan="2" rowspan="5">
 					<?php if ( shopp( 'cart.needs-shipping-estimates' ) ) : ?>
-						<small><?php _e( 'Estimate shipping &amp; taxes for:', 'Shopp' ); ?></small>
+						<small><?php Shopp::_e( 'Estimate shipping &amp; taxes for:' ); ?></small>
 						<?php shopp( 'cart.shipping-estimates' ); ?>
 					<?php endif; ?>
 					<?php shopp( 'cart.apply-code' ); ?>
 				</td>
-				<th scope="row"><?php _e( 'Subtotal', 'Shopp' ); ?></th>
+				<th scope="row"><?php Shopp::_e( 'Subtotal' ); ?></th>
 				<td class="money"><?php shopp( 'cart.subtotal' ); ?></td>
 			</tr>
 
 			<?php if ( shopp( 'cart.hasdiscount' ) ) : ?>
 				<tr class="totals">
-					<th scope="row"><?php _e( 'Discount', 'Shopp' ); ?></th>
+					<th scope="row"><?php Shopp::_e( 'Discount' ); ?></th>
 					<td class="money">-<?php shopp( 'cart.discount' ); ?></td>
 				</tr>
 			<?php endif; ?>
 
 			<?php if ( shopp( 'cart.needs-shipped' ) ) : ?>
 				<tr class="totals">
-					<th scope="row"><?php shopp( 'cart.shipping', 'label=' . __( 'Estimated Shipping', 'Shopp' ) ); ?></th>
+					<th scope="row"><?php shopp( 'cart.shipping', 'label=' . Shopp::__( 'Estimated Shipping' ) ); ?></th>
 					<td class="money"><?php shopp( 'cart.shipping' ); ?></td>
 				</tr>
 			<?php endif; ?>
 
 			<tr class="totals">
-				<th scope="row"><?php shopp( 'cart.tax', 'label=' . __( 'Tax', 'Shopp' ) ); ?></th>
+				<th scope="row"><?php shopp( 'cart.tax', 'label=' . Shopp::__( 'Tax' ) ); ?></th>
 				<td class="money"><?php shopp( 'cart.tax' ); ?></td>
 			</tr>
 			<tr class="totals total">
-				<th scope="row"><?php _e( 'Total', 'Shopp' ); ?></th>
+				<th scope="row"><?php Shopp::_e( 'Total' ); ?></th>
 				<td class="money"><?php shopp( 'cart.total' ); ?></td>
 			</tr>
 			<tr class="buttons">
@@ -94,14 +94,14 @@
 		</table>
 
 		<div>
-			<a href="<?php shopp( 'cart.referrer' ); ?>">&laquo; <?php _e( 'Continue Shopping', 'Shopp' ); ?></a>
-			<a href="<?php shopp( 'checkout.url' ); ?>" class="right"><?php _e( 'Proceed to Checkout', 'Shopp' ); ?> &raquo;</a>
+			<a href="<?php shopp( 'cart.referrer' ); ?>">&laquo; <?php Shopp::_e( 'Continue Shopping' ); ?></a>
+			<a href="<?php shopp( 'checkout.url' ); ?>" class="right"><?php Shopp::_e( 'Proceed to Checkout' ); ?> &raquo;</a>
 		</div>
 	</form>
 
 <?php else : ?>
-	<p class="notice"><?php _e( 'There are currently no items in your shopping cart.', 'Shopp' ); ?></p>
+	<p class="notice"><?php Shopp::_e( 'There are currently no items in your shopping cart.' ); ?></p>
 	<p>
-		<a href="<?php shopp( 'storefront.url' ); ?>">&laquo; <?php _e( 'Continue Shopping', 'Shopp' ); ?></a>
+		<a href="<?php shopp( 'storefront.url' ); ?>">&laquo; <?php Shopp::_e( 'Continue Shopping' ); ?></a>
 	</p>
 <?php endif; ?>
