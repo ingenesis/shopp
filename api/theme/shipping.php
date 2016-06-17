@@ -30,25 +30,25 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 	 **/
 	static $register = array(
 		'url' => 'url',
-		'hasestimates' => 'has_options',
-		'hasoptions' => 'has_options',
-		'options' => 'options',
-		'methods' => 'options',
-		'optionmenu' => 'option_menu',
-		'methodmenu' => 'option_menu',
-		'optionname' => 'option_name',
-		'methodname' => 'option_name',
-		'methodslug' => 'option_slug',
-		'optionslug' => 'option_slug',
+		'hasestimates'   => 'has_options',
+		'hasoptions'     => 'has_options',
+		'options'        => 'options',
+		'methods'        => 'options',
+		'optionmenu'     => 'option_menu',
+		'methodmenu'     => 'option_menu',
+		'optionname'     => 'option_name',
+		'methodname'     => 'option_name',
+		'methodslug'     => 'option_slug',
+		'optionslug'     => 'option_slug',
 		'optionselected' => 'option_selected',
 		'methodselected' => 'option_selected',
-		'optioncost' => 'option_cost',
-		'methodcost' => 'option_cost',
+		'optioncost'     => 'option_cost',
+		'methodcost'     => 'option_cost',
 		'optionselector' => 'option_selector',
 		'methodselector' => 'option_selector',
 		'optiondelivery' => 'option_delivery',
 		'methoddelivery' => 'option_delivery',
-		'updatebutton' => 'update_button'
+		'updatebutton'   => 'update_button'
 	);
 
 	/**
@@ -76,7 +76,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 	public static function _setobject ( $Object, $object ) {
 		if ( is_object($Object) && is_a($Object, 'ShoppOrder') && isset($Object->Shiprates) && 'shipping' == strtolower($object) )
 			return $Object->Shiprates;
-		else if ( strtolower($object) != 'shipping' ) return $Object; // not mine, do nothing
+		else if ( 'shipping' != strtolower($object) ) return $Object; // not mine, do nothing
 
 		return ShoppOrder()->Shiprates;
 	}
@@ -212,10 +212,10 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 		$Shiprates = $Order->Shiprates;
 
 		$defaults = array(
-			'difference' => true,
-			'times' => false,
-			'class' => false,
-			'dateformat' => get_option('date_format'),
+			'difference'    => true,
+			'times'         => false,
+			'class'         => false,
+			'dateformat'    => get_option('date_format'),
 			'dateseparator' => '&mdash;',
 		);
 
@@ -338,7 +338,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 	 * @return string The button markup
 	 **/
 	public static function update_button ( $result, $options, $O ) {
-		$submit_attrs = array('title','label','disabled','tabindex','accesskey','class');
+		$submit_attrs = array('title', 'label', 'disabled', 'tabindex', 'accesskey', 'class');
 		$stdclasses = 'update-button hide-if-js';
 		$defaults = array(
 			'label' => Shopp::__('Update Shipping'),
@@ -363,7 +363,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 	private static function _delivery_format( $estimate, $options = array() ) {
 		$periods = array('h' => 3600, 'd' => 86400, 'w' => 604800, 'm' => 2592000);
 		$defaults = array(
-			'dateformat' => get_option('date_format'),
+			'dateformat'    => get_option('date_format'),
 			'dateseparator' => '&mdash;',
 		);
 		$options = array_merge($defaults, $options);
