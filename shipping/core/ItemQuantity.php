@@ -55,11 +55,11 @@ class ItemQuantity extends ShippingFramework implements ShippingModule {
 			if ( ! $matched ) return $options;
 
 			$rate = array(
-				'slug' => $slug,
-				'name' => $method['label'],
-				'amount' => $amount,
+				'slug'     => $slug,
+				'name'     => $method['label'],
+				'amount'   => $amount,
 				'delivery' => $this->delivery($method),
-				'items' => false
+				'items'    => false
 			);
 
 			$options[ $slug ] = new ShippingOption($rate);
@@ -74,8 +74,8 @@ class ItemQuantity extends ShippingFramework implements ShippingModule {
 		$this->setup('table');
 
 		$this->ui->tablerates(0, array(
-			'unit' => array(Shopp::__('Item Quantity'), Shopp::__('items')),
-			'table' => $this->settings['table'],
+			'unit'       => array(Shopp::__('Item Quantity'), Shopp::__('items')),
+			'table'      => $this->settings['table'],
 			'rate_class' => 'money'
 		));
 
