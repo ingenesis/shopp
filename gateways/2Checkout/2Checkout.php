@@ -41,9 +41,9 @@ class Shopp2Checkout extends GatewayFramework implements GatewayModule {
 
 		$purchasetable = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
 
-		$Order = $this->Order;
+		$Order    = $this->Order;
 		$Customer = $Order->Customer;
-		$Billing = $Order->Billing;
+		$Billing  = $Order->Billing;
 		$Shipping = $Order->Shipping;
 
 		// Build the transaction
@@ -69,7 +69,7 @@ class Shopp2Checkout extends GatewayFramework implements GatewayModule {
 		// Line Items
 		$i = 0;
 		foreach ( $Order->Cart as $id => $Item ) {
-			$_['li_' . $i . '_product_id'] = 'shopp_pid-'.$Item->product.','.$Item->quantity;
+			$_['li_' . $i . '_product_id'] = 'shopp_pid-' . $Item->product . ',' . $Item->quantity;
 			$_['li_' . $i . '_type']       = 'product';
 			$_['li_' . $i . '_name']	   = $this->itemname($Item);
 			$_['li_' . $i . '_quantity']   = $Item->quantity;
@@ -146,13 +146,13 @@ class Shopp2Checkout extends GatewayFramework implements GatewayModule {
 		if ( $this->id() != $_GET['rmtpay'] ) return; // Not our offsite payment
 
 		$request = array_merge(array(
-			'merchant_order_id' => false,
-			'key' => false,
-			'order_number' => false,
-			'total' => false,
+			'merchant_order_id'     => false,
+			'key'                   => false,
+			'order_number'          => false,
+			'total'                 => false,
 			'credit_card_processed' => false,
-			'invoice_id' => false,
-			'pay_method' => false
+			'invoice_id'            => false,
+			'pay_method'            => false
 		), $_GET);
 		extract($request, EXTR_SKIP);
 
@@ -174,10 +174,10 @@ class Shopp2Checkout extends GatewayFramework implements GatewayModule {
 
 		if ( 'Y' != $credit_card_processed ) {
 			shopp_add_order_event($Purchase->id, 'auth-fail', array(
-				'amount' => $total, // Amount to be authorized
-				'error' => 'Declined', // Error code (if provided)
+				'amount'  => $total,                                                 // Amount to be authorized
+				'error'   => 'Declined',                                             // Error code (if provided)
 				'message' => Shopp::__('The payment was not completed succesfully'), // Error message reported by the gateway
-				'gateway' => $this->module, // The gateway module name
+				'gateway' => $this->module,                                          // The gateway module name
 			));
 			shopp_add_error(Shopp::__('The order submitted by 2Checkout did not match any submitted orders.'), SHOPP_TRXN_ERR);
 			Shopp::redirect(Shopp::url(false, 'checkout'));
@@ -190,14 +190,14 @@ class Shopp2Checkout extends GatewayFramework implements GatewayModule {
 		add_action( 'shopp_authed_order_event', array( ShoppOrder(), 'success' ) );
 
 		shopp_add_order_event($Purchase->id, 'authed', array(
-			'txnid' => $order_number,   // Transaction ID
-			'amount' => (float)$total,  // Gross amount authorized
-			'fees' => false,            // Fees associated with transaction
-			'gateway' => $this->module, // The gateway module name
-			'paymethod' => '2Checkout', // Payment method (payment method label from payment settings)
-			'paytype' => $pay_method,   // Type of payment (check, MasterCard, etc)
-			'payid' => $invoice_id,     // Payment ID (last 4 of card or check number or other payment id)
-			'capture' => true           // Capture flag
+			'txnid'     => $order_number,  // Transaction ID
+			'amount'    => (float)$total,  // Gross amount authorized
+			'fees'      => false,          // Fees associated with transaction
+			'gateway'   => $this->module,  // The gateway module name
+			'paymethod' => '2Checkout',    // Payment method (payment method label from payment settings)
+			'paytype'   => $pay_method,    // Type of payment (check, MasterCard, etc)
+			'payid'     => $invoice_id,    // Payment ID (last 4 of card or check number or other payment id)
+			'capture'   => true            // Capture flag
 		));
 
 		Shopp::redirect( Shopp::url(false, 'thanks', false) );
@@ -209,13 +209,13 @@ class Shopp2Checkout extends GatewayFramework implements GatewayModule {
 		$Billing = $this->Order->Billing;
 
 		shopp_add_order_event($Order->id, 'authed', array(
-			'txnid' => $_POST['order_number'],						// Transaction ID
-			'amount' => $_POST['total'],							// Gross amount authorized
-			'gateway' => $this->module,								// Gateway handler name (module name from @subpackage)
+			'txnid'     => $_POST['order_number'],					// Transaction ID
+			'amount'    => $_POST['total'],							// Gross amount authorized
+			'gateway'   => $this->module,							// Gateway handler name (module name from @subpackage)
 			'paymethod' => $Paymethod->label,						// Payment method (payment method label from payment settings)
-			'paytype' => $Billing->cardtype,						// Type of payment (check, MasterCard, etc)
-			'payid' => $Billing->card,								// Payment ID (last 4 of card or check number)
-			'capture' => true										// Capture flag
+			'paytype'   => $Billing->cardtype,						// Type of payment (check, MasterCard, etc)
+			'payid'     => $Billing->card,							// Payment ID (last 4 of card or check number)
+			'capture'   => true										// Capture flag
 		));
 
 	}
@@ -247,39 +247,39 @@ class Shopp2Checkout extends GatewayFramework implements GatewayModule {
 	public function settings () {
 
 		$this->ui->text(0,array(
-			'name' => 'sid',
-			'size' => 10,
+			'name'  => 'sid',
+			'size'  => 10,
 			'value' => $this->settings['sid'],
-			'label' => __('Your 2Checkout vendor account number.','Shopp')
+			'label' => Shopp::__('Your 2Checkout vendor account number.')
 		));
 
 
 		$this->ui->checkbox(0,array(
-			'name' => 'verify',
+			'name'    => 'verify',
 			'checked' => $this->settings['verify'],
-			'label' => __('Enable order verification','Shopp')
+			'label'   => Shopp::__('Enable order verification')
 		));
 
 		$this->ui->text(0,array(
-			'name' => 'secret',
-			'size' => 10,
+			'name'  => 'secret',
+			'size'  => 10,
 			'value' => $this->settings['secret'],
-			'label' => __('Your 2Checkout secret word for order verification.','Shopp')
+			'label' => Shopp::__('Your 2Checkout secret word for order verification.')
 		));
 
 		$this->ui->checkbox(0,array(
-			'name' => 'testmode',
+			'name'    => 'testmode',
 			'checked' => $this->settings['testmode'],
-			'label' => __('Enable test mode','Shopp')
+			'label'   => Shopp::__('Enable test mode')
 		));
 
 		$this->ui->text(1, array(
-			'name' => 'returnurl',
-			'size' => 64,
-			'value' => $this->returnurl(),
+			'name'     => 'returnurl',
+			'size'     => 64,
+			'value'    => $this->returnurl(),
 			'readonly' => 'readonly',
-			'class' => 'selectall',
-			'label' => __('Copy as the <strong>Approved URL</strong> & <strong>Pending URL</strong> in your 2Checkout Vendor Area under the <strong>Account &rarr; Site Management</strong> settings page.','Shopp')
+			'class'    => 'selectall',
+			'label'    => Shopp::__('Copy as the <strong>Approved URL</strong> & <strong>Pending URL</strong> in your 2Checkout Vendor Area under the <strong>Account &rarr; Site Management</strong> settings page.')
 		));
 
 		$script = "var tc ='shopp2checkout';jQuery(document).bind(tc+'Settings',function(){var $=jQuery,p='#'+tc+'-',v=$(p+'verify'),t=$(p+'secret');v.change(function(){v.prop('checked')?t.parent().fadeIn('fast'):t.parent().hide();}).change();});";
