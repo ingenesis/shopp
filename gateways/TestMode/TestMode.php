@@ -80,27 +80,27 @@ class ShoppTestMode extends GatewayFramework implements GatewayModule {
 	}
 
 	public function handler ( $type, OrderEventMessage $Event ) {
-		if( ! isset($Event->txnid) || empty($Event->txnid) ) $Event->txnid = time();
+		if ( ! isset($Event->txnid) || empty($Event->txnid) ) $Event->txnid = time();
 		if ( Shopp::str_true($this->settings['error']) ) {
 			$error = Shopp::__("This is an example error message. Disable the 'always show an error' setting to stop displaying this error.");
 			new ShoppError($error, 'testmode_error', SHOPP_TRXN_ERR);
 			return shopp_add_order_event($Event->order, $Event->type . '-fail', array(
-				'amount' => $Event->amount,
-				'error' => 0,
+				'amount'  => $Event->amount,
+				'error'   => 0,
 				'message' => $error,
 				'gateway' => $this->module
 			));
 		}
 
 		shopp_add_order_event($Event->order, $type, array(
-			'txnid' => $Event->txnid,
+			'txnid'     => $Event->txnid,
 			'txnorigin' => $Event->txnid,
-			'fees' => 0,
+			'fees'      => 0,
 			'paymethod' => '',
-			'paytype' => '',
-			'payid' => '1111',
-			'amount' => $Event->amount,
-			'gateway' => $this->module
+			'paytype'   => '',
+			'payid'     => '1111',
+			'amount'    => $Event->amount,
+			'gateway'   => $this->module
 		));
 	}
 
@@ -117,8 +117,8 @@ class ShoppTestMode extends GatewayFramework implements GatewayModule {
 	 **/
 	public function settings () {
 		$this->ui->checkbox(0, array(
-			'name' => 'error',
-			'label' => 'Always show an error',
+			'name'    => 'error',
+			'label'   => 'Always show an error',
 			'checked' => $this->settings['error']
 		));
 	}
