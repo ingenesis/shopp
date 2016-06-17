@@ -256,9 +256,9 @@ final class ShoppFlow {
 
 		$wp_admin_bar->add_menu(array(
 			'parent' => 'new-content',
-			'id' => 'new-' . ShoppProduct::posttype(),
-			'title' => $posttype->labels->singular_name,
-			'href' => admin_url(str_replace('%d', 'new', $posttype->_edit_link))
+			'id'     => 'new-' . ShoppProduct::posttype(),
+			'title'  => $posttype->labels->singular_name,
+			'href'   => admin_url(str_replace('%d', 'new', $posttype->_edit_link))
 		));
 
 		$object = get_queried_object();
@@ -266,9 +266,9 @@ final class ShoppFlow {
 			 && $object->post_type == $posttype->name ) {
 
 			$wp_admin_bar->add_menu(array(
-				'id' => 'edit',
+				'id'    => 'edit',
 				'title' => $posttype->labels->edit_item,
-				'href' => get_edit_post_link($object->ID)
+				'href'  => get_edit_post_link($object->ID)
 			));
 
 		}
@@ -464,7 +464,8 @@ abstract class ShoppAdminController extends ShoppFlowController {
 		global $plugin_page;
 
 		$pagehook = sanitize_key($plugin_page);
-
+		new ShoppError('tabs'._object_r($tabs), false, 'SHOPP_DEBUGERR');
+		new ShoppError('thistabs'._object_r($this->tabs), false, 'SHOPP_DEBUGERR');
 		$markup = array();
 		if ( empty($tabs) ) $tabs = $this->tabs;
 		$default = key($this->tabs);
