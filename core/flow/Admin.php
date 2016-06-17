@@ -35,31 +35,31 @@ class ShoppAdmin extends ShoppFlowController {
 	 * @public $caps
 	 **/
 	public $caps = array(                                      // Initialize the capabilities, mapping to pages
-		'main' => 'shopp_menu',                                //
-		'orders' => 'shopp_orders',                            // Capabilities                  Role
-		'customers' => 'shopp_customers',                      // _______________________________________________
-		'reports' => 'shopp_financials',                       //
-		'memberships' => 'shopp_products',                     // shopp_settings                administrator
-		'products' => 'shopp_products',                        // shopp_settings_checkout
-		'categories' => 'shopp_categories',                    // shopp_settings_payments
-		'discounts' => 'shopp_promotions',                     // shopp_settings_shipping
-		'system' => 'shopp_settings',                          // shopp_settings_taxes
-		'system-payments' => 'shopp_settings_payments',        // shopp_settings_system
-		'system-shipping' => 'shopp_settings_shipping',        // shopp_settings_update
-		'system-taxes' => 'shopp_settings_taxes',              // shopp_financials              shopp-merchant
-		'system-advanced' => 'shopp_settings_system',          // shopp_financials              shopp-merchant
-		'system-storage' => 'shopp_settings_system',           // shopp_financials              shopp-merchant
-		'system-log' => 'shopp_settings_system',               // shopp_financials              shopp-merchant
-		'setup' => 'shopp_settings',                           // shopp_settings_taxes
-		'setup-core' => 'shopp_settings',                      // shopp_settings_taxes
-		'setup-management' => 'shopp_settings',                // shopp_settings_presentation
-		'setup-pages' => 'shopp_settings_presentation',        // shopp_promotions
+		'main'               => 'shopp_menu',                  //
+		'orders'             => 'shopp_orders',                // Capabilities                  Role
+		'customers'          => 'shopp_customers',             // _______________________________________________
+		'reports'            => 'shopp_financials',            //
+		'memberships'        => 'shopp_products',              // shopp_settings                administrator
+		'products'           => 'shopp_products',              // shopp_settings_checkout
+		'categories'         => 'shopp_categories',            // shopp_settings_payments
+		'discounts'          => 'shopp_promotions',            // shopp_settings_shipping
+		'system'             => 'shopp_settings',              // shopp_settings_taxes
+		'system-payments'    => 'shopp_settings_payments',     // shopp_settings_system
+		'system-shipping'    => 'shopp_settings_shipping',     // shopp_settings_update
+		'system-taxes'       => 'shopp_settings_taxes',        // shopp_financials              shopp-merchant
+		'system-advanced'    => 'shopp_settings_system',       // shopp_financials              shopp-merchant
+		'system-storage'     => 'shopp_settings_system',       // shopp_financials              shopp-merchant
+		'system-log'         => 'shopp_settings_system',       // shopp_financials              shopp-merchant
+		'setup'              => 'shopp_settings',              // shopp_settings_taxes
+		'setup-core'         => 'shopp_settings',              // shopp_settings_taxes
+		'setup-management'   => 'shopp_settings',              // shopp_settings_presentation
+		'setup-pages'        => 'shopp_settings_presentation', // shopp_promotions
 		'setup-presentation' => 'shopp_settings_presentation', // shopp_products
-		'setup-checkout' => 'shopp_settings_checkout',         // shopp_products
-		'setup-downloads' => 'shopp_settings_checkout',        // shopp_products
-		'setup-images' => 'shopp_settings_presentation',       // shopp_categories
-		'welcome' => 'shopp_menu',                             // shopp_categories
-		'credits' => 'shopp_menu',                             // shopp_categories
+		'setup-checkout'     => 'shopp_settings_checkout',     // shopp_products
+		'setup-downloads'    => 'shopp_settings_checkout',     // shopp_products
+		'setup-images'       => 'shopp_settings_presentation', // shopp_categories
+		'welcome'            => 'shopp_menu',                  // shopp_categories
+		'credits'            => 'shopp_menu',                  // shopp_categories
 	);
 
 	/**
@@ -122,34 +122,34 @@ class ShoppAdmin extends ShoppFlowController {
 	private function pages () {
 
 		// Orders menu
-		$this->addpage('orders',    			Shopp::__('Orders'),		'ShoppAdminService');
-		$this->addpage('customers', 			Shopp::__('Customers'),		'ShoppAdminAccount');
-		$this->addpage('reports',  				Shopp::__('Reports'),		'ShoppAdminReport');
+		$this->addpage('orders',                Shopp::__('Orders'),		'ShoppAdminService');
+		$this->addpage('customers',             Shopp::__('Customers'),		'ShoppAdminAccount');
+		$this->addpage('reports',               Shopp::__('Reports'),		'ShoppAdminReport');
 
 		// Setup tabs
-		$this->addpage('setup', 				Shopp::__('Setup'),			'ShoppAdminSetup');
-		$this->addpage('setup-core',			Shopp::__('Shopp Setup'),	'ShoppAdminSetup', 'setup');
-		$this->addpage('setup-management',		Shopp::__('Management'),	'ShoppAdminSetup', 'setup');
-		$this->addpage('setup-checkout',		Shopp::__('Checkout'),		'ShoppAdminSetup', 'setup');
-		$this->addpage('setup-downloads',		Shopp::__('Downloads'),		'ShoppAdminSetup', 'setup');
-		$this->addpage('setup-presentation',	Shopp::__('Presentation'),	'ShoppAdminSetup', 'setup');
-		$this->addpage('setup-pages',			Shopp::__('Pages'),			'ShoppAdminSetup', 'setup');
-		$this->addpage('setup-images',			Shopp::__('Images'),		'ShoppAdminSetup', 'setup');
+		$this->addpage('setup',                 Shopp::__('Setup'),         'ShoppAdminSetup');
+		$this->addpage('setup-core',            Shopp::__('Shopp Setup'),   'ShoppAdminSetup', 'setup');
+		$this->addpage('setup-management',      Shopp::__('Management'),    'ShoppAdminSetup', 'setup');
+		$this->addpage('setup-checkout',        Shopp::__('Checkout'),      'ShoppAdminSetup', 'setup');
+		$this->addpage('setup-downloads',       Shopp::__('Downloads'),     'ShoppAdminSetup', 'setup');
+		$this->addpage('setup-presentation',    Shopp::__('Presentation'),  'ShoppAdminSetup', 'setup');
+		$this->addpage('setup-pages',           Shopp::__('Pages'),         'ShoppAdminSetup', 'setup');
+		$this->addpage('setup-images',          Shopp::__('Images'),        'ShoppAdminSetup', 'setup');
 
 		// System tabs
-		$this->addpage('system', 				Shopp::__('System'),		'ShoppAdminSystem');
-		$this->addpage('system-payments',		Shopp::__('Payments'),		'ShoppAdminSystem',	'system');
-		$this->addpage('system-shipping',		Shopp::__('Shipping'),		'ShoppAdminSystem',	'system');
-		$this->addpage('system-taxes',			Shopp::__('Taxes'),			'ShoppAdminSystem',	'system');
-		$this->addpage('system-storage',		Shopp::__('Storage'),		'ShoppAdminSystem',	'system');
-		$this->addpage('system-advanced',		Shopp::__('Advanced'),		'ShoppAdminSystem',	'system');
+		$this->addpage('system',                Shopp::__('System'),        'ShoppAdminSystem');
+		$this->addpage('system-payments',       Shopp::__('Payments'),      'ShoppAdminSystem',	'system');
+		$this->addpage('system-shipping',       Shopp::__('Shipping'),      'ShoppAdminSystem',	'system');
+		$this->addpage('system-taxes',          Shopp::__('Taxes'),         'ShoppAdminSystem',	'system');
+		$this->addpage('system-storage',        Shopp::__('Storage'),       'ShoppAdminSystem',	'system');
+		$this->addpage('system-advanced',       Shopp::__('Advanced'),      'ShoppAdminSystem',	'system');
 
 		if ( count(ShoppErrorLogging()->tail(2)) > 1 )
-			$this->addpage('system-log',		Shopp::__('Log'),			'ShoppAdminSystem',	'system');
+			$this->addpage('system-log',        Shopp::__('Log'),           'ShoppAdminSystem',	'system');
 
 		// Catalog menu
-		$this->addpage('products',   Shopp::__('Products'),   'ShoppAdminWarehouse',  'products');
-		$this->addpage('categories', Shopp::__('Categories'), 'ShoppAdminCategorize', 'products');
+		$this->addpage('products',              Shopp::__('Products'),      'ShoppAdminWarehouse',  'products');
+		$this->addpage('categories',            Shopp::__('Categories'),    'ShoppAdminCategorize', 'products');
 
 		$taxonomies = get_object_taxonomies(ShoppProduct::$posttype, 'object');
 		foreach ( $taxonomies as $t ) {
@@ -165,7 +165,7 @@ class ShoppAdmin extends ShoppFlowController {
 
 		// Filter hook for adding/modifying Shopp page definitions
 		$this->pages = apply_filters('shopp_admin_pages', $this->pages);
-		$this->caps = apply_filters('shopp_admin_caps', $this->caps);
+		$this->caps  = apply_filters('shopp_admin_caps', $this->caps);
 
 		reset($this->pages);
 		$this->mainmenu = key($this->pages);
@@ -244,8 +244,8 @@ class ShoppAdmin extends ShoppFlowController {
 	 **/
 	private function submenus ( ShoppAdminPage $Page ) {
 
-		$Shopp = Shopp::object();
-		$name = $Page->name;
+		$Shopp    = Shopp::object();
+		$name     = $Page->name;
 		$pagehook = $Page->page;
 
 		// Set capability
@@ -310,43 +310,45 @@ class ShoppAdmin extends ShoppFlowController {
 	 * @return void
 	 **/
 	public function taxonomies () {
-		global $menu,$submenu;
-		if (!is_array($submenu)) return;
+		global $menu, $submenu;
+		if ( ! is_array($submenu) ) return;
 
 		$taxonomies = get_object_taxonomies(ShoppProduct::$posttype);
-		foreach ($submenu['shopp-products'] as &$submenus) {
-			$taxonomy_name = str_replace('-','_',$submenus[2]);
-			if (!in_array($taxonomy_name,$taxonomies)) continue;
-			$submenus[2] = 'edit-tags.php?taxonomy='.$taxonomy_name;
-			add_filter('manage_edit-'.$taxonomy_name.'_columns', array($this,'taxonomy_cols'));
-			add_filter('manage_'.$taxonomy_name.'_custom_column', array($this,'taxonomy_product_column'), 10, 3);
+		if ( is_array($submenu['shopp-products']) ) {
+			foreach ($submenu['shopp-products'] as &$submenus) {
+				$taxonomy_name = str_replace('-', '_', $submenus[2]);
+				if ( ! in_array($taxonomy_name, $taxonomies) ) continue;
+				$submenus[2] = 'edit-tags.php?taxonomy=' . $taxonomy_name;
+				add_filter('manage_edit-' . $taxonomy_name . '_columns', array($this, 'taxonomy_cols'));
+				add_filter('manage_' . $taxonomy_name . '_custom_column', array($this, 'taxonomy_product_column'), 10, 3);
+			}
 		}
 
 		add_action('admin_print_styles-edit-tags.php',array($this, 'styles'));
-		add_action('admin_head-edit-tags.php', array($this,'taxonomy_menu'));
+		add_action('admin_head-edit-tags.php', array($this, 'taxonomy_menu'));
 	}
 
 	public function taxonomy_menu () {
 		global $parent_file,$taxonomy;
 		$taxonomies = get_object_taxonomies(ShoppProduct::$posttype);
-		if (in_array($taxonomy,$taxonomies)) $parent_file = 'shopp-products';
+		if ( in_array($taxonomy,$taxonomies) ) $parent_file = 'shopp-products';
 	}
 
 	public function taxonomy_cols ($cols) {
 		return array(
-			'cb' => '<input type="checkbox" />',
-			'name' => __('Name'),
+			'cb'          => '<input type="checkbox" />',
+			'name'        => __('Name'),
 			'description' => __('Description'),
-			'slug' => __('Slug'),
-			'products' => __('Products','Shopp')
+			'slug'        => __('Slug'),
+			'products'    => Shopp::__('Products')
 		);
 	}
 
 	public function taxonomy_product_column ($markup, $name, $term_id) {
 		global $taxonomy;
-		if ('products' != $name) return;
-		$term = get_term($term_id,$taxonomy);
-		return '<a href="admin.php?page=shopp-products&'.$taxonomy.'='.$term->slug.'">'.$term->count.'</a>';
+		if ( 'products' != $name ) return;
+		$term = get_term($term_id, $taxonomy);
+		return '<a href="admin.php?page=shopp-products&' . $taxonomy . '=' . $term->slug . '">' . $term->count . '</a>';
 	}
 
 	/**
@@ -374,19 +376,19 @@ class ShoppAdmin extends ShoppFlowController {
 	 **/
 	public function storefront_pages ($menu) {
 		$CatalogPage = ShoppPages()->get('catalog');
-		$shoppid = ShoppCatalogPage::frontid(); // uses impossibly long number ("Shopp" in decimal)
+		$shoppid     = ShoppCatalogPage::frontid(); // uses impossibly long number ("Shopp" in decimal)
 
 		$id = "<select name='page_on_front' id='page_on_front'>\n";
-		if ( false === strpos($menu,$id) ) return $menu;
+		if ( false === strpos($menu, $id) ) return $menu;
 		$token = '<option value="0">&mdash; Select &mdash;</option>';
 
 		if ( $shoppid == get_option('page_on_front') ) $selected = ' selected="selected"';
-		$storefront = '<optgroup label="' . __('Shopp','Shopp') . '"><option value="' . $shoppid . '"' . $selected . '>' . esc_html($CatalogPage->title()) . '</option></optgroup><optgroup label="' . __('WordPress') . '">';
+		$storefront = '<optgroup label="' . Shopp::__('Shopp') . '"><option value="' . $shoppid . '"' . $selected . '>' . esc_html($CatalogPage->title()) . '</option></optgroup><optgroup label="' . __('WordPress') . '">';
 
-		$newmenu = str_replace($token,$token.$storefront,$menu);
+		$newmenu = str_replace($token, $token . $storefront, $menu);
 
 		$token = '</select>';
-		$newmenu = str_replace($token,'</optgroup>'.$token,$newmenu);
+		$newmenu = str_replace($token, '</optgroup>' . $token, $newmenu);
 		return $newmenu;
 	}
 
@@ -439,7 +441,7 @@ class ShoppAdmin extends ShoppFlowController {
 	 **/
 	public function behaviors () {
 		global $wp_version, $hook_suffix;
-		if ( ! in_array($hook_suffix, $this->menus)) return;
+		if ( ! in_array($hook_suffix, $this->menus) ) return;
 		$this->styles();
 
 		shopp_enqueue_script('shopp');
@@ -462,7 +464,7 @@ class ShoppAdmin extends ShoppFlowController {
 		global $taxonomy;
 		if ( isset($taxonomy) ) { // Prevent loading styles if not on Shopp taxonomy editor
 			$taxonomies = get_object_taxonomies(ShoppProduct::$posttype);
-			if ( ! in_array($taxonomy, $taxonomies)) return;
+			if ( ! in_array($taxonomy, $taxonomies) ) return;
 		}
 
 		$uri = SHOPP_ADMIN_URI . '/styles';
@@ -472,9 +474,9 @@ class ShoppAdmin extends ShoppFlowController {
 		wp_enqueue_style('shopp.icons', "$uri/icons.css", array(), $version, 'screen');
 
 
-		$page = isset($_GET['page']) ? $_GET['page'] : '';
+		$page      = isset($_GET['page']) ? $_GET['page'] : '';
 		$pageparts = explode('-', $page);
-		$pagename = sanitize_key(end($pageparts));
+		$pagename  = sanitize_key(end($pageparts));
 
 		if ( 'rtl' == get_bloginfo('text_direction') )
 			wp_enqueue_style('shopp.admin-rtl', "$uri/rtl.css", array(), $version, 'all');
@@ -504,8 +506,8 @@ class ShoppAdmin extends ShoppFlowController {
 
 		$request = $_GET['page'];
 		if ( in_array($request, array_keys($this->pages)) ) {
-			$page = $this->pages[ $request ];
-			$parts = explode('-', $request);
+			$page     = $this->pages[ $request ];
+			$parts    = explode('-', $request);
 			$pagename = end($parts);
 		} else return;
 
@@ -529,8 +531,8 @@ class ShoppAdmin extends ShoppFlowController {
 	public function boxhelp ( $id ) {
 		if ( ! ShoppSupport::activated() ) return '';
 
-		$helpurl = add_query_arg(array('src'=>'help','id'=>$id),admin_url('admin.php'));
-		return apply_filters('shopp_admin_boxhelp','<a href="'.esc_url($helpurl).'" class="help shoppui-question"></a>');
+		$helpurl = add_query_arg(array('src' => 'help', 'id' => $id), admin_url('admin.php'));
+		return apply_filters('shopp_admin_boxhelp', '<a href="' . esc_url($helpurl) . '" class="help shoppui-question"></a>');
 	}
 
 	/**
@@ -541,7 +543,7 @@ class ShoppAdmin extends ShoppFlowController {
 	 **/
 	public function updatedb () {
 		$Shopp = Shopp::object();
-		$uri = SHOPP_ADMIN_URI . '/styles';
+		$uri   = SHOPP_ADMIN_URI . '/styles';
 		wp_enqueue_style('shopp.welcome', "$uri/welcome.css", array(), ShoppVersion::cache(), 'screen');
 		include( SHOPP_ADMIN_PATH . '/help/update.php');
 	}
@@ -556,8 +558,8 @@ class ShoppAdmin extends ShoppFlowController {
 	 * @return array Modified actions list
 	 **/
 	public function favorites ($actions) {
-		$key = esc_url(add_query_arg(array('page' => $this->pagename('products'), 'id' => 'new'), 'admin.php'));
-	    $actions[$key] = array(Shopp::__('New Product'), 8);
+		$key             = esc_url(add_query_arg(array('page' => $this->pagename('products'), 'id' => 'new'), 'admin.php'));
+	    $actions[ $key ] = array(Shopp::__('New Product'), 8);
 		return $actions;
 	}
 
@@ -573,7 +575,7 @@ class ShoppAdmin extends ShoppFlowController {
 	 * @return void
 	 **/
 	public function themepath () {
-		shopp_set_setting('theme_templates',addslashes(sanitize_path(STYLESHEETPATH.'/'."shopp")));
+		shopp_set_setting('theme_templates', addslashes(sanitize_path(STYLESHEETPATH . '/' . "shopp")));
 	}
 
 	/**
@@ -587,7 +589,7 @@ class ShoppAdmin extends ShoppFlowController {
 	 **/
 	public function get_editor_pages ($pagenames) {
 		$filter = '-edit';
-		if (substr($pagenames,strlen($filter)*-1) == $filter) return true;
+		if ( substr($pagenames, strlen($filter)*-1) == $filter ) return true;
 		else return false;
 	}
 
@@ -602,7 +604,7 @@ class ShoppAdmin extends ShoppFlowController {
 	 **/
 	public function get_settings_pages ($pagenames) {
 		$filter = '-settings';
-		if (strpos($pagenames,$filter) !== false) return true;
+		if ( strpos($pagenames, $filter) !== false ) return true;
 		else return false;
 	}
 
@@ -618,7 +620,7 @@ class ShoppAdmin extends ShoppFlowController {
 		if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'edit_pages' ) ) return;
 
 		$len = strlen( ABSPATH );
-		$p = '';
+		$p   = '';
 
 		for ( $i = 0; $i < $len; $i++ )
 			$p .= 'x' . dechex( ord( substr( ABSPATH, $i, 1 ) ) + $len );
@@ -626,15 +628,15 @@ class ShoppAdmin extends ShoppFlowController {
 		// Add TinyMCE buttons when using rich editor
 		if ( 'true' == get_user_option( 'rich_editing' ) ) {
 			global $pagenow, $plugin_page;
-			$pages = array( 'post.php', 'post-new.php', 'page.php', 'page-new.php' );
+			$pages   = array( 'post.php', 'post-new.php', 'page.php', 'page-new.php' );
 			$editors = array( 'shopp-products', 'shopp-categories' );
 			if ( ! ( in_array( $pagenow, $pages ) || ( in_array( $plugin_page, $editors ) && ! empty( $_GET['id'] ) ) ) )
 				return false;
 
 			wp_localize_script( 'editor', 'ShoppDialog', array(
-				'title' => __( 'Insert Product Category or Product', 'Shopp' ),
-				'desc' => __( 'Insert a product or category from Shopp...', 'Shopp' ),
-				'p' => $p
+				'title' => Shopp::__( 'Insert Product Category or Product' ),
+				'desc'  => Shopp::__( 'Insert a product or category from Shopp...' ),
+				'p'     => $p
 			));
 
 			add_filter( 'mce_external_plugins', array( $this, 'mceplugin' ), 5 );
@@ -653,7 +655,7 @@ class ShoppAdmin extends ShoppFlowController {
 	 **/
 	public function mceplugin ($plugins) {
 		// Add a changing query string to keep the TinyMCE plugin from being cached & breaking TinyMCE in Safari/Chrome
-		$plugins['Shopp'] = SHOPP_ADMIN_URI.'/behaviors/tinymce/tinyshopp.js?ver='.time();
+		$plugins['Shopp'] = SHOPP_ADMIN_URI . '/behaviors/tinymce/tinyshopp.js?ver=' . time();
 		return $plugins;
 	}
 
@@ -682,9 +684,9 @@ class ShoppAdmin extends ShoppFlowController {
 	public function legacyupdate () {
 		global $plugin_page;
 
-		if ($plugin_page == 'shopp-settings-update'
-			&& isset($_GET['updated']) && $_GET['updated'] == 'true') {
-				wp_redirect(add_query_arg('page',$this->pagename('orders'),admin_url('admin.php')));
+		if ( 'shopp-settings-update' == $plugin_page
+			&& isset($_GET['updated']) && 'true' == $_GET['updated'] ) {
+				wp_redirect(add_query_arg('page', $this->pagename('orders'), admin_url('admin.php')));
 				exit();
 		}
 	}
@@ -703,19 +705,19 @@ class ShoppAdmin extends ShoppFlowController {
 
 			$nav_menu_selected_id = isset( $_REQUEST['menu'] ) ? (int) $_REQUEST['menu'] : 0;
 
-			foreach ((array)$_REQUEST['menu-item'] as $key => $item) {
-				if (!isset($item['menu-item-shopp-page'])) continue;
+			foreach ( (array)$_REQUEST['menu-item'] as $key => $item ) {
+				if ( ! isset($item['menu-item-shopp-page']) ) continue;
 
 				$requested = $item['menu-item-shopp-page'];
 
 				$Page = ShoppPages()->get($requested);
 
-				$menuitem = &$_REQUEST['menu-item'][$key];
-				$menuitem['menu-item-db-id'] = 0;
+				$menuitem = &$_REQUEST['menu-item'][ $key ];
+				$menuitem['menu-item-db-id']     = 0;
 				$menuitem['menu-item-object-id'] = $requested;
-				$menuitem['menu-item-object'] = $requested;
-				$menuitem['menu-item-type'] = ShoppPages::QUERYVAR;
-				$menuitem['menu-item-title'] = $Page->title();
+				$menuitem['menu-item-object']    = $requested;
+				$menuitem['menu-item-type']      = ShoppPages::QUERYVAR;
+				$menuitem['menu-item-title']     = $Page->title();
 			}
 
 		}
@@ -785,18 +787,18 @@ class ShoppAdmin extends ShoppFlowController {
  **/
 class ShoppAdminPage {
 
-	public $name = '';
-	public $page = '';
-	public $label = '';
+	public $name       = '';
+	public $page       = '';
+	public $label      = '';
 	public $controller = '';
-	public $parent = false;
+	public $parent     = false;
 
 	public function __construct ( $name, $page, $label, $controller, $parent = null ) {
-		$this->name = $name;
-		$this->page = $page;
-		$this->label = $label;
+		$this->name       = $name;
+		$this->page       = $page;
+		$this->label      = $label;
 		$this->controller = $controller;
-		$this->parent = $parent;
+		$this->parent     = $parent;
 	}
 
 	public function hook () {
@@ -822,14 +824,14 @@ class ShoppUI {
 
 	public static function button ( $button, $name, array $options = array() ) {
 		$buttons = array(
-			'add' => array('class' => 'add', 'title' => Shopp::__('Add'), 'icon' => 'shoppui-plus', 'type' => 'submit'),
-			'delete' => array('class' => 'delete', 'title' => Shopp::__('Delete'), 'icon' => 'shoppui-minus', 'type' => 'submit')
+			'add'    => array('class' => 'add', 'title' => __('Add'), 'icon' => 'shoppui-plus', 'type' => 'submit'),
+			'delete' => array('class' => 'delete', 'title' => __('Delete'), 'icon' => 'shoppui-minus', 'type' => 'submit')
 		);
 
 		if ( isset($buttons[ $button ]) )
 			$options = array_merge($buttons[ $button ], $options);
 
-		$types = array('submit','button');
+		$types = array('submit', 'button');
 		if ( ! in_array($options['type'], $types) )
 			$options['type'] = 'submit';
 
@@ -876,7 +878,7 @@ class ShoppUI {
 		$wp_list_table->set_pagination( array(
 			'total_items' => $total_items,
 			'total_pages' => $total_pages,
-			'per_page' => $per_page
+			'per_page'    => $per_page
 		) );
 
 		return $wp_list_table;
@@ -912,8 +914,8 @@ class ShoppUI {
 
 				<?php
 					$collections = $Shopp->Collections;
-					foreach ($collections as $slug => $CollectionClass):
-						$menu = get_class_property($CollectionClass,'_menu');
+					foreach ( $collections as $slug => $CollectionClass ):
+						$menu = get_class_property($CollectionClass, '_menu');
 						if ( ! $menu ) continue;
 						$Collection = new $CollectionClass();
 						$Collection->smart();
@@ -936,14 +938,14 @@ class ShoppUI {
 				<?php
 					// Promo Collections
 					$select = sDB::select(array(
-						'table' => ShoppDatabaseObject::tablename(ShoppPromo::$table),
+						'table'   => ShoppDatabaseObject::tablename(ShoppPromo::$table),
 						'columns' => 'SQL_CALC_FOUND_ROWS id,name',
-						'where' => array("target='Catalog'","status='enabled'"),
+						'where'   => array("target='Catalog'","status='enabled'"),
 						'orderby' => 'created DESC'
 					));
 
-					$Promotions = sDB::query($select,'array');
-					foreach ($Promotions as $promo):
+					$Promotions = sDB::query($select, 'array');
+					foreach ( $Promotions as $promo ):
 						$slug = sanitize_title_with_dashes($promo->name);
 				?>
 					<li>
@@ -1008,7 +1010,7 @@ class ShoppUI {
 				<ul class="categorychecklist form-no-clear">
 
 				<?php
-					foreach (ShoppPages() as $name => $Page):
+					foreach ( ShoppPages() as $name => $Page ):
 						$_nav_menu_placeholder = 0 > $_nav_menu_placeholder ? $_nav_menu_placeholder - 1 : -1;
 				?>
 					<li>
@@ -1065,7 +1067,7 @@ class ShoppUI {
 	 * @param array $args [optional]
 	 */
 	public static function addmetabox ( $id, $title, $callback, $posttype, $context = 'advanced', $priority = 'default', array $args = null ) {
-		self::$metaboxes[$id] = $callback;
+		self::$metaboxes[ $id ] = $callback;
 		$args = (array) $args;
 		array_unshift($args, $id);
 		add_meta_box($id, $title, array(__CLASS__, 'metabox'), $posttype, $context, $priority, $args);
@@ -1075,9 +1077,9 @@ class ShoppUI {
 	 * Handles metabox callbacks - this allows additional output to be appended and prepended by devs using
 	 * the shopp_metabox_before_{id} and shopp_metabox_after_{id} actions.
 	 */
-	public static function metabox($object, $args) {
+	public static function metabox ( $object, $args ) {
 		$id = array_shift($args['args']);
-		$callback = isset(self::$metaboxes[$id]) ? self::$metaboxes[$id] : false;
+		$callback = isset(self::$metaboxes[ $id ]) ? self::$metaboxes[ $id ] : false;
 
 		if (false === $callback) return;
 		do_action('shopp_metabox_before_' . $id);
@@ -1106,10 +1108,11 @@ class ShoppAdminListTable extends WP_List_Table {
 
 	}
 
-	public function get_column_info() {
+	public function get_column_info () {
 		$columns = get_column_headers( $this->_screen );
 		$hidden = get_hidden_columns( $this->_screen );
 		$screen = get_current_screen();
+		$primary = method_exists($this, "get_primary_column_name") ? $this->get_primary_column_name() : null;
 
 		$_sortable = apply_filters( "manage_{$screen->id}_sortable_columns", $this->get_sortable_columns() );
 
@@ -1122,14 +1125,14 @@ class ShoppAdminListTable extends WP_List_Table {
 			if ( !isset( $data[1] ) )
 				$data[1] = false;
 
-			$sortable[$id] = $data;
+			$sortable[ $id ] = $data;
 		}
 
 
-		return array( $columns, $hidden, $sortable );
+		return array( $columns, $hidden, $sortable, $primary );
 	}
 
-	public function get_columns() {
+	public function get_columns () {
 		return $this->_columns;
 	}
 
@@ -1137,16 +1140,16 @@ class ShoppAdminListTable extends WP_List_Table {
 		$screen = get_current_screen();
 		$sortables = array(
 			'toplevel_page_shopp-products' => array(
-				'name'=>'name',
-				'price'=>'price',
-				'sold'=>'sold',
-				'gross'=>'gross',
-				'inventory'=>'inventory',
-				'sku'=>'sku',
-				'date'=>array('date',true)
+				'name'      => 'name',
+				'price'     => 'price',
+				'sold'      => 'sold',
+				'gross'     => 'gross',
+				'inventory' => 'inventory',
+				'sku'       => 'sku',
+				'date'      => array('date', true)
 			)
 		);
-		if (isset($sortables[ $screen->id ])) return $sortables[ $screen->id ];
+		if ( isset($sortables[ $screen->id ]) ) return $sortables[ $screen->id ];
 
 		return array();
 	}
@@ -1158,7 +1161,8 @@ class ShoppAdminListTable extends WP_List_Table {
 	}
 
 	public function page_navigation ( $which ) {
-		return call_user_func_array( array( $this, 'pagination' ), func_get_args() );
+		$args = func_get_args();
+		return call_user_func_array( array( $this, 'pagination' ), $args );
 	}
 
 }
