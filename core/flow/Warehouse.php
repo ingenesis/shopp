@@ -38,7 +38,8 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		Shopping::restore('worklist', $this->worklist);
 
 		if ( 'off' == shopp_setting('inventory') )
-			array_splice($this->views, 4, 1);
+			// JM array_splice($this->views, 4, 1);
+			unset($this->views['inventory']);
 
 		if ( isset($_GET['view']) && in_array($_GET['view'], $this->views) )
 			$this->view = $_GET['view'];
@@ -70,7 +71,7 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 			shopp_enqueue_script('search-select');
 
 			do_action('shopp_product_editor_scripts');
-			add_action('admin_head',array(&$this,'layout'));
+			add_action('admin_head', array(&$this, 'layout'));
 
 		} else {
 			add_action('load-' . $this->screen, array($this,'loader'));
@@ -122,16 +123,16 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 	 * @return void
 	 **/
 	public function workflow () {
-		global $Shopp,$post;
+		global $Shopp, $post;
 
 		$defaults = array(
-			'page' => false,
-			'action' => false,
-			'selected' => array(),
-			'id' => false,
-			'save' => false,
-			'duplicate' => false,
-			'next' => false
+			'page'	    => false,
+			'action'	=> false,
+			'selected'	=> array(),
+			'id'	    => false,
+			'save'	    => false,
+			'duplicate'	=> false,
+			'next'	    => false
 		);
 		$args = array_merge($defaults, $_REQUEST);
 		extract($args, EXTR_SKIP);
@@ -147,19 +148,19 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		if ( $this->Admin->pagename('products') == $page && ( false !== $action || isset($_GET['delete_all']) ) ) {
 			if (isset($_GET['delete_all'])) $action = 'emptytrash';
 			switch ($action) {
-				case 'publish': 	ShoppProduct::publishset($selected,'publish'); break;
-				case 'unpublish': 	ShoppProduct::publishset($selected,'draft'); break;
-				case 'feature': 	ShoppProduct::featureset($selected,'on'); break;
-				case 'defeature': 	ShoppProduct::featureset($selected,'off'); break;
-				case 'restore': 	ShoppProduct::publishset($selected,'draft'); break;
-				case 'trash': 		ShoppProduct::publishset($selected,'trash'); break;
+				case 'publish': 	ShoppProduct::publishset($selected, 'publish'); break;
+				case 'unpublish': 	ShoppProduct::publishset($selected, 'draft'); break;
+				case 'feature': 	ShoppProduct::featureset($selected, 'on'); break;
+				case 'defeature': 	ShoppProduct::featureset($selected, 'off'); break;
+				case 'restore': 	ShoppProduct::publishset($selected, 'draft'); break;
+				case 'trash': 		ShoppProduct::publishset($selected, 'trash'); break;
 				case 'delete':
 					foreach ($selected as $id) {
 						$P = new ShoppProduct($id); $P->delete();
 					} break;
 				case 'emptytrash':
 					$Template = new ShoppProduct();
-					$trash = sDB::query("SELECT ID FROM $Template->_table WHERE post_status='trash' AND post_type='".ShoppProduct::posttype()."'",'array','col','ID');
+					$trash = sDB::query("SELECT ID FROM $Template->_table WHERE post_status='trash' AND post_type='" . ShoppProduct::posttype() . "'", 'array', 'col', 'ID');
 					foreach ($trash as $id) {
 						$P = new ShoppProduct($id); $P->delete();
 					} break;
@@ -169,11 +170,11 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 			Shopp::cache_invalidate();
 			
 			$redirect = add_query_arg( $_GET, $adminurl );
-			$redirect = remove_query_arg( array('action','selected','delete_all'), $redirect );
+			$redirect = remove_query_arg( array('action', 'selected', 'delete_all'), $redirect );
 			Shopp::redirect( $redirect );
 		}
 
-		if ($duplicate) {
+		if ( $duplicate ) {
 			// Gracefully invalidate Shopp object caching
 			Shopp::cache_invalidate();
 
@@ -183,59 +184,59 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 			Shopp::redirect( add_query_arg(array('page' => $this->Admin->pagename('products'), 'paged' => $_REQUEST['paged']), $adminurl) );
 		}
 
-		if (isset($id) && $id != "new") {
+		if ( isset($id) && $id != "new" ) {
 			$Shopp->Product = new ShoppProduct($id);
 			$Shopp->Product->load_data();
 
 			// Adds CPT compatibility support for third-party plugins/themes
 			global $post;
-			if( is_null($post) ) $post = get_post($Shopp->Product->id);
+			if ( is_null($post) ) $post = get_post($Shopp->Product->id);
 
 		} else $Shopp->Product = new ShoppProduct();
 
-		if ($save) {
+		if ( $save ) {
 
 			// Gracefully invalidate Shopp object caching
 			Shopp::cache_invalidate();
 
 			$this->save($Shopp->Product);
-			$this->notice( sprintf(__('%s has been saved.','Shopp'),'<strong>'.stripslashes($Shopp->Product->name).'</strong>') );
+			$this->notice( Shopp::__('%s has been saved.', '<strong>' . stripslashes($Shopp->Product->name) . '</strong>') );
 
 			// Workflow handler
 			if (isset($_REQUEST['settings']) && isset($_REQUEST['settings']['workflow'])) {
 				$workflow = $_REQUEST['settings']['workflow'];
 				$worklist = $this->worklist;
-				$working = array_search($id,$this->worklist);
+				$working = array_search($id, $this->worklist);
 
-				switch($workflow) {
-					case 'close': $next = 'close'; break;
-					case 'new': $next = 'new'; break;
-					case 'next': $key = $working+1; break;
-					case 'previous': $key = $working-1; break;
-					case 'continue': $next = $id; break;
+				switch( $workflow ) {
+					case 'close':	    $next = 'close'; 	    break;
+					case 'new':	        $next = 'new'; 	        break;
+					case 'next':	    $key  = $working + 1;	break;
+					case 'previous':	$key  = $working - 1;	break;
+					case 'continue':	$next = $id;	        break;
 				}
 
-				if (isset($key)) $next = isset($worklist[$key]) ? $worklist[$key] : 'close';
+				if ( isset($key) ) $next = isset($worklist[ $key ]) ? $worklist[ $key ] : 'close';
 			}
 
-			if ($next) {
+			if ( $next ) {
 				$query = $_GET;
 				if ( isset($this->worklist['query']) ) $query = array_merge($_GET, $this->worklist['query']);
-				$redirect = add_query_arg($query,$adminurl);
-				$cleanup = array('action','selected','delete_all');
-				if ('close' == $next) { $cleanup[] = 'id'; $next = false; }
+				$redirect = add_query_arg($query, $adminurl);
+				$cleanup = array('action','selected', 'delete_all');
+				if ( 'close' == $next ) { $cleanup[] = 'id'; $next = false; }
 				$redirect = remove_query_arg($cleanup, $redirect);
-				if ($next) $redirect = add_query_arg('id',$next,$redirect);
-				Shopp::redirect($redirect);
+				if ( $next ) $redirect = add_query_arg('id', $next, $redirect);
+				Shopp::redirect( $redirect );
 			}
 
-			if (empty($id)) $id = $Shopp->Product->id;
-			$Shopp->Product = new ShoppProduct($id);
+			if ( empty( $id ) ) $id = $Shopp->Product->id;
+			$Shopp->Product = new ShoppProduct( $id );
 			$Shopp->Product->load_data();
 		}
 
 		// WP post type editing support for other plugins
-		if (!empty($Shopp->Product->id))
+		if ( ! empty($Shopp->Product->id) )
 			$post = get_post($Shopp->Product->id);
 
 	}
@@ -244,45 +245,45 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 
 		if ( ! current_user_can('shopp_products') ) return;
 
-		add_screen_option( 'per_page', array( 'label' => __('Products Per Page','Shopp'), 'default' => 20, 'option' => 'edit_' . ShoppProduct::$posttype . '_per_page' ) );
+		add_screen_option( 'per_page', array( 'label' => Shopp::__('Products Per Page'), 'default' => 20, 'option' => 'edit_' . ShoppProduct::$posttype . '_per_page' ) );
 		$per_page_option = get_current_screen()->get_option( 'per_page' );
 
 		$defaults = array(
-			'cat' => false,
-			'paged' => 1,
-			'per_page' => $per_page_option['default'],
-			's' => '',
-			'sl' => '',
-			'matchcol' => '',
-			'view' => $this->view,
-			'is_inventory' => false,
-			'is_trash' => false,
-			'is_bestselling' => false,
-			'categories_menu' => false,
-			'inventory_menu' => false,
-			'lowstock' => 0,
-			'columns' => '',
-			'orderby' => '',
-			'order' => '',
-			'where' => array(),
-			'joins' => array()
+			'cat'	            => false,
+			'paged'	            => 1,
+			'per_page'	        => $per_page_option['default'],
+			's'	                => '',
+			'sl'	            => '',
+			'matchcol'	        => '',
+			'view'	            => $this->view,
+			'is_inventory'	    => false,
+			'is_trash'	        => false,
+			'is_bestselling'	=> false,
+			'categories_menu'	=> false,
+			'inventory_menu'	=> false,
+			'lowstock'	        => 0,
+			'columns'	        => '',
+			'orderby'	        => '',
+			'order'	            => '',
+			'where'	            => array(),
+			'joins'	            => array()
 		);
 
 		$args = array_merge($defaults, $_GET);
 		if ( false !== ( $user_per_page = get_user_option($per_page_option['option']) ) ) $args['per_page'] = $user_per_page;
 		extract($args, EXTR_SKIP);
 
-		$url = ShoppAdminController::url($_GET);
+		$url = ShoppAdminController::url( $_GET );
 
 		$subs = array(
-			'all' =>        array('label' => Shopp::__('All'),                'where' => array("p.post_status!='trash'")),
-			'published' =>  array('label' => Shopp::__('Published'),          'where' => array("p.post_status='publish'")),
-			'drafts' =>     array('label' => Shopp::__('Drafts'),             'where' => array("p.post_status='draft'")),
-			'trash' =>      array('label' => Shopp::__('Trash'),              'where' => array("p.post_status='trash'")),			
-			'onsale' =>     array('label' => Shopp::__('On Sale'),            'where' => array("s.sale='on' AND p.post_status != 'trash'")),
-			'featured' =>   array('label' => Shopp::__('Featured'),	          'where' => array("s.featured='on' AND p.post_status != 'trash'")),
-			'bestselling'=> array('label' => Shopp::__('Bestselling'),        'where' => array("p.post_status!='trash'", BestsellerProducts::threshold() . " < s.sold"),'order' => 'bestselling'),
-			'inventory' => 	array('label' => Shopp::__('Inventory Manager'),  'where' => array("s.inventory='on' AND p.post_status != 'trash'"))
+			'all'	        =>	array('label' => Shopp::__('All'),                'where' => array("p.post_status!='trash'")),
+			'published'	    =>	array('label' => Shopp::__('Published'),          'where' => array("p.post_status='publish'")),
+			'drafts'	    =>	array('label' => Shopp::__('Drafts'),             'where' => array("p.post_status='draft'")),
+			'trash'	        =>	array('label' => Shopp::__('Trash'),              'where' => array("p.post_status='trash'")),			
+			'onsale'	    =>	array('label' => Shopp::__('On Sale'),            'where' => array("s.sale='on' AND p.post_status != 'trash'")),
+			'featured'	    =>	array('label' => Shopp::__('Featured'),	          'where' => array("s.featured='on' AND p.post_status != 'trash'")),
+			'bestselling'	=>	array('label' => Shopp::__('Bestselling'),        'where' => array("p.post_status!='trash'", BestsellerProducts::threshold() . " < s.sold"),'order' => 'bestselling'),
+			'inventory' 	=>	array('label' => Shopp::__('Inventory Manager'),  'where' => array("s.inventory='on' AND p.post_status != 'trash'"))
 		);
 
 		if ( ! shopp_setting_enabled('inventory') ) unset($subs['inventory']);
@@ -296,20 +297,23 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 			case 'bestselling': $is_bestselling = true; break;
 		}
 
-		if ( $is_inventory ) $per_page = 50;
+		if ( $is_inventory ) {
+			$user = wp_get_current_user();
+			$per_page = isset($user->edit_shopp_product_per_page) ? (int)$user->edit_shopp_product_per_page : 50;
+		}
 		$pagenum = absint( $paged );
 		$start = ( $per_page * ( $pagenum - 1 ) );
 
 		$where = $subs[ $this->view ]['where'];
 
-		if ( ! empty($s) ) {
+		if ( ! empty( $s ) ) {
 			$SearchResults = new SearchResults(array('search' => $s, 'nostock' => 'on', 'published' => 'off', 'paged' => -1));
 			$SearchResults->load();
 			$ids = array_keys($SearchResults->products);
 			$where[] = "p.ID IN (" . join(',', $ids) . ")";
 		}
 
-		if ( ! empty($cat) ) {
+		if ( ! empty( $cat ) ) {
 			global $wpdb;
 			$joins[ $wpdb->term_relationships ] = "INNER JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id)";
 			$joins[ $wpdb->term_taxonomy ] = "INNER JOIN $wpdb->term_taxonomy AS tt ON (tr.term_taxonomy_id=tt.term_taxonomy_id AND tt.term_id=$cat)";
@@ -347,7 +351,8 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 					if ( empty($ls) ) $ls = '0';
 					$where[] = "(s.inventory='on' AND s.lowstock != 'none')";
 					break;
-				case "is": $where[] = "(s.inventory='on' AND s.stock > 0)";
+				case "is": 
+					$where[] = "(s.inventory='on' AND s.stock > 0)";
 			}
 		}
 
@@ -370,10 +375,10 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 			case 'price': $order = 'lowprice'; if ('desc' == $orderd) $order = 'highprice'; break;
 			case 'date': $order = 'newest'; if ('desc' == $orderd) $order = 'oldest'; break;
 
-			case 'sold': $ordercols = 's.sold '.$orderd; break;
-			case 'gross': $ordercols = 's.grossed '.$orderd; break;
-			case 'inventory': $ordercols = 's.stock '.$orderd; break;
-			case 'sku': $ordercols = 'pt.sku '.$orderd; break;
+			case 'sold': $ordercols = 's.sold ' . $orderd; break;
+			case 'gross': $ordercols = 's.grossed ' . $orderd; break;
+			case 'inventory': $ordercols = 's.stock ' . $orderd; break;
+			case 'sku': $ordercols = 'pt.sku ' . $orderd; break;
 		}
 
 		if ( in_array($this->view, array('onsale', 'featured', 'inventory')) )
@@ -382,7 +387,7 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		$loading = array(
 			'where'     => $where,
 			'joins'     => $joins,
-			'limit'     => "$start,$per_page",
+			'limit'     => "$start, $per_page",
 			'load'      => array('categories', 'coverimages'),
 			'published' => false,
 			'order'     => $order,
@@ -390,7 +395,7 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 			// 'debug'  => true
 		);
 
-		if ( ! empty($ordercols) ) {
+		if ( ! empty( $ordercols ) ) {
 			unset($loading['order']);
 			$loading['orderby'] = $ordercols;
 		}
@@ -399,11 +404,11 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 			$where[] = "(pt.context='product' OR pt.context='variation') AND pt.type != 'N/A'";
 			$loading = array(
 				'columns'   => "pt.id AS stockid,IF(pt.context='variation',CONCAT(p.post_title,': ',pt.label),p.post_title) AS post_title,pt.sku AS sku,pt.stock AS stock",
-				'joins'     => array_merge(array($pt => "LEFT JOIN $pt AS pt ON p.ID=pt.product"),$joins),
+				'joins'     => array_merge(array($pt => "LEFT JOIN $pt AS pt ON p.ID=pt.product"), $joins),
 				'where'     => $where,
 				'groupby'   => 'pt.id',
 				'orderby'   => str_replace('s.', 'pt.', $ordercols),
-				'limit'     => "$start,$per_page",
+				'limit'     => "$start, $per_page",
 				'nostock'   => true,
 				'published' => false,
 				// 'debug'  => true
@@ -429,7 +434,7 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		if ( $workflow ) return $this->products->worklist();
 
 		// Get sub-screen counts
-		$subcounts = Shopp::cache_get('shopp_product_subcounts','shopp_admin');
+		$subcounts = Shopp::cache_get('shopp_product_subcounts', 'shopp_admin');
 		if ( $subcounts ) {
 			foreach ($subcounts as $name => $total)
 				if ( isset($subs[ $name ]) ) $subs[ $name ]['total'] = $total;
@@ -438,10 +443,10 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 			foreach ( $subs as $name => &$subquery ) {
 				$subquery['total'] = 0;
 				$query = array(
-					'columns' => "count(*) AS total",
-					'table' => "$pd as p",
-					'joins' => array(),
-					'where' => array(),
+					'columns'	=> "count(*) AS total",
+					'table'	    => "$pd as p",
+					'joins'	    => array(),
+					'where'	    => array(),
 				);
 
 				$query = array_merge($query, $subquery);
@@ -479,54 +484,54 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		$this->loader();
 
 		$defaults = array(
-			'cat' => false,
-			'paged' => 1,
-			'per_page' => 20,
-			's' => '',
-			'sl' => '',
-			'matchcol' => '',
-			'view' => $this->view,
-			'is_inventory' => false,
-			'is_trash' => false,
-			'is_bestselling' => false,
-			'categories_menu' => false,
-			'inventory_menu' => false,
-			'lowstock' => 0,
-			'columns' => '',
-			'orderby' => '',
-			'order' => '',
-			'where' => array(),
-			'joins' => array()
+			'cat'	            => false,
+			'paged'	            => 1,
+			'per_page'	        => 20,
+			's'                 =>	'',
+			'sl'                =>	'',
+			'matchcol'	        => '',
+			'view'	            => $this->view,
+			'is_inventory'	    => false,
+			'is_trash'	        => false,
+			'is_bestselling'	=> false,
+			'categories_menu'	=> false,
+			'inventory_menu'	=> false,
+			'lowstock'	        => 0,
+			'columns'	        => '',
+			'orderby'	        => '',
+			'order'	            => '',
+			'where'	            => array(),
+			'joins'	            => array()
 		);
 
-		$args = array_merge($defaults,$_GET);
+		$args = array_merge($defaults, $_GET);
 		$per_page_option = get_current_screen()->get_option( 'per_page' );
 		if ( false !== ( $user_per_page = get_user_option($per_page_option['option']) ) ) $args['per_page'] = $user_per_page;
-		extract($args,EXTR_SKIP);
+		extract($args, EXTR_SKIP);
 
 		$url = add_query_arg(array_merge($_GET, array('page' => $this->Admin->pagename('products'))), admin_url('admin.php'));
 
 		if ( empty($categories) ) $categories = array('');
 
 		$categories_menu = wp_dropdown_categories(array(
-			'show_option_all' => __('View all categories', 'Shopp'),
-			'show_option_none' => __('Uncategorized', 'Shopp'),
-			'hide_empty' => 0,
-			'hierarchical' => 1,
-			'show_count' => 0,
-			'orderby' => 'name',
-			'selected' => $cat,
-			'echo' => 0,
-			'taxonomy' => 'shopp_category'
+			'show_option_all'	=> Shopp::__('View all categories'),
+			'show_option_none'	=> Shopp::__('Uncategorized'),
+			'hide_empty'	    => 0,
+			'hierarchical'	    => 1,
+			'show_count'	    => 0,
+			'orderby'	        => 'name',
+			'selected'	        => $cat,
+			'echo'	            => 0,
+			'taxonomy'	        => 'shopp_category'
 		));
 
 		if ( 'on' == shopp_setting('inventory') ) {
 			$inventory_filters = array(
-				'all' => __('View all products','Shopp'),
-				'is' => __('In stock','Shopp'),
-				'ls' => __('Low stock','Shopp'),
-				'oos' => __('Out-of-stock','Shopp'),
-				'ns' => __('Not stocked','Shopp')
+				'all'	=> Shopp::__('View all products'),
+				'is'	=> Shopp::__('In stock'),
+				'ls'	=> Shopp::__('Low stock'),
+				'oos'	=> Shopp::__('Out-of-stock'),
+				'ns'	=> Shopp::__('Not stocked')
 			);
 			$inventory_menu = '<select name="sl">'.Shopp::menuoptions($inventory_filters, $sl, true) . '</select>';
 		}
@@ -540,23 +545,23 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 			case 'bestselling': $is_bestselling = true; break;
 		}
 
-		if ($is_inventory) $per_page = 50;
+		if ( $is_inventory ) $per_page = 50;
 
 		$pagenum = absint( $paged );
 		$start = ($per_page * ($pagenum-1));
 
 		$actions_menu = array(
-			'publish' => __('Publish','Shopp'),
-			'unpublish' => __('Unpublish','Shopp'),
-			'feature' => __('Feature','Shopp'),
-			'defeature' => __('De-feature','Shopp'),
-			'trash' => __('Move to trash','Shopp')
+			'publish'	=> Shopp::__('Publish'),
+			'unpublish'	=> Shopp::__('Unpublish'),
+			'feature'	=> Shopp::__('Feature'),
+			'defeature'	=> Shopp::__('De-feature'),
+			'trash'	    => Shopp::__('Move to trash')
 		);
 
-		if ($is_trash) {
+		if ( $is_trash ) {
 			$actions_menu = array(
-				'restore' => __('Restore','Shopp'),
-				'delete' => __('Delete permanently','Shopp')
+				'restore'	=> Shopp::__('Restore'),
+				'delete'	=> Shopp::__('Delete permanently')
 			);
 		}
 
@@ -568,7 +573,7 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		$subs = $this->subs;
 
 		switch ($view) {
-			case 'inventory': if (shopp_setting_enabled('inventory')) $ui = 'inventory.php'; break;
+			case 'inventory': if ( shopp_setting_enabled('inventory') ) $ui = 'inventory.php'; break;
 			default: $ui = 'products.php'; break;
 		}
 
@@ -585,28 +590,30 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 
 		$headings = array(
 			'default' => array(
-				'cb'=>'<input type="checkbox" />',
-				'name'=>__('Name','Shopp'),
-				'category'=>__('Category','Shopp'),
-				'price'=>__('Price','Shopp'),
-				'inventory'=>__('Inventory','Shopp'),
-				'featured'=>__('Featured','Shopp'),
-				'date'=>__('Date','Shopp')
+				'cb'	    => '<input type="checkbox" />',
+				'id'	    => 'ID',
+				'name'	    => __('Name'),
+				'sku'	    => Shopp::__('SKU'),
+				'category'	=> __('Category'),
+				'price'	    => Shopp::__('Price'),
+				'inventory'	=> Shopp::__('Inventory'),
+				'featured'	=> Shopp::__('Featured'),
+				'date'	    => Shopp::__('Date')
 			),
 			'inventory' => array(
-				'inventory'=>__('Inventory','Shopp'),
-				'sku'=>__('SKU','Shopp'),
-				'name'=>__('Name','Shopp')
+				'inventory'	=> Shopp::__('Inventory'),
+				'sku'	    => Shopp::__('SKU'),
+				'name'	    => __('Name')
 			),
 			'bestselling' => array(
-				'cb'=>'<input type="checkbox" />',
-				'name'=>__('Name','Shopp'),
-				'sold'=>__('Sold','Shopp'),
-				'gross'=>__('Sales','Shopp'),
-				'price'=>__('Price','Shopp'),
-				'inventory'=>__('Inventory','Shopp'),
-				'featured'=>__('Featured','Shopp'),
-				'date'=>__('Date','Shopp')
+				'cb'	    => '<input type="checkbox" />',
+				'name'	    => __('Name'),
+				'sold'	    => Shopp::__('Sold'),
+				'gross'	    => Shopp::__('Sales'),
+				'price'	    => Shopp::__('Price'),
+				'inventory'	=> Shopp::__('Inventory'),
+				'featured'	=> Shopp::__('Featured'),
+				'date'	    => Shopp::__('Date')
 			)
 		);
 
@@ -616,9 +623,9 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		if ( ! shopp_setting_enabled('inventory') ) unset($columns['inventory']);
 
 		// Remove category column from the "trash" view
-		if ('trash' == $this->view) unset($columns['category']);
+		if ( 'trash' == $this->view ) unset($columns['category']);
 
-		ShoppUI::register_column_headers('toplevel_page_shopp-products', apply_filters('shopp_manage_product_columns',$columns));
+		ShoppUI::register_column_headers('toplevel_page_shopp-products', apply_filters('shopp_manage_product_columns', $columns));
 	}
 
 	/**
@@ -633,7 +640,7 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 	 **/
 	public function layout () {
 		$Admin = $this->Admin;
-		include(SHOPP_ADMIN_PATH."/products/ui.php");
+		include(SHOPP_ADMIN_PATH . "/products/ui.php");
 	}
 
 	/**
@@ -662,11 +669,11 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		$billPeriods = ShoppPrice::periods();
 
 		$workflows = array(
-			'continue' => Shopp::__('Continue Editing'),
-			'close' =>    Shopp::__('Products Manager'),
-			'new' =>      Shopp::__('New Product'),
-			'next' =>     Shopp::__('Edit Next'),
-			'previous' => Shopp::__('Edit Previous')
+			'continue'	=> Shopp::__('Continue Editing'),
+			'close'	    => Shopp::__('Products Manager'),
+			'new'	    => Shopp::__('New Product'),
+			'next'	    => Shopp::__('Edit Next'),
+			'previous'	=> Shopp::__('Edit Previous')
 		);
 
 		$taglist = array();
@@ -702,8 +709,10 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 				}
 			}
 		} else {
-			foreach ( $Product->options as &$menu )
-				$menu['options'] = array_values($menu['options']);
+			if ( is_array($Product->options) ) {
+				foreach ( $Product->options as &$menu )
+					$menu['options'] = array_values($menu['options']);
+			}
 		}
 
 		do_action('add_meta_boxes', ShoppProduct::$posttype, $Product);
@@ -741,13 +750,13 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		// Set publish date
 		if ('publish' == $_POST['status']) {
 			$publishing = isset($_POST['publish'])?$_POST['publish']:array();
-			$fields = array('month' => '','date' => '','year' => '','hour'=>'','minute'=>'','meridiem'=>'');
-			$publishdate = join('',array_merge($fields,$publishing));
-			if (!empty($publishdate)) {
+			$fields = array('month' => '', 'date' => '', 'year' => '', 'hour'=>'', 'minute'=>'', 'meridiem'=>'');
+			$publishdate = join('', array_merge($fields, $publishing));
+			if ( ! empty($publishdate) ) {
 				$publish =& $_POST['publish'];
-				if ($publish['meridiem'] == "PM" && $publish['hour'] < 12)
+				if ( $publish['meridiem'] == "PM" && $publish['hour'] < 12 )
 					$publish['hour'] += 12;
-				$publish = mktime($publish['hour'],$publish['minute'],0,$publish['month'],$publish['date'],$publish['year']);
+				$publish = mktime($publish['hour'], $publish['minute'], 0, $publish['month'], $publish['date'], $publish['year']);
 				$Product->status = 'future';
 				unset($_POST['status']);
 			} else {
@@ -768,24 +777,24 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		$Product->featured = 'off';
 
 		if ( isset($_POST['content']) ) $_POST['description'] = $_POST['content'];
-		$Product->updates($_POST,array('meta','categories','prices','tags'));
+		$Product->updates($_POST,array('meta', 'categories','prices','tags'));
 
 		do_action('shopp_pre_product_save');
 		$Product->save();
 
 		// Remove deleted images
-		if (!empty($_POST['deleteImages'])) {
+		if ( ! empty($_POST['deleteImages']) ) {
 			$deletes = array();
-			if (strpos($_POST['deleteImages'],",") !== false) $deletes = explode(',',$_POST['deleteImages']);
+			if ( strpos($_POST['deleteImages'], ",") !== false ) $deletes = explode(',', $_POST['deleteImages']);
 			else $deletes = array($_POST['deleteImages']);
 			$Product->delete_images($deletes);
 		}
 
 		// Update image data
-		if (!empty($_POST['images']) && is_array($_POST['images'])) {
+		if ( ! empty($_POST['images']) && is_array($_POST['images']) ) {
 			$Product->link_images($_POST['images']);
 			$Product->save_imageorder($_POST['images']);
-			if (!empty($_POST['imagedetails']))
+			if ( ! empty($_POST['imagedetails']) )
 				$Product->update_images($_POST['imagedetails']);
 		}
 
@@ -793,12 +802,12 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		if ( ! empty($_POST['price']) && is_array($_POST['price']) ) {
 
 			// Delete prices that were marked for removal
-			if (!empty($_POST['deletePrices'])) {
+			if ( ! empty($_POST['deletePrices']) ) {
 				$deletes = array();
-				if (strpos($_POST['deletePrices'],","))	$deletes = explode(',',$_POST['deletePrices']);
+				if ( strpos($_POST['deletePrices'], ",") )	$deletes = explode(',', $_POST['deletePrices']);
 				else $deletes = array($_POST['deletePrices']);
 
-				foreach($deletes as $option) {
+				foreach( $deletes as $option ) {
 					$Price = new ShoppPrice($option);
 					$Price->delete();
 				}
@@ -807,36 +816,38 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 			$Product->resum();
 
 			// Save prices that there are updates for
-			foreach($_POST['price'] as $i => $priceline) {
+			foreach( $_POST['price'] as $i => $priceline ) {
 
-				if (empty($priceline['id'])) {
+				if ( empty($priceline['id']) ) {
 					$Price = new ShoppPrice();
 					$priceline['product'] = $Product->id;
-				} else $Price = new ShoppPrice($priceline['id']);
+				} else $Price = new ShoppPrice( $priceline['id'] );
 
-				$priceline['sortorder'] = array_search($i,$_POST['sortorder'])+1;
+				$priceline['sortorder'] = array_search($i, $_POST['sortorder'])+1;
 
 				$priceline['shipfee'] = Shopp::floatval($priceline['shipfee']);
-				if (isset($priceline['recurring']['trialprice']))
+				if ( isset($priceline['recurring']['trialprice']) )
 					$priceline['recurring']['trialprice'] = Shopp::floatval($priceline['recurring']['trialprice']);
 
-				if ($Price->stock != $priceline['stocked']) {
+				if ( $Price->stock != $priceline['stocked'] ) {
 					$priceline['stock'] = (int) $priceline['stocked'];
-					do_action('shopp_stock_product', $priceline['stock'], $Price, $Price->stock, $Price->stocklevel);
+					if ( ! isset($Price->stocklevel) ) $Price->stocklevel = $priceline['stock'];
+					do_action('shopp_stock_product', $priceline['stock'], $Price, $Price->stock, $Price->stocklevel); 
 				} else unset($priceline['stocked']);
+
 				$Price->updates($priceline);
 				$Price->save();
 
 				// Save 'price' meta records after saving the price record
-				if (isset($priceline['dimensions']) && is_array($priceline['dimensions']))
+				if ( isset($priceline['dimensions']) && is_array($priceline['dimensions']) )
 					$priceline['dimensions'] = array_map(array('Shopp', 'floatval'), $priceline['dimensions']);
 
-				$settings = array('donation','recurring','membership','dimensions');
+				$settings = array('donation', 'recurring', 'membership', 'dimensions');
 
 				$priceline['settings'] = array();
-				foreach ($settings as $setting) {
-					if (! isset($priceline[$setting]) ) continue;
-					$priceline['settings'][$setting] = $priceline[$setting];
+				foreach ( $settings as $setting ) {
+					if ( ! isset($priceline[$setting]) ) continue;
+					$priceline['settings'][ $setting ] = $priceline[ $setting ];
 				}
 
 				if ( ! empty($priceline['settings']) ) shopp_set_meta($Price->id, 'price', 'settings', $priceline['settings']);
@@ -860,13 +871,13 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 					$File->parent = $Price->id;
 					$File->context = "price";
 					$File->type = "download";
-					$File->name = !empty($priceline['downloadfile'])?$priceline['downloadfile']:basename($tmpfile);
+					$File->name = !empty($priceline['downloadfile']) ? $priceline['downloadfile'] : basename($tmpfile);
 					$File->filename = $File->name;
 
 					if ( $File->found($tmpfile) ) {
 						$File->uri = $tmpfile;
 						$stored = true;
-					} else $stored = $File->store($tmpfile,'file');
+					} else $stored = $File->store($tmpfile, 'file');
 
 					if ( $stored ) {
 						$File->readmeta();
@@ -906,19 +917,19 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 			wp_transition_post_status($_POST['status'], $Product->status, $Post);
 		}
 
-		if (!empty($_POST['meta']['options']))
+		if ( ! empty($_POST['meta']['options']) )
 			$_POST['meta']['options'] = stripslashes_deep($_POST['meta']['options']);
 		else $_POST['meta']['options'] = false;
 
 		// No variation options at all, delete all variation-pricelines
-		if (!empty($Product->prices) && is_array($Product->prices)
-				&& (empty($_POST['meta']['options']['v']) || empty($_POST['meta']['options']['a']))) {
+		if ( ! empty($Product->prices) && is_array($Product->prices)
+				&& (empty($_POST['meta']['options']['v']) || empty($_POST['meta']['options']['a'])) ) {
 
-			foreach ($Product->prices as $priceline) {
+			foreach ( $Product->prices as $priceline ) {
 				// Skip if not tied to variation options
-				if ($priceline->optionkey == 0) continue;
-				if ((empty($_POST['meta']['options']['v']) && $priceline->context == "variation")
-					|| (empty($_POST['meta']['options']['a']) && $priceline->context == "addon")) {
+				if ( $priceline->optionkey == 0 ) continue;
+				if ( (empty($_POST['meta']['options']['v']) && $priceline->context == "variation")
+					|| (empty($_POST['meta']['options']['a']) && $priceline->context == "addon") ) {
 						$Price = new ShoppPrice($priceline->id);
 						$Price->delete();
 				}
@@ -926,13 +937,13 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		}
 
 		// Handle product spec/detail data
-		if (!empty($_POST['details']) || !empty($_POST['deletedSpecs'])) {
+		if ( ! empty($_POST['details']) || !empty($_POST['deletedSpecs']) ) {
 
 			// Delete specs queued for removal
 			$ids = array();
 			$deletes = array();
-			if (!empty($_POST['deletedSpecs'])) {
-				if (strpos($_POST['deleteImages'],",") !== false) $deletes = explode(',',$_POST['deleteImages']);
+			if ( ! empty($_POST['deletedSpecs']) ) {
+				if ( strpos($_POST['deleteImages'], ",") !== false ) $deletes = explode(',', $_POST['deleteImages']);
 				else $deletes = array($_POST['deletedSpecs']);
 
 				$ids = db::escape($_POST['deletedSpecs']);
@@ -942,13 +953,13 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 
 			if ( is_array($_POST['details']) ) {
 				foreach ($_POST['details'] as $i => $spec) {
-					if (in_array($spec['id'],$deletes)) continue;
-					if (isset($spec['new'])) {
+					if ( in_array($spec['id'], $deletes) ) continue;
+					if ( isset($spec['new']) ) {
 						$Spec = new Spec();
 						$spec['id'] = '';
 						$spec['parent'] = $Product->id;
 					} else $Spec = new Spec($spec['id']);
-					$spec['sortorder'] = array_search($i,$_POST['details-sortorder'])+1;
+					$spec['sortorder'] = array_search($i, $_POST['details-sortorder']) + 1;
 
 					$Spec->updates($spec);
 					$Spec->save();
@@ -959,10 +970,10 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		// Save any meta data
 		if ( isset($_POST['meta']) && is_array($_POST['meta']) ) {
 			foreach ( $_POST['meta'] as $name => $value ) {
-				if (isset($Product->meta[$name])) {
+				if ( isset($Product->meta[$name]) ) {
 					$Meta = $Product->meta[$name];
-					if (is_array($Meta)) $Meta = reset($Product->meta[$name]);
-				} else $Meta = new ShoppMetaObject(array('parent'=>$Product->id,'context'=>'product','type'=>'meta','name'=>$name));
+					if ( is_array($Meta) ) $Meta = reset($Product->meta[$name]);
+				} else $Meta = new ShoppMetaObject(array('parent'=>$Product->id, 'context' => 'product', 'type' => 'meta', 'name' => $name));
 				$Meta->parent = $Product->id;
 				$Meta->name = $name;
 				$Meta->value = $value;
@@ -972,7 +983,7 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 
 		$Product->load_data(); // Reload data so everything is fresh for shopp_product_saved
 
-		do_action_ref_array('shopp_product_saved',array(&$Product));
+		do_action_ref_array('shopp_product_saved', array(&$Product));
 
 		unset($Product);
 	}
@@ -1027,10 +1038,10 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		do_action('add_product_download', $File,$_FILES['Filedata']);
 
 		echo json_encode(array(
-			'id' => $File->id,
-			'name' => stripslashes($File->name),
-			'type' => $File->mime,
-			'size' => $File->size
+			'id'	=> $File->id,
+			'name'	=> stripslashes($File->name),
+			'type'	=> $File->mime,
+			'size'	=> $File->size
 		));
 	}
 
@@ -1122,7 +1133,7 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 		$joins[$wpdb->term_relationships] = "INNER JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id)";
 		$joins[$wpdb->term_taxonomy] = "INNER JOIN $wpdb->term_taxonomy AS tt ON (tr.term_taxonomy_id=tt.term_taxonomy_id AND tt.term_id=$id)";
 
-		if (-1 == $id) {
+		if ( -1 == $id ) {
 			$joins[$wpdb->term_relationships] = "LEFT JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id)";
 			unset($joins[$wpdb->term_taxonomy]);
 			$where[] = 'tr.object_id IS NULL';
@@ -1132,11 +1143,11 @@ class ShoppAdminWarehouse extends ShoppAdminController {
 
 		$where = empty($where) ? '' : ' WHERE '.join(' AND ',$where);
 
-		if ('catalog-products' == $id)
-			$products = sDB::query("SELECT p.id,p.post_title AS name FROM $p $where ORDER BY name ASC",'array','col','name','id');
-		else $products = sDB::query("SELECT p.id,p.post_title AS name FROM $p ".join(' ',$joins).$where." ORDER BY name ASC",'array','col','name','id');
+		if ( 'catalog-products' == $id )
+			$products = sDB::query("SELECT p.id,p.post_title AS name FROM $p $where ORDER BY name ASC", 'array', 'col', 'name', 'id');
+		else $products = sDB::query("SELECT p.id,p.post_title AS name FROM $p " . join(' ', $joins) . $where . " ORDER BY name ASC", 'array', 'col', 'name', 'id');
 
-		return menuoptions($products,0,true);
+		return menuoptions($products, 0, true);
 	}
 
 	public function index ($Product) {
