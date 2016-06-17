@@ -36,11 +36,11 @@ class OrderRates extends ShippingFramework implements ShippingModule {
 			if ( false === $amount ) continue; // Skip methods that don't match at all
 
 			$rate = array(
-				'slug' => $slug,
-				'name' => $method['label'],
-				'amount' => $amount,
+				'slug'     => $slug,
+				'name'     => $method['label'],
+				'amount'   => $amount,
 				'delivery' => $this->delivery($method),
-				'items' => false
+				'items'    => false
 			);
 
 			$options[ $slug ] = new ShippingOption($rate);
