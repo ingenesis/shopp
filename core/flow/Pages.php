@@ -100,17 +100,17 @@ class ShoppPages extends ListFramework {
 
 	public function slugs () {
 		$slugs = array();
-		foreach ($this as $name => $Page)
-			$slugs[$name] = $Page->slug();
+		foreach ( $this as $name => $Page )
+			$slugs[ $name ] = $Page->slug();
 		return $slugs;
 	}
 
 	public function settings () {
 		$settings = array();
-		foreach ($this as $name => $Page) {
-			$settings[$name] = array(
-				'slug' => $Page->slug(),
-				'title' => $Page->title(),
+		foreach ( $this as $name => $Page ) {
+			$settings[ $name ] = array(
+				'slug'        => $Page->slug(),
+				'title'       => $Page->title(),
 				'description' => $Page->description()
 			);
 		}
@@ -133,23 +133,23 @@ class ShoppPages extends ListFramework {
  **/
 class ShoppPage {
 
-	public static $name = 'catalog';		// Internal name of the page
+	public static $name     = 'catalog';	// Internal name of the page
 	public static $template = '';			// Additional specific page template (more specific than: shopp.php, page.php)
 
-	protected $slug = 'shopp';				// Slug of the page
-	protected $title = '';					// Title of the page
+	protected $slug        = 'shopp';		// Slug of the page
+	protected $title       = '';			// Title of the page
 	protected $description = '';			// Translateable page description for admins
-	protected $templates = array();			// Additional Shopp content
-	protected $edit = array(				// Edit link parameters
+	protected $templates   = array();		// Additional Shopp content
+	protected $edit        = array(			// Edit link parameters
 		'page' => 'shopp-settings-pages'
 	);
 
 	public function __construct ( array $options = array() ) {
 		$defaults = array(
-			'title' => $this->title,
-			'slug' => $this->slug,
+			'title'       => $this->title,
+			'slug'        => $this->slug,
 			'description' => '',
-			'edit' => $this->edit
+			'edit'        => $this->edit
 		);
 		$options = array_merge($defaults, $options);
 
@@ -201,7 +201,7 @@ class ShoppPage {
 	 **/
 	public function title () {
 		$classname = get_class($this);
-		$title = apply_filters('shopp_' . get_class_property($classname, 'name') . '_pagetitle', $this->title); // @deprecated Use shopp_storefront_page_title or shopp_{$name}_storefront_page_title instead
+		$title     = apply_filters('shopp_' . get_class_property($classname, 'name') . '_pagetitle', $this->title); // @deprecated Use shopp_storefront_page_title or shopp_{$name}_storefront_page_title instead
 
 		$title = apply_filters('shopp_' . get_class_property($classname, 'name') . '_storefront_page_title', $title);
 		return apply_filters('shopp_storefront_page_title', $title);
@@ -209,7 +209,7 @@ class ShoppPage {
 
 	public function slug () {
 		$classname = get_class($this);
-		$slug = apply_filters('shopp_' . get_class_property($classname, 'name') . '_storefront_page_slug', $this->slug);
+		$slug      = apply_filters('shopp_' . get_class_property($classname, 'name') . '_storefront_page_slug', $this->slug);
 		return apply_filters('shopp_storefront_page_slug', $slug);
 	}
 
@@ -236,6 +236,8 @@ class ShoppPage {
 
 		$template = $this->pagetemplate();
 		if ( ! empty($template) ) array_unshift($templates, "$template.php");
+
+		$templates = apply_filters('shopp_' . $name . '_storefront_page_templates', $templates, $this->slug(), $this->title() );
 
 		return $templates;
 	}
@@ -272,13 +274,13 @@ class ShoppPage {
 
 		$stub = new WPDatabaseObject;
 		$stub->init('posts');
-		$stub->ID = 0;
-		$stub->post_name = '';
+		$stub->ID             = 0;
+		$stub->post_name      = '';
 		$stub->comment_status = 'closed'; // Force comments closed
-		$stub->post_title = $this->title;
-		$stub->post_content = '';
-		$stub->post_excerpt = ' '; // Prevent wp_trim_excerpt from calling the_content filter
-		$stub->post_type = ShoppPages::QUERYVAR;
+		$stub->post_title     = $this->title;
+		$stub->post_content   = '';
+		$stub->post_excerpt   = ' '; // Prevent wp_trim_excerpt from calling the_content filter
+		$stub->post_type      = ShoppPages::QUERYVAR;
 
 		// Setup labels
 		$labels = new stdClass;
@@ -310,8 +312,8 @@ class ShoppCatalogPage extends ShoppPage {
 	public function __construct($options = array()) {
 
 		$defaults = array(
-			'title' => __('Shop', 'Shopp'),
-			'description' => __('The page title and base slug for products, categories & collections.', 'Shopp'),
+			'title'       => Shopp::__('Shop'),
+			'description' => Shopp::__('The page title and base slug for products, categories & collections.'),
 		);
 		$options = array_merge($defaults, $options);
 
@@ -379,21 +381,22 @@ class ShoppAccountPage extends ShoppPage {
 
 	public static $name = 'account';
 
-	protected $slug = 'account';
+	protected $slug      = 'account';
 	protected $templates = array('account.php');
 
 	public function __construct ( $options = array() ) {
 
 		$defaults = array(
-			'title' => __('Account', 'Shopp'),
-			'description' => __('Used to display customer account dashboard &amp; profile pages.', 'Shopp'),
+			'title'       => Shopp::__('Account'),
+			'description' => Shopp::__('Used to display customer account dashboard &amp; profile pages.'),
 		);
 
 		if ( 'none' == shopp_setting('account_system') ) {
-			$defaults['title'] = __('Order Lookup', 'Shopp');
+			$defaults['title'] = Shopp::__('Order Lookup'); //JM
+
 			$defaults = array(
-				'title' => __('Order Lookup', 'Shopp'),
-				'description' => __('The order lookup page allows customers to lookup previous orders.', 'Shopp'),
+				'title'       => Shopp::__('Order Lookup'),
+				'description' => Shopp::__('The order lookup page allows customers to lookup previous orders.'),
 			);
 
 		}
@@ -403,7 +406,7 @@ class ShoppAccountPage extends ShoppPage {
 		parent::__construct($options);
 	}
 
-	public function content ($content, $request=false) {
+	public function content ($content, $request = false) {
 		if ( ! $request ) {
 			global $wp_query;
 			// Test that this is the main query and it is the account page
@@ -418,9 +421,10 @@ class ShoppAccountPage extends ShoppPage {
 			$orderlookup = shopp( 'customer', 'get-order-lookup' );
 
 		// $download_request = get_query_var('s_dl');
-		if ( ! $request) $request = ShoppStorefront()->account['request'];
+		if ( ! $request ) $request = ShoppStorefront()->account['request'];
+
 		$templates = array( 'account-'.$request.'.php', 'account.php' );
-		$context = ShoppStorefront::intemplate(); // Set account page context
+		$context   = ShoppStorefront::intemplate(); // Set account page context
 
 		$Errors = ShoppErrorStorefrontNotices();
 		ob_start();
@@ -436,7 +440,7 @@ class ShoppAccountPage extends ShoppPage {
 		$content = ob_get_clean();
 
 		// Suppress the #shopp div for sidebar widgets
-		if ($widget) $content = '<!-- id="shopp" -->' . $content;
+		if ( $widget ) $content = '<!-- id="shopp" -->' . $content;
 
 		return apply_filters( 'shopp_account_template', $content, $request );
 
@@ -455,20 +459,20 @@ class ShoppAccountPage extends ShoppPage {
 		$errors = array();
 
 		// Check email or login supplied
-		if (empty($_POST['account-login'])) {
-			if ( 'wordpress' == shopp_setting('account_system') ) $errors[] = new ShoppError(__('Enter an email address or login name', 'Shopp'));
-			else $errors[] = new ShoppError(__('Enter an email address', 'Shopp'));
+		if ( empty($_POST['account-login']) ) {
+			if ( 'wordpress' == shopp_setting('account_system') ) $errors[] = new ShoppError(Shopp::__('Enter an email address or login name'));
+			else $errors[] = new ShoppError(Shopp::__('Enter an email address'));
 		} else {
 			// Check that the account exists
-			if (strpos($_POST['account-login'], '@') !== false) {
+			if ( strpos($_POST['account-login'], '@') !== false ) {
 				$RecoveryCustomer = new ShoppCustomer($_POST['account-login'], 'email');
-				if (!$RecoveryCustomer->id)
-					$errors[] = new ShoppError(__('There is no user registered with that email address.', 'Shopp'), 'password_recover_noaccount', SHOPP_AUTH_ERR);
+				if ( ! $RecoveryCustomer->id )
+					$errors[] = new ShoppError(Shopp::__('There is no user registered with that email address.'), 'password_recover_noaccount', SHOPP_AUTH_ERR);
 			} else {
-				$user_data = get_userdatabylogin($_POST['account-login']);
+				$user_data        = get_userdatabylogin($_POST['account-login']);
 				$RecoveryCustomer = new ShoppCustomer($user_data->ID, 'wpuser');
-				if (empty($RecoveryCustomer->id))
-					$errors[] = new ShoppError(__('There is no user registered with that login name.', 'Shopp'), 'password_recover_noaccount', SHOPP_AUTH_ERR);
+				if ( empty($RecoveryCustomer->id) )
+					$errors[] = new ShoppError(Shopp::__('There is no user registered with that login name.'), 'password_recover_noaccount', SHOPP_AUTH_ERR);
 			}
 		}
 
@@ -480,36 +484,36 @@ class ShoppAccountPage extends ShoppPage {
 		do_action_ref_array('shopp_generate_password_key', array(&$RecoveryCustomer));
 		$RecoveryCustomer->save();
 
-		$subject = apply_filters('shopp_recover_password_subject', sprintf(__('[%s] Password Recovery Request', 'Shopp'), get_option('blogname')));
+		$subject = apply_filters('shopp_recover_password_subject', Shopp::__('[%s] Password Recovery Request', get_option('blogname')));
 
 		$_ = array();
 		$_[] = 'From: ' . Shopp::email_from( shopp_setting('merchant_email'), shopp_setting('business_name') );
-		$_[] = 'To: '.$RecoveryCustomer->email;
-		$_[] = 'Subject: '.$subject;
+		$_[] = 'To: ' . $RecoveryCustomer->email;
+		$_[] = 'Subject: ' . $subject;
 		$_[] = 'Content-type: text/html';
 		$_[] = '';
-		$_[] = '<p>'.__('A request has been made to reset the password for the following site and account:', 'Shopp').'<br />';
-		$_[] = get_bloginfo('url').'</p>';
+		$_[] = '<p>' . Shopp::__('A request has been made to reset the password for the following site and account:') . '<br />';
+		$_[] = get_bloginfo('url') . '</p>';
 		$_[] = '';
 		$_[] = '<ul>';
-		if (isset($_POST['email-login']))
-			$_[] = '<li>'.sprintf(__('Email: %s', 'Shopp'), $RecoveryCustomer->email).'</li>';
-		if (isset($_POST['loginname-login']))
-			$_[] = '<li>'.sprintf(__('Login name: %s', 'Shopp'), $user_data->user_login).'</li>';
-		if (isset($_POST['account-login']))
-			$_[] = '<li>'.sprintf(__('Login: %s', 'Shopp'), $user_data->user_login).'</li>';
+		if ( isset($_POST['email-login']) )
+			$_[] = '<li>' . Shopp::__('Email: %s', $RecoveryCustomer->email) . '</li>';
+		if ( isset($_POST['loginname-login']) )
+			$_[] = '<li>' . Shopp::__('Login name: %s', $user_data->user_login) . '</li>';
+		if ( isset($_POST['account-login']) )
+			$_[] = '<li>' . Shopp::__('Login: %s', $user_data->user_login) . '</li>';
 		$_[] = '</ul>';
 		$_[] = '';
-		$_[] = '<p>'.__('To reset your password visit the following address, otherwise just ignore this email and nothing will happen.');
+		$_[] = '<p>' . Shopp::__('To reset your password visit the following address, otherwise just ignore this email and nothing will happen.');
 		$_[] = '';
-		$_[] = '<p>'.add_query_arg(array('rp'=>$RecoveryCustomer->activation), Shopp::url(false, 'account')).'</p>';
+		$_[] = '<p>' . add_query_arg(array('rp' => $RecoveryCustomer->activation), Shopp::url(false, 'account')) . '</p>';
 		$message = apply_filters('shopp_recover_password_message', $_);
 
-		if (!Shopp::email(join("\n", $message))) {
+		if ( ! Shopp::email(join("\n", $message)) ) {
 			new ShoppError(__('The e-mail could not be sent.'), 'password_recovery_email', SHOPP_ERR);
 			Shopp::redirect( add_query_arg( 'acct', 'recover', Shopp::url(false, 'account') ) );
 		} else {
-			new ShoppError(__('Check your email address for instructions on resetting the password for your account.', 'Shopp'), 'password_recovery_email', SHOPP_ERR);
+			new ShoppError(Shopp::__('Check your email address for instructions on resetting the password for your account.'), 'password_recovery_email', SHOPP_ERR);
 		}
 
 	}
@@ -517,7 +521,7 @@ class ShoppAccountPage extends ShoppPage {
 	static function resetpassword ($activation) {
 		if ( 'none' == shopp_setting('account_system') ) return;
 
-		$user_data = false;
+		$user_data  = false;
 		$activation = preg_replace('/[^a-z0-9]/i', '', $activation);
 
 		$errors = array();
@@ -547,7 +551,7 @@ class ShoppAccountPage extends ShoppPage {
 		$subject = apply_filters('shopp_reset_password_subject', Shopp::__('[%s] New Password', get_option('blogname')));
 
 		$_ = array();
-		$_[] = 'From: ' . Shopp::email_from( shopp_setting('merchant_email'), shopp_setting('business_name') );
+		$_[] = 'From: ' . Shopp::email_from( shopp_setting('merchant_email'), shopp_setting('business_name'));
 		$_[] = 'To: ' . $RecoveryCustomer->email;
 		$_[] = 'Subject: ' . $subject;
 		$_[] = 'Content-type: text/html';
@@ -591,8 +595,8 @@ class ShoppCartPage extends ShoppPage {
 	public function __construct ( $options = array() ) {
 
 		$defaults = array(
-			'title' => __('Cart', 'Shopp'),
-			'description' => __('Displays the shopping cart.', 'Shopp'),
+			'title'       => Shopp::__('Cart'),
+			'description' => Shopp::__('Displays the shopping cart.'),
 		);
 
 		$options = array_merge($defaults, $options);
@@ -636,8 +640,8 @@ class ShoppCheckoutPage extends ShoppPage {
 	public function __construct ( $options = array() ) {
 
 		$defaults = array(
-			'title' => __('Checkout', 'Shopp'),
-			'description' => __('Displays the checkout form page.', 'Shopp'),
+			'title'       => Shopp::__('Checkout'),
+			'description' => Shopp::__('Displays the checkout form page.'),
 		);
 
 		$options = array_merge($defaults, $options);
@@ -695,8 +699,8 @@ class ShoppConfirmPage extends ShoppPage {
 	public function __construct ( $options = array() ) {
 
 		$defaults = array(
-			'title' => __('Confirm Order', 'Shopp'),
-			'description' => __('Displays an order summary to allow the customer to confirm the order before submitting for payment.', 'Shopp'),
+			'title'       => Shopp::__('Confirm Order'),
+			'description' => Shopp::__('Displays an order summary to allow the customer to confirm the order before submitting for payment.'),
 		);
 		$options = array_merge($defaults, $options);
 
@@ -746,8 +750,8 @@ class ShoppThanksPage extends ShoppPage {
 	public function __construct ( $options = array() ) {
 
 		$defaults = array(
-			'title' => __('Thanks', 'Shopp'),
-			'description' => __('The final page of the ordering process.', 'Shopp'),
+			'title'       => Shopp::__('Thanks'),
+			'description' => Shopp::__('The final page of the ordering process.'),
 		);
 		$options = array_merge($defaults, $options);
 
@@ -778,7 +782,7 @@ class ShoppThanksPage extends ShoppPage {
  **/
 class ShoppMaintenancePage extends ShoppPage {
 
-	public static $name = 'shopp-maintenance';
+	public static $name  = 'shopp-maintenance';
 	protected $templates = array('maintenance.php');
 
 	public function __construct ( $options = array() ) {
@@ -822,7 +826,7 @@ class ShoppProductPage extends ShoppPage {
 		parent::__construct($settings);
 	}
 
-	public function editlink ($link) {
+	public function editlink ( $link ) {
 		return $link;
 	}
 
@@ -833,7 +837,7 @@ class ShoppProductPage extends ShoppPage {
 		return $title;
 	}
 
-	public function content ($content) {
+	public function content ( $content ) {
 		global $wp_query;
 		// Test that this is the main query and it is a product
 		if ( ! $wp_query->is_main_query() || ! is_shopp_product() ) return $content;
@@ -841,14 +845,14 @@ class ShoppProductPage extends ShoppPage {
 		$Product = ShoppProduct();
 
 		$templates = array('product.php');
-		if (isset($Product->id) && !empty($Product->id))
+		if ( isset($Product->id) && !empty($Product->id) )
 			array_unshift($templates, 'product-'.$Product->id.'.php');
 
-		if (isset($Product->slug) && !empty($Product->slug))
+		if ( isset($Product->slug) && !empty($Product->slug) )
 			array_unshift($templates, 'product-'.$Product->slug.'.php');
 
 		// Load product summary data, before checking inventory
-		if (!isset($Product->summed)) $Product->load_data(array('summary'));
+		if ( ! isset($Product->summed) ) $Product->load_data(array('summary'));
 
 		if ( Shopp::str_true($Product->inventory) && $Product->stock < 1 )
 			array_unshift($templates, 'product-outofstock.php');
@@ -894,15 +898,15 @@ class ShoppCollectionPage extends ShoppPage {
 		if (isset($Collection->taxonomy) && isset($Collection->id)) {
 			$page = 'edit-tags.php';
 			$query = array(
-				'action' => 'edit',
+				'action'   => 'edit',
 				'taxonomy' => $Collection->taxonomy,
-				'tag_ID' => $Collection->id
+				'tag_ID'   => $Collection->id
 			);
 			if ('shopp_category' == $Collection->taxonomy) {
-				$page = 'admin.php';
+				$page  = 'admin.php';
 				$query = array(
 					'page' => 'shopp-categories',
-					'id' => $Collection->id
+					'id'   => $Collection->id
 				);
 			}
 			$editlink = add_query_arg($query, admin_url($page));
@@ -910,7 +914,7 @@ class ShoppCollectionPage extends ShoppPage {
 
 		$settings = array(
 			'title' => shopp($Collection, 'get-name'),
-			'edit' => $editlink,
+			'edit'  => $editlink,
 		);
 		parent::__construct($settings);
 	}
@@ -994,13 +998,13 @@ class ShoppCollectionPage extends ShoppPage {
 		$Collection = ShoppCollection();
 
 		ob_start();
-		if (empty($Collection)) locate_shopp_template(array('catalog.php'), true);
+		if ( empty($Collection) ) locate_shopp_template(array('catalog.php'), true);
 		else {
 			$templates = array('category.php', 'collection.php');
 			$ids = array('slug', 'id');
-			foreach ($ids as $property) {
-				if (isset($Collection->$property)) $id = $Collection->$property;
-				array_unshift($templates, 'category-'.$id.'.php', 'collection-'.$id.'.php');
+			foreach ( $ids as $property ) {
+				if ( isset($Collection->$property) ) $id = $Collection->$property;
+				array_unshift($templates, 'category-' . $id . '.php', 'collection-' . $id . '.php');
 			}
 			locate_shopp_template($templates, true);
 		}
@@ -1046,7 +1050,7 @@ class ShoppShortcodes {
 	 * @param array $attrs The parsed shortcode attributes
 	 * @return string The processed content
 	 **/
-	static function product ($atts) {
+	static function product ( $atts ) {
 		$atts['template'] = array('product-shortcode.php', 'product.php');
 		ShoppStorefront()->shortcoded[] = get_the_ID();
 		return apply_filters('shopp_product_shortcode', shopp('storefront.get-product', $atts));
@@ -1070,7 +1074,7 @@ class ShoppShortcodes {
 		} elseif ( isset($atts['slug']) ) {
 			foreach ( $Shopp->Collections as $SmartCollection ) {
 				$slugs = SmartCollection::slugs($SmartCollection);
-				if ( in_array($atts['slug'],$slugs) ) {
+				if ( in_array($atts['slug'], $slugs) ) {
 					$tag = $slugs[0] . "-collection";
 					unset($atts['slug']);
 					break;
@@ -1122,14 +1126,14 @@ class ShoppShortcodes {
 			<?php if (isset($atts['variations'])): ?>
 				<?php if(shopp('product.has-variations')): ?>
 				<ul class="variations">
-					<?php shopp('product.variations', 'mode=multiple&label=true&defaults='.__('Select an option', 'Shopp').'&before_menu=<li>&after_menu=</li>'); ?>
+					<?php shopp('product.variations', 'mode=multiple&label=true&defaults=' . Shopp::__('Select an option') . '&before_menu=<li>&after_menu=</li>'); ?>
 				</ul>
 				<?php endif; ?>
 			<?php endif; ?>
 			<?php if (isset($atts['addons'])): ?>
 				<?php if(shopp('product.has-addons')): ?>
 					<ul class="addons">
-						<?php shopp('product.addons', 'mode=menu&label=true&defaults='.__('Select an add-on', 'Shopp').'&before_menu=<li>&after_menu=</li>'); ?>
+						<?php shopp('product.addons', 'mode=menu&label=true&defaults=' . Shopp::__('Select an add-on') . '&before_menu=<li>&after_menu=</li>'); ?>
 					</ul>
 				<?php endif; ?>
 			<?php endif; ?>
@@ -1137,7 +1141,7 @@ class ShoppShortcodes {
 				<?php shopp('product.quantity', $quantity); ?>
 			<?php endif; ?>
 			<?php
-				$button = 'label=' . ( isset($atts['label']) ? $atts['label'] : __('Buy Now', 'Shopp') );
+				$button = 'label=' . ( isset($atts['label']) ? $atts['label'] : Shopp::__('Buy Now') );
 				$button .= ( isset($atts['ajax']) && Shopp::str_true($atts['ajax']) ? '&ajax=on' : '' );
 				if ( isset($atts['button']) ) $button = html_entity_decode($atts['button']);
 			?>
@@ -1165,12 +1169,12 @@ class ShoppShortcodes {
  **/
 class ShoppAccountDashboardPage {
 	public $request = "";
-	public $label = "";
+	public $label   = "";
 	public $handler = false;
 
 	public function __construct ($request, $label, $handler) {
 		$this->request = $request;
-		$this->label = $label;
+		$this->label   = $label;
 		$this->handler = $handler;
 	}
 
