@@ -28,41 +28,41 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	 * @internal
 	 **/
 	static $register = array(
-		'breadcrumb' => 'breadcrumb',
-		'businessname' => 'business_name',
+		'breadcrumb'      => 'breadcrumb',
+		'businessname'    => 'business_name',
 		'businessaddress' => 'business_address',
-		'categories' => 'categories',
-		'category' => 'category',
-		'collection' => 'category',
-		'categorylist' => 'category_list',
-		'currency' => 'currency',
-		'display' => 'type',
-		'errors' => 'errors',
-		'type' => 'type',
-		'hascategories' => 'has_categories',
-		'isaccount' => 'is_account',
-		'iscart' => 'is_cart',
-		'iscategory' => 'is_taxonomy', // @deprecated in favor of istaxonomy
-		'istaxonomy' => 'is_taxonomy',
-		'iscollection' => 'is_collection',
-		'ischeckout' => 'is_checkout',
-		'islanding' => 'is_frontpage',
-		'isfrontpage' => 'is_frontpage',
-		'iscatalog' => 'is_catalog',
-		'isproduct' => 'is_product',
-		'orderbylist' => 'orderby_list',
-		'product' => 'product',
-		'recentshoppers' => 'recent_shoppers',
-		'search' => 'search',
-		'searchform' => 'search_form',
-		'sideproduct' => 'side_product',
-		'tagproducts' => 'tag_products',
-		'tagcloud' => 'tag_cloud',
-		'url' => 'url',
-		'views' => 'views',
-		'zoomoptions' => 'zoom_options',
+		'categories'      => 'categories',
+		'category'        => 'category',
+		'collection'      => 'category',
+		'categorylist'    => 'category_list',
+		'currency'        => 'currency',
+		'display'         => 'type',
+		'errors'          => 'errors',
+		'type'            => 'type',
+		'hascategories'   => 'has_categories',
+		'isaccount'       => 'is_account',
+		'iscart'          => 'is_cart',
+		'iscategory'      => 'is_taxonomy', // @deprecated in favor of istaxonomy
+		'istaxonomy'      => 'is_taxonomy',
+		'iscollection'    => 'is_collection',
+		'ischeckout'      => 'is_checkout',
+		'islanding'       => 'is_frontpage',
+		'isfrontpage'     => 'is_frontpage',
+		'iscatalog'       => 'is_catalog',
+		'isproduct'       => 'is_product',
+		'orderbylist'     => 'orderby_list',
+		'product'         => 'product',
+		'recentshoppers'  => 'recent_shoppers',
+		'search'          => 'search',
+		'searchform'      => 'search_form',
+		'sideproduct'     => 'side_product',
+		'tagproducts'     => 'tag_products',
+		'tagcloud'        => 'tag_cloud',
+		'url'             => 'url',
+		'views'           => 'views',
+		'zoomoptions'     => 'zoom_options',
 
-		'accountmenu' => 'account_menu',
+		'accountmenu'     => 'account_menu',
 		'accountmenuitem' => 'account_menuitem',
 
 	);
@@ -91,8 +91,8 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		switch ( $name ) {
 			case 'storefront':
 			case 'catalog':
-			return 'storefront';
-			break;
+				return 'storefront';
+				break;
 		}
 		return $name;
 	}
@@ -157,38 +157,38 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		if ( empty($O->images) ) return;
 
 		// Compatibility defaults
-		$_size = 96;
-		$_width = shopp_setting('gallery_thumbnail_width');
+		$_size   = 96;
+		$_width  = shopp_setting('gallery_thumbnail_width');
 		$_height = shopp_setting('gallery_thumbnail_height');
 
 		if ( ! $_width ) $_width = $_size;
 		if ( ! $_height ) $_height = $_size;
 
 		$defaults = array(
-			'alt' => '',
-			'bg' => false,
-			'class' => '',
-			'fit' => null,
-			'height' => false,
-			'id' => false,
-			'img' => false,
-			'index' => false,
+			'alt'      => '',
+			'bg'       => false,
+			'class'    => '',
+			'fit'      => null,
+			'height'   => false,
+			'id'       => false,
+			'img'      => false,
+			'index'    => false,
 			'property' => false,
-			'quality' => null,
-			'setting' => '',
-			'sharpen' => null,
-			'size' => false,
-			'title' => '',
-			'width' => false,
-			'zoom' => false,
-			'zoomfx' => 'shopp-zoom',
+			'quality'  => null,
+			'setting'  => '',
+			'sharpen'  => null,
+			'size'     => false,
+			'title'    => '',
+			'width'    => false,
+			'zoom'     => false,
+			'zoomfx'   => 'shopp-zoom',
 		);
 
 		// Populate defaults from named image settings to allow specific overrides
 		if ( ! empty($options['setting']) ) {
-			$setting = $options['setting'];
+			$setting       = $options['setting'];
 			$ImageSettings = ImageSettings::object();
-			$settings = $ImageSettings->get($setting);
+			$settings      = $ImageSettings->get($setting);
 			if ( $settings ) $defaults = array_merge($defaults, $settings->options());
 		}
 
@@ -224,7 +224,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 
 		$lowest_quality = min(ImageSetting::$qualities);
 
-		$scale = $fit ? array_search( $fit, ImageAsset::$defaults['scaling'] ) : null;
+		$scale   = $fit ? array_search( $fit, ImageAsset::$defaults['scaling'] ) : null;
 		$sharpen = $sharpen ? max( $sharpen, ImageAsset::$defaults['sharpen'] ) : null;
 		$quality = $quality ? max( $quality, $lowest_quality ) : null;
 
@@ -233,16 +233,16 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 
 		list($width_a, $height_a) = array_values($Image->scaled($width, $height, $scale));
 		if ( 'original' == $size ) {
-			$width_a = $Image->width;
+			$width_a  = $Image->width;
 			$height_a = $Image->height;
 		}
-		if ( $width_a === false ) $width_a = $width;
+		if ( $width_a  === false ) $width_a = $width;
 		if ( $height_a === false ) $height_a = $height;
 
-		$alt = esc_attr( empty($alt) ? (empty($Image->alt) ? $Image->name : $Image->alt) : $alt );
-		$title = empty($title) ? $Image->title : $title;
+		$alt       = esc_attr( empty($alt) ? (empty($Image->alt) ? $Image->name : $Image->alt) : $alt );
+		$title     = empty($title) ? $Image->title : $title;
 		$titleattr = empty($title) ? '' : ' title="' . esc_attr($title) . '"';
-		$classes = empty($class) ? '' : ' class="' . esc_attr($class) . '"';
+		$classes   = empty($class) ? '' : ' class="' . esc_attr($class) . '"';
 
 		$src = ( 'original' == $size ) ? $Image->url() : $Image->url($width, $height, $scale, $sharpen, $quality, $fill);
 
@@ -308,30 +308,30 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			$breadcrumb += array($Page->title() => Shopp::url(false, 'account'));
 
 			$request = $Storefront->account['request'];
-			if (isset($Storefront->dashboard[$request]))
-				$breadcrumb += array($Storefront->dashboard[$request]->label => Shopp::url(false, 'account'));
+			if (isset($Storefront->dashboard[ $request ]))
+				$breadcrumb += array($Storefront->dashboard[ $request ]->label => Shopp::url(false, 'account'));
 
 		} elseif ( is_cart_page() ) {
-			$Page = shopp_get_page('cart');
+			$Page        = shopp_get_page('cart');
 			$breadcrumb += array($Page->title() => Shopp::url(false, 'cart'));
 		} elseif ( is_checkout_page() ) {
 			$Cart = shopp_get_page('cart');
-			$Checkout = shopp_get_page('checkout');
+			$Checkout    = shopp_get_page('checkout');
 			$breadcrumb += array($Cart->title() => Shopp::url(false, 'cart'));
 			$breadcrumb += array($Checkout->title() => Shopp::url(false, 'checkout'));
 		} elseif ( is_confirm_page() ) {
-			$Cart = shopp_get_page('cart');
-			$Checkout = shopp_get_page('checkout');
-			$Confirm = shopp_get_page('confirm');
+			$Cart        = shopp_get_page('cart');
+			$Checkout    = shopp_get_page('checkout');
+			$Confirm     = shopp_get_page('confirm');
 			$breadcrumb += array($Cart->title() => Shopp::url(false, 'cart'));
 			$breadcrumb += array($Checkout->title() => Shopp::url(false, 'checkout'));
 			$breadcrumb += array($Confirm->title() => Shopp::url(false, 'confirm'));
 		} elseif ( is_thanks_page() ) {
-			$Page = shopp_get_page('thanks');
+			$Page        = shopp_get_page('thanks');
 			$breadcrumb += array($Page->title() => Shopp::url(false, 'thanks'));
 		} elseif ( is_shopp_taxonomy() ) {
-			$taxonomy = ShoppCollection()->taxonomy;
-			$ancestors = array_reverse(get_ancestors(ShoppCollection()->id, $taxonomy));
+			$taxonomy    = ShoppCollection()->taxonomy;
+			$ancestors   = array_reverse(get_ancestors(ShoppCollection()->id, $taxonomy));
 			foreach ( $ancestors as $ancestor ) {
 				$term = get_term($ancestor, $taxonomy);
 				$breadcrumb[ $term->name ] = get_term_link($term->slug, $taxonomy);
@@ -535,34 +535,34 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 
 		$defaults = array(
 
-			'after' => '',			// After list
-			'before' => '',			// Before list
-			'childof' => 0,			// Only child categories of given term id
-			'class' => '',			// CSS classes for the conatiner
-			'default' => Shopp::__('Select category&hellip;'),
-			'depth' => 0,			// Depth level limit
-			'dropdown' => false,	// Render as a dropdown instead of list
-			'empty' => Shopp::__('No categories'),
-			'exclude' => '',		// List of term ids to exclude (comma-separated)
-			'excludetree' => '',	// List of parent term ids to exclude (comma-separated)
-			'hierarchy' => true,	// Show hierarchy
-			'include' => '',		// List of term ids to include (comma-separated)
-			'linkall' => false,		// Link to empty categories
-			'parent' => false,		// Show categories with given parent term id
-			'products' => false,	// Show products count
-			'number' => '',			// The maximum number of terms
-			'orderby' => 'name',	// Property to sort categories by (id, count, name, slug)
-			'order' => 'ASC',		// Direction to sort categories ascending or descending: (ASC, DESC)
-			'showall' => false,		// Show all categories, empty or not
-			'section' => false,		// Section (or branch of categories) to render
-			'sectionterm' => false, // Term id of the section to show
-			'selected' => false,	// Selected term_id to auto-select option when dropdown=true
-			'smart' => false,		// Include smart collections either before or after other collections (before, after)
-			'title' => '',			// Title/label to show above the list/menu
-			'title_after' => '</h3>',	// After title/label
+			'after'        => '',										// After list
+			'before'       => '',										// Before list
+			'childof'      => 0,										// Only child categories of given term id
+			'class'        => '',										// CSS classes for the container
+			'default'      => Shopp::__('Select category&hellip;'),
+			'depth'        => 0,										// Depth level limit
+			'dropdown'     => false,									// Render as a dropdown instead of list
+			'empty'        => Shopp::__('No categories'),
+			'exclude'      => '',										// List of term ids to exclude (comma-separated)
+			'excludetree'  => '',										// List of parent term ids to exclude (comma-separated)
+			'hierarchy'    => true,										// Show hierarchy
+			'include'      => '',										// List of term ids to include (comma-separated)
+			'linkall'      => false,									// Link to empty categories
+			'parent'       => false,									// Show categories with given parent term id
+			'products'     => false,									// Show products count
+			'number'       => '',										// The maximum number of terms
+			'orderby'      => 'name',									// Property to sort categories by (id, count, name, slug)
+			'order'        => 'ASC',									// Direction to sort categories ascending or descending: (ASC, DESC)
+			'showall'      => false,									// Show all categories, empty or not
+			'section'      => false,									// Section (or branch of categories) to render
+			'sectionterm'  => false, 									// Term id of the section to show
+			'selected'     => false,									// Selected term_id to auto-select option when dropdown=true
+			'smart'        => false,									// Include smart collections either before or after other collections (before, after)
+			'title'        => '',										// Title/label to show above the list/menu
+			'title_after'  => '</h3>',									// After title/label
 			'title_before' => '<h3 class="shopp-categories-title">',	// Before title/label
-			'taxonomy' => ProductCategory::$taxon,	// Taxonomy to use
-			'wraplist' => true,		// Wrap list in <ul></ul> (only works when dropdown=false)
+			'taxonomy'     => ProductCategory::$taxon,					// Taxonomy to use
+			'wraplist'     => true,										// Wrap list in <ul></ul> (only works when dropdown=false)
 
 			// Deprecated options
 			'linkcount' => false,
@@ -613,15 +613,15 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 				$$values = explode(',', $$values);
 
 		$terms = get_terms( $options['taxonomy'], array(
-			'hide_empty' => ! $showall,
-			'child_of' => $childof,
-			'fields' => 'all',
-			'orderby' => $orderby,
-			'order' => $order,
-			'exclude' => $exclude,
+			'hide_empty'   => ! $showall,
+			'child_of'     => $childof,
+			'fields'       => 'all',
+			'orderby'      => $orderby,
+			'order'        => $order,
+			'exclude'      => $exclude,
 			'exclude_tree' => $excludetree,
-			'include' => $include,
-			'number' => $number,
+			'include'      => $include,
+			'number'       => $number,
 		));
 
 		if ( empty( $class ) )
@@ -768,7 +768,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 
 		$defaults = array(
 			'before' => '<li>',
-			'after' => '</li>'
+			'after'  => '</li>'
 		);
 		$options = array_merge($defaults,$options);
 		extract($options);
@@ -984,8 +984,8 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		// Setup defaults
 		$options = wp_parse_args($options, array(
 			'dropdown' => false,
-			'default' => $default,
-			'title' => ''
+			'default'  => $default,
+			'title'    => ''
 		));
 		extract($options, EXTR_SKIP);
 
@@ -1009,9 +1009,9 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			$_[] = '</form>';
 		} else {
 			foreach ( $menuoptions as $value => $label ) {
-				$href = esc_url(add_query_arg(array('sort' => $value),$request));
+				$href  = esc_url(add_query_arg(array('sort' => $value),$request));
 				$class = ($default == $value?' class="current"':'');
-				$_[] = '<li><a href="'.$href.'"'.$class.'>'.$label.'</a></li>';
+				$_[]   = '<li><a href="' . $href . '"' . $class . '>' . $label . '</a></li>';
 			}
 		}
 
@@ -1162,15 +1162,15 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		global $wp;
 
 		$defaults = array(
-			'type' => 'hidden',
-			'option' => 'shopp',
-			'blog_option' => __('Search the blog','Shopp'),
-			'shop_option' => __('Search the shop','Shopp'),
+			'type'         => 'hidden',
+			'option'       => 'shopp',
+			'blog_option'  => Shopp::__('Search the blog'),
+			'shop_option'  => Shopp::__('Search the shop'),
 			'label_before' => '',
-			'label_after' => '',
-			'checked' => false
+			'label_after'  => '',
+			'checked'      => false
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract($options);
 
 		$searching = is_search(); // Flag when searching (the blog or shopp)
@@ -1270,19 +1270,26 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		$content = false;
 		$source = isset($options['source']) ? $options['source'] : 'product';
 		if ( $source == 'product' && isset($options['product']) ) {
+
 			 // Save original requested product
 			if ( $Shopp->Product ) $Requested = $Shopp->Product;
+			
 			$products = explode(',', $options['product']);
+			
 			if ( ! is_array($products) ) $products = array($products);
+			
 			foreach ( $products as $product ) {
 				$product = trim($product);
 				if ( empty($product) ) continue;
+			
 				if ( preg_match('/^\d+$/', $product) )
 					$Shopp->Product = new ShoppProduct($product);
 				else $Shopp->Product = new ShoppProduct($product, 'slug');
 
 				if ( empty($Shopp->Product->id) ) continue;
+			
 				if ( isset($options['load']) ) return true;
+			
 				ob_start();
 				locate_shopp_template(array('sideproduct-' . $Shopp->Product->id . '.php', 'sideproduct.php'), true);
 				$content .= ob_get_clean();
@@ -1296,6 +1303,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			 // Save original requested category
 			if ( $Shopp->Category ) $Requested = $Shopp->Category;
 			if ( $Shopp->Product ) $RequestedProduct = $Shopp->Product;
+			
 			if (empty($options['category'])) return false;
 
 			if ( in_array($options['category'], array_keys($Shopp->Collections)) ) {
@@ -1323,6 +1331,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			 // Restore original requested category
 			if ( ! empty($Requested) ) $Shopp->Category = $Requested;
 			else $Shopp->Category = false;
+			
 			if ( ! empty($RequestedProduct) ) $Shopp->Product = $RequestedProduct;
 			else $Shopp->Product = false;
 		}
@@ -1376,11 +1385,11 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	public static function tag_cloud ( $result, $options, $O ) {
 		$defaults = array(
 			'orderby' => 'name',
-			'order' => false,
-			'number' => 45,
-			'levels' => 7,
-			'format' => 'list',
-			'link' => 'view'
+			'order'   => false,
+			'number'  => 45,
+			'levels'  => 7,
+			'format'  => 'list',
+			'link'    => 'view'
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -1425,6 +1434,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		// Markup
 		if ( 'inline' == $format ) $markup = '<div class="shopp tagcloud">';
 		if ( 'list' == $format ) $markup = '<ul class="shopp tagcloud">';
+
 		foreach ( (array)$tags as $tag ) {
 
 			$level = floor( (1 - $tag->count / $max) * $levels )+1;
@@ -1468,12 +1478,16 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	public static function views ( $result, $options, $O ) {
 		$Shopp = Shopp::object();
 		if ( isset($Shopp->Category->controls) ) return false;
+		
 		$string = '';
 		$string .= '<ul class="views">';
+		
 		if ( isset($options['label']) ) $string .= '<li>' . $options['label'] . '</li>';
+		
 		$string .= '<li><button type="button" class="grid"><span></span></button></li>';
 		$string .= '<li><button type="button" class="list"><span></span></button></li>';
 		$string .= '</ul>';
+		
 		return $string;
 	}
 
@@ -1531,51 +1545,51 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	 **/
 	public static function zoom_options ( $result, $options, $O ) {
 		$defaults = array(				// Colorbox 1.3.15
-			'transition' => 'elastic',	// The transition type. Can be set to 'elastic', 'fade', or 'none'.
-			'speed' => 350,				// Sets the speed of the fade and elastic transitions, in milliseconds.
-			'href' => false,			// This can be used as an alternative anchor URL or to associate a URL for non-anchor elements such as images or form buttons. Example: $('h1').colorbox({href:'welcome.html'})
-			'title' => false,			// This can be used as an anchor title alternative for ColorBox.
-			'rel' => false,				// This can be used as an anchor rel alternative for ColorBox. This allows the user to group any combination of elements together for a gallery, or to override an existing rel so elements are not grouped together. Example: $('#example a').colorbox({rel:'group1'}) Note: The value can also be set to 'nofollow' to disable grouping.
-			'width' => false,			// Set a fixed total width. This includes borders and buttons. Example: '100%', '500px', or 500
-			'height' => false,			// Set a fixed total height. This includes borders and buttons. Example: '100%', '500px', or 500
-			'innerWidth' => false,		// This is an alternative to 'width' used to set a fixed inner width. This excludes borders and buttons. Example: '50%', '500px', or 500
-			'innerHeight' => false,		// This is an alternative to 'height' used to set a fixed inner height. This excludes borders and buttons. Example: '50%', '500px', or 500
-			'initialWidth' => 300,		// Set the initial width, prior to any content being loaded.
-			'initialHeight' => 100,		// Set the initial height, prior to any content being loaded.
-			'maxWidth' => false,		// Set a maximum width for loaded content. Example: '100%', 500, '500px'
-			'maxHeight' => false,		// Set a maximum height for loaded content. Example: '100%', 500, '500px'
-			'scalePhotos' => true,		// If 'true' and if maxWidth, maxHeight, innerWidth, innerHeight, width, or height have been defined, ColorBox will scale photos to fit within the those values.
-			'scrolling' => true,		// If 'false' ColorBox will hide scrollbars for overflowing content. This could be used on conjunction with the resize method (see below) for a smoother transition if you are appending content to an already open instance of ColorBox.
-			'iframe' => false,			// If 'true' specifies that content should be displayed in an iFrame.
-			'inline' => false,			// If 'true' a jQuery selector can be used to display content from the current page. Example:  $('#inline').colorbox({inline:true, href:'#myForm'});
-			'html' => false,			// This allows an HTML string to be used directly instead of pulling content from another source (ajax, inline, or iframe). Example: $.colorbox({html:'<p>Hello</p>'});
-			'photo' => false,			// If true, this setting forces ColorBox to display a link as a photo. Use this when automatic photo detection fails (such as using a url like 'photo.php' instead of 'photo.jpg', 'photo.jpg#1', or 'photo.jpg?pic=1')
-			'opacity' => 0.85,			// The overlay opacity level. Range: 0 to 1.
-			'open' => false,			// If true, the lightbox will automatically open with no input from the visitor.
-			'returnFocus' => true,		// If true, focus will be returned when ColorBox exits to the element it was launched from.
-			'preloading' => true,		// Allows for preloading of 'Next' and 'Previous' content in a shared relation group (same values for the 'rel' attribute), after the current content has finished loading. Set to 'false' to disable.
-			'overlayClose' => true,		// If false, disables closing ColorBox by clicking on the background overlay.
-			'escKey' => true, 			// If false, will disable closing colorbox on esc key press.
-			'arrowKey' => true, 		// If false, will disable the left and right arrow keys from navigating between the items in a group.
-			'loop' => true, 			// If false, will disable the ability to loop back to the beginning of the group when on the last element.
-			'slideshow' => false, 		// If true, adds an automatic slideshow to a content group / gallery.
-			'slideshowSpeed' => 2500, 	// Sets the speed of the slideshow, in milliseconds.
-			'slideshowAuto' => true, 	// If true, the slideshow will automatically start to play.
+			'transition'        => 'elastic',	// The transition type. Can be set to 'elastic', 'fade', or 'none'.
+			'speed'             => 350,			// Sets the speed of the fade and elastic transitions, in milliseconds.
+			'href'              => false,		// This can be used as an alternative anchor URL or to associate a URL for non-anchor elements such as images or form buttons. Example: $('h1').colorbox({href:'welcome.html'})
+			'title'             => false,		// This can be used as an anchor title alternative for ColorBox.
+			'rel'               => false,		// This can be used as an anchor rel alternative for ColorBox. This allows the user to group any combination of elements together for a gallery, or to override an existing rel so elements are not grouped together. Example: $('#example a').colorbox({rel:'group1'}) Note: The value can also be set to 'nofollow' to disable grouping.
+			'width'             => false,		// Set a fixed total width. This includes borders and buttons. Example: '100%', '500px', or 500
+			'height'            => false,		// Set a fixed total height. This includes borders and buttons. Example: '100%', '500px', or 500
+			'innerWidth'        => false,		// This is an alternative to 'width' used to set a fixed inner width. This excludes borders and buttons. Example: '50%', '500px', or 500
+			'innerHeight'       => false,		// This is an alternative to 'height' used to set a fixed inner height. This excludes borders and buttons. Example: '50%', '500px', or 500
+			'initialWidth'      => 300,			// Set the initial width, prior to any content being loaded.
+			'initialHeight'     => 100,			// Set the initial height, prior to any content being loaded.
+			'maxWidth'          => false,		// Set a maximum width for loaded content. Example: '100%', 500, '500px'
+			'maxHeight'         => false,		// Set a maximum height for loaded content. Example: '100%', 500, '500px'
+			'scalePhotos'       => true,		// If 'true' and if maxWidth, maxHeight, innerWidth, innerHeight, width, or height have been defined, ColorBox will scale photos to fit within the those values.
+			'scrolling'         => true,		// If 'false' ColorBox will hide scrollbars for overflowing content. This could be used on conjunction with the resize method (see below) for a smoother transition if you are appending content to an already open instance of ColorBox.
+			'iframe'            => false,		// If 'true' specifies that content should be displayed in an iFrame.
+			'inline'            => false,		// If 'true' a jQuery selector can be used to display content from the current page. Example:  $('#inline').colorbox({inline:true, href:'#myForm'});
+			'html'              => false,		// This allows an HTML string to be used directly instead of pulling content from another source (ajax, inline, or iframe). Example: $.colorbox({html:'<p>Hello</p>'});
+			'photo'             => false,		// If true, this setting forces ColorBox to display a link as a photo. Use this when automatic photo detection fails (such as using a url like 'photo.php' instead of 'photo.jpg', 'photo.jpg#1', or 'photo.jpg?pic=1')
+			'opacity'           => 0.85,		// The overlay opacity level. Range: 0 to 1.
+			'open'              => false,		// If true, the lightbox will automatically open with no input from the visitor.
+			'returnFocus'       => true,		// If true, focus will be returned when ColorBox exits to the element it was launched from.
+			'preloading'        => true,		// Allows for preloading of 'Next' and 'Previous' content in a shared relation group (same values for the 'rel' attribute), after the current content has finished loading. Set to 'false' to disable.
+			'overlayClose'      => true,		// If false, disables closing ColorBox by clicking on the background overlay.
+			'escKey'            => true, 		// If false, will disable closing colorbox on esc key press.
+			'arrowKey'          => true, 		// If false, will disable the left and right arrow keys from navigating between the items in a group.
+			'loop'              => true, 		// If false, will disable the ability to loop back to the beginning of the group when on the last element.
+			'slideshow'         => false, 		// If true, adds an automatic slideshow to a content group / gallery.
+			'slideshowSpeed'    => 2500, 		// Sets the speed of the slideshow, in milliseconds.
+			'slideshowAuto'     => true, 		// If true, the slideshow will automatically start to play.
 
-			'slideshowStart' => __('start slideshow','Shopp'),	// Text for the slideshow start button.
-			'slideshowStop' => __('stop slideshow','Shopp'),	// Text for the slideshow stop button
-			'previous' => __('previous','Shopp'), 				// Text for the previous button in a shared relation group (same values for 'rel' attribute).
-			'next' => __('next','Shopp'), 						// Text for the next button in a shared relation group (same values for 'rel' attribute).
-			'close' => __('close','Shopp'),						// Text for the close button. The 'Esc' key will also close ColorBox.
+			'slideshowStart'    => Shopp::__('start slideshow'),	// Text for the slideshow start button.
+			'slideshowStop'     => Shopp::__('stop slideshow'),		// Text for the slideshow stop button
+			'previous'          => Shopp::__('previous'), 			// Text for the previous button in a shared relation group (same values for 'rel' attribute).
+			'next'              => Shopp::__('next'), 				// Text for the next button in a shared relation group (same values for 'rel' attribute).
+			'close'             => Shopp::__('close'),				// Text for the close button. The 'Esc' key will also close ColorBox.
 
 			// Text format for the content group / gallery count. {current} and {total} are detected and replaced with actual numbers while ColorBox runs.
-			'current' => sprintf(__('image %s of %s','Shopp'),'{current}','{total}'),
+			'current'           => Shopp::__('image %s of %s', '{current}', '{total}'),
 
-			'onOpen' => false,			// Callback that fires right before ColorBox begins to open.
-			'onLoad' => false,			// Callback that fires right before attempting to load the target content.
-			'onComplete' => false,		// Callback that fires right after loaded content is displayed.
-			'onCleanup' => false,		// Callback that fires at the start of the close process.
-			'onClosed' => false			// Callback that fires once ColorBox is closed.
+			'onOpen'            => false,		// Callback that fires right before ColorBox begins to open.
+			'onLoad'            => false,		// Callback that fires right before attempting to load the target content.
+			'onComplete'        => false,		// Callback that fires right after loaded content is displayed.
+			'onCleanup'         => false,		// Callback that fires at the start of the close process.
+			'onClosed'          => false		// Callback that fires once ColorBox is closed.
 		);
 
 		$booleans = array('scalePhotos', 'scrolling', 'iframe', 'inline', 'photo', 'open', 'returnFocus', 'overlayClose', 'escKey', 'arrowKey', 'loop', 'slideshow', 'slideshowAuto');
@@ -1591,10 +1605,10 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		$options = array_combine($settings, $options);
 
 		// Convert strings to booleans
-		foreach ($options as $name => &$value)
+		foreach ( $options as $name => &$value )
 			if ( in_array($name, $booleans) ) $value = Shopp::str_true($value);
 
-		$js = 'var cbo = '.json_encode($options).';';
+		$js = 'var cbo = ' . json_encode($options).';';
 		add_storefrontjs($js, true);
 	}
 
