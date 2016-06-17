@@ -25,54 +25,54 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	 **/
 	static $register = array(
 		'_cart',
-		'applycode' => 'applycode',
-		'applygiftcard' => 'applygiftcard',
-		'discount' => 'discount',
-		'discountapplied' => 'discount_applied',
-		'discountname' => 'discount_name',
-		'discountremove' => 'discount_remove',
-		'discounts' => 'discounts',
-		'discountsavailable' => 'discounts_available',
-		'downloaditems' => 'download_items',
-		'emptybutton' => 'empty_button',
-		'function' => 'cart_function',
-		'hasdiscount' => 'has_discount',
-		'hasdiscounts' => 'has_discounts',
-		'hasdownloads' => 'has_downloads',
-		'hasitems' => 'has_items',
-		'hasshipcosts' => 'has_ship_costs',
-		'hasshipped' => 'has_shipped',
-		'hasshippingmethods' => 'has_shipping_methods',
-		'hastaxes' => 'has_taxes',
-		'items' => 'items',
-		'lastitem' => 'last_item',
-		'needsshipped' => 'needs_shipped',
+		'applycode'              => 'applycode',
+		'applygiftcard'          => 'applygiftcard',
+		'discount'               => 'discount',
+		'discountapplied'        => 'discount_applied',
+		'discountname'           => 'discount_name',
+		'discountremove'         => 'discount_remove',
+		'discounts'              => 'discounts',
+		'discountsavailable'     => 'discounts_available',
+		'downloaditems'          => 'download_items',
+		'emptybutton'            => 'empty_button',
+		'function'               => 'cart_function',
+		'hasdiscount'            => 'has_discount',
+		'hasdiscounts'           => 'has_discounts',
+		'hasdownloads'           => 'has_downloads',
+		'hasitems'               => 'has_items',
+		'hasshipcosts'           => 'has_ship_costs',
+		'hasshipped'             => 'has_shipped',
+		'hasshippingmethods'     => 'has_shipping_methods',
+		'hastaxes'               => 'has_taxes',
+		'items'                  => 'items',
+		'lastitem'               => 'last_item',
+		'needsshipped'           => 'needs_shipped',
 		'needsshippingestimates' => 'needs_shipping_estimates',
-		'referer' => 'referrer',
-		'referrer' => 'referrer',
-		'shipping' => 'shipping',
-		'shippingestimates' => 'shipping_estimates',
-		'shippeditems' => 'shipped_items',
-		'sidecart' => 'sidecart',
-		'subtotal' => 'subtotal',
-		'tax' => 'tax',
-		'total' => 'total',
-		'totaldiscounts' => 'total_discounts',
-		'totalitems' => 'total_items',
-		'totalquantity' => 'total_quantity',
-		'updatebutton' => 'update_button',
-		'url' => 'url',
-		'hassavings' => 'has_savings',
-		'savings' => 'savings',
+		'referer'                => 'referrer',
+		'referrer'               => 'referrer',
+		'shipping'               => 'shipping',
+		'shippingestimates'      => 'shipping_estimates',
+		'shippeditems'           => 'shipped_items',
+		'sidecart'               => 'sidecart',
+		'subtotal'               => 'subtotal',
+		'tax'                    => 'tax',
+		'total'                  => 'total',
+		'totaldiscounts'         => 'total_discounts',
+		'totalitems'             => 'total_items',
+		'totalquantity'          => 'total_quantity',
+		'updatebutton'           => 'update_button',
+		'url'                    => 'url',
+		'hassavings'             => 'has_savings',
+		'savings'                => 'savings',
 
 		/* @deprecated tag names - do not use */
-		'haspromos' => 'has_discounts',
-		'promocode' => 'applycode',
-		'promos' => 'discounts',
+		'haspromos'       => 'has_discounts',
+		'promocode'       => 'applycode',
+		'promos'          => 'discounts',
 		'promosavailable' => 'discounts_available',
-		'promodiscount' => 'discount_applied',
-		'promoname' => 'discount_name',
-		'totalpromos' => 'total_discounts',
+		'promodiscount'   => 'discount_applied',
+		'promoname'       => 'discount_name',
+		'totalpromos'     => 'total_discounts',
 	);
 
 	/**
@@ -177,8 +177,8 @@ class ShoppCartThemeAPI implements ShoppAPI {
 
 		$defaults = array(
 			'before' => '<p class="error">',
-			'after' => '</p>',
-			'label' => Shopp::__('Apply Discount')
+			'after'  => '</p>',
+			'label'  => Shopp::__('Apply Discount')
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -223,8 +223,8 @@ class ShoppCartThemeAPI implements ShoppAPI {
 
 		$defaults = array(
 			'before' => '<p class="error">',
-			'after' => '</p>',
-			'label' => Shopp::__('Add Gift Card')
+			'after'  => '</p>',
+			'label'  => Shopp::__('Add Gift Card')
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -287,11 +287,11 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		if ( ! $Discount->applies() ) return false;
 
 		$defaults = array(
-			'label' => __('%s off', 'Shopp'),
+			'label'       => __('%s off', 'Shopp'),
 			'creditlabel' => __('%s applied', 'Shopp'),
-			'before' => '',
-			'after' => '',
-			'remove' => 'on'
+			'before'      => '',
+			'after'       => '',
+			'remove'      => 'on'
 		);
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
@@ -820,8 +820,8 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	public static function shipping_estimates ( $result, $options, $O ) {
 		$defaults = array(
 			'postcode' => 'on',
-			'class' => 'ship-estimates',
-			'label' => Shopp::__('Estimate Shipping & Taxes')
+			'class'    => 'ship-estimates',
+			'label'    => Shopp::__('Estimate Shipping & Taxes')
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -834,7 +834,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 
 		if ( empty($markets) ) return '';
 
-		foreach ($markets as $iso => $country) $countries[$iso] = $country;
+		foreach ($markets as $iso => $country) $countries[ $iso ] = $country;
 		if ( ! empty($Shipping->country) ) $selected = $Shipping->country;
 		else $selected = $base['country'];
 		$postcode = ( Shopp::str_true($postcode) || $O->showpostcode );
@@ -1081,7 +1081,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	 * @return bool True if an item is on sale, false otherwise
 	 */
 	public static function has_savings ( $result, $options, $O ) {
-		// loop thru cart looking for $Item->sale == "on" or "1" etc
+		// loop thru cart looking for $Item->sale == 'on' or '1' etc
 		foreach( $O as $item ) {
 			if ( str_true( $item->sale ) ) return true;
 		}
