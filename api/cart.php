@@ -25,11 +25,11 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @return bool true on success, false on failure
  **/
 function shopp_add_cart_variant ( $variant = false, $quantity = 1, $key = 'id') {
-	$keys = array('id','optionkey','label','sku');
+	$keys = array('id' => 'id', 'optionkey' => 'optionkey', 'label' => 'label', 'sku' => 'sku');
 	if ( false === $variant ) {
-		shopp_debug(__FUNCTION__ . " failed: Variant parameter required.");
+		shopp_debug(__FUNCTION__ . ' failed: Variant parameter required.');
 	}
-	if (!in_array($key,$keys)) {
+	if ( ! isset( $keys[ $key ]) ) {
 		shopp_debug(__FUNCTION__ . " failed: Variant key $key invalid.");
 	}
 	$Price = new ShoppPrice($variant, $key);
@@ -58,7 +58,7 @@ function shopp_add_cart_product ( $product = false, $quantity = 1, $variant = fa
 	if ( (int) $quantity < 1 ) $quantity = 1;
 
 	if ( false === $product ) {
-		shopp_debug(__FUNCTION__ . " failed: Product parameter required.");
+		shopp_debug(__FUNCTION__ . ' failed: Product parameter required.');
 		return false;
 	}
 
@@ -71,15 +71,15 @@ function shopp_add_cart_product ( $product = false, $quantity = 1, $variant = fa
 
 	if ( false !== $variant ) {
 		$Price = new ShoppPrice( $variant );
-		if ( empty($Price->id) || $Price->product != $product) {
+		if ( empty($Price->id) || $Price->product != $product ) {
 			shopp_debug(__FUNCTION__ . " failed: Product variant $variant invalid.");
 			return false;
 		}
 	}
 
-	if ( !empty($data) ) {
-		if ( !is_array($data)) {
-			shopp_debug(__FUNCTION__ . " failed: Product custom input data must be an array.");
+	if ( ! empty($data) ) {
+		if ( ! is_array($data) ) {
+			shopp_debug(__FUNCTION__ . ' failed: Product custom input data must be an array.');
 			return false;
 		}
 	}
@@ -100,7 +100,7 @@ function shopp_add_cart_product ( $product = false, $quantity = 1, $variant = fa
  **/
 function shopp_rmv_cart_item ( $item = false ) {
 	if ( false === $item ) {
-		shopp_debug(__FUNCTION__ . " failed: Missing item parameter.");
+		shopp_debug(__FUNCTION__ . ' failed: Missing item parameter.');
 		return false;
 	}
 
@@ -188,7 +188,7 @@ function shopp_set_cart_item_variant ( $item = null, $variant = null ) {
 function shopp_cart_items () {
 	$Items = array();
 	foreach ( ShoppOrder()->Cart as $id => $Item )
-		$Items[$id] = $Item;
+		$Items[ $id ] = $Item;
 	return $Items;
 }
 
@@ -216,7 +216,7 @@ function shopp_cart_items_count () {
 function shopp_cart_item ( $item = false ) {
 	$Cart = ShoppOrder()->Cart;
 	if ( false === $item ) {
-		shopp_debug(__FUNCTION__ . " failed: Missing item parameter.");
+		shopp_debug(__FUNCTION__ . ' failed: Missing item parameter.');
 	}
 
 	if ( 'recent-cartitem' === $item ) return $Cart->added();
@@ -275,7 +275,7 @@ function shopp_add_cart_promocode ( $code = false ) {
  **/
 function shopp_add_cart_discount_code( $code = null ) {
 	if ( null === $code || empty($code) ) {
-		shopp_debug(__FUNCTION__ . " failed: Missing code parameter.");
+		shopp_debug(__FUNCTION__ . ' failed: Missing code parameter.');
 	}
 
 	$Cart = ShoppOrder()->Cart;
@@ -299,7 +299,7 @@ function shopp_add_cart_discount_code( $code = null ) {
  */
 function shopp_add_cart_item_addon ( $itemkey = false, $addonid = false ) {
 	if ( false === $itemkey || false === $addonid ) {
-		shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
+		shopp_debug(__FUNCTION__ . ' failed: item and addon parameter required.');
 		return false;
 	}
 	if ( ! ( $Item = shopp_cart_item($itemkey) ) ) {
@@ -342,7 +342,7 @@ function shopp_rmv_cart_item_addon ( $itemkey = false, $addonkey = false ) {
 	$exists = false;
 
 	if ( false === $itemkey || false === $addonkey ) {
-		shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
+		shopp_debug(__FUNCTION__ . ' failed: item and addon parameter required.');
 		return false;
 	}
 	if ( ! ( $item = shopp_cart_item($itemkey) ) ) {
@@ -377,7 +377,7 @@ function shopp_rmv_cart_item_addon ( $itemkey = false, $addonkey = false ) {
  */
 function shopp_cart_item_addons ( $itemkey = false ) {
 	if ( false === $itemkey ) {
-		shopp_debug(__FUNCTION__ . " failed: item and addon parameter required.");
+		shopp_debug(__FUNCTION__ . ' failed: item and addon parameter required.');
 		return false;
 	}
 	if ( ! ( $item = shopp_cart_item($itemkey) ) ) {
@@ -396,9 +396,9 @@ function shopp_cart_item_addons ( $itemkey = false ) {
  * @param $itemkey
  * @return bool|int
  */
-function shopp_cart_item_addons_count ($itemkey) {
+function shopp_cart_item_addons_count ( $itemkey ) {
 	if ( false === $itemkey ) {
-		shopp_debug(__FUNCTION__ . " failed: itemkey parameter required.");
+		shopp_debug(__FUNCTION__ . ' failed: itemkey parameter required.');
 		return false;
 	}
 	if ( ! ( $item = shopp_cart_item($itemkey) ) ) {
