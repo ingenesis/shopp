@@ -58,7 +58,7 @@ function shopp_product_has_meta ( $product = false, $name = false, $type = 'meta
  **/
 function shopp_product_meta_list ( $product = false, $type = 'meta' ) {
 	if ( ! $product ) {
-		shopp_debug(__FUNCTION__.' failed: product id required');
+		shopp_debug(__FUNCTION__ . ' failed: product id required');
 		return false;
 	}
 	$metas = shopp_product_meta ( $product, false, $type );
@@ -66,9 +66,9 @@ function shopp_product_meta_list ( $product = false, $type = 'meta' ) {
 	$results = array();
 	foreach ( (array) $metas as $id => $meta ) {
 		if ( is_object($meta) ) {
-			$results[$meta->name] = $meta->value;
+			$results[ $meta->name ] = $meta->value;
 		} else if ( ! empty($meta) ) {
-			$results[$id] = $meta;
+			$results[ $id ] = $meta;
 		}
 	}
 	return $results;
@@ -86,7 +86,7 @@ function shopp_product_meta_list ( $product = false, $type = 'meta' ) {
  **/
 function shopp_product_meta_count ( $product = false, $type = 'meta' ) {
 	if ( ! $product ) {
-		shopp_debug(__FUNCTION__.' failed: product id required');
+		shopp_debug(__FUNCTION__ . ' failed: product id required');
 		return false;
 	}
 	$meta = shopp_product_meta ( $product, false, $type );
@@ -123,7 +123,7 @@ function shopp_set_product_meta ( $product = false, $name = false, $value = fals
  **/
 function shopp_rmv_product_meta ( $product = false, $name = false, $type = 'meta') {
 	if ( ! $product && ! $name ) {
-		shopp_debug(__FUNCTION__.' failed: product and name parameters required.');
+		shopp_debug(__FUNCTION__ . ' failed: product and name parameters required.');
 		return false;
 	}
 	return shopp_rmv_meta ( $product, 'product', $name, $type );
@@ -156,7 +156,7 @@ function shopp_meta ( $id = false, $context = false, $name = false, $type = 'met
 	$values = array();
 
 	if ( ! ( $id || $context || $name ) ) {
-		shopp_debug(__FUNCTION__.' failed: No parameters specified.');
+		shopp_debug(__FUNCTION__ . ' failed: No parameters specified.');
 		return;
 	}
 
@@ -185,12 +185,12 @@ function shopp_meta ( $id = false, $context = false, $name = false, $type = 'met
 	if ( empty($Meta->meta) ) return array();
 
 	foreach ( $Meta->meta as $meta ) {
-		if( ! isset($values[$meta->id]) ) $values[$meta->id] = new stdClass;
-		$values[$meta->id]->parent = $meta->parent;
-		$values[$meta->id]->type = $meta->type;
-		$values[$meta->id]->name = $meta->name;
+		if( ! isset($values[ $meta->id ]) ) $values[ $meta->id ] = new stdClass;
+		$values[ $meta->id ]->parent = $meta->parent;
+		$values[ $meta->id ]->type   = $meta->type;
+		$values[ $meta->id ]->name   = $meta->name;
 		if ( empty($meta->value) && $meta->numeral > 0 ) $meta->value = $meta->numeral;
-		$values[$meta->id]->value = $meta->value;
+		$values[ $meta->id ]->value = $meta->value;
 	}
 
 	if ( $id && $context && $type && $name and 1 == count($values)) {
@@ -235,7 +235,7 @@ function shopp_meta_exists ( $name = false, $context = false, $type = 'meta' ) {
  **/
 function shopp_set_meta ( $id = false, $context = false, $name = false, $value = false, $type = 'meta', $valuetype = 'value' ) {
 	if ( ! ( $id || $id && $context ) ) {
-		shopp_debug(__FUNCTION__ . " failed: Must specify at least a meta id or parent id and context.");
+		shopp_debug(__FUNCTION__ . ' failed: Must specify at least a meta id or parent id and context.');
 		return false;
 	}
 
@@ -264,12 +264,12 @@ function shopp_set_meta ( $id = false, $context = false, $name = false, $value =
 	// fully spec'd meta entry
 	if ( $id && $context && $type && $name ) {
 		$meta = new ShoppMetaObject();
-		$meta->load( array_merge( $record, array( 'parent'=>$id, 'context'=>$context ) ) );
-		$meta->updates( array_merge(array( 'parent'=>$id, 'context'=>$context ), $record, $valuefield) );
+		$meta->load( array_merge( $record, array( 'parent' => $id, 'context' => $context ) ) );
+		$meta->updates( array_merge(array( 'parent' => $id, 'context' => $context ), $record, $valuefield) );
 		$meta->save();
 		return true;
 	}
-	shopp_debug(__FUNCTION__.' failed: id, context, type, and name are required parameters for this context.');
+	shopp_debug(__FUNCTION__ . ' failed: id, context, type, and name are required parameters for this context.');
 	return false;
 }
 
@@ -287,7 +287,7 @@ function shopp_set_meta ( $id = false, $context = false, $name = false, $value =
  **/
 function shopp_rmv_meta ( $id = false, $context = false, $name = false, $type = 'meta' ) {
 	if ( ! ( $id || $id && $context ) ) {
-		shopp_debug(__FUNCTION__ . " failed: Must specify at least a meta id or parent id and context.");
+		shopp_debug(__FUNCTION__ . ' failed: Must specify at least a meta id or parent id and context.');
 		return false;
 	}
 
@@ -302,7 +302,7 @@ function shopp_rmv_meta ( $id = false, $context = false, $name = false, $type = 
 	// fully spec'd meta entry
 	if ( $id && $context && $type && $name ) {
 		$meta = new ShoppMetaObject();
-		$meta->load( array( 'parent'=>$id, 'context'=>$context, 'type' => $type, 'name' => $name ) );
+		$meta->load( array( 'parent' => $id, 'context' => $context, 'type' => $type, 'name' => $name ) );
 
 		if ( $meta->id ) $meta->delete();
 		return true;
@@ -311,16 +311,16 @@ function shopp_rmv_meta ( $id = false, $context = false, $name = false, $type = 
 	// general meta entries
 	if ( $id && $context ) {
 		$table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
-		$id = db::escape($id);
-		$context = db::escape($context);
-		$name = db::escape($name);
-		$type = db::escape($type);
+		$id      = sDB::escape($id);
+		$context = sDB::escape($context);
+		$name    = sDB::escape($name);
+		$type    = sDB::escape($type);
 
 		$where = "parent=$id AND context='$context'";
 		$where .= ( $type && ! empty($type) ? " AND type='$type'" : "" );
 		$where .= ( $name && ! empty($name) ? " AND type='$name'" : "" );
 
-		return db::query("DELETE FROM $table WHERE $where");
+		return sDB::query("DELETE FROM $table WHERE $where");
 	}
 
 }
