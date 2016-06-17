@@ -1,7 +1,7 @@
 	<div class="wrap shopp">
 
 		<div class="icon32"></div>
-		<h2><?php _e('Customer Editor','Shopp'); ?></h2>
+		<h2><?php Shopp::_e('Customer Editor'); ?></h2>
 
 		<?php do_action('shopp_admin_notice'); ?>
 
