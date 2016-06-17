@@ -21,7 +21,7 @@ class InventoryReport extends ShoppReportFramework implements ShoppReport {
 		$where = join(" AND ", $where);
 
 		if ( ! in_array( strtoupper($order), array('ASC', 'DESC') ) ) $order = 'DESC';
-		if ( ! in_array( strtolower($orderby), array('inventory') ) ) $orderby = '(pr.stock/pr.stocked)';
+		if ( ! in_array( strtolower($orderby), array('inventory', 'sku') ) ) $orderby = '(pr.stock/pr.stocked)';
 		$ordercols = "$orderby $order";
 
 		$id = "pr.product,' ',pr.id";
@@ -29,10 +29,11 @@ class InventoryReport extends ShoppReportFramework implements ShoppReport {
 		$summary_table = ShoppDatabaseObject::tablename(ProductSummary::$table);
 		$price_table = ShoppDatabaseObject::tablename('price');
 		$query = "SELECT CONCAT($id) AS id,
-							CONCAT(p.post_title,' ',pr.label) AS product,
+							CONCAT(p.post_title, CASE WHEN pr.label='Price & Delivery' THEN '' ELSE CONCAT(' ', pr.label) END) AS product,
 							pr.stock AS inventory,
 							pr.stocked AS stocked,
-							(pr.stock/pr.stocked)*100 AS level
+							(pr.stock/pr.stocked)*100 AS level,
+							pr.sku AS sku
 					FROM $price_table AS pr
 					JOIN $product_table AS p ON p.ID=pr.product
 					WHERE $where
@@ -67,23 +68,33 @@ class InventoryReport extends ShoppReportFramework implements ShoppReport {
 
 	function columns () {
 		return array(
-			'product'   => __('Product', 'Shopp'),
-			'inventory' => __('Inventory', 'Shopp'),
-			'level'     => __('Stock Level', 'Shopp'),
+			'product'   => Shopp::__('Product'),
+			'sku'	    => Shopp::__('SKU'),
+			'inventory' => Shopp::__('Inventory'),
+			'level'     => Shopp::__('Stock Level'),
+		);
+	}
+
+	function excludecolumns () {
+			return array(
+			'sku' => 'SKU',
 		);
 	}
 
 	function sortcolumns () {
 		return array(
 			'inventory' => 'inventory',
+			'sku' => 'sku',
 		);
 	}
 
 	static function product ( $data ) { return trim($data->product); }
 
 	static function inventory ( $data ) { return intval($data->inventory); }
+	
+	static function sku ( $data ) { return trim($data->sku); }
 
-	static function level ( $data ) { return round(floatval($data->level),1).'%'; }
+	static function level ( $data ) { return round(floatval($data->level), 1) . '%'; }
 
 	static function sold ( $data ) { return intval($data->sold); }
 
