@@ -86,13 +86,15 @@ class ShoppAjax {
 
 		echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 			\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
-		<html><head><title>".get_bloginfo('name').' &mdash; '.__('Order','Shopp').' #'.shopp('purchase','get-id')."</title>";
+		<html><head><title>".get_bloginfo('name').' &mdash; ' . Shopp::__('Order') . ' #' . shopp( 'purchase', 'get-id' ) . "</title>";
 			echo '<style type="text/css">body { padding: 20px; font-family: Arial,Helvetica,sans-serif; }</style>';
 			echo "<link rel='stylesheet' href='".shopp_template_url('shopp.css')."' type='text/css' />";
 		echo "</head><body>";
 		echo apply_filters('shopp_admin_order_receipt',shopp('purchase','get-receipt','template=receipt-admin.php'));
-		if (isset($_GET['print']) && $_GET['print'] == 'auto')
+
+		if ( isset($_GET['print']) &&  'auto' == $_GET['print'] )
 			echo '<script type="text/javascript">window.onload = function () { window.print(); window.close(); }</script>';
+
 		echo "</body></html>";
 		exit();
 	}
@@ -120,8 +122,8 @@ class ShoppAjax {
 	public function country_zones () {
 		check_admin_referer('wp_ajax_shopp_country_zones');
 		$zones = Lookup::country_zones();
-		if ( isset($_GET['country']) && isset($zones[$_GET['country']]))
-			echo json_encode($zones[$_GET['country']]);
+		if ( isset($_GET['country']) && isset($zones[ $_GET['country'] ]) )
+			echo json_encode($zones[ $_GET['country'] ]);
 		else echo json_encode(false);
 		exit();
 	}
@@ -132,7 +134,10 @@ class ShoppAjax {
 		$Category = new ProductCategory((int)$_GET['category']);
 		$Category->load_meta();
 
-		echo json_encode($Category->specs);
+		if ( isset($Category->specs) )
+			echo json_encode($Category->specs);
+		else
+			echo json_encode(false);
 		exit();
 	}
 
@@ -143,8 +148,8 @@ class ShoppAjax {
 		$Category->load_meta();
 
 		$result = new stdClass();
-		$result->options = $Category->options;
-		$result->prices = $Category->prices;
+		$result->options = isset($Category->options) ? $Category->options : array();
+		$result->prices  = isset($Category->prices) ? $Category->prices : array();
 
 		echo json_encode($result);
 		exit();
@@ -165,29 +170,29 @@ class ShoppAjax {
 	public function add_category () {
 		// Add a category in the product editor
 		check_admin_referer('wp_ajax_shopp_add_category');
-		if (empty($_GET['name'])) die(0);
+		if ( empty($_GET['name']) ) die(0);
 
 		$Catalog = new ShoppCatalog();
 		$Catalog->load_categories();
 
-		$Category = new ProductCategory();
-		$Category->name = $_GET['name'];
-		$Category->slug = sanitize_title_with_dashes($Category->name);
+		$Category         = new ProductCategory();
+		$Category->name   = $_GET['name'];
+		$Category->slug   = sanitize_title_with_dashes($Category->name);
 		$Category->parent = $_GET['parent'];
 
 		// Work out pathing
 		$paths = array();
-		if (!empty($Category->slug)) $paths = array($Category->slug);  // Include self
+		if ( ! empty($Category->slug) ) $paths = array($Category->slug);  // Include self
 
 		$parentkey = -1;
 		// If we're saving a new category, lookup the parent
-		if ($Category->parent > 0) {
-			array_unshift($paths,$Catalog->categories[$Category->parent]->slug);
-			$parentkey = $Catalog->categories[$Category->parent]->parent;
+		if ( $Category->parent > 0 ) {
+			array_unshift($paths, $Catalog->categories[ $Category->parent ]->slug);
+			$parentkey = $Catalog->categories[ $Category->parent ]->parent;
 		}
 
-		while ($category_tree = $Catalog->categories[$parentkey]) {
-			array_unshift($paths,$category_tree->slug);
+		while ($category_tree = $Catalog->categories[ $parentkey ]) {
+			array_unshift($paths, $category_tree->slug);
 			$parentkey = $category_tree->parent;
 		}
 
@@ -212,9 +217,9 @@ class ShoppAjax {
 		check_admin_referer( 'wp_ajax_shopp_edit_slug' );
 
 		$defaults = array(
-			'slug' => false,
-			'type' => false,
-			'id' => false,
+			'slug'  => false,
+			'type'  => false,
+			'id'    => false,
 			'title' => false,
 		);
 		$p = array_merge( $defaults, $_POST );
@@ -265,7 +270,7 @@ class ShoppAjax {
 
 	public function order_note_message () {
 		check_admin_referer('wp_ajax_shopp_order_note_message');
-		if (!isset($_GET['id'])) die('1');
+		if ( ! isset($_GET['id']) ) die('1');
 
 		$Note = new ShoppMetaObject(array('id' => intval($_GET['id']),'type'=>'order_note'));
 		die($Note->value->message);
@@ -280,7 +285,7 @@ class ShoppAjax {
 	public function deactivate_key () {
 		check_admin_referer('wp_ajax_shopp_deactivate_key');
 		$sitekey = ShoppSupport::key();
-		$key = $sitekey['k'];
+		$key     = $sitekey['k'];
 		echo ShoppSupport::deactivate($key);
 		exit();
 	}
@@ -288,95 +293,96 @@ class ShoppAjax {
 	public function suggestions () {
 		check_admin_referer('wp_ajax_shopp_suggestions');
 
-		if (isset($_GET['t'])) { // @legacy
-			switch($_GET['t']) {
-				case "product-name": $_GET['s'] = 'shopp_products'; break;
-				case "product-tags": $_GET['s'] = 'shopp_tag'; break;
+		if ( isset($_GET['t']) ) { // @legacy
+			switch ( $_GET['t'] ) {
+				case "product-name":     $_GET['s'] = 'shopp_products'; break;
+				case "product-tags":     $_GET['s'] = 'shopp_tag'; break;
 				case "product-category": $_GET['s'] = 'shopp_category'; break;
-				case "customer-type": $_GET['s'] = 'shopp_customer_types'; break;
+				case "customer-type":    $_GET['s'] = 'shopp_customer_types'; break;
 			}
 		}
 
-		if (isset($_GET['s'])) {
+		if ( isset($_GET['s']) ) {
 			global $wpdb;
 
-			$source = strtolower($_GET['s']);
-			$q = $_GET['q'];
+			$source     = strtolower($_GET['s']);
+			$q          = $_GET['q'];
+			$orderlimit = '';
 
-			do_action('shopp_suggestions_from_'.$source);
+			do_action('shopp_suggestions_from_' . $source);
 
 			$joins = $where = array();
 			switch ($source) {
 				case 'wp_posts':
-					$id = 'ID';
-					$name = 'post_title';
-					$table = $wpdb->posts;
+					$id      = 'ID';
+					$name    = 'post_title';
+					$table   = $wpdb->posts;
 					$where[] = "post_type='post'";
 					break;
 				case 'wp_pages':
-					$id = 'ID';
-					$name = 'post_title';
-					$table = $wpdb->posts;
+					$id      = 'ID';
+					$name    = 'post_title';
+					$table   = $wpdb->posts;
 					$where[] = "post_type='page'";
 					break;
 				case 'wp_categories':
-					$id = 't.term_id';
-					$name = 'name';
-					$table = "$wpdb->terms AS t";
+					$id      = 't.term_id';
+					$name    = 'name';
+					$table   = "$wpdb->terms AS t";
 					$joins[] = "INNER JOIN  $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id";
 					$where[] = "tt.taxonomy = 'category'";
 					break;
 				case 'wp_tags':
-					$id = 't.term_id';
-					$name = 'name';
-					$table = "$wpdb->terms AS t";
+					$id      = 't.term_id';
+					$name    = 'name';
+					$table   = "$wpdb->terms AS t";
 					$joins[] = "INNER JOIN  $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id";
 					$where[] = "tt.taxonomy = 'post_tag'";
 					break;
 				case 'wp_media':
-					$id = 'ID';
-					$name = 'post_title';
-					$table = $wpdb->posts;
+					$id      = 'ID';
+					$name    = 'post_title';
+					$table   = $wpdb->posts;
 					$where[] = "post_type='attachment'";
 					break;
 				case 'wp_users':
-					$id = 'ID';
-					$name = 'user_login';
+					$id    = 'ID';
+					$name  = 'user_login';
 					$table = $wpdb->users;
 					break;
 				case 'shopp_memberships':
-					$id = 'id';
-					$name = 'name';
-					$table = ShoppDatabaseObject::tablename('meta');
+					$id      = 'id';
+					$name    = 'name';
+					$table   = ShoppDatabaseObject::tablename('meta');
 					$where[] = "context='membership'";
 					$where[] = "type='membership'";
 					break;
 				case 'shopp_products':
-					$id = 'ID';
-					$name = 'post_title';
-					$table = $wpdb->posts;
-					$where[] = "post_type='".ShoppProduct::$posttype."'";
+					$id      = 'ID';
+					$name    = 'post_title';
+					$table   = $wpdb->posts;
+					$where[] = "post_type='" . ShoppProduct::$posttype . "'";
 					break;
 				case 'shopp_promotions':
-					$id = 'id';
-					$name = 'name';
+					$id    = 'id';
+					$name  = 'name';
 					$table = ShoppDatabaseObject::tablename(ShoppPromo::$table);
 					break;
 				case 'shopp_downloads':
-					$id = 'id';
-					$name = 'name';
-					$table = ShoppDatabaseObject::tablename('meta');
+					$id      = 'id';
+					$name    = 'name';
+					$table   = ShoppDatabaseObject::tablename('meta');
 					$where[] = "context='price'";
 					$where[] = "type='download'";
 					break;
 				case 'shopp_target_markets':
 					$markets = shopp_setting('target_markets');
 					$results = array();
-					foreach ($markets as $id => $market) {
-						if (strpos(strtolower($market),strtolower($_GET['q'])) !== false) {
-							$_ = new StdClass();
-							$_->id = $id;
-							$_->name = stripslashes($market);
+					foreach ( $markets as $id => $market ) {
+						if ( strpos(strtolower($market), strtolower($_GET['q'])) !== false ) {
+							$_         = new StdClass();
+							$_->id     = $id;
+							$_->name   = stripslashes($market);
 							$results[] = $_;
 						}
 					}
@@ -386,11 +392,11 @@ class ShoppAjax {
 				case 'shopp_customer_types':
 					$types = Lookup::customer_types();
 					$results = array();
-					foreach ($types as $id => $type) {
-						if (strpos(strtolower($type),strtolower($_GET['q'])) !== false) {
-							$_ = new StdClass();
-							$_->id = $id;
-							$_->name = $type;
+					foreach ( $types as $id => $type ) {
+						if ( strpos(strtolower($type), strtolower($_GET['q'])) !== false ) {
+							$_         = new StdClass();
+							$_->id     = $id;
+							$_->name   = $type;
 							$results[] = $_;
 						}
 					}
@@ -400,25 +406,26 @@ class ShoppAjax {
 				default:
 					if ( taxonomy_exists($_GET['s']) ) {
 						$taxonomy = $_GET['s'];
-						$id = 't.term_id';
-						$name = 'name';
-						$table = "$wpdb->terms AS t";
+						$id      = 't.term_id';
+						$name    = 'name';
+						$table   = "$wpdb->terms AS t";
 						$joins[] = "INNER JOIN  $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id";
 						$where[] = "tt.taxonomy = '" . $taxonomy . "'";
 						if ( 'shopp_popular_tags' == strtolower($q) ) {
-							$q = ''; $orderlimit = "ORDER BY tt.count DESC LIMIT 15";
+							$q = ''; 
+							$orderlimit = "ORDER BY tt.count DESC LIMIT 15";
 						}
 					}
 					break;
 			}
 
 			if ( ! empty($q) )
-				$where[] = "$name LIKE '%".sDB::escape($q)."%'";
-			$where = join(' AND ',$where);
-			$joins = join(' ',$joins);
+				$where[] = "$name LIKE '%" . sDB::escape($q) . "%'";
+			$where = join(' AND ', $where);
+			$joins = join(' ', $joins);
 
 			$query = "SELECT $id AS id, $name AS name FROM $table $joins WHERE $where $orderlimit";
-			$items = sDB::query($query,'array');
+			$items = sDB::query($query, 'array');
 			echo json_encode($items);
 			exit();
 		}
@@ -428,39 +435,39 @@ class ShoppAjax {
 	public function select_customer () {
 		// check_admin_referer('wp_ajax_shopp_select_customer');
 		$defaults = array(
-			'page' => false,
-			'paged' => 1,
+			'page'     => false,
+			'paged'    => 1,
 			'per_page' => 7,
-			'status' => false,
-			's' => ''
+			'status'   => false,
+			's'        => ''
 		);
 
-		$args = wp_parse_args($_REQUEST,$defaults);
+		$args = wp_parse_args($_REQUEST, $defaults);
 		extract($args, EXTR_SKIP);
 
 		if ( ! empty($s) ) {
-			$s = stripslashes($s);
+			$s      = stripslashes($s);
 			$search = sDB::escape($s);
-			$where = array();
-			if (preg_match_all('/(\w+?)\:(?="(.+?)"|(.+?)\b)/',$s,$props,PREG_SET_ORDER)) {
-				foreach ($props as $search) {
-					$keyword = !empty($search[2])?$search[2]:$search[3];
-					switch(strtolower($search[1])) {
-						case "company": $where[] = "c.company LIKE '%$keyword%'"; break;
-						case "login": $where[] = "u.user_login LIKE '%$keyword%'"; break;
-						case "address": $where[] = "(b.address LIKE '%$keyword%' OR b.xaddress='%$keyword%')"; break;
-						case "city": $where[] = "b.city LIKE '%$keyword%'"; break;
+			$where  = array();
+			if ( preg_match_all('/(\w+?)\:(?="(.+?)"|(.+?)\b)/', $s, $props, PREG_SET_ORDER) ) {
+				foreach ( $props as $search ) {
+					$keyword = ! empty($search[2]) ? $search[2] : $search[3];
+					switch ( strtolower($search[1]) ) {
+						case "company":  $where[] = "c.company LIKE '%$keyword%'"; break;
+						case "login":    $where[] = "u.user_login LIKE '%$keyword%'"; break;
+						case "address":  $where[] = "(b.address LIKE '%$keyword%' OR b.xaddress='%$keyword%')"; break;
+						case "city":     $where[] = "b.city LIKE '%$keyword%'"; break;
 						case "province":
-						case "state": $where[] = "b.state='$keyword'"; break;
+						case "state":    $where[] = "b.state='$keyword'"; break;
 						case "zip":
 						case "zipcode":
 						case "postcode": $where[] = "b.postcode='$keyword'"; break;
-						case "country": $where[] = "b.country='$keyword'"; break;
+						case "country":  $where[] = "b.country='$keyword'"; break;
 					}
 				}
-			} elseif (strpos($s,'@') !== false) {
+			} elseif ( strpos($s,'@') !== false ) {
 				 $where[] = "c.email LIKE '%$search%'";
-			} elseif (is_numeric($s)) {
+			} elseif ( is_numeric($s) ) {
 				$where[] = "c.phone='$search'";
 			} else $where[] = "(CONCAT(c.firstname,' ',c.lastname) LIKE '%$search%' OR c.company LIKE '%$s%' OR u.user_login LIKE '%$s%')";
 
@@ -469,30 +476,30 @@ class ShoppAjax {
 			$index = ($per_page * ($pagenum-1));
 
 			$customer_table = ShoppDatabaseObject::tablename(Customer::$table);
-			$billing_table = ShoppDatabaseObject::tablename(BillingAddress::$table);
+			$billing_table  = ShoppDatabaseObject::tablename(BillingAddress::$table);
 			$purchase_table = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
 			global $wpdb;
 			$users_table = $wpdb->users;
 
 			$select = array(
 				'columns' => 'SQL_CALC_FOUND_ROWS c.*,city,state,country,user_login',
-				'table' => "$customer_table as c",
-				'joins' => array(
+				'table'   => "$customer_table as c",
+				'joins'   => array(
 						$billing_table => "LEFT JOIN $billing_table AS b ON b.customer=c.id AND b.type='billing'",
-						$users_table => "LEFT JOIN $users_table AS u ON u.ID=c.wpuser AND (c.wpuser IS NULL OR c.wpuser != 0)"
+						$users_table   => "LEFT JOIN $users_table AS u ON u.ID=c.wpuser AND (c.wpuser IS NULL OR c.wpuser != 0)"
 					),
-				'where' => $where,
+				'where'   => $where,
 				'groupby' => "c.id",
 				'orderby' => "c.created DESC",
-				'limit' => "$index,$per_page"
+				'limit'   => "$index,$per_page"
 			);
 			$query = sDB::select($select);
 
 		}
 		// if (!empty($starts) && !empty($ends)) $where[] = ' (UNIX_TIMESTAMP(c.created) >= '.$starts.' AND UNIX_TIMESTAMP(c.created) <= '.$ends.')';
 
-		$Customers = sDB::query($query,'array','index','id');
-		$url = admin_url('admin-ajax.php');
+		$Customers = sDB::query($query, 'array', 'index', 'id');
+		$url       = admin_url('admin-ajax.php');
 		?>
 		<html>
 		<head>
@@ -503,22 +510,22 @@ class ShoppAjax {
 		<?php
 		if ( ! empty($Customers) ): ?>
 		<ul>
-			<?php foreach ($Customers as $Customer): ?>
+			<?php foreach ( $Customers as $Customer ): ?>
 			<li><a href="<?php echo add_query_arg(array('order-action'=>'change-customer','page'=>$_GET['page'],'id'=>(int)$_GET['id'],'customerid'=>$Customer->id),admin_url('admin.php')); ?>" target="_parent">
 			<?php
 			$wp_user = get_userdata($Customer->wpuser);
-			$userlink = add_query_arg('user_id',$Customer->wpuser,admin_url('user-edit.php'));
+			$userlink = add_query_arg('user_id', $Customer->wpuser, admin_url('user-edit.php'));
  			echo get_avatar( $Customer->wpuser, 48 );
 			?>
-			<?php echo "<strong>$Customer->firstname $Customer->lastname</strong>"; ?><?php if (!empty($Customer->company)) echo ", $Customer->company"; ?>
-			<?php if (!empty($Customer->email)) echo "<br />$Customer->email"; ?>
-			<?php if (!empty($Customer->phone)) echo "<br />$Customer->phone"; ?>
+			<?php echo "<strong>$Customer->firstname $Customer->lastname</strong>"; ?><?php if ( ! empty($Customer->company) ) echo ", $Customer->company"; ?>
+			<?php if ( ! empty($Customer->email) ) echo "<br />$Customer->email"; ?>
+			<?php if ( ! empty($Customer->phone) ) echo "<br />$Customer->phone"; ?>
 			</a>
 			</li>
 			<?php endforeach; ?>
 		</ul>
 		<?php else: ?>
-		<?php _e('No customers found.','Shopp'); ?>
+		<?php Shopp::_e('No customers found.'); ?>
 		<?php endif; ?>
 		</body>
 		</html>
@@ -536,10 +543,12 @@ class ShoppAjax {
 	public function feature_product () {
 		check_admin_referer('wp_ajax_shopp_feature_product');
 
-		if (empty($_GET['feature'])) die('0');
+		if ( empty($_GET['feature']) ) die('0');
+
 		$Product = new ProductSummary((int)$_GET['feature']);
-		if (empty($Product->product)) die('0');
-		$Product->featured = ('on' == $Product->featured)?'off':'on';
+		if ( empty($Product->product) ) die('0');
+
+		$Product->featured = ('on' == $Product->featured) ? 'off' : 'on';
 		$Product->save();
 		echo $Product->featured;
 		exit();
@@ -560,54 +569,54 @@ class ShoppAjax {
 
 	public function import_file () {
 		check_admin_referer('wp_ajax_shopp_import_file');
-		$Shopp = Shopp::object();
+		$Shopp  = Shopp::object();
 		$Engine =& $Shopp->Storage->engines['download'];
 
-		$error = create_function('$s', 'die(json_encode(array("error" => $s)));');
-		if (empty($_REQUEST['url'])) $error(__('No file import URL was provided.','Shopp'));
-		$url = $_REQUEST['url'];
-		$request = parse_url($url);
-		$headers = array();
+		$error    = create_function('$s', 'die(json_encode(array("error" => $s)));');
+		if (empty($_REQUEST['url'])) $error(Shopp::__('No file import URL was provided.'));
+		$url      = $_REQUEST['url'];
+		$request  = parse_url($url);
+		$headers  = array();
 		$filename = basename($request['path']);
 
-		$_ = new StdClass();
-		$_->name = $filename;
+		$_         = new StdClass();
+		$_->name   = $filename;
 		$_->stored = false;
 
-		$File = new ProductDownload();
-		$stored = false;
+		$File           = new ProductDownload();
+		$stored         = false;
 		$File->engine(); // Set engine from storage settings
-		$File->uri = sanitize_path($url);
-		$File->type = "download";
-		$File->name = $filename;
+		$File->uri      = sanitize_path($url);
+		$File->type     = "download";
+		$File->name     = $filename;
 		$File->filename = $filename;
 
-		if ($File->found()) {
+		if ( $File->found() ) {
 			// File in storage, look up meta from storage engine
 			$File->readmeta();
 			$_->stored = true;
-			$_->path = $File->uri;
-			$_->size = $File->size;
-			$_->mime = $File->mime;
-			if ($_->mime == "application/octet-stream" || $_->mime == "text/plain")
+			$_->path   = $File->uri;
+			$_->size   = $File->size;
+			$_->mime   = $File->mime;
+			if ( $_->mime == "application/octet-stream" || $_->mime == "text/plain" )
 				$mime = file_mimetype($File->name);
-			if ($mime == "application/octet-stream" || $mime == "text/plain")
+			if ( $mime == "application/octet-stream" || $mime == "text/plain" )
 				$_->mime = $mime;
 		} else {
-			if (!$importfile = @tempnam(sanitize_path(realpath(SHOPP_TEMP_PATH)), 'shp')) $error(sprintf(__('A temporary file could not be created for importing the file.','Shopp'),$importfile));
-			if (!$incoming = @fopen($importfile,'w')) $error(sprintf(__('A temporary file at %s could not be opened for importing.','Shopp'),$importfile));
+			if ( ! $importfile = @tempnam(sanitize_path(realpath(SHOPP_TEMP_PATH) ), 'shp')) $error(Shopp::__('A temporary file could not be created for importing the file.', $importfile));
+			if ( ! $incoming   = @fopen($importfile,'w') ) $error(Shopp::__('A temporary file at %s could not be opened for importing.', $importfile));
 
-			if (!$file = @fopen(linkencode($url), 'rb')) $error(sprintf(__('The file at %s could not be opened for importing.','Shopp'),$url));
+			if ( ! $file = @fopen(linkencode($url), 'rb') ) $error(Shopp::__('The file at %s could not be opened for importing.', $url));
 			$data = @stream_get_meta_data($file);
 
-			if (isset($data['timed_out']) && $data['timed_out']) $error(__('The connection timed out while trying to get information about the target file.','Shopp'));
+			if ( isset($data['timed_out']) && $data['timed_out'] ) $error(Shopp::__('The connection timed out while trying to get information about the target file.'));
 
-			if (isset($data['wrapper_data'])) {
-				foreach ($data['wrapper_data'] as $d) {
-					if (strpos($d,':') === false) continue;
-					list($name,$value) = explode(': ',$d);
-					if ($rel = strpos($value,';')) $headers[$name] = substr($value,0,$rel);
-					else $headers[$name] = $value;
+			if ( isset($data['wrapper_data']) ) {
+				foreach ( $data['wrapper_data'] as $d ) {
+					if ( strpos($d, ':') === false ) continue;
+					list($name, $value) = explode(': ', $d);
+					if ( $rel = strpos($value, ';') ) $headers[ $name ] = substr($value, 0, $rel);
+					else $headers[ $name ] = $value;
 				}
 			}
 
@@ -622,32 +631,32 @@ class ShoppAjax {
 			} else {
 				// Use the stream data
 				$_->size = $headers['Content-Length'];
-				$_->mime = $headers['Content-Type'] == 'text/plain'?file_mimetype($_->name):$headers['Content-Type'];
+				$_->mime = $headers['Content-Type'] == 'text/plain' ? file_mimetype($_->name) : $headers['Content-Type'];
 			}
 		}
 
 		// Mimetype must be set or we'll have problems in the UI
-		if (!$_->mime) $_->mime = "application/octet-stream";
+		if ( ! $_->mime ) $_->mime = "application/octet-stream";
 
-		echo str_repeat(' ',1024); // Minimum browser data
-		echo '<script type="text/javascript">var importFile = '.json_encode($_).';</script>'."\n";
-		echo '<script type="text/javascript">var importProgress = 0;</script>'."\n";
-		if ($_->stored) exit();
+		echo str_repeat(' ', 1024); // Minimum browser data
+		echo '<script type="text/javascript">var importFile = ' . json_encode($_) . ';</script>'."\n";
+		echo '<script type="text/javascript">var importProgress = 0;</script>' . "\n";
+		if ( $_->stored ) exit();
 		@ob_flush();
 		@flush();
 
-		$progress = 0;
+		$progress  = 0;
 		$bytesread = 0;
 		fseek($file, 0);
-		$packet = 1024*1024;
+		$packet    = 1024*1024;
 		set_time_limit(0); // Prevent timeouts
-		while(!feof($file)) {
-			if (connection_status() !== 0) return false;
-			$buffer = fread($file,$packet);
-			if (!empty($buffer)) {
+		while( ! feof($file) ) {
+			if ( connection_status() !== 0 ) return false;
+			$buffer = fread($file, $packet);
+			if ( ! empty($buffer) ) {
 				fwrite($incoming, $buffer);
 				$bytesread += strlen($buffer);
-				echo '<script type="text/javascript">importProgress = '.$bytesread/(int)$_->size.';</script>'."\n";
+				echo '<script type="text/javascript">importProgress = ' . $bytesread/(int)$_->size . ';</script>'."\n";
 				@ob_flush();
 				@flush();
 			}
@@ -665,23 +674,23 @@ class ShoppAjax {
 		check_admin_referer('wp_ajax_shopp_verify_file');
 		$Settings = &ShoppSettings();
 		chdir(WP_CONTENT_DIR); // relative file system path context for realpath
-		$url = $_POST['url'];
+		$url     = $_POST['url'];
 		$request = parse_url($url);
 
-		if ($request['scheme'] == "http") {
+		if ( $request['scheme'] == 'http' ) {
 			$results = get_headers(linkencode($url));
-			if (substr($url,-1) == "/") die("ISDIR");
-			if (strpos($results[0],'200') === false) die("NULL");
+			if ( substr($url,-1) == '/' ) die("ISDIR");
+			if ( strpos($results[0], '200' ) === false) die("NULL");
 		} else {
-			$url = str_replace('file://','',$url);
+			$url = str_replace('file://', '', $url);
 
-			if ($url{0} != "/" || substr($url,0,2) == "./" || substr($url,0,3) == "../")
-				$result = apply_filters('shopp_verify_stored_file',$url);
+			if ($url{0} != '/' || substr($url, 0, 2) == "./" || substr($url, 0, 3) == "../")
+				$result = apply_filters('shopp_verify_stored_file', $url);
 
 			$url = sanitize_path(realpath($url));
-			if (!file_exists($url)) die('NULL');
-			if (is_dir($url)) die('ISDIR');
-			if (!is_readable($url)) die('READ');
+			if ( ! file_exists($url) ) die('NULL');
+			if (is_dir($url) ) die('ISDIR');
+			if ( ! is_readable($url) ) die('READ');
 
 		}
 
@@ -692,23 +701,23 @@ class ShoppAjax {
 	public function category_children () {
 		check_admin_referer('wp_ajax_shopp_category_children');
 
-		if (empty($_GET['parent'])) die('0');
-		$parent = $_GET['parent'];
+		if ( empty($_GET['parent']) ) die('0');
+		$parent  = $_GET['parent'];
 
-		$columns = array('id','parent','priority','name','uri','slug');
+		$columns = array('id', 'parent', 'priority', 'name', 'uri', 'slug');
 
-		$filters['columns'] = 'cat.'.join(',cat.',$columns);
-		$filters['parent'] = $parent;
+		$filters['columns'] = 'cat.' . join(',cat.', $columns);
+		$filters['parent']  = $parent;
 
 		$Catalog = new ShoppCatalog();
 		$Catalog->outofstock = true;
 		$Catalog->load_categories($filters);
 
 		$columns[] = 'depth';
-		foreach ($Catalog->categories as &$Category) {
+		foreach ( $Catalog->categories as &$Category ) {
 			$properties = get_object_vars($Category);
-			foreach ($properties as $property => $value)
-				if (!in_array($property,$columns)) unset($Category->$property);
+			foreach ( $properties as $property => $value )
+				if ( ! in_array($property, $columns) ) unset($Category->$property);
 		}
 
 		die(json_encode($Catalog->categories));
@@ -716,32 +725,32 @@ class ShoppAjax {
 
 	public function category_order () {
 		check_admin_referer('wp_ajax_shopp_category_order');
-		if (empty($_POST['position']) || !is_array($_POST['position'])) die('0');
+		if ( empty($_POST['position']) || ! is_array($_POST['position']) ) die('0');
 
-		$table = ShoppDatabaseObject::tablename(ProductCategory::$table);
+		$table   = ShoppDatabaseObject::tablename(ProductCategory::$table);
 		$updates = $_POST['position'];
-		foreach ($updates as $id => $position)
+		foreach ( $updates as $id => $position )
 			sDB::query("UPDATE $table SET priority='$position' WHERE id='$id'");
 		die('1');
 	}
 
 	public function products_order () {
 		check_admin_referer('wp_ajax_shopp_category_products_order');
-		if (empty($_POST['category']) || empty($_POST['position']) || !is_array($_POST['position'])) die('0');
+		if ( empty($_POST['category']) || empty($_POST['position']) || !is_array($_POST['position']) ) die('0');
 
 		global $wpdb;
 		$updates = $_POST['position'];
 		$category = (int)$_POST['category'];
-		foreach ((array)$updates as $id => $position)
-			sDB::query("UPDATE $wpdb->term_relationships SET term_order='".((int)$position)."' WHERE object_id='".((int)$id)."' AND term_taxonomy_id='$category'");
+		foreach ( (array)$updates as $id => $position )
+			sDB::query("UPDATE $wpdb->term_relationships SET term_order='" . ((int)$position) . "' WHERE object_id='" . ((int)$id) . "' AND term_taxonomy_id='$category'");
 		die('1');
 	}
 
 	public function gateway_ajax () {
 		check_admin_referer('wp_ajax_shopp_gateway');
-		if (isset($_POST['pid'])) {
+		if ( isset($_POST['pid']) ) {
 			$Purchase = new ShoppPurchase($_POST['pid']);
-			if ($Purchase->gateway) do_action('shopp_gateway_ajax_'.sanitize_title_with_dashes($Purchase->gateway), $Purchase);
+			if ( $Purchase->gateway ) do_action('shopp_gateway_ajax_' . sanitize_title_with_dashes($Purchase->gateway), $Purchase);
 		}
 		exit();
 	}
@@ -767,9 +776,9 @@ class ShoppAjax {
 		</head>
 		<body>
 		<ol><?php $log = ShoppErrorLogging()->tail(1000); $size = count($log);
-				foreach ($log as $n => $line) {
-					if (empty($line)) continue;
-					echo '<li'.($n+1 == $size?' id="bottom"':'').'>'.$line.'</li>';
+				foreach ( $log as $n => $line ) {
+					if ( empty($line) ) continue;
+					echo '<li' . ($n+1 == $size ? ' id="bottom"' : '') . '>' . $line . '</li>';
 				}
 
 		?></ol>
