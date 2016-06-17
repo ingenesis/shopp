@@ -43,85 +43,85 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 	 * @internal
 	 **/
 	static $register = array(
-		'address' => 'address',
-		'card' => 'card',
-		'cardtype' => 'card_type',
-		'city' => 'city',
-		'company' => 'company',
-		'country' => 'country',
-		'customer' => 'customer',
-		'data' => 'data',
-		'date' => 'date',
-		'discount' => 'discount',
-		'discountlist' => 'discount_list',
-		'email' => 'email',
-		'emailfrom' => 'email_from',
-		'emailsubject' => 'email_subject',
-		'emailto' => 'email_to',
-		'emailevent' => 'email_event',
-		'emailnote' => 'email_note',
-		'firstname' => 'first_name',
-		'hasdata' => 'has_data',
-		'hasitems' => 'has_items',
-		'haspromo' => 'has_discount',
-		'hasdiscount' => 'has_discount',
-		'hasdownloads' => 'has_downloads',
-		'hasshipping' => 'has_shipping',
-		'hastax' => 'has_tax',
-		'id' => 'id',
-		'itemaddons' => 'item_addons',
-		'itemaddon' => 'item_addon',
-		'itemaddonslist' => 'item_addons_list',
+		'address'         => 'address',
+		'card'            => 'card',
+		'cardtype'        => 'card_type',
+		'city'            => 'city',
+		'company'         => 'company',
+		'country'         => 'country',
+		'customer'        => 'customer',
+		'data'            => 'data',
+		'date'            => 'date',
+		'discount'        => 'discount',
+		'discountlist'    => 'discount_list',
+		'email'           => 'email',
+		'emailfrom'       => 'email_from',
+		'emailsubject'    => 'email_subject',
+		'emailto'         => 'email_to',
+		'emailevent'      => 'email_event',
+		'emailnote'       => 'email_note',
+		'firstname'       => 'first_name',
+		'hasdata'         => 'has_data',
+		'hasitems'        => 'has_items',
+		'haspromo'        => 'has_discount',
+		'hasdiscount'     => 'has_discount',
+		'hasdownloads'    => 'has_downloads',
+		'hasshipping'     => 'has_shipping',
+		'hastax'          => 'has_tax',
+		'id'              => 'id',
+		'itemaddons'      => 'item_addons',
+		'itemaddon'       => 'item_addon',
+		'itemaddonslist'  => 'item_addons_list',
 		'itemdescription' => 'item_description',
-		'itemdownload' => 'item_download',
-		'itemhasaddons' => 'item_has_addons',
-		'itemhasinputs' => 'item_has_inputs',
-		'itemid' => 'item_id',
-		'iteminput' => 'item_input',
-		'iteminputs' => 'item_inputs',
-		'iteminputslist' => 'item_inputs_list',
-		'itemname' => 'item_name',
-		'itemoptions' => 'item_options',
-		'itemprice' => 'item_price',
-		'itemproduct' => 'item_product',
-		'itemquantity' => 'item_quantity',
-		'itemsku' => 'item_sku',
-		'itemtotal' => 'item_total',
-		'itemunitprice' => 'item_unit_price',
-		'itemtype' => 'item_type',
-		'items' => 'items',
-		'lastname' => 'last_name',
-		'notpaid' => 'not_paid',
-		'orderdata' => 'order_data',
-		'paid' => 'paid',
-		'payment' => 'payment',
-		'paymethod' => 'paymethod',
-		'phone' => 'phone',
-		'postcode' => 'postcode',
-		'gateway' => 'gateway',
-		'receipt' => 'receipt',
-		'shipping' => 'shipping',
-		'shipname' => 'ship_name',
-		'shipaddress' => 'ship_address',
-		'shipcity' => 'ship_city',
-		'shipcountry' => 'ship_country',
-		'shipmethod' => 'ship_method',
-		'shippostcode' => 'ship_postcode',
-		'shipstate' => 'ship_state',
-		'shipxaddress' => 'ship_xaddress',
-		'state' => 'state',
-		'status' => 'status',
-		'subtotal' => 'subtotal',
-		'tax' => 'tax',
-		'total' => 'total',
-		'totalitems' => 'total_items',
-		'txnid' => 'txnid',
-		'transactionid' => 'txnid',
-		'url' => 'url',
-		'xaddress' => 'xaddress',
+		'itemdownload'    => 'item_download',
+		'itemhasaddons'   => 'item_has_addons',
+		'itemhasinputs'   => 'item_has_inputs',
+		'itemid'          => 'item_id',
+		'iteminput'       => 'item_input',
+		'iteminputs'      => 'item_inputs',
+		'iteminputslist'  => 'item_inputs_list',
+		'itemname'        => 'item_name',
+		'itemoptions'     => 'item_options',
+		'itemprice'       => 'item_price',
+		'itemproduct'     => 'item_product',
+		'itemquantity'    => 'item_quantity',
+		'itemsku'         => 'item_sku',
+		'itemtotal'       => 'item_total',
+		'itemunitprice'   => 'item_unit_price',
+		'itemtype'        => 'item_type',
+		'items'           => 'items',
+		'lastname'        => 'last_name',
+		'notpaid'         => 'not_paid',
+		'orderdata'       => 'order_data',
+		'paid'            => 'paid',
+		'payment'         => 'payment',
+		'paymethod'       => 'paymethod',
+		'phone'           => 'phone',
+		'postcode'        => 'postcode',
+		'gateway'         => 'gateway',
+		'receipt'         => 'receipt',
+		'shipping'        => 'shipping',
+		'shipname'        => 'ship_name',
+		'shipaddress'     => 'ship_address',
+		'shipcity'        => 'ship_city',
+		'shipcountry'     => 'ship_country',
+		'shipmethod'      => 'ship_method',
+		'shippostcode'    => 'ship_postcode',
+		'shipstate'       => 'ship_state',
+		'shipxaddress'    => 'ship_xaddress',
+		'state'           => 'state',
+		'status'          => 'status',
+		'subtotal'        => 'subtotal',
+		'tax'             => 'tax',
+		'total'           => 'total',
+		'totalitems'      => 'total_items',
+		'txnid'           => 'txnid',
+		'transactionid'   => 'txnid',
+		'url'             => 'url',
+		'xaddress'        => 'xaddress',
 
-		'promolist' => 'discount_list', // @deprecated purchase.promo-list replaced by purchase.discount-list
-		'freight' => 'shipping', // @deprecated purchase.freight replaced by purchase.shipping
+		'promolist'  => 'discount_list', // @deprecated purchase.promo-list replaced by purchase.discount-list
+		'freight'    => 'shipping', // @deprecated purchase.freight replaced by purchase.shipping
 		'hasfreight' => 'has_shipping', // @deprecated purchase.has-freight replaced by purchase.has-shipping
 
 		'_money'
@@ -188,7 +188,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 		if ( isset($options['currency']) ) $options['money'] = $options['currency'];
 
 		$defaults = array(
-			'money' => 'on',
+			'money'  => 'on',
 			'number' => false,
 		);
 		$options = array_merge($defaults,$options);
@@ -451,7 +451,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 
 			if ( 'shipped' == $Event->name ) {
 				$carriers = Lookup::shipcarriers();
-				$carrier = $carriers[ $Event->carrier ];
+				$carrier  = $carriers[ $Event->carrier ];
 				if ( 'carrier' == $name ) $string = $carrier->name;
 				if ( 'tracking' == $name && Shopp::str_true($link) ) {
 					$params = apply_filters('shopp_shipped_trackurl_params', array($string), $Event->order());
@@ -710,7 +710,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 				case 'download':
 					$link = false;
 					if ( isset($addon->download) && isset($addon->dkey) ) {
-						$label = __('Download', 'Shopp');
+						$label = Shopp::__('Download');
 						if ( isset($options['linktext']) && $options['linktext'] != '' ) $label = $options['linktext'];
 
 						$dkey = $addon->dkey;
@@ -752,12 +752,12 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 		$item = current($O->purchased);
 		if ( empty($item->addons) || ( is_string($item->addons) && ! Shopp::str_true($item->addons) ) ) return false;
 		$defaults = array(
-			'after' => '',
-			'before' => '',
-			'class' => '',
-			'download' => Shopp::__('Download'),
-			'excludes' => '',
-			'prices' => true,
+			'after'     => '',
+			'before'    => '',
+			'class'     => '',
+			'download'  => Shopp::__('Download'),
+			'excludes'  => '',
+			'prices'    => true,
 			'separator' => ': '
 		);
 		$options = array_merge($defaults, $options);
@@ -966,19 +966,20 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 	 **/
 	public static function item_inputs_list ( $result, $options, $O ) {
 		$item = current($O->purchased);
-		if (empty($item->data)) return false;
-		$before = ""; $after = ""; $classes = ""; $excludes = array();
-		if (!empty($options['class'])) $classes = ' class="'.$options['class'].'"';
-		if (!empty($options['exclude'])) $excludes = explode(",",$options['exclude']);
-		if (!empty($options['before'])) $before = $options['before'];
-		if (!empty($options['after'])) $after = $options['after'];
+		if ( empty($item->data) ) return false;
+		$before = ''; $after = ''; $classes = ''; $excludes = array();
+		if ( ! empty($options['class']) )   $classes  = ' class="' . $options['class'] . '"';
+		if ( ! empty($options['exclude']) ) $excludes = explode(',', $options['exclude']);
+		if ( ! empty($options['before']) )  $before   = $options['before'];
+		if ( ! empty($options['after']) )   $after    = $options['after'];
 
-		$result .= $before.'<ul'.$classes.'>';
-		foreach ($item->data as $name => $data) {
-			if (in_array($name,$excludes)) continue;
-			$result .= '<li><strong>'.apply_filters('shopp_purchase_item_input_name', $name).'</strong>: '.apply_filters('shopp_purchase_item_input_data', $data, $name).'</li>';
+		$result .= $before . '<ul' . $classes . '>';
+
+		foreach ( $item->data as $name => $data ) {
+			if ( in_array($name, $excludes) ) continue;
+			$result .= '<li><strong>' . apply_filters('shopp_purchase_item_input_name', $name) . '</strong>: ' . apply_filters('shopp_purchase_item_input_data', $data, $name) . '</li>';
 		}
-		$result .= '</ul>'.$after;
+		$result .= '</ul>' . $after;
 		return $result;
 	}
 
