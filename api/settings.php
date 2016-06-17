@@ -26,11 +26,21 @@ function shopp_setting ( $name ) {
 	$setting = null;
 
 	if ( empty($name) ) {
-		shopp_debug(__FUNCTION__ . " failed: Setting name parameter required.");
+		shopp_debug(__FUNCTION__ . ' failed: Setting name parameter required.');
 		return false;
 	}
 
 	$setting = ShoppSettings()->get($name);
+
+	// if possible return alternative when no setting
+	// is present
+	if ( empty($setting) ) {
+		switch( $name ) {
+			case 'business_name':
+				$setting = get_bloginfo('name');
+				break;
+		}
+	}
 
 	return $setting;
 }
@@ -61,7 +71,7 @@ function shopp_setting_enabled ( $name ) {
  **/
 function shopp_set_setting ( $name, $value ) {
 	if ( empty($name) ) {
-		shopp_debug(__FUNCTION__ . " failed: Setting name parameter required.");
+		shopp_debug(__FUNCTION__ . ' failed: Setting name parameter required.');
 		return false;
 	}
 
@@ -80,7 +90,7 @@ function shopp_set_setting ( $name, $value ) {
  **/
 function shopp_rmv_setting ( $name ) {
 	if ( empty($name) ) {
-		shopp_debug(__FUNCTION__ . " failed: Setting name parameter required.");
+		shopp_debug(__FUNCTION__ . ' failed: Setting name parameter required.');
 		return false;
 	}
 	return ShoppSettings()->delete($name);
@@ -97,8 +107,8 @@ function shopp_rmv_setting ( $name ) {
  * @return bool true on success, false on failure.
  **/
 function shopp_set_formsettings () {
-	if (empty($_POST['settings']) || !is_array($_POST['settings'])) {
-		shopp_debug(__FUNCTION__ . " failed: Setting name parameter required.");
+	if ( empty($_POST['settings']) || ! is_array($_POST['settings']) ) {
+		shopp_debug(__FUNCTION__ . ' failed: Setting name parameter required.');
 		return false;
 	}
 	ShoppSettings()->saveform();
@@ -112,7 +122,7 @@ function shopp_set_formsettings () {
  * 		width => (pixel width)
  * 		height => (pixel height)
  * 		size => (pixels, sets width and height)
- * 		fit => (all,matte,crop,width,height)
+ * 		fit => (all, matte, crop, width, height)
  * 		quality => (0-100 quality percentage)
  * 		sharpen => (0-100 sharpen percentage)
  * 		bg => (hex color, such as red: #ff0000)
@@ -126,31 +136,31 @@ function shopp_set_formsettings () {
  **/
 function shopp_set_image_setting ( $name, array $settings = array() ) {
 	if ( empty($name) ) {
-		shopp_debug(__FUNCTION__ . " failed: Setting name parameter required.");
+		shopp_debug(__FUNCTION__ . ' failed: Setting name parameter required.');
 		return false;
 	}
 
 	$defaults = array(
-		'width' => false,
-		'height' => false,
-		'fit' => 'all',
-		'size' => 96,
+		'width'   => false,
+		'height'  => false,
+		'fit'     => 'all',
+		'size'    => 96,
 		'quality' => 100,
 		'sharpen' => 100,
-		'bg' => false
+		'bg'      => false
 	);
-	if (isset($settings['size']))
+	if ( isset($settings['size']) )
 		$settings['width'] = $settings['height'] = $settings['size'];
 
-	$settings = array_merge($defaults,$settings);
+	$settings = array_merge($defaults, $settings);
 
-	if (in_array($settings['fit'],ImageSetting::$fittings))
-		$settings['fit'] = array_search($settings['fit'],ImageSetting::$fittings);
+	if ( in_array($settings['fit'], ImageSetting::$fittings) )
+		$settings['fit'] = array_search($settings['fit'], ImageSetting::$fittings);
 
 	// Load/update an existing one there is one
-	$ImageSetting = new ImageSetting($name,'name');
+	$ImageSetting       = new ImageSetting($name, 'name');
 	$ImageSetting->name = $name;
-	foreach ($settings as $prop => $value)
+	foreach ( $settings as $prop => $value )
 		$ImageSetting->$prop = $value;
 
 	$ImageSetting->save();
