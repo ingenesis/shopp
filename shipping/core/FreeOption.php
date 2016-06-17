@@ -31,11 +31,11 @@ class FreeOption extends ShippingFramework implements ShippingModule {
 			if ( false === $amount ) continue; // Skip methods that don't match at all
 
 			$rate = array(
-				'slug' => $slug,
-				'name' => $method['label'],
-				'amount' => $amount,
+				'slug'     => $slug,
+				'name'     => $method['label'],
+				'amount'   => $amount,
 				'delivery' => $this->delivery($method),
-				'items' => false
+				'items'    => false
 			);
 			$options[ $slug ] = new ShippingOption($rate, false);
 		}
@@ -48,7 +48,7 @@ class FreeOption extends ShippingFramework implements ShippingModule {
 
 		$this->ui->flatrates(0, array(
 			'norates' => true,
-			'table' => $this->settings['table']
+			'table'   => $this->settings['table']
 		));
 
 	}
