@@ -29,7 +29,7 @@ class DBStorage extends StorageModule implements StorageEngine {
 
 	public function __construct () {
 		parent::__construct();
-		$this->name = __('Database','Shopp');
+		$this->name = Shopp::__('Database');
 		$this->_table = ShoppDatabaseObject::tablename($this->_table);
 		$this->_metatable = ShoppDatabaseObject::tablename($this->_metatable);
 	}
@@ -54,7 +54,7 @@ class DBStorage extends StorageModule implements StorageEngine {
 			$data = file_get_contents($data);
 		}
 
-		$data = @mysql_real_escape_string($data);
+		$data = sDB::escape($data);
 
 		if ( ! $asset->id ) $uri = sDB::query("INSERT $this->_table SET data='$data'");
 		else sDB::query("UPDATE $this->_table SET data='$data' WHERE $this->_key='$asset->uri'");
@@ -113,7 +113,7 @@ class DBStorage extends StorageModule implements StorageEngine {
 		if ( ! $uri ) return false;
 		$file = sDB::query("SELECT * FROM $this->_table WHERE $this->_key='$uri' LIMIT 1");
 		if ( empty($file) ) {
-			shopp_error(Shopp::__('The requested asset could not be loaded from the database.'), SHOPP_ADMIN_ERR);
+			shopp_error(Shopp::__( 'The requested asset could not be loaded from the database.' ), SHOPP_ADMIN_ERR);
 			return false;
 		}
 		return $file->data;
