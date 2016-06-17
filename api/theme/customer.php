@@ -31,70 +31,70 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 * @internal
 	 **/
 	static $register = array(
-		'accounts' => 'accounts',
-		'accounturl' => 'account_url',
-		'action' => 'action',
-		'billingaddress' => 'billing_address',
-		'billingcity' => 'billing_city',
-		'billingcountry' => 'billing_country',
-		'billingpostcode' => 'billing_postcode',
-		'billingprovince' => 'billing_state',
-		'billingstate' => 'billing_state',
-		'billingxaddress' => 'billing_xaddress',
-		'company' => 'company',
-		'confirmpassword' => 'confirm_password',
-		'download' => 'download',
-		'downloads' => 'downloads',
-		'email' => 'email',
-		'emaillogin' => 'account_login',
-		'loginnamelogin' => 'account_login',
-		'accountlogin' => 'account_login',
-		'firstname' => 'first_name',
-		'hasaccount' => 'has_account',
-		'hasdownloads' => 'has_downloads',
-		'hasinfo' => 'has_info',
-		'haspurchases' => 'has_purchases',
-		'info' => 'info',
-		'lastname' => 'last_name',
-		'loggedin' => 'logged_in',
-		'loginlabel' => 'login_label',
-		'loginname' => 'login_name',
-		'management' => 'management',
-		'marketing' => 'marketing',
-		'menu' => 'menu',
-		'notloggedin' => 'not_logged_in',
-		'orderlookup' => 'order_lookup',
-		'password' => 'password',
-		'passwordchangefail' => 'password_change_fail',
-		'passwordchanged' => 'password_changed',
-		'passwordlogin' => 'password_login',
-		'phone' => 'phone',
-		'process' => 'process',
-		'profilesaved' => 'profile_saved',
-		'purchases' => 'purchases',
-		'receipt' => 'order',
-		'order' => 'order',
-		'recoverbutton' => 'recover_button',
-		'recoverurl' => 'recover_url',
-		'register' => 'register',
-		'registrationerrors' => 'registration_errors',
-		'registrationform' => 'registration_form',
+		'accounts'                   => 'accounts',
+		'accounturl'                 => 'account_url',
+		'action'                     => 'action',
+		'billingaddress'             => 'billing_address',
+		'billingcity'                => 'billing_city',
+		'billingcountry'             => 'billing_country',
+		'billingpostcode'            => 'billing_postcode',
+		'billingprovince'            => 'billing_state',
+		'billingstate'               => 'billing_state',
+		'billingxaddress'            => 'billing_xaddress',
+		'company'                    => 'company',
+		'confirmpassword'            => 'confirm_password',
+		'download'                   => 'download',
+		'downloads'                  => 'downloads',
+		'email'                      => 'email',
+		'emaillogin'                 => 'account_login',
+		'loginnamelogin'             => 'account_login',
+		'accountlogin'               => 'account_login',
+		'firstname'                  => 'first_name',
+		'hasaccount'                 => 'has_account',
+		'hasdownloads'               => 'has_downloads',
+		'hasinfo'                    => 'has_info',
+		'haspurchases'               => 'has_purchases',
+		'info'                       => 'info',
+		'lastname'                   => 'last_name',
+		'loggedin'                   => 'logged_in',
+		'loginlabel'                 => 'login_label',
+		'loginname'                  => 'login_name',
+		'management'                 => 'management',
+		'marketing'                  => 'marketing',
+		'menu'                       => 'menu',
+		'notloggedin'                => 'not_logged_in',
+		'orderlookup'                => 'order_lookup',
+		'password'                   => 'password',
+		'passwordchangefail'         => 'password_change_fail',
+		'passwordchanged'            => 'password_changed',
+		'passwordlogin'              => 'password_login',
+		'phone'                      => 'phone',
+		'process'                    => 'process',
+		'profilesaved'               => 'profile_saved',
+		'purchases'                  => 'purchases',
+		'receipt'                    => 'order',
+		'order'                      => 'order',
+		'recoverbutton'              => 'recover_button',
+		'recoverurl'                 => 'recover_url',
+		'register'                   => 'register',
+		'registrationerrors'         => 'registration_errors',
+		'registrationform'           => 'registration_form',
 		'residentialshippingaddress' => 'residential_shipping_address',
-		'sameshippingaddress' => 'same_shipping_address',
-		'savebutton' => 'save_button',
-		'shipping' => 'shipping',
-		'shippingaddress' => 'shipping_address',
-		'shippingcity' => 'shipping_city',
-		'shippingcountry' => 'shipping_country',
-		'shippingpostcode' => 'shipping_postcode',
-		'shippingprovince' => 'shipping_state',
-		'shippingstate' => 'shipping_state',
-		'shippingxaddress' => 'shipping_xaddress',
-		'submitlogin' => 'submit_login',
-		'type' => 'type',
-		'loginbutton' => 'submit_login',
-		'url' => 'url',
-		'wpusercreated' => 'wpuser_created'
+		'sameshippingaddress'        => 'same_shipping_address',
+		'savebutton'                 => 'save_button',
+		'shipping'                   => 'shipping',
+		'shippingaddress'            => 'shipping_address',
+		'shippingcity'               => 'shipping_city',
+		'shippingcountry'            => 'shipping_country',
+		'shippingpostcode'           => 'shipping_postcode',
+		'shippingprovince'           => 'shipping_state',
+		'shippingstate'              => 'shipping_state',
+		'shippingxaddress'           => 'shipping_xaddress',
+		'submitlogin'                => 'submit_login',
+		'type'                       => 'type',
+		'loginbutton'                => 'submit_login',
+		'url'                        => 'url',
+		'wpusercreated'              => 'wpuser_created'
 	);
 
 	/**
@@ -114,7 +114,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	public static function _apicontext () {
 		if ( null === self::$addresses ) {
 			self::$addresses = array(
-				'billing' => ShoppOrder()->Billing,
+				'billing'  => ShoppOrder()->Billing,
 				'shipping' => ShoppOrder()->Shipping
 			);
 		}
@@ -296,7 +296,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 * @return string The input markup
 	 **/
 	public static function billing_city ( $result, $options, $O ) {
-		$options['address'] = 'billing';
+		$options['address']  = 'billing';
 		$options['property'] = 'city';
 		return self::address( $result, $options, $O );
 	}
@@ -352,7 +352,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 * @return string The input markup
 	 **/
 	public static function billing_postcode ( $result, $options, $O ) {
-		$options['address'] = 'billing';
+		$options['address']  = 'billing';
 		$options['property'] = 'postcode';
 		return self::address( $result, $options, $O );
 	}
@@ -411,7 +411,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 * @return string The input markup
 	 **/
 	public static function billing_xaddress ( $result, $options, $O ) {
-		$options['address'] = 'billing';
+		$options['address']  = 'billing';
 		$options['property'] = 'xaddress';
 		return self::address( $result, $options, $O );
 	}
@@ -509,17 +509,17 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 		$df = get_option('date_format');
 		$string = '';
-		if ( array_key_exists('id', $options) ) $string .= $download->download;
-		if ( array_key_exists('purchase', $options) ) $string .= $download->purchase;
-		if ( array_key_exists('name', $options) ) $string .= $download->name;
+		if ( array_key_exists('id', $options) )        $string .= $download->download;
+		if ( array_key_exists('purchase', $options) )  $string .= $download->purchase;
+		if ( array_key_exists('name', $options) )      $string .= $download->name;
 		if ( array_key_exists('variation', $options) ) $string .= $download->optionlabel;
 		if ( array_key_exists('downloads', $options) ) $string .= $download->downloads;
-		if ( array_key_exists('key', $options) ) $string .= $download->dkey;
-		if ( array_key_exists('created', $options) ) $string .= $download->created;
-		if ( array_key_exists('total', $options) ) $string .= money($download->total);
-		if ( array_key_exists('filetype', $options) ) $string .= $download->mime;
-		if ( array_key_exists('size', $options) ) $string .= readableFileSize($download->size);
-		if ( array_key_exists('date', $options) ) $string .= _d($df, $download->created);
+		if ( array_key_exists('key', $options) )       $string .= $download->dkey;
+		if ( array_key_exists('created', $options) )   $string .= $download->created;
+		if ( array_key_exists('total', $options) )     $string .= money($download->total);
+		if ( array_key_exists('filetype', $options) )  $string .= $download->mime;
+		if ( array_key_exists('size', $options) )      $string .= readableFileSize($download->size);
+		if ( array_key_exists('date', $options) )      $string .= _d($df, $download->created);
 		if ( array_key_exists('url', $options) )
 			$string .= Shopp::url( ('' == get_option('permalink_structure') ?
 					array('src' => 'download', 'shopp_download' => $download->dkey) : 'download/' . $download->dkey),
@@ -662,11 +662,11 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 **/
 	public static function has_downloads ( $result, $options, $O ) {
 		$defaults = array(
-			'show' => false,
-			'from' => false,
-			'to' => false,
+			'show'    => false,
+			'from'    => false,
+			'to'      => false,
 			'orderby' => 'created',
-			'order' => 'DESC'
+			'order'   => 'DESC'
 		);
 		$options = array_merge($defaults, $options);
 		return $O->has_downloads($options);
@@ -715,7 +715,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 		$filters = array();
 		if ( isset($options['daysago']) )
-			$filters['where'] = "UNIX_TIMESTAMP(o.created) > UNIX_TIMESTAMP()-".($options['daysago']*86400);
+			$filters['where'] = "UNIX_TIMESTAMP(o.created) > UNIX_TIMESTAMP()-" . ($options['daysago']*86400);
 
 		if ( empty($Storefront->purchases) ) $O->load_orders($filters);
 		reset($Storefront->purchases);
@@ -757,9 +757,9 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	public static function info ( $result, $options, $O ) {
 		$fields = $O->info;
 		$defaults = array(
-			'mode' => 'input',
-			'type' => 'text',
-			'name' => false,
+			'mode'  => 'input',
+			'type'  => 'text',
+			'name'  => false,
 			'value' => false
 		);
 
@@ -823,11 +823,11 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 * @return string The input markup
 	 **/
 	public static function last_name ( $result, $options, $O ) {
-		if (!isset($options['mode'])) $options['mode'] = "input";
-		if ($options['mode'] == "value") return $O->lastname;
-		if (!empty($O->lastname))
+		if ( ! isset($options['mode'])) $options['mode'] = "input";
+		if ( 'value' == $options['mode'] ) return $O->lastname;
+		if ( ! empty($O->lastname) )
 			$options['value'] = $O->lastname;
-		return '<input type="text" name="lastname" id="lastname" '.inputattrs($options).' />';
+		return '<input type="text" name="lastname" id="lastname" ' . inputattrs($options) . ' />';
 	}
 
 	/**
@@ -858,9 +858,11 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 **/
 	public static function login_label ( $result, $options, $O ) {
 		$accounts = shopp_setting('account_system');
-		$label = Shopp::__('Email Address');
+		$label    = Shopp::__('Email Address');
+
 		if ( 'wordpress' == $accounts ) $label = Shopp::__('Login Name');
 		if ( isset($options['label']) ) $label = $options['label'];
+		
 		return $label;
 	}
 
@@ -896,12 +898,12 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 * @return string The input markup
 	 **/
 	public static function login_name ( $result, $options, $O ) {
-		if (!isset($options['mode'])) $options['mode'] = "input";
-		if (!isset($options['autocomplete'])) $options['autocomplete'] = "off";
-		if ($options['mode'] == "value") return $O->loginname;
-		if (!empty($O->loginname))
+		if ( ! isset($options['mode']) ) $options['mode'] = "input";
+		if ( ! isset($options['autocomplete']) ) $options['autocomplete'] = "off";
+		if ( 'value' == $options['mode'] ) return $O->loginname;
+		if ( ! empty($O->loginname))
 			$options['value'] = $O->loginname;
-		return '<input type="text" name="loginname" id="login" '.inputattrs($options).' />';
+		return '<input type="text" name="loginname" id="login" ' . inputattrs($options) . ' />';
 	}
 
 	/**
@@ -931,12 +933,14 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 **/
 	public static function marketing ( $result, $options, $O ) {
 		if ( ! isset($options['mode']) ) $options['mode'] = 'input';
-		if ( $options['mode'] == 'value' ) return $O->marketing;
+		if ( 'value' == $options['mode'] ) return $O->marketing;
 		if ( ! empty($O->marketing) )
 			$options['value'] = $O->marketing;
+
 		$attrs = array('accesskey', 'alt', 'checked', 'class', 'disabled', 'format',
 			'minlength', 'maxlength', 'readonly', 'size', 'src', 'tabindex',
 			'title');
+		
 		if ( Shopp::str_true($options['value']) ) $options['checked'] = true;
 		$input = '<input type="hidden" name="marketing" value="no" />';
 		$input .= '<input type="checkbox" name="marketing" id="marketing" value="yes" ' . inputattrs($options, $attrs) . ' />';
@@ -1335,10 +1339,10 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	public static function same_shipping_address ( $result, $options, $O ) {
 		$allowed = array('class', 'checked');
 		$defaults = array(
-			'label' => Shopp::__('Same shipping address'),
+			'label'   => Shopp::__('Same shipping address'),
 			'checked' => 'on',
-			'type' => 'shipping',
-			'class' => ''
+			'type'    => 'shipping',
+			'class'   => ''
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -1386,7 +1390,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 * @return string The button markup
 	 **/
 	public static function save_button ( $result, $options, $O ) {
-		if ( ! isset($options['label']) ) $options['label'] = Shopp::__('Save');
+		if ( ! isset($options['label']) ) $options['label'] = __('Save');
 		$result = '<input type="hidden" name="customer" value="true" />';
 		$result .= wp_nonce_field('shopp_profile_update', '_wpnonce', true, false);
 		$result .= '<input type="submit" name="save" id="save-button"' . inputattrs($options) . ' />';
@@ -1440,7 +1444,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 * @return string The billing street address input markup
 	 **/
 	public static function shipping_address ( $result, $options, $O ) {
-		$options['address'] = 'shipping';
+		$options['address']  = 'shipping';
 		$options['property'] = 'address';
 		return self::address( $result, $options, $O );
 	}
@@ -1477,7 +1481,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 * @return string The input markup
 	 **/
 	public static function shipping_city ( $result, $options, $O ) {
-		$options['address'] = 'shipping';
+		$options['address']  = 'shipping';
 		$options['property'] = 'city';
 		return self::address( $result, $options, $O );
 	}
@@ -1532,7 +1536,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 * @return string The input markup
 	 **/
 	public static function shipping_postcode ( $result, $options, $O ) {
-		$options['address'] = 'shipping';
+		$options['address']  = 'shipping';
 		$options['property'] = 'postcode';
 		return self::address( $result, $options, $O );
 	}
@@ -1591,7 +1595,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 * @return string The input markup
 	 **/
 	public static function shipping_xaddress ( $result, $options, $O ) {
-		$options['address'] = 'shipping';
+		$options['address']  = 'shipping';
 		$options['property'] = 'xaddress';
 		return self::address( $result, $options, $O );
 	}
@@ -1620,15 +1624,15 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	public static function submit_login ( $result, $options, $O ) {
 		$request = $_GET;
 		$defaults = array(
-			'label' => Shopp::__('Login'),
+			'label'    => Shopp::__('Login'),
 			'redirect' => isset($_REQUEST['redirect']) ?
 				$_REQUEST['redirect'] : Shopp::url($request, 'account', ShoppOrder()->security())
 		);
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
 
-		$string = '';
-		$id = 'submit-login';
+		$string  = '';
+		$id      = 'submit-login';
 		$context = ShoppStorefront::intemplate();
 
 		if ( isset($request['acct']) && 'logout' == $request['acct'] )
@@ -1762,8 +1766,8 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 **/
 	private static function address ( $result, $options, $O ) {
 		$defaults = array(
-			'mode' => 'input',
-			'address' => 'billing',
+			'mode'     => 'input',
+			'address'  => 'billing',
 			'property' => 'address'
 		);
 		$options = array_merge($defaults, $options);
@@ -1792,16 +1796,18 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 **/
 	private static function country ( $result, $options, $O ) {
 		$defaults = array(
-			'mode' => 'input',
+			'mode'    => 'input',
 			'address' => 'billing',
 		);
 		$options = array_merge($defaults, $options);
 
 		$options['address'] = self::valid_address($options['address']);
-		$Address = self::AddressObject($options['address']);
+		$Address            = self::AddressObject($options['address']);
+
 		if ( ! isset($options['value']) ) $options['value'] = $Address->country;
+		
 		$options['selected'] = $options['value'];
-		$options['id'] = "{$options['address']}-country";
+		$options['id']       = "{$options['address']}-country";
 		extract($options, EXTR_SKIP);
 
 		if ( 'value' == $mode ) return $value;
@@ -1838,27 +1844,29 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	private static function state ( $result, $options, $O ) {
 
 		$defaults = array(
-			'mode' => 'input',
-			'type' => 'menu',
-			'options' => '',
+			'mode'     => 'input',
+			'type'     => 'menu',
+			'options'  => '',
 			'required' => 'auto',
-			'class' => '',
-			'label' => '',
-			'address' => 'billing',
+			'class'    => '',
+			'label'    => '',
+			'address'  => 'billing',
 		);
 		$options = array_merge($defaults, $options);
 
 		$options['address'] = self::valid_address($options['address']);
-		$Address = self::AddressObject($options['address']);
+		$Address            = self::AddressObject($options['address']);
+
 		if ( ! isset($options['value']) ) $options['value'] = $Address->state;
+		
 		$options['selected'] = $options['value'];
-		$options['id'] = "{$options['address']}-state";
+		$options['id']       = "{$options['address']}-state";
 		extract($options, EXTR_SKIP);
 
 		if ( 'value' == $mode ) return $value;
 
-		$base = (array) shopp_setting('base_operations');
-		$countries = (array) shopp_setting('target_markets');
+		$base         = (array) shopp_setting('base_operations');
+		$countries    = (array) shopp_setting('target_markets');
 		$select_attrs = array('title', 'required', 'class', 'disabled', 'required', 'size', 'tabindex', 'accesskey');
 
 		$country = $base['country'];
@@ -1870,7 +1878,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 			$country = key($countries);
 
 		$regions = Lookup::country_zones();
-		$states = isset($regions[ $country ]) ? $regions[ $country ] : array();
+		$states  = isset($regions[ $country ]) ? $regions[ $country ] : array();
 
 		if ( ! empty($options['options']) && empty($states) ) $states = explode(',', $options['options']);
 
@@ -1887,7 +1895,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 			return '<input type="text" name="' . $address . '[state]" id="' . $id . '" ' . inputattrs($options) . '/>';
 
 		$options['disabled'] = 'disabled';
-		$options['class'] = join(' ', array_merge($classes, array('disabled', 'hidden')));
+		$options['class']    = join(' ', array_merge($classes, array('disabled', 'hidden')));
 
 		$result = '<select name="' . $address .'[state]" id="' . $id . '-menu" ' . inputattrs($options, $select_attrs) . '>' .
 					'<option value="">' . $label . '</option>' .
