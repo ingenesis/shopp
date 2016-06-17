@@ -37,7 +37,7 @@ function shopp_admin_add_menu ( $label, $page, $position = null, $handler = fals
 	if ( false === $handler ) $handler = array(Shopp::object()->Flow, 'parse');
 
 	if ( ! is_callable($handler) ) {
-		shopp_debug(__FUNCTION__ . " failed: The specified callback handler is not valid.");
+		shopp_debug(__FUNCTION__ . ' failed: The specified callback handler is not valid.');
 		return false;
 	}
 
@@ -82,7 +82,7 @@ function shopp_admin_add_submenu ( $label, $page, $menu = null, $handler = false
 	if ( false === $handler ) $handler = array(Shopp::object()->Flow, 'admin');
 
 	if ( ! is_callable($handler) ) {
-		shopp_debug(__FUNCTION__ . " failed: The specified callback handler is not valid.");
+		shopp_debug(__FUNCTION__ . ' failed: The specified callback handler is not valid.');
 		return false;
 	}
 
@@ -115,16 +115,19 @@ function shopp_admin_add_submenu ( $label, $page, $menu = null, $handler = false
 function shopp_admin_screen_tabs () {
 	global $plugin_page;
 
-	$tabs = ShoppAdmin()->tabs( $plugin_page );
-	$first = current($tabs);
+	$tabs    = ShoppAdmin()->tabs( $plugin_page );
+	$first   = current($tabs);
 	$default = $first[1];
 
-	$markup = array();
+	$markup  = array();
+
 	foreach ( $tabs as $index => $entry ) {
 		list($title, $tab, $parent) = $entry;
 		$classes = array('nav-tab');
+	
 		if ( ($plugin_page == $parent && $default == $tab) || $plugin_page == $tab )
 			$classes[] = 'nav-tab-active';
+
 		$markup[] = '<a href="' . add_query_arg(array('page' => $tab), admin_url('admin.php')) . '" class="' . join(' ', $classes) . '">' . $title . '</a>';
 	}
 
