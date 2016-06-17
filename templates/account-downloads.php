@@ -11,19 +11,19 @@
  **/
 ?>
 
-<h3><?php _e( 'Downloads', 'Shopp' ); ?></h3>
+<h3><?php Shopp::_e( 'Downloads' ); ?></h3>
 
 <p>
-	<a href="<?php shopp('customer.url'); ?>">&laquo; <?php _e( 'Return to Account Management', 'Shopp' ); ?></a>
+	<a href="<?php shopp('customer.url'); ?>">&laquo; <?php Shopp::_e( 'Return to Account Management' ); ?></a>
 </p>
 
 <?php if ( shopp( 'customer.has-downloads' ) ) : ?>
 	<table cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
-				<th scope="col"><?php _e( 'Product', 'Shopp' ); ?></th>
-				<th scope="col"><?php _e( 'Order', 'Shopp' ); ?></th>
-				<th scope="col"><?php _e( 'Amount', 'Shopp' ); ?></th>
+				<th scope="col"><?php Shopp::_e( 'Product' ); ?></th>
+				<th scope="col"><?php Shopp::_e( 'Order' ); ?></th>
+				<th scope="col"><?php Shopp::_e( 'Amount' ); ?></th>
 			</tr>
 		</thead>
 		<?php while( shopp( 'customer.downloads' ) ) : ?>
@@ -31,7 +31,7 @@
 				<td>
 					<?php shopp( 'customer.download', 'name' ); ?> <?php shopp( 'customer.download', 'variation' ); ?><br />
 					<small>
-						<a href="<?php shopp( 'customer.download', 'url' ); ?>"><?php _e( 'Download File', 'Shopp' ); ?></a> (<?php shopp( 'customer.download', 'size' ); ?>)
+						<a href="<?php shopp( 'customer.download', 'url' ); ?>"><?php Shopp::_e( 'Download File' ); ?></a> (<?php shopp( 'customer.download', 'size' ); ?>)
 					</small>
 				</td>
 				<td>
@@ -40,16 +40,16 @@
 				</td>
 				<td>
 					<?php shopp( 'customer.download', 'total' ); ?><br />
-					<small><?php shopp( 'customer.download', 'downloads' ); ?> <?php _e( 'Downloads', 'Shopp' ); ?></small>
+					<small><?php shopp( 'customer.download', 'downloads' ); ?> <?php Shopp::_e( 'Downloads' ); ?></small>
 				</td>
 			</tr>
 		<?php endwhile; ?>
 	</table>
 <?php else : ?>
 	<p>
-		<?php _e( 'You have no digital product downloads available.', 'Shopp' ); ?>
+		<?php Shopp::_e( 'You have no digital product downloads available.' ); ?>
 	</p>
 <?php endif; // end 'has-downloads' ?>
 <p>
-	<a href="<?php shopp( 'customer.url' ); ?>">&laquo; <?php _e( 'Return to Account Management', 'Shopp' ); ?></a>
+	<a href="<?php shopp( 'customer.url' ); ?>">&laquo; <?php Shopp::_e( 'Return to Account Management' ); ?></a>
 </p>
