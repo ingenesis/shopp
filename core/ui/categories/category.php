@@ -1,7 +1,7 @@
 <div class="wrap shopp">
 
 	<div class="icon32"></div>
-	<h2><?php _e('Category Editor','Shopp'); ?></h2>
+	<h2><?php Shopp::_e('Category Editor'); ?></h2>
 
 	<?php do_action('shopp_admin_notices'); ?>
 
@@ -28,12 +28,12 @@
 					</div>
 					<div class="inside">
 						<?php if ('' != get_option('permalink_structure') && !empty($Category->id)): ?>
-						<div id="edit-slug-box"><strong><?php _e('Permalink','Shopp'); ?>:</strong>
-						<span id="sample-permalink"><?php echo $permalink; ?><span id="editable-slug" title="<?php _e('Click to edit this part of the permalink','Shopp'); ?>"><?php echo esc_attr($Category->slug); ?></span><span id="editable-slug-full"><?php echo esc_attr($Category->slug); ?></span>/</span>
+						<div id="edit-slug-box"><strong><?php Shopp::_e('Permalink'); ?>:</strong>
+						<span id="sample-permalink"><?php echo $permalink; ?><span id="editable-slug" title="<?php Shopp::_e('Click to edit this part of the permalink'); ?>"><?php echo esc_attr($Category->slug); ?></span><span id="editable-slug-full"><?php echo esc_attr($Category->slug); ?></span>/</span>
 						<span id="edit-slug-buttons">
-							<button type="button" class="edit button"><?php _e('Edit','Shopp'); ?></button><?php if (!empty($Category->id)): ?><a href="<?php echo esc_url(shopp($Category,'get-url')); ?>" id="view-product" class="view button"><?php _e('View','Shopp'); ?></a><?php endif; ?></span>
+							<button type="button" class="edit button"><?php _e('Edit'); ?></button><?php if ( ! empty($Category->id) ): ?><a href="<?php echo esc_url(shopp($Category,'get-url')); ?>" id="view-product" class="view button"><?php Shopp::_e('View'); ?></a><?php endif; ?></span>
 						<span id="editor-slug-buttons">
-							<button type="button" class="save button"><?php _e('Save','Shopp'); ?></button> <button type="button" class="cancel button"><?php _e('Cancel','Shopp'); ?></button>
+							<button type="button" class="save button"><?php _e('Save'); ?></button> <button type="button" class="cancel button"><?php _e('Cancel'); ?></button>
 						</span>
 						</div>
 						<?php endif; ?>
@@ -64,8 +64,8 @@
 var flashuploader = <?php echo ($uploader == 'flash' && !(false !== strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'mac') && apache_mod_loaded('mod_security')))?'true':'false'; ?>,
 	category = <?php echo (!empty($Category->id))?$Category->id:'false'; ?>,
 	product = false,
-	details = <?php echo json_encode($Category->specs) ?>,
-	priceranges = <?php echo json_encode($Category->priceranges) ?>,
+	details = <?php echo isset($Category->specs) ? json_encode($Category->specs) : '' ?>,
+	priceranges = <?php echo isset($Category->priceranges) ? json_encode($Category->priceranges) : '' ?>,
 	options = <?php echo json_encode($Category->options) ?>,
 	prices = <?php echo json_encode($Category->prices) ?>,
 	uidir = '<?php echo SHOPP_ADMIN_URI; ?>',
@@ -91,63 +91,63 @@ var flashuploader = <?php echo ($uploader == 'flash' && !(false !== strpos(strto
 	fileupload_debug = <?php echo (defined('SHOPP_FILEUPLOAD_DEBUG') && SHOPP_FILEUPLOAD_DEBUG)?'true':'false'; ?>,
 
 	// Warning/Error Dialogs
-	DELETE_IMAGE_WARNING = "<?php _e('Are you sure you want to delete this category image?','Shopp'); ?>",
-	SERVER_COMM_ERROR = "<?php _e('There was an error communicating with the server.','Shopp'); ?>",
+	DELETE_IMAGE_WARNING = "<?php Shopp::_e('Are you sure you want to delete this category image?'); ?>",
+	SERVER_COMM_ERROR = "<?php Shopp::_e('There was an error communicating with the server.'); ?>",
 
 	// Translatable dynamic interface labels
-	NEW_DETAIL_DEFAULT = "<?php _e('Detail Name','Shopp'); ?>",
-	NEW_OPTION_DEFAULT = "<?php _e('New Option','Shopp'); ?>",
-	FACETED_DISABLED = "<?php _e('Faceted menu disabled','Shopp'); ?>",
-	FACETED_AUTO = "<?php _e('Build faceted menu automatically','Shopp'); ?>",
-	FACETED_RANGES = "<?php _e('Build as custom number ranges','Shopp'); ?>",
-	FACETED_CUSTOM = "<?php _e('Build from preset options','Shopp'); ?>",
-	ADD_IMAGE_BUTTON_TEXT = "<?php _e('Add New Image','Shopp'); ?>",
-	SAVE_BUTTON_TEXT = "<?php _e('Save','Shopp'); ?>",
-	CANCEL_BUTTON_TEXT = "<?php _e('Cancel','Shopp'); ?>",
-	OPTION_MENU_DEFAULT = "<?php _e('Option Menu','Shopp'); ?>",
-	NEW_OPTION_DEFAULT = "<?php _e('New Option','Shopp'); ?>",
+	NEW_DETAIL_DEFAULT = "<?php Shopp::_e('Detail Name'); ?>",
+	NEW_OPTION_DEFAULT = "<?php Shopp::_e('New Option'); ?>",
+	FACETED_DISABLED = "<?php Shopp::_e('Faceted menu disabled'); ?>",
+	FACETED_AUTO = "<?php Shopp::_e('Build faceted menu automatically'); ?>",
+	FACETED_RANGES = "<?php Shopp::_e('Build as custom number ranges'); ?>",
+	FACETED_CUSTOM = "<?php Shopp::_e('Build from preset options'); ?>",
+	ADD_IMAGE_BUTTON_TEXT = "<?php Shopp::_e('Add New Image'); ?>",
+	SAVE_BUTTON_TEXT = "<?php _e('Save'); ?>",
+	CANCEL_BUTTON_TEXT = "<?php _e('Cancel'); ?>",
+	OPTION_MENU_DEFAULT = "<?php Shopp::_e('Option Menu'); ?>",
+	NEW_OPTION_DEFAULT = "<?php Shopp::_e('New Option') ?>",
 
-	UPLOAD_FILE_BUTTON_TEXT = "<?php _e('Upload&nbsp;File','Shopp'); ?>",
-	TYPE_LABEL = "<?php _e('Type','Shopp'); ?>",
-	PRICE_LABEL = "<?php _e('Price','Shopp'); ?>",
-	AMOUNT_LABEL = "<?php _e('Amount','Shopp'); ?>",
-	SALE_PRICE_LABEL = "<?php _e('Sale Price','Shopp'); ?>",
-	NOT_ON_SALE_TEXT = "<?php _e('Not on Sale','Shopp'); ?>",
-	NOTAX_LABEL = "<?php _e('Not Taxed','Shopp'); ?>",
-	SHIPPING_LABEL = "<?php _e('Shipping','Shopp'); ?>",
-	FREE_SHIPPING_TEXT = "<?php _e('Free Shipping','Shopp'); ?>",
-	WEIGHT_LABEL = <?php _jse('Weight','Shopp'); ?>,
-	LENGTH_LABEL = <?php _jse('Length','Shopp'); ?>,
-	WIDTH_LABEL = <?php _jse('Width','Shopp'); ?>,
-	HEIGHT_LABEL = <?php _jse('Height','Shopp'); ?>,
-	DIMENSIONAL_WEIGHT_LABEL = <?php _jse('3D Weight','Shopp'); ?>,
-	SHIPFEE_LABEL = "<?php _e('Handling Fee','Shopp'); ?>",
-	SHIPFEE_XTRA = "<?php _e('Amount added to shipping costs for each unit ordered (for handling costs, etc)','Shopp'); ?>",
-	INVENTORY_LABEL = "<?php _e('Inventory','Shopp'); ?>",
-	NOT_TRACKED_TEXT = "<?php _e('Not Tracked','Shopp'); ?>",
-	IN_STOCK_LABEL = "<?php _e('In Stock','Shopp'); ?>",
-	SKU_LABEL = "<?php _e('SKU','Shopp'); ?>",
-	SKU_LABEL_HELP = "<?php _e('Stock Keeping Unit','Shopp'); ?>",
-	SKU_XTRA = "<?php _e('Enter a unique stock keeping unit identification code.','Shopp'); ?>",
-	DONATIONS_VAR_LABEL = "<?php _e('Accept variable amounts','Shopp'); ?>",
-	DONATIONS_MIN_LABEL = "<?php _e('Amount required as minimum','Shopp'); ?>",
-	BILLCYCLE_LABEL = <?php _jse('Billing Cycle','Shopp'); ?>,
-	TRIAL_LABEL = <?php _jse('Trial Period','Shopp'); ?>,
-	NOTRIAL_TEXT = <?php _jse('No trial period','Shopp'); ?>,
-	TIMES_LABEL = <?php _jse('times','Shopp'); ?>,
-	MEMBERSHIP_LABEL = <?php _jse('Membership','Shopp'); ?>,
-	PRODUCT_DOWNLOAD_LABEL = "<?php _e('Product Download','Shopp'); ?>",
-	NO_PRODUCT_DOWNLOAD_TEXT = "<?php _e('No product download','Shopp'); ?>",
-	NO_DOWNLOAD = "<?php _e('No download file','Shopp'); ?>",
-	UNKNOWN_UPLOAD_ERROR = "<?php _e('An unknown error occurred. The upload could not be saved.','Shopp'); ?>",
-	DEFAULT_PRICELINE_LABEL = "<?php _e('Price & Delivery','Shopp'); ?>",
-	FILE_NOT_FOUND_TEXT = "<?php _e('The file you specified could not be found.','Shopp'); ?>",
-	FILE_NOT_READ_TEXT = "<?php _e('The file you specified is not readable and cannot be used.','Shopp'); ?>",
-	FILE_ISDIR_TEXT = "<?php _e('The file you specified is a directory and cannot be used.','Shopp'); ?>",
-	IMAGE_DETAILS_TEXT = "<?php _e('Image Details','Shopp'); ?>",
-	IMAGE_DETAILS_TITLE_LABEL = "<?php _e('Title','Shopp'); ?>",
-	IMAGE_DETAILS_ALT_LABEL = "<?php _e('Alt','Shopp'); ?>",
-	IMAGE_DETAILS_DONE = "<?php _e('OK','Shopp'); ?>",
-	IMAGE_DETAILS_CROP_LABEL = "<?php _e('Cropped images','Shopp'); ?>";
+	UPLOAD_FILE_BUTTON_TEXT = "<?php Shopp::_e('Upload File'); ?>",
+	TYPE_LABEL = "<?php Shopp::_e('Type'); ?>",
+	PRICE_LABEL = "<?php Shopp::_e('Price'); ?>",
+	AMOUNT_LABEL = "<?php Shopp::_e('Amount'); ?>",
+	SALE_PRICE_LABEL = "<?php Shopp::_e('Sale Price'); ?>",
+	NOT_ON_SALE_TEXT = "<?php Shopp::_e('Not on Sale'); ?>",
+	NOTAX_LABEL = "<?php Shopp::_e('Not Taxed'); ?>",
+	SHIPPING_LABEL = "<?php Shopp::_e('Shipping'); ?>",
+	FREE_SHIPPING_TEXT = "<?php Shopp::_e('Free Shipping'); ?>",
+	WEIGHT_LABEL = <?php Shopp::_jse('Weight'); ?>,
+	LENGTH_LABEL = <?php Shopp::_jse('Length'); ?>,
+	WIDTH_LABEL = <?php Shopp::_jse('Width'); ?>,
+	HEIGHT_LABEL = <?php Shopp::_jse('Height'); ?>,
+	DIMENSIONAL_WEIGHT_LABEL = <?php Shopp::_jse('3D Weight'); ?>,
+	SHIPFEE_LABEL = "<?php Shopp::_e('Handling Fee'); ?>",
+	SHIPFEE_XTRA = "<?php Shopp::_e('Amount added to shipping costs for each unit ordered (for handling costs, etc)'); ?>",
+	INVENTORY_LABEL = "<?php Shopp::_e('Inventory'); ?>",
+	NOT_TRACKED_TEXT = "<?php Shopp::_e('Not Tracked'); ?>",
+	IN_STOCK_LABEL = "<?php Shopp::_e('In Stock'); ?>",
+	SKU_LABEL = "<?php Shopp::_e('SKU'); ?>",
+	SKU_LABEL_HELP = "<?php Shopp::_e('Stock Keeping Unit'); ?>",
+	SKU_XTRA = "<?php Shopp::_e('Enter a unique stock keeping unit identification code.'); ?>",
+	DONATIONS_VAR_LABEL = "<?php Shopp::_e('Accept variable amounts'); ?>",
+	DONATIONS_MIN_LABEL = "<?php Shopp::_e('Amount required as minimum'); ?>",
+	BILLCYCLE_LABEL = <?php Shopp::_jse('Billing Cycle'); ?>,
+	TRIAL_LABEL = <?php Shopp::_jse('Trial Period'); ?>,
+	NOTRIAL_TEXT = <?php Shopp::_jse('No trial period'); ?>,
+	TIMES_LABEL = <?php Shopp::_jse('times'); ?>,
+	MEMBERSHIP_LABEL = <?php Shopp::_jse('Membership'); ?>,
+	PRODUCT_DOWNLOAD_LABEL = "<?php Shopp::_e('Product Download'); ?>",
+	NO_PRODUCT_DOWNLOAD_TEXT = "<?php Shopp::_e('No product download'); ?>",
+	NO_DOWNLOAD = "<?php Shopp::_e('No download file'); ?>",
+	UNKNOWN_UPLOAD_ERROR = "<?php Shopp::_e('An unknown error occurred. The upload could not be saved.'); ?>",
+	DEFAULT_PRICELINE_LABEL = "<?php Shopp::_e('Price & Delivery'); ?>",
+	FILE_NOT_FOUND_TEXT = "<?php Shopp::_e('The file you specified could not be found.'); ?>",
+	FILE_NOT_READ_TEXT = "<?php Shopp::_e('The file you specified is not readable and cannot be used.'); ?>",
+	FILE_ISDIR_TEXT = "<?php Shopp::_e('The file you specified is a directory and cannot be used.'); ?>",
+	IMAGE_DETAILS_TEXT = "<?php Shopp::_e('Image Details'); ?>",
+	IMAGE_DETAILS_TITLE_LABEL = "<?php Shopp::_e('Title'); ?>",
+	IMAGE_DETAILS_ALT_LABEL = "<?php Shopp::_e('Alt'); ?>",
+	IMAGE_DETAILS_DONE = "<?php Shopp::_e('OK'); ?>",
+	IMAGE_DETAILS_CROP_LABEL = "<?php Shopp::_e('Cropped images'); ?>";
 /* ]]> */
 </script>
