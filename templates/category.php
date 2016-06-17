@@ -18,11 +18,11 @@
 		<section class="navigation controls">
 			<?php shopp( 'storefront.breadcrumb', array( 'separator' => '&nbsp;/ ' ) ); ?>
 			<?php shopp( 'collection.subcategory-list',
-					array(	'dropdown' => true,
+					array(	'dropdown'  => true,
 						 	'hierarchy' => true,
-						 	'showall' => true,
-						 	'class' => 'subcategories',
-						 	'before' => '&nbsp;/ '	)
+						 	'showall'   => true,
+						 	'class'     => 'subcategories',
+						 	'before'    => '&nbsp;/ '	)
 			); ?>
 
 			<div class="alignright">
@@ -31,7 +31,7 @@
 		</section>
 
 		<section class="view controls">
-			<?php shopp( 'storefront.views', 'label=' . __( 'Views: ', 'Shopp' ) ); ?>
+			<?php shopp( 'storefront.views', 'label=' . Shopp::__( 'Views: ' ) ); ?>
 			<?php shopp( 'collection.pagination', 'show=10&before=<div class="alignright">' ); ?>
 		</section>
 
@@ -44,9 +44,9 @@
 						<h4 class="name">
 							<a href="<?php shopp( 'product.url' ); ?>"><span itemprop="name"><?php shopp( 'product.name' ); ?></span></a>
 						</h4>
-						<p class="price" itemscope itemtype="http://schema.org/Offer"><span itemprop="price"><?php shopp( 'product.saleprice', 'starting=' . __( 'from', 'Shopp' ) ); ?></span></p>
+						<p class="price" itemscope itemtype="http://schema.org/Offer"><span itemprop="price"><?php shopp( 'product.saleprice', 'starting=' . Shopp::__( 'from' ) ); ?></span></p>
 						<?php if ( shopp( 'product.has-savings' ) ) : ?>
-							<p class="savings"><?php _e( 'Save ', 'Shopp' ); ?><?php shopp( 'product.savings', 'show=percent' ); ?></p>
+							<p class="savings"><?php _e( 'Save ' ); ?><?php shopp( 'product.savings', 'show=percent' ); ?></p>
 						<?php endif; ?>
 
 						<div class="listview">
@@ -68,5 +68,5 @@
 
 <?php else : ?>
 	<?php if ( ! shopp('storefront.is-landing') ) shopp( 'storefront.breadcrumb' ); ?>
-	<p class="notice"><?php _e( 'No products were found.', 'Shopp' ); ?></p>
+	<p class="notice"><?php Shopp::_e( 'No products were found.' ); ?></p>
 <?php endif; ?>
