@@ -24,25 +24,25 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 class ShoppOrder {
 
-	public $Customer = false;			// The current customer
-	public $Shipping = false;			// The shipping address
-	public $Billing = false;			// The billing address
-	public $Cart = false;				// The shopping cart
-	public $Tax = false;				// The tax calculator
+	public $Customer  = false;			// The current customer
+	public $Shipping  = false;			// The shipping address
+	public $Billing   = false;			// The billing address
+	public $Cart      = false;			// The shopping cart
+	public $Tax       = false;			// The tax calculator
 	public $Shiprates = false;			// The shipping service rates calculator
 	public $Discounts = false;			// The discount manager
 
 	public $Promotions = false;			// The promotions loader
-	public $Payments = false;			// The payments manager
-	public $Checkout = false;			// The checkout processor
+	public $Payments   = false;			// The payments manager
+	public $Checkout   = false;			// The checkout processor
 
-	public $data = array();				// Extra/custom order data
+	public $data        = array();		// Extra/custom order data
 	public $sameaddress = false;		// Toggle for copying a primary address to the secondary address
 
 	// Post processing properties
 	public $inprogress = false;			// Generated purchase ID
-	public $purchase = false;			// Purchase ID of the finalized sale
-	public $txnid = false;				// The transaction ID reported by the gateway
+	public $purchase   = false;			// Purchase ID of the finalized sale
+	public $txnid      = false;			// The transaction ID reported by the gateway
 
 	public $state;						// Checksum state of the items in the cart
 
@@ -58,7 +58,7 @@ class ShoppOrder {
 		$this->init();
 
 		// Set locking timeout for concurrency operation protection
-		if ( ! defined('SHOPP_TXNLOCK_TIMEOUT')) define('SHOPP_TXNLOCK_TIMEOUT',10);
+		if ( ! defined('SHOPP_TXNLOCK_TIMEOUT') ) define('SHOPP_TXNLOCK_TIMEOUT', 10);
 
 		// Request handling
 		add_action('parse_request', array($this, 'request'));
@@ -115,12 +115,12 @@ class ShoppOrder {
 
 	function init () {
 
-		$this->Cart = Shopping::restart( 'ShoppCart', $this->Cart );
+		$this->Cart     = Shopping::restart( 'ShoppCart', $this->Cart );
 		$this->Customer = Shopping::restart( 'ShoppCustomer', $this->Customer );
 
-		$this->Billing = Shopping::restart( 'BillingAddress', $this->Billing );
+		$this->Billing  = Shopping::restart( 'BillingAddress', $this->Billing );
 		$this->Shipping = Shopping::restart( 'ShippingAddress', $this->Shipping );
-		$this->Tax = Shopping::restart( 'ShoppTax', $this->Tax );
+		$this->Tax      = Shopping::restart( 'ShoppTax', $this->Tax );
 
 		$this->Shiprates = Shopping::restart( 'ShoppShiprates', $this->Shiprates );
 		$this->Discounts = Shopping::restart( 'ShoppDiscounts', $this->Discounts );
@@ -134,8 +134,8 @@ class ShoppOrder {
 		Shopping::restore('orderstate', $this->state);
 
 		$this->Promotions = new ShoppPromotions;
-		$this->Payments = new ShoppPayments;
-		$this->Checkout = new ShoppCheckout;
+		$this->Payments   = new ShoppPayments;
+		$this->Checkout   = new ShoppCheckout;
 
 	}
 
@@ -197,7 +197,7 @@ class ShoppOrder {
 		if ( empty($_REQUEST['_txnupdate']) ) return;
 
 		// Check for remote transaction update messages
-		add_action('shopp_txn_update', create_function('',"status_header('200'); exit();"), 101); // Default shopp_txn_update requests to HTTP status 200
+		add_action('shopp_txn_update', create_function('', "status_header('200'); exit();"), 101); // Default shopp_txn_update requests to HTTP status 200
 		do_action('shopp_txn_update');
 
 	}
@@ -235,7 +235,7 @@ class ShoppOrder {
 		if ( $this->Cart->shipped() || shopp_setting_enabled('tax_destination') ) // @todo add setting for "Apply tax to the shipping address"
 			$Address = $this->Shipping;
 
-		// Locale is always tracked with the billing address even though it is may be a shipping locale
+		// Locale is always tracked with the billing address even though it may be a shipping locale
 		$locale = empty($this->Billing->locale) ? null : $this->Billing->locale;
 
 		$this->Tax->location($Address->country, $Address->state, $locale); // Update the ShoppTax working location
@@ -258,7 +258,7 @@ class ShoppOrder {
 
 		// Duplicate purchase prevention #3142
 		$timeout = SHOPP_GATEWAY_TIMEOUT + 5;
-		$lockid = 'shopp_order_' . ShoppShopping()->session();
+		$lockid  = 'shopp_order_' . ShoppShopping()->session();
 		if ( get_transient($lockid) ) {
 			shopp_debug("Lock $lockid already established, waiting for other process to complete...");
 
@@ -297,7 +297,7 @@ class ShoppOrder {
 	public function invoice ( ShoppPurchase $Purchase ) {
 		shopp_add_order_event($Purchase->id, 'invoiced', array(
 			'gateway' => $Purchase->gateway,			// Gateway handler name (module name from @subpackage)
-			'amount' => $Purchase->total				// Capture of entire order amount
+			'amount'  => $Purchase->total				// Capture of entire order amount
 		));
 	}
 
@@ -341,9 +341,9 @@ class ShoppOrder {
 		}
 
 		shopp_add_order_event($Event->order, 'captured', array(
-			'txnid' => $Event->txnid,				// Can be either the original transaction ID or an ID for this transaction
-			'amount' => $Event->amount,				// Capture of entire order amount
-			'fees' => $Event->fees,					// Transaction fees taken by the gateway net revenue = amount-fees
+			'txnid'   => $Event->txnid,				// Can be either the original transaction ID or an ID for this transaction
+			'amount'  => $Event->amount,			// Capture of entire order amount
+			'fees'    => $Event->fees,				// Transaction fees taken by the gateway net revenue = amount-fees
 			'gateway' => $Event->gateway			// Gateway class name
 		));
 
@@ -404,7 +404,7 @@ class ShoppOrder {
 
 		shopp_add_order_event($Purchase->id,'auth',array(
 			'gateway' => $Purchase->gateway,
-			'amount' => $Purchase->total
+			'amount'  => $Purchase->total
 		));
 
 	}
@@ -423,9 +423,9 @@ class ShoppOrder {
 		add_action('shopp_captured_order_event', array($this, 'notify'));
 		add_action('shopp_captured_order_event', array($this, 'success'));
 
-		shopp_add_order_event($Purchase->id,'sale',array(
+		shopp_add_order_event($Purchase->id, 'sale', array(
 			'gateway' => $Purchase->gateway,
-			'amount' => $Purchase->total
+			'amount'  => $Purchase->total
 		));
 
 	}
@@ -460,7 +460,7 @@ class ShoppOrder {
 	public function purchase ( PurchaseOrderEvent $Event ) {
 
 		$Shopping = ShoppShopping();
-		$changed = $this->changed();
+		$changed  = $this->changed();
 
 		// No auth message, bail
 		if ( empty($Event) ) {
@@ -498,14 +498,16 @@ class ShoppOrder {
 		$Purchase->copydata($this->Billing);
 		$Purchase->copydata($this->Shipping, 'ship');
 		$Purchase->copydata($this->Cart->Totals->data());
-		$Purchase->subtotal = $Purchase->order; // Remap order to subtotal
-		$Purchase->paymethod = $Paymethod->slug;
-		$Purchase->customer = $this->Customer->id;
-		$Purchase->taxing = shopp_setting_enabled('tax_inclusive') ? 'inclusive' : 'exclusive';
-		$Purchase->freight = $this->Cart->total('shipping');
+
+		$Purchase->subtotal   = $Purchase->order; // Remap order to subtotal
+		$Purchase->paymethod  = $Paymethod->slug;
+		$Purchase->customer   = $this->Customer->id;
+		$Purchase->taxing     = shopp_setting_enabled('tax_inclusive') ? 'inclusive' : 'exclusive';
+		$Purchase->freight    = $this->Cart->total('shipping');
 		$Purchase->shipoption = isset($shipoption->name) ? $shipoption->name : '';
-		$Purchase->ip = $Shopping->ip;
-		$Purchase->created = current_time('mysql');
+		$Purchase->ip         = $Shopping->ip;
+		$Purchase->created    = current_time('mysql');
+
 		unset($Purchase->order);
 		$Purchase->save();
 
@@ -540,26 +542,26 @@ class ShoppOrder {
 
 				add_action( 'shopp_order_event', array($Purchase, 'notifications') );
 			} elseif ( 'voided' == $Purchase->txnstatus ) {
-                $this->invoice($Purchase); // Re-invoice cancelled orders that are still in-progress @see #1930
-            } elseif ( $Purchase->did('invoiced') ) {
-				// Reset the order status to invoiced without invoicing it again @see #3301
-                $Purchase->txnstatus = 'invoiced';
-                $Purchase->save();
-            }
+				$this->invoice($Purchase); // Re-invoice cancelled orders that are still in-progress @see #1930
+			} elseif ( $Purchase->did('invoiced') ) {
+ 				// Reset the order status to invoiced without invoicing it again @see #3301
+ 				$Purchase->txnstatus = 'invoiced';
+ 				$Purchase->save();
+ 			}
 
 			$this->process($Purchase);
 			return;
 		}
 
-		$this->items($Purchase->id);							// Create purchased records from the cart items
+		$this->items($Purchase->id);		// Create purchased records from the cart items
 
 		$this->purchase = false; 			// Clear last purchase in prep for new purchase
 		$this->inprogress = $Purchase->id;	// Keep track of the purchase record in progress for transaction updates
 
-		shopp_debug('Purchase '.$Purchase->id.' was successfully saved to the database.');
+		shopp_debug('Purchase ' . $Purchase->id . ' was successfully saved to the database.');
 
 		// Start the transaction processing events
-		do_action('shopp_purchase_order_created',$Purchase);
+		do_action('shopp_purchase_order_created', $Purchase);
 
 	}
 
@@ -657,7 +659,7 @@ class ShoppOrder {
 				$Purchase = new ShoppPurchase($Event->order);
 
 			$Purchase->customer = $this->Customer->id;
-			$Purchase->billing = $this->Billing->id;
+			$Purchase->billing  = $this->Billing->id;
 			$Purchase->shipping = $this->Shipping->id;
 			$Purchase->save();
 		}
@@ -735,27 +737,27 @@ class ShoppOrder {
 	 **/
 	public function isvalid ( $report = true ) {
 
-		$Customer = $this->Customer;
-		$Shipping = $this->Shipping;
+		$Customer  = $this->Customer;
+		$Shipping  = $this->Shipping;
 		$Shiprates = $this->Shiprates;
-		$Payments = $this->Payments;
-		$Cart = $this->Cart;
+		$Payments  = $this->Payments;
+		$Cart      = $this->Cart;
 
-		$valid = true;
+		$valid    = true;
 		$errlevel = $report ? SHOPP_TRXN_ERR : SHOPP_DEBUG_ERR;
 
 		shopp_debug('Validating order data for processing');
 
 		if ( 0 == $Cart->count() ) {
-			$valid = apply_filters('shopp_ordering_empty_cart',false);
-			shopp_add_error(__('There are no items in the cart.', 'Shopp'), $errlevel);
+			$valid = apply_filters('shopp_ordering_empty_cart', false);
+			shopp_add_error(Shopp::__('There are no items in the cart.'), $errlevel);
 		}
 
 		$stock = true;
 		foreach ( $Cart as $item ) {
 			if ( ! $item->instock() ){
-				$valid = apply_filters('shopp_ordering_items_outofstock',false);
-				shopp_add_error( sprintf(__('%s does not have sufficient stock to process order.', 'Shopp'),
+				$valid = apply_filters('shopp_ordering_items_outofstock', false);
+				shopp_add_error( Shopp::__('%s does not have sufficient stock to process order.',
 					$item->name . ( empty($item->option->label) ? '' : '(' . $item->option->label . ')' )
 				), $errlevel);
 				$stock = false;
@@ -772,7 +774,7 @@ class ShoppOrder {
 
 		if ( ! $valid_customer ) {
 			$valid = false;
-			shopp_add_error(__('There is not enough customer information to process the order.','Shopp'), $errlevel);
+			shopp_add_error(Shopp::__('There is not enough customer information to process the order.'), $errlevel);
 		}
 
 		// Check for shipped items but no Shipping information
@@ -788,25 +790,25 @@ class ShoppOrder {
 			if ( $Shiprates->count() == 0 && ! $Shiprates->free() ) {
 				$valid = apply_filters('shopp_ordering_no_shipping_costs',false);
 
-				$message = __('The order cannot be processed. No shipping is available to the address you provided. Please return to %scheckout%s and try again.', 'Shopp');
+				$message = Shopp::__('The order cannot be processed. No shipping is available to the address you provided. Please return to %scheckout%s and try again.');
 
 				if ( $Shiprates->realtime() )
-					$message = __('The order cannot be processed. The shipping rate service did not provide rates because of a problem and no other shipping is available to the address you provided. Please return to %scheckout%s and try again or contact the store administrator.', 'Shopp');
+					$message = Shopp::__('The order cannot be processed. The shipping rate service did not provide rates because of a problem and no other shipping is available to the address you provided. Please return to %scheckout%s and try again or contact the store administrator.');
 
-				if ( ! $valid ) shopp_add_error( sprintf($message, '<a href="'.Shopp::url(false,'checkout',$this->security()).'">', '</a>'), $errlevel );
+				if ( ! $valid ) shopp_add_error( sprintf($message, '<a href="' . Shopp::url(false, 'checkout', $this->security()) . '">', '</a>'), $errlevel );
 			}
 
 		}
 
 		if ( ! $valid_shipping ) {
 			$valid = false;
-			shopp_add_error(__('The shipping address information is incomplete. The order cannot be processed.','Shopp'), $errlevel);
+			shopp_add_error(Shopp::__('The shipping address information is incomplete. The order cannot be processed.'), $errlevel);
 		}
 
 		// Alert when no gateway is configured (and the order is not free)
 		if ( $Payments->count() == 0 && $Cart->total() > 0 ) {
 			$valid = false;
-			shopp_add_error( Lookup::errors('gateway','nogateways'), $errlevel);
+			shopp_add_error( Lookup::errors('gateway', 'nogateways'), $errlevel);
 		}
 
 		return $valid;
@@ -867,9 +869,9 @@ class ShoppOrder {
 		$this->Promotions->clear();
 		$this->Shiprates->clear();
 
-		$this->data = array();
+		$this->data       = array();
 		$this->inprogress = false;
-		$this->txnid = false;
+		$this->txnid      = false;
 
 	}
 
