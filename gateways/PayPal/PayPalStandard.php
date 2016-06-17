@@ -108,7 +108,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 
 		shopp_add_order_event( $Purchase->id, 'sale', array(
 			'gateway' => $Purchase->gateway,
-			'amount' => $Purchase->total
+			'amount'  => $Purchase->total
 		) );
 
 	}
@@ -154,13 +154,13 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		}
 
 		$authed = array(
-			'txnid' => $Message->txnid(),						// Transaction ID
-			'amount' => $Message->amount(),						// Gross amount authorized
-			'gateway' => $this->module,							// Gateway handler name (module name from @subpackage)
-			'paymethod' => $this->settings['label'],			// Payment method (payment method label from payment settings)
-			'paytype' => $Message->paytype(),					// Type of payment (eCheck, or instant payment)
-			'payid' => $Message->email(),						// PayPal account email address
-			'capture' => ( $captured = $Message->captured() )	// Capture flag
+			'txnid'	    => $Message->txnid(),					// Transaction ID
+			'amount'	=> $Message->amount(),					// Gross amount authorized
+			'gateway'	=> $this->module,						// Gateway handler name (module name from @subpackage)
+			'paymethod'	=> $this->settings['label'],			// Payment method (payment method label from payment settings)
+			'paytype'	=> $Message->paytype(),					// Type of payment (eCheck, or instant payment)
+			'payid'	    => $Message->email(),					// PayPal account email address
+			'capture'	=> ( $captured = $Message->captured() )	// Capture flag
 		);
 
 		if ( $captured && $fees = $Message->fees() )
@@ -192,10 +192,10 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		}
 
 		shopp_add_order_event($Event->order, 'captured', array(
-			'txnid' => $Message->txnid(),		// Transaction ID of the CAPTURE event
-			'amount' => $Event->amount,		// Amount captured
-			'fees' => $Event->fees,			// Transaction fees taken by the gateway net revenue = amount-fees
-			'gateway' => $this->module		// Gateway handler name (module name from @subpackage)
+			'txnid'	    => $Message->txnid(),	// Transaction ID of the CAPTURE event
+			'amount'	=> $Event->amount,		// Amount captured
+			'fees'	    => $Event->fees,		// Transaction fees taken by the gateway net revenue = amount-fees
+			'gateway'	=> $this->module		// Gateway handler name (module name from @subpackage)
 		));
 	}
 
@@ -221,8 +221,8 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		}
 
 		shopp_add_order_event($Event->order, 'refunded', array(
-			'txnid' => $Message->txnid(),		// Transaction ID for the REFUND event
-			'amount' => $Message->amount(),		// Amount refunded
+			'txnid'   => $Message->txnid(),		// Transaction ID for the REFUND event
+			'amount'  => $Message->amount(),	// Amount refunded
 			'gateway' => $this->module			// Gateway handler name (module name from @subpackage)
 		));
 
@@ -243,9 +243,9 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		if ( ! $Message ) return; // Requires an IPN/PDT message
 
 		shopp_add_order_event($Event->order, 'voided', array(
-			'txnid' => $Message->txnid(),			// Transaction ID
-			'txnorigin' => $Message->txnorigin(),	// Original Transaction ID
-			'gateway' => $this->module				// Gateway handler name (module name from @subpackage)
+			'txnid'	    => $Message->txnid(),		// Transaction ID
+			'txnorigin'	=> $Message->txnorigin(),	// Original Transaction ID
+			'gateway'	=> $this->module			// Gateway handler name (module name from @subpackage)
 		));
 	}
 
@@ -418,7 +418,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		$_['address_override'] 		= 1;
 
 		$_['address1']				= $Address->address;
-		if (!empty($Address->xaddress))
+		if ( ! empty($Address->xaddress) )
 			$_['address2']			= $Address->xaddress;
 		$_['city']					= $Address->city;
 		$_['state']					= $Address->state;
@@ -455,7 +455,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 			$recurring['period'] = strtoupper( $recurring['period'] );
 
 			//normalize recurring interval
-			$recurring['interval'] = min( max( $recurring['interval'], $tranges[$recurring['period']]['min'] ), $tranges[$recurring['period']]['max'] );
+			$recurring['interval'] = min( max( $recurring['interval'], $tranges[ $recurring['period'] ]['min'] ), $tranges[ $recurring['period'] ]['max'] );
 
 			$_['cmd']	= '_xclick-subscriptions';
 			$_['rm']	= 2; // Return with transaction data
@@ -475,7 +475,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 					$trialprice -= $this->amount('discount');
 
 				// normalize trial interval
-				$trial['interval'] = min( max( $trial['interval'], $tranges[$trial['period']]['min'] ), $tranges[$trial['period']]['max'] );
+				$trial['interval'] = min( max( $trial['interval'], $tranges[ $trial['period'] ]['min'] ), $tranges[ $trial['period'] ]['max'] );
 
 				$_['a1']	= $this->amount( $trial['price'] );
 				$_['p1']	= $trial['interval'];
@@ -511,6 +511,21 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 				$_[ 'amount_' . $id ]			= $this->amount($Item->unitprice);
 				$_[ 'quantity_' . $id ]			= $Item->quantity;
 				// $_['weight_'.$id]			= $Item->quantity;
+
+				// Workaround to solve mismatch between PayPal subtotal and Shopp subtotal
+				// due to rounding when selling a product with quantity > 1 and VAT included price
+				// to customers outside the VAT region
+				// When the issue occurs the product will be set to be one set with one price
+				if ( $Item->quantity > 1 ) {
+		            $pp_price   = $this->amount($_[ 'amount_' . $id ] * $_[ 'quantity_' . $id ]) ;
+		            $shopp_price    = $this->amount($Item->totald);
+
+					if ( $pp_price != $shopp_price ) {
+						$_[ 'item_name_' . $id ]        = Shopp::__('Set of %d %s', $Item->quantity, $_[ 'item_name_' . $id ]);
+						$_[ 'amount_' . $id ]           = $shopp_price;
+						$_[ 'quantity_' . $id ]         = 1;
+					}
+				}				
 			}
 
 			// Workaround a PayPal limitation of not correctly handling no subtotals or
@@ -523,7 +538,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 				$id++;
 				$_['item_number_'.$id]		= $id;
 				$_['item_name_'.$id]		= apply_filters('paypal_freeorder_handling_label',
-															__('Shipping & Handling','Shopp'));
+															Shopp::__('Shipping & Handling'));
 				$_['amount_'.$id]			= $this->amount( max((float)$this->amount('shipping'), 0.01) );
 				$_['quantity_'.$id]			= 1;
 			} else
@@ -564,27 +579,27 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 					ShoppOrder()->invoice($Purchase); // Reinvoice for cancel-reversals
 
 				shopp_add_order_event($Purchase->id, 'capture', array(
-					'txnid' => $Purchase->txnid,
+					'txnid'   => $Purchase->txnid,
 					'gateway' => $Purchase->gateway,
-					'amount' => $Message->amount(),
-					'user' => $this->settings['label']
+					'amount'  => $Message->amount(),
+					'user'    => $this->settings['label']
 				));
 			}
 		} elseif ( 'void' == $event ) {
 			shopp_add_order_event($Purchase->id, 'void', array(
-				'txnid' => $Purchase->txnid,
+				'txnid'   => $Purchase->txnid,
 				'gateway' => $this->module,
-				'reason' => $Message->reversal(),
-				'user' => $this->settings['label'],
-				'note' => $Message->reversal()
+				'reason'  => $Message->reversal(),
+				'user'    => $this->settings['label'],
+				'note'    => $Message->reversal()
 			));
 		} elseif ( 'refund' == $event ) {
 			shopp_add_order_event($Purchase->id, 'refund', array(
-				'txnid' => $Purchase->txnid,
+				'txnid'   => $Purchase->txnid,
 				'gateway' => $this->module,
-				'amount' => $Message->amount(),
-				'reason' => $Message->reversal(),
-				'user' => $this->settings['label']
+				'amount'  => $Message->amount(),
+				'reason'  => $Message->reversal(),
+				'user'    => $this->settings['label']
 			));
 		} elseif ( $txn_type = $Message->type() ) {
 			shopp_add_order_event($Purchase->id, 'review', array(
@@ -686,16 +701,16 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		$fields = array(
 			'Customer' => array(
 				'firstname' => 'first_name',
-				'lastname' => 'last_name',
-				'email' => 'payer_email',
-				'phone' => 'contact_phone',
-				'company' => 'payer_business_name'
+				'lastname'  => 'last_name',
+				'email'     => 'payer_email',
+				'phone'     => 'contact_phone',
+				'company'   => 'payer_business_name'
 			),
 			'Shipping' => array(
-				'address' => 'address_street',
-				'city' => 'address_city',
-				'state' => 'address_state',
-				'country' => 'address_country_code',
+				'address'  => 'address_street',
+				'city'     => 'address_city',
+				'state'    => 'address_state',
+				'country'  => 'address_country_code',
 				'postcode' => 'address_zip'
 			)
 		);
@@ -838,28 +853,28 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 	public function settings () {
 
 		$this->ui->text(0, array(
-			'name' => 'account',
+			'name'  => 'account',
 			'value' => $this->settings['account'],
-			'size' => 30,
+			'size'  => 30,
 			'label' => Shopp::__('Enter your PayPal account email.')
 		));
 
 		$this->ui->checkbox(0, array(
-			'name' => 'pdtverify',
+			'name'    => 'pdtverify',
 			'checked' => $this->settings['pdtverify'],
-			'label' => Shopp::__('Enable order verification')
+			'label'   => Shopp::__('Enable order verification')
 		));
 
 		$this->ui->text(0, array(
-			'name' => 'pdttoken',
-			'size' => 30,
+			'name'  => 'pdttoken',
+			'size'  => 30,
 			'value' => $this->settings['pdttoken'],
 			'label' => Shopp::__('PDT identity token for validating orders.')
 		));
 
 		$this->ui->checkbox(0, array(
-			'name' => 'testmode',
-			'label' => Shopp::_mi('Use the [PayPal Sandbox](%s)', ShoppSupport::DOCS . 'payment-processing/paypal-standard/'),
+			'name'    => 'testmode',
+			'label'   => Shopp::_mi('Use the [PayPal Sandbox](%s)', ShoppSupport::DOCS . 'payment-processing/paypal-standard/'),
 			'checked' => $this->settings['testmode']
 		));
 
@@ -887,55 +902,55 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
  **/
 class ShoppPayPalStandardMessage {
 
-	protected $amount = 0;
-	protected $email = '';
-	protected $fees = 0;
-	protected $order = 0;
-	protected $payer = '';
-	protected $payment = '';
-	protected $paytype = '';
+	protected $amount     = 0;
+	protected $email      = '';
+	protected $fees       = 0;
+	protected $order      = 0;
+	protected $payer      = '';
+	protected $payment    = '';
+	protected $paytype    = '';
 	protected $protection = '';
-	protected $reason = '';
-	protected $reversal = '';
-	protected $txnid = '';
-	protected $type = '';
+	protected $reason     = '';
+	protected $reversal   = '';
+	protected $txnid      = '';
+	protected $type       = '';
 
-	protected $data = array();
+	protected $data       = array();
 
 	protected static $map = array(
-		'invoice' => 'order',
-		'mc_fee' => 'fee',
-		'mc_gross' => 'amount',
-		'parent_txn_id' => 'txnorigin',
-		'payer_email' => 'email',
-		'payer_status' => 'payer',
-		'payment_status' => 'payment',
-		'payment_type' => 'paytype',
-		'pending_reason' => 'reason',
+		'invoice'                => 'order',
+		'mc_fee'                 => 'fee',
+		'mc_gross'               => 'amount',
+		'parent_txn_id'          => 'txnorigin',
+		'payer_email'            => 'email',
+		'payer_status'           => 'payer',
+		'payment_status'         => 'payment',
+		'payment_type'           => 'paytype',
+		'pending_reason'         => 'reason',
 		'protection_eligibility' => 'protection',
-		'reason_code' => 'reversal',
-		'txn_id' => 'txnid',
-		'txn_type' => 'type'
+		'reason_code'            => 'reversal',
+		'txn_id'                 => 'txnid',
+		'txn_type'               => 'type'
 	);
 
 	protected static $events = array(
-		'Voided' => 'void',
-		'Denied' => 'void',
-		'Expired' => 'void',
-		'Failed' => 'void',
-		'Refunded' => 'refund',
-		'Reversed' => 'refund',
+		'Voided'            => 'void',
+		'Denied'            => 'void',
+		'Expired'           => 'void',
+		'Failed'            => 'void',
+		'Refunded'          => 'refund',
+		'Reversed'          => 'refund',
 		'Canceled_Reversal' => 'capture',
 		'Canceled-Reversal' => 'capture',
-		'Completed' => 'capture',
-		'Pending' => 'auth',
-		'Processed' => 'auth',
+		'Completed'         => 'capture',
+		'Pending'           => 'auth',
+		'Processed'         => 'auth',
 	);
 
 	protected static $eligibility = array();
-	protected static $reasons = array();
-	protected static $reversals = array();
-	protected static $types = array();
+	protected static $reasons     = array();
+	protected static $reversals   = array();
+	protected static $types       = array();
 
 	public function __construct ( array $data ) {
 
