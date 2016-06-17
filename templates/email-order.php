@@ -5,8 +5,8 @@ Subject: <?php shopp( 'purchase.email-subject' ); ?>
 
 <html>
 	<div id="header">
-		<h1><?php shopp('storefront.business-name'); ?></h1>
-		<h2><?php _e( 'Order', 'Shopp' ); ?> <?php shopp( 'purchase.id' ); ?></h2>
+		<h1><?php shopp( 'storefront.business-name' ); ?></h1>
+		<h2><?php Shopp::_e( 'Order' ); ?> <?php shopp( 'purchase.id' ); ?></h2>
 	</div>
 	<div id="body">
 		<?php shopp( 'purchase.receipt' ); ?>
