@@ -489,12 +489,12 @@ class ShoppPurchase extends ShoppDatabaseObject {
 			'customer' => array(
 				"$Purchase->firstname $Purchase->lastname",		// Recipient name
 				$Purchase->email,							// Recipient email address
-				sprintf(__('Your order with %s has been updated', 'Shopp'), shopp_setting('business_name')), // Subject
+				Shopp::__('Your order with %s has been updated', shopp_setting('business_name')), // Subject
 				"email-$Event->name.php"),				// Template
 			'merchant' => array(
 				'',										// Recipient name
 				shopp_setting('merchant_email'),		// Recipient email address
-				sprintf(__('Order #%s: %s', 'Shopp'), $Purchase->id, $Event->label()), // Subject
+				Shopp::__('Order #%s: %s', 'Shopp', $Purchase->id, $Event->label()), // Subject
 				"email-merchant-$Event->name.php")		// Template
 		), $Event);
 
@@ -643,45 +643,45 @@ class ShoppPurchase extends ShoppDatabaseObject {
 	public static function exportcolumns () {
 		$prefix = "o.";
 		return array(
-			$prefix.'id' => __('Order ID','Shopp'),
-			$prefix.'ip' => __('Customer\'s IP Address','Shopp'),
-			$prefix.'firstname' => __('Customer\'s First Name','Shopp'),
-			$prefix.'lastname' => __('Customer\'s Last Name','Shopp'),
-			$prefix.'email' => __('Customer\'s Email Address','Shopp'),
-			$prefix.'phone' => __('Customer\'s Phone Number','Shopp'),
-			$prefix.'company' => __('Customer\'s Company','Shopp'),
-			$prefix.'card' => __('Credit Card Number','Shopp'),
-			$prefix.'cardtype' => __('Credit Card Type','Shopp'),
-			$prefix.'cardexpires' => __('Credit Card Expiration Date','Shopp'),
-			$prefix.'cardholder' => __('Credit Card Holder\'s Name','Shopp'),
-			$prefix.'address' => __('Billing Street Address','Shopp'),
-			$prefix.'xaddress' => __('Billing Street Address 2','Shopp'),
-			$prefix.'city' => __('Billing City','Shopp'),
-			$prefix.'state' => __('Billing State/Province','Shopp'),
-			$prefix.'country' => __('Billing Country','Shopp'),
-			$prefix.'postcode' => __('Billing Postal Code','Shopp'),
-			$prefix.'shipname' => __('Shipping Name','Shopp'),
-			$prefix.'shipaddress' => __('Shipping Street Address','Shopp'),
-			$prefix.'shipxaddress' => __('Shipping Street Address 2','Shopp'),
-			$prefix.'shipcity' => __('Shipping City','Shopp'),
-			$prefix.'shipstate' => __('Shipping State/Province','Shopp'),
-			$prefix.'shipcountry' => __('Shipping Country','Shopp'),
-			$prefix.'shippostcode' => __('Shipping Postal Code','Shopp'),
-			$prefix.'shipmethod' => __('Shipping Method','Shopp'),
-			'discounts.value' => __('Discounts Applied','Shopp'),
-			$prefix.'subtotal' => __('Order Subtotal','Shopp'),
-			$prefix.'discount' => __('Order Discount','Shopp'),
-			$prefix.'freight' => __('Order Shipping Fees','Shopp'),
-			$prefix.'tax' => __('Order Taxes','Shopp'),
-			$prefix.'total' => __('Order Total','Shopp'),
-			$prefix.'fees' => __('Transaction Fees','Shopp'),
-			$prefix.'txnid' => __('Transaction ID','Shopp'),
-			$prefix.'txnstatus' => __('Transaction Status','Shopp'),
-			$prefix.'gateway' => __('Payment Gateway','Shopp'),
-			$prefix.'status' => __('Order Status','Shopp'),
-			$prefix.'data' => __('Order Data','Shopp'),
-			$prefix.'created' => __('Order Date','Shopp'),
-			$prefix.'modified' => __('Order Last Updated','Shopp')
+			$prefix.'id'	        => Shopp::__('Order ID'),
+			$prefix.'ip'	        => Shopp::__('Customer\'s IP Address'),
+			$prefix.'firstname'	    => Shopp::__('Customer\'s First Name'),
+			$prefix.'lastname'	    => Shopp::__('Customer\'s Last Name'),
+			$prefix.'email'	        => Shopp::__('Customer\'s Email Address'),
+			$prefix.'phone'	        => Shopp::__('Customer\'s Phone Number'),
+			$prefix.'company'	    => Shopp::__('Customer\'s Company'),
+			$prefix.'card'	        => Shopp::__('Credit Card Number'),
+			$prefix.'cardtype'	    => Shopp::__('Credit Card Type'),
+			$prefix.'cardexpires'	=> Shopp::__('Credit Card Expiration Date'),
+			$prefix.'cardholder'	=> Shopp::__('Credit Card Holder\'s Name'),
+			$prefix.'address'	    => Shopp::__('Billing Street Address'),
+			$prefix.'xaddress'	    => Shopp::__('Billing Street Address 2'),
+			$prefix.'city'	        => Shopp::__('Billing City'),
+			$prefix.'state'	        => Shopp::__('Billing State/Province'),
+			$prefix.'country'	    => Shopp::__('Billing Country'),
+			$prefix.'postcode'	    => Shopp::__('Billing Postal Code'),
+			$prefix.'shipname'	    => Shopp::__('Shipping Name'),
+			$prefix.'shipaddress'	=> Shopp::__('Shipping Street Address'),
+			$prefix.'shipxaddress'	=> Shopp::__('Shipping Street Address 2'),
+			$prefix.'shipcity'	    => Shopp::__('Shipping City'),
+			$prefix.'shipstate'     => Shopp::__('Shipping State/Province'),
+			$prefix.'shipcountry'	=> Shopp::__('Shipping Country'),
+			$prefix.'shippostcode'	=> Shopp::__('Shipping Postal Code'),
+			$prefix.'shipmethod'	=> Shopp::__('Shipping Method'),
+			'discounts.value'	    => Shopp::__('Discounts Applied'),
+			$prefix.'subtotal'	    => Shopp::__('Order Subtotal'),
+			$prefix.'discount'	    => Shopp::__('Order Discount'),
+			$prefix.'freight'	    => Shopp::__('Order Shipping Fees'),
+			$prefix.'tax'	        => Shopp::__('Order Taxes'),
+			$prefix.'total'	        => Shopp::__('Order Total'),
+			$prefix.'fees'	        => Shopp::__('Transaction Fees'),
+			$prefix.'txnid'	        => Shopp::__('Transaction ID'),
+			$prefix.'txnstatus'	    => Shopp::__('Transaction Status'),
+			$prefix.'gateway'	    => Shopp::__('Payment Gateway'),
+			$prefix.'status'	    => Shopp::__('Order Status'),
+			$prefix.'data'	        => Shopp::__('Order Data'),
+			$prefix.'created'	    => Shopp::__('Order Date'),
+			$prefix.'modified'	    => Shopp::__('Order Last Updated')
 		);
 	}
 
@@ -792,11 +792,11 @@ class PurchasesExport {
 		$this->defined = array_merge($this->purchase_cols,$this->purchased_cols);
 
 		$this->sitename = get_bloginfo('name');
-		$this->headings = (shopp_setting('purchaselog_headers') == "on");
+		$this->headings = (shopp_setting('purchaselog_headers') == 'on');
 		$this->selected = shopp_setting('purchaselog_columns');
 		$this->date_format = get_option('date_format');
 		$this->time_format = get_option('time_format');
-		shopp_set_setting('purchaselog_lastexport',current_time('timestamp'));
+		shopp_set_setting('purchaselog_lastexport', current_time('timestamp'));
 	}
 
 	public function query ( $request = array() ) {
@@ -880,7 +880,7 @@ class PurchasesExport {
 
 		if ( $addoncols ) {
 			$meta_table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
-			$joins[ $meta_table.'_2' ] = "LEFT JOIN $meta_table AS addons ON addons.parent = p.id AND addons.type='addon' AND addons.context='purchased'";
+			$joins[ $meta_table.'_2' ] = "LEFT JOIN $meta_table AS addons ON addons.parent = p.id AND addons.type='addon' AND addons.context='purchased' AND addons.name = addons.name"; // addons.name eval forces use of lookup INDEX
 		}
 
 		$joins = join(' ', $joins);
@@ -927,7 +927,7 @@ class PurchasesExport {
 	}
 
 	public function parse ( $column ) {
-		if ( sdb::serialized($column) ) {
+		if ( sDB::serialized($column) ) {
 			$list = unserialize($column);
 			$column = "";
 			foreach ( $list as $name => $value ) {
@@ -1083,7 +1083,7 @@ class PurchasesIIFExport extends PurchasesExport {
 	public static function settings () { ?>
 		<div id="iif-settings" class="hidden">
 			<input type="text" id="iif-account" name="settings[purchaselog_iifaccount]" value="<?php echo shopp_setting('purchaselog_iifaccount'); ?>" size="30"/><br />
-			<label for="iif-account"><small><?php _e('QuickBooks account name for transactions','Shopp'); ?></small></label>
+			<label for="iif-account"><small><?php Shopp::_e('QuickBooks account name for transactions'); ?></small></label>
 		</div>
 		<script type="text/javascript">
 		/* <![CDATA[ */
