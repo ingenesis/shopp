@@ -1,6 +1,6 @@
 <div class="wrap shopp">
 	<div class="icon32"></div>
-	<h2><?php _e('Arrange Categories','Shopp'); ?></h2>
+	<h2><?php Shopp::_e('Arrange Categories'); ?></h2>
 
 	<?php do_action('shopp_admin_notice'); ?>
 
@@ -11,7 +11,7 @@
 
 	<div class="tablenav">
 		<div class="alignleft actions">
-			<a href="<?php echo esc_url(add_query_arg(array_merge(stripslashes_deep($_GET),array('page'=>$this->Admin->pagename('categories'),'a'=>null)),admin_url('admin.php'))); ?>" class="button add-new">&larr; <?php _e('Return to Manage Categories','Shopp'); ?></a>
+			<a href="<?php echo esc_url(add_query_arg(array_merge(stripslashes_deep($_GET),array('page'=>$this->Admin->pagename('categories'),'a'=>null)),admin_url('admin.php'))); ?>" class="button add-new">&larr; <?php Shopp::_e('Return to Manage Categories'); ?></a>
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -31,32 +31,32 @@
 		$hidden = get_hidden_columns('shopp_page_shopp-categories');
 
 		$even = false;
-		foreach ($Categories as $Category):
+		foreach ( $Categories as $Category ):
 
 		$editurl = esc_url(esc_attr(add_query_arg(array_merge(stripslashes_deep($_GET),
 			array('page'=>$this->Admin->pagename('categories'),
 					'id'=>$Category->id)),
 					admin_url('admin.php'))));
 
-		$CategoryName = empty($Category->name)?'('.__('no category name','Shopp').')':$Category->name;
+		$CategoryName = empty($Category->name) ? '(' . Shopp::__('no category name') . ')' : $Category->name;
 
-		$membership = explode('/',$Category->uri);
+		$membership = explode('/', $Category->uri);
 
-		if (count($membership) > 1) $membership[] = $membership[count($membership)-2].'-child';
-		if ($membership[0] == $Category->slug) $membership[] = "top";
+		if ( count($membership) > 1 ) $membership[] = $membership[count($membership)-2].'-child';
+		if ( $membership[0] == $Category->slug ) $membership[] = "top";
 		$stripe = (!$even)?'alternate':''; $even = !$even;
-		$classes = join(' ',$membership).(empty($stripe)?'':' '.$stripe);
+		$classes = join(' ', $membership) . (empty($stripe) ? '' : ' ' . $stripe);
 
 		?>
 		<tr class="<?php echo $classes; ?>" rel="<?php echo $Category->slug; ?>">
-			<td><button type="button" name="top" alt="<?php $title = Shopp::__('Move to the top&hellip;'); echo $title; ?>" class="shoppui-step-top"><span class="hidden"><?php echo $title; ?></span></button><button type="button" name="bottom" alt="<?php $title = Shopp::__('Move to the bottom&hellip;'); echo $title; ?>" class="shoppui-step-bottom"><span class="hidden"><?php echo $title; ?></span></button><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit','Shopp'); ?> &quot;<?php echo $CategoryName; ?>&quot;'><?php echo str_repeat("&#8212; ",$Category->depth); echo $CategoryName; ?></a>
+			<td><button type="button" name="top" alt="<?php $title = Shopp::__('Move to the top&hellip;'); echo $title; ?>" class="shoppui-step-top"><span class="hidden"><?php echo $title; ?></span></button><button type="button" name="bottom" alt="<?php $title = Shopp::__('Move to the bottom&hellip;'); echo $title; ?>" class="shoppui-step-bottom"><span class="hidden"><?php echo $title; ?></span></button><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit'); ?> &quot;<?php echo $CategoryName; ?>&quot;'><?php echo str_repeat("&#8212; ",$Category->depth); echo $CategoryName; ?></a>
 			<input type="hidden" name="id" value="<?php echo $Category->id; ?>" /><input type='hidden' name='position[<?php echo $Category->id; ?>]' value="<?php echo $Category->priority; ?>" size="4" class="num selectall" /></td>
 			<th scope='row' width="48"><button type="button" name="collapse" class="collapsing closed">&nbsp;</button></th>
 		</tr>
 		<?php endforeach; ?>
 		</tbody>
 	<?php else: ?>
-		<tbody><tr><td colspan="6"><?php _e('No categories found.','Shopp'); ?></td></tr></tbody>
+		<tbody><tr><td colspan="6"><?php Shopp::_e('No categories found.'); ?></td></tr></tbody>
 	<?php endif; ?>
 	</table>
 	</form>
@@ -69,8 +69,8 @@
 <script type="text/javascript">
 var loadchildren_url = '<?php echo wp_nonce_url(admin_url('admin-ajax.php'),'wp_ajax_shopp_category_children'); ?>',
 	updates_url = '<?php echo wp_nonce_url(admin_url('admin-ajax.php'),'wp_ajax_shopp_category_order'); ?>',
-	SAVE_ERROR = "<?php _e('The category order could not be updated because of a communication error with the server.','Shopp'); ?>";
-	LOAD_ERROR = "<?php _e('The child categories could not be loaded because of a communication error with the server.','Shopp'); ?>";
+	SAVE_ERROR = "<?php Shopp::_e('The category order could not be updated because of a communication error with the server.'); ?>";
+	LOAD_ERROR = "<?php Shopp::_e('The child categories could not be loaded because of a communication error with the server.'); ?>";
 jQuery(document).ready( function() {
 	pagenow = 'shopp_page_shopp-categories';
 	columns.init(pagenow);
