@@ -29,41 +29,41 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	 **/
 	static $register = array(
 		'_cartitem',
-		'id' => 'id',
-		'product' => 'product',
-		'name' => 'name',
-		'type' => 'type',
-		'link' => 'url',
-		'url' => 'url',
-		'sku' => 'sku',
+		'id'          => 'id',
+		'product'     => 'product',
+		'name'        => 'name',
+		'type'        => 'type',
+		'link'        => 'url',
+		'url'         => 'url',
+		'sku'         => 'sku',
 		'description' => 'description',
-		'discount' => 'discount',
-		'unitprice' => 'unitprice',
-		'unittax' => 'unittax',
-		'discounts' => 'discounts',
-		'tax' => 'tax',
-		'total' => 'total',
-		'taxrate' => 'taxrate',
-		'quantity' => 'quantity',
-		'remove' => 'remove',
-		'onsale' => 'onsale',
+		'discount'    => 'discount',
+		'unitprice'   => 'unitprice',
+		'unittax'     => 'unittax',
+		'discounts'   => 'discounts',
+		'tax'         => 'tax',
+		'total'       => 'total',
+		'taxrate'     => 'taxrate',
+		'quantity'    => 'quantity',
+		'remove'      => 'remove',
+		'onsale'      => 'onsale',
 		'optionlabel' => 'option_label',
-		'options' => 'options',
-		'price' => 'price',
-		'prices' => 'prices',
-		'hasaddons' => 'has_addons',
-		'addons' => 'addons',
-		'addon' => 'addon',
-		'addonslist' => 'addons_list',
-		'hasinputs' => 'has_inputs',
-		'incategory' => 'in_category',
-		'inputs' => 'inputs',
-		'input' => 'input',
-		'inputslist' => 'inputs_list',
-		'coverimage' => 'coverimage',
-		'thumbnail' => 'coverimage',
-		'saleprice' => 'saleprice',
-		'saleprices' => 'saleprices',
+		'options'     => 'options',
+		'price'       => 'price',
+		'prices'      => 'prices',
+		'hasaddons'   => 'has_addons',
+		'addons'      => 'addons',
+		'addon'       => 'addon',
+		'addonslist'  => 'addons_list',
+		'hasinputs'   => 'has_inputs',
+		'incategory'  => 'in_category',
+		'inputs'      => 'inputs',
+		'input'       => 'input',
+		'inputslist'  => 'inputs_list',
+		'coverimage'  => 'coverimage',
+		'thumbnail'   => 'coverimage',
+		'saleprice'   => 'saleprice',
+		'saleprices'  => 'saleprices',
 	);
 
 	/**
@@ -268,7 +268,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 
 		$defaults = array(
 			'catalog' => false,
-			'show' => ''
+			'show'    => ''
 		);
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
@@ -305,7 +305,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	public static function discounts ( $result, $options, $O ) {
 		$defaults = array(
 			'catalog' => false,
-			'show' => ''
+			'show'    => ''
 		);
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
@@ -516,7 +516,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	 * @return string The remove button markup
 	 **/
 	public static function remove ( $result, $options, $O ) {
-		$label = __('Remove', 'Shopp');
+		$label = Shopp::__('Remove');
 		if ( isset($options['label']) ) $label = $options['label'];
 		if ( isset($options['class']) ) $class = ' class="'.$options['class'].'"';
 		else $class = ' class="remove"';
@@ -709,21 +709,21 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	public static function addons_list ( $result, $options, $O ) {
 		if ( empty($O->addons) ) return false;
 		$defaults = array(
-			'before' => '',
-			'after' => '',
-			'class' => '',
-			'exclude' => '',
+			'before'    => '',
+			'after'     => '',
+			'class'     => '',
+			'exclude'   => '',
 			'separator' => ': ',
-			'prices' => true,
-			'taxes' => shopp_setting('tax_inclusive')
+			'prices'    => true,
+			'taxes'     => shopp_setting('tax_inclusive')
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
 
-		$classes = ! empty($class) ? ' class="' . esc_attr($class) . '"' : '';
+		$classes  = ! empty($class) ? ' class="' . esc_attr($class) . '"' : '';
 		$excludes = explode(',', $exclude);
-		$prices = Shopp::str_true($prices);
-		$taxes = Shopp::str_true($taxes);
+		$prices   = Shopp::str_true($prices);
+		$taxes    = Shopp::str_true($taxes);
 
 		// Get the menu labels list and addon options to menus map
 		list($menus, $menumap) = self::_addon_menus();
@@ -778,9 +778,11 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		if ( empty($O->categories) ) return false;
 		if ( isset($options['id']) ) $field = "id";
 		if ( isset($options['name']) ) $field = "name";
+
 		foreach ( $O->categories as $id => $name ) {
+			
 			switch ( strtolower($field) ) {
-				case 'id': if ($options['id'] == $id) return true;
+				case 'id'  : if ($options['id'] == $id) return true;
 				case 'name': if ($options['name'] == $name) return true;
 			}
 		}
@@ -852,10 +854,10 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	public static function inputs_list ( $result, $options, $O ) {
 		if ( empty($O->data) ) return false;
 		$defaults = array(
-			'class' => '',
-			'exclude' => array(),
-			'before' => '',
-			'after' => '',
+			'class'     => '',
+			'exclude'   => array(),
+			'before'    => '',
+			'after'     => '',
 			'separator' => '<br />'
 		);
 		$options = array_merge($defaults, $options);
@@ -867,12 +869,15 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		if ( ! empty($class) ) $classes = ' class="' . $class . '"';
 
 		$result .= $before . '<ul' . $classes . '>';
+
 		foreach ( $O->data as $name => $data ) {
+
 			if (in_array($name,$exclude)) continue;
 			if (is_array($data)) $data = join($separator, $data);
+
 			$result .= '<li><strong>' . apply_filters('shopp_cartitem_input_name', $name) . '</strong>: ' . apply_filters('shopp_cartitem_input_data', $data, $name) . '</li>';
 		}
-		$result .= '</ul>'.$after;
+		$result .= '</ul>' . $after;
 		return $result;
 	}
 
