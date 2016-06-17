@@ -222,8 +222,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
  		$index = array_search($this->name, $states);
 
- 		if( $index > 0 && isset($labels[ $index ]) )
- 			return $labels[$index];
+ 		if ( $index > 0 && isset($labels[ $index ]) )
+ 			return $labels[ $index ];
  	}
 
 	public function order () {
