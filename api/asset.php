@@ -28,7 +28,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 function shopp_add_image ( $id, $context, $file ) {
 	if ( empty($id) || empty($context) || empty($file) ) {
-		shopp_debug(__FUNCTION__ . " failed: One or more missing parameters.");
+		shopp_debug(__FUNCTION__ . ' failed: One or more missing parameters.');
 		return false;
 	}
 
@@ -38,10 +38,10 @@ function shopp_add_image ( $id, $context, $file ) {
 
 	if ( 'product' == $context ) {
 		$Object = new ShoppProduct($id);
-		$Image = new ProductImage();
+		$Image  = new ProductImage();
 	} else if ( 'category' == $context ) {
 		$Object = new ProductCategory($id);
-		$Image = new CategoryImage();
+		$Image  = new CategoryImage();
 	} else {
 		shopp_debug(__FUNCTION__ . " failed for file $file: Invalid context $context.");
 		return false;
@@ -52,13 +52,15 @@ function shopp_add_image ( $id, $context, $file ) {
 		return false;
 	}
 
-	$Image->parent = $id;
-	$Image->type = "image";
-	$Image->name = "original";
+	$Image->parent   = $id;
+	$Image->type     = "image";
+	$Image->name     = "original";
 	$Image->filename = basename($file);
+
 	list($Image->width, $Image->height, $Image->mime, $Image->attr) = getimagesize($file);
-	$Image->mime = image_type_to_mime_type($Image->mime);
-	$Image->size = filesize($file);
+
+	$Image->mime     = image_type_to_mime_type($Image->mime);
+	$Image->size     = filesize($file);
 
 	if ( ! $Image->unique() ) {
 		shopp_debug(__FUNCTION__ . " failed for file $file: Too many images exist with this name.");
@@ -88,7 +90,7 @@ function shopp_add_image ( $id, $context, $file ) {
  **/
 function shopp_rmv_image ( $image, $context ) {
 	if ( empty($image) || empty($context) ) {
-		shopp_debug(__FUNCTION__ . " failed: Missing parameters");
+		shopp_debug(__FUNCTION__ . ' failed: Missing parameters');
 		return false;
 	}
 
@@ -186,7 +188,7 @@ function shopp_add_category_image ( $category, $file ) {
  **/
 function shopp_add_product_download ( $product, $file, $variant = false ) {
 	if ( empty($product) || empty($file) ) {
-		shopp_debug(__FUNCTION__.' failed: One or more missing parameters.');
+		shopp_debug(__FUNCTION__ . ' failed: One or more missing parameters.');
 		return false;
 	}
 
@@ -203,7 +205,7 @@ function shopp_add_product_download ( $product, $file, $variant = false ) {
 		return false;
 	}
 	$Product->load_data(array('summary', 'prices'));
-	if ( "on" == $Product->variants && false === $variant ) {
+	if ( 'on' == $Product->variants && false === $variant ) {
 		shopp_debug(__FUNCTION__ . " failed for file $file: You must specify the variant id parameter for product $product.");
 		return false;
 	}
@@ -226,16 +228,17 @@ function shopp_add_product_download ( $product, $file, $variant = false ) {
 	}
 
 	// Save the uploaded file
-	$File->load(array('type'=>'download', 'parent'=> $Price->id));
-	$File->parent = $Price->id;
-	$File->context = "price";
-	$File->type = "download";
-	$File->name = basename($file);
+	$File->load(array('type' => 'download', 'parent' => $Price->id));
+	$File->parent   = $Price->id;
+	$File->context  = "price";
+	$File->type     = "download";
+	$File->name     = basename($file);
 	$File->filename = $File->name;
+
 	if ( ! $instore ) {
 		$File->mime = file_mimetype($file,$File->name);
 		$File->size = filesize($file);
-		$File->store($file,'file');
+		$File->store($file, 'file');
 	} else {
 		$File->uri = $file;
 		$File->readmeta();
@@ -261,7 +264,7 @@ function shopp_add_product_download ( $product, $file, $variant = false ) {
  **/
 function shopp_rmv_product_download ( $download ) {
 	if ( empty($download) ) {
-		shopp_debug(__FUNCTION__.' failed: download parameter required.');
+		shopp_debug(__FUNCTION__ . ' failed: download parameter required.');
 		return false;
 	}
 
