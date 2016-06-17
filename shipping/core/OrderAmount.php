@@ -51,11 +51,11 @@ class OrderAmount extends ShippingFramework implements ShippingModule {
 			if ( ! $matched ) return $options;
 
 			$rate = array(
-				'slug' => $slug,
-				'name' => $method['label'],
-				'amount' => $amount,
+				'slug'     => $slug,
+				'name'     => $method['label'],
+				'amount'   => $amount,
 				'delivery' => $this->delivery($method),
-				'items' => false
+				'items'    => false
 			);
 
 			$options[ $slug ] = new ShippingOption($rate);
@@ -70,10 +70,10 @@ class OrderAmount extends ShippingFramework implements ShippingModule {
 		$this->setup('table');
 
 		$this->ui->tablerates(0,array(
-			'unit' => array( Shopp::__('Order Amount') ),
-			'table' => $this->settings['table'],
+			'unit'            => array( Shopp::__('Order Amount') ),
+			'table'           => $this->settings['table'],
 			'threshold_class' => 'money',
-			'rate_class' => 'money'
+			'rate_class'      => 'money'
 		));
 
 	}
