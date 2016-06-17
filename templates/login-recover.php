@@ -11,12 +11,12 @@
  **/
 ?>
 
-<form action="<?php shopp( 'customer', 'url' ); ?>" method="post" class="shopp" id="login">
-	<h3><?php _e( 'Recover your password', 'Shopp'); ?></h3>
+<form action="<?php shopp( 'customer.url' ); ?>" method="post" class="shopp" id="login">
+	<h3><?php Shopp::_e( 'Recover your password' ); ?></h3>
 	<ul>
 		<li>
-			<span><?php shopp('customer','account-login','size=20&title='.__('Login','Shopp')); ?><label for="login"><?php shopp('customer','login-label'); ?></label></span>
-			<span><?php shopp('customer','recover-button'); ?></span>
+			<span><?php shopp( 'customer.account-login', 'size=20&title=' . Shopp::__( 'Login' ) ); ?><label for="login"><?php shopp( 'customer.login-label' ); ?></label></span>
+			<span><?php shopp( 'customer.recover-button' ); ?></span>
 		</li>
 	</ul>
 </form>
