@@ -19,7 +19,7 @@ class ShoppPrice extends ShoppDatabaseObject {
 
 	static $table = 'price';
 
-	public function __construct ($id=false,$key=false) {
+	public function __construct ( $id = false, $key = false) {
 		$this->init(self::$table);
 		if ($this->load($id,$key)) {
 			$this->load_download();
@@ -39,17 +39,17 @@ class ShoppPrice extends ShoppDatabaseObject {
 
 		// clean up meta entries for deleted price
 		$metatable = ShoppDatabaseObject::tablename('meta');
-		$query = "DELETE FROM $metatable WHERE context='price' and parent=$price";
+		$query     = "DELETE FROM $metatable WHERE context='price' and parent=$price";
 		sDB::query($query);
 	}
 
 	public function metasetloader ( &$records, &$record, $id = 'id', $property = false, $collate = false, $merge = false ) {
-		if (isset($this->prices) && !empty($this->prices)) $prices = &$this->prices;
+		if ( isset($this->prices) && !empty($this->prices) ) $prices = &$this->prices;
 		else $prices = array();
 
 		$metamap = array(
 			'download' => 'download',
-			'options' => 'options',
+			'options'  => 'options',
 			'settings' => 'settings'
 		);
 		$metaclass = array(
@@ -57,37 +57,40 @@ class ShoppPrice extends ShoppDatabaseObject {
 		);
 
 		if ('metatype' == $property)
-			$property = isset($metamap[$record->type])?$metamap[$record->type]:'meta';
+			$property = isset($metamap[$record->type]) ? $metamap[ $record->type ] : 'meta';
 
 		if ('download' == $record->type) {
 			$collate = false;
 			$data = unserialize($record->value);
-			foreach (get_object_vars($data) as $prop => $val) $record->{$prop} = $val;
-			$clean = array('context','type','numeral','sortorder','created','modified','value');
-			foreach ($clean as $prop) unset($record->{$prop});
+
+			foreach ( get_object_vars($data) as $prop => $val ) $record->{$prop} = $val;
+			
+			$clean = array('context', 'type', 'numeral', 'sortorder', 'created', 'modified', 'value');
+			
+			foreach ( $clean as $prop ) unset($record->{$prop});
 		}
 
-		if ( isset($record->type) && isset($metaclass[$record->type]) ) {
-			$ObjectClass = $metaclass[$record->type];
+		if ( isset($record->type) && isset($metaclass[ $record->type ]) ) {
+			$ObjectClass = $metaclass[ $record->type ];
 			$Object = new $ObjectClass();
 			$Object->populate($record);
 			if (method_exists($Object,'expopulate'))
 				$Object->expopulate();
 
-			if (is_array($prices) && isset($prices[$Object->{$id}]))
-				$target = $prices[$Object->{$id}];
+			if (is_array($prices) && isset($prices[ $Object->{$id} ]))
+				$target = $prices[ $Object->{$id} ];
 			elseif (isset($this))
 				$target = $this;
 
-			if (!empty($target)) {
-				if (is_array($Object->value))
+			if ( ! empty($target) ) {
+				if ( is_array($Object->value) )
 					foreach ( $Object->value as $prop => $setting ) {
 						$target->{$prop} = $setting;
 
 						// Determine weight ranges from loaded price settings meta
- 						if ('dimensions' == $prop && isset($setting['weight'])) {
+ 						if ( 'dimensions' == $prop && isset($setting['weight']) ) {
 							$product = is_array($this->products)?$this->products[$target->product]:$this->products;
-							if(!isset($product->min['weight']) || $product->min['weight'] == 0) $product->min['weight'] = $product->max['weight'] = $setting['weight'];
+							if ( ! isset($product->min['weight']) || $product->min['weight'] == 0 ) $product->min['weight'] = $product->max['weight'] = $setting['weight'];
 							$product->min['weight'] = min($product->min['weight'],$setting['weight']);
 							$product->max['weight'] = max($product->max['weight'],$setting['weight']);
 						}
@@ -101,7 +104,7 @@ class ShoppPrice extends ShoppDatabaseObject {
 
 		}
 
-		parent::metaloader($records,$record,$prices,$id,$property,$collate,$merge);
+		parent::metaloader($records, $record, $prices, $id, $property, $collate, $merge);
 	}
 
 	/**
@@ -202,12 +205,12 @@ class ShoppPrice extends ShoppDatabaseObject {
 	 **/
 	public static function types () {
 		 return array(
-			array('value'=>'Shipped','label'=>__('Shipped','Shopp')),
-			array('value'=>'Virtual','label'=>__('Virtual','Shopp')),
-			array('value'=>'Download','label'=>__('Download','Shopp')),
-			array('value'=>'Donation','label'=>__('Donation','Shopp')),
-			array('value'=>'Subscription','label'=>__('Subscription','Shopp')),
-			array('value'=>'N/A','label'=>__('Disabled','Shopp')),
+			array('value' => 'Shipped', 'label' => Shopp::__('Shipped')),
+			array('value' => 'Virtual', 'label' => Shopp::__('Virtual')),
+			array('value' => 'Download', 'label' => Shopp::__('Download')),
+			array('value' => 'Donation', 'label' => Shopp::__('Donation')),
+			array('value' => 'Subscription', 'label' => Shopp::__('Subscription')),
+			array('value' => 'N/A', 'label' => Shopp::__('Disabled')),
 		);
 	}
 
@@ -226,17 +229,17 @@ class ShoppPrice extends ShoppDatabaseObject {
 	public static function periods () {
 		return array(
 			array(
-				array('value'=>'d','label'=>__('days','Shopp')),
-				array('value'=>'w','label'=>__('weeks','Shopp')),
-				array('value'=>'m','label'=>__('months','Shopp')),
-				array('value'=>'y','label'=>__('years','Shopp')),
+				array('value' => 'd', 'label' => Shopp::__('days')),
+				array('value' => 'w', 'label' => Shopp::__('weeks')),
+				array('value' => 'm', 'label' => Shopp::__('months')),
+				array('value' => 'y', 'label' => Shopp::__('years')),
 
 			),
 			array(
-				array('value'=>'d','label'=>__('day','Shopp')),
-				array('value'=>'w','label'=>__('week','Shopp')),
-				array('value'=>'m','label'=>__('month','Shopp')),
-				array('value'=>'y','label'=>__('year','Shopp')),
+				array('value' => 'd', 'label' => Shopp::__('day')),
+				array('value' => 'w', 'label' => Shopp::__('week')),
+				array('value' => 'm', 'label' => Shopp::__('month')),
+				array('value' => 'y', 'label' => Shopp::__('year')),
 			)
 		);
 	}
