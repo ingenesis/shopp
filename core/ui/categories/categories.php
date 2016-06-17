@@ -9,7 +9,7 @@
 
 	<p id="post-search" class="search-box">
 		<input type="text" id="categories-search-input" class="search-input" name="s" value="<?php echo esc_attr(stripslashes($s)); ?>" />
-		<input type="submit" value="<?php _e('Search Categories','Shopp'); ?>" class="button" />
+		<input type="submit" value="<?php Shopp::_e('Search Categories'); ?>" class="button" />
 	</p>
 
 	<div class="clear">
@@ -20,8 +20,8 @@
 	<div class="tablenav top">
 		<div class="alignleft actions">
 		<select name="action" id="actions">
-			<option value="" selected="selected"><?php _e('Bulk Actions&hellip;','Shopp'); ?></option>
-			<?php echo Shopp::menuoptions(array('delete' => Shopp::__('Delete')), false, true); ?>
+			<option value="" selected="selected"><?php Shopp::_e('Bulk Actions&hellip;'); ?></option>
+			<?php echo Shopp::menuoptions(array('delete' => __('Delete')), false, true); ?>
 		</select>
 		<input type="submit" value="<?php esc_attr_e('Apply','Shopp'); ?>" id="apply" class="button action" />
 		</div>
@@ -58,19 +58,25 @@
 				<?php
 				break;
 
+				case 'id':
+				?>
+					<td><?php echo esc_attr($Category->id); ?></td>
+				<?php
+				break;				
+
 				case 'name':
 					$adminurl = add_query_arg(array_merge($_GET, array('page' => $this->Admin->pagename('categories'))), admin_url('admin.php'));
 					$editurl = wp_nonce_url(add_query_arg('id', $Category->id, $adminurl), 'shopp_categories_manager');
 					$deleteurl = wp_nonce_url(add_query_arg('action', 'delete', $editurl), 'shopp_categories_manager');
 
-					$CategoryName = empty($Category->name) ? '('.Shopp::__('no category name').')' : $Category->name;
+					$CategoryName = empty($Category->name) ? '(' . Shopp::__('no category name') . ')' : $Category->name;
 
 				?>
-					<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($CategoryName); ?>&quot;'><?php echo str_repeat("&#8212; ",$Category->level); echo esc_html($CategoryName); ?></a>
+					<td class="<?php echo esc_attr(join(' ',$classes)); ?>"><a class='row-title' href='<?php echo $editurl; ?>' title='<?php _e('Edit'); ?> &quot;<?php echo esc_attr($CategoryName); ?>&quot;'><?php echo str_repeat("&#8212; ",$Category->level); echo esc_html($CategoryName); ?></a>
 						<div class="row-actions">
-							<span class='edit'><a href="<?php echo esc_url($editurl); ?>" title="<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($CategoryName); ?>&quot;"><?php _e('Edit','Shopp'); ?></a> | </span>
-							<span class='delete'><a class='submitdelete' title='<?php _e('Delete','Shopp'); ?> &quot;<?php echo esc_attr($CategoryName); ?>&quot;' href="<?php echo esc_url($deleteurl); ?>" rel="<?php echo $Category->id; ?>"><?php _e('Delete','Shopp'); ?></a> | </span>
-							<span class='view'><a href="<?php shopp($Category, 'url'); ?>" title="<?php _e('View','Shopp'); ?> &quot;<?php echo esc_attr($CategoryName); ?>&quot;" rel="permalink" target="_blank"><?php _e('View','Shopp'); ?></a></span>
+							<span class='edit'><a href="<?php echo esc_url($editurl); ?>" title="<?php _e('Edit'); ?> &quot;<?php echo esc_attr($CategoryName); ?>&quot;"><?php _e('Edit'); ?></a> | </span>
+							<span class='delete'><a class='submitdelete' title='<?php _e('Delete'); ?> &quot;<?php echo esc_attr($CategoryName); ?>&quot;' href="<?php echo esc_url($deleteurl); ?>" rel="<?php echo $Category->id; ?>"><?php _e('Delete'); ?></a> | </span>
+							<span class='view'><a href="<?php shopp($Category, 'url'); ?>" title="<?php Shopp::_e('View'); ?> &quot;<?php echo esc_attr($CategoryName); ?>&quot;" rel="permalink" target="_blank"><?php Shopp::_e('View'); ?></a></span>
 						</div>
 					</td>
 				<?php
