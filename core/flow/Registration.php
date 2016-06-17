@@ -27,17 +27,17 @@ class ShoppRegistration extends FormPostFramework {
 	const PROCESS = 'shopp_registration';
 
 	protected $defaults = array(
-		'sameaddress' => 'off',
-		'firstname' => '',
-		'lastname' => '',
-		'phone' => '',
-		'company' => '',
-		'billing' => array(),
-		'shipping' => array(),
-		'info' => array(),
-		'marketing' => '',
-		'loginname' => '',
-		'password' => '',
+		'sameaddress'      => 'off',
+		'firstname'        => '',
+		'lastname'         => '',
+		'phone'            => '',
+		'company'          => '',
+		'billing'          => array(),
+		'shipping'         => array(),
+		'info'             => array(),
+		'marketing'        => '',
+		'loginname'        => '',
+		'password'         => '',
 		'confirm-password' => ''
 	);
 
@@ -88,18 +88,18 @@ class ShoppRegistration extends FormPostFramework {
 
 		$updates = array(
 			'firstname' => $this->form('firstname'),
-			'lastname' => $this->form('lastname'),
-			'company' => $this->form('company'),
-			'email' => $this->form('email'),
-			'phone' => $this->form('phone'),
-			'info' => $this->form('info'),
+			'lastname'  => $this->form('lastname'),
+			'company'   => $this->form('company'),
+			'email'     => $this->form('email'),
+			'phone'     => $this->form('phone'),
+			'info'      => $this->form('info'),
 			'marketing' => $this->form('marketing'),
-			'password' => $this->form('password', true),
+			'password'  => $this->form('password', true),
 			'loginname' => $this->form('loginname', true)
 		);
 
 		// Remove invalid characters from the phone number
-		$updates['phone'] = preg_replace('/[^\d\(\)\-+\. (ext|x)]/','', $updates['phone'] );
+		$updates['phone'] = preg_replace('/[^\d\(\)\-+\. (ext|x)]/', '', $updates['phone'] );
 
 		if ( empty($Customer) ) $Customer = new ShoppCustomer();
 		else $Customer->reset();
@@ -117,7 +117,7 @@ class ShoppRegistration extends FormPostFramework {
 	public function shipaddress () {
 
 		$ShippingAddress = ShoppOrder()->Shipping;
-		$BillingAddress = ShoppOrder()->Billing;
+		$BillingAddress  = ShoppOrder()->Billing;
 
 		if ( empty($ShippingAddress) )
 			$ShippingAddress = new ShippingAddress();
@@ -136,7 +136,7 @@ class ShoppRegistration extends FormPostFramework {
 
 	public function billaddress () {
 
-		$BillingAddress = ShoppOrder()->Billing;
+		$BillingAddress  = ShoppOrder()->Billing;
 		$ShippingAddress = ShoppOrder()->Shipping;
 
 		if ( empty($BillingAddress) )
@@ -167,7 +167,7 @@ class ShoppRegistration extends FormPostFramework {
 		do_action('shopp_customer_registration', $Customer);
 
 		if ( $Customer->session(ShoppCustomer::GUEST) ) {
-			$Customer->type = __('Guest', 'Shopp'); // No cuts
+			$Customer->type = Shopp::__('Guest');   // No cuts
 			$Customer->wpuser = 0;                  // No buts
 			unset($Customer->password);             // No coconuts
 		} else {
