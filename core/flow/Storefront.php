@@ -340,7 +340,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 **/
 	public function trackurl ( WP $wp ) {
 
-		if ( ! is_shopp_catalog_page() || is_shopp_cart_page() ) return;
+		if ( ! is_catalog_page() ) return;
 
 		 // Track referrer for the cart referrer URL
 		$referrer = get_bloginfo('url') . '/' . $wp->request;
@@ -470,7 +470,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @return void
 	 **/
 	public function feed () {
-		if ( ! is_shopp_collection() ) return;
+		if ( ! is_shopp_collection()) return;
 		$Collection = ShoppCollection();
 
 	    $base = shopp_setting('base_operations');
@@ -516,7 +516,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 **/
 	public function feedlinks () {
 		if ( empty( ShoppCollection()->name ) ) return;
-		$title = apply_filters('shopp_collection_feed_title', sprintf('%s %s %s', get_bloginfo('name'), ShoppCollection()->name, Shopp::__('Feed')) );
+		$title = apply_filters('shopp_collection_feed_title', sprintf('%s %s %s', get_bloginfo('name'), ShoppCollection()->name, __('Feed','Shopp')) );
 		echo '<link rel="alternate" type="' . feed_content_type('rss') . '" title="' . esc_attr($title) . '" href="' . esc_attr(shopp('collection.get-feed-url')) . '" />' . "\n";
 	}
 
@@ -609,7 +609,7 @@ class ShoppStorefront extends ShoppFlowController {
 			shopp_enqueue_script('shopp');
 			shopp_enqueue_script('catalog');
 			shopp_enqueue_script('cart');
-			if ( is_shopp_catalog_page() )
+			if ( is_catalog_page() )
 				shopp_custom_script('catalog', "var pricetags = {};\n" );
 		}
 
@@ -903,16 +903,16 @@ class ShoppStorefront extends ShoppFlowController {
 	public function dashboard () {
 		$Order = ShoppOrder();
 
-		$this->add_dashboard( 'logout', Shopp::__('Logout') );
-		$this->add_dashboard( 'orders', Shopp::__('Your Orders'), true, array(ShoppCustomer(), 'load_orders') );
-		$this->add_dashboard( 'downloads', Shopp::__('Downloads'), true, array(ShoppCustomer(), 'load_downloads') );
-		$this->add_dashboard( 'profile', Shopp::__('My Account'), true );
+		$this->add_dashboard( 'logout', __('Logout', 'Shopp') );
+		$this->add_dashboard( 'orders', __('Your Orders', 'Shopp'), true, array(ShoppCustomer(), 'load_orders') );
+		$this->add_dashboard( 'downloads', __('Downloads', 'Shopp'), true, array(ShoppCustomer(), 'load_downloads') );
+		$this->add_dashboard( 'profile', __('My Account', 'Shopp'), true );
 
 		// Pages not in menu navigation
 		$this->add_dashboard( 'login', __('Login to your Account'), false );
 		$this->add_dashboard( 'recover', __('Password Recovery'), false );
 		$this->add_dashboard( 'rp', __('Password Recovery'), false );
-		$this->add_dashboard( 'menu', __('Dashboard'), false );
+		$this->add_dashboard( 'menu', __('Dashboard', 'Shopp'), false );
 
 		do_action( 'shopp_account_menu' );
 

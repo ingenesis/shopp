@@ -16,23 +16,23 @@
 
 		<table class="form-table">
 			<tr>
-				<th scope="row" valign="top"><label for="image-storage"><?php Shopp::_e('Image Storage'); ?></label></th>
+				<th scope="row" valign="top"><label for="image-storage"><?php _e('Image Storage','Shopp'); ?></label></th>
 				<td><select name="settings[image_storage]" id="image-storage">
 					<?php echo Shopp::menuoptions($storage,shopp_setting('image_storage'),true); ?>
-					</select><input type="submit" name="image-settings" value="<?php Shopp::_e('Settings&hellip;'); ?>" class="button-secondary hide-if-js"/>
+					</select><input type="submit" name="image-settings" value="<?php _e('Settings&hellip;','Shopp'); ?>" class="button-secondary hide-if-js"/>
 					<div id="image-storage-engine" class="storage-settings"><?php if ($ImageStorage) echo $ImageStorage->ui('image'); ?></div>
 	            </td>
 			</tr>
 			<tr>
-				<th scope="row" valign="top"><label for="download-storage"><?php Shopp::_e('Product File Storage'); ?></label></th>
+				<th scope="row" valign="top"><label for="download-storage"><?php _e('Product File Storage','Shopp'); ?></label></th>
 				<td><select name="settings[product_storage]" id="download-storage">
-					<?php echo Shopp::menuoptions($storage, shopp_setting('product_storage'),true); ?>
-					</select><input type="submit" name="download-settings" value="<?php Shopp::_e('Settings&hellip;'); ?>" class="button-secondary hide-if-js"/>
+					<?php echo Shopp::menuoptions($storage,shopp_setting('product_storage'),true); ?>
+					</select><input type="submit" name="download-settings" value="<?php _e('Settings&hellip;','Shopp'); ?>" class="button-secondary hide-if-js"/>
 					<div id="download-storage-engine" class="storage-settings"><?php if ($DownloadStorage) echo $DownloadStorage->ui('download'); ?></div>
 	            </td>
 			</tr>
 		</table>
-		<p class="submit"><input type="submit" class="button-primary" name="save" value="<?php Shopp::_e('Save Changes'); ?>" /></p>
+		<p class="submit"><input type="submit" class="button-primary" name="save" value="<?php _e('Save Changes','Shopp'); ?>" /></p>
 	</form>
 </div>
 

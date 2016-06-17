@@ -24,10 +24,10 @@
 	<div class="tablenav">
 		<div class="actions">
 			<select name="id" id="shipping-option-menu">
-			<option value=""><?php Shopp::_e('Add a shipping method&hellip;'); ?></option>
+			<option value=""><?php _e('Add a shipping method&hellip;','Shopp'); ?></option>
 			<?php echo Shopp::menuoptions($installed,false,true); ?>
 			</select>
-			<button type="submit" name="add-shipping-option" id="add-shipping-option" class="button-secondary hide-if-js" tabindex="9999"><?php Shopp::_e('Add Shipping Option'); ?></button>
+			<button type="submit" name="add-shipping-option" id="add-shipping-option" class="button-secondary hide-if-js" tabindex="9999"><?php _e('Add Shipping Option','Shopp'); ?></button>
 		</div>
 	</div>
 
@@ -54,7 +54,7 @@
 			}
 
 			if (count($shiprates) == 0 && !$edit): ?>
-				<tr id="no-shiprate-settings"><td colspan="6"><?php Shopp::_e('No shipping methods, yet.'); ?></td></tr>
+				<tr id="no-shiprate-settings"><td colspan="6"><?php _e('No shipping methods, yet.','Shopp'); ?></td></tr>
 			<?php
 			endif;
 
@@ -63,7 +63,7 @@
 			foreach ($shiprates as $setting => $module):
 				$shipping = shopp_setting($setting);
 				$service = $Shipping->modules[$module]->name;
-				if ( isset($shipping['fallback']) && Shopp::str_true($shipping['fallback']) ) $service = '<big title="' . Shopp::__('Fallback shipping real-time rate lookup failures') . '">&#9100;</big>  ' . $service;
+				if ( isset($shipping['fallback']) && Shopp::str_true($shipping['fallback']) ) $service = '<big title="'.__('Fallback shipping real-time rate lookup failures','Shopp').'">&#9100;</big>  '.$service;
 				$destinations = array();
 
 				$min = $max = false;
@@ -84,7 +84,7 @@
 				if (isset($shipping['label'])) $label = $shipping['label'];
 
 				$editurl = wp_nonce_url(add_query_arg(array('id'=>$setting),$this->url));
-				$deleteurl = wp_nonce_url(add_query_arg(array('delete'=>$setting), $this->url), 'shopp_delete_shiprate');
+				$deleteurl = wp_nonce_url(add_query_arg(array('delete'=>$setting),$this->url),'shopp_delete_shiprate');
 
 				$classes = array();
 				if (!$even) $classes[] = 'alternate'; $even = !$even;
@@ -93,11 +93,11 @@
 					$template_data = array(
 						'${mindelivery_menu}' => menuoptions($deliverymenu,$shipping['mindelivery'],true),
 						'${maxdelivery_menu}' => menuoptions($deliverymenu,$shipping['maxdelivery'],true),
-						'${fallbackon}' => ('on' == $shipping['fallback']) ? 'checked="checked"' : '',
+						'${fallbackon}' => ('on' == $shipping['fallback'])?'checked="checked"':'',
 						'${cancel_href}' => $this->url
 					);
-					$editor = str_replace(array_keys($template_data), $template_data, $editor);
-					$editor = preg_replace('/\${\w+}/', '', $editor);
+					$editor = str_replace(array_keys($template_data),$template_data,$editor);
+					$editor = preg_replace('/\${\w+}/','',$editor);
 
 					echo $editor;
 					if ($edit == $setting) continue;
@@ -105,9 +105,9 @@
 
 			?>
 		<tr class="<?php echo join(' ',$classes); ?>" id="shipping-setting-<?php echo sanitize_title_with_dashes($module); ?>">
-			<td class="name column-name"><a href="<?php echo esc_url($editurl); ?>" title="<?php Shopp::_e('Edit'); ?> &quot;<?php echo esc_attr($label); ?>&quot;" class="edit row-title"><?php echo esc_html($label); ?></a>
+			<td class="name column-name"><a href="<?php echo esc_url($editurl); ?>" title="<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($label); ?>&quot;" class="edit row-title"><?php echo esc_html($label); ?></a>
 				<div class="row-actions">
-					<span class='edit'><a href="<?php echo esc_url($editurl); ?>" title="<?php Shopp::_e('Edit'); ?> &quot;<?php echo esc_attr($label); ?>&quot;" class="edit"><?php Shopp::_e('Edit'); ?></a> | </span><span class='delete'><a href="<?php echo esc_url($deleteurl); ?>" title="<?php Shopp::_e('Delete'); ?> &quot;<?php echo esc_attr($label); ?>&quot;" class="delete"><?php Shopp::_e('Delete'); ?></a></span>
+					<span class='edit'><a href="<?php echo esc_url($editurl); ?>" title="<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($label); ?>&quot;" class="edit"><?php _e('Edit','Shopp'); ?></a> | </span><span class='delete'><a href="<?php echo esc_url($deleteurl); ?>" title="<?php _e('Delete','Shopp'); ?> &quot;<?php echo esc_attr($label); ?>&quot;" class="delete"><?php _e('Delete','Shopp'); ?></a></span>
 				</div>
 			</td>
 			<td class="type column-type"><?php echo $service; ?></td>
@@ -126,7 +126,7 @@
 
 <script type="text/javascript">
 /* <![CDATA[ */
-var shipping = <?php echo json_encode(array_map('sanitize_title_with_dashes', array_keys($installed))); ?>,
+var shipping = <?php echo json_encode(array_map('sanitize_title_with_dashes',array_keys($installed))); ?>,
 	defaults = <?php echo json_encode($defaults); ?>,
 	settings = <?php echo json_encode($settings); ?>,
 	lookup = <?php echo json_encode($lookup); ?>;

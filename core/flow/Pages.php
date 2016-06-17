@@ -237,8 +237,6 @@ class ShoppPage {
 		$template = $this->pagetemplate();
 		if ( ! empty($template) ) array_unshift($templates, "$template.php");
 
-		$templates = apply_filters('shopp_' . $name . '_storefront_page_templates', $templates, $this->slug(), $this->title() );
-
 		return $templates;
 	}
 
@@ -312,8 +310,8 @@ class ShoppCatalogPage extends ShoppPage {
 	public function __construct($options = array()) {
 
 		$defaults = array(
-			'title' => Shopp::__('Shop'),
-			'description' => Shopp::__('The page title and base slug for products, categories & collections.'),
+			'title' => __('Shop', 'Shopp'),
+			'description' => __('The page title and base slug for products, categories & collections.', 'Shopp'),
 		);
 		$options = array_merge($defaults, $options);
 
@@ -387,15 +385,15 @@ class ShoppAccountPage extends ShoppPage {
 	public function __construct ( $options = array() ) {
 
 		$defaults = array(
-			'title' => Shopp::__('Account'),
-			'description' => Shopp::__('Used to display customer account dashboard &amp; profile pages.'),
+			'title' => __('Account', 'Shopp'),
+			'description' => __('Used to display customer account dashboard &amp; profile pages.', 'Shopp'),
 		);
 
 		if ( 'none' == shopp_setting('account_system') ) {
-			$defaults['title'] = Shopp::__('Order Lookup');
+			$defaults['title'] = __('Order Lookup', 'Shopp');
 			$defaults = array(
-				'title' => Shopp::__('Order Lookup'),
-				'description' => Shopp::__('The order lookup page allows customers to lookup previous orders.'),
+				'title' => __('Order Lookup', 'Shopp'),
+				'description' => __('The order lookup page allows customers to lookup previous orders.', 'Shopp'),
 			);
 
 		}
@@ -458,19 +456,19 @@ class ShoppAccountPage extends ShoppPage {
 
 		// Check email or login supplied
 		if (empty($_POST['account-login'])) {
-			if ( 'wordpress' == shopp_setting('account_system') ) $errors[] = new ShoppError(Shopp::__('Enter an email address or login name'));
-			else $errors[] = new ShoppError(Shopp::__('Enter an email address'));
+			if ( 'wordpress' == shopp_setting('account_system') ) $errors[] = new ShoppError(__('Enter an email address or login name', 'Shopp'));
+			else $errors[] = new ShoppError(__('Enter an email address', 'Shopp'));
 		} else {
 			// Check that the account exists
 			if (strpos($_POST['account-login'], '@') !== false) {
 				$RecoveryCustomer = new ShoppCustomer($_POST['account-login'], 'email');
 				if (!$RecoveryCustomer->id)
-					$errors[] = new ShoppError(Shopp::__('There is no user registered with that email address.'), 'password_recover_noaccount', SHOPP_AUTH_ERR);
+					$errors[] = new ShoppError(__('There is no user registered with that email address.', 'Shopp'), 'password_recover_noaccount', SHOPP_AUTH_ERR);
 			} else {
 				$user_data = get_userdatabylogin($_POST['account-login']);
 				$RecoveryCustomer = new ShoppCustomer($user_data->ID, 'wpuser');
 				if (empty($RecoveryCustomer->id))
-					$errors[] = new ShoppError(Shopp::__('There is no user registered with that login name.'), 'password_recover_noaccount', SHOPP_AUTH_ERR);
+					$errors[] = new ShoppError(__('There is no user registered with that login name.', 'Shopp'), 'password_recover_noaccount', SHOPP_AUTH_ERR);
 			}
 		}
 
@@ -482,36 +480,36 @@ class ShoppAccountPage extends ShoppPage {
 		do_action_ref_array('shopp_generate_password_key', array(&$RecoveryCustomer));
 		$RecoveryCustomer->save();
 
-		$subject = apply_filters('shopp_recover_password_subject', Shopp::__('[%s] Password Recovery Request', get_option('blogname')));
+		$subject = apply_filters('shopp_recover_password_subject', sprintf(__('[%s] Password Recovery Request', 'Shopp'), get_option('blogname')));
 
 		$_ = array();
 		$_[] = 'From: ' . Shopp::email_from( shopp_setting('merchant_email'), shopp_setting('business_name') );
-		$_[] = 'To: ' . $RecoveryCustomer->email;
-		$_[] = 'Subject: ' . $subject;
+		$_[] = 'To: '.$RecoveryCustomer->email;
+		$_[] = 'Subject: '.$subject;
 		$_[] = 'Content-type: text/html';
 		$_[] = '';
-		$_[] = '<p>' . Shopp::__('A request has been made to reset the password for the following site and account:') . '<br />';
-		$_[] = get_bloginfo('url') . '</p>';
+		$_[] = '<p>'.__('A request has been made to reset the password for the following site and account:', 'Shopp').'<br />';
+		$_[] = get_bloginfo('url').'</p>';
 		$_[] = '';
 		$_[] = '<ul>';
 		if (isset($_POST['email-login']))
-			$_[] = '<li>' . Shopp::__('Email: %s', $RecoveryCustomer->email) . '</li>';
+			$_[] = '<li>'.sprintf(__('Email: %s', 'Shopp'), $RecoveryCustomer->email).'</li>';
 		if (isset($_POST['loginname-login']))
-			$_[] = '<li>' . Shopp::__('Login name: %s', $user_data->user_login) . '</li>';
+			$_[] = '<li>'.sprintf(__('Login name: %s', 'Shopp'), $user_data->user_login).'</li>';
 		if (isset($_POST['account-login']))
-			$_[] = '<li>' . Shopp::__('Login: %s', $user_data->user_login) . '</li>';
+			$_[] = '<li>'.sprintf(__('Login: %s', 'Shopp'), $user_data->user_login).'</li>';
 		$_[] = '</ul>';
 		$_[] = '';
-		$_[] = '<p>' . Shopp::__('To reset your password visit the following address, otherwise just ignore this email and nothing will happen.');
+		$_[] = '<p>'.__('To reset your password visit the following address, otherwise just ignore this email and nothing will happen.');
 		$_[] = '';
-		$_[] = '<p>' . add_query_arg(array('rp' => $RecoveryCustomer->activation), Shopp::url(false, 'account')) . '</p>';
+		$_[] = '<p>'.add_query_arg(array('rp'=>$RecoveryCustomer->activation), Shopp::url(false, 'account')).'</p>';
 		$message = apply_filters('shopp_recover_password_message', $_);
 
-		if ( ! Shopp::email(join("\n", $message)) ) {
+		if (!Shopp::email(join("\n", $message))) {
 			new ShoppError(__('The e-mail could not be sent.'), 'password_recovery_email', SHOPP_ERR);
 			Shopp::redirect( add_query_arg( 'acct', 'recover', Shopp::url(false, 'account') ) );
 		} else {
-			new ShoppError(Shopp::__('Check your email address for instructions on resetting the password for your account.'), 'password_recovery_email', SHOPP_ERR);
+			new ShoppError(__('Check your email address for instructions on resetting the password for your account.', 'Shopp'), 'password_recovery_email', SHOPP_ERR);
 		}
 
 	}
@@ -549,7 +547,7 @@ class ShoppAccountPage extends ShoppPage {
 		$subject = apply_filters('shopp_reset_password_subject', Shopp::__('[%s] New Password', get_option('blogname')));
 
 		$_ = array();
-		$_[] = 'From: ' . Shopp::email_from( shopp_setting('merchant_email'), shopp_setting('business_name'));
+		$_[] = 'From: ' . Shopp::email_from( shopp_setting('merchant_email'), shopp_setting('business_name') );
 		$_[] = 'To: ' . $RecoveryCustomer->email;
 		$_[] = 'Subject: ' . $subject;
 		$_[] = 'Content-type: text/html';
@@ -593,8 +591,8 @@ class ShoppCartPage extends ShoppPage {
 	public function __construct ( $options = array() ) {
 
 		$defaults = array(
-			'title' => Shopp::__('Cart'),
-			'description' => Shopp::__('Displays the shopping cart.'),
+			'title' => __('Cart', 'Shopp'),
+			'description' => __('Displays the shopping cart.', 'Shopp'),
 		);
 
 		$options = array_merge($defaults, $options);
@@ -638,8 +636,8 @@ class ShoppCheckoutPage extends ShoppPage {
 	public function __construct ( $options = array() ) {
 
 		$defaults = array(
-			'title' => Shopp::__('Checkout'),
-			'description' => Shopp::__('Displays the checkout form page.'),
+			'title' => __('Checkout', 'Shopp'),
+			'description' => __('Displays the checkout form page.', 'Shopp'),
 		);
 
 		$options = array_merge($defaults, $options);
@@ -697,8 +695,8 @@ class ShoppConfirmPage extends ShoppPage {
 	public function __construct ( $options = array() ) {
 
 		$defaults = array(
-			'title' => Shopp::__('Confirm Order'),
-			'description' => Shopp::__('Displays an order summary to allow the customer to confirm the order before submitting for payment.'),
+			'title' => __('Confirm Order', 'Shopp'),
+			'description' => __('Displays an order summary to allow the customer to confirm the order before submitting for payment.', 'Shopp'),
 		);
 		$options = array_merge($defaults, $options);
 
@@ -748,8 +746,8 @@ class ShoppThanksPage extends ShoppPage {
 	public function __construct ( $options = array() ) {
 
 		$defaults = array(
-			'title' => Shopp::__('Thanks'),
-			'description' => Shopp::__('The final page of the ordering process.'),
+			'title' => __('Thanks', 'Shopp'),
+			'description' => __('The final page of the ordering process.', 'Shopp'),
 		);
 		$options = array_merge($defaults, $options);
 
@@ -1124,14 +1122,14 @@ class ShoppShortcodes {
 			<?php if (isset($atts['variations'])): ?>
 				<?php if(shopp('product.has-variations')): ?>
 				<ul class="variations">
-					<?php shopp('product.variations', 'mode=multiple&label=true&defaults=' . Shopp::__('Select an option') . '&before_menu=<li>&after_menu=</li>'); ?>
+					<?php shopp('product.variations', 'mode=multiple&label=true&defaults='.__('Select an option', 'Shopp').'&before_menu=<li>&after_menu=</li>'); ?>
 				</ul>
 				<?php endif; ?>
 			<?php endif; ?>
 			<?php if (isset($atts['addons'])): ?>
 				<?php if(shopp('product.has-addons')): ?>
 					<ul class="addons">
-						<?php shopp('product.addons', 'mode=menu&label=true&defaults=' . Shopp::__('Select an add-on') . '&before_menu=<li>&after_menu=</li>'); ?>
+						<?php shopp('product.addons', 'mode=menu&label=true&defaults='.__('Select an add-on', 'Shopp').'&before_menu=<li>&after_menu=</li>'); ?>
 					</ul>
 				<?php endif; ?>
 			<?php endif; ?>
@@ -1139,7 +1137,7 @@ class ShoppShortcodes {
 				<?php shopp('product.quantity', $quantity); ?>
 			<?php endif; ?>
 			<?php
-				$button = 'label=' . ( isset($atts['label']) ? $atts['label'] : Shopp::__('Buy Now') );
+				$button = 'label=' . ( isset($atts['label']) ? $atts['label'] : __('Buy Now', 'Shopp') );
 				$button .= ( isset($atts['ajax']) && Shopp::str_true($atts['ajax']) ? '&ajax=on' : '' );
 				if ( isset($atts['button']) ) $button = html_entity_decode($atts['button']);
 			?>

@@ -50,8 +50,8 @@ class ShoppAdminCategorize extends ShoppAdminController {
 			shopp_enqueue_script('category-editor');
 			shopp_enqueue_script('priceline');
 			shopp_enqueue_script('ocupload');
-			//JMshopp_enqueue_script('swfupload');
-			//JMshopp_enqueue_script('shopp-swfupload-queue');
+			shopp_enqueue_script('swfupload');
+			shopp_enqueue_script('shopp-swfupload-queue');
 
 			do_action('shopp_category_editor_scripts');
 			add_action('admin_head',array($this,'layout'));
@@ -116,7 +116,7 @@ class ShoppAdminCategorize extends ShoppAdminController {
 
 		$adminurl = admin_url('admin.php');
 
-		add_screen_option( 'per_page', array( 'label' => Shopp::__('Categories Per Page'), 'default' => 20, 'option' => 'edit_' . ProductCategory::$taxon . '_per_page' ) );
+		add_screen_option( 'per_page', array( 'label' => __('Categories Per Page','Shopp'), 'default' => 20, 'option' => 'edit_' . ProductCategory::$taxon . '_per_page' ) );
 
 		if ( 'delete' == $action && wp_verify_nonce($_wpnonce, 'shopp_categories_manager') ) {
 			if ( ! empty($id) ) $selected = array($id);
@@ -256,7 +256,7 @@ class ShoppAdminCategorize extends ShoppAdminController {
 		include $this->ui('categories.php');
 	}
 
-	public function metaloader (&$records, &$record) {
+	public function metaloader (&$records,&$record) {
 		if (empty($this->categories)) return;
 		if (empty($record->name)) return;
 
@@ -281,15 +281,14 @@ class ShoppAdminCategorize extends ShoppAdminController {
 	 **/
 	public function columns () {
 		$columns = array(
-			'cb'	    => '<input type="checkbox" />',
-			'id'	    => 'ID',
-			'name'	    => Shopp::__('Name'),
-			'slug'	    => Shopp::__('Slug'),
-			'products'	=> Shopp::__('Products'),
-			'templates'	=> Shopp::__('Templates'),
-			'menus'	    => Shopp::__('Menus')
+			'cb' => '<input type="checkbox" />',
+			'name' => Shopp::__('Name'),
+			'slug' => Shopp::__('Slug'),
+			'products' => Shopp::__('Products'),
+			'templates' => Shopp::__('Templates'),
+			'menus' => Shopp::__('Menus')
 		);
-		ShoppUI::register_column_headers($this->screen, apply_filters('shopp_manage_category_columns', $columns));
+		ShoppUI::register_column_headers($this->screen, apply_filters('shopp_manage_category_columns',$columns));
 	}
 
 	/**
@@ -314,8 +313,8 @@ class ShoppAdminCategorize extends ShoppAdminController {
 	 **/
 	public function arrange_cols () {
 		register_column_headers('shopp_page_shopp-categories', array(
-			'cat'	=> Shopp::__('Category'),
-			'move'	=> '<div class="move">&nbsp;</div>')
+			'cat' => Shopp::__('Category'),
+			'move' => '<div class="move">&nbsp;</div>')
 		);
 	}
 
@@ -344,28 +343,28 @@ class ShoppAdminCategorize extends ShoppAdminController {
 		$billPeriods = ShoppPrice::periods();
 
 		// Build permalink for slug editor
-		$permalink = trailingslashit(Shopp::url()) . "category/";
-		$Category->slug = apply_filters('editable_slug', $Category->slug);
+		$permalink = trailingslashit(Shopp::url())."category/";
+		$Category->slug = apply_filters('editable_slug',$Category->slug);
 
 		$pricerange_menu = array(
-			"disabled"	=> Shopp::__('Price ranges disabled'),
-			"auto"	    => Shopp::__('Build price ranges automatically'),
-			"custom"	=> Shopp::__('Use custom price ranges'),
+			"disabled" => __('Price ranges disabled','Shopp'),
+			"auto" => __('Build price ranges automatically','Shopp'),
+			"custom" => __('Use custom price ranges','Shopp'),
 		);
 
 		$uploader = shopp_setting('uploader_pref');
-		if ( ! $uploader ) $uploader = 'flash';
+		if (!$uploader) $uploader = 'flash';
 
 		$workflows = array(
-			"continue"	=> Shopp::__('Continue Editing'),
-			"close"	    => Shopp::__('Categories Manager'),
-			"new"	    => Shopp::__('New Category'),
-			"next"	    => Shopp::__('Edit Next'),
-			"previous"	=> Shopp::__('Edit Previous')
+			"continue" => __('Continue Editing','Shopp'),
+			"close" => __('Categories Manager','Shopp'),
+			"new" => __('New Category','Shopp'),
+			"next" => __('Edit Next','Shopp'),
+			"previous" => __('Edit Previous','Shopp')
 			);
 
 		do_action('add_meta_boxes', ProductCategory::$taxon, $Category);
-		do_action('add_meta_boxes_' . ProductCategory::$taxon, $Category);
+		do_action('add_meta_boxes_'.ProductCategory::$taxon, $Category);
 
 		do_action('do_meta_boxes', ProductCategory::$taxon, 'normal', $Category);
 		do_action('do_meta_boxes', ProductCategory::$taxon, 'advanced', $Category);
@@ -427,7 +426,7 @@ class ShoppAdminCategorize extends ShoppAdminController {
 				$_POST['prices'] = $Category->prices = array();
 		}
 
-		$metaprops = array('spectemplate', 'facetedmenus', 'variations', 'pricerange', 'priceranges', 'specs', 'options', 'prices');
+		$metaprops = array('spectemplate','facetedmenus','variations','pricerange','priceranges','specs','options','prices');
 		$metadata = array_filter_keys($_POST, $metaprops);
 
 		// Update existing entries

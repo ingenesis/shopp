@@ -86,7 +86,7 @@ class ShoppAjax {
 
 		echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 			\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
-		<html><head><title>".get_bloginfo('name').' &mdash; ' . Shopp::__('Order') . ' #' . shopp( 'purchase', 'get-id' ) . "</title>";
+		<html><head><title>".get_bloginfo('name').' &mdash; '.__('Order','Shopp').' #'.shopp('purchase','get-id')."</title>";
 			echo '<style type="text/css">body { padding: 20px; font-family: Arial,Helvetica,sans-serif; }</style>';
 			echo "<link rel='stylesheet' href='".shopp_template_url('shopp.css')."' type='text/css' />";
 		echo "</head><body>";
@@ -132,10 +132,7 @@ class ShoppAjax {
 		$Category = new ProductCategory((int)$_GET['category']);
 		$Category->load_meta();
 
-		if ( isset($Category->specs) )
-			echo json_encode($Category->specs);
-		else
-			echo json_encode(false);
+		echo json_encode($Category->specs);
 		exit();
 	}
 
@@ -146,8 +143,8 @@ class ShoppAjax {
 		$Category->load_meta();
 
 		$result = new stdClass();
-		$result->options = isset($Category->options) ? $Category->options : array();
-		$result->prices = isset($Category->prices) ? $Category->prices : array();
+		$result->options = $Category->options;
+		$result->prices = $Category->prices;
 
 		echo json_encode($result);
 		exit();
@@ -305,9 +302,8 @@ class ShoppAjax {
 
 			$source = strtolower($_GET['s']);
 			$q = $_GET['q'];
-			$orderlimit = '';
 
-			do_action('shopp_suggestions_from_' . $source);
+			do_action('shopp_suggestions_from_'.$source);
 
 			$joins = $where = array();
 			switch ($source) {
@@ -377,7 +373,7 @@ class ShoppAjax {
 					$markets = shopp_setting('target_markets');
 					$results = array();
 					foreach ($markets as $id => $market) {
-						if (strpos(strtolower($market), strtolower($_GET['q'])) !== false) {
+						if (strpos(strtolower($market),strtolower($_GET['q'])) !== false) {
 							$_ = new StdClass();
 							$_->id = $id;
 							$_->name = stripslashes($market);
@@ -391,7 +387,7 @@ class ShoppAjax {
 					$types = Lookup::customer_types();
 					$results = array();
 					foreach ($types as $id => $type) {
-						if (strpos(strtolower($type), strtolower($_GET['q'])) !== false) {
+						if (strpos(strtolower($type),strtolower($_GET['q'])) !== false) {
 							$_ = new StdClass();
 							$_->id = $id;
 							$_->name = $type;
@@ -410,8 +406,7 @@ class ShoppAjax {
 						$joins[] = "INNER JOIN  $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id";
 						$where[] = "tt.taxonomy = '" . $taxonomy . "'";
 						if ( 'shopp_popular_tags' == strtolower($q) ) {
-							$q = ''; 
-							$orderlimit = "ORDER BY tt.count DESC LIMIT 15";
+							$q = ''; $orderlimit = "ORDER BY tt.count DESC LIMIT 15";
 						}
 					}
 					break;
@@ -447,9 +442,9 @@ class ShoppAjax {
 			$s = stripslashes($s);
 			$search = sDB::escape($s);
 			$where = array();
-			if (preg_match_all('/(\w+?)\:(?="(.+?)"|(.+?)\b)/', $s, $props, PREG_SET_ORDER)) {
+			if (preg_match_all('/(\w+?)\:(?="(.+?)"|(.+?)\b)/',$s,$props,PREG_SET_ORDER)) {
 				foreach ($props as $search) {
-					$keyword = !empty($search[2]) ? $search[2] : $search[3];
+					$keyword = !empty($search[2])?$search[2]:$search[3];
 					switch(strtolower($search[1])) {
 						case "company": $where[] = "c.company LIKE '%$keyword%'"; break;
 						case "login": $where[] = "u.user_login LIKE '%$keyword%'"; break;
@@ -523,7 +518,7 @@ class ShoppAjax {
 			<?php endforeach; ?>
 		</ul>
 		<?php else: ?>
-		<?php Shopp::_e('No customers found.'); ?>
+		<?php _e('No customers found.','Shopp'); ?>
 		<?php endif; ?>
 		</body>
 		</html>
@@ -544,7 +539,7 @@ class ShoppAjax {
 		if (empty($_GET['feature'])) die('0');
 		$Product = new ProductSummary((int)$_GET['feature']);
 		if (empty($Product->product)) die('0');
-		$Product->featured = ('on' == $Product->featured) ? 'off' : 'on';
+		$Product->featured = ('on' == $Product->featured)?'off':'on';
 		$Product->save();
 		echo $Product->featured;
 		exit();
@@ -569,7 +564,7 @@ class ShoppAjax {
 		$Engine =& $Shopp->Storage->engines['download'];
 
 		$error = create_function('$s', 'die(json_encode(array("error" => $s)));');
-		if (empty($_REQUEST['url'])) $error(Shopp::__('No file import URL was provided.'));
+		if (empty($_REQUEST['url'])) $error(__('No file import URL was provided.','Shopp'));
 		$url = $_REQUEST['url'];
 		$request = parse_url($url);
 		$headers = array();
@@ -599,13 +594,13 @@ class ShoppAjax {
 			if ($mime == "application/octet-stream" || $mime == "text/plain")
 				$_->mime = $mime;
 		} else {
-			if (!$importfile = @tempnam(sanitize_path(realpath(SHOPP_TEMP_PATH)), 'shp')) $error(Shopp::__('A temporary file could not be created for importing the file.', $importfile));
-			if (!$incoming = @fopen($importfile,'w')) $error(Shopp::__('A temporary file at %s could not be opened for importing.', $importfile));
+			if (!$importfile = @tempnam(sanitize_path(realpath(SHOPP_TEMP_PATH)), 'shp')) $error(sprintf(__('A temporary file could not be created for importing the file.','Shopp'),$importfile));
+			if (!$incoming = @fopen($importfile,'w')) $error(sprintf(__('A temporary file at %s could not be opened for importing.','Shopp'),$importfile));
 
-			if (!$file = @fopen(linkencode($url), 'rb')) $error(Shopp::__('The file at %s could not be opened for importing.', $url));
+			if (!$file = @fopen(linkencode($url), 'rb')) $error(sprintf(__('The file at %s could not be opened for importing.','Shopp'),$url));
 			$data = @stream_get_meta_data($file);
 
-			if (isset($data['timed_out']) && $data['timed_out']) $error(Shopp::__('The connection timed out while trying to get information about the target file.'));
+			if (isset($data['timed_out']) && $data['timed_out']) $error(__('The connection timed out while trying to get information about the target file.','Shopp'));
 
 			if (isset($data['wrapper_data'])) {
 				foreach ($data['wrapper_data'] as $d) {
@@ -635,8 +630,8 @@ class ShoppAjax {
 		if (!$_->mime) $_->mime = "application/octet-stream";
 
 		echo str_repeat(' ',1024); // Minimum browser data
-		echo '<script type="text/javascript">var importFile = ' . json_encode($_) . ';</script>'."\n";
-		echo '<script type="text/javascript">var importProgress = 0;</script>' . "\n";
+		echo '<script type="text/javascript">var importFile = '.json_encode($_).';</script>'."\n";
+		echo '<script type="text/javascript">var importProgress = 0;</script>'."\n";
 		if ($_->stored) exit();
 		@ob_flush();
 		@flush();
@@ -652,7 +647,7 @@ class ShoppAjax {
 			if (!empty($buffer)) {
 				fwrite($incoming, $buffer);
 				$bytesread += strlen($buffer);
-				echo '<script type="text/javascript">importProgress = ' . $bytesread/(int)$_->size . ';</script>'."\n";
+				echo '<script type="text/javascript">importProgress = '.$bytesread/(int)$_->size.';</script>'."\n";
 				@ob_flush();
 				@flush();
 			}
@@ -700,9 +695,9 @@ class ShoppAjax {
 		if (empty($_GET['parent'])) die('0');
 		$parent = $_GET['parent'];
 
-		$columns = array('id', 'parent', 'priority', 'name', 'uri', 'slug');
+		$columns = array('id','parent','priority','name','uri','slug');
 
-		$filters['columns'] = 'cat.' . join(',cat.', $columns);
+		$filters['columns'] = 'cat.'.join(',cat.',$columns);
 		$filters['parent'] = $parent;
 
 		$Catalog = new ShoppCatalog();
@@ -746,7 +741,7 @@ class ShoppAjax {
 		check_admin_referer('wp_ajax_shopp_gateway');
 		if (isset($_POST['pid'])) {
 			$Purchase = new ShoppPurchase($_POST['pid']);
-			if ($Purchase->gateway) do_action('shopp_gateway_ajax_' . sanitize_title_with_dashes($Purchase->gateway), $Purchase);
+			if ($Purchase->gateway) do_action('shopp_gateway_ajax_'.sanitize_title_with_dashes($Purchase->gateway), $Purchase);
 		}
 		exit();
 	}

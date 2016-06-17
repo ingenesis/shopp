@@ -20,15 +20,15 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppAccountWidget') ) {
 			if ( 'none' == shopp_setting('account_system') ) {
 				return parent::__construct(
 					'shopp-order-lookup',
-					Shopp::__('Shopp Order Lookup'),
-					array('description' => Shopp::__('Lookup orders by order number and email'))
+					__('Shopp Order Lookup','Shopp'),
+					array('description' => __('Lookup orders by order number and email','Shopp'))
 				);
 			}
 
 	        parent::__construct(
 				'shopp-account',
-				Shopp::__('Shopp Account'),
-				array('description' => Shopp::__('Customer account management dashboard'))
+				__('Shopp Account','Shopp'),
+				array('description' => __('Customer account management dashboard','Shopp'))
 			);
 	    }
 
@@ -40,7 +40,7 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppAccountWidget') ) {
 			if (is_account_page() && !$loggedin) return '';
 
 			$defaults = array(
-				'title' => $loggedin ? Shopp::__('Your Account') : Shopp::__('Login'),
+				'title' => $loggedin?__('Your Account','Shopp'):__('Login','Shopp'),
 			);
 			$options = array_merge($defaults,$options);
 			extract($options);
@@ -65,11 +65,6 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppAccountWidget') ) {
 		}
 
 	    function form($options) {
-	    	$defaults = array(
-				'title' => '',
-				);
-	    	
-			$options = array_merge($defaults, $options);
 			?>
 			<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title'); ?></label>
 			<input type="text" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>" class="widefat" value="<?php echo $options['title']; ?>"></p>

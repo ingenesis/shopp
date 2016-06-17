@@ -516,7 +516,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	 * @return string The remove button markup
 	 **/
 	public static function remove ( $result, $options, $O ) {
-		$label = Shopp::__('Remove');
+		$label = __('Remove', 'Shopp');
 		if ( isset($options['label']) ) $label = $options['label'];
 		if ( isset($options['class']) ) $class = ' class="'.$options['class'].'"';
 		else $class = ' class="remove"';

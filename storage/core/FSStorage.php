@@ -37,7 +37,7 @@ class FSStorage extends StorageModule implements StorageEngine {
 	 */
 	public function __construct () {
 		parent::__construct();
-		$this->name = Shopp::__('File system');
+		$this->name = __('File system','Shopp');
         $this->webroot = apply_filters('shopp_fsstorage_webroot', $_SERVER['DOCUMENT_ROOT']);
 	}
 
@@ -206,7 +206,7 @@ class FSStorage extends StorageModule implements StorageEngine {
 			'name' => 'path',
 			'value' => $this->settings['path'][$context],
 			'size' => 40,
-			'label' => Shopp::__('The file system path to your storage directory.')
+			'label' => __('The file system path to your storage directory.','Shopp')
 		));
 
 	}

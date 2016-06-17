@@ -248,11 +248,11 @@ class Members extends ShoppAdminController {
 	function columns () {
 		shopp_enqueue_script('calendar');
 		register_column_headers('shopp_page_shopp-memberships', array(
-			'cb'	    => '<input type="checkbox" />',
-			'name'	    => Shopp::__('Name'),
-			'type'	    => Shopp::__('Type'),
-			'products'	=> Shopp::__('Products'),
-			'members'	=> Shopp::__('Members')
+			'cb'=>'<input type="checkbox" />',
+			'name'=>__('Name','Shopp'),
+			'type'=>__('Type','Shopp'),
+			'products'=>__('Products','Shopp'),
+			'members'=>__('Members','Shopp')
 		));
 
 	}
@@ -268,22 +268,22 @@ class Members extends ShoppAdminController {
 		$Admin =& $Shopp->Flow->Admin;
 
 		$rulegroups = apply_filters('shopp_access_rule_groups',array(
-			'wp' => Shopp::__('WordPress'),
-			'shopp' => Shopp::__('Shopp')
+			'wp' => __('WordPress','Shopp'),
+			'shopp' => __('Shopp','Shopp')
 		));
 		$ruletypes = apply_filters('shopp_access_rule_types',array(
-			'wp_posts' => Shopp::__('Posts'),
-			'wp_pages' => Shopp::__('Pages'),
-			'wp_categories' => Shopp::__('Categories'),
-			'wp_tags' => Shopp::__('Tags'),
-			'wp_media' => Shopp::__('Media'),
+			'wp_posts' => __('Posts','Shopp'),
+			'wp_pages' => __('Pages','Shopp'),
+			'wp_categories' => __('Categories','Shopp'),
+			'wp_tags' => __('Tags','Shopp'),
+			'wp_media' => __('Media','Shopp'),
 
-			'shopp_memberships' => Shopp::__('Memberships'),
-			'shopp_products' => Shopp::__('Products'),
-			'shopp_categories' => Shopp::__('Categories'),
-			'shopp_tags' => Shopp::__('Tags'),
-			'shopp_promotions' => Shopp::__('Promotions'),
-			'shopp_downloads' => Shopp::__('Downloads')
+			'shopp_memberships' => __('Memberships','Shopp'),
+			'shopp_products' => __('Products','Shopp'),
+			'shopp_categories' => __('Categories','Shopp'),
+			'shopp_tags' => __('Tags','Shopp'),
+			'shopp_promotions' => __('Promotions','Shopp'),
+			'shopp_downloads' => __('Downloads','Shopp')
 		));
 
 		include(SHOPP_ADMIN_PATH."/memberships/ui.php");
@@ -308,7 +308,7 @@ class Members extends ShoppAdminController {
 		if ($_GET['id'] != "new") {
 			$MemberPlan = new MemberPlan($_GET['id']);
 			if (empty($MemberPlan->id))
-				wp_die(Shopp::__('The requested membership record does not exist.'));
+				wp_die(__('The requested membership record does not exist.','Shopp'));
 			$MemberPlan->load_stages();
 			$MemberPlan->load_access();
 		} else $MemberPlan = new MemberPlan();

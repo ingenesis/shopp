@@ -112,7 +112,7 @@ class ShoppPayments extends ListFramework {
 
 		$selected = $this->selected($_POST['paymethod']);
 		if ( ! $this->modules($selected->processor) )
-			shopp_add_error(Shopp::__('The payment method you selected is no longer available. Please choose another.'));
+			shopp_add_error(__('The payment method you selected is no longer available. Please choose another.','Shopp'));
 
 		if ( $selected ) $this->userset = true;
 

@@ -18,8 +18,8 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppFacetedMenuWidget') ) {
 
 	    function __construct () {
 	        parent::__construct(false,
-				$name = Shopp::__('Shopp Faceted Menu'),
-				array('description' => Shopp::__('Category products drill-down search menu'))
+				$name = __('Shopp Faceted Menu', 'Shopp'),
+				array('description' => __('Category products drill-down search menu', 'Shopp'))
 			);
 	    }
 
@@ -34,7 +34,7 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppFacetedMenuWidget') ) {
 			if ( ! empty($args) )
 				extract($args);
 
-			if ( empty($options['title']) ) $options['title'] = Shopp::__('Product Filters');
+			if ( empty($options['title']) ) $options['title'] = __('Product Filters', 'Shopp');
 			$title = $before_title . $options['title'] . $after_title;
 
 			$Collection = ShoppCollection();
@@ -58,11 +58,6 @@ if ( class_exists('WP_Widget') && ! class_exists('ShoppFacetedMenuWidget') ) {
 		 * @return void
 		 **/
 	    function form ( $options ) {
-	    	$defaults = array(
-				'title' => '',
-				);
-	    	
-			$options = array_merge($defaults, $options);	    	
 			?>
 			<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title'); ?></label>
 			<input type="text" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>" class="widefat" value="<?php echo $options['title']; ?>"></p>

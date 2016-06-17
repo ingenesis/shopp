@@ -202,12 +202,12 @@ class ShoppPrice extends ShoppDatabaseObject {
 	 **/
 	public static function types () {
 		 return array(
-			array('value' => 'Shipped', 'label' => Shopp::__('Shipped')),
-			array('value' => 'Virtual', 'label' => Shopp::__('Virtual')),
-			array('value' => 'Download', 'label' => Shopp::__('Download')),
-			array('value' => 'Donation', 'label' => Shopp::__('Donation')),
-			array('value' => 'Subscription', 'label' => Shopp::__('Subscription')),
-			array('value' => 'N/A', 'label' => Shopp::__('Disabled')),
+			array('value'=>'Shipped','label'=>__('Shipped','Shopp')),
+			array('value'=>'Virtual','label'=>__('Virtual','Shopp')),
+			array('value'=>'Download','label'=>__('Download','Shopp')),
+			array('value'=>'Donation','label'=>__('Donation','Shopp')),
+			array('value'=>'Subscription','label'=>__('Subscription','Shopp')),
+			array('value'=>'N/A','label'=>__('Disabled','Shopp')),
 		);
 	}
 
@@ -226,17 +226,17 @@ class ShoppPrice extends ShoppDatabaseObject {
 	public static function periods () {
 		return array(
 			array(
-				array('value' => 'd', 'label' => Shopp::__('days')),
-				array('value' => 'w', 'label' => Shopp::__('weeks')),
-				array('value' => 'm', 'label' => Shopp::__('months')),
-				array('value' => 'y', 'label' => Shopp::__('years')),
+				array('value'=>'d','label'=>__('days','Shopp')),
+				array('value'=>'w','label'=>__('weeks','Shopp')),
+				array('value'=>'m','label'=>__('months','Shopp')),
+				array('value'=>'y','label'=>__('years','Shopp')),
 
 			),
 			array(
-				array('value' => 'd', 'label' => Shopp::__('day')),
-				array('value' => 'w', 'label' => Shopp::__('week')),
-				array('value' => 'm', 'label' => Shopp::__('month')),
-				array('value' => 'y', 'label' => Shopp::__('year')),
+				array('value'=>'d','label'=>__('day','Shopp')),
+				array('value'=>'w','label'=>__('week','Shopp')),
+				array('value'=>'m','label'=>__('month','Shopp')),
+				array('value'=>'y','label'=>__('year','Shopp')),
 			)
 		);
 	}

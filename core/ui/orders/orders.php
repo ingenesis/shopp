@@ -1,7 +1,7 @@
 <div class="wrap shopp">
 
 	<div class="icon32"></div>
-	<h2><?php Shopp::_e('Orders'); ?></h2>
+	<h2><?php _e('Orders','Shopp'); ?></h2>
 
 	<?php do_action('shopp_admin_notices'); ?>
 
@@ -14,26 +14,26 @@
 
 	<p id="post-search" class="search-box">
 		<input type="text" id="orders-search-input" class="search-input" name="s" value="<?php echo esc_attr($s); ?>" />
-		<input type="submit" value="<?php Shopp::_e('Search Orders'); ?>" class="button" />
+		<input type="submit" value="<?php _e('Search Orders','Shopp'); ?>" class="button" />
 	</p>
 
 	<?php if (current_user_can('shopp_financials')): ?>
 	<ul class="summary">
-		<li><strong><?php echo $ordercount->total; ?></strong> <span><?php Shopp::_e('Orders'); ?></span></li>
-		<li><strong><?php echo Shopp::money($ordercount->sales); ?></strong> <span><?php Shopp::_e('Total Sales'); ?></span></li>
-		<li><strong><?php echo Shopp::money($ordercount->avgsale); ?></strong> <span><?php Shopp::_e('Average Sale'); ?></span></li>
+		<li><strong><?php echo $ordercount->total; ?></strong> <span><?php _e('Orders','Shopp'); ?></span></li>
+		<li><strong><?php echo Shopp::money($ordercount->sales); ?></strong> <span><?php _e('Total Sales','Shopp'); ?></span></li>
+		<li><strong><?php echo Shopp::money($ordercount->avgsale); ?></strong> <span><?php _e('Average Sale','Shopp'); ?></span></li>
 	</ul>
 	<?php endif; ?>
 
 	<div class="tablenav">
 		<div class="alignleft actions">
-		<?php if (current_user_can('shopp_delete_orders')): ?><button type="submit" id="delete-button" name="deleting" value="order" class="button-secondary"><?php Shopp::_e('Delete'); ?></button><?php endif; ?>
+		<?php if (current_user_can('shopp_delete_orders')): ?><button type="submit" id="delete-button" name="deleting" value="order" class="button-secondary"><?php _e('Delete','Shopp'); ?></button><?php endif; ?>
 		</div>
 		<div class="alignleft actions">
 			<select name="newstatus">
 				<?php echo Shopp::menuoptions($statusLabels,false,true); ?>
 			</select>
-			<button type="submit" id="update-button" name="update" value="order" class="button-secondary"><?php Shopp::_e('Update'); ?></button>
+			<button type="submit" id="update-button" name="update" value="order" class="button-secondary"><?php _e('Update','Shopp'); ?></button>
 		</div>
 
 		<div class="alignleft actions filtering">
@@ -43,7 +43,7 @@
 					<small>to</small>
 					<div id="end-position" class="calendar-wrap"><input type="text" id="end" name="end" value="<?php echo $enddate; ?>" size="10" class="search-input selectall" /></div>
 				</div>
-				<button type="submit" id="filter-button" name="filter" value="order" class="button-secondary"><?php Shopp::_e('Filter'); ?></button>
+				<button type="submit" id="filter-button" name="filter" value="order" class="button-secondary"><?php _e('Filter','Shopp'); ?></button>
 		</div>
 
 			<?php $ListTable->page_navigation('top'); ?>
@@ -72,16 +72,16 @@
 			$classes = array();
 
 			$viewurl = add_query_arg('id',$Order->id,$url);
-			$customer = '' == trim($Order->firstname.$Order->lastname) ? "(" . Shopp::__('no contact name') . ")" : ucfirst("{$Order->firstname} {$Order->lastname}");
+			$customer = '' == trim($Order->firstname.$Order->lastname) ? "(".__('no contact name','Shopp').")" : ucfirst("{$Order->firstname} {$Order->lastname}");
 			$customerurl = add_query_arg( array( 'page' => 'shopp-customers', 'id' => $Order->customer ), $url );
 
 			$txnstatus = isset($txnstatus_labels[$Order->txnstatus]) ? $txnstatus_labels[$Order->txnstatus] : $Order->txnstatus;
-			$classes[] = strtolower(preg_replace('/[^\w]/', '_', $Order->txnstatus));
+			$classes[] = strtolower(preg_replace('/[^\w]/','_',$Order->txnstatus));
 
 			$Gateway = $Gateways->get($Order->gateway);
 			if ( $Gateway ) $gateway = $Gateway->name;
 
-			$addrfields = array('city', 'state', 'country');
+			$addrfields = array('city','state','country');
 			$format = '%3$s, %2$s &mdash; %1$s';
 			if (empty($Order->shipaddress))
 				$location = sprintf($format,$Order->country,$Order->state,$Order->city);
@@ -96,7 +96,7 @@
 			do_action_ref_array('shopp_order_row_css',array(&$classes,&$Order));
 			$even = !$even;
 		?>
-		<tr class="<?php echo join(' ', $classes); ?>">
+		<tr class="<?php echo join(' ',$classes); ?>">
 		<?php
 			foreach ( $columns as $column => $column_title ) {
 				$classes = array($column,"column-$column");
@@ -112,7 +112,7 @@
 					case 'order':
 					?>
 						<td class="<?php echo esc_attr(join(' ', $classes)); ?>">
-							<a class='row-title' href='<?php echo esc_url($viewurl); ?>' title='<?php Shopp::_e('View Order #%d', $Order->id); ?>'><?php Shopp::_e('Order #%d', $Order->id); ?></a>
+							<a class='row-title' href='<?php echo esc_url($viewurl); ?>' title='<?php printf(__('View Order #%d','Shopp'),$Order->id); ?>'><?php printf(__('Order #%d','Shopp'),$Order->id); ?></a>
 						</td>
 					<?php
 					break;
@@ -177,7 +177,7 @@
 		</tbody>
 	<?php else: ?>
 		<tbody><tr><td colspan="7"><?php
-		Shopp::_e('No %s orders yet.', (
+		printf(__('No %s orders yet.','Shopp'),(
 			isset($_GET['status'],$statusLabels[$_GET['status']]) ? strtolower($statusLabels[$_GET['status']]) : ''
 		)); ?></td></tr></tbody>
 	<?php endif; ?>
@@ -189,12 +189,12 @@
 		<?php if (current_user_can('shopp_financials') && current_user_can('shopp_export_orders')): ?>
 		<div class="alignleft actions">
 			<form action="<?php echo esc_url( add_query_arg(urlencode_deep(array_merge(stripslashes_deep($_GET),array('src'=>'export_purchases'))),admin_url('admin.php')) ); ?>" id="log" method="post">
-			<button type="button" id="export-settings-button" name="export-settings" class="button-secondary"><?php Shopp::_e('Export Options'); ?></button>
+			<button type="button" id="export-settings-button" name="export-settings" class="button-secondary"><?php _e('Export Options','Shopp'); ?></button>
 			<div id="export-settings" class="hidden">
 			<div id="export-columns" class="multiple-select">
 				<ul>
-					<li<?php $even = true; if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="checkbox" name="selectall_columns" id="selectall_columns" /><label for="selectall_columns"><strong><?php Shopp::_e('Select All'); ?></strong></label></li>
-					<li<?php if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="hidden" name="settings[purchaselog_headers]" value="off" /><input type="checkbox" name="settings[purchaselog_headers]" id="purchaselog_headers" value="on" /><label for="purchaselog_headers"><strong><?php Shopp::_e('Include column headings'); ?></strong></label></li>
+					<li<?php $even = true; if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="checkbox" name="selectall_columns" id="selectall_columns" /><label for="selectall_columns"><strong><?php _e('Select All','Shopp'); ?></strong></label></li>
+					<li<?php if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="hidden" name="settings[purchaselog_headers]" value="off" /><input type="checkbox" name="settings[purchaselog_headers]" id="purchaselog_headers" value="on" /><label for="purchaselog_headers"><strong><?php _e('Include column headings','Shopp'); ?></strong></label></li>
 
 					<?php $even = true; foreach ($exportcolumns as $name => $label): ?>
 						<?php if ( $name == 'cb' ) continue; ?>
@@ -209,7 +209,7 @@
 				<?php echo menuoptions($exports,$formatPref,true); ?>
 			</select>
 			</div>
-			<button type="submit" id="download-button" name="download" value="export" class="button-secondary"<?php if (count($Orders) < 1) echo ' disabled="disabled"'; ?>><?php Shopp::_e('Download'); ?></button>
+			<button type="submit" id="download-button" name="download" value="export" class="button-secondary"<?php if (count($Orders) < 1) echo ' disabled="disabled"'; ?>><?php _e('Download','Shopp'); ?></button>
 			<div class="clear"></div>
 			</form>
 		</div>
@@ -222,10 +222,10 @@
 </div>
 
 <script type="text/javascript">
-var lastexport = new Date(<?php echo date("Y,(n-1),j", shopp_setting('purchaselog_lastexport')); ?>);
+var lastexport = new Date(<?php echo date("Y,(n-1),j",shopp_setting('purchaselog_lastexport')); ?>);
 
 jQuery(document).ready( function($) {
-	new DateRange('#range', '#start', '#end', '#dates');
+	new DateRange('#range','#start','#end','#dates');
 
 	columns.init(pagenow);
 
@@ -237,12 +237,12 @@ jQuery(document).ready( function($) {
 	});
 
 	$('#delete-button').click(function() {
-		if (confirm("<?php echo addslashes(Shopp::__('Are you sure you want to delete the selected orders?')); ?>")) return true;
+		if (confirm("<?php echo addslashes(__('Are you sure you want to delete the selected orders?','Shopp')); ?>")) return true;
 		else return false;
 	});
 
 	$('#update-button').click(function() {
-		if (confirm("<?php echo addslashes(Shopp::__('Are you sure you want to update the status of the selected orders?')); ?>")) return true;
+		if (confirm("<?php echo addslashes(__('Are you sure you want to update the status of the selected orders?','Shopp')); ?>")) return true;
 		else return false;
 	});
 

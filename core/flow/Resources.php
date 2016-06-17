@@ -221,7 +221,7 @@ class ShoppResources {
 			// Download expiration checking
 			if (shopp_setting('download_timelimit') // Within the timelimit
 					&& $Purchased->created+shopp_setting('download_timelimit') < current_time('timestamp') ) {
-				shopp_add_error(Shopp::__('&quot;%s&quot; is no longer available for download because it has expired.', $name));
+				shopp_add_error(Shopp::__('&quot;%s&quot; is no longer available for download because it has expired.','Shopp', $name));
 				$forbidden = true;
 			}
 
@@ -241,11 +241,11 @@ class ShoppResources {
 		// Send the download
 		$download = $Download->download();
 
-		if ( is_a($download, 'ShoppError') ) {
+		if ( is_a($download,'ShoppError') ) {
 			// If the result is an error redirect to the account downloads page
 			Shopp::redirect( add_query_arg( 'downloads', '', Shopp::url(false, 'account') ), true, 303 );
 		} else {
-			do_action_ref_array('shopp_download_success', array($Purchased, $Purchase, $Download)); // @deprecated use shopp_download_order_event instead
+			do_action_ref_array('shopp_download_success',array($Purchased, $Purchase, $Download)); // @deprecated use shopp_download_order_event instead
 
 			shopp_add_order_event($Purchase->id, 'download', array(
 				'purchased' => $Purchased->id,		// Purchased line item ID (or add-on meta record ID)

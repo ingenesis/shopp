@@ -1515,22 +1515,22 @@ class WPShoppObject extends WPDatabaseObject {
 		if (is_array($args[0])) $p = $args[0];
 
 		$class = get_class($this);
-		$p['post_type'] = get_class_property($class, 'posttype');
+		$p['post_type'] = get_class_property($class,'posttype');
 
 		parent::load($p);
 	}
 
 	public static function labels () {
 		return array(
-			'name'	        => Shopp::__('Posts'),
-			'singular_name'	=> Shopp::__('Post')
+			'name' => __('Posts','Shopp'),
+			'singular_name' => __('Post','Shopp')
 		);
 	}
 
 	public static function capabilities () {
 		return apply_filters( 'shopp_product_capabilities', array(
-			'edit_post'	    => self::$posttype,
-			'delete_post'	=> self::$posttype
+			'edit_post' => self::$posttype,
+			'delete_post' => self::$posttype
 		) );
 	}
 
@@ -1542,16 +1542,16 @@ class WPShoppObject extends WPDatabaseObject {
 	}
 
 	public static function register ($class,$slug) {
-		$posttype = get_class_property($class, 'posttype');
+		$posttype = get_class_property($class,'posttype');
 		register_post_type( $posttype, array(
-			'labels'	    =>	call_user_func(array($class, 'labels')),
-			'capabilities'	=>	call_user_func(array($class, 'capabilities')),
-			'supports'	    =>	call_user_func(array($class, 'supports')),
-			'rewrite'	    =>	array( 'slug' => $slug, 'with_front' => false ),
-			'public'	    =>	true,
-			'has_archive'	=>	true,
-			'show_ui'	    =>	false,
-			'_edit_link'	=>	'admin.php?page=shopp-products&id=%d'
+			'labels' => call_user_func(array($class, 'labels')),
+			'capabilities' => call_user_func(array($class, 'capabilities')),
+			'supports' => call_user_func(array($class, 'supports')),
+			'rewrite' => array( 'slug' => $slug, 'with_front' => false ),
+			'public' => true,
+			'has_archive' => true,
+			'show_ui' => false,
+			'_edit_link' => 'admin.php?page=shopp-products&id=%d'
 		));
 	}
 }

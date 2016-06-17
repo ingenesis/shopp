@@ -8,7 +8,7 @@
 
 	?>
 
-	<!-- <h2><?php Shopp::_e('Image Settings'); ?> <a href="<?php echo esc_url( add_query_arg(array('page'=>$this->Admin->pagename('settings-images'),'id'=>'new'),admin_url('admin.php'))); ?>" class="button add-new"><?php Shopp::_e('Add New'); ?></a></h2> -->
+	<!-- <h2><?php _e('Image Settings','Shopp'); ?> <a href="<?php echo esc_url( add_query_arg(array('page'=>$this->Admin->pagename('settings-images'),'id'=>'new'),admin_url('admin.php'))); ?>" class="button add-new"><?php _e('Add New','Shopp'); ?></a></h2> -->
 
 	<form action="<?php echo esc_url(wp_nonce_url($this->url,'shopp-settings-images')); ?>" id="images" method="post">
 	<div>
@@ -21,14 +21,14 @@
 	<?php ob_start(); ?>
 	<tr class="inline-edit-row ${classnames}" id="edit-image-setting-${id}">
 		<td colspan="2">
-		<input type="hidden" name="id" value="${id}" /><label><input type="text" name="name" value="${name}" /><br /><?php Shopp::_e('Name'); ?></label>
+		<input type="hidden" name="id" value="${id}" /><label><input type="text" name="name" value="${name}" /><br /><?php _e('Name','Shopp'); ?></label>
 		<p class="submit">
-		<a href="<?php echo $this->url; ?>" class="button-secondary cancel"><?php Shopp::_e('Cancel'); ?></a>
+		<a href="<?php echo $this->url; ?>" class="button-secondary cancel"><?php _e('Cancel','Shopp'); ?></a>
 		</p>
 		</td>
 		<td class="dimensions column-dimensions">
-		<span><label><input type="text" name="width" value="${width}" size="4" class="selectall" /> &times;<br /><?php Shopp::_e('Width'); ?></label></span>
-		<span><label><input type="text" name="height" value="${height}" size="4" class="selectall" /><br /><?php Shopp::_e('Height'); ?></label></span>
+		<span><label><input type="text" name="width" value="${width}" size="4" class="selectall" /> &times;<br /><?php _e('Width','Shopp'); ?></label></span>
+		<span><label><input type="text" name="height" value="${height}" size="4" class="selectall" /><br /><?php _e('Height','Shopp'); ?></label></span>
 		</td>
 		<td class="fit column-fit">
 		<label>
@@ -36,19 +36,19 @@
 		<?php foreach ($fit_menu as $index => $option): ?>
 		<option value="<?php echo $index; ?>"${select_fit_<?php echo $index; ?>}><?php echo $option; ?></option>
 		<?php endforeach; ?>
-		</select><br /><?php Shopp::_e('Fit'); ?></label>
+		</select><br /><?php _e('Fit','Shopp'); ?></label>
 		</td>
 		<td class="quality column-quality">
 		<label><select name="quality" class="quality-menu">
 		<?php foreach ($quality_menu as $index => $option): ?>
 		<option value="<?php echo $index; ?>"${select_quality_<?php echo $index; ?>}><?php echo $option; ?></option>
 		<?php endforeach; ?>
-		</select><br /><?php Shopp::_e('Quality'); ?></label>
+		</select><br /><?php _e('Quality','Shopp'); ?></label>
 		</td>
 		<td class="sharpen column-sharpen">
-		<label><input type="text" name="sharpen" value="${sharpen}" size="5" class="percentage selectall" /><br /><?php Shopp::_e('Sharpen'); ?></label>
+		<label><input type="text" name="sharpen" value="${sharpen}" size="5" class="percentage selectall" /><br /><?php _e('Sharpen','Shopp'); ?></label>
 		<p class="submit">
-		<input type="submit" class="button-primary" name="save" value="<?php Shopp::_e('Save Changes'); ?>" />
+		<input type="submit" class="button-primary" name="save" value="<?php _e('Save Changes','Shopp'); ?>" />
 		</p>
 		</td>
 	</tr>
@@ -59,14 +59,14 @@
 
 		<div class="alignleft actions">
 		<select name="action" id="actions">
-			<option value="" selected="selected"><?php Shopp::_e('Bulk Actions&hellip;'); ?></option>
-			<?php echo menuoptions($actions_menu, false, true); ?>
+			<option value="" selected="selected"><?php _e('Bulk Actions&hellip;','Shopp'); ?></option>
+			<?php echo menuoptions($actions_menu,false,true); ?>
 		</select>
-		<input type="submit" value="<?php Shopp::esc_attr_e('Apply'); ?>" name="apply" id="apply" class="button-secondary action" />
+		<input type="submit" value="<?php esc_attr_e('Apply','Shopp'); ?>" name="apply" id="apply" class="button-secondary action" />
 		</div>
 
 		<div class="alignleft actions">
-			<a href="<?php echo esc_url(add_query_arg('id', 'new', $this->url)); ?>" class="button"><?php Shopp::_e('Add New'); ?></a>
+			<a href="<?php echo esc_url(add_query_arg('id', 'new', $this->url)); ?>" class="button"><?php _e('Add New','Shopp'); ?></a>
 		</div>
 
 		<?php $ListTable->page_navigation('top'); ?>
@@ -129,9 +129,9 @@
 			?>
 		<tr class="<?php echo join(' ',$classes); ?>" id="image-setting-<?php echo $setting->id; ?>">
 			<th scope='row' class='check-column'><input type='checkbox' name='selected[]' value='<?php echo $setting->id; ?>' /></th>
-			<td class="title column-title"><a class="row-title edit" href="<?php echo $editurl; ?>" title="<?php Shopp::_e('Edit'); ?> &quot;<?php echo esc_attr($setting->name); ?>&quot;"><?php echo esc_html($setting->name); ?></a>
+			<td class="title column-title"><a class="row-title edit" href="<?php echo $editurl; ?>" title="<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($setting->name); ?>&quot;"><?php echo esc_html($setting->name); ?></a>
 				<div class="row-actions">
-					<span class='edit'><a href="<?php echo esc_url($editurl); ?>" title="<?php Shopp::_e('Edit'); ?> &quot;<?php echo esc_attr($setting->name); ?>&quot;" class="edit"><?php Shopp::_e('Edit'); ?></a> | </span><span class='delete'><a href="<?php echo esc_url($deleteurl); ?>" title="<?php Shopp::_e('Delete'); ?> &quot;<?php echo esc_attr($setting->name); ?>&quot;" class="delete"><?php Shopp::_e('Delete'); ?></a></span>
+					<span class='edit'><a href="<?php echo esc_url($editurl); ?>" title="<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($setting->name); ?>&quot;" class="edit"><?php _e('Edit','Shopp'); ?></a> | </span><span class='delete'><a href="<?php echo esc_url($deleteurl); ?>" title="<?php _e('Delete','Shopp'); ?> &quot;<?php echo esc_attr($setting->name); ?>&quot;" class="delete"><?php _e('Delete','Shopp'); ?></a></span>
 				</div>
 			</td>
 			<td class="dimensions column-dimensions"><?php echo esc_html("$setting->width &times; $setting->height"); ?></td>
@@ -143,7 +143,7 @@
 		<?php endforeach; ?>
 		</tbody>
 	<?php else: ?>
-		<tbody id="image-setting-table" class="list"><tr class="empty"><td colspan="6"><?php Shopp::_e('No predefined image settings available, yet.'); ?></td></tr></tbody>
+		<tbody id="image-setting-table" class="list"><tr class="empty"><td colspan="6"><?php _e('No predefined image settings available, yet.','Shopp'); ?></td></tr></tbody>
 	<?php endif; ?>
 	</table>
 	</form>

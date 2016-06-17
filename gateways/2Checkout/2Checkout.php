@@ -250,27 +250,27 @@ class Shopp2Checkout extends GatewayFramework implements GatewayModule {
 			'name' => 'sid',
 			'size' => 10,
 			'value' => $this->settings['sid'],
-			'label' => Shopp::__('Your 2Checkout vendor account number.')
+			'label' => __('Your 2Checkout vendor account number.','Shopp')
 		));
 
 
 		$this->ui->checkbox(0,array(
 			'name' => 'verify',
 			'checked' => $this->settings['verify'],
-			'label' => Shopp::__('Enable order verification')
+			'label' => __('Enable order verification','Shopp')
 		));
 
 		$this->ui->text(0,array(
 			'name' => 'secret',
 			'size' => 10,
 			'value' => $this->settings['secret'],
-			'label' => Shopp::__('Your 2Checkout secret word for order verification.')
+			'label' => __('Your 2Checkout secret word for order verification.','Shopp')
 		));
 
 		$this->ui->checkbox(0,array(
 			'name' => 'testmode',
 			'checked' => $this->settings['testmode'],
-			'label' => Shopp::__('Enable test mode')
+			'label' => __('Enable test mode','Shopp')
 		));
 
 		$this->ui->text(1, array(
@@ -279,7 +279,7 @@ class Shopp2Checkout extends GatewayFramework implements GatewayModule {
 			'value' => $this->returnurl(),
 			'readonly' => 'readonly',
 			'class' => 'selectall',
-			'label' => Shopp::__('Copy as the <strong>Approved URL</strong> & <strong>Pending URL</strong> in your 2Checkout Vendor Area under the <strong>Account &rarr; Site Management</strong> settings page.')
+			'label' => __('Copy as the <strong>Approved URL</strong> & <strong>Pending URL</strong> in your 2Checkout Vendor Area under the <strong>Account &rarr; Site Management</strong> settings page.','Shopp')
 		));
 
 		$script = "var tc ='shopp2checkout';jQuery(document).bind(tc+'Settings',function(){var $=jQuery,p='#'+tc+'-',v=$(p+'verify'),t=$(p+'secret');v.change(function(){v.prop('checked')?t.parent().fadeIn('fast'):t.parent().hide();}).change();});";

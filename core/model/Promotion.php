@@ -293,7 +293,7 @@ class ShoppPromo extends ShoppDatabaseObject {
 		        AND
 		        UNIX_TIMESTAMP(ends) > $offset
 		        AND
-		        (" . current_time('timestamp') . " BETWEEN UNIX_TIMESTAMP(starts) AND UNIX_TIMESTAMP(ends))
+		        (".current_time('timestamp')." BETWEEN UNIX_TIMESTAMP(starts) AND UNIX_TIMESTAMP(ends))
 		    )
 		    OR
 		    -- Promo has _only_ a start date, check that we are after it
@@ -302,7 +302,7 @@ class ShoppPromo extends ShoppDatabaseObject {
 		        AND
 		        UNIX_TIMESTAMP(ends) <= $offset
 		        AND
-		        UNIX_TIMESTAMP(starts) < " . current_time('timestamp') . "
+		        UNIX_TIMESTAMP(starts) < ".current_time('timestamp')."
 		    )
 		    OR
 		    -- Promo has _only_ an end date, check that we are before it
@@ -311,7 +311,7 @@ class ShoppPromo extends ShoppDatabaseObject {
 		        AND
 		        UNIX_TIMESTAMP(ends) > $offset
 		        AND
-		        " . current_time('timestamp') . " < UNIX_TIMESTAMP(ends)
+		        ".current_time('timestamp')." < UNIX_TIMESTAMP(ends)
 			)
 	    )";
 	}
@@ -327,7 +327,7 @@ class ShoppPromo extends ShoppDatabaseObject {
 	function duplicate () {
 		$Promotion = new ShoppPromo();
 		$Promotion->copydata($this);
-		$Promotion->name = Shopp::__('%s copy', $Promotion->name);
+		$Promotion->name = sprintf(__('%s copy','Shopp'),$Promotion->name);
 		$Promotion->status = 'disabled';
 		$Promotion->uses = 0;
 		$Promotion->created = null;

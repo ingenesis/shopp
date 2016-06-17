@@ -23,7 +23,7 @@
 				<option value="disable"><?php Shopp::esc_html_e('Disable'); ?></option>
 				<option value="delete"><?php Shopp::esc_html_e('Delete'); ?></option>
 			</select>
-			<input type="submit" value="<?php Shopp::esc_attr_e('Apply'); ?>" name="apply" id="apply" class="button-secondary action" />
+			<input type="submit" value="<?php Shopp::esc_attr_e('Apply','Shopp'); ?>" name="apply" id="apply" class="button-secondary action" />
 		</div>
 
 		<div class="alignleft actions">
@@ -67,16 +67,16 @@
 		?>
 		<tr<?php if (!$even) echo " class='alternate'"; $even = !$even; ?>>
 			<th scope='row' class='check-column'><input type='checkbox' name='selected[]' value='<?php echo $Promotion->id; ?>' class="selected" /></th>
-			<td width="33%" class="name column-name"><a class='row-title' href='<?php echo esc_url($editurl); ?>' title='<?php Shopp::_e('Edit'); ?> &quot;<?php echo esc_attr($PromotionName); ?>&quot;'><?php echo esc_html($PromotionName); ?></a>
+			<td width="33%" class="name column-name"><a class='row-title' href='<?php echo esc_url($editurl); ?>' title='<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($PromotionName); ?>&quot;'><?php echo esc_html($PromotionName); ?></a>
 				<div class="row-actions">
-					<span class='edit'><a href="<?php echo esc_url($editurl); ?>" title="<?php Shopp::_e('Edit'); ?> &quot;<?php echo esc_attr($PromotionName); ?>&quot;"><?php Shopp::_e('Edit'); ?></a> | </span>
-					<span class='duplicate'><a href="<?php echo esc_url($duplicateurl); ?>" title="<?php Shopp::_e('Duplicate'); ?> &quot;<?php echo esc_attr($PromotionName); ?>&quot;"><?php Shopp::_e('Duplicate'); ?></a> | </span>
-					<span class='delete'><a class='delete' title='<?php Shopp::_e('Delete'); ?> &quot;<?php echo esc_attr($PromotionName); ?>&quot;' href="<?php echo esc_url($deleteurl); ?>" rel="<?php echo $Promotion->id; ?>"><?php Shopp::_e('Delete'); ?></a> | </span>
+					<span class='edit'><a href="<?php echo esc_url($editurl); ?>" title="<?php _e('Edit','Shopp'); ?> &quot;<?php echo esc_attr($PromotionName); ?>&quot;"><?php _e('Edit','Shopp'); ?></a> | </span>
+					<span class='duplicate'><a href="<?php echo esc_url($duplicateurl); ?>" title="<?php _e('Duplicate','Shopp'); ?> &quot;<?php echo esc_attr($PromotionName); ?>&quot;"><?php _e('Duplicate','Shopp'); ?></a> | </span>
+					<span class='delete'><a class='delete' title='<?php _e('Delete','Shopp'); ?> &quot;<?php echo esc_attr($PromotionName); ?>&quot;' href="<?php echo esc_url($deleteurl); ?>" rel="<?php echo $Promotion->id; ?>"><?php _e('Delete','Shopp'); ?></a> | </span>
 
 					<?php if ('disabled' == $Promotion->status): ?>
-					<span class='enable'><a href="<?php echo esc_url($enableurl); ?>" title="<?php Shopp::_e('Enable'); ?> &quot;<?php echo esc_attr($PromotionName); ?>&quot;"><?php Shopp::_e('Enable'); ?></a></span>
+<span class='enable'><a href="<?php echo esc_url($enableurl); ?>" title="<?php _e('Enable','Shopp'); ?> &quot;<?php echo esc_attr($PromotionName); ?>&quot;"><?php _e('Enable','Shopp'); ?></a></span>
 					<?php else: ?>
-					<span class='disable'><a href="<?php echo esc_url($disableurl); ?>" title="<?php Shopp::_e('Disable'); ?> &quot;<?php echo esc_attr($PromotionName); ?>&quot;"><?php Shopp::_e('Disable'); ?></a></span>
+					<span class='disable'><a href="<?php echo esc_url($disableurl); ?>" title="<?php _e('Disable','Shopp'); ?> &quot;<?php echo esc_attr($PromotionName); ?>&quot;"><?php _e('Disable','Shopp'); ?></a></span>
 					<?php endif; ?>
 				</div>
 
@@ -94,7 +94,7 @@
 				                 Shopp::_d(get_option('date_format'), Shopp::mktimestamp($Promotion->created));
 				$ends = (Shopp::mktimestamp($Promotion->ends) > 1) ?
 				               " — " . Shopp::_d(get_option('date_format'), Shopp::mktimestamp($Promotion->ends)) :
-				               ", " . Shopp::__('does not expire');
+				               ", " . __('does not expire','Shopp');
 				echo "<br />".$starts.$ends;
 			?></td>
 		</tr>
@@ -115,10 +115,10 @@
 /* <![CDATA[ */
 jQuery(document).ready( function($) {
 	var m = {
-			none:<?php Shopp::_jse('Select some discounts!'); ?>,
-			enable:<?php Shopp::_jse('Are you sure you want to enable the selected discounts?'); ?>,
-			disable:<?php Shopp::_jse('Are you sure you want to disable the selected discounts?'); ?>,
-			delete:<?php Shopp::_jse('Are you sure you want to delete the selected discounts?'); ?>
+			none:<?php Shopp::_jse('Select some discounts!','Shopp'); ?>,
+			enable:<?php Shopp::_jse('Are you sure you want to enable the selected discounts?','Shopp'); ?>,
+			disable:<?php Shopp::_jse('Are you sure you want to disable the selected discounts?','Shopp'); ?>,
+			delete:<?php Shopp::_jse('Are you sure you want to delete the selected discounts?','Shopp'); ?>
 		},form = $('#discounts');
 
 	columns.init(pagenow);

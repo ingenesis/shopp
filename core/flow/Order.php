@@ -197,7 +197,7 @@ class ShoppOrder {
 		if ( empty($_REQUEST['_txnupdate']) ) return;
 
 		// Check for remote transaction update messages
-		add_action('shopp_txn_update', create_function('', "status_header('200'); exit();"), 101); // Default shopp_txn_update requests to HTTP status 200
+		add_action('shopp_txn_update', create_function('',"status_header('200'); exit();"), 101); // Default shopp_txn_update requests to HTTP status 200
 		do_action('shopp_txn_update');
 
 	}
@@ -423,7 +423,7 @@ class ShoppOrder {
 		add_action('shopp_captured_order_event', array($this, 'notify'));
 		add_action('shopp_captured_order_event', array($this, 'success'));
 
-		shopp_add_order_event($Purchase->id, 'sale', array(
+		shopp_add_order_event($Purchase->id,'sale',array(
 			'gateway' => $Purchase->gateway,
 			'amount' => $Purchase->total
 		));
@@ -540,26 +540,26 @@ class ShoppOrder {
 
 				add_action( 'shopp_order_event', array($Purchase, 'notifications') );
 			} elseif ( 'voided' == $Purchase->txnstatus ) {
-				$this->invoice($Purchase); // Re-invoice cancelled orders that are still in-progress @see #1930
-			} elseif ( $Purchase->did('invoiced') ) {
- 				// Reset the order status to invoiced without invoicing it again @see #3301
- 				$Purchase->txnstatus = 'invoiced';
- 				$Purchase->save();
- 			}
+                $this->invoice($Purchase); // Re-invoice cancelled orders that are still in-progress @see #1930
+            } elseif ( $Purchase->did('invoiced') ) {
+				// Reset the order status to invoiced without invoicing it again @see #3301
+                $Purchase->txnstatus = 'invoiced';
+                $Purchase->save();
+            }
 
 			$this->process($Purchase);
 			return;
 		}
 
-		$this->items($Purchase->id);		// Create purchased records from the cart items
+		$this->items($Purchase->id);							// Create purchased records from the cart items
 
 		$this->purchase = false; 			// Clear last purchase in prep for new purchase
 		$this->inprogress = $Purchase->id;	// Keep track of the purchase record in progress for transaction updates
 
-		shopp_debug('Purchase ' . $Purchase->id . ' was successfully saved to the database.');
+		shopp_debug('Purchase '.$Purchase->id.' was successfully saved to the database.');
 
 		// Start the transaction processing events
-		do_action('shopp_purchase_order_created', $Purchase);
+		do_action('shopp_purchase_order_created',$Purchase);
 
 	}
 
@@ -748,14 +748,14 @@ class ShoppOrder {
 
 		if ( 0 == $Cart->count() ) {
 			$valid = apply_filters('shopp_ordering_empty_cart',false);
-			shopp_add_error(Shopp::__('There are no items in the cart.'), $errlevel);
+			shopp_add_error(__('There are no items in the cart.', 'Shopp'), $errlevel);
 		}
 
 		$stock = true;
 		foreach ( $Cart as $item ) {
 			if ( ! $item->instock() ){
-				$valid = apply_filters('shopp_ordering_items_outofstock', false);
-				shopp_add_error( Shopp::__('%s does not have sufficient stock to process order.',
+				$valid = apply_filters('shopp_ordering_items_outofstock',false);
+				shopp_add_error( sprintf(__('%s does not have sufficient stock to process order.', 'Shopp'),
 					$item->name . ( empty($item->option->label) ? '' : '(' . $item->option->label . ')' )
 				), $errlevel);
 				$stock = false;
@@ -772,7 +772,7 @@ class ShoppOrder {
 
 		if ( ! $valid_customer ) {
 			$valid = false;
-			shopp_add_error(Shopp::__('There is not enough customer information to process the order.'), $errlevel);
+			shopp_add_error(__('There is not enough customer information to process the order.','Shopp'), $errlevel);
 		}
 
 		// Check for shipped items but no Shipping information
@@ -788,25 +788,25 @@ class ShoppOrder {
 			if ( $Shiprates->count() == 0 && ! $Shiprates->free() ) {
 				$valid = apply_filters('shopp_ordering_no_shipping_costs',false);
 
-				$message = Shopp::__('The order cannot be processed. No shipping is available to the address you provided. Please return to %scheckout%s and try again.');
+				$message = __('The order cannot be processed. No shipping is available to the address you provided. Please return to %scheckout%s and try again.', 'Shopp');
 
 				if ( $Shiprates->realtime() )
-					$message = Shopp::__('The order cannot be processed. The shipping rate service did not provide rates because of a problem and no other shipping is available to the address you provided. Please return to %scheckout%s and try again or contact the store administrator.');
+					$message = __('The order cannot be processed. The shipping rate service did not provide rates because of a problem and no other shipping is available to the address you provided. Please return to %scheckout%s and try again or contact the store administrator.', 'Shopp');
 
-				if ( ! $valid ) shopp_add_error( sprintf($message, '<a href="' . Shopp::url(false, 'checkout', $this->security()) . '">', '</a>'), $errlevel );
+				if ( ! $valid ) shopp_add_error( sprintf($message, '<a href="'.Shopp::url(false,'checkout',$this->security()).'">', '</a>'), $errlevel );
 			}
 
 		}
 
 		if ( ! $valid_shipping ) {
 			$valid = false;
-			shopp_add_error(Shopp::__('The shipping address information is incomplete. The order cannot be processed.'), $errlevel);
+			shopp_add_error(__('The shipping address information is incomplete. The order cannot be processed.','Shopp'), $errlevel);
 		}
 
 		// Alert when no gateway is configured (and the order is not free)
 		if ( $Payments->count() == 0 && $Cart->total() > 0 ) {
 			$valid = false;
-			shopp_add_error( Lookup::errors('gateway', 'nogateways'), $errlevel);
+			shopp_add_error( Lookup::errors('gateway','nogateways'), $errlevel);
 		}
 
 		return $valid;

@@ -149,7 +149,7 @@ function shopp_add_product ( $data = array() ) {
 
 	// Create the "product" Price
 	$Price = new ShoppPrice();
-	$Price->label = Shopp::__('Price & Delivery');
+	$Price->label = __('Price & Delivery', 'Shopp');
 	$Price->context = 'product';
 	$Price->product = $Product->id;
 	if ( isset($subjects['variants']) ) $Price->type = 'N/A'; // disabled
@@ -2445,7 +2445,7 @@ function shopp_product_addon_set_stock ( $addon = false, $stock = 0, $action = '
  *
  * @param int/Price $addon (required) The priceline id to setup the inventory tracking on, or the Price object to change.  If Price object is specified, the object will be returned, but not saved to the database.
  * @param bool $flag (optional default:false) true for on, false for off. Turns on or off the inventory tracking on the addon.  If false, settings are ignored.
- * @param array $settings array of inventory settings (stock => int, sku => string)
+ * @param array $settings array of inventory settings (stock => int, sku => sting)
  * @return bool/Price false on failure, true if Price saved, else the modified Price object.
  **/
 function shopp_product_addon_set_inventory ( $addon = false, $flag = false, $settings = array() ) {

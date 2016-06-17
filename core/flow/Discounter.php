@@ -95,12 +95,12 @@ class ShoppAdminDiscounter extends ShoppAdminController {
 		$table = ShoppDatabaseObject::tablename(ShoppPromo::$table);
 
 		$defaults = array(
-			'page' 		=> false,
-			'status' 	=> false,
-			'type' 		=> false,
-			'paged' 	=> 1,
-			'per_page' 	=> 20,
-			's' 		=> '',
+			'page' => false,
+			'status' => false,
+			'type' => false,
+			'paged' => 1,
+			'per_page' => 20,
+			's' => '',
 			);
 
 		$args = array_merge($defaults,$_GET);
@@ -118,26 +118,26 @@ class ShoppAdminDiscounter extends ShoppAdminController {
 		if ( $status ) {
 			$datesql = ShoppPromo::activedates();
 			switch (strtolower($status)) {
-				case 'active': $where[] 	= "status='enabled' AND $datesql"; break;
-				case 'inactive': $where[] 	= "status='enabled' AND NOT $datesql"; break;
-				case 'enabled': $where[] 	= "status='enabled'"; break;
-				case 'disabled': $where[]	= "status='disabled'"; break;
+				case 'active': $where[] = "status='enabled' AND $datesql"; break;
+				case 'inactive': $where[] = "status='enabled' AND NOT $datesql"; break;
+				case 'enabled': $where[] = "status='enabled'"; break;
+				case 'disabled': $where[] = "status='disabled'"; break;
 			}
 		}
 		if ( $type ) {
 			switch (strtolower($type)) {
-				case 'catalog': $where[] 	= "target='Catalog'"; break;
-				case 'cart': $where[] 		= "target='Cart'"; break;
-				case 'cartitem': $where[] 	= "target='Cart Item'"; break;
+				case 'catalog': $where[] = "target='Catalog'"; break;
+				case 'cart': $where[] = "target='Cart'"; break;
+				case 'cartitem': $where[] = "target='Cart Item'"; break;
 			}
 		}
 
 		$select = sDB::select(array(
-			'table' 	=> $table,
-			'columns' 	=> 'SQL_CALC_FOUND_ROWS *',
-			'where' 	=> $where,
-			'orderby' 	=> 'created DESC',
-			'limit' 	=> "$start,$per_page"
+			'table' => $table,
+			'columns' => 'SQL_CALC_FOUND_ROWS *',
+			'where' => $where,
+			'orderby' => 'created DESC',
+			'limit' => "$start,$per_page"
 		));
 
 		$Promotions = sDB::query($select,'array');
@@ -147,24 +147,24 @@ class ShoppAdminDiscounter extends ShoppAdminController {
 		$ListTable = ShoppUI::table_set_pagination($this->screen, $count, $num_pages, $per_page );
 
 		$states = array(
-			'active' 	=> Shopp::__('Active'),
-			'inactive' 	=> Shopp::__('Not Active'),
-			'enabled' 	=> Shopp::__('Enabled'),
-			'disabled' 	=> Shopp::__('Disabled')
+			'active' => __('Active','Shopp'),
+			'inactive' => __('Not Active','Shopp'),
+			'enabled' => __('Enabled','Shopp'),
+			'disabled' => __('Disabled','Shopp')
 		);
 
 		$types = array(
-			'catalog' 	=> Shopp::__('Catalog Discounts'),
-			'cart' 		=> Shopp::__('Cart Discounts'),
-			'cartitem' 	=>Shopp:: __('Cart Item Discounts')
+			'catalog' => __('Catalog Discounts','Shopp'),
+			'cart' => __('Cart Discounts','Shopp'),
+			'cartitem' => __('Cart Item Discounts','Shopp')
 		);
 
 		$num_pages = ceil($count / $per_page);
 		$page_links = paginate_links( array(
-			'base' 		=> add_query_arg( 'pagenum', '%#%' ),
-			'format' 	=> '',
-			'total' 	=> $num_pages,
-			'current' 	=> $pagenum
+			'base' => add_query_arg( 'pagenum', '%#%' ),
+			'format' => '',
+			'total' => $num_pages,
+			'current' => $pagenum
 		));
 
 		include $this->ui('discounts.php');
@@ -233,11 +233,11 @@ class ShoppAdminDiscounter extends ShoppAdminController {
 	 **/
 	public function columns () {
 		register_column_headers($this->screen, array(
-			'cb' 		=> '<input type="checkbox" />',
-			'name' 		=> Shopp::__('Name'),
-			'discount' 	=> Shopp::__('Discount'),
-			'applied' 	=> Shopp::__('Type'),
-			'eff' 		=> Shopp::__('Status'))
+			'cb' => '<input type="checkbox" />',
+			'name' => __('Name','Shopp'),
+			'discount' => __('Discount','Shopp'),
+			'applied' => __('Type','Shopp'),
+			'eff' => __('Status','Shopp'))
 		);
 	}
 
@@ -290,18 +290,18 @@ class ShoppAdminDiscounter extends ShoppAdminController {
 
 	public static function types () {
 		$types = apply_filters('shopp_discount_types', array(
-			'Percentage Off' 	=> Shopp::__('Percentage Off'),
-			'Amount Off' 		=> Shopp::__('Amount Off'),
-			'Free Shipping' 	=> Shopp::__('Free Shipping'),
-			'Buy X Get Y Free' 	=> Shopp::__('Buy X Get Y Free')
+			'Percentage Off' => Shopp::__('Percentage Off'),
+			'Amount Off' => Shopp::__('Amount Off'),
+			'Free Shipping' => Shopp::__('Free Shipping'),
+			'Buy X Get Y Free' => Shopp::__('Buy X Get Y Free')
 		));
 		return $types;
 	}
 
 	public static function scopes () {
 		$scopes = apply_filters('shopp_discount_scopes', array(
-			'Catalog' 	=> Shopp::__('price'),
-			'Cart' 		=> Shopp::__('subtotal'),
+			'Catalog' => Shopp::__('price'),
+			'Cart' => Shopp::__('subtotal'),
 			'Cart Item' => Shopp::__('unit price, where:')
 		));
 		echo json_encode($scopes);
@@ -309,8 +309,8 @@ class ShoppAdminDiscounter extends ShoppAdminController {
 
 	public static function targets () {
 		$targets = apply_filters('shopp_discount_targets', array(
-			'Catalog' 	=> Shopp::__('Product'),
-			'Cart' 		=> Shopp::__('Cart'),
+			'Catalog' => Shopp::__('Product'),
+			'Cart' => Shopp::__('Cart'),
 			'Cart Item' => Shopp::__('Cart')
 		));
 		$targets = array_map('strtolower', $targets);
@@ -319,47 +319,46 @@ class ShoppAdminDiscounter extends ShoppAdminController {
 
 	public static function rules () {
 		$rules = apply_filters('shopp_discount_rules', array(
-			'Name' 			=> Shopp::__('Name'),
-			'Category' 		=> Shopp::__('Category'),
-			'Variation' 	=> Shopp::__('Variation'),
-			'SKU'			=> Shopp::__('SKU'),
-			'Price' 		=> Shopp::__('Price'),
-			'Sale price' 	=> Shopp::__('Sale price'),
-			'Type' 			=> Shopp::__('Type'),
-			'In stock' 		=> Shopp::__('In stock'),
+			'Name' => Shopp::__('Name'),
+			'Category' => Shopp::__('Category'),
+			'Variation' => Shopp::__('Variation'),
+			'Price' => Shopp::__('Price'),
+			'Sale price' => Shopp::__('Sale price'),
+			'Type' => Shopp::__('Type'),
+			'In stock' => Shopp::__('In stock'),
 
-			'Tag name' 		=> Shopp::__('Tag name'),
-			'Unit price' 	=> Shopp::__('Unit price'),
-			'Total price' 	=> Shopp::__('Total price'),
-			'Input name' 	=> Shopp::__('Input name'),
-			'Input value' 	=> Shopp::__('Input value'),
-			'Quantity' 		=> Shopp::__('Quantity'),
+			'Tag name' => Shopp::__('Tag name'),
+			'Unit price' => Shopp::__('Unit price'),
+			'Total price' => Shopp::__('Total price'),
+			'Input name' => Shopp::__('Input name'),
+			'Input value' => Shopp::__('Input value'),
+			'Quantity' => Shopp::__('Quantity'),
 
-			'Any item name' 	=> Shopp::__('Any item name'),
-			'Any item amount' 	=> Shopp::__('Any item amount'),
+			'Any item name' => Shopp::__('Any item name'),
+			'Any item amount' => Shopp::__('Any item amount'),
 			'Any item quantity' => Shopp::__('Any item quantity'),
-			'Total quantity' 	=> Shopp::__('Total quantity'),
-			'Shipping amount' 	=> Shopp::__('Shipping amount'),
-			'Subtotal amount' 	=> Shopp::__('Subtotal amount'),
-			'Discount amount' 	=> Shopp::__('Discount amount'),
+			'Total quantity' => Shopp::__('Total quantity'),
+			'Shipping amount' => Shopp::__('Shipping amount'),
+			'Subtotal amount' => Shopp::__('Subtotal amount'),
+			'Discount amount' => Shopp::__('Discount amount'),
 
-			'Customer type' 	=> Shopp::__('Customer type'),
-			'Ship-to country' 	=> Shopp::__('Ship-to country'),
+			'Customer type' => Shopp::__('Customer type'),
+			'Ship-to country' => Shopp::__('Ship-to country'),
 
-			'Promo code' 		=> Shopp::__('Discount code'),
-			'Promo use count' 	=> Shopp::__('Discount use count'),
+			'Promo code' => Shopp::__('Discount code'),
+			'Promo use count' => Shopp::__('Discount use count'),
 			'Discounts applied' => Shopp::__('Discounts applied'),
 
-			'Is equal to' 					=> Shopp::__('Is equal to'),
-			'Is not equal to' 				=> Shopp::__('Is not equal to'),
-			'Contains' 						=> Shopp::__('Contains'),
-			'Does not contain' 				=> Shopp::__('Does not contain'),
-			'Begins with' 					=> Shopp::__('Begins with'),
-			'Ends with' 					=> Shopp::__('Ends with'),
-			'Is greater than' 				=> Shopp::__('Is greater than'),
-			'Is greater than or equal to' 	=> Shopp::__('Is greater than or equal to'),
-			'Is less than' 					=> Shopp::__('Is less than'),
-			'Is less than or equal to' 		=> Shopp::__('Is less than or equal to')
+			'Is equal to' => Shopp::__('Is equal to'),
+			'Is not equal to' => Shopp::__('Is not equal to'),
+			'Contains' => Shopp::__('Contains'),
+			'Does not contain' => Shopp::__('Does not contain'),
+			'Begins with' => Shopp::__('Begins with'),
+			'Ends with' => Shopp::__('Ends with'),
+			'Is greater than' => Shopp::__('Is greater than'),
+			'Is greater than or equal to' => Shopp::__('Is greater than or equal to'),
+			'Is less than' => Shopp::__('Is less than'),
+			'Is less than or equal to' => Shopp::__('Is less than or equal to')
 		));
 
 		echo json_encode($rules);
@@ -368,54 +367,53 @@ class ShoppAdminDiscounter extends ShoppAdminController {
 	public static function conditions () {
 		$conditions = apply_filters('shopp_discount_conditions', array(
 			'Catalog' => array(
-				'Name' 			=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_products'),
-				'Category' 		=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_category'),
-				'Variation' 	=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text'),
-				'Price' 		=> array('logic' => array('boolean', 'amount'), 'value' => 'price'),
-				'Sale price'	=> array('logic' => array('boolean', 'amount'), 'value' => 'price'),
-				'Type' 			=> array('logic' => array('boolean'), 'value' => 'text'),
-				'In stock' 		=> array('logic' => array('boolean', 'amount'), 'value' => 'number')
+				'Name' => array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_products'),
+				'Category' => array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_category'),
+				'Variation' => array('logic' => array('boolean', 'fuzzy'), 'value' => 'text'),
+				'Price' => array('logic' => array('boolean', 'amount'), 'value' => 'price'),
+				'Sale price' => array('logic' => array('boolean', 'amount'), 'value' => 'price'),
+				'Type' => array('logic' => array('boolean'), 'value' => 'text'),
+				'In stock' => array('logic' => array('boolean', 'amount'), 'value' => 'number')
 			),
 			'Cart' => array(
-				'Any item name' 	=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_products'),
+				'Any item name' => array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_products'),
 				'Any item quantity' => array('logic' => array('boolean', 'amount'), 'value' => 'number'),
-				'Any item amount' 	=> array('logic' => array('boolean', 'amount'), 'value' => 'price'),
-				'Total quantity' 	=> array('logic' => array('boolean', 'amount'), 'value' => 'number'),
-				'Shipping amount' 	=> array('logic' => array('boolean', 'amount'), 'value' => 'price'),
-				'Subtotal amount'	=> array('logic' => array('boolean', 'amount'), 'value' => 'price'),
-				'Discount amount' 	=> array('logic' => array('boolean', 'amount'), 'value' => 'price'),
-				'Customer type' 	=> array('logic' => array('boolean'), 'value' => 'text', 'source' => 'shopp_customer_types'),
-				'Ship-to country' 	=> array('logic' => array('boolean'), 'value' => 'text', 'source' => 'shopp_target_markets', 'suggest' => 'alt'),
+				'Any item amount' => array('logic' => array('boolean', 'amount'), 'value' => 'price'),
+				'Total quantity' => array('logic' => array('boolean', 'amount'), 'value' => 'number'),
+				'Shipping amount' => array('logic' => array('boolean', 'amount'), 'value' => 'price'),
+				'Subtotal amount' => array('logic' => array('boolean', 'amount'), 'value' => 'price'),
+				'Discount amount' => array('logic' => array('boolean', 'amount'), 'value' => 'price'),
+				'Customer type' => array('logic' => array('boolean'), 'value' => 'text', 'source' => 'shopp_customer_types'),
+				'Ship-to country' => array('logic' => array('boolean'), 'value' => 'text', 'source' => 'shopp_target_markets', 'suggest' => 'alt'),
 				'Discounts applied' => array('logic' => array('boolean', 'amount'), 'value' => 'number'),
-				'Promo use count' 	=> array('logic' => array('boolean', 'amount'), 'value' => 'number'),
-				'Promo code' 		=> array('logic' => array('boolean'), 'value' => 'text')
+				'Promo use count' => array('logic' => array('boolean', 'amount'), 'value' => 'number'),
+				'Promo code' => array('logic' => array('boolean'), 'value' => 'text')
 			),
 			'Cart Item' => array(
-				'Any item name' 	=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_products'),
+				'Any item name' => array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_products'),
 				'Any item quantity' => array('logic' => array('boolean', 'amount'), 'value' => 'number'),
-				'Any item amount' 	=> array('logic' => array('boolean', 'amount'), 'value' => 'price'),
-				'Total quantity' 	=> array('logic' => array('boolean', 'amount'), 'value' => 'number'),
-				'Shipping amount' 	=> array('logic' => array('boolean', 'amount'), 'value' => 'price'),
-				'Subtotal amount' 	=> array('logic' => array('boolean', 'amount'), 'value' => 'price'),
-				'Discount amount' 	=> array('logic' => array('boolean', 'amount'), 'value' => 'price'),
-				'Customer type' 	=> array('logic' => array('boolean'), 'value' => 'text', 'source' => 'shopp_customer_types'),
-				'Ship-to country' 	=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_target_markets'),
+				'Any item amount' => array('logic' => array('boolean', 'amount'), 'value' => 'price'),
+				'Total quantity' => array('logic' => array('boolean', 'amount'), 'value' => 'number'),
+				'Shipping amount' => array('logic' => array('boolean', 'amount'), 'value' => 'price'),
+				'Subtotal amount' => array('logic' => array('boolean', 'amount'), 'value' => 'price'),
+				'Discount amount' => array('logic' => array('boolean', 'amount'), 'value' => 'price'),
+				'Customer type' => array('logic' => array('boolean'), 'value' => 'text', 'source' => 'shopp_customer_types'),
+				'Ship-to country' => array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_target_markets'),
 				'Discounts applied' => array('logic' => array('boolean', 'amount'), 'value' => 'number'),
-				'Promo use count' 	=> array('logic' => array('boolean', 'amount'), 'value' => 'number'),
-				'Promo code' 		=> array('logic' => array('boolean'), 'value' => 'text')
+				'Promo use count' => array('logic' => array('boolean', 'amount'), 'value' => 'number'),
+				'Promo code' => array('logic' => array('boolean'), 'value' => 'text')
 			),
 			'Cart Item Target' => array(
-				'Name' 				=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_products'),
-				'Category' 			=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_category'),
-				'Tag name' 			=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_tag'),
-				'Variation' 		=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text'),
-				'SKU'				=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text'),
-				'Input name' 		=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text'),
-				'Input value' 		=> array('logic' => array('boolean', 'fuzzy'), 'value' => 'text'),
-				'Quantity' 			=> array('logic' => array('boolean', 'amount'), 'value' => 'number'),
-				'Unit price' 		=> array('logic' => array('boolean', 'amount'), 'value' => 'price'),
-				'Total price' 		=> array('logic' => array('boolean', 'amount'), 'value' => 'price'),
-				'Discount amount' 	=> array('logic' => array('boolean', 'amount'), 'value' => 'price')
+				'Name' => array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_products'),
+				'Category' => array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_category'),
+				'Tag name' => array('logic' => array('boolean', 'fuzzy'), 'value' => 'text', 'source' => 'shopp_tag'),
+				'Variation' => array('logic' => array('boolean', 'fuzzy'), 'value' => 'text',),
+				'Input name' => array('logic' => array('boolean', 'fuzzy'), 'value' => 'text'),
+				'Input value' => array('logic' => array('boolean', 'fuzzy'), 'value' => 'text'),
+				'Quantity' => array('logic' => array('boolean', 'amount'), 'value' => 'number'),
+				'Unit price' => array('logic' => array('boolean', 'amount'), 'value' => 'price'),
+				'Total price' => array('logic' => array('boolean', 'amount'), 'value' => 'price'),
+				'Discount amount' => array('logic' => array('boolean', 'amount'), 'value' => 'price')
 			)
 		));
 		echo json_encode($conditions);
@@ -423,9 +421,9 @@ class ShoppAdminDiscounter extends ShoppAdminController {
 
 	public static function logic () {
 		$logic = apply_filters('shopp_discount_logic', array(
-			'boolean' 	=> array('Is equal to', 'Is not equal to'),
-			'fuzzy' 	=> array('Contains', 'Does not contain', 'Begins with', 'Ends with'),
-			'amount' 	=> array('Is greater than', 'Is greater than or equal to', 'Is less than', 'Is less than or equal to')
+			'boolean' => array('Is equal to', 'Is not equal to'),
+			'fuzzy' => array('Contains', 'Does not contain', 'Begins with', 'Ends with'),
+			'amount' => array('Is greater than', 'Is greater than or equal to', 'Is less than', 'Is less than or equal to')
 		));
 		echo json_encode($logic);
 	}

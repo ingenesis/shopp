@@ -20,7 +20,7 @@ class PercentageAmount extends ShippingFramework implements ShippingModule {
 	public function calcitem ( $id, $Item ) { /* Not implemented */ }
 
 	public function methods () {
-		return Shopp::__('Percentage Rate Tiers');
+		return __('Percentage Rate Tiers','Shopp');
 	}
 
 	public function calculate ( &$options, $Order ) {

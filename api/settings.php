@@ -32,16 +32,6 @@ function shopp_setting ( $name ) {
 
 	$setting = ShoppSettings()->get($name);
 
-	// if possible return alternative when no setting
-	// is present
-	if ( empty($setting) ) {
-		switch( $name ) {
-			case 'business_name':
-				$setting = get_bloginfo('name');
-				break;
-		}
-	}
-
 	return $setting;
 }
 
@@ -122,7 +112,7 @@ function shopp_set_formsettings () {
  * 		width => (pixel width)
  * 		height => (pixel height)
  * 		size => (pixels, sets width and height)
- * 		fit => (all, matte, crop, width, height)
+ * 		fit => (all,matte,crop,width,height)
  * 		quality => (0-100 quality percentage)
  * 		sharpen => (0-100 sharpen percentage)
  * 		bg => (hex color, such as red: #ff0000)
@@ -149,16 +139,16 @@ function shopp_set_image_setting ( $name, array $settings = array() ) {
 		'sharpen' => 100,
 		'bg' => false
 	);
-	if ( isset($settings['size']) )
+	if (isset($settings['size']))
 		$settings['width'] = $settings['height'] = $settings['size'];
 
-	$settings = array_merge($defaults, $settings);
+	$settings = array_merge($defaults,$settings);
 
-	if ( in_array($settings['fit'], ImageSetting::$fittings) )
-		$settings['fit'] = array_search($settings['fit'], ImageSetting::$fittings);
+	if (in_array($settings['fit'],ImageSetting::$fittings))
+		$settings['fit'] = array_search($settings['fit'],ImageSetting::$fittings);
 
 	// Load/update an existing one there is one
-	$ImageSetting = new ImageSetting($name, 'name');
+	$ImageSetting = new ImageSetting($name,'name');
 	$ImageSetting->name = $name;
 	foreach ($settings as $prop => $value)
 		$ImageSetting->$prop = $value;
