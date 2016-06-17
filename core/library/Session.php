@@ -186,6 +186,7 @@ abstract class ShoppSessionFramework {
 	 * @return bool True if a cookie was set, false otherwise
 	 **/
 	protected function cook () {
+		if ( ! $this->can_cook() ) return false;
 
 		if ( headers_sent() ) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
@@ -346,6 +347,7 @@ abstract class ShoppSessionFramework {
 	 * @return string|bool The secure key, or false if not available
 	 **/
 	private function securekey () {
+		if ( ! $this->can_cook() ) return false;
 		if ( ! is_ssl() ) return false;
 
 		if ( ! empty($_COOKIE[ SHOPP_SECURE_KEY ]) )
@@ -468,6 +470,26 @@ abstract class ShoppSessionFramework {
 		}
 
 		return $entropy;
+	}
+
+	/**
+	 * Determine whether Shopp can cook a new session.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return void
+	 **/
+	public function can_cook() {
+		/**
+		 *
+		 * Allow plugins to prevent Shopp from sessioning. Example: for performance,
+		 * a site could prevent sessioning on non-Shopp pages.
+		 *
+		 * @since 1.3.10.x
+		 *
+		 * @param boolean  $session Allow Shopp to create a session. true or false
+		 */
+		return apply_filters('shopp_session_cook', true);
 	}
 
 }
