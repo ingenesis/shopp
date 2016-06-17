@@ -65,7 +65,7 @@ class ShoppScripts extends WP_Scripts {
 		return $this->done;
 	}
 
-	public function print_footer_scripts() {
+	public function print_footer_scripts () {
 		global $concatenate_scripts;
 
 		if ( ! did_action('shopp_print_footer_scripts') )
@@ -92,16 +92,16 @@ class ShoppScripts extends WP_Scripts {
 
 		$debug = ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) ? '&debug=1' : '';
 
-		if ( !empty($this->concat) ) {
+		if ( ! empty($this->concat) ) {
 			$ver = md5("$this->concat_version");
-			if (shopp_setting('script_server') == 'plugin') {
+			if ( 'plugin' == shopp_setting('script_server') ) {
 				$src = trailingslashit(get_bloginfo('url')) . "?sjsl=" . trim($this->concat, ', ') . "&c={$zip}&ver=$ver" . $debug;
-				if (is_ssl()) $src = str_replace('http://','https://',$src);
+				if ( is_ssl() ) $src = str_replace('http://','https://',$src);
 			} else $src = SHOPP_PLUGINURI . "/services/scripts.php?c={$zip}&load=" . trim($this->concat, ', ') . "&ver=$ver" . $debug;
 			echo "<script type='text/javascript' src='" . esc_attr($src) . "'></script>\n";
 		}
 
-		if ( !empty($this->print_code) ) {
+		if ( ! empty($this->print_code) ) {
 			echo "<script type='text/javascript'>\n";
 			echo "/* <![CDATA[ */\n";
 			echo $this->print_code;
@@ -170,7 +170,7 @@ class ShoppScripts extends WP_Scripts {
 	public function wp_dependencies () {
 		global $wp_scripts;
 
-		if ( !is_a($wp_scripts, 'WP_Scripts') )
+		if ( ! is_a($wp_scripts, 'WP_Scripts') )
 			$wp_scripts = new WP_Scripts();
 
 		$wpscripts = array_keys($wp_scripts->registered);
@@ -187,14 +187,14 @@ class ShoppScripts extends WP_Scripts {
 
 	}
 
-	public function print_script_custom ($handle) {
-		return !empty($this->registered[$handle]->extra['code'])?$this->registered[$handle]->extra['code']:false;
+	public function print_script_custom ( $handle ) {
+		return ! empty($this->registered[ $handle ]->extra['code']) ? $this->registered[$handle]->extra['code'] : false;
 	}
 
 
 } // END class ShoppScripts
 
-function shopp_default_scripts (&$scripts) {
+function shopp_default_scripts ( &$scripts ) {
 
 	$script = basename(__FILE__);
 	$schema = ( !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ) ? 'https://' : 'http://';
@@ -339,70 +339,75 @@ function shopp_default_script_settings () {
 			'd'  => $settings['decimals']
 		);
 		if ( isset($settings['grouping']) )
-			$currency['g'] = is_array($settings['grouping']) ? join(',',$settings['grouping']) : $settings['grouping'];
+			$currency['g'] = is_array($settings['grouping']) ? join(',', $settings['grouping']) : $settings['grouping'];
 
 	}
 	if ( ! is_admin() ) $base = array('nocache' => is_shopp_page('account'));
 
 	// Validation alerts
 	shopp_localize_script('catalog', '$cv', array(
-		'field' => __('Your %s is required.','Shopp'),
-		'email' => __('The e-mail address you provided does not appear to be a valid address.','Shopp'),
-		'minlen' => __('The %s you entered is too short. It must be at least %d characters long.','Shopp'),
-		'pwdmm' => __('The passwords you entered do not match. They must match in order to confirm you are correctly entering the password you want to use.','Shopp'),
-		'chkbox' => __('%s must be checked before you can proceed.','Shopp')
+		'field'  => __('Your %s is required.', 'Shopp'),
+		'email'  => Shopp::__('The e-mail address you provided does not appear to be a valid address.'),
+		'minlen' => __('The %s you entered is too short. It must be at least %d characters long.', 'Shopp'),
+		'pwdmm'  => Shopp::__('The passwords you entered do not match. They must match in order to confirm you are correctly entering the password you want to use.'),
+		'chkbox' => __('%s must be checked before you can proceed.', 'Shopp')
+	));
+
+	// Address Helper
+	shopp_localize_script('address', '$shopp_address', array(
+		'country_no_postal_codes' => Lookup::country_no_postal_codes() 
 	));
 
 	// Checkout page settings & localization
 	shopp_localize_script('checkout', '$co', array(
-		'ajaxurl' =>    admin_url('admin-ajax.php'),
-		'loginname' =>  Shopp::__('You did not enter a login.'),
-		'loginpwd' =>   Shopp::__('You did not enter a password to login with.'),
-		'badpan' =>     Shopp::__('Not a valid card number.'),
+		'ajaxurl'    => admin_url('admin-ajax.php'),
+		'loginname'  => Shopp::__('You did not enter a login.'),
+		'loginpwd'   => Shopp::__('You did not enter a password to login with.'),
+		'badpan'     => Shopp::__('Not a valid card number.'),
 		'submitting' => Shopp::__('Submitting&hellip;'),
-		'error' =>      Shopp::__('An error occurred while submitting your order. Please try submitting your order again.'),
-		'timeout' =>    (int)SHOPP_SUBMIT_TIMEOUT
+		'error'      => Shopp::__('An error occurred while submitting your order. Please try submitting your order again.'),
+		'timeout'    => (int)SHOPP_SUBMIT_TIMEOUT
 	));
 
 	// Validation alerts
 	shopp_localize_script('cart', '$ct', array(
-		'items' => __('Items','Shopp'),
-		'total' => __('Total','Shopp'),
+		'items' => Shopp::__('Items'),
+		'total' => Shopp::__('Total'),
 	));
 
 	// Calendar localization
 	shopp_localize_script('calendar', '$cal', array(
 		// Month names
-		'jan' => __('January', 'Shopp'),
-		'feb' => __('February', 'Shopp'),
-		'mar' => __('March', 'Shopp'),
-		'apr' => __('April', 'Shopp'),
-		'may' => __('May', 'Shopp'),
-		'jun' => __('June', 'Shopp'),
-		'jul' => __('July', 'Shopp'),
-		'aug' => __('August', 'Shopp'),
-		'sep' => __('September', 'Shopp'),
-		'oct' => __('October', 'Shopp'),
-		'nov' => __('November', 'Shopp'),
-		'dec' => __('December', 'Shopp'),
+		'jan' => Shopp::__('January'),
+		'feb' => Shopp::__('February'),
+		'mar' => Shopp::__('March'),
+		'apr' => Shopp::__('April'),
+		'may' => Shopp::__('May'),
+		'jun' => Shopp::__('June'),
+		'jul' => Shopp::__('July'),
+		'aug' => Shopp::__('August'),
+		'sep' => Shopp::__('September'),
+		'oct' => Shopp::__('October'),
+		'nov' => Shopp::__('November'),
+		'dec' => Shopp::__('December'),
 
 		// Weekday names
-		'sun' => __('Sun', 'Shopp'),
-		'mon' => __('Mon', 'Shopp'),
-		'tue' => __('Tue', 'Shopp'),
-		'wed' => __('Wed', 'Shopp'),
-		'thu' => __('Thu', 'Shopp'),
-		'fri' => __('Fri', 'Shopp'),
-		'sat' => __('Sat', 'Shopp')
+		'sun' => Shopp::__('Sun'),
+		'mon' => Shopp::__('Mon'),
+		'tue' => Shopp::__('Tue'),
+		'wed' => Shopp::__('Wed'),
+		'thu' => Shopp::__('Thu'),
+		'fri' => Shopp::__('Fri'),
+		'sat' => Shopp::__('Sat')
 	));
 
 	// Product editor: unsaved changes warning
 	shopp_localize_script('product-editor', '$msg', array(
-		'confirm' => __('The changes you made will be lost if you navigate away from this page.', 'Shopp')
+		'confirm' => Shopp::__('The changes you made will be lost if you navigate away from this page.')
 	));
 
 	$defaults = apply_filters('shopp_js_settings', array_merge($currency, $base));
-	shopp_localize_script('shopp', '$s',$defaults);
+	shopp_localize_script('shopp', '$s', $defaults);
 }
 
 add_action('shopp_print_scripts', 'shopp_default_script_settings', 100);
