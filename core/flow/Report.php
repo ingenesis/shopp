@@ -46,7 +46,7 @@ class ShoppAdminReport extends ShoppAdminController {
 		shopp_enqueue_script('reports');
 
 		add_filter('shopp_reports', array(__CLASS__, 'xreports'));
-		add_action('load-'.$this->screen, array($this, 'loader'));
+		add_action('load-' . $this->screen, array($this, 'loader'));
 	}
 
 	/**
@@ -58,15 +58,15 @@ class ShoppAdminReport extends ShoppAdminController {
 	 * @return array List of reports
 	 **/
 	static function reports () {
-		return apply_filters('shopp_reports',array(
-			'sales' => array( 'class' => 'SalesReport', 'name' => __('Sales Report','Shopp'), 'label' => __('Sales','Shopp') ),
-			'tax' => array( 'class' => 'TaxReport', 'name' => __('Tax Report','Shopp'), 'label' => __('Taxes','Shopp') ),
-			'shipping' => array( 'class' => 'ShippingReport', 'name' => __('Shipping Report','Shopp'), 'label' => __('Shipping','Shopp') ),
-			'discounts' => array( 'class' => 'DiscountsReport', 'name' => __('Discounts Report','Shopp'), 'label' => __('Discounts','Shopp') ),
-			'customers' => array( 'class' => 'CustomersReport', 'name' => __('Customers Report','Shopp'), 'label' => __('Customers','Shopp') ),
-			'locations' => array( 'class' => 'LocationsReport', 'name' => __('Locations Report','Shopp'), 'label' => __('Locations','Shopp') ),
-			'products' => array( 'class' => 'ProductsReport', 'name' => __('Products Report','Shopp'), 'label' => __('Products','Shopp') ),
-			'paytype' => array( 'class' => 'PaymentTypesReport', 'name' => __('Payment Types Report','Shopp'), 'label' => __('Payment Types','Shopp') ),
+		return apply_filters('shopp_reports', array(
+			'sales'     => array( 'class' => 'SalesReport',        'name' => Shopp::__('Sales Report'),         'label' => Shopp::__('Sales') ),
+			'tax'       => array( 'class' => 'TaxReport',          'name' => Shopp::__('Tax Report'),           'label' => Shopp::__('Taxes') ),
+			'shipping'  => array( 'class' => 'ShippingReport',     'name' => Shopp::__('Shipping Report'),      'label' => Shopp::__('Shipping') ),
+			'discounts' => array( 'class' => 'DiscountsReport',    'name' => Shopp::__('Discounts Report'),     'label' => Shopp::__('Discounts') ),
+			'customers' => array( 'class' => 'CustomersReport',    'name' => Shopp::__('Customers Report'),     'label' => Shopp::__('Customers') ),
+			'locations' => array( 'class' => 'LocationsReport',    'name' => Shopp::__('Locations Report'),     'label' => Shopp::__('Locations') ),
+			'products'  => array( 'class' => 'ProductsReport',     'name' => Shopp::__('Products Report'),      'label' => Shopp::__('Products') ),
+			'paytype'   => array( 'class' => 'PaymentTypesReport', 'name' => Shopp::__('Payment Types Report'), 'label' => Shopp::__('Payment Types') ),
 		));
 	}
 
@@ -79,9 +79,9 @@ class ShoppAdminReport extends ShoppAdminController {
 	 * @param array $reports The list of registered reports
 	 * @return array The modified list of registered reports
 	 **/
-	static function xreports ($reports) {
+	static function xreports ( $reports ) {
 		if ( shopp_setting_enabled('inventory') )
-			$reports['inventory'] = array( 'class' => 'InventoryReport', 'name' => __('Inventory Report','Shopp'), 'label' => __('Inventory','Shopp') );
+			$reports['inventory'] = array( 'class' => 'InventoryReport', 'name' => Shopp::__('Inventory Report'), 'label' => Shopp::__('Inventory') );
 		return $reports;
 	}
 
@@ -95,32 +95,32 @@ class ShoppAdminReport extends ShoppAdminController {
 	 **/
 	static function request () {
 		$defaults = array(
-			'start' => date('n/j/Y',mktime(0,0,0)),
-			'end' => date('n/j/Y',mktime(23,59,59)),
-			'range' => '',
-			'scale' => 'day',
-			'report' => 'sales',
-			'paged' => 1,
-			'per_page' => 100,
+			'start'     => date('n/j/Y', mktime(0, 0, 0)),
+			'end'       => date('n/j/Y', mktime(23, 59, 59)),
+			'range'     => '',
+			'scale'     => 'day',
+			'report'    => 'sales',
+			'paged'     => 1,
+			'per_page'  => 100,
 			'num_pages' => 1
 		);
 
-		$today = mktime(23,59,59);
+		$today = mktime(23, 59, 59);
 
-		$options = wp_parse_args($_GET,$defaults);
+		$options = wp_parse_args($_GET, $defaults);
 
-		if (!empty($options['start'])) {
-			$startdate = $options['start'];
-			list($sm,$sd,$sy) = explode("/",$startdate);
-			$options['starts'] = mktime(0,0,0,$sm,$sd,$sy);
-			date('F j Y',$options['starts']);
+		if ( ! empty($options['start']) ) {
+			$startdate          = $options['start'];
+			list($sm, $sd, $sy) = explode('/', $startdate);
+			$options['starts']  = mktime(0, 0, 0, $sm, $sd, $sy);
+			date('F j Y', $options['starts']);
 		}
 
-		if (!empty($options['end'])) {
-			$enddate = $options['end'];
-			list($em,$ed,$ey) = explode("/",$enddate);
-			$options['ends'] = mktime(23,59,59,$em,$ed,$ey);
-			if ($options['ends'] > $today) $options['ends'] = $today;
+		if ( ! empty($options['end']) ) {
+			$enddate            = $options['end'];
+			list($em, $ed, $ey) = explode("/", $enddate);
+			$options['ends']    = mktime(23, 59, 59, $em, $ed, $ey);
+			if ( $options['ends'] > $today ) $options['ends'] = $today;
 		}
 
 		$daterange = $options['ends'] - $options['starts'];
@@ -156,7 +156,7 @@ class ShoppAdminReport extends ShoppAdminController {
 			return wp_die(Shopp::__('The requested report does not exist.'));
 
 		$ReportClass = $reports[ $report ]['class'];
-		$Report = new $ReportClass($options);
+		$Report = new $ReportClass( $options );
 		$Report->load();
 
 		return $Report;
@@ -187,7 +187,7 @@ class ShoppAdminReport extends ShoppAdminController {
 	 **/
 	public function admin () {
 		if ( ! current_user_can('shopp_financials') )
-			wp_die(__('You do not have sufficient permissions to access this page.','Shopp'));
+			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		extract($this->options, EXTR_SKIP);
 
@@ -196,38 +196,38 @@ class ShoppAdminReport extends ShoppAdminController {
 		$ListTable = ShoppUI::table_set_pagination ($this->screen, $Report->total, $Report->pages, $per_page );
 
 		$ranges = array(
-			'all' => __('Show All Orders','Shopp'),
-			'today' => __('Today','Shopp'),
-			'week' => __('This Week','Shopp'),
-			'month' => __('This Month','Shopp'),
-			'quarter' => __('This Quarter','Shopp'),
-			'year' => __('This Year','Shopp'),
-			'yesterday' => __('Yesterday','Shopp'),
-			'lastweek' => __('Last Week','Shopp'),
-			'last30' => __('Last 30 Days','Shopp'),
-			'last90' => __('Last 3 Months','Shopp'),
-			'lastmonth' => __('Last Month','Shopp'),
-			'lastquarter' => __('Last Quarter','Shopp'),
-			'lastyear' => __('Last Year','Shopp'),
-			'custom' => __('Custom Dates','Shopp')
+			'all'           => Shopp::__('Show All Orders'),
+			'today'         => Shopp::__('Today'),
+			'week'          => Shopp::__('This Week'),
+			'month'         => Shopp::__('This Month'),
+			'quarter'       => Shopp::__('This Quarter'),
+			'year'          => Shopp::__('This Year'),
+			'yesterday'     => Shopp::__('Yesterday'),
+			'lastweek'      => Shopp::__('Last Week'),
+			'last30'        => Shopp::__('Last 30 Days'),
+			'last90'        => Shopp::__('Last 3 Months'),
+			'lastmonth'     => Shopp::__('Last Month'),
+			'lastquarter'   => Shopp::__('Last Quarter'),
+			'lastyear'      => Shopp::__('Last Year'),
+			'custom'        => Shopp::__('Custom Dates')
 			);
 
 		$exports = array(
-			'tab' => __('Tab-separated.txt','Shopp'),
-			'csv' => __('Comma-separated.csv','Shopp'),
-			'xls' => __('Microsoft&reg; Excel.xls','Shopp'),
+			'tab' => Shopp::__('Tab-separated.txt'),
+			'csv' => Shopp::__('Comma-separated.csv'),
+			'xls' => Shopp::__('Microsoft&reg; Excel.xls'),
 			);
 
 		$format = shopp_setting('report_format');
 		if ( ! $format ) $format = 'tab';
 
-		$columns = array_merge(ShoppPurchase::exportcolumns(), ShoppPurchased::exportcolumns());
+		$columns  = array_merge(ShoppPurchase::exportcolumns(), ShoppPurchased::exportcolumns());
 		$selected = shopp_setting('purchaselog_columns');
-		if (empty($selected)) $selected = array_keys($columns);
+		if ( empty($selected) ) $selected = array_keys($columns);
 
 		$reports = self::reports();
 
-		$report_title = isset($reports[ $report ])? $reports[ $report ]['name'] : __('Report','Shopp');
+		$report_title = isset($reports[ $report ]) ? $reports[ $report ]['name'] : Shopp::__('Report');
 
 		include $this->ui('reports.php');
 
@@ -264,12 +264,12 @@ abstract class ShoppReportFramework {
 	public $periods = false;		// A time period series report
 
 	public $screen = false;			// The current WP screen
-	public $Chart = false;			// The report chart (if any)
+	public $Chart  = false;			// The report chart (if any)
 
 
 	public $options = array();		// Options for the report
-	public $data = array();			// The processed report data
-	public $totals = false;			// The processed totals for the report
+	public $data    = array();		// The processed report data
+	public $totals  = false;		// The processed totals for the report
 
 
 	public $range = false;			// Range of values in the report
@@ -281,8 +281,8 @@ abstract class ShoppReportFramework {
 
 	public function __construct ($request = array()) {
 		$this->options = $request;
-		$this->screen = $this->options['screen'];
-		$this->totals = new StdClass();
+		$this->screen  = $this->options['screen'];
+		$this->totals  = new StdClass();
 
 		add_action('shopp_report_filter_controls', array($this, 'filters'));
 		add_action("manage_{$this->screen}_columns", array($this, 'screencolumns'));
@@ -307,15 +307,21 @@ abstract class ShoppReportFramework {
 		$this->setup();
 
 		$query = $this->query();
+
 		if ( empty($query) ) return;
+
 		$loaded = sDB::query( $query, 'array', array($this, 'process') );
 
 		if ( $this->periods && $this->Chart ) {
+
 			foreach ( $this->data as $index => &$record ) {
+			
 				if ( count(get_object_vars($record)) <= 1 ) {
+			
 					foreach ( $this->columns as $column )
 						$record->$column = null;
 				}
+			
 				foreach ( $this->chartseries as $series => $column ) {
 					$data = isset($record->$column) ? $record->$column : 0;
 					$this->chartdata($series, $record->period, $data);
@@ -346,9 +352,12 @@ abstract class ShoppReportFramework {
 			$this->columns = array_diff(array_keys($columns), array('id', 'period'));
 		}
 
-		foreach ($columns as $column => $value) {
+		foreach ( $columns as $column => $value ) {
+			
 			if ( is_numeric($value) && 0 !== $value ) {
+			
 				if ( ! isset($this->totals->$column) ) $this->totals->$column = 0;
+			
 				$this->totals->$column += $value;
 			} else $this->totals->$column = null;
 		}
@@ -361,7 +370,9 @@ abstract class ShoppReportFramework {
 		}
 
 		if ( $collate ) {
+			
 			if ( ! isset($records[ $index ]) ) $records[ $index ] = $record;
+			
 			$records[ $index ][] = $record;
 			return;
 		}
@@ -382,7 +393,7 @@ abstract class ShoppReportFramework {
 	 **/
 	public function pagination () {
 		extract($this->options,EXTR_SKIP);
-		$this->pages = ceil($this->total / $per_page);
+		$this->pages   = ceil($this->total / $per_page);
 		$_GET['paged'] = $this->options['paged'] = min($paged,$this->pages);
 	}
 
@@ -399,13 +410,13 @@ abstract class ShoppReportFramework {
 	 * @param string $scale Scale of periods (hour, day, week, month, year)
 	 * @return void
 	 **/
-	public function timereport ($starts,$ends,$scale) {
-		$this->total = $this->range($starts,$ends,$scale);
+	public function timereport ($starts, $ends, $scale) {
+		$this->total = $this->range($starts, $ends, $scale);
 		$i = 0;
 		while ($i < $this->total) {
 			$record = new StdClass();
-			list ($index,$record->period) = self::timeindex($i++,$starts,$scale);
-			$this->data[$index] = $record;
+			list ($index, $record->period) = self::timeindex($i++, $starts, $scale);
+			$this->data[ $index ] = $record;
 		}
 	}
 
@@ -425,29 +436,29 @@ abstract class ShoppReportFramework {
 	 * @return array The date index and timestamp pair
 	 **/
 	static function timeindex ( $i, $starts, $scale ) {
-		$month = date('n',$starts); $day = date('j',$starts); $year = date('Y',$starts);
+		$month = date('n', $starts); $day = date('j', $starts); $year = date('Y', $starts);
 		$index = $i;
 		switch (strtolower($scale)) {
-			case 'hour': $ts = mktime($i,0,0,$month,$day,$year); break;
+			case 'hour': $ts = mktime($i, 0, 0, $month, $day, $year); break;
 			case 'week':
-				$ts = mktime(0,0,0,$month,$day+($i*7),$year);
-				$index = sprintf('%s %s',(int)date('W',$ts),date('Y',$ts));
+				$ts = mktime(0, 0, 0, $month, $day+($i*7), $year);
+				$index = sprintf('%s %s', (int)date('W', $ts), date('Y', $ts));
 				break;
 			case 'month':
-				$ts = mktime(0,0,0,$month+$i,1,$year);
-				$index = sprintf('%s %s',date('n',$ts),date('Y',$ts));
+				$ts = mktime(0, 0, 0, $month+$i, 1, $year);
+				$index = sprintf('%s %s', date('n', $ts), date('Y', $ts));
 				break;
 			case 'year':
-				$ts = mktime(0,0,0,1,1,$year+$i);
-				$index = sprintf('%s',date('Y',$ts));
+				$ts = mktime(0, 0, 0, 1, 1, $year+$i);
+				$index = sprintf('%s', date('Y', $ts));
 				break;
 			default:
-				$ts = mktime(0,0,0,$month,$day+$i,$year);
-				$index = sprintf('%s %s %s',date('j',$ts),date('n',$ts),date('Y',$ts));
+				$ts = mktime(0, 0, 0, $month, $day+$i, $year);
+				$index = sprintf('%s %s %s', date('j', $ts), date('n', $ts), date('Y', $ts));
 				break;
 		}
 
-		return array($index,$ts);
+		return array($index, $ts);
 	}
 
 	/**
@@ -465,10 +476,10 @@ abstract class ShoppReportFramework {
 	public function timecolumn ( $column ) {
 		switch ( strtolower($this->options['scale']) ) {
 			case 'hour':	$_ = "HOUR($column)"; break;
-			case 'week':	$_ = "WEEK($column,3),' ',YEAR($column)"; break;
-			case 'month':	$_ = "MONTH($column),' ',YEAR($column)"; break;
+			case 'week':	$_ = "WEEK($column,3), ' ', YEAR($column)"; break;
+			case 'month':	$_ = "MONTH($column), ' ', YEAR($column)"; break;
 			case 'year':	$_ = "YEAR($column)"; break;
-			default:		$_ = "DAY($column),' ',MONTH($column),' ',YEAR($column)";
+			default:		$_ = "DAY($column), ' ', MONTH($column), ' ', YEAR($column)";
 		}
 		return $_;
 	}
@@ -486,27 +497,27 @@ abstract class ShoppReportFramework {
 	 **/
 	public function range ( $starts, $ends, $scale = 'day') {
 		$oneday = 86400;
-		$years = date('Y',$ends)-date('Y',$starts);
-		switch (strtolower($scale)) {
+		$years = date('Y', $ends)-date('Y', $starts);
+		switch ( strtolower($scale) ) {
 			case 'week':
 				// Find the timestamp for the first day of the start date's week
-				$startweekday = date('w',$starts);
+				$startweekday = date('w', $starts);
 				$startweekdate = $starts-($startweekday*86400);
 
 				// Find the timestamp for the last day of the end date's' week
-				$endweekday = date('w',$ends);
+				$endweekday = date('w', $ends);
 				$endweekdate = $ends+((6-$endweekday)*86400);
 
-				$starts_week = (int)date('W',$startweekdate);
-				$ends_week =  (int)date('W',$endweekdate);
-				if ($starts_week < 0) $starts_week += 52;
+				$starts_week = (int)date('W', $startweekdate);
+				$ends_week =  (int)date('W', $endweekdate);
+				if ( $starts_week < 0 ) $starts_week += 52;
 				elseif ($starts_week > $ends_week) $starts_week -= 52;
 
 				return ($years*52)+$ends_week - $starts_week;
 			case 'month':
-				$starts_month = date('n',$starts);
-				$ends_month = date('n',$ends);
-				if ($starts_month > $ends_month) $starts_month -= 12;
+				$starts_month = date('n', $starts);
+				$ends_month = date('n', $ends);
+				if ( $starts_month > $ends_month ) $starts_month -= 12;
 				return (12*$years)+$ends_month-$starts_month+1;
 			case 'year': return $years+1;
 			case 'hour': return 24; break;
@@ -549,15 +560,15 @@ abstract class ShoppReportFramework {
 	 **/
 	static function period ( $data, $column, $title, array $options ) {
 
-		if ( __('Total','Shopp') == $data->period ) { echo __('Total','Shopp'); return; }
-		if ( __('Average','Shopp') == $data->period ) { echo __('Average','Shopp'); return; }
+		if ( Shopp::__('Total') == $data->period ) { echo Shopp::__('Total'); return; }
+		if ( Shopp::__('Average') == $data->period ) { echo Shopp::__('Average'); return; }
 
-		switch (strtolower($options['scale'])) {
-			case 'hour': echo date('ga',$data->period); break;
-			case 'day': echo date('l, F j, Y',$data->period); break;
+		switch ( strtolower($options['scale']) ) {
+			case 'hour': echo date('ga', $data->period); break;
+			case 'day': echo date('l, F j, Y', $data->period); break;
 			case 'week': echo ShoppReportFramework::weekrange($data->period); break;
-			case 'month': echo date('F Y',$data->period); break;
-			case 'year': echo date('Y',$data->period); break;
+			case 'month': echo date('F Y', $data->period); break;
+			case 'year': echo date('Y', $data->period); break;
 			default: echo $data->period; break;
 		}
 	}
@@ -574,15 +585,15 @@ abstract class ShoppReportFramework {
 	 * @param array $options The options for this report
 	 * @return void
 	 **/
-	static function export_period ($data,$column,$title,$options) {
+	static function export_period ($data, $column, $title, $options) {
 		$date_format = get_option('date_format');
 		$time_format = get_option('time_format');
-		$datetime = "$date_format $time_format";
+		$datetime    = "$date_format $time_format";
 
 		switch (strtolower($options['scale'])) {
-			case 'day': echo date($date_format,$data->period); break;
-			case 'week': echo ShoppReportFramework::weekrange($data->period,array($date_format,$date_format)); break;
-			default: echo date($datetime,$data->period); break;
+			case 'day': echo date($date_format, $data->period); break;
+			case 'week': echo ShoppReportFramework::weekrange($data->period, array($date_format,$date_format)); break;
+			default: echo date($datetime, $data->period); break;
 		}
 	}
 
@@ -594,7 +605,7 @@ abstract class ShoppReportFramework {
 	 * The array should be defined as an associative array with column keys as the array key and
 	 * a translatable column title as the value:
 	 *
-	 * array('orders' => __('Orders','Shopp'));
+	 * array('orders' => Shopp::__('Orders'));
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.3
@@ -604,6 +615,25 @@ abstract class ShoppReportFramework {
 	public function columns () { return array(); }
 
 	/**
+	 * Returns a list of columns for this report that should be excluded
+	 * from 'Average' and 'Total' calculations in the report table
+	 *
+	 * This method is a placehoder. Columns should be specified in the concrete report subclass.
+	 *
+	 * The array should be defined as an associative array with column keys as the array key and
+	 * a translatable column title as the value:
+	 *
+	 * array('orders' => Shopp::__('Orders'));
+	 *
+	 * @author Webshop1310
+	 * @since 1.3
+	 *
+	 * @return array The list of column keys and column title labels
+	 **/
+	public function excludecolumns () { return array(); }
+
+
+	/**
 	 * Registers the report columns to the WP screen
 	 *
 	 * @author Jonathan Davis
@@ -611,7 +641,7 @@ abstract class ShoppReportFramework {
 	 *
 	 * @return void
 	 **/
-	public function screencolumns () { ShoppUI::register_column_headers($this->screen,$this->columns()); }
+	public function screencolumns () { ShoppUI::register_column_headers($this->screen, $this->columns()); }
 
 	/**
 	 * Specifies columns that are sortable
@@ -651,7 +681,7 @@ abstract class ShoppReportFramework {
 	 * The array should be defined as an associative array with the translateable label as keys and the
 	 * score as the value:
 	 *
-	 * array(__('Total','Shopp') => $this->totals->total);
+	 * array(Shopp::__('Total') => $this->totals->total);
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.3
@@ -720,6 +750,7 @@ abstract class ShoppReportFramework {
 				<?php
 				$columns = get_column_headers($this->screen);
 				$hidden = get_hidden_columns($this->screen);
+				$exclude = $this->excludecolumns();
 
 				$even = false;
 				$records = 0;
@@ -736,7 +767,7 @@ abstract class ShoppReportFramework {
 						if ( method_exists(get_class($this), $column) ): ?>
 							<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php echo call_user_func(array($this, $column), $data, $column, $column_title, $this->options); ?></td>
 						<?php else: ?>
-							<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
+							<td class="<?php echo esc_attr(join(' ', $classes)); ?>">
 							<?php do_action( 'shopp_manage_report_custom_column', $column, $column_title, $data );	?>
 							</td>
 						<?php endif;
@@ -749,9 +780,9 @@ abstract class ShoppReportFramework {
 					<?php
 					$averages = clone $this->totals;
 					$first = true;
-					foreach ($columns as $column => $column_title):
+					foreach ( $columns as $column => $column_title ):
 						if ( $first ) {
-							$averages->id = $averages->period = $averages->$column = __('Average','Shopp');
+							$averages->id = $averages->period = $averages->$column = Shopp::__('Average');
 							$first = false;
 						} else {
 							$value = isset($averages->$column) ? $averages->$column : null;
@@ -761,12 +792,12 @@ abstract class ShoppReportFramework {
 							else $averages->$column = ( $value / $total );
 						}
 						$classes = array($column,"column-$column");
-						if ( in_array($column,$hidden) ) $classes[] = 'hidden';
+						if ( in_array($column, $hidden) ) $classes[] = 'hidden';
 					?>
-						<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
+						<td class="<?php echo esc_attr(join(' ', $classes)); ?>">
 							<?php
-								if ( method_exists(get_class($this),$column) )
-									echo call_user_func(array($this,$column),$averages,$column,$column_title,$this->options);
+								if ( method_exists(get_class($this), $column) && ! isset($exclude[ $column ]) )
+									echo call_user_func(array($this, $column), $averages, $column, $column_title, $this->options);
 								else do_action( 'shopp_manage_report_custom_column_average', $column, $column_title, $data );
 							?>
 						</td>
@@ -775,18 +806,18 @@ abstract class ShoppReportFramework {
 				<tr class="summary total">
 					<?php
 					$first = true;
-					foreach ($columns as $column => $column_title):
+					foreach ( $columns as $column => $column_title ):
 						if ( $first ) {
-							$label = __('Total','Shopp');
+							$label = Shopp::__('Total');
 							$this->totals->id = $this->totals->period = $this->totals->$column = $label;
 							$first = false;
 						}
 						$classes = array($column,"column-$column");
 						if ( in_array($column, $hidden) ) $classes[] = 'hidden';
 					?>
-						<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
+						<td class="<?php echo esc_attr(join(' ', $classes)); ?>">
 							<?php
-								if ( method_exists(get_class($this), $column) )
+								if ( method_exists(get_class($this), $column) && ! isset($exclude[ $column ]) )
 									echo call_user_func(array($this, $column), $this->totals, $column, $column_title, $this->options);
 								else do_action( 'shopp_manage_report_custom_column_total', $column, $column_title, $data );
 							?>
@@ -796,10 +827,10 @@ abstract class ShoppReportFramework {
 
 				</tbody>
 			<?php else: ?>
-				<tbody><tr><td colspan="<?php echo count(get_column_headers($this->screen)); ?>"><?php _e('No report data available.','Shopp'); ?></td></tr></tbody>
+				<tbody><tr><td colspan="<?php echo count(get_column_headers($this->screen)); ?>"><?php Shopp::_e('No report data available.'); ?></td></tr></tbody>
 			<?php endif; ?>
 			<tfoot>
-			<tr><?php ShoppUI::print_column_headers($this->screen,false); ?></tr>
+			<tr><?php ShoppUI::print_column_headers($this->screen, false); ?></tr>
 			</tfoot>
 			</table>
 	<?php
@@ -832,33 +863,33 @@ abstract class ShoppReportFramework {
 			<?php
 				$defaults = array(
 					'start' => '',
-					'end' => '',
+					'end'   => '',
 					'range' => 'all'
 				);
 				$request = array_merge($defaults, $_GET);
 				extract($request, EXTR_SKIP);
 
 				$ranges = array(
-					'today' => __('Today','HelpDesk'),
-					'week' => __('This Week','HelpDesk'),
-					'month' => __('This Month','HelpDesk'),
-					'year' => __('This Year','HelpDesk'),
-					'quarter' => __('This Quarter','HelpDesk'),
-					'yesterday' => __('Yesterday','HelpDesk'),
-					'lastweek' => __('Last Week','HelpDesk'),
-					'last30' => __('Last 30 Days','HelpDesk'),
-					'last90' => __('Last 3 Months','HelpDesk'),
-					'lastmonth' => __('Last Month','HelpDesk'),
-					'lastquarter' => __('Last Quarter','HelpDesk'),
-					'lastyear' => __('Last Year','HelpDesk'),
-					'custom' => __('Custom Dates','HelpDesk')
+					'today'       => Shopp::__('Today'),
+					'week'        => Shopp::__('This Week'),
+					'month'	      => Shopp::__('This Month'),
+					'year'        => Shopp::__('This Year'),
+					'quarter'     => Shopp::__('This Quarter'),
+					'yesterday'   => Shopp::__('Yesterday'),
+					'lastweek'    => Shopp::__('Last Week'),
+					'last30'      => Shopp::__('Last 30 Days'),
+					'last90'      => Shopp::__('Last 3 Months'),
+					'lastmonth'   => Shopp::__('Last Month'),
+					'lastquarter' => Shopp::__('Last Quarter'),
+					'lastyear'    => Shopp::__('Last Year'),
+					'custom'      => Shopp::__('Custom Dates')
 				);
 				echo menuoptions($ranges, $range, true);
 			?>
 		</select>
 		<div id="dates" class="hide-if-js">
 			<div id="start-position" class="calendar-wrap"><input type="text" id="start" name="start" value="<?php echo esc_attr($start); ?>" size="10" class="search-input selectall" /></div>
-			<small><?php _e('to','Shopp'); ?></small>
+			<small><?php Shopp::_e('to'); ?></small>
 			<div id="end-position" class="calendar-wrap"><input type="text" id="end" name="end" value="<?php echo esc_attr($end); ?>" size="10" class="search-input selectall" /></div>
 		</div>
 <?php
@@ -878,13 +909,13 @@ abstract class ShoppReportFramework {
 		<?php
 		$scale = isset($_GET['scale']) ? $_GET['scale'] : 'day';
 		$scales = array(
-			'hour' => __('By Hour','Shopp'),
-			'day' => __('By Day','Shopp'),
-			'week' => __('By Week','Shopp'),
-			'month' => __('By Month','Shopp')
+			'hour'  => Shopp::__('By Hour'),
+			'day'   => Shopp::__('By Day'),
+			'week'  => Shopp::__('By Week'),
+			'month' => Shopp::__('By Month')
 		);
 
-		echo menuoptions($scales,$scale,true);
+		echo menuoptions($scales, $scale, true);
 		?>
 		</select>
 
@@ -900,7 +931,7 @@ abstract class ShoppReportFramework {
 	 * @return void
 	 **/
 	protected static function filterbutton () {
-		?><button type="submit" id="filter-button" name="filter" value="order" class="button-secondary"><?php _e('Filter','Shopp'); ?></button><?php
+		?><button type="submit" id="filter-button" name="filter" value="order" class="button-secondary"><?php Shopp::_e('Filter'); ?></button><?php
 	}
 
 	/**
@@ -913,7 +944,7 @@ abstract class ShoppReportFramework {
 	 **/
 	protected function initchart () {
 		$this->Chart = new ShoppReportChart();
-		if ($this->periods)	$this->Chart->timeaxis('xaxis',$this->total,$this->options['scale']);
+		if ( $this->periods ) $this->Chart->timeaxis('xaxis', $this->total, $this->options['scale']);
 	}
 
 	/**
@@ -942,7 +973,7 @@ abstract class ShoppReportFramework {
 	 * @return void
 	 **/
 	protected function chartdata ( $series, $x, $y ) {
-		$this->Chart->data($series,$x,$y,$this->periods);
+		$this->Chart->data($series, $x, $y, $this->periods);
 	}
 
 	/**
@@ -979,38 +1010,38 @@ class ShoppReportChart {
 
 	public $options = array(
 		'series' => array(
-			'limit' => 20,	// Limit the number of series
-			'lines' => array('show' => true,'fill'=>true,'lineWidth'=>3),
-			'points' => array('show' => true),
+			'limit'      => 20,	// Limit the number of series
+			'lines'      => array('show' => true, 'fill' => true, 'lineWidth' => 3),
+			'points'     => array('show' => true),
 			'shadowSize' => 0
 		),
 		'xaxis' => array(
-			'color' => '#545454',
-			'tickColor' => '#fff',
-			'position' => 'top',
-			'mode' => 'time',
-			'timeformat' => '%m/%d/%y',
-			'tickSize' => array(1,'day'),
+			'color'           => '#545454',
+			'tickColor'       => '#fff',
+			'position'        => 'top',
+			'mode'            => 'time',
+			'timeformat'      => '%m/%d/%y',
+			'tickSize'        => array(1,'day'),
 			'twelveHourClock' => true
 		),
 		'yaxis' => array(
-			'position' => 'right',
+			'position'        => 'right',
 			'autoscaleMargin' => 0.02,
 		),
 		'legend' => array(
 			'show' => false
 		),
 		'grid' => array(
-			'show' => true,
-			'hoverable' => true,
-			'borderWidth' => 0,
-			'borderColor' => '#000',
+			'show'            => true,
+			'hoverable'       => true,
+			'borderWidth'     => 0,
+			'borderColor'     => '#000',
 			'minBorderMargin' => 10,
-			'labelMargin' => 10,
-			'markingsColor' => '#f7f7f7'
+			'labelMargin'     => 10,
+			'markingsColor'   => '#f7f7f7'
          ),
 		// Solarized Color Palette
-		'colors' => array('#1C63A8','#618C03','#1C63A8','#1F756B','#896204','#CB4B16','#A90007','#A9195F','#4B4B9A'),
+		'colors' => array('#1C63A8', '#618C03', '#1C63A8', '#1F756B', '#896204', '#CB4B16', '#A90007', '#A9195F', '#4B4B9A'),
 	);
 
 	/**
@@ -1039,8 +1070,8 @@ class ShoppReportChart {
 	 * @return void
 	 **/
 	public function settings ($options) {
-		foreach ($options as $setting => $settings)
-			$this->options[$setting] = wp_parse_args($settings,$this->options[$setting]);
+		foreach ( $options as $setting => $settings )
+			$this->options[$setting] = wp_parse_args($settings, $this->options[$setting]);
 	}
 
 	/**
@@ -1054,34 +1085,34 @@ class ShoppReportChart {
 	 * @param string $scale Scale of periods (hour, day, week, month, year)
 	 * @return void
 	 **/
-	public function timeaxis ($axis,$range,$scale='day') {
-		if ( ! isset($this->options[ $axis ])) return;
+	public function timeaxis ($axis, $range, $scale = 'day' ) {
+		if ( ! isset($this->options[ $axis ]) ) return;
 
 		$options = array();
-		switch (strtolower($scale)) {
+		switch ( strtolower($scale) ) {
 			case 'hour':
 				$options['timeformat'] = '%h%p';
-				$options['tickSize'] = array(2,'hour');
+				$options['tickSize'] = array(2, 'hour');
 				break;
 			case 'day':
 				$tickscale = ceil($range / 10);
-				$options['tickSize'] = array($tickscale,'day');
+				$options['tickSize'] = array($tickscale, 'day');
 				$options['timeformat'] = '%b %d';
 				break;
 			case 'week':
 				$tickscale = ceil($range/10)*7;
-				$options['tickSize'] = array($tickscale,'day');
-				$options['minTickSize'] = array(7,'day');
+				$options['tickSize'] = array($tickscale, 'day');
+				$options['minTickSize'] = array(7, 'day');
 				$options['timeformat'] = '%b %d';
 				break;
 			case 'month':
 				$tickscale = ceil($range / 10);
-				$options['tickSize'] = array($tickscale,'month');
+				$options['tickSize'] = array($tickscale, 'month');
 				$options['timeformat'] = '%b %y';
 				break;
 			case 'year':
-				$options['tickSize'] = array(12,'month');
-				$options['minTickSize'] = array(12,'month');
+				$options['tickSize'] = array(12, 'month');
+				$options['minTickSize'] = array(12, 'month');
 				$options['timeformat'] = '%y';
 				break;
 		}
@@ -1103,17 +1134,17 @@ class ShoppReportChart {
 		if ( count($this->data) > $this->options['series']['limit'] ) return;
 		$defaults = array(
 			'label' => $label,
-			'data' => array(),
-			'grow' => array(				// Enables grow animation
-				'active' => true,
-				'stepMode' => 'linear',
-				'stepDelay' => false,
-				'steps' => 25,
+			'data'  => array(),
+			'grow'  => array(				// Enables grow animation
+				'active'        => true,
+				'stepMode'      => 'linear',
+				'stepDelay'     => false,
+				'steps'         => 25,
 				'stepDirection' => 'up'
 			)
 		);
 
-		$settings = wp_parse_args($options,$defaults);
+		$settings = wp_parse_args($options, $defaults);
 
 		$this->data[] = $settings;
 	}
@@ -1135,17 +1166,17 @@ class ShoppReportChart {
 
 		if ( $periods ) {
 			$tzoffset = date('Z');
-			$x = ($x+$tzoffset)*1000;
+			$x = ($x + $tzoffset) * 1000;
 		}
 
-		$this->data[$series]['data'][] = array($x,$y);
+		$this->data[ $series ]['data'][] = array($x, $y);
 
 		// Setup the minimum scale for the y-axis from chart data
 		$min = isset($this->options['yaxis']['min']) ? $this->options['yaxis']['min'] : $y;
-		$this->options['yaxis']['min'] = (float)min($min,$y);
+		$this->options['yaxis']['min'] = (float)min($min, $y);
 
 		if ( ! isset($this->datapoints) ) $this->datapoints = 0;
-		$this->datapoints = max( $this->datapoints, count($this->data[$series]['data']) );
+		$this->datapoints = max( $this->datapoints, count($this->data[ $series ]['data']) );
 	}
 
 	/**
@@ -1194,25 +1225,25 @@ class ShoppReportChart {
 abstract class ShoppReportExportFramework {
 
 	public $ReportClass = '';
-	public $columns = array();
-	public $headings = true;
-	public $data = false;
+	public $columns     = array();
+	public $headings    = true;
+	public $data        = false;
 
-	public $recordstart = true;
+	public $recordstart  = true;
 	public $content_type = "text/plain; charset=UTF-8";
-	public $extension = "txt";
-	public $set = 0;
-	public $limit = 1024;
+	public $extension    = "txt";
+	public $set          = 0;
+	public $limit        = 1024;
 
 	public function __construct ( ShoppReportFramework $Report ) {
 
 		$this->ReportClass = get_class($Report);
-		$this->options = $Report->options;
+		$this->options     = $Report->options;
 
 		$Report->load();
 
 		$this->columns = $Report->columns();
-		$this->data = $Report->data;
+		$this->data    = $Report->data;
 		$this->records = $Report->total;
 
 		$report = $this->options['report'];
@@ -1247,7 +1278,7 @@ abstract class ShoppReportExportFramework {
 		header("Pragma: public");
 
 		$this->begin();
-		if ($this->headings) $this->heading();
+		if ( $this->headings ) $this->heading();
 		$this->records();
 		$this->end();
 	}
@@ -1290,16 +1321,16 @@ abstract class ShoppReportExportFramework {
 		$options = array('scale' => $this->scale);
 		// @todo Add batch export to reduce memory footprint and add scalability to report exports
 		// while (!empty($this->data)) {
-		foreach ($this->data as $key => $record) {
+		foreach ( $this->data as $key => $record ) {
 			if ( ! is_array($this->selected) ) continue;
-			foreach ($this->selected as $column) {
-				$title = $this->columns[$column];
+			foreach ( $this->selected as $column ) {
+				$title   = $this->columns[$column];
 				$columns = get_object_vars($record);
-				$value = isset($columns[ $column ]) ? ShoppReportExportFramework::parse( $columns[ $column ] ) : false;
-				if ( method_exists($this->ReportClass,"export_$column") )
-					$value = call_user_func(array($this->ReportClass,"export_$column"),$record,$column,$title,$this->options);
-				elseif ( method_exists($this->ReportClass,$column) )
-					$value = call_user_func(array($this->ReportClass,$column),$record,$column,$title,$this->options);
+				$value   = isset($columns[ $column ]) ? ShoppReportExportFramework::parse( $columns[ $column ] ) : false;
+				if ( method_exists($this->ReportClass, "export_$column") )
+					$value = call_user_func(array($this->ReportClass,"export_$column"), $record, $column, $title, $this->options);
+				elseif ( method_exists($this->ReportClass, $column) )
+					$value = call_user_func(array($this->ReportClass, $column), $record, $column, $title, $this->options);
 				$this->export($value);
 			}
 			$this->record();
@@ -1321,11 +1352,11 @@ abstract class ShoppReportExportFramework {
 	 * @return string The normalized string column data
 	 **/
 	static function parse ( $column ) {
-		if (preg_match("/^[sibNaO](?:\:.+?\{.*\}$|\:.+;$|;$)/",$column)) {
-			$list = unserialize($column);
+		if (preg_match("/^[sibNaO](?:\:.+?\{.*\}$|\:.+;$|;$)/", $column)) {
+			$list   = unserialize($column);
 			$column = "";
-			foreach ($list as $name => $value)
-				$column .= (empty($column)?"":";")."$name:$value";
+			foreach ( $list as $name => $value )
+				$column .= (empty($column) ? "" : ";") . "$name:$value";
 		}
 		return $column;
 	}
@@ -1349,7 +1380,7 @@ abstract class ShoppReportExportFramework {
 	 * @return void
 	 **/
 	public function export ($value) {
-		echo ($this->recordstart?"":"\t").$value;
+		echo ($this->recordstart ? "" : "\t") . $value;
 		$this->recordstart = false;
 	}
 
@@ -1406,9 +1437,9 @@ class ShoppReportCSVExport extends ShoppReportExportFramework {
 	}
 
 	public function export ( $value ) {
-		$value = str_replace('"','""',$value);
-		if (preg_match('/^\s|[,"\n\r]|\s$/',$value)) $value = '"'.$value.'"';
-		echo ($this->recordstart?"":",").$value;
+		$value = str_replace('"', '""', $value);
+		if ( preg_match('/^\s|[,"\n\r]|\s$/', $value) ) $value = '"' . $value . '"';
+		echo ($this->recordstart ? "" : ",") . $value;
 		$this->recordstart = false;
 	}
 
