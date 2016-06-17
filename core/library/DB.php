@@ -35,18 +35,18 @@ class sDB extends SingletonFramework {
 
 	// Define datatypes for MySQL
 	private static $datatypes = array(
-		'int'		=> array('int', 'bit', 'bool', 'boolean'),
-		'float'		=> array('float', 'double', 'decimal', 'real'),
-		'string'	=> array('char', 'binary', 'text', 'blob'),
-		'list' 		=> array('enum','set'),
-		'date' 		=> array('date', 'time', 'year')
+		'int'    => array('int', 'bit', 'bool', 'boolean'),
+		'float'  => array('float', 'double', 'decimal', 'real'),
+		'string' => array('char', 'binary', 'text', 'blob'),
+		'list'   => array('enum','set'),
+		'date'   => array('date', 'time', 'year')
 	);
 
 	public $results = array(); // @deprecated No longer used
 	public $queries = array(); // A runtime log of queries that have been run
-	public $api = false;       // The DB API engine instance
-	public $dbh = false;       // The
-	public $found = false;
+	public $api     = false;   // The DB API engine instance
+	public $dbh     = false;   // The
+	public $found   = false;
 
 	/**
 	 * Initializes the DB object
@@ -432,17 +432,19 @@ class sDB extends SingletonFramework {
 		while ( $row = $db->api->object($result) )
 			call_user_func_array($callback, array_merge( array(&$records, &$row), $args) );
 
-		// Free the results immediately to save memory
-		$db->api->free();
 
 		// Save the found count if it is present
 		if ( isset($rows->found) ) $db->found = (int) $rows->found;
+
+		// Free the results immediately to save memory
+		// JM Added check for empty result to prevent warning 'Could not fetch mysqli_result'
+		if ( isset($db->found) && $db->found > 0 ) $db->api->free();
 
 		// Handle result format post processing
 		switch (strtolower($format)) {
 			case 'object': return reset($records); break;
 			case 'array':  return $records; break;
-			default:       return (count($records) == 1)?reset($records):$records; break;
+			default:       return (count($records) == 1) ? reset($records) : $records; break;
 		}
 	}
 
@@ -457,20 +459,20 @@ class sDB extends SingletonFramework {
 	 **/
 	public static function select ( $options = array() ) {
 		$defaults = array(
-			'columns' => '*',
+			'columns'  => '*',
 			'useindex' => '',
-			'joins' => array(),
-			'table' => '',
-			'where' => array(),
-			'groupby' => false,
-			'having' => array(),
-			'limit' => false,
-			'orderby' => false
+			'joins'    => array(),
+			'table'    => '',
+			'where'    => array(),
+			'groupby'  => false,
+			'having'   => array(),
+			'limit'    => false,
+			'orderby'  => false
 		);
-		$options = array_merge($defaults,$options);
+		$options = array_merge($defaults, $options);
 		extract ($options);
 
-		if (empty($table)) return shopp_add_error('No table specified for SELECT query.',SHOPP_DB_ERR);
+		if ( empty($table) ) return shopp_add_error('No table specified for SELECT query.', SHOPP_DB_ERR);
 
 		$useindex 	= empty($useindex)?'':"FORCE INDEX($useindex)";
 		$joins 		= empty($joins)?'':"\n\t\t".join("\n\t\t",$joins);
@@ -867,7 +869,7 @@ class ShoppMySQLiEngine implements ShoppDBInterface {
 
 	public function free () {
 		if ( ! is_a($this->results, 'mysqli_result') ) return false;
-		return $this->results->free();
+			return $this->results->free();
 	}
 
 	public function escape ( $string ) {
@@ -1414,11 +1416,11 @@ abstract class ShoppDatabaseObject implements Iterator {
 	 * @param string $property The name of the property to check
 	 * @return boolean True if ignored, false otherwise
 	 **/
-	private function _ignored ($property) {
+	private function _ignored ( $property ) {
 		return (! (
-					in_array($property,$this->_ignores)
+					in_array($property, $this->_ignores)
 					|| (
-						in_array('_',$this->_ignores)
+						in_array('_', $this->_ignores)
 						&& '_' == $property[0])
 					)
 				);
@@ -1515,21 +1517,21 @@ class WPShoppObject extends WPDatabaseObject {
 		if (is_array($args[0])) $p = $args[0];
 
 		$class = get_class($this);
-		$p['post_type'] = get_class_property($class,'posttype');
+		$p['post_type'] = get_class_property($class, 'posttype');
 
 		parent::load($p);
 	}
 
 	public static function labels () {
 		return array(
-			'name' => __('Posts','Shopp'),
-			'singular_name' => __('Post','Shopp')
+			'name'          => Shopp::__('Posts'),
+			'singular_name' => Shopp::__('Post')
 		);
 	}
 
 	public static function capabilities () {
 		return apply_filters( 'shopp_product_capabilities', array(
-			'edit_post' => self::$posttype,
+			'edit_post'   => self::$posttype,
 			'delete_post' => self::$posttype
 		) );
 	}
@@ -1542,16 +1544,16 @@ class WPShoppObject extends WPDatabaseObject {
 	}
 
 	public static function register ($class,$slug) {
-		$posttype = get_class_property($class,'posttype');
+		$posttype = get_class_property($class, 'posttype');
 		register_post_type( $posttype, array(
-			'labels' => call_user_func(array($class, 'labels')),
+			'labels'       => call_user_func(array($class, 'labels')),
 			'capabilities' => call_user_func(array($class, 'capabilities')),
-			'supports' => call_user_func(array($class, 'supports')),
-			'rewrite' => array( 'slug' => $slug, 'with_front' => false ),
-			'public' => true,
-			'has_archive' => true,
-			'show_ui' => false,
-			'_edit_link' => 'admin.php?page=shopp-products&id=%d'
+			'supports'     => call_user_func(array($class, 'supports')),
+			'rewrite'      => array( 'slug' => $slug, 'with_front' => false ),
+			'public'       => true,
+			'has_archive'  => true,
+			'show_ui'      => false,
+			'_edit_link'   => 'admin.php?page=shopp-products&id=%d'
 		));
 	}
 }
