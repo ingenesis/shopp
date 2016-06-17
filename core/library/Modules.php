@@ -615,26 +615,26 @@ class ModuleSettingsUI {
 
 		$classes = empty($class)?'':' class="'.$class.'"';
 
-		$this->ui('<div'.$classes.'><div class="multiple-select">',$column);
-		$this->ui('<ul '.inputattrs($attributes).'>',$column);
+		$this->ui('<div' . $classes . '><div class="multiple-select">', $column);
+		$this->ui('<ul ' . inputattrs($attributes) . '>', $column);
 		if (is_array($options)) {
 			$checked = '';
 			$alt = false;
-			$this->ui('<li class="hide-if-no-js"><input type="checkbox" name="select-all" id="'.$id.'-select-all" class="selectall-toggle" /><label for="'.$id.'-select-all"><strong>'.__('Select All','Shopp').'</strong></label></li>',$column);
+			$this->ui('<li class="hide-if-no-js"><input type="checkbox" name="select-all" id="'.$id.'-select-all" class="selectall-toggle" /><label for="'.$id.'-select-all"><strong>' . Shopp::__('Select All') . '</strong></label></li>', $column);
 			foreach ($options as $key => $l) {
 				$attrs = '';
-				$boxid = $id.'-'.sanitize_title_with_dashes($key);
+				$boxid = $id . '-' . sanitize_title_with_dashes($key);
 
 				if (in_array($key,(array)$selected)) $attrs .= ' checked="checked"';
 				if (in_array($key,(array)$disabled)) $attrs .= ' disabled="disabled"';
 				if (in_array($key,(array)$readonly)) $attrs .= ' readonly="readonly"';
 
-				$this->ui('<li'.($alt = !$alt?' class="odd"':'').'><input type="checkbox" name="settings['.$this->module.']['.$name.'][]" value="'.$key.'" id="'.$boxid.'"'.$attrs.' /><label for="'.$boxid.'">'.$l.'</label></li>',$column);
+				$this->ui('<li' . ($alt = !$alt ? ' class="odd"' : '') . '><input type="checkbox" name="settings[' . $this->module . '][' . $name . '][]" value="' . $key . '" id="' . $boxid . '"' . $attrs . ' /><label for="' . $boxid . '">' . $l . '</label></li>', $column);
 			}
 		}
-		$this->ui('</ul></div>',$column);
-		if (!empty($label)) $this->ui('<br /><label for="'.$id.'">'.$label.'</label>',$column);
-		$this->ui('</div>',$column);
+		$this->ui('</ul></div>', $column);
+		if ( ! empty($label) ) $this->ui('<br /><label for="' . $id . '">' . $label . '</label>', $column);
+		$this->ui('</div>', $column);
 
 	}
 
@@ -658,14 +658,14 @@ class ModuleSettingsUI {
 			'size' => 20,
 			'class' => ''
 		);
-		$attributes = array_merge($defaults,array_filter($attributes));
-		$attributes['id'] = "{$this->id}-".sanitize_title_with_dashes($attributes['name']);
+		$attributes = array_merge($defaults, array_filter($attributes));
+		$attributes['id'] = "{$this->id}-" . sanitize_title_with_dashes($attributes['name']);
 		extract($attributes);
 
 		$this->ui('<div>',$column);
-		$this->ui('<input type="'.$type.'" name="settings['.$this->module.']['.$name.']" id="'.$id.'"'.inputattrs($attributes).' />',$column);
-		if (!empty($label)) $this->ui('<br /><label for="'.$id.'">'.$label.'</label>',$column);
-		$this->ui('</div>',$column);
+		$this->ui('<input type="' . $type . '" name="settings[' . $this->module . '][' . $name . ']" id="' . $id . '"' . inputattrs($attributes) . ' />', $column);
+		if ( ! empty($label) ) $this->ui('<br /><label for="' . $id . '">' . $label . '</label>', $column);
+		$this->ui('</div>', $column);
 	}
 
 	/**
@@ -697,7 +697,7 @@ class ModuleSettingsUI {
 	 **/
 	public function password ( $column = 0, array $attributes = array() ) {
 		$attributes['type'] = 'password';
-		$this->input($column,$attributes);
+		$this->input($column, $attributes);
 	}
 
 	/**
@@ -761,20 +761,20 @@ class ModuleSettingsUI {
 	 **/
 	public function button ( $column = 0, array $attributes = array() ) {
 		$defaults = array(
-			'type' => 'button',
-			'label' => '',
-			'disabled' => false,
-			'content' =>__('Button','Shopp'),
-			'value' => '',
-			'class' => ''
+			'type'	    => 'button',
+			'label'	    => '',
+			'disabled'	=> false,
+			'content'	=> Shopp::__('Button'),
+			'value'	    => '',
+			'class'	    => ''
 		);
-		$attributes = array_merge($defaults,$attributes);
-		$attributes['id'] = "{$this->id}-".sanitize_title_with_dashes($attributes['name']);
-		$attributes['class'] = 'button-secondary'.('' == $attributes['class']?'':' '.$attributes['class']);
+		$attributes = array_merge($defaults, $attributes);
+		$attributes['id'] = "{$this->id}-" . sanitize_title_with_dashes($attributes['name']);
+		$attributes['class'] = 'button-secondary' . ('' == $attributes['class'] ? '' : ' ' . $attributes['class']);
 		extract($attributes);
 
-		$this->ui('<button type="'.$type.'" name="'.$name.'" id="'.$id.'"'.inputattrs($attributes).'>'.$content.'</button>',$column);
-		if (!empty($label)) $this->ui('<br /><label for="'.$id.'">'.$label.'</label>',$column);
+		$this->ui('<button type="' . $type . '" name="' . $name . '" id="' . $id . '"' . inputattrs($attributes) . '>' . $content . '</button>', $column);
+		if ( ! empty($label) ) $this->ui('<br /><label for="' . $id . '">' . $label . '</label>', $column);
 
 	}
 
@@ -791,24 +791,25 @@ class ModuleSettingsUI {
 	 **/
 	public function p ( $column = 0, array $attributes = array() ) {
 		$defaults = array(
-			'id' => '',
-			'label' => '',
-			'content' => '',
-			'class' => ''
+			'id'	    => '',
+			'label'	    => '',
+			'content'	=> '',
+			'class'	    => ''
 		);
-		$attributes = array_merge($defaults,$attributes);
-		if (!empty($attributes['id']))
-			$attributes['id'] = " id=\"{$this->id}-".sanitize_title_with_dashes($attributes['id'])."\"";
+		$attributes = array_merge($defaults, $attributes);
+
+		if ( ! empty($attributes['id']) )
+			$attributes['id'] = " id=\"{$this->id}-" . sanitize_title_with_dashes($attributes['id']) . "\"";
 		extract($attributes);
 
-		if (!empty($class)) $class = ' class="'.$class.'"';
+		if ( ! empty($class) ) $class = ' class="' . $class . '"';
 
-		if (!empty($label)) $label = '<p><label><strong>'.$label.'</strong></label></p>';
-		$this->ui('<div'.$id.$class.'>'.$label.$content.'</div>',$column);
+		if ( ! empty($label) ) $label = '<p><label><strong>' . $label . '</strong></label></p>';
+		$this->ui('<div' . $id . $class . '>' . $label . $content . '</div>', $column);
 	}
 
 	public function behaviors ($script) {
-		shopp_custom_script('shopp',$script);
+		shopp_custom_script('shopp', $script);
 	}
 
 } // END class ModuleSettingsUI
