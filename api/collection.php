@@ -23,7 +23,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 function shopp_register_collection ( $name = '' ) {
 
 	if ( empty($name) ) {
-		shopp_debug(__FUNCTION__ . " failed: Collection name required.");
+		shopp_debug(__FUNCTION__ . ' failed: Collection name required.');
 		return false;
 	}
 
@@ -33,7 +33,7 @@ function shopp_register_collection ( $name = '' ) {
 
 	$slugs = SmartCollection::slugs($name);
 	$slug = $slugs[0];
-	$Shopp->Collections[$slug] = $name;
+	$Shopp->Collections[ $slug ] = $name;
 
 	do_action('shopp_register_collection', $name, $slug);
 	$slugs = SmartCollection::slugs($name);
@@ -72,14 +72,14 @@ function shopp_register_collection ( $name = '' ) {
  * @return void
  **/
 function shopp_register_taxonomy ( $taxonomy, $args = array() ) {
-	$taxonomy = sanitize_key($taxonomy);
+	$taxonomy     = sanitize_key($taxonomy);
 	$rewrite_slug = $taxonomy;
-	$taxonomy = "shopp_$taxonomy";
+	$taxonomy     = "shopp_$taxonomy";
 	if ( isset($args['rewrite'] ) && isset($args['rewrite']['slug']) ) $rewrite_slug = $args['rewrite']['slug'];
 	if ( ! isset($args['rewrite']) ) $args['rewrite'] = array();
 
-	$args['rewrite']['slug'] = SHOPP_NAMESPACE_TAXONOMIES ? ShoppPages()->baseslug().'/'.$rewrite_slug : $rewrite_slug;
-	register_taxonomy($taxonomy, ShoppProduct::$posttype,$args);
+	$args['rewrite']['slug'] = SHOPP_NAMESPACE_TAXONOMIES ? ShoppPages()->baseslug() . '/' . $rewrite_slug : $rewrite_slug;
+	register_taxonomy($taxonomy, ShoppProduct::$posttype, $args);
 }
 
 /**
@@ -95,23 +95,23 @@ function shopp_register_taxonomy ( $taxonomy, $args = array() ) {
  **/
 function shopp_add_product_category ( $name = '', $description = '', $parent = false ) {
 	if ( empty($name) ) {
-		shopp_debug(__FUNCTION__ . " failed: Category name required.");
+		shopp_debug(__FUNCTION__ . ' failed: Category name required.');
 		return false;
 	}
 
 	$args = array();
 	$args['description'] = ( $description ? $description : '');
-	$args['parent'] = ( $parent ? $parent : 0 );
+	$args['parent']      = ( $parent ? $parent : 0 );
 
 	$term = wp_insert_term($name, ProductCategory::$taxon, $args);
 
 	if ( ! is_wp_error($term) && isset($term['term_id']) ) {
 		$hierarchy = _get_term_hierarchy(ProductCategory::$taxon);
-		if ( $parent && (! in_array($parent, array_keys($hierarchy)) || ! in_array($term['term_id'], $hierarchy[$parent]) ) ) {
+		if ( $parent && (! in_array($parent, array_keys($hierarchy)) || ! in_array($term['term_id'], $hierarchy[ $parent ])) ) {
 			// update hierarchy if necessary
-			if ( ! isset($hierarchy[$parent])) $hierarchy[$parent] = array();
-			$hierarchy[$parent][] = $term['term_id'];
-			update_option(ProductCategory::$taxon."_children", $hierarchy);
+			if ( ! isset($hierarchy[ $parent ])) $hierarchy[ $parent ] = array();
+			$hierarchy[ $parent ][] = $term['term_id'];
+			update_option(ProductCategory::$taxon . '_children', $hierarchy);
 		}
 
 		return $term['term_id'];
@@ -131,7 +131,7 @@ function shopp_add_product_category ( $name = '', $description = '', $parent = f
  **/
 function shopp_product_category ( $cat = false, $options = array() ) {
 	if ( ! $cat ) {
-		shopp_debug(__FUNCTION__ . " failed: Category id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Category id required.');
 		return false;
 	}
 
@@ -141,7 +141,7 @@ function shopp_product_category ( $cat = false, $options = array() ) {
 	$defaults = array(
 		'pagination' => false
 	);
-	$options = array_merge($defaults,$options);
+	$options = array_merge($defaults, $options);
 
 	$Cat->load($options);
 
@@ -159,7 +159,7 @@ function shopp_product_category ( $cat = false, $options = array() ) {
  **/
 function shopp_rmv_product_category ( $id = false ) {
 	if ( ! $id ) {
-		shopp_debug(__FUNCTION__ . " failed: Category id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Category id required.');
 		return false;
 	}
 	$Category = new ProductCategory($id);
@@ -180,7 +180,7 @@ function shopp_rmv_product_category ( $id = false ) {
  **/
 function shopp_product_tag ( $tag = false, $options = array() ) {
 	if ( ! $tag ) {
-		shopp_debug(__FUNCTION__ . " failed: Tag id or string required.");
+		shopp_debug(__FUNCTION__ . ' failed: Tag id or string required.');
 		return false;
 	}
 
@@ -207,10 +207,10 @@ function shopp_product_tag ( $tag = false, $options = array() ) {
  **/
 function shopp_add_product_tag ( $tag = '' ) {
 	if ( ! $tag  ) {
-		shopp_debug(__FUNCTION__ . " failed: Tag name required.");
+		shopp_debug(__FUNCTION__ . ' failed: Tag name required.');
 		return false;
 	}
-	$Tag = new ProductTag( array('name'=>$tag) );
+	$Tag       = new ProductTag( array('name' => $tag) );
 	$Tag->name = $tag;
 
 	if ( empty($Tag->id) ) $Tag->save();
@@ -229,7 +229,7 @@ function shopp_add_product_tag ( $tag = '' ) {
  **/
 function shopp_rmv_product_tag ( $tag = '' ) {
 	if ( ! $tag ) {
-		shopp_debug(__FUNCTION__ . " failed: Tag name or id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Tag name or id required.');
 		return false;
 	}
 
@@ -259,7 +259,7 @@ function shopp_add_product_term ( $term = '', $taxonomy = 'shopp_category', $par
 		return false;
 	}
 	if ( ! $term ) {
-		shopp_debug(__FUNCTION__ . " failed: term required.");
+		shopp_debug(__FUNCTION__ . ' failed: term required.');
 		return false;
 	}
 
@@ -269,10 +269,10 @@ function shopp_add_product_term ( $term = '', $taxonomy = 'shopp_category', $par
 
 	if ( is_array($term_array) && $term_array['term_id'] ) {
 		$hierarchy = _get_term_hierarchy($taxonomy);
-		if ( $parent && (! in_array($parent, array_keys($hierarchy)) || ! in_array($term_array['term_id'], $hierarchy[$parent]) ) ) {
+		if ( $parent && (! in_array($parent, array_keys($hierarchy)) || ! in_array($term_array['term_id'], $hierarchy[ $parent ]) ) ) {
 			// update hierarchy if necessary
-			if ( ! isset($hierarchy[$parent])) $hierarchy[$parent] = array();
-			$hierarchy[$parent][] = $term_array['term_id'];
+			if ( ! isset($hierarchy[ $parent ])) $hierarchy[ $parent ] = array();
+			$hierarchy[ $parent ][] = $term_array['term_id'];
 			update_option("{$taxonomy}_children", $hierarchy);
 		}
 
@@ -296,13 +296,13 @@ function shopp_product_term ( $term = false, $taxonomy = 'shopp_category', $opti
 	global $ShoppTaxonomies;
 
 	if ( ! $term ) {
-		shopp_debug(__FUNCTION__ . " failed: Term id required.");
+		shopp_debug(__FUNCTION__ . ' failed: Term id required.');
 		return false;
 	}
 
 
 	if ( in_array( $taxonomy, array_keys($ShoppTaxonomies) ) ) { // Shopp ProductTaxonomy class type
-		$Term = new $ShoppTaxonomies[$taxonomy]($term);
+		$Term = new $ShoppTaxonomies[ $taxonomy ]($term);
 	} else {
 		$term = term_exists( $term, $taxonomy );
 		if ( ! is_array($term) ) return false;
@@ -334,7 +334,7 @@ function shopp_rmv_product_term ( $term = '', $taxonomy = 'shopp_category' ) {
 		return false;
 	}
 	if ( ! $term ) {
-		shopp_debug(__FUNCTION__ . " failed: term required.");
+		shopp_debug(__FUNCTION__ . ' failed: term required.');
 		return false;
 	}
 
@@ -377,8 +377,8 @@ function shopp_product_categories ( $args = array() ) {
 	$categories = array();
 	foreach ( $terms as $term ) {
 		$Cat = new ProductCategory($term);
-		$categories[$Cat->{$index}] = $Cat;
-		if ( isset($load) ) $categories[$Cat->{$index}]->load($load);
+		$categories[ $Cat->{$index} ] = $Cat;
+		if ( isset($load) ) $categories[ $Cat->{$index} ]->load($load);
 	}
 	return $categories;
 }
@@ -418,8 +418,8 @@ function shopp_product_tags ( $args = array() ) {
 	$tags = array();
 	foreach ( $terms as $term ) {
 		$Tag = new ProductTag($term);
-		$tags[$Tag->{$index}] = $Tag;
-		if ( isset($load) ) $tags[$Tag->{$index}]->load($load);
+		$tags[ $Tag->{$index} ] = $Tag;
+		if ( isset($load) ) $tags[ $Tag->{$index} ]->load($load);
 	}
 
 	return $tags;
@@ -528,9 +528,9 @@ function shopp_term_products ( $term = false, $taxonomy = 'shopp_category', $opt
 	}
 
 	$Tax = new ProductTaxonomy();
-	$Tax->id = $term['term_id'];
+	$Tax->id               = $term['term_id'];
 	$Tax->term_taxonomy_id = $term['term_taxonomy_id'];
-	$Tax->taxonomy = $taxonomy;
+	$Tax->taxonomy         = $taxonomy;
 	$Tax->load( $options );
 
 	return ! empty($Tax->products) ? $Tax->products : array();
@@ -555,7 +555,7 @@ function shopp_catalog_count ( $status = 'publish' ) {
 		return $total;
 	}
 
-	if ( isset($counts[$status]) ) return $counts[$status];
+	if ( isset($counts[ $status ]) ) return $counts[ $status ];
 
 	return 0;
 }
