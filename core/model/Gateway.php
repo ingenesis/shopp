@@ -50,31 +50,31 @@ interface GatewayModule {
  **/
 abstract class GatewayFramework {
 
-	public $name = false;		// The proper name of the gateway
-	public $module = false;		// The module class name of the gateway
+	public $name      = false;		// The proper name of the gateway
+	public $module    = false;		// The module class name of the gateway
 
 	// Supported features
-	public $cards = false;		// A list of supported payment cards
-	public $authonly = false;	// Forces auth-only order processing
-	public $saleonly = false;	// Forces sale-only order processing
-	public $captures = false;	// Supports capture separate of authorization
-	public $recurring = false;	// Supports recurring billing
-	public $refunds = false;	// Remote refund support flag
+	public $cards     = false;		// A list of supported payment cards
+	public $authonly  = false;		// Forces auth-only order processing
+	public $saleonly  = false;		// Forces sale-only order processing
+	public $captures  = false;		// Supports capture separate of authorization
+	public $recurring = false;		// Supports recurring billing
+	public $refunds   = false;		// Remote refund support flag
 
 	// Config settings
-	public $secure = true;		// Flag for requiring encrypted checkout process
-	public $multi = false;		// Flag to enable a multi-instance gateway
+	public $secure = true;			// Flag for requiring encrypted checkout process
+	public $multi  = false;			// Flag to enable a multi-instance gateway
 
 	// Loaded settings
-	public $session = false;	// The current shopping session ID
-	public $Order = false;		// The current customer's Order
-	public $baseop = false; 	// Base of operation setting
-	public $currency = false;	// The base of operations currency code
-	public $precision = 2;		// Currency precision
-	public $decimals = '.';		// Default decimal separator
-	public $thousands = '';		// Default thousands separator
-	public $settings = array();	// List of settings for the module
-	public $codes = array(200);	// List of valid response codes
+	public $session   = false;		// The current shopping session ID
+	public $Order     = false;		// The current customer's Order
+	public $baseop    = false; 		// Base of operation setting
+	public $currency  = false;		// The base of operations currency code
+	public $precision = 2;			// Currency precision
+	public $decimals  = '.';		// Default decimal separator
+	public $thousands = '';			// Default thousands separator
+	public $settings  = array();	// List of settings for the module
+	public $codes     = array(200);	// List of valid response codes
 
 	/**
 	 * Setup the module for runtime
@@ -88,9 +88,9 @@ abstract class GatewayFramework {
 	 **/
 	public function __construct () {
 
-		$this->module = get_class($this);
+		$this->module  = get_class($this);
 		$this->session = ShoppShopping()->session;
-		$this->Order = ShoppOrder();
+		$this->Order   = ShoppOrder();
 
 		if ( 'ShoppFreeOrder' != $this->module ) { // There are no settings for ShoppFreeOrder
 			$this->settings = shopp_setting($this->module);
@@ -106,10 +106,10 @@ abstract class GatewayFramework {
 		}
 
 		if ( ! isset($this->settings['label']) && $this->cards )
-			$this->settings['label'] = __('Credit Card', 'Shopp');
+			$this->settings['label'] = Shopp::__('Credit Card');
 
-		$this->baseop = shopp_setting('base_operations');
-		$this->currency = $this->baseop['currency']['code'];
+		$this->baseop    = shopp_setting('base_operations');
+		$this->currency  = $this->baseop['currency']['code'];
 		$this->precision = $this->baseop['currency']['format']['precision'];
 
 		$this->_loadcards();
@@ -204,9 +204,9 @@ abstract class GatewayFramework {
 
 	public function captured ( $Order ) {
 		shopp_add_order_event($Order->id, 'captured', array(
-			'txnid' => $Order->txnid,				// Can be either the original transaction ID or an ID for this transaction
-			'amount' => $Order->total,				// Capture of entire order amount
-			'fees' => $Order->fees,					// Order Fees
+			'txnid'   => $Order->txnid,				// Can be either the original transaction ID or an ID for this transaction
+			'amount'  => $Order->total,				// Capture of entire order amount
+			'fees'    => $Order->fees,				// Order Fees
 			'gateway' => $Order->gateway			// Gateway handler name (module name from @subpackage)
 		));
 	}
@@ -231,39 +231,39 @@ abstract class GatewayFramework {
 		else $options = array();
 
 		$defaults = array(
-			'method' => 'POST',
-			'timeout' => SHOPP_GATEWAY_TIMEOUT,
+			'method'      => 'POST',
+			'timeout'     => SHOPP_GATEWAY_TIMEOUT,
 			'redirection' => 7,
 			'httpversion' => '1.0',
-			'user-agent' => SHOPP_GATEWAY_USERAGENT.'; '.get_bloginfo( 'url' ),
-			'blocking' => true,
-			'headers' => array(),
-			'cookies' => array(),
-			'body' => $data,
-			'compress' => false,
-			'decompress' => true,
-			'sslverify' => true,
+			'user-agent'  => SHOPP_GATEWAY_USERAGENT.'; '.get_bloginfo( 'url' ),
+			'blocking'    => true,
+			'headers'     => array(),
+			'cookies'     => array(),
+			'body'        => $data,
+			'compress'    => false,
+			'decompress'  => true,
+			'sslverify'   => true,
 		);
 		$params = array_merge($defaults, $options);
 
 		$connection = new WP_Http();
 		$result = $connection->request($url, $params);
 
-		if (is_wp_error($result)) {
+		if ( is_wp_error($result) ) {
 			$errors = array(); foreach ($result->errors as $errname => $msgs) $errors[] = join(' ',$msgs);
 			$errors = join(' ',$errors);
 
-			new ShoppError($this->name.": ".Lookup::errors('gateway','fail')." $errors ".Lookup::errors('contact','admin')." (WP_HTTP)",'gateway_comm_err',SHOPP_COMM_ERR);
+			new ShoppError($this->name.": " . Lookup::errors('gateway', 'fail') . " $errors " . Lookup::errors('contact', 'admin') . " (WP_HTTP)", 'gateway_comm_err', SHOPP_COMM_ERR);
 			return false;
-		} elseif (empty($result) || !isset($result['response'])) {
-			new ShoppError($this->name.": ".Lookup::errors('gateway','noresponse'),'gateway_comm_err',SHOPP_COMM_ERR);
+		} elseif ( empty($result) || !isset($result['response']) ) {
+			new ShoppError($this->name.": " . Lookup::errors('gateway', 'noresponse'), 'gateway_comm_err', SHOPP_COMM_ERR);
 			return false;
 		} else extract($result);
 
 		if ( ! in_array($response['code'], $this->codes) ) {
-			$error = Lookup::errors('gateway','http-'.$response['code']);
-			if (empty($error)) $error = Lookup::errors('gateway','http-unknown');
-			new ShoppError($this->name.": $error",'gateway_comm_err',SHOPP_COMM_ERR);
+			$error = Lookup::errors('gateway', 'http-' . $response['code']);
+			if ( empty($error) ) $error = Lookup::errors('gateway', 'http-unknown');
+			new ShoppError($this->name . ": $error", 'gateway_comm_err', SHOPP_COMM_ERR);
 			return false;
 		}
 
@@ -300,7 +300,7 @@ abstract class GatewayFramework {
 				foreach( $value as $item )
 					$query .= '<input type="hidden" name="' . $key . '[]" value="' . esc_attr($item) . '" />';
 			} else {
-				$query .= '<input type="hidden" name="'.$key.'" value="'.esc_attr($value).'" />';
+				$query .= '<input type="hidden" name="' . $key . '" value="' . esc_attr($value) . '" />';
 			}
 		}
 		return $query;
@@ -355,7 +355,7 @@ abstract class GatewayFramework {
 
 		$defaults = array(
 			'precision' => $this->precision,
-			'decimals' => $this->decimals,
+			'decimals'  => $this->decimals,
 			'thousands' => $this->thousands,
 		);
 		$format = array_merge($defaults, $format);
@@ -398,8 +398,8 @@ abstract class GatewayFramework {
 		// If not a partial refund, cancel the remaining balance
 		shopp_add_order_event($order, 'voided', array(
 			'txnorigin' => $Refunded->txnid,
-			'txnid' => '',
-			'gateway' => $this->module
+			'txnid'     => '',
+			'gateway'   => $this->module
 		));
 	}
 
@@ -477,9 +477,9 @@ class GatewayModules extends ModuleLoader {
 	protected $interface = 'GatewayModule';
 	protected $paths =  array(SHOPP_GATEWAYS, SHOPP_ADDONS);
 
-	public $selected = false;		// The chosen gateway to process the order
+	public $selected  = false;		// The chosen gateway to process the order
 	public $installed = array();
-	public $secure = false;			// SSL-required flag
+	public $secure    = false;		// SSL-required flag
 	public $freeorder = false;
 
 	/**
@@ -511,10 +511,10 @@ class GatewayModules extends ModuleLoader {
 	 * @return array List of module names for the activated modules
 	 **/
 	public function activated () {
-		$Shopp = Shopp::object();
+		$Shopp           = Shopp::object();
 		$this->activated = array();
-		$gateways = explode(',', shopp_setting('active_gateways'));
-		$modules = array_keys($this->modules);
+		$gateways        = explode(',', shopp_setting('active_gateways'));
+		$modules         = array_keys($this->modules);
 
 		foreach ( $gateways as $gateway ) {
 			$moduleclass = $this->moduleclass($gateway);
@@ -657,14 +657,14 @@ class GatewayModules extends ModuleLoader {
 
 class GatewaySettingsUI extends ModuleSettingsUI {
 
-	public $multi = false;
+	public $multi    = false;
 	public $instance = false;
 
 	public function __construct ($Module, $name) {
 		parent::__construct($Module, $name);
 		if ( $Module->multi ) {
 			$this->multi = true;
-			shopp_custom_script('payments', '$ps[\''.strtolower($Module->module).'\'] = ' . json_encode($Module->settings) . ";\n");
+			shopp_custom_script('payments', '$ps[\'' . strtolower($Module->module) . '\'] = ' . json_encode($Module->settings) . ";\n");
 		}
 	}
 
@@ -682,7 +682,7 @@ class GatewaySettingsUI extends ModuleSettingsUI {
 		$_[] = '<th scope="row" colspan="4">' . $this->name . '<input type="hidden" name="gateway" value="' . $this->module . $instance . '" /></th>';
 		$_[] = '</tr><tr>';
 		$_[] = '<td><input type="text" name="settings[' . $this->module . ']' . $instance . '[label]" value="' . $label . '" id="' . $this->id . '-label" size="16" class="selectall" /><br />';
-		$_[] = '<label for="' . $this->id . '-label">'.__('Option Name','Shopp').'</label></td>';
+		$_[] = '<label for="' . $this->id . '-label">' . Shopp::__('Option Name') . '</label></td>';
 
 		foreach ( $this->markup as $markup ) {
 			$_[] = '<td>';
@@ -694,8 +694,8 @@ class GatewaySettingsUI extends ModuleSettingsUI {
 		$_[] = '</tr><tr>';
 		$_[] = '<td colspan="4">';
 		$_[] = '<p class="textright">';
-		$_[] = '<a href="${cancel_href}" class="button-secondary cancel alignleft">'.__('Cancel','Shopp').'</a>';
-		$_[] = '<input type="submit" name="save" value="'.__('Save Changes','Shopp').'" class="button-primary" /></p>';
+		$_[] = '<a href="${cancel_href}" class="button-secondary cancel alignleft">' . __('Cancel') . '</a>';
+		$_[] = '<input type="submit" name="save" value="' . __('Save Changes') . '" class="button-primary" /></p>';
 		$_[] = '</td>';
 		$_[] = '</tr></table>';
 		$_[] = '</td></tr>';
@@ -736,7 +736,7 @@ class GatewaySettingsUI extends ModuleSettingsUI {
 	public function multifield ( &$attributes ) {
 		if ($this->multi) {
 			$attributes['value'] = '${'. $attributes['name']. '}';
-			$attributes['name'] = '${instance}]['. $attributes['name'];
+			$attributes['name']  = '${instance}]['. $attributes['name'];
 		}
 		return $attributes;
 	}
@@ -757,8 +757,8 @@ class GatewaySettingsUI extends ModuleSettingsUI {
  **/
 class ShoppFreeOrder extends GatewayFramework {
 
-	public $secure = false;	// SSL not required
-	public $refunds = true;	// Supports refunds
+	public $secure   = false;	// SSL not required
+	public $refunds  = true;	// Supports refunds
 	public $saleonly = true;
 
 	/**
@@ -771,7 +771,7 @@ class ShoppFreeOrder extends GatewayFramework {
 	 **/
 	public function __construct () {
 		parent::__construct();
-		$this->name = __('Free Order', 'Shopp');
+		$this->name = Shopp::__('Free Order');
 
 		add_action('shopp_freeorder_sale', array($this, 'capture'));
 		add_action('shopp_freeorder_refund', array($this, 'void'));
@@ -780,22 +780,22 @@ class ShoppFreeOrder extends GatewayFramework {
 
 	public function capture ( OrderEventMessage $Event ) {
 		shopp_add_order_event($Event->order, 'captured', array(
-			'txnid' => time(),
-			'fees' => 0,
-			'paymethod' => __('Free Order','Shopp'),
-			'paytype' => '',
-			'payid' => '',
-			'amount' => $Event->amount,
-			'gateway' => $this->module
+			'txnid'     => time(),
+			'fees'      => 0,
+			'paymethod' => Shopp::__('Free Order'),
+			'paytype'   => '',
+			'payid'     => '',
+			'amount'    => $Event->amount,
+			'gateway'   => $this->module
 		));
 	}
 
 	public function void ( OrderEventMessage $Event ) {
 		$Purchase = new ShoppPurchase($Event->order);
 		shopp_add_order_event($Purchase->id, 'voided', array(
-			'txnorigin' =>  $Purchase->txnid,	// Original transaction ID (txnid of original Purchase record)
-			'txnid' => time(),					// Transaction ID for the VOID event
-			'gateway' => $Event->gateway		// Gateway handler name (module name from @subpackage)
+			'txnorigin' => $Purchase->txnid,	// Original transaction ID (txnid of original Purchase record)
+			'txnid'     => time(),					// Transaction ID for the VOID event
+			'gateway'   => $Event->gateway		// Gateway handler name (module name from @subpackage)
 		));
 
 	}
@@ -822,11 +822,11 @@ class PayCard {
 	public $inputs = array();
 
 	public function __construct ( $name, $symbol, $pattern, $csc = false, $inputs = array() ) {
-		$this->name = $name;
-		$this->symbol = $symbol;
+		$this->name    = $name;
+		$this->symbol  = $symbol;
 		$this->pattern = $pattern;
-		$this->csc = $csc;
-		$this->inputs = $inputs;
+		$this->csc     = $csc;
+		$this->inputs  = $inputs;
 	}
 
 	public function validate ( $pan ) {
