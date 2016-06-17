@@ -24,11 +24,11 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 class ShoppDiscounts extends ListFramework {
 
-	private $removed = array(); // List of removed discounts
-	private $codes = array();	// List of applied codes
-	private $request = false;	// Current code request
-	private $credit = false;	// Credit request types
-	private $shipping = false;	// Track shipping discount changes
+	private $removed  	= array(); 	// List of removed discounts
+	private $codes 		= array();	// List of applied codes
+	private $request 	= false;	// Current code request
+	private $credit 	= false;	// Credit request types
+	private $shipping 	= false;	// Track shipping discount changes
 
 	/**
 	 * Calculate the discount amount
@@ -101,12 +101,12 @@ class ShoppDiscounts extends ListFramework {
 			// Cancel matching if max number of discounts reached
 			if ( $this->maxed($Promo) && ! $this->applied($Promo) ) continue;
 
-			$apply = false;
+			$apply   = false;
 			$matches = 0;
-			$total = 0;
+			$total   = 0;
 
 			// Match the promo rules against the cart properties
-			foreach ($Promo->rules as $index => $rule) {
+			foreach ( $Promo->rules as $index => $rule ) {
 				if ( 'item' === $index ) continue;
 
 				$total++; // Count the total 'non-item' rules
@@ -493,10 +493,10 @@ class ShoppDiscounts extends ListFramework {
 	 * @param string $code The code to check
 	 * @return boolean True if the code is valid, false otherwise
 	 **/
-	public function validcode( $code ) {
+	public function validcode ( $code ) {
 		$Promotions = ShoppOrder()->Promotions;
 
-		foreach($Promotions as $promo) {
+		foreach( $Promotions as $promo ) {
 			if( empty($promo->code) ) continue;
 			if( strtolower($code) == strtolower($promo->code) ) return true;
 		}
@@ -546,10 +546,10 @@ class ShoppDiscounts extends ListFramework {
  **/
 class ShoppDiscountRule {
 
-	private $promo = false;			// A reference to the originating promotion object
-	private $property = false;		// The rule property name
-	private $logic = false;			// The logical comparison operation to match with
-	private $value = false;			// The value to match
+	private $promo 		= false;		// A reference to the originating promotion object
+	private $property 	= false;		// The rule property name
+	private $logic 		= false;		// The logical comparison operation to match with
+	private $value 		= false;		// The value to match
 
 	/**
 	 * Constructs a ShoppDiscountRule
@@ -567,7 +567,7 @@ class ShoppDiscountRule {
 
 		// Populate the rule
 		foreach ( $rule as $name => $value ) {
-			if ( property_exists($this,$name) )
+			if ( property_exists($this, $name) )
 				$this->$name = $value;
 		}
 
@@ -619,13 +619,14 @@ class ShoppDiscountRule {
 			case 'discount amount':
 			case 'name':
 			case 'quantity':
+			case 'sku':
 			case 'tag name':
 			case 'total price':
 			case 'unit price':
 			case 'variant':
-			case 'variation':			return array($this, 'items');
+			case 'variation':		return array($this, 'items');
 
-			case 'promo code': 			return array($this, 'code');
+			case 'promo code':		return array($this, 'code');
 
 			case 'promo use count':		return $this->promo->uses;
 
@@ -635,7 +636,7 @@ class ShoppDiscountRule {
 			case 'subtotal amount':		return $Cart->total('order');
 			case 'customer type':		return ShoppOrder()->Customer->type;
 			case 'ship-to country':		return ShoppOrder()->Shipping->country;
-			default:					return apply_filters('shopp_discounts_subject_' . sanitize_key($property), false, $this->promo);
+			default:			return apply_filters('shopp_discounts_subject_' . sanitize_key($property), false, $this->promo);
 		}
 
 	}
@@ -705,14 +706,15 @@ class ShoppDiscountRule {
 			case 'any item name':		$subject = $Item->name; break;
 			case 'quantity':
 			case 'any item quantity':	$subject = (int) $Item->quantity; break;
-			case 'category':			$subject = (array) $Item->categories; break;
+			case 'category':		$subject = (array) $Item->categories; break;
 			case 'discount amount':		$subject = (float) $Item->discount; break;
-			case 'tag name':			$subject = (array) $Item->tags; break;
-			case 'unit price':			$subject = (float) $Item->unitprice; break;
+			case 'sku':			$subject = $Item->sku; break;
+			case 'tag name':		$subject = (array) $Item->tags; break;
+			case 'unit price':		$subject = (float) $Item->unitprice; break;
 			case 'variant':
-			case 'variation':			$subject = $Item->option->label; break;
-			case 'input name':			$subject = $Item->data; break;
-			case 'input value':			$subject = $Item->data; break;
+			case 'variation':		$subject = $Item->option->label; break;
+			case 'input name':		$subject = $Item->data; break;
+			case 'input value':		$subject = $Item->data; break;
 
 		}
 
@@ -731,8 +733,8 @@ class ShoppDiscountRule {
 	public function evaluate ( $subject ) {
 
 		$property = $this->property;
-		$op = strtolower($this->logic);
-		$value = $this->value;
+		$op       = strtolower($this->logic);
+		$value    = $this->value;
 
 		switch( $op ) {
 			// String or Numeric operations
@@ -750,19 +752,19 @@ class ShoppDiscountRule {
 			 	if ( isset(ShoppPromo::$values[ $property ]) && 'price' == ShoppPromo::$values[ $property ] )
 					$type = 'float';
 
-				return ! $this->isequalto($subject,$value,$type);
+				return ! $this->isequalto($subject, $value, $type);
 
 			// String operations
-			case 'contains':					return $this->contains($subject, $value);
+			case 'contains':				return $this->contains($subject, $value);
 			case 'does not contain':			return ! $this->contains($subject, $value);
 			case 'begins with': 				return $this->beginswith($subject, $value);
-			case 'ends with':					return $this->endswith($subject, $value);
+			case 'ends with':				return $this->endswith($subject, $value);
 
 			// Numeric operations
 			case 'is greater than':				return (Shopp::floatval($subject, false) >  Shopp::floatval($value, false));
-			case 'is greater than or equal to':	return (Shopp::floatval($subject, false) >= Shopp::floatval($value, false));
+			case 'is greater than or equal to':		return (Shopp::floatval($subject, false) >= Shopp::floatval($value, false));
 			case 'is less than':				return (Shopp::floatval($subject, false) <  Shopp::floatval($value, false));
-			case 'is less than or equal to':	return (Shopp::floatval($subject, false) <= Shopp::floatval($value, false));
+			case 'is less than or equal to':		return (Shopp::floatval($subject, false) <= Shopp::floatval($value, false));
 		}
 
 		return false;
@@ -811,7 +813,7 @@ class ShoppDiscountRule {
 			return false;
 		}
 
-		return ( false !== stripos($subject,$value) );
+		return ( false !== stripos($subject, $value) );
 	}
 
 	/**
@@ -832,7 +834,7 @@ class ShoppDiscountRule {
 			return false;
 		}
 
-		return 0 === stripos($subject,$value);
+		return 0 === stripos($subject, $value);
 
 	}
 
@@ -854,7 +856,7 @@ class ShoppDiscountRule {
 			return false;
 		}
 
-		return stripos($subject,$value) === strlen($subject) - strlen($value);
+		return stripos($subject, $value) === strlen($subject) - strlen($value);
 
 	}
 
@@ -874,25 +876,25 @@ class ShoppDiscountRule {
 class ShoppOrderDiscount {
 
 	// Discount types
-	const AMOUNT_OFF = 1;
-	const PERCENT_OFF = 2;
-	const SHIP_FREE = 4;
-	const BOGOF = 8;
-	const CREDIT = 16;
+	const AMOUNT_OFF 	= 1;
+	const PERCENT_OFF 	= 2;
+	const SHIP_FREE 	= 4;
+	const BOGOF 		= 8;
+	const CREDIT 		= 16;
 
 	// Discount targets
-	const ITEM = 1;
+	const ITEM 	= 1;
 	const ORDER = 2;
 
-	private $id = false;					// The originating promotion object id
-	private $name = '';						// The name of the promotion
-	private $amount = 0.00;					// The total amount of the discount
-	private $type = self::AMOUNT_OFF;		// The discount type
-	private $target = self::ORDER;			// The discount target
-	private $discount = false;				// The calculated discount amount
-	private $code = false;					// The code associated with the discount
-	private $shipfree = false;				// A flag for free shipping
-	private $items = array();				// A list of items the discount applies to
+	private $id 		= false;			// The originating promotion object id
+	private $name 		= '';				// The name of the promotion
+	private $amount 	= 0.00;				// The total amount of the discount
+	private $type 		= self::AMOUNT_OFF;		// The discount type
+	private $target 	= self::ORDER;			// The discount target
+	private $discount 	= false;			// The calculated discount amount
+	private $code 		= false;			// The code associated with the discount
+	private $shipfree 	= false;			// A flag for free shipping
+	private $items 		= array();			// A list of items the discount applies to
 
 	/**
 	 * Converts a ShoppOrderPromo object to a Discount object
@@ -1082,10 +1084,10 @@ class ShoppOrderDiscount {
 		if ( isset($type) ) {
 			switch ( strtolower($type) ) {
 				case 'percentage off':		$this->type = self::PERCENT_OFF; break;
-				case 'amount off':			$this->type = self::AMOUNT_OFF; break;
+				case 'amount off':		$this->type = self::AMOUNT_OFF; break;
 				case 'free shipping':		$this->type = self::SHIP_FREE; break;
 				case 'buy x get y free':	$this->type = self::BOGOF; break;
-				default:					if ( is_int($type) ) $this->type = $type;
+				default:			if ( is_int($type) ) $this->type = $type;
 			}
 		}
 
@@ -1232,25 +1234,25 @@ class ShoppOrderDiscount {
  **/
 class ShoppPurchaseDiscount {
 
-	public $id = false;								// The originating promotion object id
-	public $name = '';								// The name of the promotion
-	public $amount = 0.00;							// The total amount of the discount
-	public $type = ShoppOrderDiscount::AMOUNT_OFF;	// The discount type
-	public $target = ShoppOrderDiscount::ORDER;		// The discount target
-	public $discount = false;						// The calculated discount amount (float or array for BOGOFs)
-	public $code = false;							// The code associated with the discount
-	public $shipfree = false;						// A flag for free shipping
+	public $id 		= false;				// The originating promotion object id
+	public $name 		= '';					// The name of the promotion
+	public $amount 		= 0.00;					// The total amount of the discount
+	public $type 		= ShoppOrderDiscount::AMOUNT_OFF;	// The discount type
+	public $target 		= ShoppOrderDiscount::ORDER;		// The discount target
+	public $discount 	= false;				// The calculated discount amount (float or array for BOGOFs)
+	public $code 		= false;				// The code associated with the discount
+	public $shipfree 	= false;				// A flag for free shipping
 
 	public function __construct ( ShoppOrderDiscount $Discount ) {
 
-		$this->id = $Discount->id();
-		$this->name = $Discount->name();
-		$this->type = $Discount->type();
-		$this->target = $Discount->target();
+		$this->id 	= $Discount->id();
+		$this->name 	= $Discount->name();
+		$this->type 	= $Discount->type();
+		$this->target 	= $Discount->target();
 		$this->discount = $Discount->discount();
-		$this->code = $Discount->code();
+		$this->code 	= $Discount->code();
 		$this->shipfree = $Discount->shipfree();
-		$this->amount = $Discount->amount();
+		$this->amount 	= $Discount->amount();
 
 	}
 
@@ -1318,8 +1320,8 @@ class ShoppPromotions extends ListFramework {
 		$orderby = 'target DESC';
 
 		$queryargs = compact('table', 'where', 'orderby');
-		$query = sDB::select( $queryargs );
-		$loaded = sDB::query($query, 'array', array('ShoppPromotions', 'loader') );
+		$query     = sDB::select( $queryargs );
+		$loaded    = sDB::query($query, 'array', array('ShoppPromotions', 'loader') );
 
 		if ( ! $loaded || 0 == count($loaded) ) return;
 
