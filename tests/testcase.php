@@ -33,7 +33,11 @@ class ShoppTestCase extends WP_UnitTestCase {
 	}
 
 	function setUp() {
-		ini_set('display_errors', 1 );
+		// Ensure PHPUnit can read error messages properly
+		ini_set('error_reporting', E_ALL); // or error_reporting(E_ALL);
+		ini_set('display_errors', '1');
+		ini_set('display_startup_errors', '1');
+
 		// $this->factory = new WP_UnitTest_Factory;
 		// $this->clean_up_global_scope();
 		// $this->start_transaction();
@@ -145,6 +149,47 @@ class ShoppTestCase extends WP_UnitTestCase {
 	static function imgrequesthash ($id, $args) {
 		$Image = new ImageAsset( $id );
 		return call_user_func_array( array($Image, 'resizing'), $args );
+	}
+
+	/**
+	 * @param array $matcher
+	 * @param string $actual
+	 * @param bool $isHtml
+	 *
+	 * @return bool
+	 */
+	private static function tagMatch( $matcher, $actual, $isHtml = true ) {
+		$dom = Shopp_Tests_Util_XML::load( $actual, $isHtml );
+		$tags = Shopp_Tests_Util_XML::findNodes( $dom, $matcher, $isHtml );
+		return count( $tags ) > 0 && $tags[0] instanceof DOMNode;
+	}
+
+	/**
+	 * Note: we are overriding this method to remove the deprecated error
+	 * @see https://phabricator.wikimedia.org/T71505
+	 * @see https://github.com/sebastianbergmann/phpunit/issues/1292
+	 * @deprecated
+	 *
+	 * @param array $matcher
+	 * @param string $actual
+	 * @param string $message
+	 * @param bool $isHtml
+	 */
+	public static function assertTag( $matcher, $actual, $message = '', $isHtml = true ) {
+		self::assertTrue( self::tagMatch( $matcher, $actual, $isHtml ), $message );
+	}
+
+	/**
+	 * @see ShoppTestCase::assertTag
+	 * @deprecated
+	 *
+	 * @param array $matcher
+	 * @param string $actual
+	 * @param string $message
+	 * @param bool $isHtml
+	 */
+	public static function assertNotTag( $matcher, $actual, $message = '', $isHtml = true ) {
+		self::assertFalse( self::tagMatch( $matcher, $actual, $isHtml ), $message );
 	}
 
 } // end ShoppTestCase class

@@ -30,10 +30,12 @@ class TaxReport extends ShoppReportFramework implements ShoppReport {
 							UNIX_TIMESTAMP(o.created) as period,
 							COUNT(DISTINCT o.id) AS orders,
 							SUM(o.subtotal) as subtotal,
-							( SELECT SUM(IF(p.unittax > 0,p.total,0)) FROM $purchased_table AS p WHERE o.id = p.purchase ) AS taxable,
-							( SELECT AVG(p.unittax/p.unitprice) FROM $purchased_table AS p WHERE o.id = p.purchase ) AS rate,
-							SUM(o.tax) as tax
+							SUM(o.tax) as tax,
+							SUM(p1.taxable) as taxable,
+							AVG(p2.rate) as rate
 					FROM $orders_table AS o
+					LEFT JOIN (SELECT purchase, SUM(p.total) as taxable FROM $purchased_table AS p WHERE p.unittax > 0 GROUP BY purchase) p1 ON p1.purchase = o.id
+					LEFT JOIN (SELECT purchase, AVG(p.unittax/p.unitprice) as rate FROM $purchased_table AS p WHERE p.unittax > 0 GROUP BY purchase) p2 ON p2.purchase = o.id
 					WHERE $where
 					GROUP BY CONCAT($id)";
 

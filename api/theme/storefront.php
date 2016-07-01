@@ -596,7 +596,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			if ( empty($sectionterm) )                // If sectionterm option is not specified,
 				$sectionterm = ShoppCollection()->id; // use the current collection as target
 
-			if ( 0 == ShoppCollection()->parent )
+			if ( ! empty(ShoppCollection()->id) && 0 == ShoppCollection()->parent )
 				$childof = $sectionterm;
 			else {
 				$ancestors = get_ancestors($sectionterm, $options['taxonomy']);
@@ -655,14 +655,16 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		foreach ( $Shopp->Collections as $slug => $CollectionClass ) {
 			if ( ! get_class_property($CollectionClass, '_menu') ) continue;
 
+            // Stubs out a WP_Term compatible StdClass object
 			$Collection = new StdClass;
-		    $Collection->term_id = 0;
-		    $Collection->name = call_user_func(array($CollectionClass, 'name'));
-		    $Collection->slug = $slug;
-		    $Collection->term_group = 0;
-		    $Collection->taxonomy = get_class_property('SmartCollection','taxon');
-		    $Collection->description = '';
-		    $Collection->parent = 0;
+			$Collection->term_id = 0;
+			$Collection->name = call_user_func(array($CollectionClass, 'name'));
+			$Collection->slug = $slug;
+			$Collection->term_group = 0;
+			$Collection->taxonomy = get_class_property('SmartCollection','taxon');
+			$Collection->description = '';
+			$Collection->parent = 0;
+            $Collection->query_var = ''; //$Collection->taxonomy;
 			$collections[] = $Collection;
 		}
 
@@ -873,7 +875,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 	 * @return bool True if it is the catalog page, false otherwise
 	 **/
 	public static function is_catalog ( $result, $options, $O ) {
-		return is_catalog_page();
+		return is_shopp_catalog_page();
 	}
 
 	/**
@@ -1391,14 +1393,14 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		$tags = get_terms( ProductTag::$taxon, array( 'orderby' => 'count', 'order' => 'DESC', 'number' => $number) );
 
 		if ( empty($tags) ) return false;
-		
+
 		if ( ! empty($exclude) ) {
 			$excludes = explode(',', $exclude);
-			
+
 			foreach ( $tags as $key => $tag ) {
 				if ( in_array($tag->name, $excludes) )
 					unset($tags[ $key ]);
-			}	
+			}
 		}
 
 		$min = $max = false;
@@ -1725,10 +1727,9 @@ class ShoppCategoryWalker extends Walker {
 		extract($args);
 
 		$smartcollection = $category->taxonomy == get_class_property( 'SmartCollection', 'taxon');
-
 		$categoryname = $category->name;
 
-		$href = get_term_link($category);
+        $href = shopp($category, 'get-url');
 
 		$classes = '';
 		if ( 'list' == $args['style'] ) {

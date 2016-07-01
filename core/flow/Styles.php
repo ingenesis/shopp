@@ -82,9 +82,10 @@ class ShoppStyles extends WP_Styles {
 				$ver = hash('crc32b', "$this->concat_version");
 				$stylesheets = trim($this->concat, ', ');
 				$url = trailingslashit(SHOPP_PLUGINURI) . 'core/ui/styles/sp-styles.css';
-
+				$url = get_bloginfo('url');
+                
 				$href = add_query_arg(array(
-					'load' => $stylesheets,
+					'styles' => $stylesheets,
 					'c' => $zip,
 					'ver' => $ver,
 					'debug' => $debug

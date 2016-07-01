@@ -76,10 +76,14 @@ class ShoppScripts extends WP_Scripts {
 			$zip = 'gzip';
 
 		$debug = ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) ? '&debug=1' : '';
-
+        
+        
+        $resource = "sp-scripts.js";
+        $resource = "";
+        
 		if ( ! empty($this->concat) ) {
 			$ver = md5($this->concat_version);
-			$src = trailingslashit(get_bloginfo('url')) . "sp-scripts.js?load=" . trim($this->concat, ', ') . "&c={$zip}&ver=$ver" . $debug;
+			$src = trailingslashit(get_bloginfo('url')) . "$resource?scripts=" . trim($this->concat, ', ') . "&c={$zip}&ver=$ver" . $debug;
 			if ( is_ssl() ) $src = str_replace('http://', 'https://', $src);
 			echo "<script type='text/javascript' src='" . esc_attr($src) . "'></script>\n";
 		}
@@ -344,6 +348,9 @@ function shopp_default_script_settings () {
 		'pwdmm' => __('The passwords you entered do not match. They must match in order to confirm you are correctly entering the password you want to use.','Shopp'),
 		'chkbox' => __('%s must be checked before you can proceed.','Shopp')
 	));
+
+	// Address Helper
+	shopp_localize_script('address', '$shopp_address', array('country_no_postal_codes' => Lookup::country_no_postal_codes() ) );
 
 	// Checkout page settings & localization
 	shopp_localize_script('checkout', '$co', array(

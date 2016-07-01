@@ -186,13 +186,6 @@ class ShoppScreenCategories extends ShoppScreenController {
 
 	}
 
-
-	public function load_category ( $term, $taxonomy ) {
-		$Category = new ProductCategory();
-		$Category->populate($term);
-
-		return $Category;
-	}
 	/**
 	 * Interface processor for the category list manager
 	 *
@@ -458,17 +451,16 @@ class ShoppScreenCategoryEditor extends ShoppScreenController {
 	 * @return void
 	 **/
 	public function layout () {
-
+		
 		$Category = $this->Model;
 
-		new ShoppAdminCategorySaveBox($this->id, 'side', 'core', array('Category' => $Category));
-		new ShoppAdminCategorySettingsBox($this->id, 'side', 'core', array('Category' => $Category));
+		new ShoppAdminCategorySaveBox($this, 'side', 'core', array('Category' => $Category));
+		new ShoppAdminCategorySettingsBox($this, 'side', 'core', array('Category' => $Category));
 
-		new ShoppAdminCategoryImagesBox($this->id, 'normal', 'core', array('Category' => $Category));
-		new ShoppAdminCategoryTemplatesBox($this->id, 'normal', 'core', array('Category' => $Category));
+		new ShoppAdminCategoryImagesBox($this, 'normal', 'core', array('Category' => $Category));
+		new ShoppAdminCategoryTemplatesBox($this, 'normal', 'core', array('Category' => $Category));
 
 	}
-
 
 	public function categories () {
 		if ( ! current_user_can('shopp_categories') )
@@ -499,7 +491,7 @@ class ShoppScreenCategoryEditor extends ShoppScreenController {
 
 		$taxonomy = 'shopp_category';
 
-		$filters = array('hide_empty' => 0,'fields'=>'id=>parent');
+		$filters = array('hide_empty' => 0, 'fields' => 'id=>parent');
 		add_filter('get_shopp_category',array($this,'load_category'),10,2);
 
 		// $filters['limit'] = "$start,$per_page";
@@ -509,7 +501,7 @@ class ShoppScreenCategoryEditor extends ShoppScreenController {
 		$terms = get_terms( $taxonomy, $filters );
 		if (empty($s)) {
 			$children = _get_term_hierarchy($taxonomy);
-			ProductCategory::tree($taxonomy,$terms,$children,$count,$Categories,$paged,$per_page);
+			ProductCategory::tree($taxonomy, $terms, $children, $count, $Categories, $paged, $per_page);
 			$this->categories = $Categories;
 		} else {
 			foreach ($terms as $id => $parent)
@@ -520,6 +512,13 @@ class ShoppScreenCategoryEditor extends ShoppScreenController {
 		return $ids;
 	}
 
+	public function load_category ( $term, $taxonomy ) {
+		$Category = new ProductCategory();
+		$Category->populate($term);
+
+		return $Category;
+	}
+	
 	public function load () {
 
 		if ( $this->request('new') )

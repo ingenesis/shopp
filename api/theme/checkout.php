@@ -903,7 +903,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 			$defaults['rows'] = '3';
 		}
 		$op = array_merge($defaults, $options);
-		extract($op, $EXTR_SKIP);
+		extract($op, EXTR_SKIP);
 
 		// Allowed input types
 		$allowed_types = array('text', 'hidden', 'password', 'checkbox', 'radio', 'textarea', 'menu');
@@ -1006,9 +1006,12 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		extract($options);
 		$regions = Lookup::country_zones();
 
+        $DefaultPayment = $Payments->selected();
+        $payslug = isset($DefaultPayment->slug) ? $DefaultPayment->slug : '';
+        
 		$js = "var regions=" . json_encode($regions) . "," .
 				  "c_upd='" . $updating . "'," .
-				  "d_pm='" . $Payments->selected()->slug . "'," .
+				  "d_pm='" . $payslug . "'," .
 				  "pm_cards={};";
 
 		foreach ($Payments as $slug => $option) {

@@ -228,7 +228,9 @@ class OrderDevAPITests extends ShoppTestCase {
 	function test_shopp_rmv_order() {
 		$pid = shopp_last_order()->id;
 		$this->AssertTrue(shopp_rmv_order($pid));
-		$this->AssertFalse($pid == shopp_last_order()->id);
+        $LastOrder = shopp_last_order();
+        $lastid = isset($LastOrder->id) ? $LastOrder->id : false;
+		$this->AssertFalse($pid == $lastid);
 	}
 
 }

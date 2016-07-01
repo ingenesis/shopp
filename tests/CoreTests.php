@@ -610,6 +610,7 @@ class CoreTests extends ShoppTestCase {
 	}
 
 	public function test_is_robot() {
+		if ( ! isset($_SERVER['HTTP_USER_AGENT']) ) $_SERVER['HTTP_USER_AGENT'] = '';
 		$restore = $_SERVER['HTTP_USER_AGENT'];
 
 		$_SERVER['HTTP_USER_AGENT'] = '';

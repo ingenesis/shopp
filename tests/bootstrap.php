@@ -6,7 +6,7 @@
 
 // Test rig setup
 define('SHOPP_UNSUPPORTED', false);
-define('SHOPP_UNITTEST_DIR', dirname(__FILE__));
+define('SHOPP_UNITTEST_DIR', dirname(__FILE__) . '/');
 define('SHOPP_UNITTEST_CONFIG', SHOPP_UNITTEST_DIR.'/wp-tests-config.php');
 define('WP_TESTS_FORCE_KNOWN_BUGS', false);
 define('DISABLE_WP_CRON', true); // Stop HTTP requests during testing (which is in CLI mode)
@@ -24,8 +24,8 @@ if ( file_exists('PHPUnit/Autoload.php') )
 	require_once 'PHPUnit/Autoload.php';
 require_once SHOPP_UNITTEST_CONFIG;
 
-define('WP_UNITTEST_DIR', realpath(ABSPATH . '../includes'));
-define('DIR_TESTDATA', WP_UNITTEST_DIR . '/data');
+define('WP_UNITTEST_DIR', realpath(ABSPATH . '../tests/phpunit/includes') . '/');
+define('DIR_TESTDATA', WP_UNITTEST_DIR . 'data/');
 
 // Simulate the HTTP request (since we're actually in CLI mode here)
 $_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
@@ -33,7 +33,7 @@ $_SERVER['HTTP_HOST'] = WP_TESTS_DOMAIN;
 $PHP_SELF = $GLOBALS['PHP_SELF'] = $_SERVER['PHP_SELF'] = '/index.php';
 
 $multisite = (int) ( defined( 'WP_TESTS_MULTISITE') && WP_TESTS_MULTISITE );
-system( WP_PHP_BINARY . ' ' . escapeshellarg( WP_UNITTEST_DIR.'/install.php' ) . ' ' . escapeshellarg( SHOPP_UNITTEST_CONFIG ) . ' ' . $multisite );
+system( WP_PHP_BINARY . ' ' . escapeshellarg( WP_UNITTEST_DIR . 'install.php' ) . ' ' . escapeshellarg( SHOPP_UNITTEST_CONFIG ) . ' ' . $multisite );
 
 if ( $multisite ) {
 	echo "Running as multisite..." . PHP_EOL;
@@ -49,7 +49,7 @@ if ( $multisite ) {
 }
 unset( $multisite );
 
-require WP_UNITTEST_DIR . '/functions.php';
+require WP_UNITTEST_DIR . 'functions.php';
 
 // Preset WordPress options used to activate themes, plugins, as well as  other settings.
 $GLOBALS['wp_tests_options'] = array('active_plugins' => array( 'shopp/Shopp.php' ));
@@ -148,22 +148,25 @@ function shopp_tests_settings () {
 
 }
 
-tests_add_filter('plugins_loaded','shopp_tests_install');
+tests_add_filter('shopp_loaded', 'shopp_tests_install');
 tests_add_filter('shopp_loaded', 'shopp_tests_setup');
 tests_add_filter('shopp_loaded', 'shopp_tests_settings');
 
+// Shopp_Tests_Util_XML
+require 'Shopp_Tests_Util_XML.php';
+
 // Load WordPress
-require_once ABSPATH . '/wp-settings.php';
+require_once ABSPATH . 'wp-settings.php';
 
 // Delete any default posts & related data
 _delete_all_posts();
 
-require WP_UNITTEST_DIR . '/testcase.php';
-require WP_UNITTEST_DIR . '/testcase-xmlrpc.php';
-require WP_UNITTEST_DIR . '/testcase-ajax.php';
-require WP_UNITTEST_DIR . '/exceptions.php';
-require WP_UNITTEST_DIR . '/utils.php';
-require SHOPP_UNITTEST_DIR.'/testcase.php';
+require WP_UNITTEST_DIR . 'testcase.php';
+require WP_UNITTEST_DIR . 'testcase-xmlrpc.php';
+require WP_UNITTEST_DIR . 'testcase-ajax.php';
+require WP_UNITTEST_DIR . 'exceptions.php';
+require WP_UNITTEST_DIR . 'utils.php';
+require SHOPP_UNITTEST_DIR . 'testcase.php';
 
 ShoppTestCase::resetTables();
 

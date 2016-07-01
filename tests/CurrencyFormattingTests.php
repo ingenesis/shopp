@@ -26,8 +26,11 @@ class CurrencyFormatting extends ShoppTestCase {
 	static function setUpBeforeClass() {
 
 		$countries = Lookup::countries();
-		foreach ($countries as $code => $country)
-			self::$formats[$code] = Shopp::scan_money_format($country['currency']['format']);
+		foreach ( $countries as $code => $country ) {
+			$Locale = new ShoppLocale($code);
+			$Currency = $Locale->currency();
+			self::$formats[ $code ] = $Currency->settings();
+		}
 	}
 
 	static function tearDownAfterClass () {
@@ -40,7 +43,7 @@ class CurrencyFormatting extends ShoppTestCase {
 			// 0.0123456789	0.123456789		1.234			12.345			123.456			 12345.678			1234567.899
 			array('CA',		'$0.01',		'$0.12',		'$1.23',		'$12.35',		'$123.46',		'$12,345.68',		'$1,234,567.90'),
 			array('US',		'$0.01',		'$0.12',		'$1.23',		'$12.35',		'$123.46',		'$12,345.68',		'$1,234,567.90'),
-		  array('USAF',		'$0.01',		'$0.12',		'$1.23',		'$12.35',		'$123.46',		'$12,345.68',		'$1,234,567.90'),
+					  array('USAF',		'$0.01',		'$0.12',		'$1.23',		'$12.35',		'$123.46',		'$12,345.68',		'$1,234,567.90'),
 			array('GB',		'£0.01',		'£0.12',		'£1.23',		'£12.35',		'£123.46',		'£12,345.68',		'£1,234,567.90'),
 			// 'DZ'
 			array('AR',		'$0,01',		'$0,12',		'$1,23',		'$12,35',		'$123,46',		'$12.345,68',		'$1.234.567,90'),
@@ -187,8 +190,7 @@ class CurrencyFormatting extends ShoppTestCase {
 
 	function currency_assertions ($float,$expected,$code) {
 		$format = self::$formats[$code];
-
-		$formatted = money($float, $format);
+		$formatted = Shopp::money($float, $format);
 
 		$this->assertEquals($expected, $formatted, "Formatting floating point failed for country code $code");
 		$this->assertEquals($expected, money((string)$float, $format), "Formatting string failed for country code $code");

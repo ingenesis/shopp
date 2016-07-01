@@ -1,6 +1,4 @@
-<span class="float-right">
-[![build status](http://ci.shopp.net/projects/2/status.png?ref=master)](http://ci.shopp.net/projects/2?ref=master)
-</span>
+[![build status](https://api.travis-ci.org/ingenesis/shopp.svg)](https://travis-ci.org/ingenesis/shopp) [![code climate](https://d3s6mut3hikguw.cloudfront.net/github/ingenesis/shopp/badges/gpa.svg)](https://codeclimate.com/github/ingenesis/shopp/badges) [![code coverage](https://d3s6mut3hikguw.cloudfront.net/github/ingenesis/shopp/badges/coverage.svg)](https://codeclimate.com/github/ingenesis/shopp/badges)
 
 ![Shopp Logo](https://shopplugin.com/logo.png)
 

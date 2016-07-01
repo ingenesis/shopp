@@ -14,7 +14,7 @@
 ?></script>
 
 	<script id="countries-menu" type="text/x-jquery-tmpl"><?php
-		echo Shopp::menuoptions($this->countries, false, true);
+		echo Shopp::menuoptions($Table->countries, false, true);
 	?></script>
 
 <script id="conditional" type="text/x-jquery-tmpl">

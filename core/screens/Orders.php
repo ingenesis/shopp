@@ -32,7 +32,7 @@ class ShoppAdminOrders extends ShoppAdminController {
 	protected function route () {
 		if ( false !== strpos($this->request('page'), 'orders-new') )
 			return 'ShoppScreenOrderEntry';
-		elseif ( ! empty($this->request('id') ) )
+		elseif ( $this->request('id') )
 			return 'ShoppScreenOrderManager';
 		else return 'ShoppScreenOrders';
 	}
@@ -334,11 +334,11 @@ class ShoppOrdersTable extends ShoppAdminTable {
 
 		$offset = get_option( 'gmt_offset' ) * 3600;
 
-		if ( ! empty($this->request('start')) ) {
+		if ( $this->request('start') ) {
 			list($month, $day, $year) = explode("/", $this->request('start'));
 			$starts = mktime(0, 0, 0, $month, $day, $year);
 		}
-		if ( ! empty($this->request('end')) ) {
+		if ( $this->request('end') ) {
 			list($month, $day, $year) = explode("/", $this->request('end'));
 			$ends = mktime(23, 59, 59, $month, $day, $year);
 		}
@@ -481,8 +481,7 @@ class ShoppOrdersTable extends ShoppAdminTable {
 
 		$exports = array(
 			'tab' => Shopp::__('Tab-separated.txt'),
-			'csv' => Shopp::__('Comma-separated.csv'),
-			'xls' => Shopp::__('Microsoft&reg; Excel.xls'),
+			'csv' => Shopp::__('Comma-separated.csv'),			
 			'iif' => Shopp::__('Intuit&reg; QuickBooks.iif')
 		);
 
@@ -806,7 +805,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
 		if ( ! $Purchase->exists() ) return;
 
 		$totals = array();
-		if ( ! empty($this->form('totals')) )
+		if ( $this->form('totals') )
 			$totals = $this->form('totals');
 
 		$objects = array(
@@ -1790,7 +1789,8 @@ class ShoppAdminOrderBillingAddressBox extends ShoppAdminMetabox {
 
 	public function has_address() {
 		$Purchase = $this->Purchase;
-		return ! ( empty($Purchase->address . $Purchase->xaddress)
+		$address = $Purchase->address . $Purchase->xaddress;
+		return ! ( empty($address)
 				|| empty($Purchase->city)
 				|| empty($Purchase->postcode)
 				|| empty($Purchase->country)
@@ -1860,7 +1860,8 @@ class ShoppAdminOrderShippingAddressBox extends ShoppAdminOrderBillingAddressBox
 
 	public function has_address() {
 		$Purchase = $this->Purchase;
-		return ! ( empty($Purchase->shipaddress . $Purchase->shipxaddress)
+		$address = $Purchase->shipaddress . $Purchase->shipxaddress;
+		return ! ( empty($address)
 								|| empty($Purchase->shipcity)
 								|| empty($Purchase->shippostcode)
 								|| empty($Purchase->shipcountry)

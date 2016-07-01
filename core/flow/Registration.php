@@ -45,7 +45,7 @@ class ShoppRegistration extends ShoppFormPostFramework {
 
 		if ( empty($_POST) ) return;
 
-		$this->updateform();
+		$this->posted();
 
 		if ( ! self::submitted() ) return;
 

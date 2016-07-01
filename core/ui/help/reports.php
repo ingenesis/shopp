@@ -46,7 +46,6 @@ Reports can be exported in a variety of formats with any of the columns from the
 
 * Tab-separated.txt
 * Comma-separated.csv
-* Microsoft&copy; Excel.xls
 
 Click the **Export Options** button to select the columns you want to include in the report and choose the file format for the export file.
 

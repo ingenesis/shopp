@@ -15,7 +15,7 @@ class CustomerAPITests extends ShoppTestCase {
 		shopp_set_setting('account_system', 'wordpress');
 
 		$Shopp = Shopp::object();
-		$Shopp->Flow->Controller = new ShoppStorefront();
+		$Shopp->Flow->controller('ShoppStorefront');
 
 		// Create the WordPress account
 		$wpuser = wp_insert_user(array(

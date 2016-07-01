@@ -726,8 +726,8 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	 * @return string The referring page's URL
 	 **/
 	public static function referrer ( $result, $options, $O ) {
-		$Shopping = ShoppShopping();
-		$referrer = $Shopping->data->referrer;
+
+		$referrer = ShoppStorefront()->referrer;
 		if ( ! $referrer ) $referrer = shopp('catalog', 'url', 'return=1');
 		return $referrer;
 	}
@@ -840,10 +840,10 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		$postcode = ( Shopp::str_true($postcode) || $O->showpostcode );
 
 		$_ = '<div class="' . $class . '">';
-		if ( count($countries) > 1 ) {
+		if ( count($markets) > 1 ) {
 			$_ .= '<span>';
 			$_ .= '<select name="shipping[country]" id="shipping-country">';
-			$_ .= menuoptions($countries, $selected, true);
+			$_ .= menuoptions($markets, $selected, true);
 			$_ .= '</select>';
 			$_ .= '</span>';
 		} else {

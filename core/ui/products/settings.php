@@ -6,7 +6,7 @@
 	<p><input type="hidden" name="meta[excludetax]" value="off" /><input type="checkbox" name="meta[excludetax]" value="on" id="excludetax-setting" tabindex="18"  <?php if(isset($Product->meta['excludetax']) && Shopp::str_true($Product->meta['excludetax']->value)) echo 'checked="checked"'; ?> /> <label for="excludetax-setting"><?php _e('Exclude Taxes','Shopp'); ?></label></p>
 <?php endif; ?>
 
-<?php if ($Shopp->Shipping->realtime): ?>
+<?php if ($shiprealtime): ?>
 <p><input type="hidden" name="meta[packaging]" value="off" /><input type="checkbox" name="meta[packaging]" value="on" id="packaging-setting" tabindex="18"  <?php if(isset($Product->meta['packaging']) && $Product->meta['packaging']->value == "on") echo 'checked="checked"'; ?> /> <label for="packaging-setting"><?php _e('Separate Packaging','Shopp'); ?></label></p>
 <?php endif; ?>
 

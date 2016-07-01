@@ -6,7 +6,7 @@
 	<?php do_action('shopp_admin_notices'); ?>
 
 	<div id="ajax-response"></div>
-	<form name="category" id="category" action="<?php echo admin_url('admin.php'); ?>" method="post">
+	<form name="category" id="category" action="<?php echo esc_url($this->url()); ?>" method="post">
 		<?php wp_nonce_field('shopp-save-category'); ?>
 
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
@@ -43,14 +43,15 @@
 				<?php
 					$media_buttons = ( defined('SHOPP_EDITOR_MEDIA_BTNS') && SHOPP_EDITOR_MEDIA_BTNS );
 					wp_editor($Category->description, 'content', array( 'media_buttons' => $media_buttons ));
-					wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
 				?>
 				</div>
 
-			<?php
-			do_meta_boxes($this->id, 'normal', $Category);
-			do_meta_boxes($this->id, 'advanced', $Category);
-			?>
+				<div class="clear">&nbsp;</div>
+
+				<?php
+					do_meta_boxes($this->id, 'normal', $Category);
+					do_meta_boxes($this->id, 'advanced', $Category);
+				?>
 
 			</div>
 			</div>

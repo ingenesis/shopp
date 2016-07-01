@@ -507,7 +507,7 @@ abstract class ShippingFramework {
 		$target = array('region' => false, 'country' => false, 'area' => false, 'zone' => false, 'postcode' => false);
 
 		// Prepare address for comparison
-		$target['region'] = ShoppLookup::region($Address->country, int);
+		$target['region'] = ShoppLookup::region($Address->country, intval($Address->region));
 		$target['country'] = $Address->country;
 
 		if ( isset($Address->postcode) && ! empty($Address->postcode) ) {
@@ -550,7 +550,11 @@ abstract class ShippingFramework {
 				$rule['postcode'] = $rate['postcode'];
 			$match = array_intersect_key($target, $rule);
 
-			$d = array_diff($rule, $match);
+            // Find any differences between the rule and potential match target
+            // The potential match can have an array of country areas, 
+            // so we suppress datatype conversion warnings and match areas separately
+            // in the special case below.
+			$d = @array_diff($rule, $match);
 
 			// Use the rate if the destination rule is for anywhere
 			if ( '*' == $rule['region'] ) return $r;
@@ -1535,7 +1539,6 @@ class ShippingPackager implements ShippingPackagingInterface {
 			unset($this->_loop);
 			return false;
 		}
-		break;
 	}
 
 	/**

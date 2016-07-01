@@ -635,7 +635,7 @@ class ShoppDiscountRule {
 			case 'subtotal amount':		return $Cart->total('order');
 			case 'customer type':		return ShoppOrder()->Customer->type;
 			case 'ship-to country':		return ShoppOrder()->Shipping->country;
-			default:					return apply_filters('shopp_discounts_subject_' . sanitize_key($property), false);
+			default:					return apply_filters('shopp_discounts_subject_' . sanitize_key($property), false, $this->promo);
 		}
 
 	}
@@ -1061,7 +1061,7 @@ class ShoppOrderDiscount {
 	 * @param boolean $shipfree The setting for free shipping
 	 * @return boolean The free shipping status of the discount
 	 **/
-	public function shipfree ( boolean $shipfree = null ) {
+	public function shipfree ( $shipfree = null ) {
 		if ( isset($shipfree) ) {
 			$this->shipfree = $shipfree;
 			ShoppOrder()->Shiprates->free($shipfree);

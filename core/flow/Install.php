@@ -32,7 +32,7 @@ class ShoppInstallation extends ShoppFlowController {
 		add_action('shopp_setup', array($this, 'roles'));
 		add_action('shopp_setup', array($this, 'maintenance'));
 
-		$this->errors = array(
+		self::$errors = array(
 			'header' => __('Shopp Activation Error','Shopp'),
 			'intro' => __('Sorry! Shopp cannot be activated for this WordPress install.'),
 			'dbprivileges' => __('Shopp cannot be installed because the database privileges do not allow Shopp to create new tables.', 'Shopp'),
@@ -81,7 +81,7 @@ class ShoppInstallation extends ShoppFlowController {
 
 		shopp_set_setting('updates', false);
 
-		add_action('init', 'flush_rewrite_rules', 99);
+		flush_rewrite_rules();
 		return true;
 	}
 
@@ -216,8 +216,9 @@ class ShoppInstallation extends ShoppFlowController {
 		foreach ($tests as $testquery) {
 			$db = sDB::get();
 			sDB::query($testquery);
-			$error = mysql_error($db->dbh);
-			if (!empty($error)) $this->error('dbprivileges');
+			$error = $db->api->error();
+
+			if ( ! empty($error) ) $this->error('dbprivileges');
 		}
 
 		// Make sure dbDelta() is available
@@ -507,6 +508,7 @@ class ShoppInstallation extends ShoppFlowController {
 		sDB::query("INSERT INTO $meta_table (parent, context, type, name, value, numeral, sortorder, created, modified)
 							SELECT parent, context, 'image', 'processing', CONCAT_WS('::', id, name, value, size, properties, LENGTH(data)), '0', sortorder, created, modified FROM $asset_table WHERE datatype='image'");
 		$records = sDB::query("SELECT id, value FROM $meta_table WHERE type='image' AND name='processing'", 'array');
+
 		foreach ($records as $r) {
 			list($src, $name, $value, $size, $properties, $datasize) = explode("::", $r->value);
 			$p = unserialize($properties);
@@ -526,7 +528,8 @@ class ShoppInstallation extends ShoppFlowController {
 				$value->storage = "FSStorage";
 				$value->uri = $name;
 			}
-			$value = mysql_real_escape_string(serialize($value));
+
+			$value = sDB::escape( serialize($value) );
 			sDB::query("UPDATE $meta_table set name='original', value='$value' WHERE id=$r->id");
 		}
 
@@ -551,7 +554,7 @@ class ShoppInstallation extends ShoppFlowController {
 				$value->storage = "FSStorage";
 				$value->uri = $name;
 			}
-			$value = mysql_real_escape_string(serialize($value));
+			$value = sDB::escape( serialize($value) );
 			sDB::query("UPDATE $meta_table set name='$name', value='$value' WHERE id=$r->id");
 		}
 

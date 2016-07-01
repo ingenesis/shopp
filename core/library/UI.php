@@ -39,10 +39,12 @@ abstract class ShoppAdminMetabox extends ShoppRequestFormFramework {
 	public function __construct ( ShoppScreenController $Screen, $context, $priority, array $args = array() ) {
 		Shopping::restore('admin_notices', $this->notices);
 
-		$this->Screen = $Screen;
 		$this->references = $args;
+		$this->Screen = $Screen;
 
-		add_meta_box($this->id, $this->title() . self::help($this->id), array($this, 'box'), $Screen->id, $context, $priority, $args);
+		$screenid = isset($args['posttype']) ? $args['posttype'] : $Screen->id;
+
+		add_meta_box($this->id, $this->title() . self::help($this->id), array($this, 'box'), $screenid, $context, $priority, $args);
 
 		// Parse query request
 		if ( $this->query() ) {
@@ -309,19 +311,20 @@ class ShoppUI {
 
 class ShoppAdminListTable extends WP_List_Table {
 
+	public $screen;
 	public $_screen;
 	public $_columns;
 	public $_sortable;
 
 	public function __construct ( $screen, $columns = array()) {
 		if ( is_string( $screen ) )
-			$screen = convert_to_screen( $screen );
+			$this->screen = convert_to_screen( $screen );
 
-		$this->_screen = $screen;
+		$this->_screen = $this->screen;
 
 		if ( !empty( $columns ) ) {
 			$this->_columns = $columns;
-			add_filter( 'manage_' . $screen->id . '_columns', array( &$this, 'get_columns' ), 0 );
+			add_filter( 'manage_' . $this->screen->id . '_columns', array( $this, 'get_columns' ), 0 );
 		}
 
 	}
@@ -330,6 +333,9 @@ class ShoppAdminListTable extends WP_List_Table {
 		$columns = get_column_headers( $this->_screen );
 		$hidden = get_hidden_columns( $this->_screen );
 		$screen = get_current_screen();
+		$primary = method_exists($this, "get_primary_column_name")
+			? $this->get_primary_column_name()
+			: null;
 
 		$_sortable = apply_filters( "manage_{$screen->id}_sortable_columns", $this->get_sortable_columns() );
 
@@ -345,8 +351,7 @@ class ShoppAdminListTable extends WP_List_Table {
 			$sortable[$id] = $data;
 		}
 
-
-		return array( $columns, $hidden, $sortable );
+		return array( $columns, $hidden, $sortable, $primary );
 	}
 
 	public function get_columns() {

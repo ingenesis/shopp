@@ -280,6 +280,8 @@ class CartTotalsTests extends ShoppTestCase {
 	static function resetTests () {
 		ShoppOrder()->clear();
 
+		ShoppBaseLocale()->save('US', 'OH');
+
 		ShoppOrder()->Billing = new BillingAddress;
 		ShoppOrder()->Shipping = new ShippingAddress;
 
@@ -554,27 +556,7 @@ class CartTotalsTests extends ShoppTestCase {
 		$Product = shopp_product('uss-enterprise','slug');
 		$options = array('return' => true,'money'=>true,'wrap'=>false);
 
-		$baseop = array(
-			'name' => 'United Kingdom',
-			'currency' => array(
-				'code' => 'GBP',
-				'format' => array(
-					'cpos' => 1,
-					'currency' => '£',
-					'precision' => 2,
-					'decimals' => '.',
-					'thousands' => ',',
-					'grouping' => array('3')
-				)
-			),
-			'units' => 'metric',
-			'region' => 3,
-			'country' => 'GB',
-			'zone' => null,
-			'vat' => true
-		);
-
-		shopp_set_setting('base_operations', $baseop);
+		ShoppBaseLocale()->save('GB');
 		shopp_set_setting('tax_inclusive','on');
 
 		shopp_add_cart_product($Product->id, 1);
@@ -614,27 +596,7 @@ class CartTotalsTests extends ShoppTestCase {
 		$options = array('return' => true,'money'=>true,'wrap'=>false);
 		$Product = shopp_product('uss-enterprise','slug');
 
-		$baseop = array(
-			'name' => 'United Kingdom',
-			'currency' => array(
-				'code' => 'GBP',
-				'format' => array(
-					'cpos' => 1,
-					'currency' => '£',
-					'precision' => 2,
-					'decimals' => '.',
-					'thousands' => ',',
-					'grouping' => array('3')
-				)
-			),
-			'units' => 'metric',
-			'region' => 3,
-			'country' => 'GB',
-			'zone' => null,
-			'vat' => true
-		);
-
-		shopp_set_setting('base_operations', $baseop);
+		ShoppBaseLocale()->save('GB');
 		shopp_set_setting('tax_inclusive','on');
 		shopp_set_setting('tax_shipping','on');
 
@@ -676,27 +638,7 @@ class CartTotalsTests extends ShoppTestCase {
 		$options = array('return' => true,'money'=>true,'wrap'=>false);
 		$Product = shopp_product('uss-enterprise','slug');
 
-		$baseop = array(
-			'name' => 'United Kingdom',
-			'currency' => array(
-				'code' => 'GBP',
-				'format' => array(
-					'cpos' => 1,
-					'currency' => '£',
-					'precision' => 2,
-					'decimals' => '.',
-					'thousands' => ',',
-					'grouping' => array('3')
-				)
-			),
-			'units' => 'metric',
-			'region' => 3,
-			'country' => 'GB',
-			'zone' => null,
-			'vat' => true
-		);
-
-		shopp_set_setting('base_operations', $baseop);
+		ShoppBaseLocale()->save('GB');
 		shopp_set_setting('tax_inclusive','on');
 
 		shopp_add_cart_product($Product->id,1);
@@ -849,27 +791,7 @@ class CartTotalsTests extends ShoppTestCase {
 		$options = array('return' => true,'money'=>true,'wrap'=>false);
 		$Product = shopp_product('uss-enterprise','slug');
 
-		$baseop = array(
-			'name' => 'United Kingdom',
-			'currency' => array(
-				'code' => 'GBP',
-				'format' => array(
-					'cpos' => 1,
-					'currency' => '£',
-					'precision' => 2,
-					'decimals' => '.',
-					'thousands' => ',',
-					'grouping' => array('3')
-				)
-			),
-			'units' => 'metric',
-			'region' => 3,
-			'country' => 'GB',
-			'zone' => null,
-			'vat' => true
-		);
-
-		shopp_set_setting('base_operations', $baseop);
+		ShoppBaseLocale()->save('GB');
 		shopp_set_setting('tax_inclusive','on');
 
 		shopp_add_cart_product($Product->id,1);
@@ -909,27 +831,7 @@ class CartTotalsTests extends ShoppTestCase {
 		$options = array('return' => true,'money'=>true,'wrap'=>false);
 		$Product = shopp_product('uss-enterprise','slug');
 
-		$baseop = array(
-			'name' => 'United Kingdom',
-			'currency' => array(
-				'code' => 'GBP',
-				'format' => array(
-					'cpos' => 1,
-					'currency' => '£',
-					'precision' => 2,
-					'decimals' => '.',
-					'thousands' => ',',
-					'grouping' => array('3')
-				)
-			),
-			'units' => 'metric',
-			'region' => 3,
-			'country' => 'GB',
-			'zone' => null,
-			'vat' => true
-		);
-
-		shopp_set_setting('base_operations', $baseop);
+		ShoppBaseLocale()->save('GB');
 		shopp_set_setting('tax_inclusive','on');
 
 		shopp_add_cart_product($Product->id,1);

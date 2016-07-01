@@ -222,8 +222,9 @@ abstract class ModuleLoader {
 	 **/
 	public function activate ( $module ) {
 		$ModuleFile = $this->module($module);
-		$moduleclass = get_class($ModuleFile);
 		if ( false === $ModuleFile ) return false;
+
+		$moduleclass = get_class($ModuleFile);
 
 		if ( $ModuleFile->modified() ) {
 			unset($this->modules[ $module ], $this->active[ $module ]);
@@ -236,7 +237,8 @@ abstract class ModuleLoader {
 			$this->modules[ $module ] = $ModuleFile;
 		}
 
-		if ( isset($this->active[ $module ]) ) return;
+		if ( isset($this->active[ $module ]) )
+			return $this->active[ $module ];
 
 		ShoppLoader::add($module, $ModuleFile->file);
 		$Module = $ModuleFile->load();

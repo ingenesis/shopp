@@ -90,13 +90,16 @@ class StorageEngines extends ModuleLoader {
 	public function &get ( $module ) {
 		$false = false;
 
+		if ( empty($module) )
+			return $false;
+
 		if ( empty($this->active) )
 			$this->activate($module);
 
 		if ( ! isset($this->active[ $module ]) )
 			return $false;
 
-		return $this->active[$module];
+		return $this->active[ $module ];
 	}
 
 	/**

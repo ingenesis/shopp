@@ -22,17 +22,17 @@ Run sales, add new products, update inventory, ship orders. It’s all there, an
 
 E-commerce software shouldn’t tell you how to manage your business. You should be able tell your e-commerce software how you manage your business. Shopp lets you do just that. Create your own order processing labels and easily move orders through each step of the order fulfillment workflow either automatically or take control of it yourself.
 
-Export orders to accounting systems like Intuit® QuickBooks®, or to spreadsheets like Microsoft® Excel®. Shopp remembers your last export date so its easy to do ongoing exports on a regular basis.
+Export orders to accounting systems like Intuit® QuickBooks®, or to spreadsheets like Microsoft® Excel® and Google Sheets (using CSV format). Shopp remembers your last export date so its easy to do ongoing exports on a regular basis.
 
 = Safe & Sound =
 
 Your website will be in good hands (or bytes) running on Shopp. Our comprehensive security builds on the solid toolkit of WordPress to let the good guys in and keep bad guys out. We use all the tricks of the trade plus a few ideas of our own to protect your store and your customers.
 
-Shopp is so secure it passes PCI vulnerability scans every day and we can prove it! [See the McAfee SECURE seal on our website](https://www.mcafeesecure.com/RatingVerify?ref=shopplugin.net). 
+Shopp is so secure it passes PCI vulnerability scans every day and we can prove it! [See the McAfee SECURE seal on our website](https://www.mcafeesecure.com/RatingVerify?ref=shopplugin.net).
 
 = Wired for Performance =
 
-Engineered beyond the WordPress blogging architecture, Shopp goes to great lengths to deliver the best performance possible. 
+Engineered beyond the WordPress blogging architecture, Shopp goes to great lengths to deliver the best performance possible.
 
 Strategic use of custom database tables (for native decimal columns) improves load performance for catalogs of thousands, hundreds of thousands or even millions of products. A summary table is designed to build a transparent queriable cache of product pricing data to allow for simpler queries. Simpler queries means faster results. Faster results mean a snappy website!
 
@@ -106,7 +106,7 @@ At a minimum you should setup a **Base of Operations** location to setup Shopp t
 * Improved session handling
 * Fixed slow queries
 * Improved order management
-* Redesigned unit tests 
+* Redesigned unit tests
 * implemented continuous integration developement
 
 = 1.2 =
@@ -126,7 +126,7 @@ At a minimum you should setup a **Base of Operations** location to setup Shopp t
 * Redesigned shipping calculators
 * Query speed optimizations
 * DB record loader infrastructure
-* Auto-generate plain text email alternative 
+* Auto-generate plain text email alternative
 * Implemented unit tests
 
 = 1.1 =

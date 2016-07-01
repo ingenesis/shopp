@@ -58,9 +58,8 @@ Customers can be exported in a variety of formats with any number of customer da
 
 * Tab-separated.txt
 * Comma-separated.csv
-* Microsoft&copy; Excel.xls
 
-For Tab-separated, comma-separated and Microsoft® Excel file formats select the columns to include for each record in the export. Enable the Include column headings option to include column names in the first line of the export file.
+For Tab-separated and comma-separated file formats select the columns to include for each record in the export. Enable the Include column headings option to include column names in the first line of the export file.
 
 ### Continuous Periodic Exports
 

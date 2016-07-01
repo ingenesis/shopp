@@ -769,9 +769,9 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
 
-		if ( $O->_info_looping )
+		if ( isset($O->_info_looping) && $O->_info_looping )
 			$info = current($fields->meta);
-		elseif ( $name !== false && is_object($fields->named[ $name ]) )
+		elseif ( isset($fields->named[ $name ]) && is_object($fields->named[ $name ]) )
 			$info = $fields->named[ $name ];
 
 		switch ( strtolower($mode) ) {
@@ -1770,7 +1770,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		$options['address'] = self::valid_address($options['address']);
 		$Address = self::AddressObject($options['address']);
 		if ( ! property_exists($Address, $options['property']) ) $options['property'] = 'address';
-		$options['value'] = $Address->{$options['property']};
+		if ( ! isset($options['value']) ) $options['value'] = $Address->{$options['property']};
 		extract($options, EXTR_SKIP);
 
 		if ( 'value' == $mode ) return $value;
@@ -1799,7 +1799,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 		$options['address'] = self::valid_address($options['address']);
 		$Address = self::AddressObject($options['address']);
-		$options['value'] = $Address->country;
+		if ( ! isset($options['value']) ) $options['value'] = $Address->country;
 		$options['selected'] = $options['value'];
 		$options['id'] = "{$options['address']}-country";
 		extract($options, EXTR_SKIP);
@@ -1849,7 +1849,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 		$options['address'] = self::valid_address($options['address']);
 		$Address = self::AddressObject($options['address']);
-		$options['value'] = $Address->state;
+		if ( ! isset($options['value']) ) $options['value'] = $Address->state;
 		$options['selected'] = $options['value'];
 		$options['id'] = "{$options['address']}-state";
 		extract($options, EXTR_SKIP);

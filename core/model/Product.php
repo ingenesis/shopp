@@ -35,6 +35,7 @@ class ShoppProduct extends WPShoppObject {
 	public $max = array();
 	public $min = array();
 	public $sale = false;
+	public $featured = 'off';
 	public $outofstock = false;
 	public $excludetax = false;
 	public $variants = 'off';
@@ -1153,7 +1154,7 @@ class ShoppProduct extends WPShoppObject {
 		$this->save();
 
 		// Copy prices
-		foreach ($this->prices as $price) {
+		foreach ( $this->prices as $price ) {
 
 			$Price = new ShoppPrice();
 			$Price->copydata($price);
@@ -1164,11 +1165,14 @@ class ShoppProduct extends WPShoppObject {
 			$meta = array('donation','recurring','membership','dimensions');
 			$priceline['settings'] = array();
 			$settings = array();
-			foreach ($meta as $name)
-				if ( isset($price->$name) ) $settings[$name] = $price->$name;
+			foreach ( $meta as $name )
+				if ( isset($price->$name) ) $settings[ $name ] = $price->$name;
 
-			shopp_set_meta($Price->id,'price','settings',$settings);
-			shopp_set_meta($Price->id,'price','options',$price->options);
+            if ( ! empty($settings) )
+                shopp_set_meta($Price->id, 'price', 'settings', $settings);
+            
+            if ( isset($price->options) )
+                shopp_set_meta($Price->id, 'price', 'options', $price->options);
 
 		}
 
@@ -1189,7 +1193,7 @@ class ShoppProduct extends WPShoppObject {
 
 		$metadata = array('specs','images','settings','meta');
 		foreach ( $metadata as $metaset ) {
-			if ( ! is_array($this->$metaset) ) continue;
+			if ( ! isset($this->$metaset) || ! is_array($this->$metaset) ) continue;
 			foreach ( $this->$metaset as $metaobjects ) {
 				if ( ! is_array($metaobjects) ) $metaobjects = array($metaobjects);
 				foreach ( $metaobjects as $meta ) {
@@ -1278,7 +1282,7 @@ class ShoppProduct extends WPShoppObject {
 			if( function_exists('clean_post_cache') )
 				clean_post_cache($id);
 
-			wp_transition_post_status($status, $Product->status, $Post);
+			wp_transition_post_status($status, $Post->status, $Post);
 		}
 
 		return true;

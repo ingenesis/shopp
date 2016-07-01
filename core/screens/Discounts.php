@@ -146,9 +146,9 @@ class ShoppScreenDiscountEditor extends ShoppScreenController {
 
 		$Promotion = $this->Model;
 
-		new ShoppAdminDiscountSaveBox($this->id, 'side', 'core', array('Promotion' => $Promotion));
-		new ShoppAdminDiscountBox($this->id, 'normal', 'core', array('Promotion' => $Promotion));
-		new ShoppAdminDiscountRulesBox($this->id, 'normal', 'core', array('Promotion' => $Promotion));
+		new ShoppAdminDiscountSaveBox($this, 'side', 'core', array('Promotion' => $Promotion));
+		new ShoppAdminDiscountBox($this, 'normal', 'core', array('Promotion' => $Promotion));
+		new ShoppAdminDiscountRulesBox($this, 'normal', 'core', array('Promotion' => $Promotion));
 
 	}
 

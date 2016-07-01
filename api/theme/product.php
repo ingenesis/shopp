@@ -1116,7 +1116,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	public static function image ( $result, $options, $O ) {
 		$loadset = array('images', 'coverimages');
 		if ( empty($options['load']) || ! in_array($options['load'], $loadset) )
-			$options['load'] = $loading[0];
+			$options['load'] = $loadset[0];
 
 		// Load images if no images are loaded or we're loading all images after the coverimage was loaded
 		if ( empty($O->images) || 'images' == $options['load'] )
@@ -2077,7 +2077,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			$_[] = $variation->recurring['trialperiod'];
 
 		if ( array_key_exists('weight', $options) )
-			$_[] = round($variation->weight, 3) . ($weightunit ? " $weightunit" : false);
+			$_[] = round($variation->dimensions['weight'], 3) . ($weightunit ? " $weightunit" : false);
 
 		if ( array_key_exists('shipfee', $options) ) {
 			$shipfee = Shopp::roundprice($variation->shipfee);

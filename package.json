@@ -1,0 +1,22 @@
+{
+  "name": "shopp",
+  "version": "1.4.0",
+  "description": "An ecommerce framework for WordPress.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ingenesis/shopp.git"
+  },
+  "author": "Ingenesis Limited",
+  "bugs": {
+    "url": "https://github.com/ingenesis/shopp/issues"
+  },
+  "homepage": "https://github.com/ingenesis/shopp",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-cached": "^1.1.0",
+    "gulp-notify": "^2.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.3",
+    "gulp-util": "^3.0.7"
+  }
+}

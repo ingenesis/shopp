@@ -12,7 +12,7 @@
  * @since 1.4
  **/
 
-$load = isset($_GET['load']) ? $_GET['load'] : '';
+$load = isset($_GET['styles']) ? $_GET['styles'] : '';
 $load = preg_replace( '/[^a-z0-9,_-]+/i', '', $load );
 $load = (array) explode(',', $load);
 
@@ -36,6 +36,9 @@ foreach( $load as $handle ) {
 	$out .= @file_get_contents($path) . "\n";
 
 }
+
+$out = str_replace('shopp-icons.', set_url_scheme(plugins_url()) . "/$directory/core/ui/styles/shopp-icons.", $out);
+$out = str_replace('../icons/', set_url_scheme(plugins_url()) . "/$directory/core/ui/icons/", $out);
 
 header('Content-Type: text/css; charset=UTF-8');
 header('Expires: ' . gmdate( "D, d M Y H:i:s", time() + $expires_offset ) . ' GMT');

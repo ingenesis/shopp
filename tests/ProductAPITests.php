@@ -21,7 +21,7 @@ class ProductAPITests extends ShoppTestCase {
 		// $this->_set_setting('taxrates',shopp_setting('taxrates'));
 
 		$Shopp = Shopp::object();
-		$Shopp->Flow->Controller = new ShoppStorefront();
+		$Shopp->Flow->controller('ShoppStorefront');
 
 		self::$category = $Uniforms = shopp_add_product_category('Uniforms');
 		$CommandDivision = shopp_add_product_category('Command Division', '', $Uniforms);
@@ -441,6 +441,7 @@ class ProductAPITests extends ShoppTestCase {
 
 		while( shopp('product','variations') ) {
 			$Price = current($Product->prices);
+
 			$this->assertEquals($Price->id, shopp('product.get-variation','id'));
 			$this->assertEquals($Price->label, shopp('product.get-variation','label'));
 			$this->assertEquals($Price->type, shopp('product.get-variation','type'));
@@ -448,7 +449,7 @@ class ProductAPITests extends ShoppTestCase {
 			$this->assertEquals(money($Price->price), shopp('product.get-variation','price'));
 			$this->assertEquals(money($Price->saleprice), shopp('product.get-variation','saleprice'));
 			$this->assertEquals($Price->stock, shopp('product.get-variation','stock'));
-			$this->assertEquals(floatval($Price->weight), shopp('product.get-variation','weight'));
+			$this->assertEquals(floatval($Price->dimensions['weight']), shopp('product.get-variation','weight'));
 			$this->assertEquals(money($Price->shipfee), shopp('product.get-variation','shipfee'));
 			$this->assertEquals(str_true($Price->sale), shopp('product.get-variation','sale'));
 			$this->assertEquals(str_true($Price->shipping), shopp('product.get-variation','shipping'));

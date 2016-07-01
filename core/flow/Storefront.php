@@ -339,14 +339,13 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @return void
 	 **/
 	public function trackurl ( WP $wp ) {
-
-		if ( ! is_catalog_page() ) return;
+		
+		if ( ! is_shopp_catalog_page() || is_shopp_cart_page() ) return;
 
 		 // Track referrer for the cart referrer URL
-		$referrer = get_bloginfo('url') . '/' . $wp->request;
-		if ( ! empty($_GET) ) $referrer = add_query_arg($_GET, $referrer);
-		$this->referrer = user_trailingslashit($referrer);
+		$referrer = get_bloginfo('url') . $_SERVER['REQUEST_URI'];
 
+		$this->referrer = user_trailingslashit($referrer);
 	}
 
 	/**
@@ -608,7 +607,7 @@ class ShoppStorefront extends ShoppFlowController {
 			shopp_enqueue_script('shopp');
 			shopp_enqueue_script('catalog');
 			shopp_enqueue_script('cart');
-			if ( is_catalog_page() )
+			if ( is_shopp_catalog_page() )
 				shopp_custom_script('catalog', "var pricetags = {};\n" );
 		}
 
@@ -921,21 +920,26 @@ class ShoppStorefront extends ShoppFlowController {
 		// Add dashboard page specific handlers
 		add_action( 'shopp_account_management', array($this, 'dashboard_handler') );
 
-		$query = $_SERVER['QUERY_STRING'];
-		$query = html_entity_decode($query);
-		$query = explode('&', $query);
-
 		$request = 'menu';
 		$id = false;
 
-		foreach ( $query as $queryvar ) {
-			$value = false;
-			if ( false !== strpos($queryvar, '=') ) list($key, $value) = explode('=', $queryvar);
-			else $key = $queryvar;
+		$query = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : false;
 
-			if ( in_array($key, array_keys($this->dashboard)) ) {
-				$request = $key;
-				$id = $value;
+		if ( $query !== false ) {
+			$query = html_entity_decode($query);
+			$query = array_filter( explode('&', $query) ); // filter out empty arrays
+
+			if ( is_array($query) ) {
+				foreach ( $query as $queryvar ) {
+					$value = false;
+					if ( false !== strpos($queryvar, '=') ) list($key, $value) = explode('=', $queryvar);
+					else $key = $queryvar;
+
+					if ( in_array($key, array_keys($this->dashboard)) ) {
+						$request = $key;
+						$id = $value;
+					}
+				}
 			}
 		}
 

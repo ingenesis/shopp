@@ -60,10 +60,9 @@ Orders can be exported in a variety of formats with any number of order data col
 
 * Tab-separated.txt
 * Comma-separated.csv
-* Microsoft&copy; Excel.xls
 * Intuit&copy; QuickBooks.iif
 
-For Tab-separated, comma-separated and Microsoft® Excel file formats select the columns to include for each record in the export. Enable the Include column headings option to include column names in the first line of the export file.
+For Tab-separated and comma-separated file formats select the columns to include for each record in the export. Enable the Include column headings option to include column names in the first line of the export file.
 
 When exporting to QuickBooks IIF format, enter the name of the QuickBooks account sales transactions should be recorded to. The name must match exactly the name of the appropriate QuickBooks account.
 

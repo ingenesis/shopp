@@ -108,7 +108,7 @@ class AssetDevAPITests extends ShoppTestCase {
 		$product = self::$product;
 
 		foreach ( self::$files as $file ) {
-			$this->assets[$type][$file] = shopp_add_product_image ( $product, $file );
+			self::$assets[$type][$file] = shopp_add_product_image ( $product, $file );
 		}
 		$this->assertTrue( ! empty(self::$assets[$type]) );
 		$assets = self::$assets[$type];

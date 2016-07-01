@@ -58,14 +58,15 @@
 					wp_editor($Product->description, 'content', array( 'media_buttons' => $media_buttons ));
 				?>
 				</div>
-			<?php
-			do_meta_boxes(get_current_screen()->id, 'normal', $Product);
-			do_meta_boxes(get_current_screen()->id, 'advanced', $Product);
+				<?php
 
-			do_meta_boxes($post_type, 'normal', $Product);
-			do_meta_boxes($post_type, 'advanced', $Product);
+					do_meta_boxes(get_current_screen()->id, 'normal', $Product);
+					do_meta_boxes(get_current_screen()->id, 'advanced', $Product);
 
-			?>
+					do_meta_boxes($post_type, 'normal', $Product);
+					do_meta_boxes($post_type, 'advanced', $Product);
+
+				?>
 			</div>
 			</div>
 			<div class="clear">&nbsp;</div>

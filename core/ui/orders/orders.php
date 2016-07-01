@@ -12,7 +12,7 @@
 	<form action="<?php echo esc_url($this->url()); ?>" id="orders" method="get">
 
 	<input type="hidden" name="page" value="<?php echo $this->request('page'); ?>" />
-<?php if ( ! empty($this->request('status')) ): ?>
+<?php if ( $this->request('status') ): ?>
 	<input type="hidden" name="status" value="<?php echo $this->request('status'); ?>" />
 	<?php endif; ?>
 

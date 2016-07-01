@@ -435,6 +435,7 @@ class PackagingTests extends ShoppTestCase {
 		$pkgs = array();
 		while ( $this->packer->packages() ) {
 			$pkgs[] = $p = $this->packer->package();
+            $items = $p->contents();
 			// echo "Package ".count($pkgs).":\nItems:\n";
 			// foreach ( $p->contents() as $item ) {
 			// 	echo "Item '$item->name' QTY($item->quantity) - Each wt: $item->weight h: $item->height w: $item->width l: $item->length val: $item->unitprice\n";
@@ -446,8 +447,8 @@ class PackagingTests extends ShoppTestCase {
 			$pc = count($pkgs);
 			switch ( $pc ) {
 				case 1:
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					// first 6 of 8 will fit in one package
 					$this->AssertEquals('Packager Test Product 2', $item->parentItem()->name);
 					$this->AssertEquals(7, $item->quantity);
@@ -459,14 +460,14 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 294, $p->value());
 					break;
 				case 2:
-					$this->AssertEquals( 2, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 2, count($items));
+					$item = reset($items);
 					// last 2 of 8 will fit
 					$this->AssertEquals('Packager Test Product 2', $item->parentItem()->name);
 					$this->AssertEquals(2, $item->quantity);
 
 					// first 2 of 6 will fit
-					$item = next($p->contents());
+					$item = next($items);
 					$this->AssertEquals('Packager Test Product 3', $item->parentItem()->name);
 					$this->AssertEquals(3, $item->quantity);
 
@@ -477,8 +478,8 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 210, $p->value());
 					break;
 				case 3:
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					// last 4 of 6 will fit
 					$this->AssertEquals('Packager Test Product 3', $item->parentItem()->name);
 					$this->AssertEquals(4, $item->quantity);
@@ -494,8 +495,8 @@ class PackagingTests extends ShoppTestCase {
 				case 6:
 				case 7:
 				// last 4 of 4 all require individual package due to weight
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					$this->AssertEquals('Packager Test Product 4', $item->parentItem()->name);
 					$this->AssertEquals(1, $item->quantity);
 
@@ -541,6 +542,7 @@ class PackagingTests extends ShoppTestCase {
 		$pkgs = array();
 		while ( $this->packer->packages() ) {
 			$pkgs[] = $p = $this->packer->package();
+            $items = $p->contents();
 			// echo "Package ".count($pkgs).":\nItems:\n";
 			// foreach ( $p->contents() as $item ) {
 			// 	echo "Item '$item->name' QTY($item->quantity) - Each wt: $item->weight h: $item->height w: $item->width l: $item->length val: $item->unitprice\n";
@@ -554,7 +556,7 @@ class PackagingTests extends ShoppTestCase {
 				case 1:
 				case 2:
 				case 3:
-					$this->AssertEquals( 1, count($p->contents()));
+					$this->AssertEquals( 1, count($items));
 					$this->AssertEquals( 1, $p->weight());
 					$this->AssertEquals( 1, $p->width());
 					$this->AssertEquals( 1, $p->length());
@@ -562,8 +564,8 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 41, $p->value());
 					break;
 				case 4:
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					// first 6 of 8 will fit in one package
 					$this->AssertEquals('Packager Test Product 2', $item->parentItem()->name);
 					$this->AssertEquals(6, $item->quantity);
@@ -575,14 +577,14 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 252, $p->value());
 					break;
 				case 5:
-					$this->AssertEquals( 2, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 2, count($items));
+					$item = reset($items);
 					// last 2 of 8 will fit
 					$this->AssertEquals('Packager Test Product 2', $item->parentItem()->name);
 					$this->AssertEquals(2, $item->quantity);
 
 					// first 2 of 6 will fit
-					$item = next($p->contents());
+					$item = next($items);
 					$this->AssertEquals('Packager Test Product 3', $item->parentItem()->name);
 					$this->AssertEquals(2, $item->quantity);
 
@@ -593,8 +595,8 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 168, $p->value());
 					break;
 				case 6:
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					// last 4 of 6 will fit
 					$this->AssertEquals('Packager Test Product 3', $item->parentItem()->name);
 					$this->AssertEquals(4, $item->quantity);
@@ -618,8 +620,8 @@ class PackagingTests extends ShoppTestCase {
 				case 17:
 				case 18:
 				// last 12 of 12 all require individual package due to weight
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					$this->AssertEquals('Packager Test Product 4', $item->parentItem()->name);
 					$this->AssertEquals(1, $item->quantity);
 
@@ -640,7 +642,7 @@ class PackagingTests extends ShoppTestCase {
 		// echo "\n".__FUNCTION__." Tests:\n----------------------\n";
 
 		$products = self::$products;
-		$quantites = array(3, 8, 6, 12);
+		$quantities = array(3, 8, 6, 12);
 		$items = array();
 		foreach ( $products as $i => $product ) {
 			$Item = new Item($products[$i], false);
@@ -664,6 +666,7 @@ class PackagingTests extends ShoppTestCase {
 		$pkgs = array();
 		while ( $this->packer->packages() ) {
 			$pkgs[] = $p = $this->packer->package();
+            $items = $p->contents();
 			// echo "Package ".count($pkgs).":\nItems:\n";
 			// foreach ( $p->contents() as $item ) {
 			// 	echo "Item '$item->name' QTY($item->quantity) - Each wt: $item->weight h: $item->height w: $item->width l: $item->length val: $item->unitprice\n\n";
@@ -677,7 +680,7 @@ class PackagingTests extends ShoppTestCase {
 				case 1:
 				case 2:
 				case 3:
-					$this->AssertEquals( 1, count($p->contents()));
+					$this->AssertEquals( 1, count($items));
 					$this->AssertEquals( 1, $p->weight());
 					$this->AssertEquals( 1, $p->width());
 					$this->AssertEquals( 1, $p->length());
@@ -685,8 +688,8 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 41, $p->value());
 					break;
 				case 4:
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					// all 8 of 8 will fit in one package
 					$this->AssertEquals('Packager Test Product 2', $item->parentItem()->name);
 					$this->AssertEquals(8, $item->quantity);
@@ -698,8 +701,8 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 336, $p->value());
 					break;
 				case 5:
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					// all 6 of 6 will fit in one package
 					$this->AssertEquals('Packager Test Product 3', $item->parentItem()->name);
 					$this->AssertEquals(6, $item->quantity);
@@ -717,8 +720,8 @@ class PackagingTests extends ShoppTestCase {
 				case 10:
 				case 11:
 				// last 12 will only fit 2 in each package
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					$this->AssertEquals('Packager Test Product 4', $item->parentItem()->name);
 					$this->AssertEquals(2, $item->quantity);
 
@@ -879,7 +882,8 @@ class PackagingTests extends ShoppTestCase {
 		$pkgs = array();
 		while ( $this->packer->packages() ) {
 			$pkgs[] = $p = $this->packer->package();
-
+            $items = $p->contents();
+            
 			// Debugging code
 			// echo "Package ".count($pkgs). sprintf(
 			// 	"- dims (%d W x %d L x %d H)\tWght: %d\tVal: \$ %d\n\n",
@@ -898,7 +902,7 @@ class PackagingTests extends ShoppTestCase {
 				case 1:
 				case 2:
 				case 3:
-					$this->AssertEquals( 1, count($p->contents()));
+					$this->AssertEquals( 1, count($items));
 					$this->AssertEquals( 1, $p->weight());
 					$this->AssertEquals( 1, $p->width());
 					$this->AssertEquals( 1, $p->length());
@@ -906,8 +910,8 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 41, $p->value());
 					break;
 				case 4:
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					// all 8 of 8 will fit in one package
 					$this->AssertEquals('Packager Test Product 2', $item->parentItem()->name);
 					$this->AssertEquals(8, $item->quantity);
@@ -919,8 +923,8 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 336, $p->value());
 					break;
 				case 5:
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					// all 6 of 6 will fit in one package
 					$this->AssertEquals('Packager Test Product 3', $item->parentItem()->name);
 					$this->AssertEquals(6, $item->quantity);
@@ -936,8 +940,8 @@ class PackagingTests extends ShoppTestCase {
 				case 8:
 				case 9:
 				// last 12 will only fit 3 in each package
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					$this->AssertEquals('Packager Test Product 4', $item->parentItem()->name);
 					$this->AssertEquals(3, $item->quantity);
 
@@ -986,7 +990,8 @@ class PackagingTests extends ShoppTestCase {
 		$pkgs = array();
 		while ( $this->packer->packages() ) {
 			$pkgs[] = $p = $this->packer->package();
-
+            $items = $p->contents();
+            
 			// Debugging code
 			// echo "Package ".count($pkgs). sprintf(
 			// 	"- dims (%d W x %d L x %d H)\tWght: %d\tVal: \$ %d\n\n",
@@ -1005,7 +1010,7 @@ class PackagingTests extends ShoppTestCase {
 				case 1:
 				case 2:
 				case 3:
-					$this->AssertEquals( 1, count($p->contents()));
+					$this->AssertEquals( 1, count($items));
 					$this->AssertEquals( 1, $p->weight());
 					$this->AssertEquals( 1, $p->width());
 					$this->AssertEquals( 1, $p->length());
@@ -1013,8 +1018,8 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 41, $p->value());
 					break;
 				case 4:
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					// all 8 of 8 will fit in one package
 					$this->AssertEquals('Packager Test Product 2', $item->parentItem()->name);
 					$this->AssertEquals(8, $item->quantity);
@@ -1026,8 +1031,8 @@ class PackagingTests extends ShoppTestCase {
 					$this->AssertEquals( 336, $p->value());
 					break;
 				case 5:
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					// all 6 of 6 will fit in one package
 					$this->AssertEquals('Packager Test Product 3', $item->parentItem()->name);
 					$this->AssertEquals(6, $item->quantity);
@@ -1043,8 +1048,8 @@ class PackagingTests extends ShoppTestCase {
 				case 8:
 				case 9:
 				// last 12 will only fit 3 in each package
-					$this->AssertEquals( 1, count($p->contents()));
-					$item = reset($p->contents());
+					$this->AssertEquals( 1, count($items));
+					$item = reset($items);
 					$this->AssertEquals('Packager Test Product 4', $item->parentItem()->name);
 					$this->AssertEquals(3, $item->quantity);
 

@@ -79,14 +79,14 @@ jQuery(document).ready(function($) {
 		keepLastValue = function () { // Save the current value of the field
 			$(this).attr('data-last', $(this).val());
 		};
-	
+
 	// When first and last name are changed, pre-fill billing name and shipping name if empty
 	$('#firstname,#lastname').change( function() {
 		// If other name field is empty, bail
 		var other_field_id = $(this).attr('id') == 'firstname' ? 'lastname' : 'firstname';
 		if ( ! $('#' + other_field_id).val().trim() || ! $(this).val().trim() ) return;
-		
-		// Otherwise, proceed with setting billing and shipping name 
+
+		// Otherwise, proceed with setting billing and shipping name
 		$('#billing-name,#shipping-name').filter(function() {
 	            return ( this.value === '' );
 		}).val(new String($('#firstname').val()+" "+$('#lastname').val()).trim());
@@ -116,4 +116,18 @@ jQuery(document).ready(function($) {
 		if (refocus) alt.find('input:first').focus();
 	}).trigger('change',[true])
 		.click(function () { $(this).change(); }); // For IE compatibility
+
+	// Do not require postal code when selected country does not use postal codes.
+	$("#billing-country,#shipping-country").change(function() {
+		if ( typeof $shopp_address === 'undefined' ) return;
+
+		var prefix = $(this).attr('id').split('-')[0];
+		var country = $(this).val();
+
+		if ( $shopp_address.country_no_postal_codes.indexOf(country) > -1 ) {
+			$("#" + prefix + "-postcode").removeClass("required");
+		} else {
+			$("#" + prefix + "-postcode").addClass("required");
+		}
+	});
 });

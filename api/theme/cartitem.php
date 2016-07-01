@@ -799,12 +799,14 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	 * @return bool True if the next input exists, false otherwise
 	 **/
 	public static function inputs ( $result, $options, $O ) {
+        
 		if ( ! isset($O->_data_loop) ) {
 			reset($O->data);
 			$O->_data_loop = true;
 		} else next($O->data);
 
-		if ( false !== current($O->data) ) return true;
+		if ( false !== current($O->data) )
+            return true;
 
 		unset($O->_data_loop);
 		reset($O->data);

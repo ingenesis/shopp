@@ -88,7 +88,7 @@ class ShoppLocale {
 		// Currency
 		$currencies = include $this->data('currencies.php');
 		$currency = Shopp::array_search_deep($code, $currencies);
-		$this->Currency = new ShoppLocaleCurrency($currency);
+		$this->Currency = new ShoppLocaleCurrency($currency, $code);
 
 		// Region
 		$regions = include $this->data('regions.php');
@@ -198,11 +198,16 @@ class ShoppLocaleCurrency {
 	private $thousands = ',';
 	private $grouping = array(3);
 
-	public function __construct ( $code ) {
+	public function __construct ( $code, $country ) {
 		$currencies = $this->currencies();
 		if ( ! isset($currencies[ $code ]) ) return false;
 		$this->code = $code;
-		$format = json_decode(key($currencies[ $code ]));
+		if ( count($currencies[ $code ]) > 1 )
+			$json_format = Shopp::array_search_deep($country, $currencies[ $code ]);
+		else $json_format = key($currencies[ $code ]);
+
+		$format = json_decode($json_format);
+
 		list(
 			$this->position,
 			$this->symbol,

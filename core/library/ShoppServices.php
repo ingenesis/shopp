@@ -42,7 +42,7 @@ final class ShoppServices {
 	 * @return bool True if a script request, false otherwise
 	 **/
 	private static function scripts () {
-		return ( isset($_GET['load']) && false !== strpos($_SERVER['REQUEST_URI'], 'sp-scripts.js') );
+		return ( isset($_GET['scripts']) );
 	}
 
 	/**
@@ -51,7 +51,7 @@ final class ShoppServices {
 	 * @return bool True if a style request, false otherwise
 	 **/
 	private static function styles () {
-		return ( isset($_GET['load']) && false !== strpos($_SERVER['REQUEST_URI'], 'sp-styles.css') );
+		return ( isset($_GET['styles']) );
 	}
 
 	/**
@@ -78,7 +78,10 @@ final class ShoppServices {
 	 * @return void
 	 **/
 	public static function serve () {
-		$services = dirname(ShoppLoader()->basepath()) . '/services';
+
+        $plugin = dirname(ShoppLoader()->basepath());
+		$services = $plugin . '/services';
+        $directory = basename($plugin);
 
 		// Image Server request handling
 		if ( self::images() )

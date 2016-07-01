@@ -18,7 +18,7 @@ class ShoppAdminCustomers extends ShoppAdminController {
 	protected $ui = 'customers';
 
 	protected function route () {
-		if ( ! empty($this->request('id') ) )
+		if ( $this->request('id') )
 			return 'ShoppScreenCustomerEditor';
 		else return 'ShoppScreenCustomers';
 	}
@@ -274,8 +274,7 @@ class ShoppScreenCustomers extends ShoppScreenController {
 
 		$exports = array(
 			'tab' => __('Tab-separated.txt','Shopp'),
-			'csv' => __('Comma-separated.csv','Shopp'),
-			'xls' => __('Microsoft&reg; Excel.xls','Shopp')
+			'csv' => __('Comma-separated.csv','Shopp'),			
 			);
 
 

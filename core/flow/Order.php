@@ -398,8 +398,8 @@ class ShoppOrder {
 	 **/
 	public function auth ( $Purchase ) {
 
-		add_action('shopp_authed_order_event', array($this, 'notify'));
 		add_action('shopp_authed_order_event', array($this, 'accounts'));
+		add_action('shopp_authed_order_event', array($this, 'notify'));
 		add_action('shopp_authed_order_event', array($this, 'success'));
 
 		shopp_add_order_event($Purchase->id,'auth',array(
@@ -419,8 +419,8 @@ class ShoppOrder {
 	 **/
 	public function sale ( $Purchase ) {
 
-		add_action('shopp_captured_order_event', array($this, 'notify'));
 		add_action('shopp_captured_order_event', array($this, 'accounts'));
+		add_action('shopp_captured_order_event', array($this, 'notify'));
 		add_action('shopp_captured_order_event', array($this, 'success'));
 
 		shopp_add_order_event($Purchase->id,'sale',array(
@@ -499,7 +499,7 @@ class ShoppOrder {
 		$Purchase->copydata($this->Shipping, 'ship');
 		$Purchase->copydata($this->Cart->Totals->data());
 		$Purchase->subtotal = $Purchase->order; // Remap order to subtotal
-		$Purchase->paymethod = $Paymethod->slug;
+		$Purchase->paymethod = isset($Paymethod->slug) ? $Paymethod->slug : '';
 		$Purchase->customer = $this->Customer->id;
 		$Purchase->taxing = shopp_setting_enabled('tax_inclusive') ? 'inclusive' : 'exclusive';
 		$Purchase->freight = $this->Cart->total('shipping');

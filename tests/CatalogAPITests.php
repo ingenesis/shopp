@@ -30,7 +30,7 @@ class CatalogAPITests extends ShoppTestCase {
 	static function setUpBeforeClass () {
 
 		$Shopp = Shopp::object();
-		$Shopp->Flow->handler('ShoppStorefront');
+		$Shopp->Flow->controller('ShoppStorefront');
 
 		$Product = shopp_add_product($product);
 		self::$HeavyCruiser = shopp_add_product_category('Battle Cruiser');
@@ -63,131 +63,97 @@ class CatalogAPITests extends ShoppTestCase {
 
 	function test_catalog_categorylist () {
 		// $this->markTestSkipped('Skipped.');
-		ob_start();
-		shopp('storefront.category-list');
-		$actual = ob_get_clean();
+		$actual = shopp('storefront.get-category-list');
 
-		$this->assertValidMarkup($actual);
-		$expected = array(
-			'tag' => 'ul',
-			'attributes' => array('class' => 'children'),
-			'children' => array(
-				'count' => count(self::$ships) - 1,
-				'only' => array('tag' => 'li')
-			)
-		);
-		$this->assertTag($expected, $actual, 'storefront.category-list failed');
+        $this->assertValidMarkup($actual);
+        $expected = array(
+            'tag' => 'ul',
+            'attributes' => array('class' => 'children'),
+            'children' => array(
+                'count' => count(self::$ships) - 1,
+                'only' => array('tag' => 'li')
+            )
+        );
+        $this->assertTag($expected, $actual, 'storefront.category-list failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'before=<span>Before</span>&after=<span>After</span>');
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'span', 'content' => 'Before');
-		$this->assertTag($expected, $actual, 'category-list before failed');
-		$expected = array('tag' => 'span', 'content' => 'After');
-		$this->assertTag($expected, $actual, 'category-list after failed');
+        $actual = shopp('storefront.get-category-list', 'before=<span>Before</span>&after=<span>After</span>');
+        $expected = array('tag' => 'span', 'content' => 'Before');
+        $this->assertTag($expected, $actual, 'category-list before failed');
+        $expected = array('tag' => 'span', 'content' => 'After');
+        $this->assertTag($expected, $actual, 'category-list after failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'class=css-class');
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'ul', 'attributes' => array('class' => 'shopp-categories-menu css-class'));
-		$this->assertTag($expected, $actual, 'category-list class failed');
+        $actual = shopp('storefront.get-category-list', 'class=css-class');
+        $expected = array('tag' => 'ul', 'attributes' => array('class' => 'shopp-categories-menu css-class'));
+        $this->assertTag($expected, $actual, 'category-list class failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'exclude=' . self::$HeavyCruiser);
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'a', 'content' => 'Battle Cruiser');
-		$this->assertNotTag($expected, $actual, 'category-list exclude failed', true);
+        $actual = shopp('storefront.get-category-list', 'exclude=' . self::$HeavyCruiser);
+        $expected = array('tag' => 'a', 'content' => 'Battle Cruiser');
+        $this->assertNotTag($expected, $actual, 'category-list exclude failed', true);
 
-		ob_start();
-		shopp('storefront.category-list', 'orderby=name&order=DESC');
-		$actual = strip_tags(ob_get_clean());
-		$actual = str_replace(array("\t", "\n"),"",$actual);
-		$expected = 'Battle CruiserYorktownPegasusLexingtonIntrepidHoodFarragutExeterExcaliburEnterpriseDefiantConstellation';
-		$this->assertEquals($expected, $actual, 'category-list orderby/order DESC failed');
+        $actual = shopp('storefront.get-category-list', 'orderby=name&order=DESC');
+        $actual = strip_tags($actual);
+        $actual = str_replace(array("\t", "\n"),"",$actual);
+        $expected = 'Battle CruiserYorktownPegasusLexingtonIntrepidHoodFarragutExeterExcaliburEnterpriseDefiantConstellation';
+        $this->assertEquals($expected, $actual, 'category-list orderby/order DESC failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'hierarchy=on');
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'li', 'content' => 'Battle Cruiser', 'child' => array('tag' => 'ul'));
-		$this->assertTag($expected, $actual, 'category-list hierarchy=on failed');
+        $actual = shopp('storefront.get-category-list', 'hierarchy=on');
+        $expected = array('tag' => 'li', 'content' => 'Battle Cruiser', 'child' => array('tag' => 'ul'));
+        $this->assertTag($expected, $actual, 'category-list hierarchy=on failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'hierarchy=on&depth=1');
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'ul', 'children' => array('count' => 1));
-		$this->assertTag($expected, $actual, 'category-list depth=1 failed');
+        $actual = shopp('storefront.get-category-list', 'hierarchy=on&depth=1');
+        $expected = array('tag' => 'ul', 'children' => array('count' => 1));
+        $this->assertTag($expected, $actual, 'category-list depth=1 failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'hierarchy=on&depth=2');
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'ul', 'attributes' => array('class'=>'children'),'children' => array('count' => count(self::$ships)-1));
-		$this->assertTag($expected, $actual, 'category-list depth=2 failed');
+        $actual = shopp('storefront.get-category-list', 'hierarchy=on&depth=2');
+        $expected = array('tag' => 'ul', 'attributes' => array('class'=>'children'),'children' => array('count' => count(self::$ships)-1));
+        $this->assertTag($expected, $actual, 'category-list depth=2 failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'childof=' . self::$HeavyCruiser);
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'ul', 'children' => array('count' => count(self::$ships) - 1));
-		$this->assertTag($expected, $actual, 'category-list childof failed');
+        $actual = shopp('storefront.get-category-list', 'childof=' . self::$HeavyCruiser);
+        $expected = array('tag' => 'ul', 'children' => array('count' => count(self::$ships) - 1));
+        $this->assertTag($expected, $actual, 'category-list childof failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'wraplist=off&section=on&sectionterm=' . self::$HeavyCruiser);
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'ul', 'children' => array('count' => count(self::$ships) - 1));
-		$this->assertTag($expected, $actual, 'category-list section failed');
+        $actual = shopp('storefront.get-category-list', 'wraplist=off&section=on&sectionterm=' . self::$HeavyCruiser);
+        $expected = array('tag' => 'ul', 'children' => array('count' => count(self::$ships) - 1));
+        $this->assertTag($expected, $actual, 'category-list section failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'showall=on');
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'li', 'content' => 'Potemkin');
-		$this->assertTag($expected, $actual, 'category-list showall=on failed');
+        $actual = shopp('storefront.get-category-list', 'showall=on');
+        $expected = array('tag' => 'li', 'content' => 'Potemkin');
+        $this->assertTag($expected, $actual, 'category-list showall=on failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'showall=off');
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'a', 'content' => 'Potemkin');
-		$this->assertNotTag($expected, $actual, 'category-list showall=off failed');
+        $actual = shopp('storefront.get-category-list', 'showall=off');
+        $expected = array('tag' => 'a', 'content' => 'Potemkin');
+        $this->assertNotTag($expected, $actual, 'category-list showall=off failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'showall=on&linkall=on');
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'a', 'content' => 'Potemkin');
-		$this->assertTag($expected, $actual, 'category-list linkall=on failed');
+        $actual = shopp('storefront.get-category-list', 'showall=on&linkall=on');
+        $expected = array('tag' => 'a', 'content' => 'Potemkin');
+        $this->assertTag($expected, $actual, 'category-list linkall=on failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'showall=on&linkall=off');
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'a', 'content' => 'Potemkin');
-		$this->assertNotTag($expected, $actual, 'category-list linkall=off failed');
+        $actual = shopp('storefront.get-category-list', 'showall=on&linkall=off');
+        $expected = array('tag' => 'a', 'content' => 'Potemkin');
+        $this->assertNotTag($expected, $actual, 'category-list linkall=off failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'wraplist=off&hierarchy=off');
-		$actual = ob_get_clean();
-		$expected = array('tag' => 'ul');
-		$this->assertNotTag($expected, $actual, 'category-list wraplist=off failed');
+        $actual = shopp('storefront.get-category-list', 'wraplist=off&hierarchy=off');
+        $expected = array('tag' => 'ul');
+        $this->assertNotTag($expected, $actual, 'category-list wraplist=off failed');
 
-		ob_start();
-		shopp('storefront.category-list', 'showsmart=before');
-		$actual = strip_tags(ob_get_clean());
-		$actual = str_replace(array("\t", "\n"),"",$actual);
-		$expected = 'Catalog ProductsNew ProductsFeatured ProductsOn SaleBestsellersRecently ViewedRandom ProductsBattle CruiserConstellationDefiantEnterpriseExcaliburExeterFarragutHoodIntrepidLexingtonPegasusYorktown';
-		$this->assertEquals($expected, $actual);
+        $actual = shopp('storefront.get-category-list', 'showsmart=before');
+        $actual = strip_tags($actual);
+        $actual = str_replace(array("\t", "\n"),"",$actual);
+        $expected = 'Catalog ProductsNew ProductsFeatured ProductsOn SaleBestsellersRecently ViewedRandom ProductsBattle CruiserConstellationDefiantEnterpriseExcaliburExeterFarragutHoodIntrepidLexingtonPegasusYorktown';
+        $this->assertEquals($expected, $actual);
 
-		ob_start();
-		shopp('storefront.category-list', 'showsmart=after');
-		$actual = strip_tags(ob_get_clean());
-		$actual = str_replace(array("\t", "\n"),"",$actual);
+                $actual = shopp('storefront.get-category-list', 'showsmart=after');
+                $actual = strip_tags($actual);
+                $actual = str_replace(array("\t", "\n"),"",$actual);
+                $expected = 'Battle CruiserConstellationDefiantEnterpriseExcaliburExeterFarragutHoodIntrepidLexingtonPegasusYorktownCatalog ProductsNew ProductsFeatured ProductsOn SaleBestsellersRecently ViewedRandom Products';
+                $this->assertEquals($expected, strip_tags($actual));
 
-		$expected = 'Battle CruiserConstellationDefiantEnterpriseExcaliburExeterFarragutHoodIntrepidLexingtonPegasusYorktownCatalog ProductsNew ProductsFeatured ProductsOn SaleBestsellersRecently ViewedRandom Products';
-		$this->assertEquals($expected, strip_tags($actual));
-
-		ob_start();
-		shopp('storefront.category-list', 'dropdown=on');
-		$actual = ob_get_clean();
-		$this->assertValidMarkup($actual);
-		$expected = array('tag' => 'form', 'attributes' => array('class' => 'category-list-menu'),'child' => array('tag' => 'select', 'attributes' => array('name' =>'shopp_cats')));
-		$this->assertTag($expected, $actual, 'category-list dropdown=on failed');
-		$expected = array('tag' => 'select', 'children' => array('count'=>count(self::$ships)+1));
-		$this->assertTag($expected, $actual, 'category-list dropdown=on failed');
+        $actual = shopp('storefront.get-category-list', 'dropdown=on');
+        $this->assertValidMarkup($actual);
+        $expected = array('tag' => 'form', 'attributes' => array('class' => 'category-list-menu'),'child' => array('tag' => 'select', 'attributes' => array('name' =>'shopp_cats')));
+        $this->assertTag($expected, $actual, 'category-list dropdown=on failed');
+        $expected = array('tag' => 'select', 'children' => array('count'=>count(self::$ships)+1));
+        $this->assertTag($expected, $actual, 'category-list dropdown=on failed');
 
 	}
 
@@ -252,58 +218,32 @@ class CatalogAPITests extends ShoppTestCase {
 	function test_catalog_collections () {
 		// $this->markTestSkipped('Skipped.');
 		$Storefront = new ShoppStorefront();
-		ob_start();
-		shopp('catalog','catalog-products','show=3');
-		$actual = ob_get_contents();
-		ob_end_clean();
+        
+		$actual = shopp('catalog.get-catalog-products','show=3');
 		$this->assertValidMarkup($actual);
 
-		ob_start();
-		shopp('catalog','new-products','show=3');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('catalog.get-new-products','show=3');
 		$this->assertValidMarkup($actual);
 
-		ob_start();
-		shopp('catalog','featured-products','show=3');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('catalog.get-featured-products','show=3');
 		$this->assertValidMarkup($actual);
 
-		ob_start();
-		shopp('catalog','onsale-products','show=3');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('catalog.get-onsale-products','show=3');
 		$this->assertValidMarkup($actual);
 
-		ob_start();
-		shopp('catalog','bestseller-products','show=3');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('catalog.get-bestseller-products','show=3');
 		$this->assertValidMarkup($actual);
 
-		ob_start();
-		shopp('catalog','random-products','show=3');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('catalog.get-random-products','show=3');
 		$this->assertValidMarkup($actual);
 
-		ob_start();
-		shopp('catalog','tag-products','show=3&tag=wordpress');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('catalog.get-tag-products','show=3&tag=wordpress');
 		$this->assertValidMarkup($actual);
 
-		ob_start();
-		shopp('catalog','related-products','show=3&product=114');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('catalog.get-related-products','show=3&product=114');
 		$this->assertValidMarkup($actual);
 
-		ob_start();
-		shopp('catalog','search-products','show=3&search=wordpress');
-		$actual = ob_get_contents();
-		ob_end_clean();
+		$actual = shopp('catalog.get-search-products','show=3&search=wordpress');
 		$this->assertValidMarkup($actual);
 	}
 

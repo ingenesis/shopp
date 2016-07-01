@@ -13,7 +13,7 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-$load = isset($_GET['load']) ? $_GET['load'] : '';
+$load = isset($_GET['scripts']) ? $_GET['scripts'] : '';
 $load = preg_replace( '/[^a-z0-9,_-]+/i', '', $load );
 $load = (array) explode(',', $load);
 

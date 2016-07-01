@@ -427,8 +427,9 @@ abstract class AutoObjectFramework {
 
 class ShoppRequestProcessing {
 
-	public static function get ( $key = null, array $data = array() ) {
-
+	public static function get ( $key = null, $data = array() ) {
+		if ( ! is_array($data) ) return false;
+		
 		if ( isset($key) ) {
 			if ( isset($data[ $key ]) )
 				return $data[ $key ];

@@ -110,21 +110,25 @@ class PrettyURLTests extends ShoppTestCase {
 
 
 	function test_cart_url () {
+        // $this->markTestSkipped('Skipped.');
 		$actual = shopp('cart.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/cart/', $actual);
 	}
 
 	function test_checkout_url () {
+        // $this->markTestSkipped('Skipped.');
 		$actual = shopp('checkout.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/checkout/', $actual);
 	}
 
 	function test_account_url () {
+        // $this->markTestSkipped('Skipped.');
 		$actual = shopp('customer.get-accounturl');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/account/', $actual);
 	}
 
 	function test_product_url () {
+        // $this->markTestSkipped('Skipped.');
 
 		$Product = shopp_product('uss-enterprise', 'slug');
 		ShoppProduct($Product);
@@ -136,6 +140,7 @@ class PrettyURLTests extends ShoppTestCase {
 	}
 
 	function test_category_url () {
+        // $this->markTestSkipped('Skipped.');
 
 		shopp('storefront.category', 'slug=heavy-cruiser&load=true');
 		$actual = shopp('category.get-url');
@@ -145,6 +150,7 @@ class PrettyURLTests extends ShoppTestCase {
 	}
 
 	function test_category_paginated_url () {
+        // $this->markTestSkipped('Skipped.');
 
 		shopp_set_setting('catalog_pagination',10);
 		shopp('storefront.category', 'slug=heavy-cruiser&load=true');
@@ -165,35 +171,41 @@ class PrettyURLTests extends ShoppTestCase {
 	}
 
 	function test_category_feed_url () {
+        // $this->markTestSkipped('Skipped.');
 		shopp('storefront','category','slug=heavy-cruiser&load=true');
 		$actual = shopp('category.get-feed-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/category/heavy-cruiser/feed',$actual);
 	}
 
 	function test_catalog_url () {
+        // $this->markTestSkipped('Skipped.');
 		$actual = shopp('storefront.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/', $actual);
 	}
 
 	function test_catalogproducts_url () {
+        // $this->markTestSkipped('Skipped.');
 		shopp('storefront.catalog-products','load=true');
 		$actual = shopp('collection.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/collection/catalog/',$actual);
 	}
 
 	function test_newproducts_url () {
+        // $this->markTestSkipped('Skipped.');
 		shopp('storefront.new-products','load=true');
 		$actual = shopp('collection.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/collection/new/',$actual);
 	}
 
 	function test_featuredproducts_url () {
+        // $this->markTestSkipped('Skipped.');
 		shopp('storefront.featured-products','load=true');
 		$actual = shopp('collection.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/collection/featured/',$actual);
 	}
 
 	function test_onsaleproducts_url () {
+        // $this->markTestSkipped('Skipped.');
 		shopp('storefront.onsale-products','load=true');
 		$actual = shopp('collection.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/collection/onsale/',$actual);
@@ -201,37 +213,42 @@ class PrettyURLTests extends ShoppTestCase {
 	}
 
 	function test_bestsellerproducts_url () {
+        // $this->markTestSkipped('Skipped.');
 		shopp('storefront.bestseller-products','load=true');
 		$actual = shopp('collection.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/collection/bestsellers/',$actual);
 	}
 
 	function test_alsoboughtproducts_url () {
+        // $this->markTestSkipped('Skipped.');
 		shopp('storefront.alsobought-products','load=true');
 		$actual = shopp('collection.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/collection/alsobought/',$actual);
 	}
 
 	function test_randomproducts_url () {
+        // $this->markTestSkipped('Skipped.');
 		shopp('storefront.random-products','load=true');
 		$actual = shopp('collection.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/collection/random/',$actual);
 	}
 
-
 	function test_relatedproducts_url () {
+        // $this->markTestSkipped('Skipped.');
 		shopp('storefront.related-products','load=true');
 		$actual = shopp('collection.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/collection/related/',$actual);
 	}
 
 	function test_tagproducts_url () {
+        // $this->markTestSkipped('Skipped.');
 		shopp('storefront.tag-products','load=true');
 		$actual = shopp('collection.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/collection/tag/',$actual);
 	}
 
 	function test_searchproducts_url () {
+        // $this->markTestSkipped('Skipped.');
 		shopp('storefront.search-products','load=true&search=uss+enterprise');
 		$actual = shopp('collection.get-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/shop/collection/search-results/?s=uss+enterprise&s_cs=1',$actual);

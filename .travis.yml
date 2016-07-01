@@ -1,0 +1,60 @@
+# Travis CI Configuration File
+
+# Use container infrastructure
+sudo: false
+
+# Tell Travis CI we're using PHP
+language: php
+
+# PHP version used in first build configuration.
+php:
+    - "5.6"
+
+# WordPress version used in first build configuration.
+env:
+    - WP_VERSION=4.4.2
+
+# Next we define our matrix of additional build configurations to test against.
+# The versions listed above will automatically create our first configuration,
+# so it doesn't need to be re-defined below.
+
+# WP_VERSION specifies the tag to use. The way these tests are configured to run
+# requires at least WordPress 3.8. Specify "master" to test against SVN trunk.
+
+# Note that Travis CI supports listing these above to automatically build a
+# matrix of configurations, but we're being nice here by manually building a
+# total of four configurations even though we're testing 4 versions of PHP
+# along with 2 versions of WordPress (which would build 8 configs otherwise).
+# This takes half as long to run while still providing adequate coverage.
+
+matrix:
+  include:
+     - php: "7.0"
+       env: WP_VERSION=master
+     - php: "5.3"
+       env: WP_VERSION=4.0
+
+# Clones WordPress and configures our testing environment.
+before_script:
+    - # Environment variables
+    - export WP_VERSION=master
+    - export WP_DEVELOP_DIR=/tmp/wordpress/
+    - export PLUGIN_SLUG=$(basename $(pwd))
+    - # git WordPress test rig
+    - git clone --depth=1 --branch="$WP_VERSION" git://develop.git.wordpress.org/ $WP_DEVELOP_DIR
+    - # Move plugin into place
+    - cd ..
+    - mv $PLUGIN_SLUG "/tmp/wordpress/src/wp-content/plugins/$PLUGIN_SLUG"
+    - # Checkout WP version
+    - cd /tmp/wordpress/
+    - git checkout $WP_VERSION
+    - # Reconfigure tests
+    - cd "$WP_DEVELOP_DIR/src/wp-content/plugins/$PLUGIN_SLUG/tests"
+    - cp wp-tests-config-sample.php wp-tests-config.php
+    - mysql -e "CREATE DATABASE shopp_tests;" -uroot
+    - sed -i "s/testdb/shopp_tests/" wp-tests-config.php
+    - sed -i "s/testuser/travis/" wp-tests-config.php
+    - # Configure phpunit
+    - cp phpunit-sample.xml phpunit.xml
+
+script: phpunit

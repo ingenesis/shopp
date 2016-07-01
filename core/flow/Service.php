@@ -291,8 +291,7 @@ class ShoppAdminService extends ShoppAdminController {
 
 		$exports = array(
 			'tab' => __('Tab-separated.txt','Shopp'),
-			'csv' => __('Comma-separated.csv','Shopp'),
-			'xls' => __('Microsoft&reg; Excel.xls','Shopp'),
+			'csv' => __('Comma-separated.csv','Shopp'),			
 			'iif' => __('Intuit&reg; QuickBooks.iif','Shopp')
 			);
 
@@ -302,9 +301,9 @@ class ShoppAdminService extends ShoppAdminController {
 		$exportcolumns = array_merge(ShoppPurchase::exportcolumns(),ShoppPurchased::exportcolumns());
 		$selected = shopp_setting('purchaselog_columns');
 		if ( empty($selected) ) $selected = array_keys($exportcolumns);
-		
+
 		$Gateways = $Shopp->Gateways;
-		
+
 		include $this->ui('orders.php');
 	}
 

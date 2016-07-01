@@ -490,8 +490,12 @@ class ShoppCart extends ListFramework {
 	 **/
 	public function change ( $item, $product, $pricing, array $addons = array() ) {
 
-		// Don't change anything if everything is the same
-		if ( ! $this->exists($item) || ($this->get($item)->product == $product && $this->get($item)->price == $pricing) )
+		// If the specified item doesn't exist, fail
+		if ( ! $this->exists($item) )
+            return false;
+        
+        // If nothing has changed, consider the change already successful
+        if ( empty($addons) && $this->get($item)->product == $product && $this->get($item)->priceline == $pricing )
 			return true;
 
 		// Maintain item state, change variant
