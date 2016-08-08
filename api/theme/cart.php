@@ -25,54 +25,54 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	 **/
 	static $register = array(
 		'_cart',
-		'applycode' => 'applycode',
-		'applygiftcard' => 'applygiftcard',
-		'discount' => 'discount',
-		'discountapplied' => 'discount_applied',
-		'discountname' => 'discount_name',
-		'discountremove' => 'discount_remove',
-		'discounts' => 'discounts',
-		'discountsavailable' => 'discounts_available',
-		'downloaditems' => 'download_items',
-		'emptybutton' => 'empty_button',
-		'function' => 'cart_function',
-		'hasdiscount' => 'has_discount',
-		'hasdiscounts' => 'has_discounts',
-		'hasdownloads' => 'has_downloads',
-		'hasitems' => 'has_items',
-		'hasshipcosts' => 'has_ship_costs',
-		'hasshipped' => 'has_shipped',
-		'hasshippingmethods' => 'has_shipping_methods',
-		'hastaxes' => 'has_taxes',
-		'items' => 'items',
-		'lastitem' => 'last_item',
-		'needsshipped' => 'needs_shipped',
+		'applycode'              => 'applycode',
+		'applygiftcard'          => 'applygiftcard',
+		'discount'               => 'discount',
+		'discountapplied'        => 'discount_applied',
+		'discountname'           => 'discount_name',
+		'discountremove'         => 'discount_remove',
+		'discounts'              => 'discounts',
+		'discountsavailable'     => 'discounts_available',
+		'downloaditems'          => 'download_items',
+		'emptybutton'            => 'empty_button',
+		'function'               => 'cart_function',
+		'hasdiscount'            => 'has_discount',
+		'hasdiscounts'           => 'has_discounts',
+		'hasdownloads'           => 'has_downloads',
+		'hasitems'               => 'has_items',
+		'hasshipcosts'           => 'has_ship_costs',
+		'hasshipped'             => 'has_shipped',
+		'hasshippingmethods'     => 'has_shipping_methods',
+		'hastaxes'               => 'has_taxes',
+		'items'                  => 'items',
+		'lastitem'               => 'last_item',
+		'needsshipped'           => 'needs_shipped',
 		'needsshippingestimates' => 'needs_shipping_estimates',
-		'referer' => 'referrer',
-		'referrer' => 'referrer',
-		'shipping' => 'shipping',
-		'shippingestimates' => 'shipping_estimates',
-		'shippeditems' => 'shipped_items',
-		'sidecart' => 'sidecart',
-		'subtotal' => 'subtotal',
-		'tax' => 'tax',
-		'total' => 'total',
-		'totaldiscounts' => 'total_discounts',
-		'totalitems' => 'total_items',
-		'totalquantity' => 'total_quantity',
-		'updatebutton' => 'update_button',
-		'url' => 'url',
-		'hassavings' => 'has_savings',
-		'savings' => 'savings',
+		'referer'                => 'referrer',
+		'referrer'               => 'referrer',
+		'shipping'               => 'shipping',
+		'shippingestimates'      => 'shipping_estimates',
+		'shippeditems'           => 'shipped_items',
+		'sidecart'               => 'sidecart',
+		'subtotal'               => 'subtotal',
+		'tax'                    => 'tax',
+		'total'                  => 'total',
+		'totaldiscounts'         => 'total_discounts',
+		'totalitems'             => 'total_items',
+		'totalquantity'          => 'total_quantity',
+		'updatebutton'           => 'update_button',
+		'url'                    => 'url',
+		'hassavings'             => 'has_savings',
+		'savings'                => 'savings',
 
 		/* @deprecated tag names - do not use */
-		'haspromos' => 'has_discounts',
-		'promocode' => 'applycode',
-		'promos' => 'discounts',
+		'haspromos'       => 'has_discounts',
+		'promocode'       => 'applycode',
+		'promos'          => 'discounts',
 		'promosavailable' => 'discounts_available',
-		'promodiscount' => 'discount_applied',
-		'promoname' => 'discount_name',
-		'totalpromos' => 'total_discounts',
+		'promodiscount'   => 'discount_applied',
+		'promoname'       => 'discount_name',
+		'totalpromos'     => 'total_discounts'
 	);
 
 	/**
@@ -98,9 +98,8 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	 * @return ShoppCart The active ShoppCart context
 	 **/
 	public static function _setobject ( $Object, $object ) {
-		if ( is_object($Object) && is_a($Object, 'ShoppOrder') && isset($Object->Cart) && 'cart' == strtolower($object) )
-			return $Object->Cart;
-		else if ( strtolower($object) != 'cart' ) return $Object; // not mine, do nothing
+		if ( is_object($Object) && is_a($Object, 'ShoppOrder') && isset($Object->Cart) && 'cart' == strtolower($object) ) return $Object->Cart;
+		elseif ( 'cart' != strtolower($object) ) return $Object; // not mine, do nothing
 
 		$Order = ShoppOrder();
 		return $Order->Cart;
@@ -132,16 +131,16 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		if ( isset($options['wrapper']) ) $options['wrap'] = $options['wrapper'];
 
 		$defaults = array(
-			'wrap' => 'on',
-			'money' => 'on',
-			'number' => false,
+			'wrap'   => 'on',
+			'money'  => 'on',
+			'number' => false
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
 
 		if ( Shopp::str_true($number) ) return $result;
-		if ( Shopp::str_true($money)  ) $result = money( roundprice($result) );
-		if ( Shopp::str_true($wrap)   ) return '<span class="shopp-cart cart-' . strtolower($property) . '">' . $result . '</span>';
+		if ( Shopp::str_true($money) ) $result = money( roundprice($result) );
+		if ( Shopp::str_true($wrap) ) return '<span class="shopp-cart cart-' . strtolower($property) . '">' . $result . '</span>';
 
 		return $result;
 	}
@@ -177,8 +176,8 @@ class ShoppCartThemeAPI implements ShoppAPI {
 
 		$defaults = array(
 			'before' => '<p class="error">',
-			'after' => '</p>',
-			'label' => Shopp::__('Apply Discount')
+			'after'  => '</p>',
+			'label'  => Shopp::__('Apply Discount')
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -187,8 +186,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 
 		$Errors = ShoppErrorStorefrontNotices();
 		if ( $Errors->exist() ) {
-			while ( $Errors->exist() )
-				$result .=  $before . $Errors->message() . $after;
+			while ( $Errors->exist() ) $result .=  $before . $Errors->message() . $after;
 		}
 
 		$result .= '<span><input type="text" id="discount-code" name="discount" value="" size="10" /></span>';
@@ -223,8 +221,8 @@ class ShoppCartThemeAPI implements ShoppAPI {
 
 		$defaults = array(
 			'before' => '<p class="error">',
-			'after' => '</p>',
-			'label' => Shopp::__('Add Gift Card')
+			'after'  => '</p>',
+			'label'  => Shopp::__('Add Gift Card')
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -235,8 +233,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 
 		$Errors = ShoppErrorStorefrontNotices();
 		if ( $Errors->exist() ) {
-			while ( $Errors->exist() )
-				$result .=  $before . $Errors->message() . $after;
+			while ( $Errors->exist() ) $result .=  $before . $Errors->message() . $after;
 		}
 
 		$result .= '<span><input type="text" id="giftcard" name="credit" value="" size="20" /></span>';
@@ -287,31 +284,29 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		if ( ! $Discount->applies() ) return false;
 
 		$defaults = array(
-			'label' => __('%s off', 'Shopp'),
-			'creditlabel' => __('%s applied', 'Shopp'),
-			'before' => '',
-			'after' => '',
-			'remove' => 'on'
+			'label'       => Shopp::__('%s off'),
+			'creditlabel' => Shopp::__('%s applied'),
+			'before'      => '',
+			'after'       => '',
+			'remove'      => 'on'
 		);
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
 
-		if ( false === strpos($label, '%s') )
-			$label = "%s $label";
+		if ( false === strpos($label, '%s') ) $label = '%s $label';
 
 		$string = $before;
 
 		switch ( $Discount->type() ) {
-			case ShoppOrderDiscount::SHIP_FREE:		$string .= Shopp::esc_html__( 'Free Shipping!' ); break;
+			case ShoppOrderDiscount::SHIP_FREE:	$string .= Shopp::esc_html__( 'Free Shipping!' ); break;
 			case ShoppOrderDiscount::PERCENT_OFF:	$string .= sprintf(esc_html($label), percentage((float)$Discount->discount(), array('precision' => 0))); break;
 			case ShoppOrderDiscount::AMOUNT_OFF:	$string .= sprintf(esc_html($label), money($Discount->discount())); break;
-			case ShoppOrderDiscount::CREDIT:		$string .= sprintf(esc_html($creditlabel), money($Discount->amount())); break;
-			case ShoppOrderDiscount::BOGOF:			list($buy, $get) = $Discount->discount(); $string .= ucfirst(strtolower(Shopp::esc_html__('Buy %s Get %s Free', $buy, $get))); break;
+			case ShoppOrderDiscount::CREDIT:	$string .= sprintf(esc_html($creditlabel), money($Discount->amount())); break;
+			case ShoppOrderDiscount::BOGOF:		list($buy, $get) = $Discount->discount(); $string .= ucfirst(strtolower(Shopp::esc_html__('Buy %s Get %s Free', $buy, $get))); break;
 		}
 
 		$options['label'] = '';
-		if ( Shopp::str_true($remove) )
-			$string .= '&nbsp;' . self::discount_remove('', $options, $O);
+		if ( Shopp::str_true($remove) ) $string .= '&nbsp;' . self::discount_remove('', $options, $O);
 
 		$string .= $after;
 
@@ -727,7 +722,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	public static function referrer ( $result, $options, $O ) {
 		$Shopping = ShoppShopping();
 		$referrer = $Shopping->data->referrer;
-		if ( ! $referrer ) $referrer = shopp('catalog', 'url', 'return=1');
+		if ( ! $referrer ) $referrer = shopp('storefront.get-url');
 		return $referrer;
 	}
 
@@ -820,8 +815,8 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	public static function shipping_estimates ( $result, $options, $O ) {
 		$defaults = array(
 			'postcode' => 'on',
-			'class' => 'ship-estimates',
-			'label' => Shopp::__('Estimate Shipping & Taxes')
+			'class'    => 'ship-estimates',
+			'label'    => Shopp::__('Estimate Shipping & Taxes')
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);
@@ -835,8 +830,10 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		if ( empty($markets) ) return '';
 
 		foreach ($markets as $iso => $country) $countries[$iso] = $country;
+		
 		if ( ! empty($Shipping->country) ) $selected = $Shipping->country;
 		else $selected = $base['country'];
+		
 		$postcode = ( Shopp::str_true($postcode) || $O->showpostcode );
 
 		$_ = '<div class="' . $class . '">';
@@ -853,7 +850,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 			$_ .= '<span>';
 			$_ .= '<input type="text" name="shipping[postcode]" id="shipping-postcode" size="6" value="' . $Shipping->postcode . '"' . inputattrs($options) . ' />&nbsp;';
 			$_ .= '</span>';
-			$_ .= shopp('cart','get-update-button', array('value' => $label));
+			$_ .= shopp('cart', 'get-update-button', array('value' => $label));
 		}
 
 		return $_ . '</div>';
@@ -910,8 +907,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		// Handle no-tax option for tax inclusive storefronts
 		if ( ! Shopp::str_true($taxes) && shopp_setting_enabled('tax_inclusive') ) {
 			$tax = $O->Totals->entry('tax', 'Tax');
-			if ( is_a($tax, 'OrderAmountItemTax') )
-				$subtotal -= $tax->amount();
+			if ( is_a($tax, 'OrderAmountItemTax') ) $subtotal -= $tax->amount();
 		}
 
 		return (float)$subtotal;
@@ -936,7 +932,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 	public static function tax ( $result, $options, $O ) {
 		$defaults = array(
 			'label' => false,
-			'id' => false
+			'id'    => false
 		);
 		$options = array_merge($defaults, $options);
 		extract($options);

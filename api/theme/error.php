@@ -28,13 +28,13 @@ class ShoppErrorThemeAPI implements ShoppAPI {
 	 * @internal
 	 **/
 	static $register = array(
-		'trxn' => 'trxn',
-		'auth' => 'auth',
+		'trxn'  => 'trxn',
+		'auth'  => 'auth',
 		'addon' => 'addon',
-		'comm' => 'comm',
+		'comm'  => 'comm',
 		'stock' => 'stock',
 		'admin' => 'admin',
-		'db' => 'db',
+		'db'    => 'db',
 		'debug' => 'debug'
 	);
 
@@ -63,7 +63,7 @@ class ShoppErrorThemeAPI implements ShoppAPI {
 	public static function _setobject ( $Object, $object ) {
 		if ( is_object($Object) && is_a($Object, 'ShoppErrors') ) return $Object;
 
-		if ( strtolower($object) != 'error' ) return $Object; // not mine
+		if ( 'error' != strtolower($object) ) return $Object; // not mine
 		return ShoppErrors();
 	}
 
