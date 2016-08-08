@@ -361,7 +361,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults, $options);
 		extract($options, EXTR_SKIP);
 
-		return '<a href="' . Shopp::url(array('removecode' => $Discount->id()), 'cart') . '" class="' . $class . '">' . $label . '</a>';
+		return '<a href="' . Shopp::url(array('removecode' => $Discount->id()), 'cart') . '" class="' . $defaults["class"] . '">' . $defaults["label"] . '</a>';
 	}
 
 	/**
