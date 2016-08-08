@@ -1517,8 +1517,20 @@ class SmartCollection extends ProductCollection {
 			unset($this->loading['show']);
 		}
 
-		if ( isset($options['pagination']) )
+		if ( isset($options['pagination'] ) )
 			$this->loading['pagination'] = $options['pagination'];
+			
+		if ( isset($options['exclude']) ) {
+			$exclude = $options['exclude'];	
+
+			if ( is_numeric(str_replace(',','',$exclude)) ) {
+				global $wpdb;
+				$this->loading['joins'][] = "INNER JOIN $wpdb->term_relationships as tr ON p.ID = tr.object_id";
+				$this->loading['joins'][] = "INNER JOIN $wpdb->term_taxonomy as tt ON tr.term_taxonomy_id = tt.term_taxonomy_id";
+				$this->loading['where'][] = "tr.term_taxonomy_id NOT IN ($exclude)";
+				$this->loading['where'][] = "tt.taxonomy = 'shopp_category'";
+			} 
+		}
 
 		if ( isset($options['exclude']) ) {
 			$exclude = $options['exclude'];
