@@ -500,7 +500,7 @@ class ShoppAccountPage extends ShoppPage {
 			$_[] = '<li>'.sprintf(__('Login: %s', 'Shopp'), $user_data->user_login).'</li>';
 		$_[] = '</ul>';
 		$_[] = '';
-		$_[] = '<p>'.__('To reset your password visit the following address, otherwise just ignore this email and nothing will happen.');
+		$_[] = '<p>'.__('To reset your password visit the following address, otherwise just ignore this email and nothing will happen.').'</p>';
 		$_[] = '';
 		$_[] = '<p>'.add_query_arg(array('rp'=>$RecoveryCustomer->activation), Shopp::url(false, 'account')).'</p>';
 		$message = apply_filters('shopp_recover_password_message', $_);

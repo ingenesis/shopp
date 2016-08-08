@@ -110,7 +110,7 @@
 					</div>
 					<div class="right">
 						<label for="shipping-state"><?php _e( 'State / Province', 'Shopp' ); ?></label>
-						<?php shopp( 'checkout.shipping-state', 'required=auto&title=' . __( 'State/Provice/Region shipping address', 'Shopp' ) ); ?>
+						<?php shopp( 'checkout.shipping-state', 'required=auto&title=' . __( 'State/Province/Region shipping address', 'Shopp' ) ); ?>
 					</div>
 					<div class="left">
 						<label for="shipping-postcode"><?php _e( 'Postal / Zip Code', 'Shopp' ); ?></label>
