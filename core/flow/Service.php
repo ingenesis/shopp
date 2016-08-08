@@ -553,7 +553,7 @@ class ShoppAdminService extends ShoppAdminController {
 			if ( (int)$Customer->id > 0 ) {
 				$Purchase->copydata($Customer);
 				$Purchase->save();
-			} else $this->notice(__('An unknown error occured. The customer could not be created.','Shopp'),'error');
+			} else $this->notice(__('An unknown error occurred. The customer could not be created.','Shopp'),'error');
 		}
 
 		if ( isset($_GET['order-action']) && 'change-customer' == $_GET['order-action'] && ! empty($_GET['customerid'])) {

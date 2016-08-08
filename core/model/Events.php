@@ -126,7 +126,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  		$this->save();
 
  		if ( empty($this->id) ) {
-			shopp_debug(sprintf('An error occured while saving a new %s', get_class($this)));
+			shopp_debug(sprintf('An error occurred while saving a new %s', get_class($this)));
  			return $this->_exception = true;
  		}
 

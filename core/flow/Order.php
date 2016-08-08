@@ -269,7 +269,7 @@ class ShoppOrder {
 
 			shopp_debug("Lock $lockid process appears to have completed, redirecting...");
 
-			// Otherwise an error must have occured, bounce back to checkout
+			// Otherwise an error must have occurred, bounce back to checkout
 			Shopp::redirect(Shopp::url(array('inprogress' => '1'), 'checkout', $this->security()));
 			return;
 
