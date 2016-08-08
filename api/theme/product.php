@@ -520,6 +520,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			// else $previews .= '<a name="preview-'.$img->id.'">'; // If links are turned off, leave the <a> so we don't break layout
 			$previews .= '<img src="'.add_query_string($img->resizing($width,$height,$scale,$sharpen,$quality,$fill),shoppurl($img->id,'images')).'"'.$title.' alt="'.$alt.'" width="'.$scaled['width'].'" height="'.$scaled['height'].'" />';
 			if ($p_link) $previews .= '</a>';
+			if ($firstPreview) $previews .= apply_filters('shopp_gallery_description'); // Add description text
 			$previews .= '</li>';
 			$firstPreview = false;
 		}
