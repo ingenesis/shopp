@@ -162,7 +162,7 @@ class Lookup {
 		$_['GA'] = array('name'=>__('Gabon','Shopp'),'currency'=>array('code'=>'XAF','format'=>'# ### FCFA'),'units'=>'metric','region'=>5);
 		$_['GM'] = array('name'=>__('Gambia','Shopp'),'currency'=>array('code'=>'GMD','format'=>'GMD#,###.##'),'units'=>'metric','region'=>5);
 		$_['GE'] = array('name'=>__('Georgia','Shopp'),'currency'=>array('code'=>'GEL','format'=>'GEL #.###,##'),'units'=>'metric','region'=>6);
-		$_['DE'] = array('name'=>__('Germany','Shopp'),'currency'=>array('code'=>'EUR','format'=>'#,###.## €'),'units'=>'metric','region'=>3);
+		$_['DE'] = array('name'=>__('Germany','Shopp'),'currency'=>array('code'=>'EUR','format'=>'#.###,## €'),'units'=>'metric','region'=>3);
 		$_['GH'] = array('name'=>__('Ghana','Shopp'),'currency'=>array('code'=>'GHS','format'=>'₵#,###.##'),'units'=>'metric','region'=>5);
 		$_['GI'] = array('name'=>__('Gibraltar','Shopp'),'currency'=>array('code'=>'GBP','format'=>'£#,###.##'),'units'=>'metric','region'=>3);
 		$_['GR'] = array('name'=>__('Greece','Shopp'),'currency'=>array('code'=>'EUR','format'=>'€#,###.##'),'units'=>'metric','region'=>3);
@@ -740,16 +740,16 @@ class Lookup {
 		$_['capost'] = new ShippingCarrier(__('Canada Post', 'Shopp'), 'http://canadapost.ca/', 'CA', 'http://www.canadapost.ca/cpotools/apps/track/personal/findByTrackNumber?trackingNumber=%s', '/^(\d{16}|[A-Z]{2}[A-Z0-9]{9}[A-Z]{2})/');
 		$_['china-post'] = new ShippingCarrier(__('China Air Post', 'Shopp'), 'http://183.com.cn/', 'CN');
 		$_['ems-china'] = new ShippingCarrier(__('EMS China', 'Shopp'), 'http://www.ems.com.cn/', 'CN'); // EEXXXXXXXXXHK??
-		$_['hongkong-post'] = new ShippingCarrier(__('Hong Kong Post', 'Shopp'), 'http://www.ems.com.cn/', 'CN');
+		$_['hongkong-post'] = new ShippingCarrier(__('Hong Kong Post', 'Shopp'), 'http://hongkongpost.hk', 'HK');
 		$_['india-post'] = new ShippingCarrier(__('India Post', 'Shopp'), 'http://www.indiapost.gov.in/', 'IN');
-		$_['japan-post'] = new ShippingCarrier(__('Japan Post', 'Shopp'), 'http://www.indiapost.gov.in/', 'IN');
+		$_['japan-post'] = new ShippingCarrier(__('Japan Post', 'Shopp'), 'http://www.post.japanpost.jp/', 'JP');
 		$_['parcelforce'] = new ShippingCarrier(__('Parcelforce', 'Shopp'), 'http://parcelforce.com/', 'UK');
 		$_['post-danmark'] = new ShippingCarrier(__('Post Danmark', 'Shopp'), 'http://www.postdanmark.dk/', 'DK');
 		$_['posten-norway'] = new ShippingCarrier(__('Posten Norway', 'Shopp'), 'http://www.posten.no/', 'NO');
-		$_['posten-sweden'] = new ShippingCarrier(__('Posten Sweden', 'Shopp'), 'http://www.posten.se/', 'NO');
+		$_['posten-sweden'] = new ShippingCarrier(__('Posten Sweden', 'Shopp'), 'http://www.posten.se/', 'SE', 'http://www.posten.se/sv/Kundservice/Sidor/Sok-brev-paket.aspx?search=%s');
 		$_['purolator'] = new ShippingCarrier(__('Purolator', 'Shopp'), 'http://purolator.com/', 'CA', 'http://shipnow.purolator.com/shiponline/track/purolatortrack.asp?pinno=%s');
 		$_['russian-post'] = new ShippingCarrier(__('Russian Post', 'Shopp'), 'http://www.russianpost.ru/', 'RU', 'http://www.russianpost.ru/rp/servise/ru/home/postuslug/trackingpo');
-		$_['thailand-post'] = new ShippingCarrier(__('Thailand Post', 'Shopp'), 'http://www.thailandpost.com/', 'NO');
+		$_['thailand-post'] = new ShippingCarrier(__('Thailand Post', 'Shopp'), 'http://www.thailandpost.com/', 'TH');
 		$_['nz-post'] = new ShippingCarrier(__('New Zealand Post', 'Shopp'), 'http://www.nzpost.co.nz/', 'NZ', 'http://www.nzpost.co.nz/tools/tracking-new?trackid=%s', '/[A-Z]{2}\d{9}[A-Z]{2}/i');
 
 		// Global carriers - don't translate global carrier brand names
