@@ -24,10 +24,10 @@ class ShoppVersion {
 	const PATCH = 11;
 
 	/** @type string PRERELEASE The prerelease designation (dev, beta, RC1) */
-	const PRERELEASE = '';
+	const PRERELEASE = 'dev';
 
 	/** @type string CODENAME The release project code name */
-	const CODENAME = 'Europa';
+	const CODENAME = 'Ares';
 
 	/** @type int DB The database schema version */
 	const DB = 1201;
