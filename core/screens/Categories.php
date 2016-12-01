@@ -189,7 +189,6 @@ class ShoppScreenCategories extends ShoppScreenController {
 	/**
 	 * Interface processor for the category list manager
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 * @return void
 	 **/
@@ -219,12 +218,12 @@ class ShoppScreenCategories extends ShoppScreenController {
 		$start = ($per_page * ($paged-1));
 		$end = $start + $per_page;
 
-		$url = add_query_arg(array_merge($_GET,array('page'=>ShoppAdmin::pagename('categories'))),admin_url('admin.php'));
+		$url = add_query_arg(array_merge($_GET, array('page' => ShoppAdmin::pagename('categories'))), admin_url('admin.php'));
 
 		$taxonomy = 'shopp_category';
 
-		$filters = array('hide_empty' => 0,'fields'=>'id=>parent');
-		add_filter('get_shopp_category',array($this,'load_category'),10,2);
+		$filters = array('hide_empty' => 0, 'fields' => 'id=>parent');
+		add_filter('get_shopp_category', array('ShoppScreenCategories', 'load_category'), 10, 2);
 
 		// $filters['limit'] = "$start,$per_page";
 		if (!empty($s)) $filters['search'] = $s;
@@ -280,7 +279,6 @@ class ShoppScreenCategories extends ShoppScreenController {
 	/**
 	 * Registers column headings for the category list manager
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 * @return void
 	 **/
@@ -296,11 +294,9 @@ class ShoppScreenCategories extends ShoppScreenController {
 		ShoppUI::register_column_headers($this->id, apply_filters('shopp_manage_category_columns', $columns));
 	}
 
-
 	/**
 	 * Registers column headings for the category list manager
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 * @return void
 	 **/
@@ -311,12 +307,9 @@ class ShoppScreenCategories extends ShoppScreenController {
 		);
 	}
 
-
-
 	/**
 	 * Set
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
 	 * @return void
@@ -336,7 +329,21 @@ class ShoppScreenCategories extends ShoppScreenController {
 
 	}
 
+	/**
+	 * Convert a WP_Term into a Shopp ProductCategory
+	 *
+	 * @since 1.3
+	 *
+	 * @param WP_Term $term The WP_Term object 	
+	 * @param string $taxonomy The WP_Term taxonomy name
+	 * @return ProductCategory The converted WP_Term
+	 **/
+	public static function load_category ( $term, $taxonomy ) {
+		$Category = new ProductCategory();
+		$Category->populate($term);
 
+		return $Category;
+	}
 
 }
 
@@ -487,12 +494,12 @@ class ShoppScreenCategoryEditor extends ShoppScreenController {
 		$start = ($per_page * ($paged-1));
 		$end = $start + $per_page;
 
-		$url = add_query_arg(array_merge($_GET,array('page'=>ShoppAdmin::pagename('categories'))),admin_url('admin.php'));
+		$url = add_query_arg(array_merge($_GET, array('page' => ShoppAdmin::pagename('categories'))), admin_url('admin.php'));
 
 		$taxonomy = 'shopp_category';
 
 		$filters = array('hide_empty' => 0, 'fields' => 'id=>parent');
-		add_filter('get_shopp_category',array($this,'load_category'),10,2);
+		add_filter('get_shopp_category', array('ShoppScreenCategories', 'load_category'), 10, 2);
 
 		// $filters['limit'] = "$start,$per_page";
 		if (!empty($s)) $filters['search'] = $s;
@@ -510,13 +517,6 @@ class ShoppScreenCategoryEditor extends ShoppScreenController {
 
 		$ids = array_keys($Categories);
 		return $ids;
-	}
-
-	public function load_category ( $term, $taxonomy ) {
-		$Category = new ProductCategory();
-		$Category->populate($term);
-
-		return $Category;
 	}
 	
 	public function load () {
