@@ -88,7 +88,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		$price = ShoppDatabaseObject::tablename(ShoppPrice::$table);
 
 		$this->purchased = sDB::query(
-			"SELECT pd.*,pr.inventory FROM $table AS pd LEFT JOIN $price AS pr ON pr.id=pd.price WHERE pd.purchase=$this->id ORDER BY pd.id ASC",
+			"SELECT pd.*,pr.inventory FROM $table AS pd LEFT JOIN $price AS pr ON pr.id=pd.price WHERE pd.purchase=$this->id",
 			'array',
 			array($this, 'purchases')
 		);
