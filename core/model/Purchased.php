@@ -24,8 +24,8 @@ class ShoppPurchased extends ShoppDatabaseObject {
 		else return false;
 	}
 
-	public function copydata ( $Item, $prefix = '', $ignores = false ) {
-		parent::copydata($Item, $ignores);
+	public function copydata ( $Item, $prefix = '', array $ignores = array() ) {
+		parent::copydata ($Item);
 		if ( isset($Item->option->label) )
 			$this->optionlabel = $Item->option->label;
 

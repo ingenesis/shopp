@@ -1321,9 +1321,8 @@ abstract class ShoppDatabaseObject implements Iterator {
 	 * @param array $ignores (optional) List of property names to ignore copying from
 	 * @return void
 	 **/
-	public function copydata ( $data, $prefix = '', $ignores = false ) {
-		if ( ! is_array($ignores) || ! $ignores ) $ignores = array('_datatypes', '_table', '_key', '_lists', '_map', 'id', 'created', 'modified');
-
+	public function copydata ( $data, $prefix = '', array $ignores = array('_datatypes', '_table', '_key', '_lists', '_map', 'id', 'created', 'modified') ) {
+		if ( ! is_array($ignores) ) $ignores = array();
 		$properties = is_object($data) ? get_object_vars($data) : $data;
 		foreach ( (array)$properties as $property => $value ) {
 			$property = $prefix . $property;
