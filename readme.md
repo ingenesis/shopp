@@ -8,6 +8,11 @@ A professional, high-performance e-commerce development plugin for WordPress.
 - [License](license.txt)
 - [Contributors](https://github.com/ingenesis/shopp/contributors)
 
+## Downloads
+- [Latest release (1.3.12)](https://github.com/ingenesis/shopp/releases/tag/1.3.12)
+- [Current dev (1.3.13.dev)](https://github.com/ingenesis/shopp/archive/1.3.x.zip)
+- [Future dev (1.4.dev)](https://github.com/ingenesis/shopp/archive/master.zip)
+
 ## Looking for Help?
 
 - [User Guide Documentation](https://shopplugin.com/docs/) - The official documentation for how to use and setup Shopp
