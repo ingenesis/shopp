@@ -5,7 +5,7 @@ language: php
 
 # PHP version used in first build configuration.
 php:
-    - "7.0.17"
+    - "5.6.30"
 
 # WordPress version used in first build configuration.
 env:
