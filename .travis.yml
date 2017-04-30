@@ -5,7 +5,7 @@ language: php
 
 # PHP version used in first build configuration.
 php:
-    - "7.1.4"
+    - "7.0.17"
 
 # WordPress version used in first build configuration.
 env:
@@ -26,9 +26,9 @@ env:
 
 matrix:
   include:
-     - php: "7.0.18"
-       env: WP_VERSION=4.7
      - php: "5.6.30"
+       env: WP_VERSION=4.7
+     - php: "5.3.29"
        env: WP_VERSION=4.6
 
 # Clones WordPress and configures our testing environment.
