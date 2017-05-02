@@ -1,31 +1,36 @@
 <div itemscope itemtype="http://schema.org/Product">
-
-	<meta itemprop="name" content="<?php shopp('product.name'); ?>" />
-	<meta itemprop="description" content="<?php shopp('product.summary'); ?>" />
+	
+	<meta itemprop="name" content="<?php echo str_replace('"', '&quot;', shopp('product.get-name')); ?>" />
+	<meta itemprop="description" content="<?php echo htmlspecialchars(strip_tags(shopp('product.get-summary'))); ?>" />
 	<meta itemprop="image" content="<?php shopp('product.coverimage', 'property=url&size=original'); ?>" />
-
 	<?php if ( shopp('product.has-variations') ): ?>
 		<?php while( shopp('product.variations') ): ?>
 			<div itemprop="model" itemscope itemtype="http://schema.org/ProductModel">
-				<meta itemprop="name" content="<?php shopp('product.variation', 'label'); ?>" />
-				<meta itemprop="sku" content="<?php shopp('product.variation', 'sku'); ?>" />
+				<meta itemprop="name" content="<?php echo str_replace('"', '&quot;', shopp('product.get-variation', 'label')); ?>" />
+				<meta itemprop="sku" content="<?php echo htmlspecialchars(shopp('product.get-variation', 'sku')); ?>" />
 				<div itemscope itemprop="offers" itemtype="http://schema.org/Offer">
+					<?php while( shopp('product','categories') ): ?>
+						<meta itemprop="category" content="<?php echo str_replace('"', '&quot;', shopp('product','get-category')); ?>" />
+					<?php endwhile; ?>
 					<meta itemprop="price" content="<?php shopp('product.variation', 'saleprice'); ?>" />
 					<meta itemprop="priceCurrency" content="<?php shopp('storefront.currency'); ?>" />
 				</div>
 			</div>
 		<?php endwhile; ?>
 	<?php else: ?>
-
-		<meta itemprop="sku" content="<?php shopp('product.sku'); ?>" />
+		
+		<meta itemprop="sku" content="<?php echo htmlspecialchars(shopp('product.get-sku')); ?>" />
 
 		<div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+			<?php while( shopp('product','categories') ): ?>
+				<meta itemprop="category" content="<?php echo str_replace('"', '&quot;', shopp('product','get-category')); ?>" />
+			<?php endwhile; ?>
 			<meta itemprop="price" content="<?php shopp('product.saleprice'); ?>" />
 			<meta itemprop="priceCurrency" content="<?php shopp('storefront.currency'); ?>" />
-			<?php if ( shopp('product.availability') ): ?>
-				<link itemprop="availability" href="http://schema.org/InStock" />
-			<?php else: ?>
+			<?php if ( shopp('product.get-outofstock') ): ?>
 				<link itemprop="availability" href="http://schema.org/OutOfStock" />
+			<?php else: ?>
+				<link itemprop="availability" href="http://schema.org/InStock" />
 			<?php endif; ?>
 		</div>
 	<?php endif; ?>
@@ -56,5 +61,4 @@
 
 		<?php endwhile; ?>
 	<?php endif; ?>
-
 </div>
