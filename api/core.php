@@ -24,8 +24,10 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 function ShoppProduct ( $Object = null ) {
 	$Shopp = Shopp::object();
-	if ( isset($Object) )
+	if ( isset($Object) ) {
 		$Shopp->Product = $Object;
+		do_action( 'shopp_product', $Shopp->Product );
+	}
 	return $Shopp->Product;
 }
 
@@ -40,8 +42,10 @@ function ShoppProduct ( $Object = null ) {
  **/
 function ShoppCustomer ( $Object = false ) {
 	$Order = ShoppOrder();
-	if ( $Object && is_a($Object, 'ShoppCustomer') )
+	if ( $Object && is_a($Object, 'ShoppCustomer') ) {
 		$Order->Customer = $Object;
+		do_action( 'shopp_customer', $Order->Customer );
+	}
 	return $Order->Customer;
 }
 
@@ -56,7 +60,10 @@ function ShoppCustomer ( $Object = false ) {
  **/
 function ShoppCollection ( $Object = null ) {
 	$Shopp = Shopp::object();
-	if ( isset($Object) ) $Shopp->Category = $Object;
+	if ( isset($Object) ) {
+		$Shopp->Category = $Object;
+		do_action( 'shopp_collection', $Shopp->Category );
+	}
 	return $Shopp->Category;
 }
 
