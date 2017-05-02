@@ -49,6 +49,12 @@ class ShoppScripts extends WP_Scripts {
 		if(parent::do_item($handle,$group))
 			$this->print_code .= $this->print_script_custom($handle);
 	}
+	
+	public function enqueue( $handle ) {
+		if( 'suggest' == $handle )
+			wp_deregister_script('suggest'); //Remove incompatible core script
+		return parent::enqueue( $handle );
+	}
 
 	public function print_head_scripts() {
 		global $concatenate_scripts;
