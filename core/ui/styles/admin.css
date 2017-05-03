@@ -29,6 +29,7 @@ th.textright {
 	line-height: 9px;
 	width: 16px;
 	height: 16px;
+    line-height: 14px;
 	border-radius: 999px;
 	border: none;
 	padding: 0;
@@ -45,7 +46,7 @@ th.textright {
 }
 
 .shopp button.delete:hover {
-	background: #f00;
+	background: #be2626;
 	border: 2px solid transparent;
 	color: #fff;
 }
@@ -400,6 +401,295 @@ div.comment-item:hover .row-actions {
 
 #scheduling input {
 	text-align: center;
+}
+
+@-webkit-keyframes passing-through {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateY(40px);
+        -ms-transform: translateY(40px);
+        transform: translateY(40px); 
+    }
+    30%, 70% {
+        opacity: 1;
+        -webkit-transform: translateY(0px);
+        -ms-transform: translateY(0px);
+        transform: translateY(0px); 
+    }
+    100% {
+        opacity: 0;
+        -webkit-transform: translateY(-40px);
+        -ms-transform: translateY(-40px);
+        transform: translateY(-40px); 
+    }
+}
+@keyframes passing-through {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateY(40px);
+        -ms-transform: translateY(40px);
+        transform: translateY(40px); }
+    30%, 70% {
+        opacity: 1;
+        -webkit-transform: translateY(0px);
+        -ms-transform: translateY(0px);
+        transform: translateY(0px); 
+    }
+    100% {
+        opacity: 0;
+        -webkit-transform: translateY(-40px);
+        -ms-transform: translateY(-40px);
+        transform: translateY(-40px); 
+    }
+}
+@-webkit-keyframes slide-in {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(40px);
+    -ms-transform: translateY(40px);
+    transform: translateY(40px); }
+  30% {
+    opacity: 1;
+    -webkit-transform: translateY(0px);
+    -ms-transform: translateY(0px);
+    transform: translateY(0px);
+    } }
+@keyframes slide-in {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(40px);
+    -ms-transform: translateY(40px);
+    transform: translateY(40px); }
+  30% {
+    opacity: 1;
+    -webkit-transform: translateY(0px);
+    -ms-transform: translateY(0px);
+    transform: translateY(0px); } }
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1); }
+  10% {
+    -webkit-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.1); }
+  20% {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1); } }
+@keyframes pulse {
+  0% {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1); }
+  10% {
+    -webkit-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.1); }
+  20% {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1); } }
+
+.lightbox-dropzone {
+    box-sizing: border-box;
+    min-height: 150px;
+    list-style-type: none;
+    margin: 0;
+    margin-left: -5px;
+    padding: 5px; 
+    border: 1px solid transparent;
+    margin-bottom: 20px;
+}
+
+.lightbox-dropzone.dz-drag-hover {
+    border: 1px dashed #dfdfdf;
+}
+
+/*  .dropzone.dz-clickable {
+    cursor: pointer; }
+    .dropzone.dz-clickable * {
+      cursor: default; }
+    .dropzone.dz-clickable .dz-message, .dropzone.dz-clickable .dz-message * {
+      cursor: pointer; }
+  .dropzone.dz-started .dz-message {
+    display: none; }
+    .dropzone.dz-drag-hover .dz-message {
+      opacity: 0.5; }
+  .lightbox-dropzone .dz-message {
+    text-align: center;
+    margin: 2em 0; }
+*/
+.lightbox-dropzone .dz-preview {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    background: #ffffff;
+    margin: 0 10px 10px 0;
+    padding: 5px;
+    cursor: move;
+    width: 120px;
+    height: 120px;
+    border: 1px solid #dfdfdf;
+    z-index: 1;
+}
+.lightbox-dropzone .dz-error .dz-image {
+    filter: contrast(50%) saturate(0%) brightness(150%);
+    -webkit-transition: filter 0.2s ease-out;
+}
+
+.lightbox-dropzone .dz-preview:hover {
+    z-index: 1000; 
+}
+.lightbox-dropzone .dz-preview:hover .dz-details {
+    opacity: 1; 
+}
+.lightbox-dropzone .dz-preview.dz-file-preview .dz-details {
+    opacity: 1; 
+}
+
+.lightbox-dropzone .dz-preview.dz-image-preview .dz-details {
+    -webkit-transition: opacity 0.2s linear;
+    transition: opacity 0.2s linear; 
+}
+
+.lightbox-dropzone .dz-preview .dz-remove {
+    font-size: 14px;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+    border: none;
+}
+
+.lightbox-dropzone .dz-preview .delete {
+	margin: 0;
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	top: -4px;
+	right: -5px;
+	z-index: 10;
+    visibility: hidden;
+}
+.lightbox-dropzone .dz-preview:not(.dz-error):hover .delete {
+    visibility: visible;
+}
+
+
+.lightbox-dropzone .dz-preview .dz-remove:hover {
+    text-decoration: underline;
+}
+
+.lightbox-dropzone .dz-preview .dz-details .dz-size {
+    margin-bottom: 1em;
+    font-size: 16px; 
+}
+.lightbox-dropzone .dz-preview .dz-details .dz-filename {
+    white-space: nowrap;
+}
+    .lightbox-dropzone .dz-preview:hover .dz-image img {
+      -webkit-transform: scale(1.05, 1.05);
+      -ms-transform: scale(1.05, 1.05);
+      transform: scale(1.05, 1.05);
+      -webkit-filter: blur(8px);
+      filter: blur(8px); }
+    .lightbox-dropzone .dz-preview .dz-image {
+      overflow: hidden;
+      width: 120px;
+      height: 120px;
+      position: relative;
+      display: block;
+      z-index: 10; }
+      .lightbox-dropzone .dz-preview .dz-image img {
+        display: block; }
+    .lightbox-dropzone .dz-preview.dz-success .dz-success-mark {
+      -webkit-animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1);
+      animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1); }
+    .lightbox-dropzone .dz-preview.dz-error .dz-error-mark {
+      opacity: 1;
+      -webkit-animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
+      animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1); }
+    
+.lightbox-dropzone .dz-preview .dz-success-mark, 
+.lightbox-dropzone .dz-preview .dz-error-mark {
+    pointer-events: none;
+    opacity: 0;
+    z-index: 500;
+    position: absolute;
+    display: block;
+    top: calc(50% - 30px);
+    left: calc(50% - 15px);
+    color: #ffffff;
+    text-shadow: -2px 0 #be2626, 0 2px #be2626, 2px 0 #be2626, 0 -2px #be2626;
+    font-size: 60px;
+    line-height: 60px;
+}
+    .lightbox-dropzone .dz-preview.dz-processing .dz-progress {
+      opacity: 1;
+      -webkit-transition: all 0.2s linear;
+      transition: all 0.2s linear; }
+    .lightbox-dropzone .dz-preview.dz-complete .dz-progress {
+      opacity: 0;
+      -webkit-transition: opacity 0.4s ease-in;
+      transition: opacity 0.4s ease-in; }
+    .lightbox-dropzone .dz-preview:not(.dz-processing) .dz-progress {
+      -webkit-animation: pulse 6s ease infinite;
+      animation: pulse 6s ease infinite; }
+
+.lightbox-dropzone .dz-preview .dz-progress {
+    opacity: 0;
+    z-index: 1000;
+    pointer-events: none;
+    position: absolute;
+    height: 10px;
+    left: 50%;
+    top: 50%;
+    margin-top: -8px;
+    width: 80px;
+    margin-left: -40px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    -webkit-transform: scale(1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.lightbox-dropzone .dz-preview .dz-progress .dz-upload {
+    background: #333;
+    background: linear-gradient(to bottom, #666666, #444444);
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    -webkit-transition: width 300ms ease-in-out;
+    transition: width 300ms ease-in-out; 
+}
+
+.lightbox-dropzone .dz-preview.dz-error:hover .dz-error-message {
+    cursor: pointer;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.lightbox-dropzone .dz-preview .dz-error-message {
+    font-size: 12px;
+    letter-spacing: -0.03em;
+    display: block;
+    width: 130px;
+    height: 130px;
+    box-sizing: border-box;
+    padding: 10px;
+    z-index: 1000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    background: linear-gradient(to bottom, #ffffff, #e8e8e8);
+    -webkit-transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 /** Image details modal **/

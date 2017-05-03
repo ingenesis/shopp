@@ -21,8 +21,10 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  * @since 1.1
  * @package shopp
  **/
-class ShoppAjax {
+class ShoppAjax extends ShoppRequestFormFramework {
 
+	private $files = array();
+	
 	/**
 	 * ShoppAjax constructor
 	 *
@@ -31,11 +33,15 @@ class ShoppAjax {
 	 * @return void
 	 **/
 	public function __construct () {
-
-		if ( isset($_POST['action']) && 'add-menu-item' == $_POST['action'] ) {
-			// Boot the Admin controller to handle AJAX added WP nav menu items
-			new ShoppAdmin();
-		}
+		
+		$this->query();  // Process query string
+		$this->posted(); // Process post data
+		
+		if ( ! empty($_FILES) ) // Process any files
+			$this->files = $_FILES;
+				
+		if ( 'add-menu-item' == $this->form('action') )
+			new ShoppAdmin(); // Boot the Admin controller to handle AJAX added WP nav menu items
 
 		// Flash uploads require unprivileged access
 		add_action('wp_ajax_nopriv_shopp_upload_image', array($this, 'upload_image'));
@@ -48,7 +54,7 @@ class ShoppAjax {
 		add_action('wp_ajax_shopp_ship_costs', array($this, 'shipping_costs'));
 
 		// Below this line must have nonce protection (all admin ajax go below)
-		if ( ! isset($_REQUEST['_wpnonce']) ) return;
+		if ( ! $this->request('_wpnonce') ) return;
 
 		add_action('wp_ajax_shopp_category_products', array($this, 'category_products'));
 		add_action('wp_ajax_shopp_order_receipt', array($this, 'receipt'));
@@ -157,7 +163,8 @@ class ShoppAjax {
 	}
 
 	public function upload_image () {
-		ShoppScreenProductEditor::images();
+		$file = isset($this->files['file']) ? $this->files['file'] : false;
+		ShoppScreenProductEditor::images($file, $this->request('parent'), $this->request('type'));
 	}
 
 	public function upload_file () {

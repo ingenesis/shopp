@@ -227,8 +227,10 @@ class ShoppUI {
 		$type = $options['type'];
 		$title = $options['title'];
 		$icon = $options['icon'];
+		
+		$dz = isset($options['data-dz-remove']) ? ' data-dz-remove' : '';
 
-		return '<button type="' . $type . '" name="' . $name . '"' . inputattrs($options) . '><span class="' . $icon . '"><span class="hidden">' . $title . '</span></span></button>';
+		return '<button type="' . $type . '" name="' . $name . '"' . inputattrs($options) . $dz . '><span class="' . $icon . '"><span class="hidden">' . $title . '</span></span></button>';
 	}
 
 	public static function template ( $ui, array $data = array() ) {

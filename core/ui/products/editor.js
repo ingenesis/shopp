@@ -92,7 +92,7 @@ jQuery(document).ready(function($) {
 	$('#addDetail').click(function() { addDetail(); });
 
 	// Initialize file uploads before the pricelines
-	fileUploads = new FileUploader('flash-upload-file',$('#ajax-upload-file'));
+    // fileUploads = new FileUploader('flash-upload-file',$('#ajax-upload-file'));
 
 	// Initalize the base price line
 	basePrice = $(prices).get(0);
@@ -115,7 +115,7 @@ jQuery(document).ready(function($) {
 	$('#newAddonGroup').click(function() { newAddonGroup(); });
 	if (options && options.a) loadAddons(options.a,prices);
 
-	imageUploads = new ImageUploads($('#image-product-id').val(),'product');
+	imageUploads = new ImageUploads($('#image-product-id').val(), 'product');
 
 	// Setup categories
 	categories();
