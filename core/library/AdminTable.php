@@ -414,7 +414,7 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 	 */
 	protected function bulk_actions( $which = '' ) {
 		if ( is_null( $this->_actions ) ) {
-			$no_new_actions = $this->_actions = $this->get_bulk_actions();
+			$no_new_actions = $this->_actions = $this->get_bulk_actions( $which );
 			/**
 			 * Filter the list table Bulk Actions drop-down.
 			 *
