@@ -114,7 +114,7 @@ class TaxTests extends ShoppTestCase {
 					'type' => 'Shipped',
 					'price' => 10.00,
 					'shipping' => array('flag' => true, 'fee' => 0, 'weight' => 0.1, 'length' => 0.3, 'width' => 0.3, 'height' => 1.0),
-					'inventory' => array('flag' => false),                    
+					'inventory' => array('flag' => false),
 				),
 				1 => array(
 					'option' => array('Pips' => 'Gold Pip'),
@@ -267,6 +267,7 @@ class TaxTests extends ShoppTestCase {
 	}
 
 	static function tearDownAfterClass () {
+		parent::tearDownAfterClass();
 		self::resetTests();
 	}
 
@@ -297,7 +298,7 @@ class TaxTests extends ShoppTestCase {
 	function setUp () {
 		parent::setUp();
 		self::resetTests();
-        
+
 		$shippingrates = array(
 			'label' => 'Standard',
 			'mindelivery' => '4d',
@@ -316,23 +317,23 @@ class TaxTests extends ShoppTestCase {
         remove_all_actions('shopp_calculate_shipping_init');
         remove_all_actions('shopp_calculate_item_shipping');
         remove_all_actions('shopp_calculate_shipping');
-        
+
 		shopp_set_setting('ItemRates-0', serialize($shippingrates));
     	shopp_set_setting('active_shipping',array(
     		'ItemRates' => array( 0 => true )
     	));
-        
+
         $Shopp->Shipping->activated();
         $Shopp->Shipping->load();
 	}
-    
+
     function number ($amount) {
 		return Shopp::numeric_format(abs($amount), 2, '.', '', 3);
     }
-    
+
 	function test_vat_scenario1 () {
 		$Order = ShoppOrder();
-        
+
 		$baseop = array(
 			'name' => 'France',
 			'currency' => array(
@@ -374,7 +375,7 @@ class TaxTests extends ShoppTestCase {
 			)
 		);
 		shopp_set_setting('taxrates', serialize($taxrates));
-        
+
 		$Product = shopp_product('command-uniform', 'slug');
 		shopp_add_cart_product($Product->id, 1);
 
@@ -383,9 +384,9 @@ class TaxTests extends ShoppTestCase {
 
 		$addons = shopp_product_addons($Product->id);
 		$addon = array_shift($addons); // First available addon
-        
-        shopp_add_cart_item_addon($itemkey, $addon->id);		
-		
+
+        shopp_add_cart_item_addon($itemkey, $addon->id);
+
 		$data = array('country' => 'GB');
 		$Order->Billing->updates($data);
 		$Order->Shipping->updates($data);
@@ -393,7 +394,7 @@ class TaxTests extends ShoppTestCase {
 		$Totals = $Order->Cart->totals();
         $Items = shopp_cart_items();
         $Item = reset($Items);
-        
+
         // Item Pricing
 		$this->assertEquals(110, $Item->unitprice, 'Cart line item unit price:');
         $this->assertEquals(110, $Item->total, 'Cart line item total:');
@@ -403,18 +404,18 @@ class TaxTests extends ShoppTestCase {
 		$this->assertEquals(10, $Totals->total('shipping'), 'Cart shipping amount:');
 		$this->assertEquals(20, $Totals->total('tax'), 'Cart tax amount:');
 		$this->assertEquals(120.00, $Totals->total('total'), 'Cart total amount:');
-        
+
 		$data = array('country' => 'DE');
 
 		$Order->Billing->updates($data);
 		$Order->Shipping->updates($data);
 		$Order->locate();
-        
+
 		$Totals = $Order->Cart->totals();
-        
+
         $Items = shopp_cart_items();
         $Item = reset($Items);
-        
+
         // Item Pricing
 		$this->assertEquals('109.08', $this->number($Item->unitprice), 'Cart line item unit price:');
         $this->assertEquals('109.08', $this->number($Item->total), 'Cart line item total:');
@@ -424,19 +425,19 @@ class TaxTests extends ShoppTestCase {
 		$this->assertEquals('10.00', $this->number($Totals->total('shipping')), 'Cart shipping amount:');
 		$this->assertEquals('19.00', $this->number($Totals->total('tax')), 'Cart tax amount:');
 		$this->assertEquals('119.08', $this->number($Totals->total('total')), 'Cart total amount:');
-        
-        
+
+
 		$data = array('country' => 'FJ');
 
 		$Order->Billing->updates($data);
 		$Order->Shipping->updates($data);
 		$Order->locate();
-        
+
 		$Totals = $Order->Cart->totals();
-        
+
         $Items = shopp_cart_items();
         $Item = reset($Items);
-        
+
         // Item Pricing
 		$this->assertEquals('91.67', $this->number($Item->unitprice), 'Cart line item unit price:');
         $this->assertEquals('91.67', $this->number($Item->total), 'Cart line item total:');

@@ -102,11 +102,6 @@ class CoreTests extends ShoppTestCase {
 		));
 	}
 
-	static function tearDownAfterClass () {
-		$Product = shopp_product('shopp-branded-plain-white-tee', 'slug');
-		shopp_rmv_product($Product->id);
-	}
-
 	public function test_unsupported () {
 		$this->assertTrue(defined('SHOPP_UNSUPPORTED'));
 	}

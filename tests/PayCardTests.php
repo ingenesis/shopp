@@ -24,6 +24,7 @@ class PayCardTests extends ShoppTestCase {
 	}
 
 	static function tearDownAfterClass () {
+		parent::tearDownAfterClass();
 		self::$paycards = array();
 	}
 
@@ -31,10 +32,10 @@ class PayCardTests extends ShoppTestCase {
      * Test card valid and invalid card PANs
      */
 	function pans () {
-        
+
         return array(
             //    code,   PAN,                mask,         last4, match, checksum, validate
-            
+
             // Valid cards
             array('amex', '370000000000002', 'XXXXXXXXXXXX', '0002', true, true, true),
             array('amex', '378282246310005', 'XXXXXXXXXXXX', '0005', true, true, true),
@@ -72,7 +73,7 @@ class PayCardTests extends ShoppTestCase {
             array('mc', '5424000000000015', 'XXXXXXXXXXXX', '0015', true, true, true),
             array('mc', '5454545454545454', 'XXXXXXXXXXXX', '5454', true, true, true),
             array('mc', '5555555555554444', 'XXXXXXXXXXXX', '4444', true, true, true),
-            
+
             array('visa', '4007000000027', 'XXXXXXXXXXXX', '0027', true, true, true),
             array('visa', '4012888818888', 'XXXXXXXXXXXX', '8888', true, true, true),
             array('visa', '4012888888881881', 'XXXXXXXXXXXX', '1881', true, true, true),
@@ -88,7 +89,7 @@ class PayCardTests extends ShoppTestCase {
         );
 
 	}
-    
+
     function decorated_pans() {
         // Decorated pans for sanitization tests
         return array(
@@ -121,11 +122,11 @@ class PayCardTests extends ShoppTestCase {
         if ( $checksum )
             $this->assertTrue($PayCard->checksum($pan), "Valid PAN $pan failed to pass the checksum match for '$code' PayCard type.");
         else $this->assertFalse($PayCard->checksum($pan), "Invalid PAN '$pan' should not pass the checksum match for '$code' PayCard type.");
-        
+
         if ( $validate )
             $this->assertTrue($PayCard->validate($pan), "Valid PAN $pan failed to validate for '$code' PayCard type.");
         else $this->assertFalse($PayCard->validate($pan), "Invalid PAN '$pan' should not be able to validate for '$code' PayCard type.");
-        
+
     }
 
 	/**
@@ -134,7 +135,7 @@ class PayCardTests extends ShoppTestCase {
     function test_mask ($code, $pan, $mask, $last4, $match, $checksum) {
         $this->assertTrue(isset(self::$paycards[ $code ]), "Invalid PayCard code. No $code PayCard entry exists.");
         $PayCard = self::$paycards[ $code ];
-        
+
         $this->assertEquals(PayCard::truncate($pan), $last4, "Truncating $pan failed to match expected last-4 $last4");
 
         if ( $checksum ) { // Only test masking if the PAN is expected to pass the checksum test

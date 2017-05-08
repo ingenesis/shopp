@@ -2,15 +2,12 @@
 /**
  * URLTests
  *
+ * @todo These tests cause flakiness in the CategoryAPITests
  *
  * @author Jonathan Davis, Dave Kress
  * @version 1.0
  * @copyright Ingenesis Limited, 28 November, 2011
  * @package
- **/
-
-/**
- * Initialize
  **/
 
 class DefaultURLTests extends ShoppTestCase {
@@ -79,6 +76,10 @@ class DefaultURLTests extends ShoppTestCase {
 		}
 
 	}
+
+	// static function tearDownAfterClass() {
+	// 	parent::tearDownAfterClass();
+	// }
 
 	function test_cart_url () {
 		$actual = shopp('cart.get-url');

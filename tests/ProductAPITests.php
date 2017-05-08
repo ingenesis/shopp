@@ -104,13 +104,7 @@ class ProductAPITests extends ShoppTestCase {
 	}
 
 	static function tearDownAfterClass () {
-		$Product = shopp_product('command-uniform','slug');
-		shopp_rmv_product($Product->id);
-		// restore original settings
-		// $this->_restore_setting('inventory');
-		// $this->_restore_setting('base_operations');
-		// $this->_restore_setting('taxrates');
-		// parent::tearDown();
+		parent::tearDownAfterClass();
 	}
 
 	function test_product_id () {

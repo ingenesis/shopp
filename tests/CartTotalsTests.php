@@ -274,6 +274,7 @@ class CartTotalsTests extends ShoppTestCase {
 	}
 
 	static function tearDownAfterClass () {
+		parent::tearDownAfterClass();
 		self::resetTests();
 	}
 

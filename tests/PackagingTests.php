@@ -79,9 +79,6 @@ class PackagingTests extends ShoppTestCase {
 
 	}
 
-	static function tearDownAfterClass () {
-	}
-
 	// testing packaging all items together, by mass
 	function test_package_mass () {
         // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');

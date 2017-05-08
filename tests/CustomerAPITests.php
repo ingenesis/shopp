@@ -85,6 +85,7 @@ class CustomerAPITests extends ShoppTestCase {
 	}
 
 	static function tearDownAfterClass () {
+		parent::tearDownAfterClass();
 		shopp_set_setting('account_system', 'none');
 		$Customer = shopp_customer('mccoy@starfleet.gov','email');
 		wp_delete_user( $Customer->wpuser );

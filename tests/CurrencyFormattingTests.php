@@ -31,6 +31,7 @@ class CurrencyFormatting extends ShoppTestCase {
 	}
 
 	static function tearDownAfterClass () {
+		parent::tearDownAfterClass();
 		self::$formats = array();
 		self::$values = array();
 	}

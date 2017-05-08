@@ -74,10 +74,6 @@ class OrderDevAPITests extends ShoppTestCase {
 
 	}
 
-	static function tearDownAfterClass () {
-
-	}
-
 	function test_shopp_add_order () {
 
 		ShoppOrder()->clear();

@@ -53,6 +53,7 @@ class AssetDevAPITests extends ShoppTestCase {
 	}
 
 	public static function tearDownAfterClass () {
+		parent::tearDownAfterClass();
 		// $Shopp = Shopp::object();
 		// $Shopp->Storage->engines = array();
 

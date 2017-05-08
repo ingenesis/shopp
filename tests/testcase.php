@@ -56,7 +56,7 @@ class ShoppTestCase extends WP_UnitTestCase {
 
 	static function resetTables () {
 		$classes = array(
-			'Address','ShoppProduct','ShoppPromo','ProductSummary','ShoppPrice','ShoppCustomer','ShoppPurchase','ShoppPurchased'
+			'ShoppAddress','ShoppAsset','ShoppMeta','ShoppCart','ShoppProduct','ShoppPromo','ProductSummary','ShoppPrice','ShoppCustomer','ShoppPurchase','ShoppPurchased'
 		);
 		foreach ($classes as $classname) {
 			$table = ShoppDatabaseObject::tablename(get_class_property($classname, 'table'));
@@ -69,7 +69,6 @@ class ShoppTestCase extends WP_UnitTestCase {
 			if ( in_array($table, $skipped) ) continue;
 			sDB::query('DELETE FROM ' . $wpdb->$table);
 		}
-
 	}
 
 	function assertValidMarkup ($string) {

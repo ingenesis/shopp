@@ -77,6 +77,7 @@ class CategoryAPITests extends ShoppTestCase {
 	}
 
 	function test_category_products () {
+
 		ob_start();
 		if ( shopp('category','has-products') )
 			while(shopp('category','products')) shopp('product','name');
