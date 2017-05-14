@@ -1,4 +1,5 @@
 <?php wp_nonce_field('shopp-setup-management'); ?>
+<?php shopp_admin_screen_tabs(); ?>
 
 <table class="form-table">
 

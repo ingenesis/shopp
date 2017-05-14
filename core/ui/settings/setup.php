@@ -1,3 +1,4 @@
+shopp_admin_screen_tabs();
 <table class="form-table">
 	<tr>
 		<th scope="row" valign="top"><label for="base_operations"><?php Shopp::_e('Base of Operations'); ?></label></th>

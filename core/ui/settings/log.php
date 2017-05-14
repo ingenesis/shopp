@@ -1,3 +1,4 @@
+<?php shopp_admin_screen_tabs(); ?>
 <?php
 	$logurl = wp_nonce_url(add_query_arg('action', 'shopp_debuglog', admin_url('admin-ajax.php')), 'wp_ajax_shopp_debuglog') . '#bottom';
 	wp_nonce_field('shopp-system-log');
