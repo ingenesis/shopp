@@ -174,7 +174,7 @@ jQuery.fn.PopupCalendar = function (settings) {
 			// Start a new week
 			if (i % 7 == 0) weeks[++w] = $('<div class="week"></div>').appendTo($this);
 			if (dates[i] != -1) {
-				calendar[i] = $('<div title="'+i+'">'+thisDate.getDate()+'</div>').appendTo(weeks[w]);
+				calendar[i] = $('<div title="'+thisDate.getDate()+'" data-index="'+i+'">'+thisDate.getDate()+'</div>').appendTo(weeks[w]);
 				calendar[i].date = thisDate;
 
 				if (thisMonth != month) calendar[i].addClass(disabled);
@@ -196,7 +196,7 @@ jQuery.fn.PopupCalendar = function (settings) {
 						_.resetCalendar();
 						if (!$(this).hasClass(disabled)) $(this).addClass(selected);
 
-						_.select(dates[$(this).attr('title')]);
+						_.select(dates[$(this).attr('data-index')]);
 						_.scope = "day";
 
 						if (_.selection.getMonth()+1 != month) {
