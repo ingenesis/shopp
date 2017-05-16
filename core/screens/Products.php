@@ -556,13 +556,13 @@ class ShoppScreenProducts extends ShoppScreenController {
 			)
 		);
 
-		$columns = isset($headings[$this->view]) ? $headings[$this->view] : $headings['default'];
+		$columns = isset($headings[ $this->request['view'] ]) ? $headings[ $this->request['view'] ] : $headings['default'];
 
 		// Remove inventory column if inventory tracking is disabled
 		if ( ! shopp_setting_enabled('inventory') ) unset($columns['inventory']);
 
 		// Remove category column from the "trash" view
-		if ('trash' == $this->view) unset($columns['category']);
+		if ('trash' == $this->request['view']) unset($columns['category']);
 
 		ShoppUI::register_column_headers('toplevel_page_shopp-products', apply_filters('shopp_manage_product_columns',$columns));
 	}
