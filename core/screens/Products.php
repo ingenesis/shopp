@@ -90,12 +90,12 @@ class ShoppScreenProducts extends ShoppScreenController {
 		if ( ! is_array($selected) ) $selected = array($selected);
 
 		if ( ! defined('WP_ADMIN') || ! isset($page)
-			|| $this->Admin->pagename('products') != $page )
+			|| ShoppAdmin::pagename('products') != $page )
 				return false;
 
 		$adminurl = admin_url('admin.php');
 
-		if ( $this->Admin->pagename('products') == $page && ( false !== $action || isset($_GET['delete_all']) ) ) {
+		if ( ShoppAdmin::pagename('products') == $page && ( false !== $action || isset($_GET['delete_all']) ) ) {
 			if (isset($_GET['delete_all'])) $action = 'emptytrash';
 			switch ($action) {
 				case 'publish': 	ShoppProduct::publishset($selected,'publish'); break;
@@ -125,7 +125,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 			$Product = new ShoppProduct($duplicate);
 			$Product->duplicate();
 			$this->index($Product);
-			Shopp::redirect( add_query_arg(array('page' => $this->Admin->pagename('products'), 'paged' => $_REQUEST['paged']), $adminurl) );
+			Shopp::redirect( add_query_arg(array('page' => ShoppAdmin::pagename('products'), 'paged' => $_REQUEST['paged']), $adminurl) );
 		}
 
 		if (isset($id) && $id != "new") {

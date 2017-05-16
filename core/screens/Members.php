@@ -81,7 +81,7 @@ class Members extends ShoppScreenController {
 		$args = array_merge($defaults,$_GET);
 		extract($args, EXTR_SKIP);
 
-		if ($page == $this->Admin->pagename('memberships')
+		if ($page == ShoppAdmin::pagename('memberships')
 				&& !empty($deleting)
 				&& !empty($delete)
 				&& is_array($delete)

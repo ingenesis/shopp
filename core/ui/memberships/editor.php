@@ -6,7 +6,7 @@
 		<?php do_action('shopp_admin_notice'); ?>
 
 		<div id="ajax-response"></div>
-		<form name="membership" id="membership" action="<?php echo add_query_arg('page',$this->Admin->pagename('memberships'),admin_url('admin.php')); ?>" method="post">
+		<form name="membership" id="membership" action="<?php echo add_query_arg('page',ShoppAdmin::pagename('memberships'),admin_url('admin.php')); ?>" method="post">
 			<?php wp_nonce_field('shopp-save-membership'); ?>
 
 			<div class="hidden"><input type="hidden" name="id" value="<?php echo $MemberPlan->id; ?>" /></div>

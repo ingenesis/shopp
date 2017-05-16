@@ -118,7 +118,7 @@ class ShoppAdminService extends ShoppAdminController {
 		$args = array_merge($defaults, $_GET);
 		extract($args, EXTR_SKIP);
 
-		$url = add_query_arg(array_merge($_GET, array('page' => $this->Admin->pagename('orders'))), admin_url('admin.php'));
+		$url = add_query_arg(array_merge($_GET, array('page' => ShoppAdmin::pagename('orders'))), admin_url('admin.php'));
 
 		if ( $page == "shopp-orders"
 						&& !empty($deleting)

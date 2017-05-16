@@ -6,12 +6,12 @@
 
 	<form action="" id="categories" method="get">
 	<div>
-		<input type="hidden" name="page" value="<?php echo $this->Admin->pagename('categories'); ?>" />
+		<input type="hidden" name="page" value="<?php echo ShoppAdmin::pagename('categories'); ?>" />
 	</div>
 
 	<div class="tablenav">
 		<div class="alignleft actions">
-			<a href="<?php echo esc_url(add_query_arg(array_merge(stripslashes_deep($_GET),array('page'=>$this->Admin->pagename('categories'),'a'=>null)),admin_url('admin.php'))); ?>" class="button add-new">&larr; <?php _e('Return to Manage Categories','Shopp'); ?></a>
+			<a href="<?php echo esc_url(add_query_arg(array_merge(stripslashes_deep($_GET),array('page'=>ShoppAdmin::pagename('categories'),'a'=>null)),admin_url('admin.php'))); ?>" class="button add-new">&larr; <?php _e('Return to Manage Categories','Shopp'); ?></a>
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -34,7 +34,7 @@
 		foreach ($Categories as $Category):
 
 		$editurl = esc_url(esc_attr(add_query_arg(array_merge(stripslashes_deep($_GET),
-			array('page'=>$this->Admin->pagename('categories'),
+			array('page'=>ShoppAdmin::pagename('categories'),
 					'id'=>$Category->id)),
 					admin_url('admin.php'))));
 

@@ -189,7 +189,7 @@ final class ShoppFlow extends ShoppFlowController {
 		$Installer = new ShoppInstallation();
 		$Installer->upgrade();
 
-		$welcome = add_query_arg( array('page' => $this->Admin->pagename('welcome')), admin_url('admin.php'));
+		$welcome = add_query_arg( array('page' => ShoppAdmin::pagename('welcome')), admin_url('admin.php'));
 		Shopp::redirect($welcome, true);
 
 	}
