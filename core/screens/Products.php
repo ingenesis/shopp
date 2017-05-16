@@ -528,7 +528,9 @@ class ShoppScreenProducts extends ShoppScreenController {
 		$headings = array(
 			'default' => array(
 				'cb'=>'<input type="checkbox" />',
+				'id'=>__('ID','Shopp'),
 				'name'=>__('Name','Shopp'),
+				'sku'=>__('SKU','Shopp'),
 				'category'=>__('Category','Shopp'),
 				'price'=>__('Price','Shopp'),
 				'inventory'=>__('Inventory','Shopp'),
@@ -542,7 +544,9 @@ class ShoppScreenProducts extends ShoppScreenController {
 			),
 			'bestselling' => array(
 				'cb'=>'<input type="checkbox" />',
+				'id'=>__('ID','Shopp'),
 				'name'=>__('Name','Shopp'),
+				'sku'=>__('SKU','Shopp'),
 				'sold'=>__('Sold','Shopp'),
 				'gross'=>__('Sales','Shopp'),
 				'price'=>__('Price','Shopp'),

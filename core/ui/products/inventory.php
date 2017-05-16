@@ -9,7 +9,7 @@
 	<?php include("navigation.php"); ?>
 
 	<div>
-		<input type="hidden" name="page" value="<?php echo $this->Admin->pagename('products'); ?>" />
+		<input type="hidden" name="page" value="<?php echo ShoppAdmin::pagename('products'); ?>" />
 		<input type="hidden" name="view" value="<?php echo $this->view; ?>" />
 	</div>
 

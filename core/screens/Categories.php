@@ -449,6 +449,7 @@ class ShoppScreenCategories extends ShoppScreenController {
 	public function layout () {
 		$columns = array(
 			'cb'        => '<input type="checkbox" />',
+			'id'        => Shopp::__('ID'),
 			'name'      => Shopp::__('Name'),
 			'slug'      => Shopp::__('Slug'),
 			'products'  => Shopp::__('Products'),
