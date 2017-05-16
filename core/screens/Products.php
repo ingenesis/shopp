@@ -223,7 +223,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 			'onsale' =>     array('label' => Shopp::__('On Sale'),     'where' => array("s.sale='on' AND p.post_status != 'trash'")),
 			'featured' =>   array('label' => Shopp::__('Featured'),	   'where' => array("s.featured='on' AND p.post_status != 'trash'")),
 			'bestselling'=> array('label' => Shopp::__('Bestselling'), 'where' => array("p.post_status!='trash'", BestsellerProducts::threshold() . " < s.sold"),'order' => 'bestselling'),
-			'inventory' => 	array('label' => Shopp::__('Inventory'),   'where' => array("s.inventory='on' AND p.post_status != 'trash'")),
+			'inventory' => 	array('label' => Shopp::__('Inventory Manager'),   'where' => array("s.inventory='on' AND p.post_status != 'trash'")),
 			'trash' =>      array('label' => Shopp::__('Trash'),       'where' => array("p.post_status='trash'"))
 		);
 
@@ -350,7 +350,9 @@ class ShoppScreenProducts extends ShoppScreenController {
 				'published' => false,
 				// 'debug'  => true
 			);
-		}
+		} elseif ( 'sku' == $orderby ) {
+			$loading['joins'] = array_merge(array($pt => "LEFT JOIN $pt AS pt ON p.ID=pt.product"), $joins);			
+ 		}
 
 		// Override loading product meta and limiting by pagination in the workflow list
 		if ( $workflow ) {
