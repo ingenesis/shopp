@@ -84,6 +84,12 @@
 					<?php
 					break;
 
+					case 'id':
+					?>
+						<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php echo esc_attr($Product->id); ?></td>
+					<?php
+					break;
+
 					case 'name':
 						$ProductName = empty($Product->name)?'('.__('no product name','Shopp').')':$Product->name;
 					?>
@@ -109,6 +115,12 @@
 							</div>
 							<?php endif; ?>
 							</td>
+					<?php
+					break;
+
+					case 'sku':
+					?>
+						<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php shopp($Product, 'sku'); ?></td>
 					<?php
 					break;
 
