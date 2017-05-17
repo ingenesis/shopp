@@ -110,7 +110,7 @@ class ShoppScreenSetup extends ShoppSettingsScreenController {
 
 		}
 
-		if ( $updated )
+		if ( $update )
 			$this->notice(Shopp::__('Shopp settings saved.'));
 	}
 
