@@ -57,6 +57,12 @@
 				<?php
 				break;
 
+				case 'id':
+				?>
+					<td><?php echo esc_attr($Category->id); ?></td>
+				<?php
+				break;					
+
 				case 'name':
 					$adminurl = add_query_arg(array_merge($_GET, array('page' => ShoppAdmin::pagename('categories'))), admin_url('admin.php'));
 					$editurl = wp_nonce_url(add_query_arg('id', $Category->id, $adminurl), 'shopp_categories_manager');
