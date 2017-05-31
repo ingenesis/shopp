@@ -303,11 +303,10 @@ class ShoppTax {
 	}
 
 	/**
-	 * Provides an adjustment amount based on EU tax zone differences
+	 * Provides an adjusted amount based on EU tax zone differences
 	 *
-	 * The adjustment amount is a +/- difference to apply to a
-	 * product or cart item price to account for the tax rate difference
-	 * between the base of operations tax rate that applies to the item
+	 * The adjusted amount is a product or cart item price based
+	 * on the base of operations tax rate that applies to the item
 	 * and the tax rate that applies to the current shipping location.
 	 *
 	 * @since 1.4
@@ -316,23 +315,19 @@ class ShoppTax {
 	 * @param object $Item A compatible taxable object
 	 * @return float The signed adjustment amount
 	 **/
-	public static function adjustment ( $amount, $rates, $Item ) {
-		if ( ! shopp_setting_enabled('tax_inclusive') ) return 0;
 
-		$baserates = ShoppTax::baserates($Item);
-		$baserate = reset($baserates);
+	public static function adjustment ( $amount, $rates, $Item ) {
+		$baserates   = ShoppTax::baserates($Item);
+		$baserate    = reset($baserates);
 		$appliedrate = self::appliedrate($rates);
 
-		$baserate = isset($baserate->rate) ? $baserate->rate : 0;
+		$baserate    = isset($baserate->rate) ? $baserate->rate : 0;
 		$appliedrate = isset($appliedrate->rate) ? $appliedrate->rate : 0;
         
-		if ( $baserate == $appliedrate )
-			return 0;
+		$netamount   = (float)$amount / (1 + $baserate);
+		$newamount   = ( $netamount * (1 + $appliedrate) );
 
-		$netamount = (float)$amount / (1 + $baserate);
-		$appliedtax = ( $netamount * $appliedrate );
-
-		return ( $netamount + $appliedtax ) - $amount;
+		return $newamount;
 	}
 
 	/**
@@ -391,7 +386,7 @@ class ShoppTax {
 			// Calculate tax amount
 			$tax = self::tax($taxable, $taxrate->rate);
 
-			if ( $taxrate->compound ) {
+			if ( Shopp::str_true($taxrate->compound) ) {
 				$tax = self::tax($compound, $taxrate->rate);
 				$compound += $tax;						 	// Set compound taxable amount for next compound rate
 			}
