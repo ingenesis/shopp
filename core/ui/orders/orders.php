@@ -32,6 +32,9 @@
 		<?php if (current_user_can('shopp_delete_orders')): ?><button type="submit" id="delete-button" name="deleting" value="order" class="button-secondary"><?php _e('Delete'); ?></button><?php endif; ?>
 		</div>
 		<div class="alignleft actions">
+			<button type="submit" id="print-selected" class="button-secondary"><?php _e('Print Selected','Shopp'); ?></button>
+		</div>
+		<div class="alignleft actions">
 			<select name="newstatus">
 				<?php echo Shopp::menuoptions($statusLabels,false,true); ?>
 			</select>
@@ -56,7 +59,7 @@
 	</div>
 	<div class="clear"></div>
 
-	<table class="widefat" cellspacing="0">
+	<table id="orders-admin-table" class="widefat" cellspacing="0">
 		<thead>
 		<tr><?php print_column_headers(ShoppAdmin()->screen()); ?></tr>
 		</thead>
@@ -252,6 +255,25 @@ jQuery(document).ready( function($) {
 		else $('#export-columns input').not(this).attr('checked',false);
 	});
 	$('input.current-page').unbind('mouseup.select').bind('mouseup.select',function () { this.select(); });
+	
+	$('#print-selected').on('click',function(e){
+		e.preventDefault();
+		var	printIds	=	$('#orders-admin-table input:checkbox:checked').map(function(){
+			return $(this).val();
+		}).get();
+		
+		if( printIds.length === 0) {
+			alert('You must select at least one order to print using the checkboxes next to each order');
+			return false;
+		}
+		
+		var params	=	{ action: 'shopp_bulk_print', ids: printIds, print: 'auto', _ajax_nonce: '<?php echo wp_create_nonce('wp_ajax_shopp_bulk_print'); ?>' };
+		
+		var url	=	'/wp-admin/admin-ajax.php?' + $.param(params);
+		
+		var win	=	window.open(url, '_blank');
+		win.focus();
+	});
 
 });
 

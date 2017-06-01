@@ -75,6 +75,7 @@ class ShoppAjax {
 		add_action('wp_ajax_shopp_gateway', array($this, 'gateway_ajax'));
 		add_action('wp_ajax_shopp_debuglog', array($this, 'logviewer'));
 		add_action('wp_ajax_shopp_nonag', array($this, 'nonag'));
+		add_action('wp_ajax_shopp_bulk_print', array($this, 'bulk_print'));
 
 	}
 
@@ -791,6 +792,38 @@ class ShoppAjax {
 		check_admin_referer('wp_ajax_shopp_nonag');
 		$id = get_current_user_id();
 		update_user_meta($id, 'shopp_nonag', (string)current_time('timestamp'));
+	}
+	
+	public function bulk_print() {
+		check_ajax_referer('wp_ajax_shopp_bulk_print');
+		
+		if( count($_GET['ids']) ) {
+			$i	=	0;
+			echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
+				\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+			<html><head><title>Shopp Order Receipt</title>";
+				echo '<style type="text/css">body { padding: 20px; font-family: Arial,Helvetica,sans-serif; }</style>';
+				echo "<link rel='stylesheet' href='".shopp_template_url('shopp.css')."' type='text/css' />";
+			echo "</head><body>";
+			
+			foreach( $_GET['ids'] as $id ) {
+				ShoppPurchase( new ShoppPurchase((int)$id));
+				echo apply_filters('shopp_admin_order_receipt',shopp('purchase','get-receipt','template=receipt-admin.php'));
+				if( $i < count($_GET['ids']) - 1 ) {
+					echo '<div style="page-break-after: always"></div>';
+				}
+				$i++;
+			}
+				
+				if (isset($_GET['print']) && $_GET['print'] == 'auto')
+					echo '<script type="text/javascript">window.onload = function () { window.print(); window.close(); }</script>';
+			echo "</body></html>";
+		} else {
+			echo '<h1>You must select orders to print</h1>';
+		}
+		
+		exit();
+		
 	}
 
 }
