@@ -59,7 +59,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 	public function actions () {
 		return array(
 			'bulkaction',
-            'emptytrash',
+			'emptytrash',
 			'duplicate'
 		);
 	}
@@ -72,34 +72,27 @@ class ShoppScreenProducts extends ShoppScreenController {
 	 * @version 1.4
 	 * @return void
 	 **/
-	public function bulkaction () {
+	public function bulkaction() {
 		$actions = array('publish', 'unpublish', 'trash', 'restore', 'feature', 'defeature');
 
 		$request = $this->request('action');
 		$selected = (array)$this->request('selected');
-        $selected = array_map('absint', $selected);
+		$selected = array_map('intval', $selected);
 
 		if ( ! in_array($request, $actions) ) return;
-
-		if ( empty($selected) ) return;
+		elseif ( empty($selected) ) return;
 
 		if ( 'publish' == $request )
 			ShoppProduct::publishset($selected, 'publish');
-
-		if ( 'unpublish' == $request )
+		elseif ( 'unpublish' == $request )
 			ShoppProduct::publishset($selected, 'draft');
-
-		if ( 'trash' == $request )
+		elseif ( 'trash' == $request )
 			ShoppProduct::publishset($selected, 'trash');
-        
-        if ( 'restore' == $request ){
-            ShoppProduct::publishset($selected, 'draft');
-        }
-
-		if ( 'feature' == $request )
+		elseif ( 'restore' == $request )
+			ShoppProduct::publishset($selected, 'draft');
+		elseif( 'feature' == $request )
 			ShoppProduct::featureset($selected, 'on');
-
-		if ( 'defeature' == $request )
+		elseif ( 'defeature' == $request )
 			ShoppProduct::featureset($selected, 'off');
 
 		Shopp::redirect( $this->url(array('action' => null, 'selected' => null)) );
@@ -122,25 +115,25 @@ class ShoppScreenProducts extends ShoppScreenController {
 
 		Shopp::redirect( $this->url(array('duplicate' => null)) );
 	}
-    
-    /**
-     * Handles emptying products in the trash view
-     *
-     * @since 1.4
-     * @return void
-     **/
-    public function emptytrash () {
-        if ( ! $this->request('delete_all') ) return;
+	
+	/**
+	 * Handles emptying products in the trash view
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
+	public function emptytrash () {
+		if ( ! $this->request('delete_all') ) return;
 		
-        $Template = new ShoppProduct();
+		$Template = new ShoppProduct();
 		$trash = sDB::query("SELECT ID FROM $Template->_table WHERE post_status='trash' AND post_type='" . ShoppProduct::$posttype . "'", 'array', 'col', 'ID');
 		foreach ( $trash as $id ) {
 			$Product = new ShoppProduct($id);
-            $Product->delete();
+			$Product->delete();
 		}
-        
-		Shopp::redirect( $this->url(array('delete_all' => null)) );        
-    }
+		
+		Shopp::redirect( $this->url(array('delete_all' => null)) );		
+	}
 
 	/**
 	 * Handles loading, saving and deleting products in the context of workflows
@@ -278,7 +271,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 		if ( $query = $this->request('s') )
 			$View->search($query);
 
-		if ( $category_id = $this->request('cat') )
+		if ( $category_id = $this->request('cat') );
 			$View->category($category_id);
 
 		// Detect custom taxonomies
@@ -352,7 +345,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 			'unpublish' => Shopp::__('Unpublish'),
 			'feature'   => Shopp::__('Feature'),
 			'defeature' => Shopp::__('De-feature'),
-			'trash'     => Shopp::__('Move to trash')
+			'trash'	 => Shopp::__('Move to trash')
 		);
 
 		if ( 'trash' == $this->view ) {
@@ -402,28 +395,28 @@ class ShoppScreenProducts extends ShoppScreenController {
 
 		$headings = array(
 			'default' => array(
-				'cb'        => '<input type="checkbox" />',
-				'name'      => Shopp::__('Name'),
+				'cb'		=> '<input type="checkbox" />',
+				'name'	  => Shopp::__('Name'),
 				'category'  => Shopp::__('Category'),
-				'price'     => Shopp::__('Price'),
+				'price'	 => Shopp::__('Price'),
 				'inventory' => Shopp::__('Inventory'),
 				'featured'  => Shopp::__('Featured'),
-				'date'      => Shopp::__('Date')
+				'date'	  => Shopp::__('Date')
 			),
 			'inventory' => array(
 				'inventory' => Shopp::__('Inventory'),
-				'sku'       => Shopp::__('SKU'),
-				'name'      => Shopp::__('Name')
+				'sku'	   => Shopp::__('SKU'),
+				'name'	  => Shopp::__('Name')
 			),
 			'bestselling' => array(
-				'cb'        => '<input type="checkbox" />',
-				'name'      => Shopp::__('Name'),
-				'sold'      => Shopp::__('Sold'),
-				'gross'     => Shopp::__('Sales'),
-				'price'     => Shopp::__('Price'),
+				'cb'		=> '<input type="checkbox" />',
+				'name'	  => Shopp::__('Name'),
+				'sold'	  => Shopp::__('Sold'),
+				'gross'	 => Shopp::__('Sales'),
+				'price'	 => Shopp::__('Price'),
 				'inventory' => Shopp::__('Inventory'),
 				'featured'  => Shopp::__('Featured'),
-				'date'      => Shopp::__('Date')
+				'date'	  => Shopp::__('Date')
 			)
 		);
 
@@ -437,11 +430,11 @@ class ShoppScreenProducts extends ShoppScreenController {
 
 		// Remove inventory column if inventory tracking is disabled
 		if ( ! shopp_setting_enabled('inventory') ) 
-            unset($columns['inventory']);
+			unset($columns['inventory']);
 
 		// Remove category column from the "trash" view
 		if ( 'trash' == $this->view ) 
-            unset($columns['category']);
+			unset($columns['category']);
 
 		ShoppUI::register_column_headers('toplevel_page_shopp-products', apply_filters('shopp_manage_product_columns', $columns));
 	}
@@ -503,13 +496,13 @@ class ShoppScreenProductsView {
 	protected $nostock = true;
 	protected $debug = false;
 
-    /**
-     * Constructor
-     * 
-     * Define available views for this screen and set the initial view
-     * 
-     * @param string $view The initial view
-     **/
+	/**
+	 * Constructor
+	 * 
+	 * Define available views for this screen and set the initial view
+	 * 
+	 * @param string $view The initial view
+	 **/
 	public function __construct ( $view = 'all' ) {
 
 		$pricetable = ShoppDatabaseObject::tablename(ShoppPrice::$table);
@@ -572,14 +565,14 @@ class ShoppScreenProductsView {
 		$this->view($view);
 	}
 
-    /**
-     * Get or set the current view
-     *
-     * @since 1.4
-     * 
-     * @param string $view The view slug to set
-     * @return string The current view slug
-     **/
+	/**
+	 * Get or set the current view
+	 *
+	 * @since 1.4
+	 * 
+	 * @param string $view The view slug to set
+	 * @return string The current view slug
+	 **/
 	public function view ( $view = false ) {
 		if ( false === $view )
 			return $this->view;
@@ -595,15 +588,15 @@ class ShoppScreenProductsView {
 
 		return $this->view;
 	}
-    
-    /**
-     * Set the current view page limit parameter
-     *
-     * @since 1.4
-     * 
-     * @param int $page The page number to set
-     * @return void
-     **/
+	
+	/**
+	 * Set the current view page limit parameter
+	 *
+	 * @since 1.4
+	 * 
+	 * @param int $page The page number to set
+	 * @return void
+	 **/
 	public function page ( $page = 1 ) {
 		if ( ! $page ) $page = 1;
 
@@ -618,13 +611,13 @@ class ShoppScreenProductsView {
 		$this->limit = "$start,$perpage";
 	}
 
-    /**
-     * Set where clause additions for a product search query
-     *
-     * @since 1.4
-     * @param string $query The product search query
-     * @return void
-     **/
+	/**
+	 * Set where clause additions for a product search query
+	 *
+	 * @since 1.4
+	 * @param string $query The product search query
+	 * @return void
+	 **/
 	public function search ( $query ) {
 		$SearchResults = new SearchResults(array('search' => $query, 'nostock' => 'on', 'published' => 'off', 'paged' => -1));
 		$SearchResults->load();
@@ -632,13 +625,13 @@ class ShoppScreenProductsView {
 		$this->where[] = "p.ID IN (" . join(',', $ids) . ")";
 	}
 
-    /**
-     * Set the category filter query parameters
-     *
-     * @since 1.4
-     * @param int $id The category term id
-     * @return void
-     **/
+	/**
+	 * Set the category filter query parameters
+	 *
+	 * @since 1.4
+	 * @param int $id The category term id
+	 * @return void
+	 **/
 	public function category ( $id ) {
 		global $wpdb;
 		$this->joins[ $wpdb->term_relationships ] = "INNER JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id)";
@@ -653,15 +646,15 @@ class ShoppScreenProductsView {
 		}
 	}
 
-    /**
-     * Set query parameters for custom taxonomy filters
-     *
-     * @since 1.4
-     * @param array $list The list of custom taxonomy names and taxonomy term
-     * @return void
-     **/
+	/**
+	 * Set query parameters for custom taxonomy filters
+	 *
+	 * @since 1.4
+	 * @param array $list The list of custom taxonomy names and taxonomy term
+	 * @return void
+	 **/
 	public function taxonomies ( array $list ) {
-        global $wpdb;
+		global $wpdb;
 		foreach ( $list as $n => $taxonomy ) {
 			global $wpdb;
 			$term = get_term_by('slug', $_GET[ $taxonomy ], $taxonomy);
@@ -672,13 +665,13 @@ class ShoppScreenProductsView {
 		}
 	}
 
-    /**
-     * Set the query parameter for stock level filters
-     *
-     * @since 1.4
-     * @param string $level The stock level filter
-     * @return void
-     **/
+	/**
+	 * Set the query parameter for stock level filters
+	 *
+	 * @since 1.4
+	 * @param string $level The stock level filter
+	 * @return void
+	 **/
 	public function stocklevel ( $level ) {
 		switch( $level ) {
 			case "ns":  // No stock
@@ -700,14 +693,14 @@ class ShoppScreenProductsView {
 		}
 	}
 
-    /**
-     * Set the query parameter for column ordering
-     *
-     * @since 1.4
-     * @param string $column The column name
-     * @param string $order The order direction ('asc' or 'desc')
-     * @return void
-     **/
+	/**
+	 * Set the query parameter for column ordering
+	 *
+	 * @since 1.4
+	 * @param string $column The column name
+	 * @param string $order The order direction ('asc' or 'desc')
+	 * @return void
+	 **/
 	public function orderby ( $column, $order = 'asc' ) {
 
 		$column = strtolower($column);
@@ -741,12 +734,12 @@ class ShoppScreenProductsView {
 			$this->orderby = str_replace('s.', 'pt.', $this->orderby);
 	}
 
-    /**
-     * Produces the ShoppProduct query loading parameters
-     *
-     * @since 1.4
-     * @return array The loading parameters
-     **/
+	/**
+	 * Produces the ShoppProduct query loading parameters
+	 *
+	 * @since 1.4
+	 * @return array The loading parameters
+	 **/
 	public function loading () {
 
 		$summarytable = ShoppDatabaseObject::tablename(ProductSummary::$table);
@@ -772,12 +765,12 @@ class ShoppScreenProductsView {
 		return $loading;
 	}
 
-    /**
-     * Calculates cached sub-view product totals based on the view queries
-     *
-     * @since 1.4
-     * @return void
-     **/
+	/**
+	 * Calculates cached sub-view product totals based on the view queries
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
 	public function totals () {
 
 		// Get sub-screen counts
@@ -820,18 +813,403 @@ class ShoppScreenProductsView {
 }
 
 /**
+ * Controller for updating a product from a submitted product form
+ *
+ * @since 1.4
+ **/
+class ShoppAdminProductUpdate extends ShoppRequestFormFramework {
+	
+	/** @var ShoppProduct $Product The target ShoppProduct object to update */
+	private $Product = false;
+	
+	/**
+	 * Constructor.
+	 *
+	 * @since 1.4
+	 * @param ShoppProduct $Product The target ShoppProduct object to update
+	 * @return void
+	 **/
+	public function __construct( ShoppProduct $Product ) {
+		$this->Product = $Product;
+		$this->posted();
+	}
+	
+	/**
+	 * Update the product publishing status and publish date
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
+	public function status() {
+
+		$status = $this->form('status');
+		$publish = (array)$this->form('publish');
+		unset($this->form['publish']);
+		
+		$Product->publish = 0;
+		
+		// Save current status
+		$this->form['prestatus'] = $this->Product->status;
+		
+		// Set publish date
+		if ( 'publish' == $status ) {
+			$fields = array('month' => '', 'date' => '', 'year' => '', 'hour' => '', 'minute' => '', 'meridiem' => '');
+			$publish = array_intersect_key($publish, $fields);
+			
+			$publishfields = join('', $publish);
+			$this->Product->publish = null;
+			if ( ! empty($publishfields) ) {
+
+				if ( 'PM' == $publish['meridiem'] && $publish['hour'] < 12 )
+					$publish['hour'] += 12;
+				
+				$this->Product->publish = mktime($publish['hour'], $publish['minute'], 0, $publish['month'], $publish['date'], $publish['year']);
+				
+				$Product->status = 'future';
+				unset($this->form['status']);
+			}		
+		}
+	}
+	
+	/**
+	 * Update the product with core product data from the form
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
+	public function updates () {
+		// Set a unique product slug
+		if ( empty($this->Product->slug) )
+			$this->Product->slug = sanitize_title($this->form('name'));
+		$this->Product->slug = wp_unique_post_slug($this->Product->slug, $this->Product->id, $this->Product->status, ShoppProduct::posttype(), 0);
+
+		$this->Product->featured = 'off';
+		$this->form['description'] = $this->form('content');
+		
+		$this->Product->updates($this->form(), array('meta', 'categories', 'prices', 'tags'));
+	}
+ 
+ 	/**
+ 	 * Update or delete prices
+ 	 *
+ 	 * Depends on ShoppAdminProductPriceUpdate
+ 	 * 
+ 	 * @since 1.4
+ 	 * @return void
+ 	 **/
+	public function prices() {
+		
+		$deleting = $this->form('deletePrices');
+		
+		if ( ! empty($deleting) ) {
+			$deletes = explode(',', $deletes);
+
+			foreach( $deletes as $option ) {
+				$Price = new ShoppPrice($option);
+				$Price->delete();
+			}
+		}
+		
+		$this->Product->resum();
+		
+		$formprice = $this->form('price');
+		$sortorder = $this->form('sortorder');
+		
+		if ( ! is_array($formprice) )
+			return;
+		
+		foreach ( $formprice as $index => $form ) {
+			$id = empty($form['id']) ? null : intval($form['id']);
+			$form['product'] = $this->Product->id;
+			$Price = new ShoppPrice($id);
+			$PriceUpdate = new ShoppAdminProductPriceUpdate($this->Product, $Price, $form, $sortorder);
+			$PriceUpdate->updates($index);
+			$PriceUpdate->meta();
+			$PriceUpdate->download();
+
+			$this->Product->sumprice($Price);
+			unset($Price, $PriceUpdate);
+		}
+
+		$this->Product->load_sold($this->Product->id); // Refresh accurate product sales stats
+		$this->Product->sumup();
+	}
+	
+	/**
+	 * Delete leftover ShoppPrice entries when the defined variant/addon options are deleted
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
+	public function emptyprices() {
+		// No variation options at all, delete all variation-pricelines
+		if ( ! is_array($this->Product->prices) )
+			return;
+		
+		$metadata = $this->form('meta');
+		$options = isset($metadata['options']) ? stripslashes_deep($metadata['options']) : false;
+
+		if ( ! empty($options['v']) && ! empty($options['a']) )
+			return;
+				
+		foreach ( $this->Product->prices as $priceline ) {
+			if ( $priceline->optionkey == 0 ) 
+				continue; // Skip priceline if not tied to variation options
+			elseif ( ! empty($options[ substr($priceline->context, 0, 1) ]) ) // skip priceline for 
+				continue; // non-empty $options['a'] or $options['v'] depending on priceline context of 'addon' or 'variation'
+						
+			$Price = new ShoppPrice($priceline->id);
+			$Price->delete();
+		}
+	}
+  
+  	/**
+  	 * Delete, link or update images for the product
+  	 *
+  	 * @since 1.4
+  	 * @return void
+  	 **/
+	public function images() {
+		$deleting = $this->form('deleteImages');
+		
+		// Remove deleted images
+		if ( ! empty($deleting) ) {
+			$deletes = array($deleting);
+			if ( false !== strpos($deleting, ',') ) 
+				$deletes = explode(',', $deleting);
+			$this->Product->delete_images($deletes);
+		}
+
+		$images = $this->form('images');
+		$details = $this->form('imagedetails');
+		
+		// Update image data
+		if ( is_array($images) ) {
+			$this->Product->link_images($images);
+			$this->Product->save_imageorder($images);
+
+			$this->Product->update_images($details);
+		}
+	}
+	
+	/**
+	 * Update taxonomies added or removed from the product
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
+	public function taxonomies() {
+		// Update taxonomies after pricing summary is generated
+		// Summary table entry is needed for ProductTaxonomy::recount() to
+		// count properly based on aggregate product inventory, see #2968
+		$taxonomies = get_object_taxonomies(ShoppProduct::$posttype);
+		foreach ( $taxonomies as $taxonomy ) {
+			$tags = '';
+			$taxonomy_obj = get_taxonomy($taxonomy);
+			$tax_input = $this->form('tax_input');
+
+			if ( isset($tax_input[ $taxonomy ]) ) {
+				$tags = $tax_input[ $taxonomy ];
+				if ( is_array($tags) ) // array = hierarchical, string = non-hierarchical.
+					$tags = array_filter($tags);
+			}
+
+			if ( current_user_can($taxonomy_obj->cap->assign_terms) )
+				wp_set_post_terms( $this->Product->id, $tags, $taxonomy );
+		}
+
+		// Ensure taxonomy counts are updated on status changes, see #2968
+		if ( $this->form('prestatus') != $this->form('status') ) {
+			$Post = new StdClass;
+			$Post->ID = $this->Product->id;
+			$Post->post_type = ShoppProduct::$posttype;
+			wp_transition_post_status($this->form('prestatus'), $this->Product->status, $Post);
+		}
+		
+	}
+	
+	/**
+	 * Delete or update product specs
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
+	public function specs() {
+		
+		$deleting = $this->form('deletedSpecs');
+		if ( ! empty($deleting) ) { // Delete specs queued for removal
+			$ids = array();
+			$deletes = array_map('intval', explode(',', $deleting));
+
+			$ids = sDB::escape(join(',', $deletes));
+			$Spec = new Spec();
+			sDB::query("DELETE FROM $Spec->_table WHERE id IN ($ids)");
+		}
+		
+		$details = $this->form('details');
+		if ( ! is_array($details) )
+			return;
+		
+		$sortorder = $this->form('details-sortorder');
+		foreach ( $details as $index => $spec ) {
+			$id = isset($spec['new']) ? false : intval($spec['id']);
+			if ( in_array($id, $deletes) )
+				continue; // Skip deleted specs
+			
+			$Spec = new Spec($id); // Create or load an existing spec for updates
+			$spec['parent'] = $this->Product->id;
+			// Sort order is not 0-indexed, so start with 1
+			$spec['sortorder'] = 1 + array_search($index, $sortorder);
+
+			$Spec->updates($spec);
+			$Spec->save();
+		}
+		
+	}
+	
+	/**
+	 * Update product meta data
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
+	public function meta() {
+		
+		$metadata = $this->form('meta');
+		
+		if ( ! is_array($metadata) )
+			return;
+
+		foreach ( $metadata as $name => $value ) {
+			if ( isset($this->Product->meta[ $name ]) ) {
+				$Meta = $this->Product->meta[ $name ];
+				if ( is_array($Meta) ) 
+					$Meta = reset($Meta);
+			} else $Meta = new ShoppMetaObject(array(
+				'parent' => $this->Product->id,
+				'context' => 'product',
+				'type' => 'meta',
+				'name' => $name
+			));
+			
+			$Meta->parent = $this->Product->id;
+			$Meta->context = 'product';
+			$Meta->name = $name;
+			$Meta->value = $value;
+			$Meta->save();
+		}
+	}
+
+} // end ShoppAdminProductUpdate
+
+/**
+ * Controller for updating a product price from a submitted product form
+ *
+ * @since 1.4
+ **/
+class ShoppAdminProductPriceUpdate extends ShoppRequestFormFramework {
+	
+	/** @var ShoppProduct $Product The target ShoppProduct to update */
+	private $Product = false;
+	
+	/** @var ShoppPrice $Price The target ShoppPrice to update */
+	private $Price = false;
+	
+	/** @var array $sortorder The sort order for price options set by the user */
+	private $sortorder = false;
+	
+	/**
+	 * Constructor.
+	 *
+	 * @since 1.4
+	 * @param ShoppProduct $Product The target ShoppProduct to update
+	 * @param ShoppPrice $Price The target ShoppPrice to update
+	 * @param array $form The processed form data
+	 * @param array $sortorder The sort order for price options set by the user
+	 * @return void Description...
+	 **/
+	public function __construct( ShoppProduct $Product, ShoppPrice $Price, array $form, $sortorder) {
+		$this->Product = $Product;
+		$this->Price = $Price;
+		$this->form = $form;
+		$this->sortorder = $sortorder;
+	}
+	
+	/**
+	 * Update the price object from form data
+	 *
+	 * @since 1.4
+	 * @param int $index The index of the price entry in the form data to match with the sortorder
+	 * @return void
+	 **/
+	public function updates( $index ) {
+		$form = $this->form;
+		$form['sortorder'] = 1 + array_search($index, $this->sortorder);
+		$form['shipfee'] = Shopp::floatval($form['shipfee']);
+		
+		if ( isset($form['recurring']['trialprice']) )
+			$form['recurring']['trialprice'] = Shopp::floatval($form['recurring']['trialprice']);
+		
+		if ( $this->Price->stock != $form['stocked'] ) {
+			$form['stock'] = (int) $form['stocked'];
+			do_action('shopp_stock_product', $form['stock'], $this->Price, $this->Price->stock, $this->Price->stocklevel);
+		} else unset($form['stocked']);
+		
+		$this->Price->updates($form);
+		$this->Price->save();
+	}
+	
+	/**
+	 * Update meta data for the product
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
+	public function meta() {
+		$form = $this->form;
+		
+		// Save 'price' meta records after saving the price record
+		if ( isset($form['dimensions']) && is_array($form['dimensions']) )
+			$form['dimensions'] = array_map(array('Shopp', 'floatval'), $form['dimensions']);
+
+		$settings = array('donation', 'recurring', 'membership', 'dimensions');
+
+		$form['settings'] = array();
+		foreach ( $settings as $setting )
+			if ( isset($form[ $setting ]) )
+				$form['settings'][ $setting ] = $form[ $setting ];
+
+		if ( ! empty($form['settings']) ) 
+			shopp_set_meta($this->Price->id, 'price', 'settings', $form['settings']);
+		
+		if ( ! empty($form['options']) ) 
+			shopp_set_meta($this->Price->id, 'price', 'options', $form['options']);		
+	}
+	
+	public function download() {
+		if ( ! empty($form['download']) )
+			$this->Price->attach_download($form['download']);
+		elseif ( ! empty($form['downloadpath']) ) {
+			$filename = ! empty($form['downloadfile']) ? $form['downloadfile'] : basename(sanitize_path($form['downloadpath']));
+			$this->Price->attach_download_by_path($form['downloadpath'], $filename);
+		}
+	}
+
+} // end ShoppAdminProductPriceUpdate
+
+/**
  * Screen controller for the product editor
  *
  * @since 1.4
  **/
 class ShoppScreenProductEditor extends ShoppScreenController {
 
-    /**
-     * Load the requested product for the editor
-     *
-     * @since 1.4
-     * @return ShoppProduct The loaded product based on the request
-     **/
+	/**
+	 * Load the requested product for the editor
+	 *
+	 * @since 1.4
+	 * @return ShoppProduct The loaded product based on the request
+	 **/
 	public function load () {
 		$id = $this->request('id');
 		$Product = new ShoppProduct($id);
@@ -863,9 +1241,9 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 
 		$workflows = array(
 			'continue' => Shopp::__('Continue Editing'),
-			'close'    => Shopp::__('Products Manager'),
-			'new'      => Shopp::__('New Product'),
-			'next'     => Shopp::__('Edit Next'),
+			'close'	=> Shopp::__('Products Manager'),
+			'new'	  => Shopp::__('New Product'),
+			'next'	 => Shopp::__('Edit Next'),
 			'previous' => Shopp::__('Edit Previous')
 		);
 
@@ -947,243 +1325,27 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 
 		ShoppSettings()->saveform(); // Save workflow setting
 
-		$status = $Product->status;
-		// Set publish date
-		if ('publish' == $_POST['status']) {
-			$publishing = isset($_POST['publish'])?$_POST['publish']:array();
-			$fields = array('month' => '','date' => '','year' => '','hour'=>'','minute'=>'','meridiem'=>'');
-			$publishdate = join('',array_merge($fields,$publishing));
-			if (!empty($publishdate)) {
-				$publish =& $_POST['publish'];
-				if ($publish['meridiem'] == "PM" && $publish['hour'] < 12)
-					$publish['hour'] += 12;
-				$publish = mktime($publish['hour'],$publish['minute'],0,$publish['month'],$publish['date'],$publish['year']);
-				$Product->status = 'future';
-				unset($_POST['status']);
-			} else {
-				unset($_POST['publish']);
-				// Auto set the publish date if not set (or more accurately, if set to an irrelevant timestamp)
-				if ($Product->publish <= 86400) $Product->publish = null;
-			}
-		} else {
-			unset($_POST['publish']);
-			$Product->publish = 0;
-		}
+		$Update = new ShoppAdminProductUpdate($Product);
 
-		// Set a unique product slug
-		if ( empty($Product->slug) )
-			$Product->slug = sanitize_title($_POST['name']);
-		$Product->slug = wp_unique_post_slug($Product->slug, $Product->id, $Product->status, ShoppProduct::posttype(), 0);
-
-		$Product->featured = 'off';
-
-		if ( isset($_POST['content']) ) $_POST['description'] = $_POST['content'];
-		$Product->updates($_POST,array('meta','categories','prices','tags'));
+		$Update->status();
+		$Update->updates();
 
 		do_action('shopp_pre_product_save');
 		$Product->save();
 
-		// Remove deleted images
-		if (!empty($_POST['deleteImages'])) {
-			$deletes = array();
-			if (strpos($_POST['deleteImages'],",") !== false) $deletes = explode(',',$_POST['deleteImages']);
-			else $deletes = array($_POST['deleteImages']);
-			$Product->delete_images($deletes);
-		}
-
-		// Update image data
-		if (!empty($_POST['images']) && is_array($_POST['images'])) {
-			$Product->link_images($_POST['images']);
-			$Product->save_imageorder($_POST['images']);
-			if (!empty($_POST['imagedetails']))
-				$Product->update_images($_POST['imagedetails']);
-		}
-
-		// Update Prices
-		if ( ! empty($_POST['price']) && is_array($_POST['price']) ) {
-
-			// Delete prices that were marked for removal
-			if (!empty($_POST['deletePrices'])) {
-				$deletes = array();
-				if (strpos($_POST['deletePrices'],","))	$deletes = explode(',',$_POST['deletePrices']);
-				else $deletes = array($_POST['deletePrices']);
-
-				foreach($deletes as $option) {
-					$Price = new ShoppPrice($option);
-					$Price->delete();
-				}
-			}
-
-			$Product->resum();
-
-			// Save prices that there are updates for
-			foreach($_POST['price'] as $i => $priceline) {
-
-				if (empty($priceline['id'])) {
-					$Price = new ShoppPrice();
-					$priceline['product'] = $Product->id;
-				} else $Price = new ShoppPrice($priceline['id']);
-
-				$priceline['sortorder'] = array_search($i,$_POST['sortorder'])+1;
-
-				$priceline['shipfee'] = Shopp::floatval($priceline['shipfee']);
-				if (isset($priceline['recurring']['trialprice']))
-					$priceline['recurring']['trialprice'] = Shopp::floatval($priceline['recurring']['trialprice']);
-
-				if ($Price->stock != $priceline['stocked']) {
-					$priceline['stock'] = (int) $priceline['stocked'];
-					do_action('shopp_stock_product', $priceline['stock'], $Price, $Price->stock, $Price->stocklevel);
-				} else unset($priceline['stocked']);
-				$Price->updates($priceline);
-				$Price->save();
-
-				// Save 'price' meta records after saving the price record
-				if (isset($priceline['dimensions']) && is_array($priceline['dimensions']))
-					$priceline['dimensions'] = array_map(array('Shopp', 'floatval'), $priceline['dimensions']);
-
-				$settings = array('donation','recurring','membership','dimensions');
-
-				$priceline['settings'] = array();
-				foreach ($settings as $setting) {
-					if (! isset($priceline[$setting]) ) continue;
-					$priceline['settings'][$setting] = $priceline[$setting];
-				}
-
-				if ( ! empty($priceline['settings']) ) shopp_set_meta($Price->id, 'price', 'settings', $priceline['settings']);
-				if ( ! empty($priceline['options']) ) shopp_set_meta($Price->id, 'price', 'options', $priceline['options']);
-
-				$Product->sumprice($Price);
-
-				if ( ! empty($priceline['download']) ) $Price->attach_download($priceline['download']);
-
-				if ( ! empty($priceline['downloadpath']) ) { // Attach file specified by URI/path
-					if ( ! empty($Price->download->id) || ( empty($Price->download) && $Price->load_download() ) ) {
-						$File = $Price->download;
-					} else $File = new ProductDownload();
-
-					$stored = false;
-					$tmpfile = sanitize_path($priceline['downloadpath']);
-
-					$File->storage = false;
-					$File->engine(); // Set engine from storage settings
-
-					$File->parent = $Price->id;
-					$File->context = "price";
-					$File->type = "download";
-					$File->name = !empty($priceline['downloadfile'])?$priceline['downloadfile']:basename($tmpfile);
-					$File->filename = $File->name;
-
-					if ( $File->found($tmpfile) ) {
-						$File->uri = $tmpfile;
-						$stored = true;
-					} else $stored = $File->store($tmpfile,'file');
-
-					if ( $stored ) {
-						$File->readmeta();
-						$File->save();
-					}
-
-				} // END attach file by path/uri
-			} // END foreach()
-			unset($Price);
-		} // END if (!empty($_POST['price']))
-
+		$Update->prices();
 		$Product->load_sold($Product->id); // Refresh accurate product sales stats
 		$Product->sumup();
-
-		// Update taxonomies after pricing summary is generated
-		// Summary table entry is needed for ProductTaxonomy::recount() to
-		// count properly based on aggregate product inventory, see #2968
-		foreach ( get_object_taxonomies(Product::$posttype) as $taxonomy ) {
-			$tags = '';
-			$taxonomy_obj = get_taxonomy($taxonomy);
-
-			if ( isset($_POST['tax_input']) && isset($_POST['tax_input'][$taxonomy]) ) {
-				$tags = $_POST['tax_input'][$taxonomy];
-				if ( is_array($tags) ) // array = hierarchical, string = non-hierarchical.
-					$tags = array_filter($tags);
-			}
-
-			if ( current_user_can($taxonomy_obj->cap->assign_terms) )
-				wp_set_post_terms( $Product->id, $tags, $taxonomy );
-		}
-
-		// Ensure taxonomy counts are updated on status changes, see #2968
-		if ( $status != $_POST['status'] ) {
-			$Post = new StdClass;
-			$Post->ID = $Product->id;
-			$Post->post_type = ShoppProduct::$posttype;
-			wp_transition_post_status($_POST['status'], $Product->status, $Post);
-		}
-
-		if (!empty($_POST['meta']['options']))
-			$_POST['meta']['options'] = stripslashes_deep($_POST['meta']['options']);
-		else $_POST['meta']['options'] = false;
-
-		// No variation options at all, delete all variation-pricelines
-		if (!empty($Product->prices) && is_array($Product->prices)
-				&& (empty($_POST['meta']['options']['v']) || empty($_POST['meta']['options']['a']))) {
-
-			foreach ($Product->prices as $priceline) {
-				// Skip if not tied to variation options
-				if ($priceline->optionkey == 0) continue;
-				if ((empty($_POST['meta']['options']['v']) && $priceline->context == "variation")
-					|| (empty($_POST['meta']['options']['a']) && $priceline->context == "addon")) {
-						$Price = new ShoppPrice($priceline->id);
-						$Price->delete();
-				}
-			}
-		}
-
-		// Handle product spec/detail data
-		if (!empty($_POST['details']) || !empty($_POST['deletedSpecs'])) {
-
-			// Delete specs queued for removal
-			$ids = array();
-			$deletes = array();
-			if (!empty($_POST['deletedSpecs'])) {
-				if (strpos($_POST['deleteImages'],",") !== false) $deletes = explode(',',$_POST['deleteImages']);
-				else $deletes = array($_POST['deletedSpecs']);
-
-				$ids = db::escape($_POST['deletedSpecs']);
-				$Spec = new Spec();
-				db::query("DELETE FROM $Spec->_table WHERE id IN ($ids)");
-			}
-
-			if ( is_array($_POST['details']) ) {
-				foreach ($_POST['details'] as $i => $spec) {
-					if (in_array($spec['id'],$deletes)) continue;
-					if (isset($spec['new'])) {
-						$Spec = new Spec();
-						$spec['id'] = '';
-						$spec['parent'] = $Product->id;
-					} else $Spec = new Spec($spec['id']);
-					$spec['sortorder'] = array_search($i,$_POST['details-sortorder'])+1;
-
-					$Spec->updates($spec);
-					$Spec->save();
-				}
-			}
-		}
-
-		// Save any meta data
-		if ( isset($_POST['meta']) && is_array($_POST['meta']) ) {
-			foreach ( $_POST['meta'] as $name => $value ) {
-				if (isset($Product->meta[$name])) {
-					$Meta = $Product->meta[$name];
-					if (is_array($Meta)) $Meta = reset($Product->meta[$name]);
-				} else $Meta = new ShoppMetaObject(array('parent'=>$Product->id,'context'=>'product','type'=>'meta','name'=>$name));
-				$Meta->parent = $Product->id;
-				$Meta->name = $name;
-				$Meta->value = $value;
-				$Meta->save();
-			}
-		}
-
+		$Update->emptyprices(); // Must occur after sumup()
+		
+		$Update->images();
+		$Update->taxonomies();
+		$Update->specs();
+		$Update->meta();
+		
 		$Product->load_data(); // Reload data so everything is fresh for shopp_product_saved
 
-		do_action_ref_array('shopp_product_saved',array(&$Product));
-
+		do_action_ref_array('shopp_product_saved', array(&$Product));
 		unset($Product);
 	}
 
@@ -1194,10 +1356,10 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 	 * the correct storage container (DB, file system, etc)
 	 **/
 	public static function downloads () {
-        
+		
 		$json_error = array('errors' => false);
 		$error_contact = ' ' . ShoppLookup::errors('contact', 'server-manager');
-        
+		
 		if ( isset($_FILES['Filedata']['error']) )
 			$json_error['errors'] = ShoppLookup::errors('uploads', $_FILES['Filedata']['error']);
 		elseif ( ! is_uploaded_file($_FILES['Filedata']['tmp_name']) )
@@ -1217,8 +1379,8 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 		$File->parent = 0;
 		$File->context = "price";
 		$File->type = "download";
-        
-        $File->mime = empty($mimetype) ? 'application/octet-stream' : $mimetype;
+		
+		$File->mime = empty($mimetype) ? 'application/octet-stream' : $mimetype;
 		$File->name = $File->filename = empty($properfile) ? $_FILES['Filedata']['name'] : $properfile;
 
 		$File->size = filesize($_FILES['Filedata']['tmp_name']);
@@ -1242,25 +1404,25 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 
 		$json_error = array('errors' => false);
 		$error_contact = ' ' . ShoppLookup::errors('contact', 'server-manager');
-        
-        $ImageClass = false;
-        
+		
+		$ImageClass = false;
+		
 		$contexts = array(
-            'product' => 'ProductImage', 
-            'category' => 'CategoryImage'
-        );
-        
+			'product' => 'ProductImage', 
+			'category' => 'CategoryImage'
+		);
+		
 		$parent = $_REQUEST['parent'];
-        $type = strtolower($_REQUEST['type']);
+		$type = strtolower($_REQUEST['type']);
 
 		if ( isset($contexts[ $type ]) )
-            $ImageClass = $contexts[ $type ];
-        
+			$ImageClass = $contexts[ $type ];
+		
 		if ( isset($_FILES['Filedata']['error']) )
 			$json_error['errors'] = ShoppLookup::errors('uploads', $_FILES['Filedata']['error']);
 		elseif ( ! $ImageClass )
-            $json_error['errors'] = Shopp::__('The file could not be saved because the server cannot tell whether to attach the asset to a product or a category.');
-        elseif ( ! is_uploaded_file($_FILES['Filedata']['tmp_name']) )
+			$json_error['errors'] = Shopp::__('The file could not be saved because the server cannot tell whether to attach the asset to a product or a category.');
+		elseif ( ! is_uploaded_file($_FILES['Filedata']['tmp_name']) )
 			$json_error['errors'] = Shopp::__('The file could not be saved because the upload was not found on the server.') . $error_contact;
 		elseif ( ! is_readable($_FILES['Filedata']['tmp_name']) )
 			$json_error['errors'] = Shopp::__('The file could not be saved because the web server does not have permission to read the upload from the server\'s temporary directory.');
@@ -1271,7 +1433,7 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 			wp_die( json_encode($json_error) );
 
 		// Save the source image
-        $Image = new $ImageClass();
+		$Image = new $ImageClass();
 		$Image->parent = $parent;
 		$Image->type = "image";
 		$Image->name = "original";
@@ -1283,13 +1445,13 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 
 		if ( ! $Image->unique() ) {
 			$json_error['errors'] = Shopp::__('The image already exists, but a new filename could not be generated.');
-            wp_die(json_encode($json_error));
-        }
-        
+			wp_die(json_encode($json_error));
+		}
+		
 		$Image->store($_FILES['Filedata']['tmp_name'], 'upload');
 		$Error = ShoppErrors()->code('storage_engine_save');
 		if ( ! empty($Error) )
-            wp_die( json_encode( array('error' => $Error->message(true)) ) );
+			wp_die( json_encode( array('error' => $Error->message(true)) ) );
 
 		$Image->save();
 
@@ -1299,12 +1461,12 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 		wp_die(json_encode(array("id" => $Image->id)));
 	}
 
-    /**
-     * Enqueue scripts and style dependencies
-     *
-     * @since 1.2
-     * @return void
-     **/
+	/**
+	 * Enqueue scripts and style dependencies
+	 *
+	 * @since 1.2
+	 * @return void
+	 **/
 	public function assets () {
 		wp_enqueue_script('jquery-ui-draggable');
 		wp_enqueue_script('postbox');

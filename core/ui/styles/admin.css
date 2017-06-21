@@ -1299,8 +1299,8 @@ div.progress div.gloss {
 }
 
 .shopp .postbox label {
-	font-size: 11px;
-	line-height: 20px;
+	font-size: 13px;
+	line-height: 1.4em;
 }
 
 /** Multipane Inputs & Multple Selects **/
@@ -1822,6 +1822,7 @@ p.controls {
 }
 
 #schedule-calendar {
+    display: inline-block;
 	margin-left: 18px;
 }
 
