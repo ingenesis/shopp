@@ -941,7 +941,7 @@ class ShoppAdminProductUpdate extends ShoppRequestFormFramework {
 	 * @since 1.4
 	 * @return void
 	 **/
-	public function emptyprices() {
+	public function trimprices() {
 		// No variation options at all, delete all variation-pricelines
 		if ( ! is_array($this->Product->prices) )
 			return;
@@ -1211,9 +1211,17 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 	 * @return ShoppProduct The loaded product based on the request
 	 **/
 	public function load () {
+		global $post;
+
 		$id = $this->request('id');
 		$Product = new ShoppProduct($id);
+		$Product->load_data();
 		ShoppProduct($Product);
+
+		// Adds CPT compatibility support for third-party plugins/themes
+		if ( is_null($post) ) 
+			$post = get_post($Shopp->Product->id);
+				
 		return ShoppProduct();
 	}
 
@@ -1317,7 +1325,7 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 	 * @param ShoppProduct $Product
 	 * @return void
 	 **/
-	public function save ( ShoppProduct $Product ) {
+	public function save ( ShoppProduct &$Product ) {
 		check_admin_referer('shopp-save-product');
 
 		if ( ! current_user_can('shopp_products') )
@@ -1336,17 +1344,19 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 		$Update->prices();
 		$Product->load_sold($Product->id); // Refresh accurate product sales stats
 		$Product->sumup();
-		$Update->emptyprices(); // Must occur after sumup()
+		$Update->trimprices(); // Must occur after sumup()
 		
 		$Update->images();
 		$Update->taxonomies();
 		$Update->specs();
 		$Update->meta();
-		
-		$Product->load_data(); // Reload data so everything is fresh for shopp_product_saved
+
+		// Reload product to refresh all of the saved data
+		// so everything is fresh for shopp_product_saved
+		$Product = $this->load();
+		$Product->load_data();
 
 		do_action_ref_array('shopp_product_saved', array(&$Product));
-		unset($Product);
 	}
 
 	/**
@@ -1526,10 +1536,7 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 		new ShoppAdminProductDetailsBox($this, 'normal', 'core', array('Product' => $Product, 'posttype' => ShoppProduct::$posttype));
 		new ShoppAdminProductImagesBox($this, 'normal', 'core', array('Product' => $Product, 'posttype' => ShoppProduct::$posttype));
 		new ShoppAdminProductPricingBox($this, 'normal', 'core', array('Product' => $Product, 'posttype' => ShoppProduct::$posttype));
-
 	}
-
-
 
 } // class ShoppScreenProductEditor
 
