@@ -9,8 +9,8 @@ A professional, high-performance e-commerce development plugin for WordPress.
 - [Contributors](https://github.com/ingenesis/shopp/contributors)
 
 ## Downloads
-- [Latest release (1.3.12)](https://github.com/ingenesis/shopp/releases/tag/1.3.12)
-- [Current dev (1.3.13.dev)](https://github.com/ingenesis/shopp/archive/1.3.x.zip)
+- [Latest release (1.3.13)](https://github.com/ingenesis/shopp/releases/tag/1.3.13)
+- [Current dev (1.3.14dev)](https://github.com/ingenesis/shopp/archive/1.3.14dev.zip)
 - [Future dev (1.4.dev)](https://github.com/ingenesis/shopp/archive/master.zip)
 
 ## Looking for Help?
