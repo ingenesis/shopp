@@ -130,6 +130,7 @@ th.textright {
 #shopp-activation-nag {
 	display: block;
 	cursor: pointer;
+    margin-bottom: 25px;
 }
 
 #shopp-activation-nag .dismiss {
@@ -1299,8 +1300,8 @@ div.progress div.gloss {
 }
 
 .shopp .postbox label {
-	font-size: 11px;
-	line-height: 20px;
+	font-size: 13px;
+	line-height: 1.4em;
 }
 
 /** Multipane Inputs & Multple Selects **/
@@ -1372,6 +1373,11 @@ div.progress div.gloss {
 
 .shopp .multiple-select ul ul {
 	padding-left: 20px;
+}
+
+.shopp .multiple-select label {
+    display: inline-block;
+    width: 100%;
 }
 
 .shopp .multipane ul li {
@@ -1484,6 +1490,31 @@ div.progress div.gloss {
 
 .form-table th div {
 	margin-top: 10px;
+}
+
+
+.shopp .toggle-setting label {
+    font-weight: bold;
+}
+
+.shopp .toggle-setting + p {
+    padding-left: 24px;
+    margin-bottom: 10px;
+}
+
+.shopp .grouped-buttons button:first-child {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+.shopp .grouped-buttons button:last-child {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border-left-color: transparent;
+    box-shadow: 0 1px 0 #cccccc, inset 1px 0 1px #fefefe;
+}
+
+.shopp .grouped-buttons button:last-child:hover {
+    border-left-color: #999;
 }
 
 /** Category Arrange UI **/
@@ -1822,6 +1853,7 @@ p.controls {
 }
 
 #schedule-calendar {
+    display: inline-block;
 	margin-left: 18px;
 }
 
