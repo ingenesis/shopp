@@ -6,7 +6,7 @@
  *
  * @copyright Ingenesis Limited, June 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
- * @package   \Shopp\Screens\Products
+ * @package   \Shopp\Screens\Orders
  * @since     1.4
  **/
 
