@@ -223,7 +223,7 @@ class ShoppAdminService extends ShoppAdminController {
 		$where = ! empty($where) ? "WHERE " . join(' AND ', $where) : '';
 		$joins = join(' ', $joins);
 
-		$countquery = "SELECT count(*) as total,SUM(IF(txnstatus IN ('authed', 'captured'), total, NULL)) AS sales, AVG(IF(txnstatus IN ('authed', 'captured'), total, NULL)) AS avgsale FROM $Purchase->_table AS o $joins $where ORDER BY o.created DESC LIMIT 1";
+		$countquery = "SELECT count(*) as total,SUM(IF(txnstatus IN ('authed', 'captured'), o.total, NULL)) AS sales, AVG(IF(txnstatus IN ('authed', 'captured'), o.total, NULL)) AS avgsale FROM $Purchase->_table AS o $joins $where ORDER BY o.created DESC LIMIT 1";
 		$this->ordercount = sDB::query($countquery, 'object');
 
 		$query = "SELECT o.* FROM $Purchase->_table AS o $joins $where ORDER BY created DESC LIMIT $start, $per_page";
