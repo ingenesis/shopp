@@ -289,9 +289,6 @@ function shopp_default_scripts (&$scripts) {
 	$scripts->add('search-select', '/ui/behaviors/searchselect.js', array('jquery'), $version);
 	$scripts->add_data('search-select', 'group', 1);
 
-	$scripts->add('swfupload', '/ui/behaviors/swfupload/swfupload.min.js', array(), $version);
-	$scripts->add_data('swfupload', 'group', 1);
-
 	$scripts->add('membership-editor', '/ui/memberships/editor.js', array('jquery','jquery-tmpl','search-select'), $version);
 	$scripts->add_data('membership-editor', 'group', 1);
 
