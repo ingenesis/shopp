@@ -1,11 +1,6 @@
 	<script id="lightbox-image-template" type="text/x-jquery-tmpl">
 		<div>
 		<?php ob_start(); ?>
-	<div id="confirm-delete-images" class="notice hidden"><p><?php _e('Save the product to confirm deleted images.','Shopp'); ?></p></div>
-	<ul id="lightbox">
-	<?php foreach ( (array) $Product->images as $i => $Image ): 
-        if ( ! is_a($Image, 'ProductImage') ) continue;
-    ?>
 		<li class="dz-preview dz-file-preview">
 			<div class="dz-details" title="<?php Shopp::_e('Double-click images to edit their details&hellip;'); ?>">
 				<img data-dz-thumbnail width="120" height="120" class="dz-image" />
@@ -41,4 +36,3 @@
 	<input type="hidden" name="deleteImages" id="deleteImages" value="" />
 
 	<button type="button" name="image_upload" class="button-secondary image-upload"><small><?php Shopp::_e('Add New Image'); ?></small></button>
-	
