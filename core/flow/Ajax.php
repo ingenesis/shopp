@@ -168,7 +168,8 @@ class ShoppAjax extends ShoppRequestFormFramework {
 	}
 
 	public function upload_file () {
-		ShoppScreenProductEditor::downloads();
+		$file = isset($this->files['file']) ? $this->files['file'] : false;
+		ShoppScreenProductEditor::downloads($file);
 	}
 
 	public function add_category () {

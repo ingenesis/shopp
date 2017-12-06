@@ -405,7 +405,7 @@ function Priceline (id,options,data,target,attachment) {
 	_.download = function (d) {
 		var hd,ui,hd2,fc;
 		hd = $('<th><label for="download-'+i+'">'+PRODUCT_DOWNLOAD_LABEL+'</label></th>').appendTo(headingsRow);
-		ui = $('<td width="31%"><input type="hidden" name="'+fn+'[downloadpath]" id="download_path-'+i+'"/><input type="hidden" name="'+fn+'[downloadfile]" id="download_file-'+i+'"/><div id="file-'+i+'" class="status">'+NO_DOWNLOAD+'</div></td>').appendTo(inputsRow);
+		ui = $('<td width="31%"><input type="hidden" name="'+fn+'[downloadpath]" id="download_path-'+i+'"/><input type="hidden" name="'+fn+'[downloadfile]" id="download_file-'+i+'"/><div id="file-'+i+'" class="status dz-message">'+NO_DOWNLOAD+'</div></td>').appendTo(inputsRow);
 
 		hd2 = $('<td rowspan="2" class="controls" width="75"><button type="button" class="button-secondary" style="white-space: nowrap;" id="file-selector-'+i+'"><small>'+SELECT_FILE_BUTTON_TEXT+'&hellip;</small></button></td>').appendTo(headingsRow);
 
@@ -414,7 +414,7 @@ function Priceline (id,options,data,target,attachment) {
 
 		if (d && d.id) {
 			fc = d.mime.replace('/',' ');
-			_.file.attr('class','file').html('<div class="icon shoppui-file '+fc+'"></div>'+d.name+'<br /><small>'+readableFileSize(d.size)+'</small>').click(function () {
+			_.file.attr('class','file').html('<div class="icon shoppui-file '+fc+'"></div><span class="name">'+d.name+'</span><small class="size">'+readableFileSize(d.size)+'</small>').click(function () {
 				window.location.href = adminurl+"admin.php?src=download&shopp_download="+d.id;
 			});
 		}
@@ -447,7 +447,6 @@ function Priceline (id,options,data,target,attachment) {
 					'<select name="'+fn+'[recurring][period]" id="period-'+i+'" class="period">'+pp+'</select><br />'+
 					'<select name="'+fn+'[recurring][cycles]" id="cycles-'+i+'">'+cycs+'</select>'+
 					'<label for="cycles'+i+'">&nbsp;'+TIMES_LABEL+'</label></td>').appendTo(inputsRow);
-
 
 		dis = ui2.find('span.status');
 		ui = ui2.find('span.ui').hide();

@@ -92,7 +92,7 @@ jQuery(document).ready(function($) {
 	$('#addDetail').click(function() { addDetail(); });
 
 	// Initialize file uploads before the pricelines
-    // fileUploads = new FileUploader('flash-upload-file',$('#ajax-upload-file'));
+    fileUploads = new FileUploader('#filechooser');
 
 	// Initalize the base price line
 	basePrice = $(prices).get(0);

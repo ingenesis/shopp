@@ -759,6 +759,7 @@ div.comment-item:hover .row-actions {
 	padding-right: 16px;
 	box-sizing: border-box;
 	width: 99%;
+    height: 28px;
 }
 
 #cboxContent span.status {
@@ -1384,8 +1385,13 @@ div.comment-item:hover .row-actions {
 	font-size: 12px;
 }
 
-.shopp .file small {
+.shopp .file .name {
+	display: block;
+}
+
+.shopp .file .size {
 	color: #444;
+	display: inline-block;
 }
 
 .shopp .file .icon {
@@ -1452,50 +1458,92 @@ div.comment-item:hover .row-actions {
 	border-bottom: 1px solid #dfdfdf;
 }
 
-#chooser {
+#filechooser {
 	font-size: 11px;
 	position: absolute;
 	left: -9999em;
 	width: 360px;
 }
 
-#chooser p {
+#filechooser p {
 	font-size: 11px;
 	margin: 6px 0 8px;
 	line-height: 1;
 }
 
-#cboxContent #chooser {
+#cboxContent #filechooser {
 	left: auto;
 }
 
-#cboxContent #chooser label {
+#cboxContent #filechooser label {
 	margin: 0;
 	padding: 6px 0;
 	text-align: left;
 	width: auto;
 }
 
-div.progress {
-	position: relative;
-	width: 76px;
-	height: 10px;
-	background: #ffffff;
-	border: 1px solid #dddddd;
+.filechooser-upload {
+    width: 100%;
 }
 
-div.progress div.bar {
-	position: absolute;
-	height: 10px;
-	background: #85ec3d;
-	border: none;
+.pricing-table .dz-filename {
+    display: block;
+}
+.pricing-table .dz-size {
+    display: inline-block;
 }
 
-div.progress div.gloss {
-	position: absolute;
-	width: 100%;
-	height: 10px;
-	background: url('../icons/gloss.png') repeat-x;
+.pricing-table .dz-error {
+    color: #999;
+}
+
+.pricing-table .dz-error-message {
+    color: #900;
+    font-weight: bold;
+}
+
+    .pricing-table .dz-preview.dz-processing .dz-progress {
+      opacity: 1;
+      -webkit-transition: all 0.2s linear;
+      transition: all 0.2s linear; }
+    .pricing-table .dz-preview.dz-complete .dz-progress {
+      opacity: 0;
+      -webkit-transition: opacity 0.4s ease-in;
+      transition: opacity 0.4s ease-in; }
+    .pricing-table .dz-preview:not(.dz-processing) .dz-progress {
+      -webkit-animation: pulse 6s ease infinite;
+      animation: pulse 6s ease infinite; }
+    .pricing-table .dz-preview.dz-error .dz-progress {
+      opacity: 0;
+      -webkit-transition: opacity 0.4s ease-out;
+      transition: opacity 0.4s ease-out; }
+
+.pricing-table .dz-preview .dz-progress {
+    display: inline-block;
+    opacity: 0;
+    z-index: 1000;
+    pointer-events: none;
+    position: relative;
+    height: 8px;
+    top: 2px;
+    width: 80px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    -webkit-transform: scale(1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.pricing-table .dz-preview .dz-progress .dz-upload {
+    background: #333;
+    background: linear-gradient(to bottom, #666666, #444444);
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    -webkit-transition: width 300ms ease-in-out;
+    transition: width 300ms ease-in-out; 
 }
 
 #editable-slug-full,#editor-slug-buttons {
