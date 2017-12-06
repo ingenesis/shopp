@@ -320,10 +320,10 @@ div.comment-item:hover .row-actions {
 }
 
 /** Editors Global **/
-.postbox h3 span a.shoppui-question,
+.postbox .hndle a.shoppui-question,
 .postbox label a.shoppui-question,
 .subpanel label a.shoppui-question {
-	color: #767676;
+	color: #999999;
 	margin-bottom: -3px;
 	margin-top: -2px;
 	margin-left: 5px;
