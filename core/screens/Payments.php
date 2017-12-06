@@ -37,7 +37,8 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 	}
 
 	public function ops () {
-		add_action('shopp_admin_settings_ops', array($this, 'updates') );
+        add_action('shopp_admin_settings_ops', array($this, 'add') );
+        add_action('shopp_admin_settings_ops', array($this, 'updates') );
 	}
 
 	public function delete () {
@@ -59,6 +60,29 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 
 		Shopp::redirect(add_query_arg(array('delete' => null, '_wpnonce' => null)));
 	}
+    
+    public function add () {
+		$form = $this->form();
+		if ( empty($form) ) return;
+        
+        $id = $this->form('id');
+        if ( empty($id) ) return;
+
+        $gateway = $id;
+        $index = false;
+
+        if ( false !== strpos($id, '-') ) 
+            list($gateway, $index) = explode('-', $gateway);
+        
+        if ( isset($Gateways->active[ $gateway ]) ) {
+            $Gateway = $Gateways->get($gateway);
+            if ( $Gateway->multi && false === $index ) {
+                unset($Gateway->settings['cards'], $Gateway->settings['label']);
+                $index = count($Gateway->settings);
+            }
+        }
+        
+    }
 
 	public function updates () {
 
@@ -70,7 +94,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 
 		$gateways = array_keys($Gateways->activated());
 		$gateway = key($form);
-
+        
 		// Handle Multi-instance payment systems
 		$indexed = false;
 		if ( preg_match('/\[(\d+)\]/', $gateway, $matched) ) {
@@ -96,6 +120,9 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 
 		$this->notice(Shopp::__('Shopp payments settings saved.'));
 
+        if ( $this->form('save') )
+    		Shopp::redirect(add_query_arg(array('id' => null)));
+        
 		Shopp::redirect(add_query_arg());
 
 	}
@@ -145,7 +172,7 @@ class ShoppPaymentsSettingsTable extends ShoppAdminTable {
 				$this->editor = $Gateway->ui();
 		}
 
-		add_action('shopp_gateway_module_settings', array($Gateways, 'templates'));
+        add_action('shopp_gateway_module_settings', array($Gateways, 'templates'));
 
 		$total = count($this->items);
 		$this->set_pagination_args( array(
@@ -154,16 +181,16 @@ class ShoppPaymentsSettingsTable extends ShoppAdminTable {
 			'per_page' => $per_page
 		) );
 
-		$installed = array();
-		foreach ( (array)$Gateways->modules as $slug => $module )
-			$installed[ $slug ] = $module->name;
-		asort($installed);
+        $installed = array();
+        foreach ( (array)$Gateways->modules as $slug => $module )
+            $installed[ $slug ] = $module->name;
+        asort($installed);
 
-		$this->installed = $installed;
+        $this->installed = $installed;
 
-		shopp_custom_script('payments', 'var gateways = ' . json_encode(array_map('sanitize_title_with_dashes',array_keys($installed))) . ';'
-			. ( $event ? "jQuery(document).ready(function($) { $(document).trigger('" . $event . "Settings',[$('#payments-settings-table tr." . $event . "-editing')]); });" : '' )
-		);
+        shopp_custom_script('payments', 'var gateways = ' . json_encode(array_map('sanitize_title_with_dashes',array_keys($installed))) . ';'
+            . ( $event ? "jQuery(document).ready(function($) { $(document).trigger('" . $event . "Settings',[$('#payments-settings-table tr." . $event . "-editing')]); });" : '' )
+        );
 
 	}
 
@@ -171,7 +198,7 @@ class ShoppPaymentsSettingsTable extends ShoppAdminTable {
 		if ( 'bottom' == $which ) return;
 
 		echo  '<select name="id" id="payment-option-menu">'
-			. '	<option>' . Shopp::__('Add a payment system&hellip;') . '</option>'
+			. '	<option value="label" disabled selected>' . Shopp::__('Add a payment system&hellip;') . '</option>'
 			. '	' . Shopp::menuoptions($this->installed, false, true)
 			. '</select>'
 			. '<button type="submit" name="add-payment-option" id="add-payment-option" class="button-secondary hide-if-js" tabindex="9999">' . Shopp::__('Add Payment System') . '</button>';
@@ -218,17 +245,16 @@ class ShoppPaymentsSettingsTable extends ShoppAdminTable {
 		$edit_link = wp_nonce_url(add_query_arg('id', $Item->payid), 'shopp_edit_gateway');
 		$delete_link = wp_nonce_url(add_query_arg('delete', $Item->payid), 'shopp_delete_gateway');
 
-		echo '<a class="row-title edit" href="' . esc_url($edit_link) . '" title="' . Shopp::__('Edit') . ' &quot;' . esc_attr($label) . '&quot;">' . esc_html($label) . '</a>';
-
-		echo $this->row_actions( array(
-			'edit' => '<a class="edit" href="' . $edit_link . '">' . __( 'Edit' ) . '</a>',
-			'delete' => '<a class="delete" href="' . $delete_link . '">' . __( 'Delete' ) . '</a>', 
-		) );
+		return '<a class="row-title edit" href="' . esc_url($edit_link) . '" title="' . Shopp::__('Edit') . ' &quot;' . esc_attr($label) . '&quot;">' . esc_html($label) . '</a>' .
+                $this->row_actions( array(
+        			'edit' => '<a class="edit" href="' . $edit_link . '">' . __( 'Edit' ) . '</a>',
+        			'delete' => '<a class="delete" href="' . $delete_link . '">' . __( 'Delete' ) . '</a>', 
+        		) );
 
 	}
 
 	public function column_processor( $Item ) {
-		echo esc_html($Item->name);
+		return esc_html($Item->name);
 	}
 
 	public function column_payments( $Item ) {
@@ -240,27 +266,27 @@ class ShoppPaymentsSettingsTable extends ShoppAdminTable {
 			if ( $Paycard ) $cards[] = $Paycard->name;
 		}
 
-		echo esc_html(join(', ', $cards));
+		return esc_html(join(', ', $cards));
 	}
 
 	public function column_ssl( $Item ) {
-		$this->checkbox( $Item->secure, $Item->secure ? Shopp::__('SSL/TLS Required'): Shopp::__('No SSL/TLS Required') );
+		return $this->checkbox( $Item->secure, $Item->secure ? Shopp::__('SSL/TLS Required'): Shopp::__('No SSL/TLS Required') );
 	}
 
 	public function column_captures( $Item ) {
-		$this->checkbox( $Item->captures, $Item->captures ? Shopp::__('Supports delayed payment capture') : Shopp::__('No delayed payment capture support') );
+		return $this->checkbox( $Item->captures, $Item->captures ? Shopp::__('Supports delayed payment capture') : Shopp::__('No delayed payment capture support') );
 	}
 
 	public function column_recurring( $Item ) {
-		$this->checkbox( $Item->recurring, $Item->recurring ? Shopp::__('Supports recurring payments') : Shopp::__('No recurring payment support') );
+		return $this->checkbox( $Item->recurring, $Item->recurring ? Shopp::__('Supports recurring payments') : Shopp::__('No recurring payment support') );
 	}
 
 	public function column_refunds( $Item ) {
-		$this->checkbox( $Item->refunds, $Item->refunds ? Shopp::__('Supports refund and void processing') : Shopp::__('No refund or void support') );
+		return $this->checkbox( $Item->refunds, $Item->refunds ? Shopp::__('Supports refund and void processing') : Shopp::__('No refund or void support') );
 	}
 
 	protected function checkbox( $set, $title ) {
-		echo '<div class="checkbox ' . ( $set ? ' checked' : '' ) . '" title="' . esc_html($title) . '"><span class="hidden">' . esc_html($title) . '</div>';
+		return '<div class="checkbox ' . ( $set ? ' checked' : '' ) . '" title="' . esc_html($title) . '"><span class="hidden">' . esc_html($title) . '</div>';
 	}
 
 } // class ShoppPaymentsSettingsTable

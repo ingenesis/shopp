@@ -88,28 +88,71 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 
 	}
 
+	/**
+	 * Provides the page slug for this screen
+	 *
+	 * @since 1.4
+	 * @return string The page slug
+	 **/
 	public function slug () {
 		return substr($this->pagename, strrpos($this->pagename, '-') + 1);
 	}
 
+	/**
+	 * Prototype load method to load the data model for the screen
+	 *
+	 * @since 1.4
+	 * @return Object Some object data to pass back to the screen
+	 **/
 	public function load () {
 		/** Optionally implemented in the concrete class **/
 	}
 
+	/**
+	 * Used to register actions this screen handles
+	 *
+	 * Providing a hook name
+	 *
+	 * @since 1.4
+	 * @return array A list of user request action hook names
+	 **/
 	public function actions () {
 		/** Optionally implemented in the concrete class **/
 		return array();
 	}
 
+	/**
+	 * Used to handle operations on the loaded data model
+	 *
+	 * @since 1.4
+	 * @return array A list of operations to perform
+	 **/
 	public function ops () {
 		/** Optionally implemented in the concrete class **/
 		return array();
 	}
 
+	/**
+	 * Layout method for user interface setup
+	 *
+	 * This is normally used for registering table column names, or meta boxes
+	 * or other references used in the user interface.
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
 	public function layout () {
 		/** Optionally implement in concrete classes **/
 	}
 
+	/**
+	 * Displays the interface
+	 *
+	 * This is the main event. It includes a UI template for display.
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
 	public function screen () {
 		include $this->ui($this->slug() . '.php');
 	}
@@ -118,7 +161,6 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 * Dynamically includes necessary JavaScript and stylesheets for the screen
 	 *
 	 * @since 1.4
-	 *
 	 * @return void
 	 **/
 	public function assets () {
@@ -128,9 +170,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	/**
 	 * Adds contextually appropriate help information to interfaces
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
-	 *
 	 * @return void
 	 **/
 	public function help () {
@@ -170,7 +210,6 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 * Displays registered screen notices
 	 *
 	 * @since 1.3
-	 *
 	 * @return void
 	 **/
 	public function notices () {
@@ -195,7 +234,6 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 * Create or get the admin table for this screen
 	 *
 	 * @since 1.4
-	 *
 	 * @param string $classname The class name for the admin table renderer
 	 * @return ShoppAdminTable|bool The ShoppAdminTable object or false
 	 **/
@@ -213,7 +251,6 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 * Process posted form data and/or request action operations
 	 *
 	 * @since 1.4
-	 *
 	 * @param Object $Object The model object for this screen
 	 * @return Object The model object for this screen
 	 **/
@@ -244,7 +281,6 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 * localized title as the value.
 	 *
 	 * @since 1.3
-	 *
 	 * @param array $tabs The tab map array
 	 * @return void
 	 **/
@@ -271,7 +307,6 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 * Generates the full URL for the current admin screen
 	 *
 	 * @since 1.3
-	 *
 	 * @param array $params (optional) The parameters to include in the URL
 	 * @return string The generated URL with parameters
 	 **/
@@ -286,7 +321,6 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 * Generate a nonce field, nonce URL or get the current nonce name
 	 *
 	 * @since 1.4
-	 *
 	 * @param string $nonce The nonce type ('field', 'url') or the nonce name
 	 * @param string $url (optional) The URL to nonce
 	 * @return string|void The nonce URL, nonce name or void when genrating the nonce field
@@ -304,6 +338,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 			$this->nonce = $nonce;
 		} else return $this->nonce;
 	}
+
 	/**
 	 * Helper to load a UI view template
 	 *
@@ -311,7 +346,6 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 * are still in scope when the template is included.
 	 *
 	 * @since 1.3
-	 *
 	 * @param string $file The file to include
 	 * @return string|bool The file path or false if not found
 	 **/
@@ -330,8 +364,6 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 * Registers callback handlers for actions or ops
 	 *
 	 * @since 1.4
-	 *
-	 *
 	 * @return void
 	 **/
 	private function handlers ( $action, array $methods = array() ) {

@@ -232,11 +232,10 @@ class ShoppLookup {
 	}
 
 	public static function country_euvat () {
-		$_ = array( // Includes 28 core member states plus dependent territories
-			'AT','BE','BG','CY','CZ','DE','DK','ES','ET','EE',
-			'FI','FR','GB','GR','HR','HU','IE','IM','IT','LB',
-			'LT','LU','LV','MT','NL','PL','PT','RO','SE','SI',
-			'SK');
+		$_ = array( // Includes 28 core member countries plus dependent territories
+			'AT','BE','BG','CY','CZ','DE','DK','ES','EE','FI',
+			'FR','GB','GR','HR','HU','IE','IM','IT','LT','LU',
+			'LV','MT','NL','PL','PT','RO','SE','SI','SK');
 		return (array)apply_filters('shopp_country_euvat', $_);
 	}
 
@@ -327,18 +326,16 @@ class ShoppLookup {
 	 **/
 	public static function paycards () {
 		$_ = array();
-		$_['amex'] = new PayCard('American Express','Amex','/^3[47]\d{13}$/',4);
-		$_['dc'] = new PayCard("Diner's Club",'DC','/^(30|36|38|39|54)\d{12}$/',3);
-		$_['disc'] = new PayCard("Discover Card",'Disc','/^6(011|22[0-9]|4[4-9]0|5[0-9][0-9])\d{12}$/',3);
-		$_['jcb'] = new PayCard('JCB','JCB','/^35(2[8-9]|[3-8][0-9])\d{12}$/',3);
-		$_['dankort'] = new PayCard('Dankort','DK','/^5019\d{12}$/');
-		$_['maes'] = new PayCard('Maestro','Maes','/^(5[06-8]|6\d)\d{10,17}$/',3, array('start'=>5,'issue'=>3));
-		$_['mc'] = new PayCard('MasterCard','MC','/^(5[1-5]\d{4}|677189)\d{10}$/',3);
-		$_['forbrugsforeningen'] = new PayCard('Forbrugsforeningen','forbrug','/^600722\d{10}$/');
-		$_['lasr'] = new PayCard('Laser','Lasr','/^(6304|6706|6709|6771)\d{12,15}$/');
-		$_['solo'] = new PayCard('Solo','Solo','/^(6334|6767)(\d{12}|\d{14,15})$/',3, array('start'=>5,'issue'=>3));
-		$_['visa'] = new PayCard('Visa','Visa','/^4[0-9]{12}(?:[0-9]{3})?$/',3);
-		return apply_filters('shopp_payment_cards',$_);
+		$_['amex'] = new PayCard('American Express', 'Amex', '/^3[47]\d{13}$/', 4);
+		$_['dc'] = new PayCard("Diner's Club", 'DC', '/^3(0[0-5]|[68]\d)\d{11}$/', 3);
+		$_['disc'] = new PayCard("Discover Card", 'Disc', '/^(6011|65\d{2}|64[4-9]\d)\d{12}|(62\d{14})$/', 3);
+		$_['jcb'] = new PayCard('JCB', 'JCB', '/^35(28|29|[3-8]\d)\d{12}$/', 3);
+		$_['dankort'] = new PayCard('Dankort', 'DK', '/^5019\d{12}$/');
+		$_['maes'] = new PayCard('Maestro', 'Maes', '/^(5[06-8]|6\d)\d{10,17}$/', 3,  array('start' => 5, 'issue' => 3));
+		$_['mc'] = new PayCard('MasterCard', 'MC', '/^(5[1-5]\d{4}|677189)\d{10}$|^2(?:2(?:2[1-9]|[3-9]\d)|[3-6]\d\d|7(?:[01]\d|20))\d{12}$/', 3);
+		$_['forbrugsforeningen'] = new PayCard('Forbrugsforeningen', 'forbrug', '/^600722\d{10}$/');
+		$_['visa'] = new PayCard('Visa', 'Visa', '/^4\d{12}(\d{3})?(\d{3})?$/', 3);
+		return apply_filters('shopp_payment_cards', $_);
 	}
 
 	/**
@@ -559,6 +556,11 @@ class ShoppLookup {
 			'webmaster' => __('For help with this, contact your website developer.','Shopp'),
 			'admin' => __('For help with this, contact the website administrator.','Shopp'),
 		);
+
+        /* AJAX and Resource errors */
+        $_['access'] = array(
+            '403' => Shopp::__('You are not authorized to access this resource.')
+        );
 
 		/* PHP file upload errors */
 		$_['uploads'] = array(

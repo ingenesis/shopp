@@ -482,7 +482,6 @@ class ShoppCart extends ListFramework {
 	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
-	 * @fixme foreach over iterable items prevents addons from being added via cart API
 	 * @param int $item Index of the item to change
 	 * @param ShoppProduct $Product Product object to change to
 	 * @param int|array|Price $pricing Price record ID or an array of pricing record IDs or a Price object
@@ -493,18 +492,27 @@ class ShoppCart extends ListFramework {
 		// If the specified item doesn't exist, fail
 		if ( ! $this->exists($item) )
             return false;
-        
+
         // If nothing has changed, consider the change already successful
         if ( empty($addons) && $this->get($item)->product == $product && $this->get($item)->priceline == $pricing )
 			return true;
 
 		// Maintain item state, change variant
 		$Item = $this->get($item);
+        
+        // Remove old item taxes from the cart tax total register
+        $ItemTax = reset($Item->taxes);
+        $TaxTotals = $this->Totals->entry(OrderAmountItemTax::$register, $ItemTax->label);
+        if ($TaxTotals)
+            $TaxTotals->unapply($item);
+        
 		$category = $Item->category;
 		$data = $Item->data;
 
 		$Item->load(new ShoppProduct($product), $pricing, $category, $data, $addons);
 		ShoppOrder()->Shiprates->item( new ShoppShippableItem($Item) );
+
+        $this->move($item, $Item->fingerprint());
 
 		return true;
 	}
@@ -549,13 +557,13 @@ class ShoppCart extends ListFramework {
 	 * @author Jonathan Davis
 	 * @since 1.3
 	 *
-	 * @param ShoppCartItem $Item The cart item from shopp_cart_item_retotal
+	 * @param ShoppCartItem $Item The cart item from shopp_cart_item_taxes
 	 * @return void
 	 **/
 	public function itemtaxes ( ShoppCartItem $Item ) {
 
 		$itemid = $Item->fingerprint();
-		if ( ! $this->exists($itemid) ) return;
+        if ( ! $this->exists($itemid) ) return;
 
 		foreach ( $Item->taxes as $id => &$ItemTax )
 			$this->Totals->register( new OrderAmountItemTax( $ItemTax, $itemid ) );
@@ -632,7 +640,7 @@ class ShoppCart extends ListFramework {
 
 		if ( apply_filters( 'shopp_tax_shipping', shopp_setting_enabled('tax_shipping') ) ) {
 			$Totals->register( new OrderAmountShippingTax( $Totals->total('shipping') ) );
-		} else {			
+		} else {
 			$Totals->takeoff( OrderAmountShippingTax::$register, 'shipping' ); // if not applicable, make sure we scrub
 		}
 
@@ -641,7 +649,6 @@ class ShoppCart extends ListFramework {
 
 		// Apply credits to discount the order
 		$Discounts->credits();
-
 
 		if ( $Discounts->shipping() ) // If shipping discounts changed, recalculate shipping amount
 			$Totals->register( new OrderAmountShipping( array('id' => 'cart', 'amount' => $Shipping->calculate() ) ) );

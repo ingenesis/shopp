@@ -19,7 +19,7 @@ jQuery(document).ready( function($) {
 			notice.hide();
 			var $this = $(this),
 				row = $this.parents('tr').hide(),
-				selected = menu.val().toLowerCase(),
+				selected = menu.val() ? menu.val().toLowerCase() : false,
 				id = $this.attr('href')?$this.attr('href').split('&')[1].split('=')[1].toLowerCase().split('-'):false,
 				gateway = id?id[0]:selected,
 				instance = id?id[1]:0,

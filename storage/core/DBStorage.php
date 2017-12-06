@@ -54,7 +54,7 @@ class DBStorage extends StorageModule implements StorageEngine {
 			$data = file_get_contents($data);
 		}
 
-		$data = sDB::escape($data);
+		$data = sDB::str_escape($data);
 
 		if ( ! $asset->id ) $uri = sDB::query("INSERT $this->_table SET data='$data'");
 		else sDB::query("UPDATE $this->_table SET data='$data' WHERE $this->_key='$asset->uri'");

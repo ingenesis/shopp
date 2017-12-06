@@ -60,10 +60,10 @@ class ShoppErrorThemeAPI implements ShoppAPI {
 	 * @param string      $context The context being worked on by the Theme API
 	 * @return ShoppErrors The active object context
 	 **/
-	public static function _setobject ( $Object, $object ) {
+	public static function _setobject ( $Object, $context ) {
 		if ( is_object($Object) && is_a($Object, 'ShoppErrors') ) return $Object;
 
-		if ( strtolower($object) != 'error' ) return $Object; // not mine
+		if ( strtolower($context) != 'error' ) return $Object; // not mine
 		return ShoppErrors();
 	}
 

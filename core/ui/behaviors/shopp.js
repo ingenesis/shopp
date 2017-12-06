@@ -252,12 +252,12 @@ if (!Number.prototype.roundFixed) {
  * when activating the field by mouse click
  **/
 function quickSelects (e) {
-	var target = jQuery(e).size() == 0 ? document : e;
+	var target = jQuery(e).length == 0 ? document : e;
 	jQuery(target).on('mouseup.select', 'input.selectall', function () { this.select(); });
 }
 
 function moneyInputs (e) {
-	var target = jQuery(e).size() == 0 ? document : e;
+	var target = jQuery(e).length == 0 ? document : e;
 	jQuery(document).on('change', 'input.money', function () { this.value = asMoney(this.value); });
 }
 

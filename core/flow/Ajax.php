@@ -70,7 +70,7 @@ class ShoppAjax extends ShoppRequestFormFramework {
 		add_action('wp_ajax_shopp_order_note_message', array($this, 'order_note_message'));
 		add_action('wp_ajax_shopp_activate_key', array($this, 'activate_key'));
 		add_action('wp_ajax_shopp_deactivate_key', array($this, 'deactivate_key'));
-		add_action('wp_ajax_shopp_rebuild_search_index', array('ShoppAdminSystem', 'reindex'));
+		add_action('wp_ajax_shopp_rebuild_search_index', array('ShoppSearchIndexController', 'reindex'));
 		add_action('wp_ajax_shopp_upload_local_taxes', array($this, 'upload_local_taxes'));
 		add_action('wp_ajax_shopp_feature_product', array($this, 'feature_product'));
 		add_action('wp_ajax_shopp_update_inventory', array($this, 'update_inventory'));
@@ -144,7 +144,9 @@ class ShoppAjax extends ShoppRequestFormFramework {
 		$Category = new ProductCategory((int)$_GET['category']);
 		$Category->load_meta();
 
-		echo json_encode($Category->specs);
+		if ( isset($Category->specs) )
+			echo json_encode($Category->specs);
+		else echo json_encode(false);
 		exit();
 	}
 
@@ -155,8 +157,8 @@ class ShoppAjax extends ShoppRequestFormFramework {
 		$Category->load_meta();
 
 		$result = new stdClass();
-		$result->options = $Category->options;
-		$result->prices = $Category->prices;
+		$result->options = isset($Category->options) ? $Category->options : array();
+		$result->prices = isset($Category->prices) ? $Category->prices : array();
 
 		echo json_encode($result);
 		exit();
@@ -417,7 +419,7 @@ class ShoppAjax extends ShoppRequestFormFramework {
 						$joins[] = "INNER JOIN  $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id";
 						$where[] = "tt.taxonomy = '" . $taxonomy . "'";
 						if ( 'shopp_popular_tags' == strtolower($q) ) {
-							$q = ''; 
+							$q = '';
 							$orderlimit = "ORDER BY tt.count DESC LIMIT 15";
 						}
 					}

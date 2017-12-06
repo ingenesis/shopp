@@ -80,6 +80,8 @@ class ShoppProduct extends WPShoppObject {
 		if ( isset($this->_map[ $key ]) ) $key = $this->_map[ $key ];
 		$this->init(self::$table, $key);
 		$this->type = self::$posttype;
+        $this->ping_status = get_option('default_ping_status');
+        $this->comment_status = get_option('default_comment_status');
 		$this->load($id, $key);
 	}
 
@@ -106,7 +108,7 @@ class ShoppProduct extends WPShoppObject {
 	 **/
 	public function savepost () {
 		if ( empty($this->id)) return;
-		do_action('save_post', $this->id, get_post($this->id));
+		do_action('save_post', $this->id, get_post($this->id), $update = true);
 		if( function_exists('clean_post_cache') )
 			clean_post_cache($this->id);
 	}

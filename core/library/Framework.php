@@ -44,6 +44,23 @@ class ListFramework implements Iterator {
 		$this->_added = $key;
 		return $this->get($key);
 	}
+    
+	/**
+	 * Moves an entry to a new key
+	 *
+	 * @since 1.4
+	 *
+	 * @param string $old The original key to move the entry from
+	 * @param string $new The new key to move the entry to
+	 * @return bool True if successful, false otherwise
+	 **/
+    public function move ( $old, $new ) {
+		if ( is_null($old) || ! $this->exists($old) )
+            return false;
+		$this->_list[$new] = $this->_list[$old];
+        unset($this->_list[ $old ]);
+        return true;
+    }
 
 	/**
 	 * Set or get the last added entry

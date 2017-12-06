@@ -250,7 +250,7 @@ final class ShoppFlow extends ShoppFlowController {
  * @package shopp
  * @author Jonathan Davis
  **/
-abstract class ShoppFlowController extends ShoppRequestFramework {
+abstract class ShoppFlowController extends ShoppRequestFormFramework {
 
 	/**
 	 * ShoppFlowController constructor

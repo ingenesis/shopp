@@ -48,66 +48,67 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	 * @internal
 	 **/
 	static $register = array(
-		'addon' => 'addon',
-		'addons' => 'addons',
-		'addtocart' => 'add_to_cart',
-		'availability' => 'availability',
-		'buynow' => 'buy_now',
-		'categories' => 'categories',
-		'category' => 'category',
-		'coverimage' => 'coverimage',
-		'description' => 'description',
-		'donation' => 'quantity',
-		'amount' => 'quantity',
-		'quantity' => 'quantity',
-		'found' => 'found',
-		'freeshipping' => 'free_shipping',
-		'gallery' => 'gallery',
-		'hasaddons' => 'has_addons',
-		'hascategories' => 'has_categories',
-		'hassavings' => 'has_savings',
-		'hasvariants' => 'has_variants',
-		'hasimages' => 'has_images',
-		'hasspecs' => 'has_specs',
+		'addon'           => 'addon',
+		'addons'          => 'addons',
+		'addtocart'       => 'add_to_cart',
+		'availability'    => 'availability',
+		'buynow'          => 'buy_now',
+		'categories'      => 'categories',
+		'category'        => 'category',
+		'coverimage'      => 'coverimage',
+		'description'     => 'description',
+		'donation'        => 'quantity',
+		'amount'          => 'quantity',
+		'quantity'        => 'quantity',
+		'found'           => 'found',
+		'freeshipping'    => 'free_shipping',
+		'gallery'         => 'gallery',
+		'hasaddons'       => 'has_addons',
+		'hascategories'   => 'has_categories',
+		'hassavings'      => 'has_savings',
+		'hasvariants'     => 'has_variants',
+		'hasimages'       => 'has_images',
+		'hasspecs'        => 'has_specs',
 		'hassubscription' => 'has_subscription',
-		'hastags' => 'has_tags',
-		'id' => 'id',
-		'image' => 'image',
-		'thumbnail' => 'image',
-		'images' => 'images',
-		'incart' => 'in_cart',
-		'incategory' => 'in_category',
-		'input' => 'input',
-		'isfeatured' => 'is_featured',
-		'link' => 'url',
-		'url' => 'url',
-		'name' => 'name',
-		'onsale' => 'on_sale',
-		'outofstock' => 'out_of_stock',
-		'price' => 'price',
-		'saleprice' => 'saleprice',
-		'relevance' => 'relevance',
-		'savings' => 'savings',
-		'schema' => 'schema',
-		'slug' => 'slug',
-		'spec' => 'spec',
-		'specs' => 'specs',
-		'summary' => 'summary',
-		'sku' => 'sku',
-		'stock' => 'stock',
-		'tag' => 'tag',
-		'tagged' => 'tagged',
-		'tags' => 'tags',
-		'taxrate' => 'taxrate',
-		'type' => 'type',
-		'variant' => 'variant',
-		'variants' => 'variants',
-		'weight' => 'weight',
+		'hastags'         => 'has_tags',
+		'id'              => 'id',
+		'image'           => 'image',
+		'thumbnail'       => 'image',
+		'images'          => 'images',
+		'incart'          => 'in_cart',
+		'incategory'      => 'in_category',
+		'input'           => 'input',
+		'isfeatured'      => 'is_featured',
+		'link'            => 'url',
+		'url'             => 'url',
+		'name'            => 'name',
+		'onsale'          => 'on_sale',
+		'outofstock'      => 'out_of_stock',
+		'price'           => 'price',
+		'saleprice'       => 'saleprice',
+		'processing'      => 'processing',
+		'relevance'       => 'relevance',
+		'savings'         => 'savings',
+		'schema'          => 'schema',
+		'slug'            => 'slug',
+		'spec'            => 'spec',
+		'specs'           => 'specs',
+		'summary'         => 'summary',
+		'sku'             => 'sku',
+		'stock'           => 'stock',
+		'tag'             => 'tag',
+		'tagged'          => 'tagged',
+		'tags'            => 'tags',
+		'taxrate'         => 'taxrate',
+		'type'            => 'type',
+		'variant'         => 'variant',
+		'variants'        => 'variants',
+		'weight'          => 'weight',
 
 		// Deprecated
-		'hasvariations' => 'has_variants',
-		'variation' => 'variant',
-		'variations' => 'variants',
+		'hasvariations'   => 'has_variants',
+		'variation'       => 'variant',
+		'variations'      => 'variants',
 	);
 
 	/**
@@ -150,10 +151,10 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	 * @param string       $context The context being worked on by the Theme API
 	 * @return ShoppProduct The active object context
 	 **/
-	public static function _setobject ($Object, $object) {
+	public static function _setobject ($Object, $context) {
 		if ( is_object($Object) && is_a($Object, 'ShoppProduct') ) return $Object;
 
-		if ( strtolower($object) != 'product' ) return $Object; // not mine, do nothing
+		if ( strtolower($context) != 'product' ) return $Object; // not mine, do nothing
 		else {
 			return ShoppProduct();
 		}
@@ -374,7 +375,10 @@ class ShoppProductThemeAPI implements ShoppAPI {
 				if ( ! empty($before_menu) ) $markup[] = $before_menu;
 				$menuid = $idprefix . $menu['id'];
 				if ( Shopp::str_true($label) ) $markup[] = '<label for="' . esc_attr($menuid) . '">' . esc_html($menu['name']) . '</label> ';
-				$category_class = shopp('collection', 'get-slug');
+
+				$category_slug = array_column($O->categories, 'slug');
+                
+                $category_class = implode(' ', $category_slug);
 				$classes = array($class, $category_class, 'addons');
 
 				$markup[] = '<select name="products[' . $O->id . '][addons][]" class="' . trim(join(' ', $classes)). '" id="' . esc_attr($menuid) . '" title="' . esc_attr($menu['name']) . '">';
@@ -1399,8 +1403,8 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			'disabled' => __('Currently unavailable', 'Shopp')
 		);
 		$options = array_merge($defaults, $options);
-		extract($options);
-
+		extract($options, EXTR_SKIP);
+        
 		if ( ! Shopp::str_true($O->sale) ) $property = 'price';
 
 		$levels = array('min', 'max');
@@ -1426,6 +1430,38 @@ class ShoppProductThemeAPI implements ShoppAPI {
 
 		if ( is_array($prices) ) return join($separator, $prices);
 		else return $prices;
+	}
+
+	/**
+	 * Provides the processing time of the product
+	 *
+	 * @api `shopp('product.processing')`
+	 * @since 1.3
+	 *
+	 * @param string       $result  The output
+	 * @param array        $options The options
+	 * @param ShoppProduct $O       The working object
+	 * @return string|boolean The product processing time markup | False when turned off
+	 **/
+	public static function processing ( $result, $options, $O ) {
+		if ( 'off' == $O->processing ) return false;
+
+		$period  = array( 'd' => Shopp::__('day'), 'w' => Shopp::__('week'), 'm' => Shopp::__('month'));
+		$periods = array( 'd' => Shopp::__('days'), 'w' => Shopp::__('weeks'), 'm' => Shopp::__('months'));
+
+		$minprocess = 0;
+		$maxprocess = 0;
+		$processes  = array('minprocess', 'maxprocess');
+
+		foreach ($processes as $process) {
+			$timespan = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $O->$process);
+			if ( $timespan[0] == 1 )
+				$$process = $timespan[0] . ' ' . $period[ $timespan[1] ];
+			else
+				$$process = $timespan[0] . ' ' . $periods[ $timespan[1] ];
+		}
+
+		return $minprocess . ' - ' . $maxprocess;
 	}
 
 	/**
@@ -2386,7 +2422,6 @@ new ProductOptionsMenus(<?php printf("'select%s.product%d.options'",$select_coll
 		foreach ( $levels as $level )
 			$$level = self::_taxed($$level, $O, isset($O->{$level}[ $property . '_tax' ]) ? $O->{$level}[ $property . '_tax' ] : true, $taxoption, $taxrates);
 
-
 		return array($min, $max);
 	}
 
@@ -2399,36 +2434,30 @@ new ProductOptionsMenus(<?php printf("'select%s.product%d.options'",$select_coll
 	 * @param float $amount The amount to add taxes to, or exclude taxes from
 	 * @param ShoppProduct $O The product to get properties from
 	 * @param boolean $istaxed Whether the amount can be taxed
-	 * @param boolean $taxoption The Theme API tax option given the the tag
-	 * @param array $taxrates A list of taxrates that apply to the product and amount
+	 * @param boolean $taxoption The Theme API tax option given the the tag to include or exclude taxes
+	 * @param array $taxrates (optional) A list of taxrates to apply to the product and amount (overriding the product applied taxes)
 	 * @return float The amount with tax added or tax excluded
 	 **/
 	private static function _taxed ( $amount, ShoppProduct $O, $istaxed, $taxoption = null, array $taxrates = array() ) {
 		if ( ! $istaxed ) return $amount;
 
-		if ( empty($taxrates) ) $taxrates = Shopp::taxrates($O);
-
-		if ( isset($taxoption) )
-			$taxoption = Shopp::str_true( $taxoption );
-
 		$inclusivetax = self::_inclusive_taxes($O);
-		if ( $inclusivetax ) {
-			$adjustment = ShoppTax::adjustment($taxrates);
-			if ( 1 != $adjustment && false !== $taxoption ) // Only adjust when taxes are not excluded @see #3041
-				return (float) ($amount / $adjustment);
-		}
+        
+		if ( empty($taxrates) )
+			$taxrates = Shopp::taxrates($O);
 
-		// Handle inclusive/exclusive tax presentation options (product editor setting or api option)
-		// If the 'taxes' option is specified and the item either has inclusive taxes that apply,
-		// or the 'taxes' option is forced on (but not both) then handle taxes by either adding or excluding taxes
-		// This is an exclusive or known as XOR, the lesser known brother of Thor that gets left out of the family get togethers
-		if ( isset($taxoption) && ( $inclusivetax ^ $taxoption ) ) {
+		if ( isset($taxoption) ) {
 
-			if ( $taxoption )
-				return ShoppTax::calculate($taxrates, (float)$amount);
-			else return ShoppTax::exclusive($taxrates, (float)$amount);
+			if ( ! Shopp::str_true( $taxoption ) )
+                return ShoppTax::exclusive($taxrates, (float)$amount);
+
+			if ( $inclusivetax ) // $taxoption is false, meaning they want the tax exclusive amount
+				ShoppTax::calculate($taxrates, (float)$amount);
 
 		}
+        
+		if ( $inclusivetax )
+			$amount += ShoppTax::adjustment($amount, $taxrates, $O);
 
 		return $amount;
 	}

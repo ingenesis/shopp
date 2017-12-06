@@ -218,7 +218,6 @@ th.textright {
 }
 
 .shopp .column-featured,
-.shopp .column-inventory,
 .shopp .column-ssl,
 .shopp .column-captures,
 .shopp .column-recurring,
@@ -1953,6 +1952,8 @@ span.indent {
 	font-size: 0.875em;
 	padding: 0em 0.5em;
 }
+
+
 /** Category Metabox **/
 .shopp .category-menu {
 	display: block;
@@ -2108,8 +2109,6 @@ p.controls {
 }
 
 .shopp .postbox p span {
-	float: left;
-	padding: 0 5px 0 0;
 	display: inline-block;
 	text-align: left;
 }

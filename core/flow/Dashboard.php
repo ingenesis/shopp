@@ -378,14 +378,18 @@ class ShoppAdminDashboard {
 
 		?>
 		<table><tbody>
-		<?php foreach ($Collection->products as $product): $product->lowstock($product->stock,$product->stocked); ?>
-		<tr>
-			<td class="amount"><?php echo abs($product->stock); ?></td>
-			<td><span class="stock lowstock <?php echo $product->lowstock; ?>"><?php echo $warnings[ $product->lowstock ]; ?></span></td>
-			<td><a href="<?php echo esc_url(add_query_arg('id',$product->id,$productscreen)); ?>"><?php echo $product->name; ?></a></td>
-			<td><a href="<?php echo esc_url(add_query_arg('view','inventory',$productscreen)); ?>"><?php echo $product->sku; ?></a></td>
-		</tr>
-		<?php endforeach; ?>
+			<?php if ( empty($Collection->products) ) : ?>
+				<tr><td colspan="4"><?php Shopp::_e('No low stock products found.'); ?></td></tr>
+			<?php else: ?> 
+				<?php foreach ( $Collection->products as $product ): $product->lowstock($product->stock, $product->stocked); ?>
+				<tr>
+					<td class="amount"><?php echo abs($product->stock); ?></td>
+					<td><span class="stock lowstock <?php echo $product->lowstock; ?>"><?php echo $warnings[ $product->lowstock ]; ?></span></td>
+					<td><a href="<?php echo esc_url(add_query_arg('id',$product->id,$productscreen)); ?>"><?php echo $product->name; ?></a></td>
+					<td><a href="<?php echo esc_url(add_query_arg('view','inventory',$productscreen)); ?>"><?php echo $product->sku; ?></a></td>
+				</tr>
+				<?php endforeach; ?>
+			<?php endif; ?>
 		</tbody></table>
 
 		<?php

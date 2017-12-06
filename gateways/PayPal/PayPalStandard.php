@@ -629,7 +629,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		$this->process($event, $Purchase);
 
 		status_header( '200' );
-		die( 'OK' );
+        exit();
 	}
 
 	protected function ipnurl () {

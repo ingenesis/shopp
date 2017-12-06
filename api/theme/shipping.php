@@ -73,10 +73,10 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 	 * @param string           $context The context being worked on by the Theme API
 	 * @return ShoppShiprates The active object context
 	 **/
-	public static function _setobject ( $Object, $object ) {
-		if ( is_object($Object) && is_a($Object, 'ShoppOrder') && isset($Object->Shiprates) && 'shipping' == strtolower($object) )
+	public static function _setobject ( $Object, $context ) {
+		if ( is_object($Object) && is_a($Object, 'ShoppOrder') && isset($Object->Shiprates) && 'shipping' == strtolower($context) )
 			return $Object->Shiprates;
-		else if ( strtolower($object) != 'shipping' ) return $Object; // not mine, do nothing
+		else if ( strtolower($context) != 'shipping' ) return $Object; // not mine, do nothing
 
 		return ShoppOrder()->Shiprates;
 	}

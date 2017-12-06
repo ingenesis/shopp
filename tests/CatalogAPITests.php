@@ -14,6 +14,7 @@ class CatalogAPITests extends ShoppTestCase {
 			'Constellation', 'Defiant', 'Enterprise', 'Excalibur', 'Exeter', 'Farragut',
 			'Hood', 'Intrepid', 'Lexington', 'Pegasus', 'Potemkin', 'Yorktown'
 	);
+	static $products = array();
 
 	static function product ($category) {
 		return array(
@@ -43,6 +44,14 @@ class CatalogAPITests extends ShoppTestCase {
 		}
 
 	}
+
+	public static function tearDownAfterClass () {
+		foreach ($products as $id)
+			shopp_rmv_product($id);
+
+		shopp_rmv_product_category(self::$HeavyCruiser);
+	}
+
 
 	function test_catalog_url () {
 		// $this->markTestSkipped('Skipped.');
@@ -218,7 +227,7 @@ class CatalogAPITests extends ShoppTestCase {
 	function test_catalog_collections () {
 		// $this->markTestSkipped('Skipped.');
 		$Storefront = new ShoppStorefront();
-        
+
 		$actual = shopp('catalog.get-catalog-products','show=3');
 		$this->assertValidMarkup($actual);
 

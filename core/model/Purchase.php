@@ -660,59 +660,61 @@ class ShoppPurchase extends ShoppDatabaseObject {
 	 * @param array $ignores A list of properties to ignore
 	 * @return void
 	 **/
-	public function copydata ( $Object, $prefix = '', array $ignores = array() ) {
+	public function copydata ( $Object, $prefix = '', $ignores = false ) {
 
-		$ignores = array_merge(array('_datatypes', '_table', '_key', '_lists', 'id', 'created', 'modified'), $ignores);
+		$skipped = array('_datatypes', '_table', '_key', '_lists', 'id', 'created', 'modified');
 
-		foreach( get_object_vars($Object) as $property => $value ) {
-			$property = $prefix . $property;
-			if ( property_exists($this, $property) && ! in_array($property, $ignores) )
-				$this->{$property} = $value;
-		}
+		if ( is_array($ignores) )
+			$ignores = array_merge($skipped, $ignores);
+		else $ignores = $skipped;
+
+		parent::copydata($Object, $prefix, $ignores);
 	}
 
 	public static function exportcolumns () {
 		$prefix = "o.";
 		return array(
-			$prefix.'id' => __('Order ID','Shopp'),
-			$prefix.'ip' => __('Customer\'s IP Address','Shopp'),
-			$prefix.'firstname' => __('Customer\'s First Name','Shopp'),
-			$prefix.'lastname' => __('Customer\'s Last Name','Shopp'),
-			$prefix.'email' => __('Customer\'s Email Address','Shopp'),
-			$prefix.'phone' => __('Customer\'s Phone Number','Shopp'),
-			$prefix.'company' => __('Customer\'s Company','Shopp'),
-			$prefix.'card' => __('Credit Card Number','Shopp'),
-			$prefix.'cardtype' => __('Credit Card Type','Shopp'),
-			$prefix.'cardexpires' => __('Credit Card Expiration Date','Shopp'),
-			$prefix.'cardholder' => __('Credit Card Holder\'s Name','Shopp'),
-			$prefix.'address' => __('Billing Street Address','Shopp'),
-			$prefix.'xaddress' => __('Billing Street Address 2','Shopp'),
-			$prefix.'city' => __('Billing City','Shopp'),
-			$prefix.'state' => __('Billing State/Province','Shopp'),
-			$prefix.'country' => __('Billing Country','Shopp'),
-			$prefix.'postcode' => __('Billing Postal Code','Shopp'),
-			$prefix.'shipname' => __('Shipping Name','Shopp'),
-			$prefix.'shipaddress' => __('Shipping Street Address','Shopp'),
-			$prefix.'shipxaddress' => __('Shipping Street Address 2','Shopp'),
-			$prefix.'shipcity' => __('Shipping City','Shopp'),
-			$prefix.'shipstate' => __('Shipping State/Province','Shopp'),
-			$prefix.'shipcountry' => __('Shipping Country','Shopp'),
-			$prefix.'shippostcode' => __('Shipping Postal Code','Shopp'),
-			$prefix.'shipmethod' => __('Shipping Method','Shopp'),
-			'discounts.value' => __('Discounts Applied','Shopp'),
-			$prefix.'subtotal' => __('Order Subtotal','Shopp'),
-			$prefix.'discount' => __('Order Discount','Shopp'),
-			$prefix.'freight' => __('Order Shipping Fees','Shopp'),
-			$prefix.'tax' => __('Order Taxes','Shopp'),
-			$prefix.'total' => __('Order Total','Shopp'),
-			$prefix.'fees' => __('Transaction Fees','Shopp'),
-			$prefix.'txnid' => __('Transaction ID','Shopp'),
-			$prefix.'txnstatus' => __('Transaction Status','Shopp'),
-			$prefix.'gateway' => __('Payment Gateway','Shopp'),
-			$prefix.'status' => __('Order Status','Shopp'),
-			$prefix.'data' => __('Order Data','Shopp'),
-			$prefix.'created' => __('Order Date','Shopp'),
-			$prefix.'modified' => __('Order Last Updated','Shopp')
+			$prefix . 'id'           => Shopp::__("Order ID"),
+			$prefix . 'ip'           => Shopp::__("Customer's IP Address"),
+			$prefix . 'firstname'    => Shopp::__("Customer's First Name"),
+			$prefix . 'lastname'     => Shopp::__("Customer's Last Name"),
+			$prefix . 'email'        => Shopp::__("Customer's Email Address"),
+			$prefix . 'phone'        => Shopp::__("Customer's Phone Number"),
+			$prefix . 'company'      => Shopp::__("Customer's Company"),
+			$prefix . 'card'         => Shopp::__("Credit Card Number"),
+			$prefix . 'cardtype'     => Shopp::__("Credit Card Type"),
+			$prefix . 'cardexpires'  => Shopp::__("Credit Card Expiration Date"),
+			$prefix . 'cardholder'   => Shopp::__("Credit Card Holder's Name"),
+			$prefix . 'address'      => Shopp::__("Billing Street Address"),
+			$prefix . 'xaddress'     => Shopp::__("Billing Street Address 2"),
+			$prefix . 'city'         => Shopp::__("Billing City"),
+			$prefix . 'state'        => Shopp::__("Billing State/Province"),
+			$prefix . 'country'      => Shopp::__("Billing Country"),
+			$prefix . 'postcode'     => Shopp::__("Billing Postal Code"),
+			$prefix . 'shipname'     => Shopp::__("Shipping Name"),
+			$prefix . 'shipaddress'  => Shopp::__("Shipping Street Address"),
+			$prefix . 'shipxaddress' => Shopp::__("Shipping Street Address 2"),
+			$prefix . 'shipcity'     => Shopp::__("Shipping City"),
+			$prefix . 'shipstate'    => Shopp::__("Shipping State/Province"),
+			$prefix . 'shipcountry'  => Shopp::__("Shipping Country"),
+			$prefix . 'shippostcode' => Shopp::__("Shipping Postal Code"),
+			$prefix . 'shipmethod'   => Shopp::__("Shipping Method"),
+			$prefix . 'shipoption'   => Shopp::__("Shipping Option"),
+			'discounts.value'        => Shopp::__("Discounts Applied"),
+			$prefix . 'subtotal'     => Shopp::__("Order Subtotal"),
+			$prefix . 'discount'     => Shopp::__("Order Discount"),
+			$prefix . 'freight'      => Shopp::__("Order Shipping Fees"),
+			$prefix . 'tax'          => Shopp::__("Order Taxes"),
+			$prefix . 'total'        => Shopp::__("Order Total"),
+			$prefix . 'fees'         => Shopp::__("Transaction Fees"),
+			$prefix . 'txnid'        => Shopp::__("Transaction ID"),
+			$prefix . 'txnstatus'    => Shopp::__("Transaction Status"),
+			$prefix . 'gateway'      => Shopp::__("Payment Gateway"),
+            $prefix . 'paymethod'    => Shopp::__("Payment Method"),
+			$prefix . 'status'       => Shopp::__("Order Status"),
+			$prefix . 'data'         => Shopp::__("Order Data"),
+			$prefix . 'created'      => Shopp::__("Order Date"),
+			$prefix . 'modified'     => Shopp::__("Order Last Updated")
 		);
 	}
 
@@ -988,7 +990,7 @@ class PurchasesExport {
 		/** Placeholder **/
 	}
 
-	public function escape ($value) {
+	public function escape ( $value ) {
 		return $value;
 	}
 
@@ -1001,9 +1003,9 @@ class PurchasesTabExport extends PurchasesExport {
 		$this->output();
 	}
 
-	public function escape ($value) {
+	public function escape ( $value ) {
 		$value = str_replace(array("\n", "\r"), ' ', $value); // No newlines
-		if ( false !== strpos($value, "\t") && false === strpos($value,'"') )	// Quote tabs
+		if ( false !== strpos($value, "\t") && false === strpos($value, '"') )	// Quote tabs
 			$value = '"' . $value . '"';
 		return $value;
 	}
@@ -1019,12 +1021,12 @@ class PurchasesCSVExport extends PurchasesExport {
 		$this->output();
 	}
 
-	public function export ($value) {
-		echo ($this->recordstart?"":",").$value;
+	public function export ( $value ) {
+		echo ( $this->recordstart ? "" : ",") . $value;
 		$this->recordstart = false;
 	}
 
-	public function escape ($value) {
+	public function escape ( $value ) {
 		$value = str_replace('"','""',$value);
 		if ( preg_match('/^\s|[,"\n\r]|\s$/',$value) )
 			$value = '"'.$value.'"';
@@ -1040,7 +1042,7 @@ class PurchasesIIFExport extends PurchasesExport {
 		$this->content_type = "application/qbooks";
 		$this->extension = "iif";
 		$account = shopp_setting('purchaselog_iifaccount');
-		if (empty($account)) $account = "Merchant Account";
+		if ( empty($account) ) $account = "Merchant Account";
 		$this->selected = array(
 			"'\nTRNS'",
 			"DATE_FORMAT(o.created,'\"%m/%d/%Y\"')",
@@ -1069,8 +1071,8 @@ class PurchasesIIFExport extends PurchasesExport {
 		echo "!TRNS\tDATE\tACCNT\tNAME\tCLASS\tAMOUNT\tMEMO\n!SPL\tDATE\tACCNT\tNAME\tAMOUNT\tMEMO\n!ENDTRNS";
 	}
 
-	public function export ($value) {
-		echo (substr($value,0,1) != "\n")?"\t".$value:$value;
+	public function export ( $value ) {
+		echo ( substr($value, 0, 1) != "\n" ) ? "\t" . $value : $value;
 	}
 
 	public function record () { }

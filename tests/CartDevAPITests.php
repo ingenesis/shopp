@@ -281,17 +281,18 @@ class CartDevAPITests extends ShoppTestCase {
 		$Product = shopp_product('galileo', 'slug');
 		shopp_add_cart_product($Product->id, 1);
 
-		$Items = shopp_cart_items();
-		$itemkey = key($Items); // Reliably obtain the itemkey
+		$itemkey = key(shopp_cart_items()); // Reliably obtain the itemkey
 
 		$addons = shopp_product_addons($Product->id);
 		$addon = array_shift($addons); // First available addon
 
-		$this->assertTrue( shopp_add_cart_item_addon($itemkey, $addon->id) );
+        $this->assertTrue( shopp_add_cart_item_addon($itemkey, $addon->id) );
+		
+		$itemkey = key(shopp_cart_items()); // Reliably obtain the itemkey
 
 		$successfully_added = false;
-		foreach ( shopp_cart_item_addons($itemkey) as $existing )
-			if ( $existing->id == $addon->id ) $successfully_added = true;
+        foreach ( shopp_cart_item_addons($itemkey) as $existing )
+            if ( $existing->id == $addon->id ) $successfully_added = true;
 
 		$this->assertTrue($successfully_added);
 	}
@@ -301,15 +302,18 @@ class CartDevAPITests extends ShoppTestCase {
 		$Product = shopp_product('galileo', 'slug');
 		shopp_add_cart_product($Product->id, 1);
 
-		$Items = shopp_cart_items();
-		$itemkey = key($Items); // Reliably obtain the itemkey
+		$itemkey = key(shopp_cart_items()); // Reliably obtain the itemkey
 
 		$addons = shopp_product_addons($Product->id);
 		$addon = array_shift($addons); // First available addon
 
 		shopp_add_cart_item_addon($itemkey, $addon->id);
 
+		$itemkey = key(shopp_cart_items()); // Reliably obtain the itemkey
+
 		$this->assertTrue(shopp_rmv_cart_item_addon($itemkey, $addon->id));
+
+		$itemkey = key(shopp_cart_items()); // Reliably obtain the itemkey
 
 		$successfully_removed = true;
 		foreach ( shopp_cart_item_addons($itemkey) as $existing )
@@ -323,19 +327,20 @@ class CartDevAPITests extends ShoppTestCase {
 		$Product = shopp_product('galileo', 'slug');
 		shopp_add_cart_product($Product->id, 1);
 
-		$Items = shopp_cart_items();
-		$itemkey = key($Items); // Reliably obtain the itemkey
+		$itemkey = key(shopp_cart_items()); // Reliably obtain the itemkey
 
 		$addons = shopp_product_addons($Product->id);
 		$addon_p = array_shift($addons); // 1st available addon
 		$addon_q = array_shift($addons); // 2nd available addon
 
 		shopp_add_cart_item_addon($itemkey, $addon_p->id);
+		$itemkey = key(shopp_cart_items()); // Reliably obtain the itemkey
 		$added = shopp_cart_item_addons($itemkey);
 		$this->assertTrue(is_array($added));
 		$this->assertCount(1, $added);
 
 		shopp_add_cart_item_addon($itemkey, $addon_q->id);
+		$itemkey = key(shopp_cart_items()); // Reliably obtain the itemkey
 		$added = shopp_cart_item_addons($itemkey);
 		$this->assertCount(2, $added);
 	}
@@ -348,18 +353,19 @@ class CartDevAPITests extends ShoppTestCase {
 		$Product = shopp_product('galileo', 'slug');
 		shopp_add_cart_product($Product->id, 1);
 
-		$Items = shopp_cart_items();
-		$itemkey = key($Items); // Reliably obtain the itemkey
+		$itemkey = key(shopp_cart_items()); // Reliably obtain the itemkey
 
 		$addons = shopp_product_addons($Product->id);
 		$addon_p = array_shift($addons); // 1st available addon
 		$addon_q = array_shift($addons); // 2nd available addon
 
 		shopp_add_cart_item_addon($itemkey, $addon_p->id);
+		$itemkey = key(shopp_cart_items()); // Reliably obtain the itemkey
 		$count = shopp_cart_item_addons_count($itemkey);
 		$this->assertEquals(1, $count);
 
 		shopp_add_cart_item_addon($itemkey, $addon_q->id);
+		$itemkey = key(shopp_cart_items()); // Reliably obtain the itemkey        
 		$count = shopp_cart_item_addons_count($itemkey);
 		$this->assertEquals(2, $count);
 	}

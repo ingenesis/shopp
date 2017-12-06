@@ -15,20 +15,20 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class ShoppAdminWelcome extends ShoppScreenController {
 
-	protected $ui = 'help';
-
 	public function __construct () {
 		parent::__construct();
+        
+        $this->ui = 'help';
 
 		$uri = SHOPP_ADMIN_URI . '/styles';
 		shopp_enqueue_style('welcome');
 	}
 
 	public function route () {
-		switch ( $this->pagename ) {
-			case 'credits': return $this->credits();
-			default: return $this->welcome();
-		}
+        // switch ( $this->pagename ) {
+        //     case 'credits': return $this->credits();
+        //     default: return $this->ui();
+        // }
 	}
 
 	public function welcome () {
@@ -66,9 +66,6 @@ Thank you for using Shopp! E-commerce just got a little easier and more secure. 
 				'shopp-welcome' => __('What&#8217;s New'),
 				'shopp-credits' => __('Credits'),
 			));
-		?>
-
-		<?php
 	}
 
 	public function credits () {

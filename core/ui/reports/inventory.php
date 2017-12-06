@@ -30,6 +30,7 @@ class InventoryReport extends ShoppReportFramework implements ShoppReport {
 		$price_table = ShoppDatabaseObject::tablename('price');
 		$query = "SELECT CONCAT($id) AS id,
 							CONCAT(p.post_title,' ',pr.label) AS product,
+							pr.sku AS sku,
 							pr.stock AS inventory,
 							pr.stocked AS stocked,
 							(pr.stock/pr.stocked)*100 AS level
@@ -67,9 +68,10 @@ class InventoryReport extends ShoppReportFramework implements ShoppReport {
 
 	function columns () {
 		return array(
-			'product'   => __('Product', 'Shopp'),
-			'inventory' => __('Inventory', 'Shopp'),
-			'level'     => __('Stock Level', 'Shopp'),
+			'product'   => Shopp::__('Product'),
+			'sku'	    => Shopp::__('SKU'),
+			'inventory' => Shopp::__('Inventory'),
+			'level'     => Shopp::__('Stock Level'),
 		);
 	}
 
@@ -82,6 +84,8 @@ class InventoryReport extends ShoppReportFramework implements ShoppReport {
 	static function product ( $data ) { return trim($data->product); }
 
 	static function inventory ( $data ) { return intval($data->inventory); }
+	
+    static function sku ( $data ) { return trim($data->sku); }
 
 	static function level ( $data ) { return round(floatval($data->level),1).'%'; }
 

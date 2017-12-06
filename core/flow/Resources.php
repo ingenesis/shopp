@@ -5,11 +5,10 @@
  * Processes resource requests for non-HTML data
  *
  * @author Jonathan Davis
- * @version 1.0
- * @copyright Ingenesis Limited, February  8, 2010
+ * @version 1.4
+ * @copyright Ingenesis Limited, February, 2010-2017
  * @license GNU GPL version 3 (or later) {@see license.txt}
- * @package shopp
- * @subpackage resources
+ * @package Shopp\Resources
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -21,8 +20,7 @@ class ShoppResources {
 	/**
 	 * Resources constructor
 	 *
-	 * @author Jonathan Davis
-	 *
+	 * @param array $request The controller request
 	 * @return void
 	 **/
 	public function __construct ( array $request = array() ) {
@@ -31,25 +29,49 @@ class ShoppResources {
 			return;
 
 		$this->request = empty($request) ? $_GET : $request;
+		if ( ! empty( $this->request['src'] ) )
+            add_action('shopp_shoppresources_init', array($this, 'init'));
+
+		// For secure, backend lookups wait for pluggables to check login
+		if ( defined('WP_ADMIN') )
+            add_action('plugins_loaded', array($this, 'admin'));
 
 		add_action('shopp_resource_download', array($this, 'download'));
-
-		// For secure, backend lookups
-		if ( defined('WP_ADMIN') && is_user_logged_in() ) {
-			add_action('shopp_resource_help', array($this, 'help'));
-
-			if ( current_user_can('shopp_financials') ) {
-				add_action('shopp_resource_export_reports', array($this, 'export_reports'));
-				add_action('shopp_resource_export_purchases', array($this, 'export_purchases'));
-				add_action('shopp_resource_export_customers', array($this, 'export_customers'));
-			}
-		}
-
-		if ( ! empty( $this->request['src'] ) )
-			do_action( 'shopp_resource_' . $this->request['src'], $this->request );
-
-		exit();
 	}
+    
+	/**
+	 * Runs the requested resource handler
+	 * 
+	 * @return void
+	 **/
+    
+    public function init () {
+		do_action( 'shopp_resource_' . $this->request['src'], $this->request );
+    }
+    
+    /**
+     * Handles Admin resource requests
+     *
+     * This handler is delayed until plugins_loaded when the WordPress pluggable.php
+     * library is loaded so that we can reliably make the call to is_user_logged_in()
+     *
+     * @return void
+     **/
+    public function admin () {
+        if ( ! is_user_logged_in() ) 
+            wp_die(ShoppLookup::errors('access','403'), Shopp::__('Access Denied'), array('response' => 403));
+        
+		add_action('shopp_resource_help', array($this, 'help'));
+
+		if ( ! current_user_can('shopp_financials') )
+            wp_die(ShoppLookup::errors('access','403'), Shopp::__('Access Denied'), array('response' => 403));
+
+		add_action('shopp_resource_export_reports', array($this, 'export_reports'));
+		add_action('shopp_resource_export_purchases', array($this, 'export_purchases'));
+		add_action('shopp_resource_export_customers', array($this, 'export_customers'));
+
+        $this->init();
+    }
 
 	/**
 	 * Delivers order export files to the browser
@@ -78,7 +100,7 @@ class ShoppResources {
 			case 'iif': new PurchasesIIFExport(); break;
 			default: new PurchasesTabExport();
 		}
-		exit();
+		exit;
 
 	}
 
@@ -109,7 +131,7 @@ class ShoppResources {
 			case 'csv': new ShoppReportCSVExport($Report); break;
 			default: new ShoppReportTabExport($Report);
 		}
-		exit();
+		exit;
 
 	}
 
@@ -122,7 +144,7 @@ class ShoppResources {
 	 * @return void
 	 **/
 	public function export_customers () {
-		if ( ! current_user_can('shopp_export_customers') ) exit();
+		if ( ! current_user_can('shopp_export_customers') ) wp_die();
 
 		if ( ! isset($_POST['settings']['customerexport_columns']) ) {
 			$Customer = ShoppCustomer::exportcolumns();

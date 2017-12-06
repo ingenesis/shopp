@@ -175,6 +175,8 @@ class ShoppCartItem {
 			if ( Shopp::str_true($Price->tax) ) $this->taxable[] = $baseprice;
 			$this->istaxed =  array_sum($this->taxable) > 0 ;
 			$this->includetax = shopp_setting_enabled('tax_inclusive');
+			if ( isset($this->taxprice) ) // If there is a taxprice left over, unset it
+				unset($this->taxprice);   // to allow tax adjustments to capture any unit price changes
 			if ( isset($Product->excludetax) && Shopp::str_true($Product->excludetax) )
 				$this->includetax = false;
 		}
@@ -397,25 +399,43 @@ class ShoppCartItem {
 	 * @return string
 	 **/
 	public function options ($selection = '') {
-		if (empty($this->variants)) return '';
+		if ( empty($this->variants) ) return '';
+
+		$priceline = $this->priceline;
+
+		$adjustment = isset($this->taxprice) ? $this->taxprice / $this->unitprice : $this->taxrate;
+		if ( $adjustment < 0 )
+			$adjustment = 1 + $adjustment;
 
 		$string = '';
-		foreach($this->variants as $option) {
-			if ($option->type == 'N/A') continue;
-			$currently = (Shopp::str_true($option->sale)?$option->promoprice:$option->price)+$this->addonsum;
-			$difference = (float)($currently+$this->unittax)-($this->unitprice+$this->unittax);
+		foreach ( $this->variants as $option ) {
+			if ( 'N/A' == $option->type ) continue;
+
+			$difference = 0;
+			$currently = ( Shopp::str_true($option->sale) ? $option->promoprice : $option->price ) + $this->addonsum;
+
+			if ( $priceline != $option->id ) {
+				if ( 0 != $adjustment )
+					$currently = $currently / $adjustment;
+
+				$difference = (float)($currently - $this->unitprice);
+
+				if ( isset($taxoption) && ( $inclusivetax ^ $taxoption ) )
+					$difference += ( $difference * $this->taxrate );
+			}
 
 			$price = '';
-			if ($difference > 0) $price = '  (+'.money($difference).')';
-			if ($difference < 0) $price = '  (-'.money(abs($difference)).')';
+			if ( $difference > 0 ) $price = '  (+'.money($difference).')';
+			if ( $difference < 0 ) $price = '  (-'.money(abs($difference)).')';
 
 			$selected = '';
-			if ($selection == $option->id) $selected = ' selected="selected"';
+			if ( $selection == $option->id ) $selected = ' selected="selected"';
+
 			$disabled = '';
-			if ( Shopp::str_true($option->inventory) && $option->stock < $this->quantity )
+			if ( Shopp::str_true($option->inventory) && $option->stock < $this->quantity && ! shopp_setting_enabled('backorders') )
 				$disabled = ' disabled="disabled"';
 
-			$string .= '<option value="'.$option->id.'"'.$selected.$disabled.'>'.$option->label.$price.'</option>';
+			$string .= '<option value="' . $option->id . '"' . $selected . $disabled . '>' . $option->label . $price . '</option>';
 		}
 		return $string;
 
@@ -641,12 +661,12 @@ class ShoppCartItem {
 		// Update stock in the database
 		$pricetable = ShoppDatabaseObject::tablename(ShoppPrice::$table);
 		foreach ( $ids as $priceline ) {
-			db::query("UPDATE $pricetable SET stock=stock-{$this->quantity} WHERE id='{$priceline}'");
+			sDB::query("UPDATE $pricetable SET stock=stock-{$this->quantity} WHERE id='{$priceline}'");
 		}
 
 		// Force summary update to get new stock warning levels on next load
 		$summarytable = ShoppDatabaseObject::tablename(ProductSummary::$table);
-		db::query("UPDATE $summarytable SET modified='".ProductSummary::$_updates."' WHERE product='{$this->product}'");
+		sDB::query("UPDATE $summarytable SET modified='".ProductSummary::$_updates."' WHERE product='{$this->product}'");
 
 		// Update
 		if ( ! empty($this->addons) ) {
@@ -715,7 +735,7 @@ class ShoppCartItem {
 			}
 		}
 
-		$result = db::query("SELECT min(stock) AS stock FROM $table WHERE 0 < FIND_IN_SET(id,'".join(',',$ids)."')");
+		$result = sDB::query("SELECT min(stock) AS stock FROM $table WHERE 0 < FIND_IN_SET(id,'".join(',',$ids)."')");
 		if (isset($result->stock)) return $result->stock;
 
 		return $this->option->stock;
@@ -941,20 +961,19 @@ class ShoppCartItem {
 		$taxableqty = ( $this->bogof && $this->bogof != $this->quantity ) ? $this->quantity - $this->bogof : $this->quantity;
 
 		$Tax->rates($this->taxes, $Tax->item($this));
-
 		$this->unittax = ShoppTax::calculate($this->taxes, $taxable);
 		$this->tax = $Tax->total($this->taxes, (int) $taxableqty);
 
 		// Handle inclusive tax price adjustments for non-EU markets or alternate tax rate markets
-		$adjustment = ShoppTax::adjustment($this->taxes);
-		if ( 1 != $adjustment ) {
+		if ( Shopp::str_true(shopp_setting_enabled('tax_inclusive')) ) {
+			$adjustment = ShoppTax::adjustment($taxable, $this->taxes, $Tax->item($this));
 
 			if ( ! isset($this->taxprice) )
 				$this->taxprice = $this->unitprice;
 
 			// Modify the unitprice from the original tax inclusive price and update the discounted price
-			$this->unitprice = ( $this->taxprice / $adjustment );
-			$this->priced = ( $this->unitprice - $this->discount );
+			$this->unitprice = $this->taxprice + $adjustment;
+			$this->priced = $this->unitprice - $this->discount;
 
 		} elseif ( isset($this->taxprice) ) { // Undo tax price adjustments
 			$this->unitprice = $this->taxprice;

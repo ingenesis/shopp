@@ -53,12 +53,12 @@ class ShoppScreenPages extends ShoppSettingsScreenController {
 		include $this->ui('pages.php');
 
 	}
-	
+
 	public function url ( $params = array() ) {
 		$url = parent::url($params);
 		return remove_query_arg('edit', $url);
 	}
-	
+
 
 } // class ShoppScreenPages
 
@@ -87,7 +87,7 @@ class ShoppPagesSettingsTable extends ShoppAdminTable {
 			$page['id'] = $name;
 			$this->items[ $name ] = (object) array_merge($template, $page);
 		}
-		
+
 		$per_page = 25;
 		$total = count($this->items);
 		$this->set_pagination_args( array(
@@ -124,12 +124,12 @@ class ShoppPagesSettingsTable extends ShoppAdminTable {
 			'${slug}' => $Item->slug,
 			'${description}' => $Item->description
 		);
-		
+
 		echo ShoppUI::template($this->editor, $data);
 	}
 
 	public function column_default( $Item ) {
-		echo '.';
+		return '';
 	}
 
 	public function column_title( $Item ) {
@@ -137,20 +137,20 @@ class ShoppPagesSettingsTable extends ShoppAdminTable {
 
 		$edit_link = wp_nonce_url(add_query_arg('edit', $Item->id), 'shopp-settings-pages');
 
-		echo '<a class="row-title edit" href="' . $edit_link . '" title="' . Shopp::__('Edit') . ' &quot;' . esc_attr($title) . '&quot;">' . esc_html($title) . '</a>';
+		return '<a class="row-title edit" href="' . $edit_link . '" title="' . Shopp::__('Edit') . ' &quot;' . esc_attr($title) . '&quot;">' . esc_html($title) . '</a>';
 
-		echo $this->row_actions( array(
+		return $this->row_actions( array(
 			'edit' => '<a class="edit" href="' . $edit_link . '">' . __( 'Edit' ) . '</a>'
 		) );
 
 	}
 
 	public function column_slug( $Item ) {
-		echo esc_html($Item->slug);
+		return esc_html($Item->slug);
 	}
 
 	public function column_description( $Item ) {
-		echo esc_html($Item->description);
+		return esc_html($Item->description);
 	}
 
 } // class ShoppPagesSettingsTable

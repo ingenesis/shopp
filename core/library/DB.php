@@ -242,7 +242,7 @@ class sDB extends SingletonFramework {
 				return $timestamp; // Ignore already properly formatted strings
 
 		// Check > 0 to prevent 0 from becoming epoch datetime and passthrough negative integers
-		if ( is_int($timestamp) && $timestamp > 0 ) 
+		if ( intval($timestamp) > 0 )
 				return date('Y-m-d H:i:s', $timestamp);
 
 		return $datetime;
@@ -251,32 +251,46 @@ class sDB extends SingletonFramework {
 	/**
 	 * Escape the contents of data for safe insertion into the database
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
-	 *
 	 * @param string|array|object $data Data to be escaped
 	 * @return string Database-safe data
 	 **/
 	public static function escape ( $data ) {
-		// Prevent double escaping by stripping any existing escapes out
-		if ( is_array($data) ) array_map(array(__CLASS__, 'escape'), $data);
-		elseif ( is_object($data) ) {
+		if ( is_array($data) )
+			array_map(array(__CLASS__, 'escape'), $data);
+		elseif ( is_object($data) )
 			foreach ( get_object_vars($data) as $p => $v )
 				$data->$p = self::escape($v);
-		} else {
-			$db = sDB::get();
-			$data = self::unescape($data); // Prevent double-escapes
-			$data = $db->api->escape($data);
-		}
+		else // Unescape to prevent double escapes
+			$data = self::str_escape( self::unescape($data) );
 		return $data;
 	}
 
+	/**
+	 * Unescape already escaped data
+	 *
+	 * @since 1.1
+	 * @param mixed $data The data to unescape
+	 * @return string The unescaped data
+	 **/
 	protected static function unescape ( $data ) {
 	    return str_replace(
-			array("\\\\", "\\0", "\\n", "\\r", "\Z",   "\'", '\"'),
+			array("\\\\", "\\0", "\\n", "\\r", "\\Z", "\\'", '\"'),
 			array("\\",   "\0",  "\n",  "\r",  "\x1a", "'",  '"'),
 			$data
 		);
+	}
+
+	/**
+	 * Escape a single string
+	 *
+	 * @since 1.4
+	 * @param string $data The string to escape
+	 * @return string The escaped string
+	 **/
+	public static function str_escape ( $string ) {
+		$db = sDB::get();
+		return $db->api->escape($string);
 	}
 
 	/**
@@ -441,11 +455,13 @@ class sDB extends SingletonFramework {
 		while ( $row = $db->api->object($result) )
 			call_user_func_array($callback, array_merge( array(&$records, &$row), $args) );
 
-		// Free the results immediately to save memory
-		$db->api->free();
-
 		// Save the found count if it is present
-		if ( isset($rows->found) ) $db->found = (int) $rows->found;
+		if ( isset($rows->found) ) 
+            $db->found = (int) $rows->found;
+        
+		// Free the results immediately to save memory
+		if ( $db->found > 0 )
+            $db->api->free();
 
 		// Handle result format post processing
 		switch (strtolower($format)) {
@@ -936,7 +952,12 @@ abstract class ShoppDatabaseObject implements Iterator {
 
 		$map = ! empty($this->_map) ? array_flip($this->_map) : array();
 
-		$Tables = $Settings->available() ? $Settings->get('data_model') : array();
+        $Tables = array();
+        if ( $Settings->available() ) {
+            $datamodel = $Settings->get('data_model');
+            if ( ! empty($datamodel) )
+                $Tables = $datamodel;
+        }
 
 		if ( isset($Tables[ $this->_table ]) ) {
 			$this->_datatypes = $Tables[ $this->_table ]->_datatypes;
@@ -1170,6 +1191,7 @@ abstract class ShoppDatabaseObject implements Iterator {
 		}
 
 		// Update record
+        unset($data['id']);
 		$dataset = ShoppDatabaseObject::dataset($data);
 		sDB::query("UPDATE $this->_table SET $dataset WHERE $this->_key='$id'");
 
@@ -1324,8 +1346,10 @@ abstract class ShoppDatabaseObject implements Iterator {
 	 * @param array $ignores (optional) List of property names to ignore copying from
 	 * @return void
 	 **/
-	public function copydata ( $data, $prefix = '', array $ignores = array('_datatypes', '_table', '_key', '_lists', '_map', 'id', 'created', 'modified') ) {
-		if ( ! is_array($ignores) ) $ignores = array();
+	public function copydata ( $data, $prefix = '', $ignores = false ) {
+		if ( ! is_array($ignores) || $ignores === false )
+			$ignores = array('_datatypes', '_table', '_key', '_lists', '_map', 'id', 'created', 'modified');
+
 		$properties = is_object($data) ? get_object_vars($data) : $data;
 		foreach ( (array)$properties as $property => $value ) {
 			$property = $prefix . $property;
@@ -1334,6 +1358,12 @@ abstract class ShoppDatabaseObject implements Iterator {
 		}
 	}
 
+	/**
+	 * Clear all of the data properties for the current object
+	 *
+	 * @since 1.0
+	 * @return void
+	 **/
 	public function clear () {
 		$ObjectClass = get_class($this);
 		$new = new $ObjectClass();
@@ -1493,7 +1523,7 @@ class WPDatabaseObject extends ShoppDatabaseObject {
 	 **/
 	function save () {
 		parent::save();
-		do_action('save_post',$this->id,get_post($this->id));
+		do_action('save_post', $this->id, get_post($this->id), $update = true);
 	}
 
 }
@@ -1506,32 +1536,49 @@ class WPDatabaseObject extends ShoppDatabaseObject {
  * @package DB
  **/
 class WPShoppObject extends WPDatabaseObject {
+
+	/* @var	string The post type name for this object */
 	static $posttype = 'shopp_post';
 
+	/**
+	 * Handles loading a WPShoppObject
+	 *
+	 * @return void
+	 **/
 	public function load () {
 		$args = func_get_args();
-		if (empty($args[0])) return false;
+		if ( empty($args[0]) ) return false;
 
-		if (count($args) == 2) {
-			list($id,$key) = $args;
-			if (empty($key)) $key = $this->_key;
+		if ( count($args) == 2 ) {
+			list($id, $key) = $args;
+			if ( empty($key) ) $key = $this->_key;
 			$p = array($key => $id);
 		}
-		if (is_array($args[0])) $p = $args[0];
+		if ( is_array($args[0]) ) $p = $args[0];
 
 		$class = get_class($this);
-		$p['post_type'] = get_class_property($class,'posttype');
+		$p['post_type'] = get_class_property($class, 'posttype');
 
 		parent::load($p);
 	}
 
+	/**
+	 * Defines the labels for the post type object
+	 *
+	 * @return array The list of labels
+	 **/
 	public static function labels () {
 		return array(
-			'name' => __('Posts','Shopp'),
-			'singular_name' => __('Post','Shopp')
+			'name' => Shopp::__('Posts'),
+			'singular_name' => Shopp::__('Post')
 		);
 	}
 
+	/**
+	 * Defines the capabilities for managing this post type object
+	 *
+	 * @return array List of defined capabilities
+	 **/
 	public static function capabilities () {
 		return apply_filters( 'shopp_product_capabilities', array(
 			'edit_post' => self::$posttype,
@@ -1539,6 +1586,11 @@ class WPShoppObject extends WPDatabaseObject {
 		) );
 	}
 
+	/**
+	 * Defines the editor support for this post type object
+	 *
+	 * @return array THe list of supported editor features
+	 **/
 	public static function supports () {
 		return array(
 			'title',
@@ -1546,8 +1598,15 @@ class WPShoppObject extends WPDatabaseObject {
 		);
 	}
 
-	public static function register ($class,$slug) {
-		$posttype = get_class_property($class,'posttype');
+	/**
+	 * Registers this post type object with WordPress
+	 *
+	 * @return void
+	 * @param string $class The class name for this object
+	 * @param string $slug The slug for the post type
+	 **/
+	public static function register ( $class, $slug ) {
+		$posttype = get_class_property($class, 'posttype');
 		register_post_type( $posttype, array(
 			'labels' => call_user_func(array($class, 'labels')),
 			'capabilities' => call_user_func(array($class, 'capabilities')),

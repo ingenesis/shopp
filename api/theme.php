@@ -73,7 +73,7 @@ function shopp ( $context, $property = false, $options = false ) {
 
 	if ( 'hascontext' == $tag ) return ($Object);
 
-	if ( ! $Object ) shopp_add_error(Shopp::__("The shopp('%s') tag cannot be used in this context because the object responsible for handling it doesn't exist.", $context), SHOPP_PHP_ERR);
+	if ( ! $Object ) shopp_add_error(Shopp::__("The shopp('%s.%s') tag cannot be used in this context because the object responsible for handling it doesn't exist.", $context, isset($second) ? $second : $tag), SHOPP_PHP_ERR);
 
 	$themeapi = apply_filters('shopp_themeapi_context_name', $context);
 	$result   = apply_filters('shopp_themeapi_' . strtolower($themeapi . '_' . $tag), $result, $options, $Object); // tag specific tag filter

@@ -24,23 +24,30 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  **/
 class ShoppRegistration extends ShoppFormPostFramework {
 
+	/* @var string Process name string */
 	const PROCESS = 'shopp_registration';
 
+	/* @var array List of default form fields to process */
 	protected $defaults = array(
-		'sameaddress' => 'off',
-		'firstname' => '',
-		'lastname' => '',
-		'phone' => '',
-		'company' => '',
-		'billing' => array(),
-		'shipping' => array(),
-		'info' => array(),
-		'marketing' => '',
-		'loginname' => '',
-		'password' => '',
+		'sameaddress'      => 'off',
+		'firstname'        => '',
+		'lastname'         => '',
+		'phone'            => '',
+		'company'          => '',
+		'billing'          => array(),
+		'shipping'         => array(),
+		'info'             => array(),
+		'marketing'        => '',
+		'loginname'        => '',
+		'password'         => '',
 		'confirm-password' => ''
 	);
 
+	/**
+	 * Constructor
+	 *
+	 * @return void
+	 **/
 	public function __construct () {
 
 		if ( empty($_POST) ) return;
@@ -70,10 +77,20 @@ class ShoppRegistration extends ShoppFormPostFramework {
 
 	}
 
+	/**
+	 * Determines if the registration form has been submitted
+	 *
+	 * @return boolean True if submitted, false otherwise
+	 **/
 	public static function submitted () {
 		return isset($_POST[ self::PROCESS ]);
 	}
 
+	/**
+	 * Capture additional customer custom info fields
+	 *
+	 * @return void
+	 **/
 	public function info () {
 		$Customer = ShoppOrder()->Customer;
 
@@ -82,24 +99,28 @@ class ShoppRegistration extends ShoppFormPostFramework {
 
 	}
 
+	/**
+	 * Capture core customer field details
+	 *
+	 * @return void
+	 **/
 	public function customer () {
-
 		$Customer = ShoppOrder()->Customer;
 
 		$updates = array(
 			'firstname' => $this->form('firstname'),
-			'lastname' => $this->form('lastname'),
-			'company' => $this->form('company'),
-			'email' => $this->form('email'),
-			'phone' => $this->form('phone'),
-			'info' => $this->form('info'),
+			'lastname'  => $this->form('lastname'),
+			'company'   => $this->form('company'),
+			'email'     => $this->form('email'),
+			'phone'     => $this->form('phone'),
+			'info'      => $this->form('info'),
 			'marketing' => $this->form('marketing'),
-			'password' => $this->form('password', true),
+			'password'  => $this->form('password', true),
 			'loginname' => $this->form('loginname', true)
 		);
 
 		// Remove invalid characters from the phone number
-		$updates['phone'] = preg_replace('/[^\d\(\)\-+\. (ext|x)]/','', $updates['phone'] );
+		$updates['phone'] = preg_replace('/[^\d\(\)\-+\. (ext|x)]/', '', $updates['phone'] );
 
 		if ( empty($Customer) ) $Customer = new ShoppCustomer();
 		else $Customer->reset();
@@ -110,14 +131,16 @@ class ShoppRegistration extends ShoppFormPostFramework {
 		$confirmpass = $this->form('confirm-password', true);
 		if ( ! empty($confirmpass) )
 			$Customer->_confirm_password = $confirmpass;
-
-
 	}
 
+	/**
+	 * Capture shipping address field updates
+	 *
+	 * @return void
+	 **/
 	public function shipaddress () {
-
 		$ShippingAddress = ShoppOrder()->Shipping;
-		$BillingAddress = ShoppOrder()->Billing;
+		$BillingAddress  = ShoppOrder()->Billing;
 
 		if ( empty($ShippingAddress) )
 			$ShippingAddress = new ShippingAddress();
@@ -131,12 +154,15 @@ class ShoppRegistration extends ShoppFormPostFramework {
 
 		if ( 'billing' == ShoppOrder()->sameaddress )
 			$BillingAddress->updates($form);
-
 	}
 
+	/**
+	 * Capture billing address field updates
+	 *
+	 * @return void
+	 **/
 	public function billaddress () {
-
-		$BillingAddress = ShoppOrder()->Billing;
+		$BillingAddress  = ShoppOrder()->Billing;
 		$ShippingAddress = ShoppOrder()->Shipping;
 
 		if ( empty($BillingAddress) )
@@ -155,19 +181,26 @@ class ShoppRegistration extends ShoppFormPostFramework {
 		ShoppOrder()->sameaddress = strtolower( $this->form('sameaddress') );
 		if ( 'shipping' == ShoppOrder()->sameaddress )
 			$ShippingAddress->updates($form);
-
 	}
 
+	/**
+	 * Process the customer registration
+	 *
+	 * Validate the registration details, then create accounts. Creates a
+	 * Shopp customer record for guests, or customer login and WordPress user if needed.
+	 *
+	 * @return void
+	 **/
 	public static function process () {
-
 		// We have to avoid truthiness, hence the strange logic expression
 		if ( true !== apply_filters('shopp_validate_registration', true) ) return;
 
 		$Customer = ShoppOrder()->Customer;
 		do_action('shopp_customer_registration', $Customer);
+        $registration = false;
 
 		if ( $Customer->session(ShoppCustomer::GUEST) ) {
-			$Customer->type = __('Guest', 'Shopp'); // No cuts
+			$Customer->type = Shopp::__('Guest');   // No cuts
 			$Customer->wpuser = 0;                  // No buts
 			unset($Customer->password);             // No coconuts
 		} else {
@@ -178,9 +211,12 @@ class ShoppRegistration extends ShoppFormPostFramework {
 				else $Customer->create_wpuser(); // not logged in, create new account
 			}
 
-			if ( ! $Customer->exists(true) ) {
+            $registration = ! $Customer->exists(true);
+
+			if ( $registration ) {
 				$Customer->id = false;
 				shopp_debug('Creating new Shopp customer record');
+
 				if ( empty($Customer->password) )
 					$Customer->password = wp_generate_password(12, true);
 
@@ -204,7 +240,9 @@ class ShoppRegistration extends ShoppFormPostFramework {
 			$Address->save();
 		}
 
-		do_action('shopp_customer_registered', $Customer);
+		if ( $registration )
+            do_action('shopp_customer_registered', $Customer);
+        else do_action('shopp_customer_registration_updated', $Customer);
 
 		// Auto-login
 		$Customer->login(); // Login the customer

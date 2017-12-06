@@ -416,6 +416,7 @@ class ShoppOrdersTable extends ShoppAdminTable {
 		$date_format = str_replace(array('j'), 'd/', $date_format);
 		// Force year display to 4-digits
 		$date_format = str_replace('y', 'Y/', $date_format);
+		$date_format = preg_replace("/[^dmY0-9\/]/", '', $date_format);
 		$this->dates = trim($date_format, '/');
 
 		$this->set_pagination_args( array(
@@ -481,7 +482,7 @@ class ShoppOrdersTable extends ShoppAdminTable {
 
 		$exports = array(
 			'tab' => Shopp::__('Tab-separated.txt'),
-			'csv' => Shopp::__('Comma-separated.csv'),			
+			'csv' => Shopp::__('Comma-separated.csv'),
 			'iif' => Shopp::__('Intuit&reg; QuickBooks.iif')
 		);
 
@@ -557,16 +558,16 @@ class ShoppOrdersTable extends ShoppAdminTable {
 	}
 
 	public function column_default( $Item ) {
-		echo '.';
+		return '';
 	}
 
 	public function column_cb( $Item ) {
-		echo '<input type="checkbox" name="selected[]" value="' . $Item->id . '" />';
+		return '<input type="checkbox" name="selected[]" value="' . $Item->id . '" />';
 	}
 
 	public function column_order( $Item ) {
 		$url = add_query_arg('id', $Item->id);
-		echo '<a class="row-title" href="' . esc_url($url) . '" title="' . Shopp::__('View Order #%d', $Item->id) . '">' . Shopp::__('Order #%d', $Item->id) . '</a>';
+		return '<a class="row-title" href="' . esc_url($url) . '" title="' . Shopp::__('View Order #%d', $Item->id) . '">' . Shopp::__('Order #%d', $Item->id) . '</a>';
 	}
 
 	public function column_name( $Item ) {
@@ -576,9 +577,9 @@ class ShoppOrdersTable extends ShoppAdminTable {
 
 		$url = add_query_arg( array( 'page' => 'shopp-customers', 'id' => $Item->customer ) );
 
-		echo '<a href="' . esc_url($url) . '">' . esc_html($customer) . '</a>';
+		return '<a href="' . esc_url($url) . '">' . esc_html($customer) . '</a>';
 		if ( '' != trim($Item->company) )
-			echo "<br />" . esc_html($Item->company);
+			return "<br />" . esc_html($Item->company);
 	}
 
 	public function column_destination( $Item ) {
@@ -594,31 +595,31 @@ class ShoppOrdersTable extends ShoppAdminTable {
 			$location = str_replace('&mdash; ', '', $location);
 		$location = str_replace(',   &mdash;', ' &mdash;', $location);
 
-		echo esc_html($location);
+		return esc_html($location);
 	}
 
 	public function column_txn( $Item ) {
-		echo $Item->txnid;
+		return $Item->txnid;
 
 		if ( isset($this->gateways[ $Item->gateway ]) )
 			echo '<br />' . esc_html($this->gateways[ $Item->gateway ]->name);
 	}
 
 	public function column_date( $Item ) {
-		echo date($this->dates, mktimestamp($Item->created));
+		return date($this->dates, mktimestamp($Item->created));
 
 		if ( isset($this->statuses[ $Item->status ]) )
-			echo '<br /><strong>' . esc_html($this->statuses[ $Item->status ]) . '</strong>';
+			return '<br /><strong>' . esc_html($this->statuses[ $Item->status ]) . '</strong>';
 	}
 
 	public function column_total( $Item ) {
-		echo money($Item->total);
+		return money($Item->total);
 
 		$status = $Item->txnstatus;
 		if ( isset($this->txnstatuses[ $Item->txnstatus ]) )
 			$status = $this->txnstatuses[ $Item->txnstatus ];
 
-		echo '<br /><span class="status">' . esc_html($status) . '</span>';
+		return '<br /><span class="status">' . esc_html($status) . '</span>';
 	}
 
 } // class ShoppOrdersTable

@@ -1,76 +1,88 @@
 <?php
 /**
- * ShoppShoppersWidget class
+ * shoppers.php
+ *
  * A WordPress widget to show a list of recent shoppers
  *
- * @author Jonathan Davis
- * @version 1.0
- * @copyright Ingenesis Limited, 26 June, 2011
- * @package shopp
-**/
+ * @copyright Ingenesis Limited, May 2017
+ * @license   GNU GPL version 3 (or later) {@see license.txt}
+ * @package   Shopp/UI/Widgets
+ * @version   1.0
+ * @since     1.4
+ **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-if ( class_exists('WP_Widget') && ! class_exists('ShoppShoppersWidget') ) {
+class ShoppShoppersWidget extends WP_Widget {
 
-	class ShoppShoppersWidget extends WP_Widget {
+	private $defaults = array(
+		'title' => '',
+		'abbr' => 'firstname',
+		'city' => 'off',
+		'state' => 'off',
+		'avatar' => 'off',
+		'size' => 48,
+		'show' => 5
+	);
 
-	    function __construct () {
-	        parent::__construct(
-				'shopp-recent-shoppers',
-				__('Shopp Recent Shoppers','Shopp'),
-				array('description' => __('Lists recent shoppers on your store','Shopp'))
-			);
-	    }
+    function __construct () {
+        parent::__construct(
+			'shopp-recent-shoppers-widget',
+			Shopp::__('Shopp Recent Shoppers'),
+			array(
+				'description' => Shopp::__('Lists recent shoppers on your store'),
+				'classname' => 'shopp-recent-shoppers-widget'
+			)
+		);
+    }
 
-	    function widget($args, $options) {
-			if (!empty($args)) extract($args);
+    function widget ($args, $options) {
+		$options = array_merge($this->defaults, $options);
 
-			if (empty($options['title'])) $options['title'] = __('Recent Shoppers','Shopp');
-			$title = $before_title.$options['title'].$after_title;
-			$content = shopp('catalog','get-recent-shoppers',$options);
+		if ( ! empty($args) ) extract($args);
 
-			if (empty($content)) return false; // No recent shoppers, hide it
+		if ( empty($options['title']) )
+			$options['title'] = Shopp::__('Recent Shoppers');
 
-			echo $before_widget.$title.$content.$after_widget;
-	    }
+		$title = $before_title . $options['title'] . $after_title;
 
-	    function update($new_instance, $old_instance) {
-	        return $new_instance;
-	    }
+		$content = shopp('catalog.get-recent-shoppers', $options);
 
-		function showerrors () {
-			return false;
-		}
+		if ( empty($content) ) return false; // No recent shoppers, hide it
 
-	    function form($options) {
-			$format_options = array(
-				'firstname' => __('J. Doe'),
-				'lastname' => __('John D.')
-			);
+		echo $before_widget . $title . $content . $after_widget;
+    }
 
-			$location_options = array(
-				'none' => __('No location'),
-				'state' => __('State/Province'),
-				'city,state' => __('City, State/Province')
-			);
+    function form ($options) {
+		$options = array_merge($this->defaults, $options);
 
-			?>
-			<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title'); ?></label>
-			<input type="text" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>" class="widefat" value="<?php echo $options['title']; ?>"></p>
-			<p><select name="<?php echo $this->get_field_name('abbr'); ?>">
-			<?php echo menuoptions($format_options,$options['abbr'],true); ?>
-			</select><label> <?php _e('Name format','Shopp'); ?></label></p>
+		$format_options = array(
+			'firstname' => __('J. Doe'),
+			'lastname' => __('John D.')
+		);
 
-			<p><label><input type="hidden" name="<?php echo $this->get_field_name('city'); ?>" value="off" /><input type="checkbox" name="<?php echo $this->get_field_name('city'); ?>" value="on" <?php echo $options['city'] == "on"?' checked="checked"':''; ?> /> <?php _e('Show city'); ?></label><br />
-			<label><input type="hidden" name="<?php echo $this->get_field_name('state'); ?>" value="off" /><input type="checkbox" name="<?php echo $this->get_field_name('state'); ?>" value="on" <?php echo $options['state'] == "on"?' checked="checked"':''; ?> /> <?php _e('Show state/province'); ?></label></p>
+		$location_options = array(
+			'none' => __('No location'),
+			'state' => __('State/Province'),
+			'city,state' => __('City, State/Province')
+		);
 
-			<p>
-			<label><input type="hidden" name="<?php echo $this->get_field_name('avatar'); ?>" value="off" /><input type="checkbox" name="<?php echo $this->get_field_name('avatar'); ?>" value="on" <?php echo $options['avatar'] == "on"?' checked="checked"':''; ?>/> <?php _e('Show Avatar'); ?></label> &nbsp; <input type="text" name="<?php echo $this->get_field_name('size'); ?>" size="5" value="<?php echo $options['size']; ?>" /><label> <?php _e('pixels','Shopp'); ?></label>
-			</p>
-			<?php
-	    }
+		?>
+		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title'); ?></label>
+		<input type="text" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>" class="widefat" value="<?php echo $options['title']; ?>"></p>
 
-	} // END class ShoppShoppersWidget
+		<p><label><?php Shopp::_e('Name format'); ?><select name="<?php echo $this->get_field_name('abbr'); ?>">
+		<?php echo menuoptions($format_options, $options['abbr'], true); ?>
+		</select></label></p>
+
+		<p><label><input type="hidden" name="<?php echo $this->get_field_name('city'); ?>" value="off" /><input type="checkbox" name="<?php echo $this->get_field_name('city'); ?>" value="on" <?php echo $options['city'] == "on"?' checked="checked"':''; ?> /> <?php _e('Show city'); ?></label><br />
+		<label><input type="hidden" name="<?php echo $this->get_field_name('state'); ?>" value="off" /><input type="checkbox" name="<?php echo $this->get_field_name('state'); ?>" value="on" <?php echo $options['state'] == "on"?' checked="checked"':''; ?> /> <?php _e('Show state/province'); ?></label></p>
+
+		<p><label><input type="hidden" name="<?php echo $this->get_field_name('avatar'); ?>" value="off" /><input type="checkbox" name="<?php echo $this->get_field_name('avatar'); ?>" value="on" <?php echo $options['avatar'] == "on"?' checked="checked"':''; ?>/> <?php _e('Show Avatar'); ?></label></p>
+
+		<p><label><?php Shopp::_e('Avatar size in pixels:'); ?><input type="number" name="<?php echo $this->get_field_name('size'); ?>" size="5" value="<?php echo $options['size']; ?>" /></label></p>
+		<p><label><?php Shopp::_e('Number of shoppers to show:'); ?><input type="number" name="<?php echo $this->get_field_name('show'); ?>" size="5" value="<?php echo $options['show']; ?>" /></label></p>
+		<?php
+    }
 
 }

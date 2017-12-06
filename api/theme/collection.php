@@ -844,118 +844,135 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 	 * @api `shopp('collection.pagination')`
 	 * @since 1.0
 	 *
-	 * @param string          $result  The output
-	 * @param array           $options The options
+	 * @param string          	$result  The output
+	 * @param array           	$options The options
+	 * - **activeclass**: `active` The class attribute specifies one or more class-names for the active element
 	 * - **after**: `</div>` Markup to add after the pagination
 	 * - **before**: `<div>` Markup to add before the pagination
-	 * - **jumpback**: `(number of page being jumped to)` The label for the jump backward link
-	 * - **jumpfwd**: `(number of page being jumped to)` The label for the jump forward link
-	 * - **jumps**: `(half number of pages shown)` Number of pages to jump.
+	 * - **class**: `paging` The class attribute specifies one or more class-names for the <ul> tag.
+	 * - **disabledclass**: `disabled` The class attribute specifies one or more class-names for the disabled element
+	 * - **jumpback**: `&laquo;` The label for the jump backward
+	 * - **jumpfwd**: `&raquo;` The label for the jump forward
 	 * - **label**: `Pages:` The label for the pagination list
-	 * - **next**: `next` The label for the next button
-	 * - **previous**: `previous` The label for the previous button
-	 * - **first**: `1` The label for the first page button.
-	 * - **last**: `(number of the last page)` The label for the last page button.
+	 * - **linked**: `true` Add link to jump backward, jump forward label
+	 * - **next**: `Next` The label for the next button
+	 * - **nextclass**: `next` The class attribute specifies one or more class-names for the next element
+	 * - **previous**: `Previous` The label for the previous button
+	 * - **previousclass**: `previous` The class attribute specifies one or more class-names for the previous element
 	 * - **show**: `1000` The maximum number of pages to show
-	 * - **class**: `paging` The class applied to the ul
-	 * - **classactive**: `active` The class applied to the currently active list item
-	 * - **classdisabled**: `disabled` The class applied to any disabled list items
-	 * - **classprevious**: `previous` The class applied to the previous list item
-	 * - **classnext**: `next` The class applied to the next list items
-	 * @param ShoppCollection $O       The working object
+	 * @param ShoppCollection 	$O       The working object
 	 * @return string The pagination markup
 	 **/
 	public static function pagination ( $result, $options, $O ) {
 		if ( ! $O->paged ) return '';
+
 		$defaults = array(
-			'after' => '</div>',
-			'before' => '<div>',
-			'jumpback' => '',
-			'jumpfwd' => '',
-			'jumps' => false,
-			'label' => Shopp::__('Pages:'),
-			'next' => Shopp::__('next'),
-			'previous' => Shopp::__('previous'),
-			'first' => '1',
-			'last' => $O->pages,
-			'show' => 1000,
-			'class' => 'paging',
-			'classactive' => 'active',
-			'classdisabled' => 'disabled',
-			'classprevious' => 'previous',
-			'classnext' => 'next'
+			'activeclass'    => 'active',
+			'after'          => '</div>',
+			'before'         => '<div>',
+			'class'          => 'paging',
+			'disabledclass'  => 'disabled',
+			'jumpback'       => '&laquo;',
+			'jumpfwd'        => '&raquo;',
+			'label'          => Shopp::__('Pages:'),
+			'linked'         => true,
+			'next'           => Shopp::__('Next'),
+			'nextclass'     => 'next',
+			'previous'       => Shopp::__('Previous'),
+			'previousclass' => 'previous',
+			'show'           => 1000
 		);
+
 		$options = array_merge($defaults, $options);
 		extract($options);
+
 		$_ = array();
+
 		if ( isset($O->alpha) && $O->paged ) {
 			$_[] = $before . $label;
 			$_[] = '<ul class="' . esc_attr($class) . '">';
+
 			foreach ( $O->alpha as $letter => $products ) {
 				$link = $O->pagelink($letter);
 				if ( $products > 0 ) $_[] = '<li><span><a href="' . esc_url($link) . '">' . $letter . '</a></span></li>';
 				else $_[] = '<li><span>' . $letter . '</span></li>';
 			}
+
 			$_[] = '</ul>';
 			$_[] = $after;
+
 			return join("\n", $_);
 		}
+
 		if ( $O->pages > 1 ) {
-			if ( $O->pages > $show ) $visible_pages = $show;
-			else $visible_pages = $O->pages;
-			if( empty($jumps) )
-				$jumps = ceil( $visible_pages / 2 );
+			if ( $O->pages > $show ) $visible_pages = $show + 2;
+			else $visible_pages = $O->pages + 1;
+			$jumpsize = ceil( $visible_pages / 2 );
+
 			$_[] = $before . $label;
 			$_[] = '<ul class="' . esc_attr($class) . '">';
-			if ( $O->page <= floor( $show / 2) ) {
-				$i = 1;
-			} else {
-				$i = $O->page - floor( $show / 2 );
-				$visible_pages = $O->page + floor( $show / 2 );
-				if ( $visible_pages > $O->pages ) $visible_pages = $O->pages;
-				if ( $i > 1 ) {
-					$link = $O->pagelink(1);
-					$_[] = '<li class="first"><span><a href="' . esc_url($link) . '">' . $first . '</a></span></li>';
-					$pagenum = ( $O->page - $jumps );
-					if ( $pagenum > 1 ) { //Only show jump back if different than first
-					$link = $O->pagelink($pagenum);
-						if( empty($jumpback) )
-							$jumpback = $pagenum;
-						$_[] = '<li class="jumpback"><span><a href="' . esc_url($link) . '">' . $jumpback . '</a></span></li>';
-					}
-				}
-			}
+
 			// Add previous button
 			if ( ! empty($previous) && $O->page > 1 ) {
 				$prev = $O->page-1;
 				$link = $O->pagelink($prev);
-				$_[] = '<li class="' . esc_attr($classprevious) . '"><span><a href="' . esc_url($link) . '" rel="prev">' . $previous . '</a></span></li>';
-			} else $_[] = '<li class="' . esc_attr($classprevious) . ' ' . esc_attr($classdisabled) . '"><span>' . $previous . '</span></li>';
+				$_[]  = '<li class="' . esc_attr($previousclass) . '"><span><a href="' . esc_url($link) . '" rel="prev">' . $previous . '</a></span></li>';
+			} else $_[] = '<li class="' . esc_attr($previousclass) . ' ' . esc_attr($disabledclass) . '"><span>' . $previous . '</span></li>';
 			// end previous button
-			while ( $i <= $visible_pages ) {
+
+			$center = floor( $show / 2);
+			if ( $O->page <= $center ) {
+				$i = 1;
+			} else {
+				$i = $O->page - $center;
+				$visible_pages = $O->page + $center + 1;
+				if ( $visible_pages > $O->pages ) {
+					$visible_pages = $O->pages + 1;
+					// to prevent negative pagenumbers
+					$i = max( 1, $O->pages - $show);
+				}
+
+				if ( $i > 1 ) {
+					$link = $O->pagelink(1);
+					$_[]  = '<li><span><a href="' . esc_url($link) . '">1</a></span></li>';
+
+					$pagenum = ( $O->page - $jumpsize );
+					if ( $pagenum < 1 ) $pagenum = 1;
+					$link = $O->pagelink($pagenum);
+
+					if ( $i > 2 ) {
+						if ( $linked === true ) $_[] = '<li><span><a href="' . esc_url($link) . '">' . $jumpback . '</a></span></li>';
+						else $_[] = '<li><span>' . $jumpback . '</span></li>';
+					}
+				}
+			}
+
+			while ( $i < $visible_pages ) {
 				$link = $O->pagelink($i);
-				if ( $i == $O->page ) $_[] = '<li class="' . esc_attr($classactive) . '"><span>' . $i . '</span></li>';
+				if ( $i == $O->page ) $_[] = '<li class="' . esc_attr($activeclass) . '"><span>' . $i . '</span></li>';
 				else $_[] = '<li><span><a href="' . esc_url($link) . '">' . $i . '</a></span></li>';
 				$i++;
 			}
+
+			if ( $O->pages > $visible_pages ) {
+				$pagenum = ( $O->page + $jumpsize );
+				if ( $pagenum > $O->pages ) $pagenum = $O->pages;
+				$link = $O->pagelink($pagenum);
+				if ( $linked === true ) $_[] = '<li><span><a href="' . esc_url($link) . '">' . $jumpfwd . '</a></span></li>';
+				else $_[] = '<li><span>' . $jumpfwd . '</span></li>';
+			}
+
+			if ( $O->pages >= $visible_pages ) {
+				$link = $O->pagelink($O->pages);
+				$_[] = '<li><span><a href="' . esc_url($link) . '">' . $O->pages . '</a></span></li>';
+			}
+
 			// Add next button
 			if ( ! empty($next) && $O->page < $O->pages) {
 				$pagenum = $O->page + 1;
 				$link = $O->pagelink($pagenum);
-				$_[] = '<li class="' . esc_attr($classnext) . '"><span><a href="' . esc_url($link) . '" rel="next">' . $next . '</a></span></li>';
-			} else $_[] = '<li class="' . esc_attr($classnext) . ' ' . esc_attr($classdisabled) . '"><span>' . $next . '</span></li>';
-			// end next button
-			if ( $O->pages > $visible_pages  ) {
-				$pagenum = ( $O->page + $jumps );
-				if ( $pagenum < $O->pages ) { //Only show jump forward if different than last
-					$link = $O->pagelink($pagenum);
-					if( empty($jumpfwd) )
-							$jumpfwd = $pagenum;
-					$_[] = '<li class="jumpfwd"><span><a href="' . esc_url($link) . '">' . $jumpfwd . '</a></span></li>';
-				}
-				$link = $O->pagelink($O->pages);
-				$_[] = '<li class="last"><span><a href="' . esc_url($link) . '">' . $last . '</a></span></li>';
-			}
+				$_[] = '<li class="' . esc_attr($nextclass) . '"><span><a href="' . esc_url($link) . '" rel="next">' . $next . '</a></span></li>';
+			} else $_[] = '<li class="' . esc_attr($nextclass) . ' ' . esc_attr($disabledclass) . '"><span>' . $next . '</span></li>';
 			$_[] = '</ul>';
 			$_[] = $after;
 		}

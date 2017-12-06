@@ -268,11 +268,13 @@ abstract class ShoppAdminController extends ShoppFlowController {
 	/** @var ShoppScreen The URL for this admin screen */
 	protected $Screen = false;
 
+	/** @var array Registry of notices to display to hand off to the screen */
+	protected $notices = array();
+
 	/**
-	 * Constructor.
+	 * Constructor
 	 *
 	 * @since 1.2
-	 *
 	 * @return void
 	 **/
 	public function __construct () {
@@ -299,18 +301,42 @@ abstract class ShoppAdminController extends ShoppFlowController {
 
 	}
 
+	/**
+	 * Used to route control to screens
+	 *
+	 * @since 1.4
+	 * @return string Return the class name as a string of the subordinate screen controller
+	 **/
 	protected function route () {
 		/** Optionally implement in concrete classes **/
 	}
 
+	/**
+	 * Calls the subordinate Screen help handler
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
 	public function help () {
 		$this->Screen->help();
 	}
 
+	/**
+	 * Calls the subordinate Screen layout handler
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
 	public function layout () {
 		$this->Screen->layout();
 	}
 
+	/**
+	 * Calls the subordinate Screen's screen method handler
+	 *
+	 * @since 1.4
+	 * @return void
+	 **/
 	public function screen () {
 
 		if ( ! current_user_can(ShoppAdminPages()->Page->capability) )
@@ -358,7 +384,7 @@ abstract class ShoppAdminController extends ShoppFlowController {
 
 		if ( ShoppLoader::is_activating() || Shopp::upgradedb() ) return;
 
-		$setting = isset($_POST['settings']['maintenance']) ? $_POST['settings']['maintenance'] : false;
+		$setting = isset($_POST['settings']['maintenance']);
 		$nonce = isset($_POST['_wpnonce']) ? $_POST['_wpnonce'] : false;
 
 		if ( false !== $setting && wp_verify_nonce($nonce, 'shopp-setup') )
@@ -376,35 +402,22 @@ abstract class ShoppAdminController extends ShoppFlowController {
 
 }
 
+/**
+ * A variant admin controller for handling form input
+ *
+ * This is for HTTP-POST data handling in addition to HTTP-GET query handling.
+ *
+ * @since 1.4
+ **/
 class ShoppAdminPostController extends ShoppAdminController {
 
 	public function __construct () {
 
 		if ( ! ShoppAdminPages()->shoppscreen() ) return;
-
-		// Get the query request
-		$this->query();
-
-		// Setup the screen controller
-		$ControllerClass = $this->route();
-		if ( false == $ControllerClass || ! class_exists($ControllerClass) ) return;
-
-		$this->Screen = new $ControllerClass($this->ui);
-
-		// Queue JavaScript & CSS
-		add_action('admin_enqueue_scripts', array($this, 'assets'), 50);
-
-		// Screen setup
-		global $pagenow;
-		$screen = ShoppAdmin::screen();
-		if ( $screen == $this->request('post_type') )
-			$screen = $pagenow;
-		add_action('load-' . $screen, array($this, 'help'));
-		add_action('load-' . $screen, array($this, 'layout'));
-		add_action('load-' . $screen, array($this, 'maintenance'));
+        $this->posted();
+		parent::__construct();
 
 	}
-
 
 }
 
@@ -490,10 +503,9 @@ class ShoppTinyMCE {
 	}
 
 	/**
-	 * Constructor.
+	 * Constructor
 	 *
 	 * @since 1.4
-	 *
 	 * @return void
 	 **/
 	public function __construct () {
@@ -557,7 +569,6 @@ class ShoppTinyMCE {
  * Adds ShoppPages and SmartCollection support to WordPress theme menus system.
  *
  * @access private
- *
  * @since 1.4
  **/
 class ShoppCustomThemeMenus {
@@ -587,6 +598,9 @@ class ShoppCustomThemeMenus {
 
 		new ShoppPagesMenusBox('nav-menus', 'side', 'low');
 		new ShoppCollectionsMenusBox('nav-menus', 'side', 'low');
+
+		$this->enable();
+		
 	}
 
 	/**
@@ -640,6 +654,30 @@ class ShoppCustomThemeMenus {
 		}
 
 		return $menuitem;
+	}
+	
+	/**
+	 * Updates user preferences to automatically show all Shopp menus by default
+	 *
+	 * @since 1.4
+	 *
+	 * @return void
+	 **/
+	protected function enable () {
+
+		if ( get_user_option( 'metaboxhidden_nav-menus-shopp-enabled' ) !== false )
+			return; // Only do this once, otherwise skip it to allow user preference overrides
+		
+		$user = wp_get_current_user();
+		$hidden = get_user_option( 'metaboxhidden_nav-menus', $user->ID);
+		$updates = array_filter($options, function ($id) {
+			return false === strpos($id, 'shopp');
+		});
+		
+		if ( $hidden !== $updates)
+			update_user_option( $user->ID, 'metaboxhidden_nav-menus', $updates, true );
+		
+		update_user_option( $user->ID, 'metaboxhidden_nav-menus-shopp-enabled', true, true );
 	}
 
 } // class ShoppCustomThemeMenu

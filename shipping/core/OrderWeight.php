@@ -2,7 +2,7 @@
 /**
  * Order Weight Tiers
  *
- * Provides shipping calculations based on order amount tiers
+ * Provides shipping calculations based on order weight tiers
  *
  * @author Jonathan Davis
  * @copyright Ingenesis Limited, 27 April, 2008

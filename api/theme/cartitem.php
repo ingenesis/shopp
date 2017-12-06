@@ -84,10 +84,10 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	 *
 	 * @return ShoppCartItem|bool The working ShoppCartItem context
 	 **/
-	public static function _setobject ( $Object, $object ) {
+	public static function _setobject ( $Object, $context ) {
 		if ( is_object($Object) && is_a($Object, 'Item') ) return $Object;
 
-		if ( strtolower($object) != 'cartitem' ) return $Object; // not mine, do nothing
+		if ( strtolower($context) != 'cartitem' ) return $Object; // not mine, do nothing
 		else {
 			$Cart = ShoppOrder()->Cart;
 			$Item = false;
@@ -413,13 +413,14 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	public static function taxrate ( $result, $options, $O ) {
 
 		if ( count($O->taxes) == 1 ) {
-			$Tax = reset($O->taxes);
+			$Tax = ShoppTax::appliedrate($O->taxes);
 			return percentage( $Tax->rate * 100, array( 'precision' => 1 ) );
 		}
 
 		$compounding = false;
 		$rate = 0;
 		foreach ( $O->taxes as $Tax ) {
+			if ( is_null($Tax->amount) ) continue;
 			$rate += $Tax->rate;
 			if ( Shopp::str_true($Tax->compound) ) {
 				$compounding = true;
@@ -720,10 +721,16 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		$options = array_merge($defaults, $options);
 		extract($options);
 
-		$classes = ! empty($class) ? ' class="' . esc_attr($class) . '"' : '';
-		$excludes = explode(',', $exclude);
-		$prices = Shopp::str_true($prices);
-		$taxes = Shopp::str_true($taxes);
+		$classes      = ! empty($class) ? ' class="' . esc_attr($class) . '"' : '';
+		$excludes     = explode(',', $exclude);
+		$prices       = Shopp::str_true($prices);
+		$taxoption    = Shopp::str_true($taxes);
+		$inclusivetax = self::_inclusive_taxes($O);
+
+		// Determine the price adjustment factor from the ratio of the tax price to the unit price, or use the tax rate
+		$adjustment = isset($O->taxprice) ? $O->taxprice / $O->unitprice : $O->taxrate;
+		if ( $adjustment < 0 )
+			$adjustment = 1 + $adjustment;
 
 		// Get the menu labels list and addon options to menus map
 		list($menus, $menumap) = self::_addon_menus();
@@ -735,10 +742,16 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 			$menu = isset( $menumap[ $addon->options ]) ? $menus[ $menumap[ $addon->options ] ] . $separator : false;
 
 			$price = ( Shopp::str_true($addon->sale) ? $addon->promoprice : $addon->price );
-			if ( $taxes && $O->taxrate > 0 )
+
+			if ( 0 != $adjustment ) // Adjust price to net price
+				$price = $price / $adjustment;
+
+			if ( isset($taxoption) && ( $inclusivetax ^ $taxoption ) )
 				$price = $price + ( $price * $O->taxrate );
 
-			if ( $prices ) $pricing = " (" . ( $addon->price < 0 ?'-' : '+' ) . money($price) . ')';
+			if ( $prices )
+				$pricing = " (" . ( $addon->price < 0 ? '-' : '+' ) . money($price) . ')';
+
 			$result .= '<li>' . $menu . $addon->label . $pricing . '</li>';
 		}
 		$result .= '</ul>' . $after;
@@ -799,7 +812,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	 * @return bool True if the next input exists, false otherwise
 	 **/
 	public static function inputs ( $result, $options, $O ) {
-        
+
 		if ( ! isset($O->_data_loop) ) {
 			reset($O->data);
 			$O->_data_loop = true;
@@ -999,13 +1012,11 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 	 *
 	 * @param float $amount The amount to add taxes to, or exclude taxes from
 	 * @param ShoppProduct $O The product to get properties from
-	 * @param boolean $istaxed Whether the amount can be taxed
 	 * @param boolean $taxoption The Theme API tax option given the the tag
-	 * @param array $taxrates A list of taxrates that apply to the product and amount
+	 * @param int $quantity The quantity of items
 	 * @return float The amount with tax added or tax excluded
 	 **/
 	private static function _taxes ( $amount, ShoppCartItem $O, $taxoption = null, $quantity = 1) {
-		// if ( empty($taxrates) ) $taxrates = Shopp::taxrates($O);
 
 		if ( ! $O->istaxed ) return $amount;
 		if ( 0 == $O->unittax ) return $amount;

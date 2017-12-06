@@ -348,7 +348,7 @@ class ShoppShippingRatesTable extends ShoppAdminTable {
 		if ( 'bottom' == $which ) return;
 
 		echo  '<select name="id" id="shipping-option-menu">'
-			. '	<option value="">' . Shopp::__('Add a shipping method&hellip;') . '</option>'
+			. '	<option value="label" disabled selected>' . Shopp::__('Add a shipping method&hellip;') . '</option>'
 			. '	' . Shopp::menuoptions($this->installed, false, true)
 			. '</select>'
 			. '<button type="submit" name="add-shipping-option" id="add-shipping-option" class="button-secondary hide-if-js" tabindex="9999">' . Shopp::__('Add Shipping Option') . '</button>';

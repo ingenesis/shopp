@@ -58,7 +58,7 @@ class ShoppAdminSettings extends ShoppAdminPostController {
 class ShoppSettingsScreenController extends ShoppScreenController {
 
 	public $template = false;
-
+    
 	public function title () {
 		if ( isset($this->title) )
 			return $this->title;
@@ -77,15 +77,16 @@ class ShoppSettingsScreenController extends ShoppScreenController {
 	protected function ui ( $file ) {
 		$template = join('/', array(SHOPP_ADMIN_PATH, $this->ui, $file));
 
+		if ( 'settings.php' == $file )
+			$template = false;
+
 		if ( is_readable($template) ) {
 			$this->template = $template;
-			return join('/', array(SHOPP_ADMIN_PATH, $this->ui, 'settings.php'));
+		} else {
+			$this->notice(Shopp::__('The requested screen was not found.'), 'error');
 		}
 
-		echo '<div class="wrap shopp"><div class="icon32"></div><h2></h2></div>';
-		$this->notice(Shopp::__('The requested screen was not found.'), 'error');
-		do_action('shopp_admin_notices');
-		return false;
+		return join('/', array(SHOPP_ADMIN_PATH, $this->ui, 'settings.php'));
 	}
 
 
@@ -164,13 +165,18 @@ class ShoppSettingsScreenController extends ShoppScreenController {
 	public function posted () {
 		parent::posted();
 		$this->posted = $this->form;
-		
+        
+        $save = $this->form('save'); // Keep save button state
+        
 		if ( ! empty($_POST['settings']) )
 			$this->form = ShoppRequestProcessing::process($_POST['settings'], $this->defaults);
+        
+        if ( ! empty($save) )
+            $this->form['save'] = true;
 
 		return true;
 	}
-	
+
 	public function saveform () {
 		$_POST['settings'] = $this->form;
 		return shopp_set_formsettings();

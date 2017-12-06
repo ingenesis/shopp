@@ -195,30 +195,30 @@ class ShoppImageSettingsTable extends ShoppAdminTable {
 	}
 
 	public function column_cb( $Item ) {
-		echo '<input type="checkbox" name="selected[]" value="' . $Item->id . '" />';
+		return '<input type="checkbox" name="selected[]" value="' . $Item->id . '" />';
 	}
 
 	public function column_name( $Item ) {
-		echo '<a class="row-title edit" href="' . $editurl . '" title="' . Shopp::__('Edit') . ' &quot;' . esc_attr($Item->name) . '&quot;">' . esc_html($Item->name) . '</a>';
 
 		$edit_link = wp_nonce_url(add_query_arg('id', $Item->id), 'shopp-settings-images');
 		$delete_link = wp_nonce_url(add_query_arg('delete', $Item->id), 'shopp-settings-images');
 
-		echo $this->row_actions( array(
-			'edit' => '<a class="edit" href="' . $edit_link . '">' . __( 'Edit' ) . '</a>',
-			'delete' => '<a class="delete" href="' . $delete_link . '">' . __( 'Delete' ) . '</a>',
-		) );
+		return '<a class="row-title edit" href="' . $editurl . '" title="' . Shopp::__('Edit') . ' &quot;' . esc_attr($Item->name) . '&quot;">' . esc_html($Item->name) . '</a>' .
+                $this->row_actions( array(
+        			'edit' => '<a class="edit" href="' . $edit_link . '">' . __( 'Edit' ) . '</a>',
+        			'delete' => '<a class="delete" href="' . $delete_link . '">' . __( 'Delete' ) . '</a>',
+        		) );
 
 	}
 
 	public function column_dimensions( $Item ) {
-		echo esc_html("$Item->width &times; $Item->height");
+		return esc_html("$Item->width &times; $Item->height");
 	}
 
 	public function column_fit( $Item ) {
 		$menu = ShoppImageSetting::fit_menu();
 		$fit = isset($menu[ $Item->fit ]) ? $menu[ $Item->fit ] : '?';
-		echo esc_html($fit);
+		return esc_html($fit);
 	}
 
 	public function column_quality( $Item ) {
@@ -227,11 +227,11 @@ class ShoppImageSettingsTable extends ShoppAdminTable {
 						$Item->quality;
 
 		$quality = percentage($quality, array('precision' => 0));
-		echo esc_html($quality);
+		return esc_html($quality);
 	}
 
 	public function column_sharpness( $Item ) {
-		echo esc_html("$Item->sharpen%");
+		return esc_html("$Item->sharpen%");
 	}
 
 } // class ShoppImageSettingsTable

@@ -33,6 +33,15 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 	public function actions() {
 		add_action('shopp_admin_settings_actions', array($this, 'delete') );
 	}
+    
+    public static function settings () {
+        $rates = array();
+        $setting = shopp_setting('taxrates');
+        if ( ! empty($setting) ) 
+            $rates = $setting;
+        
+        return $rates;
+    }
 
 	public function delete() {
 		$delete = $this->request('delete');
@@ -40,7 +49,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 
 		check_admin_referer('shopp_delete_taxrate');
 
-		$rates = shopp_setting('taxrates');
+		$rates = (array)shopp_setting('taxrates');
 
 		if ( empty($rates[ $delete ]) )
 			return $this->notice(Shopp::__('Could not delete the tax rate because that tax setting was not found.'));
@@ -54,14 +63,14 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 
 	}
 
-	public function ops() {
-		add_action('shopp_admin_settings_ops', array($this, 'addrule') );
-		add_action('shopp_admin_settings_ops', array($this, 'deleterule') );
-		add_action('shopp_admin_settings_ops', array($this, 'addlocals') );
-		add_action('shopp_admin_settings_ops', array($this, 'rmvlocals') );
-		add_action('shopp_admin_settings_ops', array($this, 'upload') );
-		add_action('shopp_admin_settings_ops', array($this, 'updates') );
-	}
+	// public function ops() {
+	// 	add_action('shopp_admin_settings_ops', array($this, 'addrule') );
+	// 	add_action('shopp_admin_settings_ops', array($this, 'deleterule') );
+	// 	add_action('shopp_admin_settings_ops', array($this, 'addlocals') );
+	// 	add_action('shopp_admin_settings_ops', array($this, 'rmvlocals') );
+	// 	add_action('shopp_admin_settings_ops', array($this, 'upload') );
+	// 	add_action('shopp_admin_settings_ops', array($this, 'updates') );
+	// }
 
 	public function layout() {
 		$this->table('ShoppTaxesRatesTable');
@@ -69,10 +78,9 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 
 	public function updates() {
 
-		$rates = shopp_setting('taxrates');
-
+        $rates = self::settings();
+        
 		$updates = $this->form('taxrates');
-
 		if ( ! empty($updates) ) {
 			if ( array_key_exists('new', $updates) ) {
 				$rates[] = $updates['new'];
@@ -84,13 +92,17 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 
 			shopp_set_setting('taxrates', $rates);
 			unset($_POST['settings']['taxrates']);
+
+			$this->notice(Shopp::__('Tax rates saved.'));
 		}
 
-		shopp_set_formsettings(); // Save other tax settings
+		$inclusive = $this->form('tax_inclusive');
+		$shipping = $this->form('tax_shipping');
+		if ( ! ( empty($inclusive) || empty($shipping) ) ) {
+			shopp_set_formsettings(); // Save other tax settings
+			$this->notice(Shopp::__('Tax settings saved.'));
+		}
 
-		$this->notice(Shopp::__('Tax settings saved.'));
-
-		Shopp::redirect(add_query_arg());
 	}
 
 	public function addrule () {
@@ -162,7 +174,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 
 			if ( '*' != $rate['country'] ) $score++;
 
-			$score += $rate['rate'] / 100;
+			$score += (float)$rate['rate'] / 100;
 		}
 
 		if ( $scoring['a'] == $scoring['b'] ) return 0;
@@ -311,17 +323,17 @@ class ShoppTaxesRatesTable extends ShoppAdminTable {
 		$args = array_merge($defaults, $_GET);
 		extract($args, EXTR_SKIP);
 
-		$rates = (array)shopp_setting('taxrates');
+		$rates = ShoppScreenTaxes::settings();
 
 		$this->items = array();
 		foreach ( $rates as $index => $taxrate )
 			$this->items[ $index ] = array_merge(self::$template, array('id' => $index), $taxrate);
 
-		$specials = array(ShoppTax::ALL => Shopp::__('All Markets'));
-
-		if ( ShoppTax::euvat(false, ShoppBaseLocale()->country(), ShoppTax::EUVAT) )
-			$specials[ ShoppTax::EUVAT ] = Shopp::__('European Union');
-
+		$specials = array(
+            ShoppTax::ALL => Shopp::__('All Markets'),
+            ShoppTax::EUVAT => Shopp::__('European Union')
+        );
+        
 		$this->countries = array_filter(array_merge($specials, (array) shopp_setting('target_markets')));
 		$this->zones = 	ShoppLookup::country_zones();
 
@@ -462,25 +474,25 @@ class ShoppTaxesRatesTable extends ShoppAdminTable {
 		$edit_link = wp_nonce_url(add_query_arg('id', $id), 'shopp_edit_taxrate');
 		$delete_link = wp_nonce_url(add_query_arg('delete', $id), 'shopp_delete_taxrate');
 
-		echo '<a class="row-title edit" href="' . esc_url($edit_link) . '" title="' . Shopp::__('Edit') . ' &quot;' . esc_attr($label) . '&quot;">' . esc_html($label) . '</a>';
-		echo $this->row_actions( array(
-			'edit' => '<a class="edit" href="' . $edit_link . '">' . __( 'Edit' ) . '</a>',
-			'delete' => '<a class="delete" href="' . $delete_link . '">' . __( 'Delete' ) . '</a>',
-		) );
+		return '<a class="row-title edit" href="' . esc_url($edit_link) . '" title="' . Shopp::__('Edit') . ' &quot;' . esc_attr($label) . '&quot;">' . esc_html($label) . '</a>' .
+                $this->row_actions( array(
+        			'edit' => '<a class="edit" href="' . $edit_link . '">' . __( 'Edit' ) . '</a>',
+        			'delete' => '<a class="delete" href="' . $delete_link . '">' . __( 'Delete' ) . '</a>',
+        		) );
 
 	}
 
 	public function column_local( $Item ) {
-		$this->checkbox($Item['haslocals'], $Item['haslocals'] ? Shopp::__('This tax setting has local tax rates defined.') : Shopp::__('No local tax rates are defined.'));
+		return $this->checkbox($Item['haslocals'], $Item['haslocals'] ? Shopp::__('This tax setting has local tax rates defined.') : Shopp::__('No local tax rates are defined.'));
 	}
 
 	public function column_conditional( $Item ) {
 		$conditionals = count($Item['rules']) > 0;
-		$this->checkbox($conditionals, $conditionals ? Shopp::__('This tax setting has conditional rules defined.') : Shopp::__('No conditions are defined for this tax rate.'));
+		return $this->checkbox($conditionals, $conditionals ? Shopp::__('This tax setting has conditional rules defined.') : Shopp::__('No conditions are defined for this tax rate.'));
 	}
 
 	protected function checkbox( $set, $title ) {
-		echo '<div class="checkbox ' . ( $set ? ' checked' : '' ) . '" title="' . esc_html($title) . '"><span class="hidden">' . esc_html($title) . '</div>';
+		return '<div class="checkbox ' . ( $set ? ' checked' : '' ) . '" title="' . esc_html($title) . '"><span class="hidden">' . esc_html($title) . '</div>';
 	}
 
 } // class ShoppTaxesRatesTable

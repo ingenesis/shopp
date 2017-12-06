@@ -730,6 +730,7 @@ class ShoppDiscountRule {
 	 **/
 	public function evaluate ( $subject ) {
 
+		$subject = $this->normalize($subject);
 		$property = $this->property;
 		$op = strtolower($this->logic);
 		$value = $this->value;
@@ -766,6 +767,12 @@ class ShoppDiscountRule {
 		}
 
 		return false;
+	}
+
+	private function normalize ( $subject ) {
+		if ( is_array($subject) )
+			return array_map('htmlspecialchars_decode', $subject);
+		return htmlspecialchars_decode($subject);
 	}
 
 	/**

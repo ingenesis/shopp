@@ -71,7 +71,7 @@ class OrderTotals extends ListFramework {
 		// If id is not provided, return the entire register
 		if ( ! isset($id) ) return $Register;
 
-		if ( ! isset($Register[$id]) ) return false;
+		if ( ! isset($Register[$id]) ) return $false;
 		return $Register[$id];
 	}
 

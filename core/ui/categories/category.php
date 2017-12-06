@@ -79,7 +79,6 @@ var flashuploader = <?php echo ($uploader == 'flash' && !(false !== strpos(strto
 	fileverify_url = '<?php echo wp_nonce_url(admin_url()."admin-ajax.php", "shopp-ajax_verify_file"); ?>',
 	adminpage = '<?php echo ShoppAdmin::pagename('categories'); ?>',
 	request = <?php echo json_encode(stripslashes_deep($_GET)); ?>,
-	worklist = <?php echo json_encode($this->categories()); ?>,
 	filesizeLimit = <?php echo wp_max_upload_size(); ?>,
 	priceTypes = <?php echo json_encode($priceTypes) ?>,
 	billPeriods = <?php echo json_encode($billPeriods) ?>,

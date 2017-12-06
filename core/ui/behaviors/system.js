@@ -12,15 +12,15 @@ jQuery(document).ready(function($) {
 	function progress () {
 		var progressbar = $('#progress div.bar'),
 			scale = $('#progress').outerWidth(),
-			p = $('#reindexProcessor').get(0).contentWindow['indexProgress'];
+			p = $('#reindexProcessor')[0].contentWindow['indexProgress'];
 		if (!p) p = 0;
-		progressbar.animate({'width': Math.ceil(p*scale) +'px'},100);
-		if (p == 1) return setTimeout($.fn.colorbox.close,1000);
-		setTimeout(progress,100);
+		progressbar.animate({'width': Math.ceil(p*scale) +'px'}, 100);
+		if (p == 1) return setTimeout($.fn.colorbox.close, 1000);
+		setTimeout(progress, 100);
 	};
 
 	$('#rebuild-index').click(function () {
-		setTimeout(progress,100);
+		setTimeout(progress, 100);
 		$.colorbox({'title':$sys.indexing,
 			'innerWidth':'250',
 			'innerHeight':'50',

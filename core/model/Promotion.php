@@ -272,7 +272,7 @@ class ShoppPromo extends ShoppDatabaseObject {
 		// for the start and end dates if no date values are provided.
 		// We can evaluate in SQL if the dates are set by checking
 		// if they are more or less than the default. However, we
-		// wse an offset amount as a buffer to account for how
+		// use an offset amount as a buffer to account for how
 		// MySQL's UNIX_TIMESTAMP() converts the datetime to a
 		// UTC-based timestamp from the Jan 1, 1970 00:00:00 epoch
 		// 43200 to represents 12-hours (UTC +/- 12 hours), then we

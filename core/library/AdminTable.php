@@ -414,7 +414,7 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 	 */
 	protected function bulk_actions( $which = '' ) {
 		if ( is_null( $this->_actions ) ) {
-			$no_new_actions = $this->_actions = $this->get_bulk_actions();
+			$no_new_actions = $this->_actions = $this->get_bulk_actions( $which );
 			/**
 			 * Filter the list table Bulk Actions drop-down.
 			 *
@@ -978,7 +978,7 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 
 		if ( $actions = $this->get_bulk_actions($which) ) {
 			echo '	<div class="alignleft actions bulkactions">';
-			echo $actions;
+			$this->bulk_actions($which);
 			echo '	</div>';
 		}
 
@@ -1043,7 +1043,11 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 		$row_class = ( $row_class == '' ? ' class="alternate"' : '' );
 
 		echo '<tr ' . $row_class .  ( empty($item->id) ? '' : ' id="list-item-' . $item->id . '"' ) . '>';
+
+		do_action('shopp_{$this->screen->id}_column_before');
 		$this->single_row_columns( $item );
+		do_action('shopp_{$this->screen->id}_column_after');
+
 		echo '</tr>';
 	}
 
@@ -1096,22 +1100,27 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 				$style = ' style="display:none;"';
 
 			$attributes = "$class$style";
+			$attributes = apply_filters('shopp_{$this->screen->id}_column_{$column_name}_attributes', $attributes);
+
+			$content = '';
+			$wrap_open = "<td $attributes>";
+			$wrap_close = "</td>";
 
 			if ( 'cb' == $column_name ) {
-				echo '<th scope="row" class="check-column">';
-				echo $this->column_cb( $item );
-				echo '</th>';
+				$wrap_open = '<th scope="row" class="check-column">';
+				$content = $this->column_cb( $item );
+				$wrap_close = "</th>";
+			} elseif ( method_exists( $this, 'column_' . $column_name ) ) {
+				$content = call_user_func( array( $this, 'column_' . $column_name ), $item );
+			} else {
+				$content = $this->column_default( $item, $column_name );
 			}
-			elseif ( method_exists( $this, 'column_' . $column_name ) ) {
-				echo "<td $attributes>";
-				echo call_user_func( array( $this, 'column_' . $column_name ), $item );
-				echo "</td>";
-			}
-			else {
-				echo "<td $attributes>";
-				echo $this->column_default( $item, $column_name );
-				echo "</td>";
-			}
+
+			$content = apply_filters('shopp_{$this->screen->id}_column_{$column_name}_content', $content);
+
+			echo $wrap_open;
+			echo $content;
+			echo $wrap_close;
 		}
 	}
 

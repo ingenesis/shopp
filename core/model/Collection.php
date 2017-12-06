@@ -277,7 +277,7 @@ class ProductCollection implements Iterator {
 		$prettyurl = "$namespace/$this->slug" . ($page > 1 || $alpha ? "/page/$page" : "");
 
 		// Handle catalog landing page category pagination
-		if ( is_catalog_frontpage() ) $prettyurl = ($page > 1 || $alpha ? "page/$page" : "");
+		if ( is_shopp_catalog_frontpage() ) $prettyurl = ($page > 1 || $alpha ? "page/$page" : "");
 
 		$queryvars = array($this->taxonomy => $this->uri);
 		if ( $page > 1 || $alpha ) $queryvars['paged'] = $page;

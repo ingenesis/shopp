@@ -19,6 +19,8 @@ class CategoryAPITests extends ShoppTestCase {
 	static $Cheyenne;
 	static $Constitution;
 
+	static $products = array();
+
 	static function setUpBeforeClass () {
 
 		self::$HeavyCruiser = shopp_add_product_category('Heavy Cruiser', 'A large multi-purpose starship.');
@@ -36,10 +38,20 @@ class CategoryAPITests extends ShoppTestCase {
 				)
 			);
 			$Product = shopp_add_product($product);
+			self::$products[] = $Product->id;
 		}
 
 		shopp('storefront.category','load=true&id='.self::$HeavyCruiser);
 		shopp('category.load-products');
+	}
+
+	public static function tearDownAfterClass () {
+		foreach ($products as $id)
+			shopp_rmv_product($id);
+
+		shopp_rmv_product_category(self::$HeavyCruiser);
+		shopp_rmv_product_category(self::$Cheyenne);
+		shopp_rmv_product_category(self::$Constitution);
 	}
 
 	function test_category_url () {

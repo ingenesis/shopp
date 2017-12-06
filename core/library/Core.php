@@ -165,7 +165,9 @@ abstract class ShoppCore {
 		$args = func_get_args(); // Handle sprintf rendering
 		$text = array_shift($args);
 		$translated = Shopp::translate($text);
-		return vsprintf($translated, $args);
+		if ( count($args) > 0 )
+			return vsprintf($translated, $args);
+		return $translated;
 	}
 
 	/**

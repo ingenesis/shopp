@@ -495,6 +495,7 @@ ShoppLoader::map(array(
 	'shoppimageserver' => '/image.php',
 	'shoppimagingmodule' => '/model/Image.php',
 	'shoppimagingmodules' => '/model/Image.php',
+	'shoppsearchindexcontroller' => '/library/SearchIndex.php',
 	'shopping' => '/model/Shopping.php',
 	'shoppingobject' => '/model/Shopping.php',
 	'shoppinstallation' => '/flow/Install.php',

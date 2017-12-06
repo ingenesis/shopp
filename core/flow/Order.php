@@ -88,6 +88,9 @@ class ShoppOrder {
 		// Ensure payment card PAN is truncated after successful processing
 		add_action('shopp_authed_order_event', array($this, 'securecard'));
 
+		// Session handling
+		add_action('shopp_session_save', array($this, 'secure_session'));
+		
 		// Reset handlers
 		add_action('shopp_resession', array($this, 'init'));
 		add_action('shopp_pre_resession', array($this, 'clear'), 100);
@@ -824,8 +827,8 @@ class ShoppOrder {
 		return $this->Payments->secure() || is_ssl();
 	}
 
-	/**
-	 * Secures the payment card by truncating it to the last four digits
+/**
+	 * Secures the payment card by removing it from the session
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.2
@@ -833,7 +836,18 @@ class ShoppOrder {
 	 * @return void
 	 **/
 	public function securecard () {
+		$this->Billing->cardtype = '';
 		$this->Billing->card = '';
+		$this->Billing->cvv = '';
+		$this->Billing->cardexpires = 0;
+		$this->Billing->cardholder = '';
+
+		if( !empty( $Billing->Billing->xcsc ) ) {
+			foreach( $Billing->Billing->xcsc as $field ) {
+				unset( $Billing->$field );
+			}
+			unset( $Billing->Billing->xcsc ); 
+		}
 
 		// Card data is gone, switch the cart to normal mode
 		ShoppShopping()->secured(false);
@@ -873,4 +887,27 @@ class ShoppOrder {
 
 	}
 
+	/**
+	 * Secure session if secure information is in the order
+	 *
+	 * @author Matthew Sigley
+	 * @since 1.3.12
+	 *
+	 * @return void
+	 **/
+	public function secure_session () {
+		$Shopping = ShoppShopping();
+
+		if( $Shopping->secured() )
+			return;
+		
+		if( ! empty($this->Billing->cardtype) 
+			|| ! empty($this->Billing->card) 
+			|| ! empty($this->Billing->cvv) 
+			|| ! empty($this->Billing->cardexpires) 
+			|| ! empty($this->Billing->cardholder)
+			|| !empty( $Billing->Billing->xcsc ) ) {
+			$Shopping->secured(true);
+		}
+	}
 }

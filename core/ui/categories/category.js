@@ -26,7 +26,6 @@ jQuery(document).ready(function () {
 		return false;
 	});
 
-	updateWorkflow();
 	$('#category').submit(function () {
 		this.action = this.action.substr(0,this.action.indexOf("?"))+"?"+$.param(request);
 		return true;
@@ -134,39 +133,6 @@ jQuery(document).ready(function () {
 		});
 
 		detailsidx++;
-	}
-
-	function updateWorkflow () {
-		$('#workflow').change(function () {
-			setting = $(this).val();
-			request.page = adminpage;
-			request.id = category;
-			if (!request.id) request.id = "new";
-			if (setting == "new") {
-				request.id = "new";
-				request.next = setting;
-			}
-			if (setting == "close") delete request.id;
-
-			// Find previous product
-			if (setting == "previous") {
-				$.each(worklist,function (i,entry) {
-					if (entry.id != category) return;
-					if (worklist[i-1]) request.next = worklist[i-1].id;
-					else delete request.id;
-				});
-			}
-
-			// Find next product
-			if (setting == "next") {
-				$.each(worklist,function (i,entry) {
-					if (entry.id != category) return;
-					if (worklist[i+1]) request.next = worklist[i+1].id;
-					else delete request.id;
-				});
-			}
-
-		}).change();
 	}
 
 });

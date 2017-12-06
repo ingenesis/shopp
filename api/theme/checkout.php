@@ -136,10 +136,10 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 	 * @param string     $object The context being worked on by the Theme API
 	 * @return ShoppOrder|ShoppCustomer The active object context
 	 **/
-	public static function _setobject ( $Object, $object, $tag ) {
+	public static function _setobject ( $Object, $context, $tag ) {
 
-		if ( is_object($Object) && is_a($Object, 'ShoppOrder') && 'checkout' == strtolower($object) ) return $Object;
-		else if ( strtolower($object) != 'checkout' ) return $Object; // not mine, do nothing
+		if ( is_object($Object) && is_a($Object, 'ShoppOrder') && 'checkout' == strtolower($context) ) return $Object;
+		else if ( strtolower($context) != 'checkout' ) return $Object; // not mine, do nothing
 
 		if ( isset(self::$register[ $tag ]) ) {
 			$handler = self::$register[ $tag ];

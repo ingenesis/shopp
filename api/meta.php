@@ -311,16 +311,16 @@ function shopp_rmv_meta ( $id = false, $context = false, $name = false, $type = 
 	// general meta entries
 	if ( $id && $context ) {
 		$table = ShoppDatabaseObject::tablename(ShoppMetaObject::$table);
-		$id = db::escape($id);
-		$context = db::escape($context);
-		$name = db::escape($name);
-		$type = db::escape($type);
+		$id = sDB::escape($id);
+		$context = sDB::escape($context);
+		$name = sDB::escape($name);
+		$type = sDB::escape($type);
 
 		$where = "parent=$id AND context='$context'";
 		$where .= ( $type && ! empty($type) ? " AND type='$type'" : "" );
 		$where .= ( $name && ! empty($name) ? " AND type='$name'" : "" );
 
-		return db::query("DELETE FROM $table WHERE $where");
+		return sDB::query("DELETE FROM $table WHERE $where");
 	}
 
 }

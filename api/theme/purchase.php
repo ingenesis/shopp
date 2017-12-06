@@ -150,10 +150,10 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 	 * @param string        $context The context being worked on by the Theme API
 	 * @return ShoppPurchase The active object context
 	 **/
-	public static function _setobject ( $Object, $object ) {
+	public static function _setobject ( $Object, $context ) {
 		if ( is_object($Object) && is_a($Object, 'Purchase') ) return $Object;
 
-		if ( strtolower($object) != 'purchase' ) return $Object; // not mine, do nothing
+		if ( strtolower($context) != 'purchase' ) return $Object; // not mine, do nothing
 		else {
 			return ShoppPurchase();
 		}
@@ -1425,7 +1425,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 	 **/
 	public static function ship_state ( $result, $options, $O ) {
 		$state = esc_html($O->shipstate);
-		if ( strlen( $O->state > 2 ) ) return $state;
+		if ( strlen( $O->shipstate > 2 ) ) return $state;
 		$regions = Lookup::country_zones();
 
 		if ( isset($regions[ $O->country ])) {

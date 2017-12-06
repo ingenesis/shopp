@@ -111,19 +111,26 @@ function ShoppCartAjaxHandler ( cart, response ) {
  * DOM-ready initialization
  **/
 jQuery(document).ready(function($) {
+    
+    var submit = function () {
+        this.form.submit();
+    }
+    
 	// Adds behaviors to shopping cart controls
-	$('#cart #shipping-country').change(function () {
-		this.form.submit();
-	});
+	$('#cart #shipping-country').change(submit);
 
-	$('#cart input[type=image]').click(function () { $(this.form).submit(); });
+    // Auto-submit cart item variation changes
+    $('#cart select[name*="[price]"]').change(submit);
+
+    // Enable cart image buttons to submit the form
+	$('#cart input[type=image]').click(submit);
 
 	// "Add to cart" button behaviors
 	$('input.addtocart').each(function() {
-		var button = $(this),
-			form = button.closest('form');
+
+		var button = $(this), form = $(this.form);
 		if (!form) return false;
-		form.unbind('submit.validate').bind('submit.addtocart',function (e) {
+		form.unbind('submit.validate').bind('submit.addtocart', function (e) {
 			e.preventDefault();
 			if (form.hasClass('validate')) {
 				if (!validate(this)) return false;
@@ -131,7 +138,7 @@ jQuery(document).ready(function($) {
 			addtocart(this);
 		});
 		if (button.attr('type') == "button")
-			button.click(function() { form.submit(); });
+			button.click(submit);
 
 	});
 
