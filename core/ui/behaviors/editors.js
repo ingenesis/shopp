@@ -729,7 +729,7 @@ function ImageUploads(parent, type) {
 			var self = this;
 			$('.image-upload').on('click', function () {
 				self.hiddenFileInput.click();
-			})
+			});
 
 			this.on('error', function(file, message) {
 				$('.lightbox-dropzone li.dz-error').on('click', function () {
@@ -815,7 +815,7 @@ function ImageUploads(parent, type) {
 	});
 
 	function sorting () {
-		if ($('#lightbox li').size() > 0) $('#lightbox').sortable({'opacity':0.8});
+		if ($('#lightbox li').length > 0) $('#lightbox').sortable({'opacity':0.8});
 	}
 
 	function enableDeleteButton (button) {
