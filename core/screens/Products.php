@@ -960,16 +960,57 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 	 *
 	 * Handles processing a file upload from a temporary file to a
 	 * the correct storage container (DB, file system, etc)
-	 * 
+	 *
 	 * @since 1.3
 	 * @return string JSON encoded result with DB id, filename, type & size
 	 **/
-	public static function downloads ($file) {
+	public static function downloads ($file, $data) {
 
         self::uploaderrs($file);
 
+		// Get dropzone chunk data
+		$chunk = $data['dzchunkindex'];
+		$chunks = $data['dztotalchunkcount'];
+		$lastchunk = ( $chunk == ( $chunks - 1 ) );
+
+		$directory = wp_upload_dir();
+		if ( ! empty($directory['error']) )
+			wp_die($directory['error'], 500);
+
+		$basedir = trailingslashit($directory['basedir']);
+
+		$completed = $basedir . $file['name'];
+		$partfile = $completed . ".part.$chunk";
+
+		move_uploaded_file($file['tmp_name'], $partfile);
+
+		if ( $lastchunk ) {
+			if ( ! $out = @fopen($completed, 'wb' ) )
+				wp_die('Failed to open output stream.', 500);
+
+			for ( $i = 0; $i < $chunks; $i++ ) {
+				$chunkfile = $completed . ".part.$i";
+				// Read binary input stream and append it to temp file
+				if ( ! $in = @fopen($chunkfile, 'rb') )
+					wp_die('Failed to open input stream for file chunk.');
+
+				while ($buffer = fread($in, 4096))
+					fwrite($out, $buffer);
+
+				@fclose($in);
+				@unlink($chunkfile);
+			}
+
+			fclose($out);
+
+			// unlink parts
+
+		} else {
+			wp_die('', 200);
+		}
+
 		FileAsset::mimetypes();
-        
+
 		// Save the uploaded file
 		$DownloadFile = new ProductDownload();
 		$DownloadFile->parent = 0;
@@ -978,21 +1019,21 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 		$DownloadFile->name = $file['name'];
 		$DownloadFile->filename = $DownloadFile->name;
 
-		$mimedata = wp_check_filetype_and_ext($file['tmp_name'], $DownloadFile->name);        
+		$mimedata = wp_check_filetype_and_ext($completed, $DownloadFile->name);
 		$DownloadFile->mime = ! empty($mimedata['type']) ? $mimedata['type'] : 'application/octet-stream';
 		if ( ! empty($mimedata['proper_filename']) )
 			$DownloadFile->name = $DownloadFile->filename = $mimedata['proper_filename'];
 
-		$DownloadFile->size = filesize($file['tmp_name']);        
-		$DownloadFile->store($file['tmp_name'],'upload');
-        
+		$DownloadFile->size = filesize($completed);
+		$DownloadFile->store($completed, 'file');
+
 		$Error = ShoppErrors()->code('storage_engine_save');
-		if ( ! empty($Error) ) 
+		if ( ! empty($Error) )
             wp_die($Error->message(true), 500);
 
 		$DownloadFile->save();
 
-		do_action('add_product_download', $DownloadFile,$file);
+		do_action('add_product_download', $DownloadFile, $file);
 
 		header('Content-Type: application/json');
         wp_die(json_encode(array('id' => $DownloadFile->id, 'name' => stripslashes($DownloadFile->name), 'type' => $DownloadFile->mime, 'size' => $DownloadFile->size)));
@@ -1005,7 +1046,7 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 	 * @return string JSON encoded result with thumbnail id and src
 	 **/
 	public static function images ($file, $parent = false, $context = false) {
-		
+
 		$ContextClasses = array(
 			'category' => 'CategoryImage',
 			'product' => 'ProductImage'
@@ -1013,9 +1054,9 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 
 		if ( ! in_array(strtolower($context), array_keys($ContextClasses)) )
             wp_die(Shopp::__('The file could not be saved because the request did not specify whether it is a product or a category image.'), 400);
-		
+
         self::uploaderrs($file);
-        
+
 		// Save the source image
 		$Image = new $ContextClasses[ $context ]();
 		$Image->parent = $parent;
@@ -1042,13 +1083,13 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 		header('Content-Type: application/json');
 		wp_die(json_encode(array('id' => $Image->id)));
 	}
-    
+
     private static function uploaderrs ($file) {
 		$error = array();
-        
+
 		if ( ! empty($file['error']) )
 			$error[500] = ShoppLookup::errors('uploads', $file['error']);
-		
+
 		if ( ! is_uploaded_file($file['tmp_name']) )
 			$error[500] = Shopp::__('The file could not be saved because the uploaded file was not found on the server.');
 
@@ -1063,7 +1104,7 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 
 		if ( ! empty($error) )
             wp_die(current($error), key($error));
-        
+
         return false;
     }
 
@@ -1127,8 +1168,6 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 		new ShoppAdminProductPricingBox($this, 'normal', 'core', array('Product' => $Product, 'posttype' => ShoppProduct::posttype()));
 
 	}
-
-
 
 } // class ShoppScreenProductEditor
 

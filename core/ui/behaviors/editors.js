@@ -714,12 +714,7 @@ function ImageUploads(parent, type) {
 
 	var myDropzone = new Dropzone('ul.lightbox-dropzone', {
 		url: imgul_url + "&type=" + type + '&parent=' + parent,
-		chunking: true,
-		forceChunking: true,
 		maxFilesize: filesizeLimit,
-		chunkSize: chunksizeLimit,
-		parallelChunkUploads: true,
-		retryChunks: true,
 		autoDiscover: false,
 		parallelUploads: 5,
 		autoProcessQueue: true,
@@ -974,7 +969,6 @@ function FileUploader(container) {
 		autoProcessQueue: true,
 		chunking: true,
 		forceChunking: true,
-		maxFilesize: filesizeLimit,
 		chunkSize: chunksizeLimit,
 		parallelChunkUploads: true,
 		retryChunks: true,
@@ -995,11 +989,12 @@ function FileUploader(container) {
 
 			self.on('success', function (file) {
 				var response = JSON.parse(file.xhr.response);
-				$('<input>').attr({
-					type: 'hidden',
-					name: 'price[' + _.priceline + '][download]',
-					value: response.id
-				}).appendTo($(self.previewsContainer));
+				if ( response.id )
+					$('<input>').attr({
+						type: 'hidden',
+						name: 'price[' + _.priceline + '][download]',
+						value: response.id
+					}).appendTo($(self.previewsContainer));
 			});
 
 		} //init

@@ -24,7 +24,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 class ShoppAjax extends ShoppRequestFormFramework {
 
 	private $files = array();
-	
+
 	/**
 	 * ShoppAjax constructor
 	 *
@@ -33,13 +33,13 @@ class ShoppAjax extends ShoppRequestFormFramework {
 	 * @return void
 	 **/
 	public function __construct () {
-		
+
 		$this->query();  // Process query string
 		$this->posted(); // Process post data
-		
+
 		if ( ! empty($_FILES) ) // Process any files
 			$this->files = $_FILES;
-				
+
 		if ( 'add-menu-item' == $this->form('action') )
 			new ShoppAdmin(); // Boot the Admin controller to handle AJAX added WP nav menu items
 
@@ -171,7 +171,7 @@ class ShoppAjax extends ShoppRequestFormFramework {
 
 	public function upload_file () {
 		$file = isset($this->files['file']) ? $this->files['file'] : false;
-		ShoppScreenProductEditor::downloads($file);
+		ShoppScreenProductEditor::downloads($file, $this->form());
 	}
 
 	public function add_category () {

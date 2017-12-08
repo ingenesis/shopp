@@ -62,7 +62,7 @@ class FSStorage extends StorageModule implements StorageEngine {
 
 		$error = false;
 		if (empty($data)) $error = "$this->module: There is no file data to store.";
-		
+
 		$filepath = self::sanitize($this->path.'/'.$asset->filename);
 		switch ($type) {
 			case 'upload':
@@ -72,7 +72,7 @@ class FSStorage extends StorageModule implements StorageEngine {
 				break;
 			case 'file':
 				if ( ! is_readable($data) ) $error = "$this->module: Could not read the file.";
-				elseif (copy($data,$filepath)) break;
+				elseif (rename($data,$filepath)) break;
 				else $error = "$this->module: Could not move the file to the storage repository.";
 				break;
 			default:
@@ -84,14 +84,14 @@ class FSStorage extends StorageModule implements StorageEngine {
 			$error = new ShoppError($error,'storage_engine_save',SHOPP_ADMIN_ERR);
 			return $error;
 		}
-		
+
 		// Set correct file permissions
 		$filestat = stat($filepath);
 		$perms = $filestat['mode'] & 0000666;
 		@ chmod( $filepath, $perms );
-		
+
 		return $asset->filename;
-		
+
 	}
 
 	public function exists ($uri) {
