@@ -38,17 +38,16 @@ class ShoppResources {
 
 		add_action('shopp_resource_download', array($this, 'download'));
 	}
-    
+
 	/**
 	 * Runs the requested resource handler
-	 * 
+	 *
 	 * @return void
 	 **/
-    
     public function init () {
 		do_action( 'shopp_resource_' . $this->request['src'], $this->request );
     }
-    
+
     /**
      * Handles Admin resource requests
      *
@@ -58,9 +57,9 @@ class ShoppResources {
      * @return void
      **/
     public function admin () {
-        if ( ! is_user_logged_in() ) 
+        if ( ! is_user_logged_in() )
             wp_die(ShoppLookup::errors('access','403'), Shopp::__('Access Denied'), array('response' => 403));
-        
+
 		add_action('shopp_resource_help', array($this, 'help'));
 
 		if ( ! current_user_can('shopp_financials') )
@@ -177,7 +176,6 @@ class ShoppResources {
 	 * @return void
 	 **/
 	public function download () {
-		$Shopp = Shopp::object();
 		$download = $this->request['shopp_download'];
 		$Purchase = false;
 		$Purchased = false;
