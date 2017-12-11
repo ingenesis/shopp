@@ -970,13 +970,15 @@ function FileUploader(container) {
 		chunking: true,
 		forceChunking: true,
 		chunkSize: uploadLimit,
-		parallelChunkUploads: true,
+		maxFilesize: 4096,
+		parallelChunkUploads: false,
 		retryChunks: true,
+		parallelConnectionLimit: uploadMaxConnections,
 		previewTemplate: $.tmpl('filechooser-upload-template').html(),
 		init: function () {
 			var self = this;
 
-			$('.filechooser-upload').on('click', function () {
+			$('.filechooser-upload').on('mousedown', function () {
 				self.hiddenFileInput.click();
 				$(self.previewsContainer).empty();
 			});
@@ -984,6 +986,9 @@ function FileUploader(container) {
 			self.on('addedfile', function (file) {
 				$.colorbox.hide();
 				self.processQueue();
+				self.options.parallelChunkUploads = false;
+				if ( file.size / self.options.chunkSize <= self.options.parallelConnectionLimit)
+					self.options.parallelChunkUploads = true;
 				$(self.previewsContainer).find('.icon.shoppui-file').addClass(file.type.replace('/',' '));
 			});
 
