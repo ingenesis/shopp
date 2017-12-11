@@ -714,7 +714,7 @@ function ImageUploads(parent, type) {
 
 	var myDropzone = new Dropzone('ul.lightbox-dropzone', {
 		url: imgul_url + "&type=" + type + '&parent=' + parent,
-		maxFilesize: filesizeLimit,
+		maxFilesize: uploadLimit / 1024 / 1024,
 		autoDiscover: false,
 		parallelUploads: 5,
 		autoProcessQueue: true,
@@ -969,13 +969,13 @@ function FileUploader(container) {
 		autoProcessQueue: true,
 		chunking: true,
 		forceChunking: true,
-		chunkSize: chunksizeLimit,
+		chunkSize: uploadLimit,
 		parallelChunkUploads: true,
 		retryChunks: true,
 		previewTemplate: $.tmpl('filechooser-upload-template').html(),
 		init: function () {
 			var self = this;
-			console.log(self.options);
+
 			$('.filechooser-upload').on('click', function () {
 				self.hiddenFileInput.click();
 				$(self.previewsContainer).empty();

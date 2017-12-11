@@ -424,20 +424,20 @@ var Dropzone = function (_Emitter) {
         /**
          * The text that replaces the default message text it the browser is not supported.
          */
-        dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
+        dictFallbackMessage: "Your browser does not support drag-and-drop file uploads.",
 
         /**
          * The text that will be added before the fallback form.
          * If you provide a  fallback element yourself, or if this option is `null` this will
          * be ignored.
          */
-        dictFallbackText: "Please use the fallback form below to upload your files like in the olden days.",
+        dictFallbackText: "Please use the fallback form below to upload files.",
 
         /**
          * If the filesize is too big.
          * `{{filesize}}` and `{{maxFilesize}}` will be replaced with the respective configuration values.
          */
-        dictFileTooBig: "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
+        dictFileTooBig: "This file is too big ({{filesize}}MB). The maximum file size is {{maxFilesize}}MB.",
 
         /**
          * If the file doesn't match the file type.
@@ -448,7 +448,7 @@ var Dropzone = function (_Emitter) {
          * If the server response was invalid.
          * `{{statusCode}}` will be replaced with the servers status code.
          */
-        dictResponseError: "Server responded with {{statusCode}} code.",
+        dictResponseError: "The server responded with error code {{statusCode}}.",
 
         /**
          * If `addRemoveLinks` is true, the text to be used for the cancel upload link.
