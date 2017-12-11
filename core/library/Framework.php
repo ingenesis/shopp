@@ -44,7 +44,7 @@ class ListFramework implements Iterator {
 		$this->_added = $key;
 		return $this->get($key);
 	}
-    
+
 	/**
 	 * Moves an entry to a new key
 	 *
@@ -446,7 +446,7 @@ class ShoppRequestProcessing {
 
 	public static function get ( $key = null, $data = array() ) {
 		if ( ! is_array($data) ) return false;
-		
+
 		if ( isset($key) ) {
 			if ( isset($data[ $key ]) )
 				return $data[ $key ];
@@ -502,6 +502,8 @@ abstract class ShoppFormPostFramework {
 }
 
 abstract class ShoppRequestFormFramework extends ShoppFormPostFramework {
+
+	protected $request = array();
 
 	public function request ( $key = null ) {
 		return ShoppRequestProcessing::get($key, $this->request);
