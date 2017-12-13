@@ -9,10 +9,11 @@
 			<div class="dz-error-mark"><span>&times;</span></div>
 			<div class="dz-error-message"><span data-dz-errormessage></span></div>
 			<?php echo ShoppUI::button('delete', 'deleteImage', array('type' => 'button', 'class' => 'delete', 'value' => '${imageid}', 'title' => Shopp::__('Remove image&hellip;'), 'data-dz-remove' => true) ); ?>
-			
-			<input type="hidden" name="imagedetails[${index}][id]" value="${imageid}" />
+
+			<input type="hidden" name="images[]" value="${imageid}" class="imageid"/>
+			<input type="hidden" name="imagedetails[${index}][id]" value="${imageid}" class="imageid"/>
 			<input type="hidden" name="imagedetails[${index}][title]" value="${title}" class="imagetitle" />
-			<input type="hidden" name="imagedetails[${index}][alt]" value="${alt}"  class="imagealt" />			
+			<input type="hidden" name="imagedetails[${index}][alt]" value="${alt}"  class="imagealt" />
 		</li>
 		<?php $preview = ob_get_clean(); echo $preview; ?>
 		</div>

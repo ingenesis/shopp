@@ -726,12 +726,17 @@ function ImageUploads(parent, type) {
 				self.hiddenFileInput.click();
 			});
 
-			this.on('error', function(file, message) {
+			self.on('error', function(file, message) {
 				$('.lightbox-dropzone li.dz-error').on('click', function () {
 					$(this).fadeOut(300, function () {
 						$(this).remove();
 					});
 				});
+			});
+
+			self.on('success', function (file, response) {
+				console.log(response)
+				$(file.previewElement).find('.imageid').attr('value', response.id);
 			});
 		}
 	});
