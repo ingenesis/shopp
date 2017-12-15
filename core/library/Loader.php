@@ -513,6 +513,7 @@ ShoppLoader::map(array(
 	'shoppadminordertable' => '/screens/Orders.php',
 	'shopppage' => '/flow/Pages.php',
 	'shopppages' => '/flow/Pages.php',
+	'shopppartialupload' => '/library/PartialUpload.php',
 	'shopppaymentoption' => '/model/Payments.php',
 	'shopppayments' => '/model/Payments.php',
 	'shoppprice' => '/model/Price.php',

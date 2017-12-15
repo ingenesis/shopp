@@ -973,8 +973,10 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 		$stagedfile = $file['tmp_name'];
 
 		// Handle chunked file uploads
-		if ( isset($data['dzchunkindex']) && isset($data['dztotalchunkcount']) )
-			$stagedfile = self::uploadparts($file, $data);
+		if ( isset($data['dzchunkindex']) && isset($data['dztotalchunkcount']) ) {
+			$PartialUpload = new ShoppPartialUpload($file, $data);
+			$stagedfile = $PartialUpload->process();
+		}
 
 		FileAsset::mimetypes();
 
