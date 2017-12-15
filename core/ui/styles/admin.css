@@ -527,7 +527,6 @@ div.comment-item:hover .row-actions {
     background: #ffffff;
     margin: 0 10px 10px 0;
     padding: 5px;
-    cursor: move;
     width: 120px;
     height: 120px;
     border: 1px solid #dfdfdf;
@@ -587,29 +586,29 @@ div.comment-item:hover .row-actions {
 .lightbox-dropzone .dz-preview .dz-details .dz-filename {
     white-space: nowrap;
 }
-    .lightbox-dropzone .dz-preview:hover .dz-image img {
-      -webkit-transform: scale(1.05, 1.05);
-      -ms-transform: scale(1.05, 1.05);
-      transform: scale(1.05, 1.05);
-      -webkit-filter: blur(8px);
-      filter: blur(8px); }
-    .lightbox-dropzone .dz-preview .dz-image {
+	.lightbox-dropzone .dz-preview .dz-image img {
+		display: block; }
+	.lightbox-dropzone .dz-preview:hover .dz-image img {
+		-webkit-transform: scale(1.05, 1.05);
+		-ms-transform: scale(1.05, 1.05);
+		transform: scale(1.05, 1.05);
+		-webkit-filter: blur(8px);
+		filter: blur(8px); }
+	.lightbox-dropzone .dz-preview .dz-image {
 		pointer-events: none;
-      overflow: hidden;
-      width: 120px;
-      height: 120px;
-      position: relative;
-      display: block;
-      z-index: 10; }
-      .lightbox-dropzone .dz-preview .dz-image img {
-        display: block; }
-    .lightbox-dropzone .dz-preview.dz-success .dz-success-mark {
-      -webkit-animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1);
-      animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1); }
-    .lightbox-dropzone .dz-preview.dz-error .dz-error-mark {
-      opacity: 1;
-      -webkit-animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
-      animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1); }
+		overflow: hidden;
+		width: 120px;
+		height: 120px;
+		position: relative;
+		display: block;
+		z-index: 10; }
+	.lightbox-dropzone .dz-preview.dz-success .dz-success-mark {
+		-webkit-animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1);
+		animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1); }
+	.lightbox-dropzone .dz-preview.dz-error .dz-error-mark {
+		opacity: 1;
+		-webkit-animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
+		animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1); }
 
 .lightbox-dropzone .dz-preview .dz-success-mark,
 .lightbox-dropzone .dz-preview .dz-error-mark {
@@ -625,17 +624,17 @@ div.comment-item:hover .row-actions {
     font-size: 60px;
     line-height: 60px;
 }
-    .lightbox-dropzone .dz-preview.dz-processing .dz-progress {
-      opacity: 1;
-      -webkit-transition: all 0.2s linear;
-      transition: all 0.2s linear; }
-    .lightbox-dropzone .dz-preview.dz-complete .dz-progress {
-      opacity: 0;
-      -webkit-transition: opacity 0.4s ease-in;
-      transition: opacity 0.4s ease-in; }
-    .lightbox-dropzone .dz-preview:not(.dz-processing) .dz-progress {
-      -webkit-animation: pulse 6s ease infinite;
-      animation: pulse 6s ease infinite; }
+	.lightbox-dropzone .dz-preview.dz-processing .dz-progress {
+		opacity: 1;
+		-webkit-transition: all 0.2s linear;
+		transition: all 0.2s linear; }
+	.lightbox-dropzone .dz-preview.dz-complete .dz-progress {
+		opacity: 0;
+		-webkit-transition: opacity 0.4s ease-in;
+		transition: opacity 0.4s ease-in; }
+	.lightbox-dropzone .dz-preview:not(.dz-processing) .dz-progress {
+		-webkit-animation: pulse 6s ease infinite;
+		animation: pulse 6s ease infinite; }
 
 .lightbox-dropzone .dz-preview .dz-progress {
     opacity: 0;
@@ -691,6 +690,10 @@ div.comment-item:hover .row-actions {
     transition: opacity 0.3s ease;
     pointer-events: none;
 }
+.lightbox-dropzone .ui-sortable-handle {
+	cursor: move;
+}
+
 
 /** Image details modal **/
 #product #lightbox li .details,
