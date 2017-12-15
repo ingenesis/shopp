@@ -407,19 +407,19 @@ div.comment-item:hover .row-actions {
         opacity: 0;
         -webkit-transform: translateY(40px);
         -ms-transform: translateY(40px);
-        transform: translateY(40px); 
+        transform: translateY(40px);
     }
     30%, 70% {
         opacity: 1;
         -webkit-transform: translateY(0px);
         -ms-transform: translateY(0px);
-        transform: translateY(0px); 
+        transform: translateY(0px);
     }
     100% {
         opacity: 0;
         -webkit-transform: translateY(-40px);
         -ms-transform: translateY(-40px);
-        transform: translateY(-40px); 
+        transform: translateY(-40px);
     }
 }
 @keyframes passing-through {
@@ -432,13 +432,13 @@ div.comment-item:hover .row-actions {
         opacity: 1;
         -webkit-transform: translateY(0px);
         -ms-transform: translateY(0px);
-        transform: translateY(0px); 
+        transform: translateY(0px);
     }
     100% {
         opacity: 0;
         -webkit-transform: translateY(-40px);
         -ms-transform: translateY(-40px);
-        transform: translateY(-40px); 
+        transform: translateY(-40px);
     }
 }
 @-webkit-keyframes slide-in {
@@ -497,7 +497,7 @@ div.comment-item:hover .row-actions {
     list-style-type: none;
     margin: 0;
     margin-left: -5px;
-    padding: 5px; 
+    padding: 5px;
     border: 1px solid transparent;
     margin-bottom: 20px;
 }
@@ -539,18 +539,18 @@ div.comment-item:hover .row-actions {
 }
 
 .lightbox-dropzone .dz-preview:hover {
-    z-index: 1000; 
+    z-index: 1000;
 }
 .lightbox-dropzone .dz-preview:hover .dz-details {
-    opacity: 1; 
+    opacity: 1;
 }
 .lightbox-dropzone .dz-preview.dz-file-preview .dz-details {
-    opacity: 1; 
+    opacity: 1;
 }
 
 .lightbox-dropzone .dz-preview.dz-image-preview .dz-details {
     -webkit-transition: opacity 0.2s linear;
-    transition: opacity 0.2s linear; 
+    transition: opacity 0.2s linear;
 }
 
 .lightbox-dropzone .dz-preview .dz-remove {
@@ -582,7 +582,7 @@ div.comment-item:hover .row-actions {
 
 .lightbox-dropzone .dz-preview .dz-details .dz-size {
     margin-bottom: 1em;
-    font-size: 16px; 
+    font-size: 16px;
 }
 .lightbox-dropzone .dz-preview .dz-details .dz-filename {
     white-space: nowrap;
@@ -594,6 +594,7 @@ div.comment-item:hover .row-actions {
       -webkit-filter: blur(8px);
       filter: blur(8px); }
     .lightbox-dropzone .dz-preview .dz-image {
+		pointer-events: none;
       overflow: hidden;
       width: 120px;
       height: 120px;
@@ -609,8 +610,8 @@ div.comment-item:hover .row-actions {
       opacity: 1;
       -webkit-animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
       animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1); }
-    
-.lightbox-dropzone .dz-preview .dz-success-mark, 
+
+.lightbox-dropzone .dz-preview .dz-success-mark,
 .lightbox-dropzone .dz-preview .dz-error-mark {
     pointer-events: none;
     opacity: 0;
@@ -663,7 +664,7 @@ div.comment-item:hover .row-actions {
     bottom: 0;
     width: 0;
     -webkit-transition: width 300ms ease-in-out;
-    transition: width 300ms ease-in-out; 
+    transition: width 300ms ease-in-out;
 }
 
 .lightbox-dropzone .dz-preview.dz-error:hover .dz-error-message {
@@ -1542,7 +1543,7 @@ div.comment-item:hover .row-actions {
     bottom: 0;
     width: 0;
     -webkit-transition: width 300ms ease-in-out;
-    transition: width 300ms ease-in-out; 
+    transition: width 300ms ease-in-out;
 }
 
 #editable-slug-full,#editor-slug-buttons {
@@ -3587,7 +3588,7 @@ div.storage-settings {
 
 .address-controls.button-group .button {
 	width: 50%;
-	padding-left: 0; 
+	padding-left: 0;
 	padding-right: 0;
 }
 
@@ -3598,7 +3599,7 @@ div.storage-settings {
 	padding-left: 180px;
 }
 
-body.shopp_page_shopp-settings ul#adminmenu a.wp-has-current-submenu::after, 
+body.shopp_page_shopp-settings ul#adminmenu a.wp-has-current-submenu::after,
 body.shopp_page_shopp-settings ul#adminmenu > li.current > a.current::after {
 	border-right-color: #fff;
 }
@@ -3656,7 +3657,7 @@ body.shopp_page_shopp-settings ul#adminmenu > li.current > a.current::after {
 	.shopp_page_shopp-settings #wpfooter {
 		padding-left: 56px;
 	}
-	
+
 	#shopp-settings-menu {
 		width: 36px;
 		left: 36px;
@@ -3664,11 +3665,11 @@ body.shopp_page_shopp-settings ul#adminmenu > li.current > a.current::after {
 
 	#shopp-settings-menu a {
 		padding: 0;
-	} 
+	}
 	.shopp-settings-icon {
 		font-size: 20px;
 	}
-	
+
 	.shopp-settings-label {
 		display: none;
 	}

@@ -735,6 +735,7 @@ function ImageUploads(parent, type) {
 			});
 
 			self.on('success', function (file, response) {
+				$(file.previewElement)[0].dataTransfer = false;
 				$(file.previewElement).find('.imageid').attr('value', response.id);
 			});
 		}
@@ -814,7 +815,8 @@ function ImageUploads(parent, type) {
 	});
 
 	function sorting () {
-		if ($('#lightbox li').length > 0) $('#lightbox').sortable({'opacity':0.8});
+		if ($('.lightbox-dropzone li').length > 0)
+			$('.lightbox-dropzone').sortable({'opacity':0.8});
 	}
 
 	function enableDeleteButton (button) {
