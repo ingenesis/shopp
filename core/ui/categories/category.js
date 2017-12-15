@@ -9,7 +9,6 @@ var Pricelines = new Pricelines(),
 	fileUploader = false,
 	changes = false,
 	saving = false,
-	flashUploader = false,
 	template = true;
 
 jQuery(document).ready(function () {

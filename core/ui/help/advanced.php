@@ -9,10 +9,6 @@ get_current_screen()->add_help_tab( array(
 
 This screen provides access to advanced troubleshooting and maintenance tools.
 
-#### Upload System
-
-The Adobe Flash upload system shows accurate file upload progress and select multiple files to upload at the same time. If you experience problems, however, disable the setting to use browser-based uploads instead.
-
 #### Script Loading
 
 There are two settings that can adjust how Shopp handles loading JavaScript libraries:

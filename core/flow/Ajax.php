@@ -43,7 +43,7 @@ class ShoppAjax extends ShoppRequestFormFramework {
 		if ( 'add-menu-item' == $this->form('action') )
 			new ShoppAdmin(); // Boot the Admin controller to handle AJAX added WP nav menu items
 
-		// Flash uploads require unprivileged access
+		// File uploads require unprivileged access
 		add_action('wp_ajax_nopriv_shopp_upload_image', array($this, 'upload_image'));
 		add_action('wp_ajax_nopriv_shopp_upload_file', array($this, 'upload_file'));
 		add_action('wp_ajax_shopp_upload_image', array($this, 'upload_image'));

@@ -990,7 +990,6 @@ abstract class ShoppCore {
 			case 'js': return 'application/javascript';
 			case 'json': return 'application/json';
 			case 'xml': return 'application/xml';
-			case 'swf':	return 'application/x-shockwave-flash';
 
 			// images
 			case 'jpg': case 'jpeg': case 'jpe': return 'image/jpg';

@@ -735,8 +735,11 @@ function ImageUploads(parent, type) {
 			});
 
 			self.on('success', function (file, response) {
-				$(file.previewElement)[0].dataTransfer = false;
 				$(file.previewElement).find('.imageid').attr('value', response.id);
+			});
+
+			self.on('complete', function (file, response) {
+				sorting();
 			});
 		}
 	});

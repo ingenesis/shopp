@@ -422,7 +422,6 @@ class ShoppInstallation extends ShoppFlowController {
 		$Settings->setup('product_image_orderby', 'sortorder');
 
 		// System Settings
-		$Settings->setup('uploader_pref', 'flash');
 		$Settings->setup('script_loading', 'global');
 		$Settings->setup('script_server', 'plugin');
 

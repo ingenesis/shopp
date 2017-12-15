@@ -20,7 +20,6 @@ var Pricelines = new Pricelines(),
  	fileUploader = false,
  	changes = false,
  	saving = false,
- 	flashUploader = false,
 	template = false,
  	fileUploads = false,
 	changesMade = false,
@@ -141,14 +140,14 @@ jQuery(document).ready(function($) {
 	});
 
 	// We don't need an AYS dialog when saving
-	$("input[name='save']").click(function() { isSave = true });
+	$("input[name='save']").click(function() { isSave = true; });
 
 	// Confirm navigation dialog (avoid people accidentally losing work upon navigation)
 	window.onbeforeunload = function() {
 		var editor = (typeof(tinymce) != 'undefined') ? tinymce.activeEditor : false;
 		if (!isSave && (changesMade || (editor && editor.isDirty() && !editor.isHidden())) )
 			return $msg.confirm;
-	}
+	};
 });
 
 function categories () {

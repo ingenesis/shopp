@@ -63,7 +63,7 @@
 <div id="filechooser">
 	<p><label for="import-url"><?php Shopp::_e('Attach file by URL'); ?>&hellip;</label></p>
 	<p><span class="fileimporter"><input type="text" name="url" id="import-url" class="fileimport" /><span class="shoppui-spin-align"><span class="status"></span></span></span><button class="button-secondary" id="attach-file"><small><?php Shopp::_e('Attach File'); ?></small></button><br /><span><label for="import-url">file:///path/to/file.zip<?php if (!in_array('http',stream_get_wrappers())): ?>, http://server.com/file.zip<?php endif; ?></label></span></p>
-	<div><div id="flash-upload-file"></div><button id="filechooser-upload-file" class="button-secondary filechooser-upload"><small><?php Shopp::_e('Upload a file from your device'); ?></small></button></div>
+	<div><button id="filechooser-upload-file" class="button-secondary filechooser-upload"><small><?php Shopp::_e('Upload a file from your device'); ?></small></button></div>
 </div>
 
 <script id="filechooser-upload-template" type="text/x-jquery-tmpl">
