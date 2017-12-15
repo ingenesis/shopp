@@ -735,7 +735,6 @@ function ImageUploads(parent, type) {
 			});
 
 			self.on('success', function (file, response) {
-				console.log(response)
 				$(file.previewElement).find('.imageid').attr('value', response.id);
 			});
 		}
@@ -974,7 +973,7 @@ function FileUploader(container) {
 		autoProcessQueue: true,
 		chunking: true,
 		forceChunking: true,
-		chunkSize: uploadLimit,
+		chunkSize: uploadLimit - 1024,
 		maxFilesize: 4096,
 		parallelChunkUploads: false,
 		retryChunks: true,

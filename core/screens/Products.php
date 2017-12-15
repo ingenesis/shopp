@@ -1100,6 +1100,13 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 		wp_die(json_encode(array('id' => $Image->id)));
 	}
 
+	/**
+	 * Provide upload errors back to the browser
+	 *
+	 * @since 1.4
+	 * @param array $file The uploaded file data
+	 * @return boolean False if no errors, exits if there are errors
+	 **/
     private static function uploaderrs ($file) {
 		$error = array();
 
