@@ -962,12 +962,59 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 	 * the correct storage container (DB, file system, etc)
 	 *
 	 * @since 1.3
+	 * @param array $file File upload data
+	 * @param array $data Posted data
 	 * @return string JSON encoded result with DB id, filename, type & size
 	 **/
 	public static function downloads ($file, $data) {
 
         self::uploaderrs($file);
 
+		$stagedfile = $file['tmp_name'];
+
+		// Handle chunked file uploads
+		if ( isset($data['dzchunkindex']) && isset($data['dztotalchunkcount']) )
+			$stagedfile = self::uploadparts($file, $data);
+
+		FileAsset::mimetypes();
+
+		// Save the uploaded file
+		$DownloadFile = new ProductDownload();
+		$DownloadFile->parent = 0;
+		$DownloadFile->context = "price";
+		$DownloadFile->type = "download";
+		$DownloadFile->name = $file['name'];
+		$DownloadFile->filename = $DownloadFile->name;
+
+		$mimedata = wp_check_filetype_and_ext($stagedfile, $DownloadFile->name);
+		$DownloadFile->mime = ! empty($mimedata['type']) ? $mimedata['type'] : 'application/octet-stream';
+		if ( ! empty($mimedata['proper_filename']) )
+			$DownloadFile->name = $DownloadFile->filename = $mimedata['proper_filename'];
+
+		$DownloadFile->size = filesize($stagedfile);
+		$DownloadFile->store($stagedfile, 'file');
+
+		$Error = ShoppErrors()->code('storage_engine_save');
+		if ( ! empty($Error) )
+            wp_die($Error->message(true), 500);
+
+		$DownloadFile->save();
+
+		do_action('add_product_download', $DownloadFile, $file);
+
+		header('Content-Type: application/json');
+        wp_die(json_encode(array('id' => $DownloadFile->id, 'name' => stripslashes($DownloadFile->name), 'type' => $DownloadFile->mime, 'size' => $DownloadFile->size)));
+	}
+
+	/**
+	 * Handle partial file uploads
+	 *
+	 * @since 1.4
+	 * @param array $file File upload data
+	 * @param array $data Posted data
+	 * @return string Path to the completed file
+	 **/
+	private static function uploadparts ($file, $data) {
 		// Get dropzone chunk data
 		$chunk = $data['dzchunkindex'];
 		$chunks = $data['dztotalchunkcount'];
@@ -984,59 +1031,28 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 
 		move_uploaded_file($file['tmp_name'], $partfile);
 
-		if ( $lastchunk ) {
-			if ( ! $out = @fopen($completed, 'wb' ) )
-				wp_die('Failed to open output stream.', 500);
+		if ( ! $lastchunk )  // When not the last chunk stop processing,
+			wp_die('', 200); // but tell the browser everything's A-OK.
 
-			for ( $i = 0; $i < $chunks; $i++ ) {
-				$chunkfile = $completed . ".part.$i";
-				// Read binary input stream and append it to temp file
-				if ( ! $in = @fopen($chunkfile, 'rb') )
-					wp_die('Failed to open input stream for file chunk.');
+		if ( ! $out = @fopen($completed, 'wb' ) )
+			wp_die('Failed to open output stream.', 500);
 
-				while ($buffer = fread($in, 4096))
-					fwrite($out, $buffer);
+		for ( $i = 0; $i < $chunks; $i++ ) {
+			$chunkfile = $completed . ".part.$i";
+			// Read binary input stream and append it to temp file
+			if ( ! $in = @fopen($chunkfile, 'rb') )
+				wp_die('Failed to open input stream for file chunk.', 500);
 
-				@fclose($in);
-				@unlink($chunkfile);
-			}
+			while ($buffer = fread($in, 4096))
+				fwrite($out, $buffer);
 
-			fclose($out);
-
-			// unlink parts
-
-		} else {
-			wp_die('', 200);
+			@fclose($in);
+			@unlink($chunkfile); // Remove the part file
 		}
 
-		FileAsset::mimetypes();
+		fclose($out);
 
-		// Save the uploaded file
-		$DownloadFile = new ProductDownload();
-		$DownloadFile->parent = 0;
-		$DownloadFile->context = "price";
-		$DownloadFile->type = "download";
-		$DownloadFile->name = $file['name'];
-		$DownloadFile->filename = $DownloadFile->name;
-
-		$mimedata = wp_check_filetype_and_ext($completed, $DownloadFile->name);
-		$DownloadFile->mime = ! empty($mimedata['type']) ? $mimedata['type'] : 'application/octet-stream';
-		if ( ! empty($mimedata['proper_filename']) )
-			$DownloadFile->name = $DownloadFile->filename = $mimedata['proper_filename'];
-
-		$DownloadFile->size = filesize($completed);
-		$DownloadFile->store($completed, 'file');
-
-		$Error = ShoppErrors()->code('storage_engine_save');
-		if ( ! empty($Error) )
-            wp_die($Error->message(true), 500);
-
-		$DownloadFile->save();
-
-		do_action('add_product_download', $DownloadFile, $file);
-
-		header('Content-Type: application/json');
-        wp_die(json_encode(array('id' => $DownloadFile->id, 'name' => stripslashes($DownloadFile->name), 'type' => $DownloadFile->mime, 'size' => $DownloadFile->size)));
+		return $completed;
 	}
 
 	/**
