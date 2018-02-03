@@ -9,7 +9,7 @@
 	<?php include("navigation.php"); ?>
 
 	<div>
-		<input type="hidden" name="page" value="<?php echo $this->Admin->pagename('products'); ?>" />
+		<input type="hidden" name="page" value="<?php echo $this->pagename; ?>" />
 		<input type="hidden" name="view" value="<?php echo $this->view; ?>" />
 	</div>
 
@@ -41,13 +41,13 @@
 		<tfoot>
 		<tr><?php ShoppUI::print_column_headers('toplevel_page_shopp-products',false); ?></tr>
 		</tfoot>
-	<?php if ($Products->size() > 0): ?>
+	<?php if ($this->products->size() > 0): ?>
 		<tbody id="products" class="list products">
 		<?php
 		$hidden = get_hidden_columns('toplevel_page_shopp-products');
 
 		$even = false;
-		foreach ($Products as $key => $Product):
+		foreach ($this->products as $key => $Product):
 		$editurl = esc_url(esc_attr(add_query_arg(array_merge(stripslashes_deep($_GET),
 			array('page'=>'shopp-products',
 					'id'=>$Product->id,

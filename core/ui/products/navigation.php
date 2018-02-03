@@ -1,17 +1,22 @@
 <?php
-	$subs = apply_filters('shopp_products_subsubsub',$subs);
-	if (empty($subs)) return;
+	$views = apply_filters('shopp_products_subsubsub', $views);
+	if ( empty($views) ) return;
 ?>
 <ul class="subsubsub"><?php
 	$links = array();
-	foreach($subs as $name => $sub) {
-		extract($sub);
-		if ('0' == $sub['total']) continue;
-		$suburl = remove_query_arg(array('apply','selected','pagenum','view'),$url);
-		$filter = 'all' != $name ? array('view'=>$name) : array('view'=>null);
-		$link = esc_url(add_query_arg($filter,$suburl));
-		$class = ($this->view == $name?' class="current"':false);
-		$links[] = sprintf('<li><a href="%s"%s>%s</a> <span class="count">(%d)</span>',$link,$class,$sub['label'],$sub['total']);
+	foreach( $views as $name => $view ) {
+		extract($view);
+        
+		if ( '0' == $total )
+			continue;
+
+        $viewurl = remove_query_arg(array('apply', 'action', 'selected', 'paged', 'view'), $url);
+		$filter = 'all' != $name ? array('view' => $name) : array('view' => null);
+		$link = esc_url( add_query_arg($filter, $viewurl) );
+        
+		$class = $this->view == $name ? ' class="current"' : false;
+
+		$links[] = sprintf('<li><a href="%s"%s>%s</a> <span class="count">(%d)</span>', $link, $class, $label, $total);
 	}
-	echo join(' | </li>',$links);
+	echo join(' | </li>', $links);
 ?></ul>

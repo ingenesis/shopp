@@ -191,7 +191,7 @@
 		</div>
 	</div>
 </div>
-<?php if ( ! ( $Purchase->isvoid() && $Purchase->refunded ) ): ?>
+<?php if ( ! ( $Purchase->isvoid() || $Purchase->refunded ) ): ?>
 	<div id="major-publishing-actions">
 		<?php if ( ! $Purchase->isvoid() ): ?>
 		<div class="alignleft">

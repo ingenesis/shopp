@@ -80,8 +80,8 @@ class ShoppErrorThemeAPI implements ShoppAPI {
 	 * @param ShoppErrors $O       The working object
 	 * @return void
 	 **/
-	public static function trxn ( $result, $options, $O ) {
-		if ( empty($options) ) return false;
+	public static function trxn ( $result, $options ) {
+		if ( empty($options) ) return $result;
 		new ShoppError(key($options), 'template_error', SHOPP_TRXN_ERR);
 	}
 
@@ -98,8 +98,8 @@ class ShoppErrorThemeAPI implements ShoppAPI {
 	 * @param ShoppErrors $O       The working object
 	 * @return void
 	 **/
-	public static function auth ( $result, $options, $O ) {
-		if ( empty($options) ) return false;
+	public static function auth ( $result, $options ) {
+		if ( empty($options) ) return $result;
 		new ShoppError(key($options), 'template_error', SHOPP_AUTH_ERR);
 	}
 
@@ -116,8 +116,8 @@ class ShoppErrorThemeAPI implements ShoppAPI {
 	 * @param ShoppErrors $O       The working object
 	 * @return void
 	 **/
-	public static function addon ( $result, $options, $O ) {
-		if ( empty($options) ) return false;
+	public static function addon ( $result, $options ) {
+		if ( empty($options) ) return $result;
 		new ShoppError(key($options), 'template_error', SHOPP_ADDON_ERR);
 	 }
 
@@ -134,8 +134,8 @@ class ShoppErrorThemeAPI implements ShoppAPI {
  	 * @param ShoppErrors $O       The working object
  	 * @return void
  	 **/
-	public static function comm ( $result, $options, $O ) {
-		if ( empty($options) ) return false;
+	public static function comm ( $result, $options ) {
+		if ( empty($options) ) return $result;
 		new ShoppError(key($options), 'template_error', SHOPP_COMM_ERR);
 	}
 
@@ -152,8 +152,8 @@ class ShoppErrorThemeAPI implements ShoppAPI {
 	 * @param ShoppErrors $O       The working object
 	 * @return void
 	 **/
-	public static function stock ( $result, $options, $O ) {
-		if ( empty($options) ) return false;
+	public static function stock ( $result, $options ) {
+		if ( empty($options) ) return $result;
 		new ShoppError(key($options), 'template_error', SHOPP_STOCK_ERR);
 	}
 
@@ -170,8 +170,8 @@ class ShoppErrorThemeAPI implements ShoppAPI {
 	 * @param ShoppErrors $O       The working object
 	 * @return void
 	 **/
-	public static function admin ( $result, $options, $O ) {
-		if (empty($options) ) return false;
+	public static function admin ( $result, $options ) {
+		if (empty($options) ) return $result;
 		new ShoppError(key($options), 'template_error', SHOPP_ADMIN_ERR);
 	}
 
@@ -188,8 +188,8 @@ class ShoppErrorThemeAPI implements ShoppAPI {
 	 * @param ShoppErrors $O       The working object
 	 * @return void
 	 **/
-	public static function db ( $result, $options, $O ) {
-		if ( empty($options) ) return false;
+	public static function db ( $result, $options ) {
+		if ( empty($options) ) return $result;
 		new ShoppError(key($options), 'template_error', SHOPP_DB_ERR);
 	}
 
@@ -206,8 +206,8 @@ class ShoppErrorThemeAPI implements ShoppAPI {
 	 * @param ShoppErrors $O       The working object
 	 * @return void
 	 **/
-	public static function debug ( $result, $options, $O ) {
-		if ( empty($options) ) return false;
+	public static function debug ( $result, $options ) {
+		if ( empty($options) ) return $result;
 		new ShoppError(key($options), 'template_error', SHOPP_DEBUG_ERR);
 	}
 

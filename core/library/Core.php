@@ -1334,32 +1334,35 @@ abstract class ShoppCore {
 	 * @param boolean $extend (optional) Use to add the selected value if it doesn't exist in the specified list of options
 	 * @return string The markup of option elements
 	 **/
-	public static function menuoptions ($list,$selected=null,$values=false,$extend=false) {
-		if (!is_array($list)) return "";
+	public static function menuoptions ( array $list, $selected = null, $values = false, $extend = false ) {
+		if ( ! is_array($list) ) 
+            return "";
 
 		$_ = array();
 		// Extend the options if the selected value doesn't exist
-		if ((!in_array($selected,$list) && !isset($list[$selected])) && $extend)
-			$_[] = '<option value="'.esc_attr($selected).'">'.esc_html($selected).'</option>';
-		foreach ($list as $value => $text) {
+		if ( ( ! in_array($selected, $list) && ! isset($list[ $selected ])) && $extend )
+			$_[] = '<option value="' . esc_attr($selected) . '">' . esc_html($selected) . '</option>';
 
+		foreach ( $list as $value => $text ) {
 			$valueattr = $selectedattr = '';
-
-			if ($values) $valueattr = ' value="'.esc_attr($value).'"';
-			if (($values && (string)$value === (string)$selected)
-				|| (!$values && (string)$text === (string)$selected))
+			if ( $values ) $valueattr = ' value="' . esc_attr($value) . '"';
+			
+            if ( ( $values && (string)$value === (string)$selected )
+				|| ( ! $values && (string)$text === (string)$selected ) )
 					$selectedattr = ' selected="selected"';
-			if (is_array($text)) {
+            
+			if ( is_array($text) ) {
 				$label = $value;
-				$_[] = '<optgroup label="'.esc_attr($label).'">';
-				$_[] = self::menuoptions($text,$selected,$values);
+				$_[] = '<optgroup label="' . esc_attr($label) . '">';
+				$_[] = self::menuoptions($text, $selected, $values);
 				$_[] = '</optgroup>';
 				continue;
 			}
+            
 			$_[] = "<option$valueattr$selectedattr>$text</option>";
-
 		}
-		return join('',$_);
+        
+		return join('', $_);
 	}
 
 	/**

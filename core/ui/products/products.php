@@ -5,10 +5,11 @@
 
 	<?php do_action('shopp_admin_notices'); ?>
 
-	<form action="<?php echo esc_url($url); ?>" method="get" id="products-manager">
+	<form action="<?php echo admin_url('admin.php'); ?>" method="get" id="products-manager">
 	<?php include('navigation.php'); ?>
 
 	<div>
+		<input type="hidden" name="page" value="<?php echo $this->pagename; ?>" />
 		<input type="hidden" name="view" value="<?php echo $this->view; ?>" />
 	</div>
 
@@ -22,7 +23,7 @@
 
 		<div class="alignleft actions">
 		<select name="action" id="actions">
-			<option value="" selected="selected"><?php _e('Bulk Actions&hellip;','Shopp'); ?></option>
+			<option selected disabled><?php _e('Bulk Actions&hellip;','Shopp'); ?></option>
 			<?php echo Shopp::menuoptions($actions_menu,false,true); ?>
 		</select>
 		<input type="submit" value="<?php esc_attr_e('Apply','Shopp'); ?>" name="apply" id="apply" class="button-secondary action" />
@@ -33,7 +34,7 @@
 		<?php echo $inventory_menu; ?>
 		<input type="submit" id="filter-button" value="<?php _e('Filter','Shopp'); ?>" class="button-secondary" />
 		</div>
-		<?php if ($is_trash): ?>
+		<?php if ( 'trash' == $this->view ): ?>
 		<div class="alignleft actions">
 			<input type="submit" name="delete_all" id="delete_all" class="button-secondary apply" value="<?php _e('Empty Trash','Shopp'); ?>"  />
 		</div>
@@ -52,14 +53,14 @@
 		<tfoot>
 		<tr><?php ShoppUI::print_column_headers($this->id, false); ?></tr>
 		</tfoot>
-	<?php if ($Products->size() > 0): ?>
+	<?php if ($this->products->size() > 0): ?>
 		<tbody id="products" class="list products">
 		<?php
 		$columns = get_column_headers($this->id);
 		$hidden = get_hidden_columns($this->id);
 
 		$even = false;
-		foreach ( $Products as $key => $Product ):
+		foreach ( $this->products as $key => $Product ):
 
 			$editor_url = remove_query_arg(array('s','cat','sl'),$url);
 			$editurl = esc_url( add_query_arg( array('id'=>$Product->id,'view'=>null),$editor_url ) );

@@ -439,7 +439,7 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 
 		echo "<label for='bulk-action-selector-" . esc_attr( $which ) . "' class='screen-reader-text'>" . __( 'Select bulk action' ) . "</label>";
 		echo "<select name='action$two' id='bulk-action-selector-" . esc_attr( $which ) . "'>\n";
-		echo "<option value='-1' selected='selected'>" . __( 'Bulk Actions' ) . "</option>\n";
+		echo "<option value='-1' selected disabled>" . __( 'Bulk Actions' ) . "</option>\n";
 
 		foreach ( $this->_actions as $name => $title ) {
 			$class = 'edit' == $name ? ' class="hide-if-no-js"' : '';
@@ -874,6 +874,7 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 		}
 
 		foreach ( $columns as $column_key => $column_display_name ) {
+            $tag = "th";
 			$class = array( 'manage-column', "column-$column_key" );
 
 			$style = '';
@@ -882,9 +883,10 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 
 			$style = ' style="' . $style . '"';
 
-			if ( 'cb' == $column_key )
+			if ( 'cb' == $column_key ) {
 				$class[] = 'check-column';
-			elseif ( in_array( $column_key, array( 'posts', 'comments', 'links' ) ) )
+                $tag = "td";
+            } elseif ( in_array( $column_key, array( 'posts', 'comments', 'links' ) ) )
 				$class[] = 'num';
 
 			if ( isset( $sortable[$column_key] ) ) {
@@ -908,7 +910,7 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 			if ( !empty( $class ) )
 				$class = "class='" . join( ' ', $class ) . "'";
 
-			echo "<th scope='col' $id $class $style>$column_display_name</th>";
+			echo "<$tag scope='col' $id $class $style>$column_display_name</$tag>";
 		}
 	}
 

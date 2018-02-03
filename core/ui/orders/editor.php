@@ -109,7 +109,7 @@
 		?>
 		<tr class="fee<?php if ( floatval($Purchase->fees) == 0.0 ) echo ' empty'; ?>">
 			<td scope="row" colspan="<?php echo $colspan; ?>" class="label"><?php _e('Fees','Shopp'); ?></td>
-			<td class="money"><input type="text" id="fee-total" name="totals[fee][]" value="<?php echo money($Purchase->fees); ?>" size="7" class="money selectall">
+			<td class="money"><input type="text" id="fee-total" name="totals[fees][]" value="<?php echo money($Purchase->fees); ?>" size="7" class="money selectall">
 				<button type="button" class="add" data-label="<?php Shopp::_e('Fee Label&hellip;'); ?>" value="fee"><span class="shoppui-plus"><span class="hidden"><?php Shopp::_e('Add'); ?></span></span></button></td>
 		</tr>
 		<?php

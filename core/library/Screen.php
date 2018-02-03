@@ -61,7 +61,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 * @param array $request The screen request parameters
 	 * @return void
 	 **/
-	public function __construct ( $ui ) {
+	public function __construct ( $ui = false ) {
 		global $plugin_page;
 
 		// Setup helper properties

@@ -120,8 +120,8 @@ class ShoppAdminPages {
 		$this->add('discounts', Shopp::__('Discounts'), 'ShoppAdminDiscounts', 'products');
 
 		// Adds extra screens
-		$this->add('welcome', Shopp::__('Welcome'), 'ShoppAdminWelcome', 'welcome');
-		$this->add('credits', Shopp::__('Credits'), 'ShoppAdminWelcome', 'credits');
+		$this->add('welcome', Shopp::__('Welcome'), 'ShoppAdminScreenWelcome', 'welcome');
+		$this->add('credits', Shopp::__('Credits'), 'ShoppAdminScreenWelcome', 'credits');
 
 		// Filter hook for adding/modifying Shopp page definitions
 		$this->pages = apply_filters('shopp_admin_pages', $this->pages);
