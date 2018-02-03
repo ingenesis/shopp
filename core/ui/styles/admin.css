@@ -507,20 +507,6 @@ div.comment-item:hover .row-actions {
     border: 1px dashed #dfdfdf;
 }
 
-/*  .dropzone.dz-clickable {
-    cursor: pointer; }
-    .dropzone.dz-clickable * {
-      cursor: default; }
-    .dropzone.dz-clickable .dz-message, .dropzone.dz-clickable .dz-message * {
-      cursor: pointer; }
-  .dropzone.dz-started .dz-message {
-    display: none; }
-    .dropzone.dz-drag-hover .dz-message {
-      opacity: 0.5; }
-  .lightbox-dropzone .dz-message {
-    text-align: center;
-    margin: 2em 0; }
-*/
 .lightbox-dropzone .dz-preview {
     position: relative;
     display: inline-block;
@@ -1462,7 +1448,8 @@ div.comment-item:hover .row-actions {
 	border-bottom: 1px solid #dfdfdf;
 }
 
-#filechooser {
+/** Priceline file chooser **/
+#filechooser { 
 	font-size: 11px;
 	position: absolute;
 	left: -9999em;
@@ -1479,7 +1466,7 @@ div.comment-item:hover .row-actions {
 	left: auto;
 }
 
-#cboxContent #filechooser label {
+#cboxContent #filechooser label { 
 	margin: 0;
 	padding: 6px 0;
 	text-align: left;
@@ -1487,69 +1474,75 @@ div.comment-item:hover .row-actions {
 }
 
 .filechooser-upload {
-    width: 100%;
+	width: 100%;
 }
-
 .pricing-table .dz-filename {
-    display: block;
+	display: block;
 }
 .pricing-table .dz-size {
-    display: inline-block;
+	display: inline-block;
 }
-
 .pricing-table .dz-error {
-    color: #999;
+	color: #999;
 }
 
 .pricing-table .dz-error-message {
-    color: #900;
-    font-weight: bold;
+	color: #900;
+	font-weight: bold;
 }
 
-    .pricing-table .dz-preview.dz-processing .dz-progress {
-      opacity: 1;
-      -webkit-transition: all 0.2s linear;
-      transition: all 0.2s linear; }
-    .pricing-table .dz-preview.dz-complete .dz-progress {
-      opacity: 0;
-      -webkit-transition: opacity 0.4s ease-in;
-      transition: opacity 0.4s ease-in; }
-    .pricing-table .dz-preview:not(.dz-processing) .dz-progress {
-      -webkit-animation: pulse 6s ease infinite;
-      animation: pulse 6s ease infinite; }
-    .pricing-table .dz-preview.dz-error .dz-progress {
-      opacity: 0;
-      -webkit-transition: opacity 0.4s ease-out;
-      transition: opacity 0.4s ease-out; }
+.pricing-table .dz-preview.dz-processing .dz-progress {
+	opacity: 1;
+	-webkit-transition: all 0.2s linear;
+	transition: all 0.2s linear;
+}
+
+.pricing-table .dz-preview.dz-complete .dz-progress {
+	opacity: 0;
+	-webkit-transition: opacity 0.4s ease-in;
+	transition: opacity 0.4s ease-in;
+}
+
+.pricing-table .dz-preview: not(.dz-processing) .dz-progress {
+	-webkit-animation: pulse 6s ease infinite;
+	animation: pulse 6s ease infinite;
+}
+
+.pricing-table .dz-preview.dz-error .dz-progress {
+	opacity: 0;
+	-webkit-transition: opacity 0.4s ease-out;
+	transition: opacity 0.4s ease-out;
+}
 
 .pricing-table .dz-preview .dz-progress {
-    display: inline-block;
-    opacity: 0;
-    z-index: 1000;
-    pointer-events: none;
-    position: relative;
-    height: 8px;
-    top: 2px;
-    width: 80px;
-    background: rgba(255, 255, 255, 0.7);
-    border: 2px solid rgba(255, 255, 255, 0.7);
-    -webkit-transform: scale(1);
-    border-radius: 8px;
-    overflow: hidden;
+	display: inline-block;
+	opacity: 0;
+	z-index: 1000;
+	pointer-events: none;
+	position: relative;
+	height: 8px;
+	top: 2px;
+	width: 80px;
+	background: rgba(255,255,255,0.7);
+	border: 2px solid rgba(255,255,255,0.7);
+	-webkit-transform: scale(1);
+	border-radius: 8px;
+	overflow: hidden;
 }
 
 .pricing-table .dz-preview .dz-progress .dz-upload {
-    background: #333;
-    background: linear-gradient(to bottom, #666666, #444444);
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 0;
-    -webkit-transition: width 300ms ease-in-out;
-    transition: width 300ms ease-in-out;
+	background: #333;
+	background: linear-gradient(to bottom,#666666,#444444);
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 0;
+	-webkit-transition: width 300ms ease-in-out;
+	transition: width 300ms ease-in-out;
 }
 
+/** Slug Editor **/
 #editable-slug-full,#editor-slug-buttons {
 	display: none;
 }

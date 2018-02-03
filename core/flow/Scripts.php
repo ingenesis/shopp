@@ -23,7 +23,7 @@ class ShoppScripts extends WP_Scripts {
 
 		add_action('wp_head', array($this, 'print_head_scripts'), 15);
 		add_action('admin_head', array($this, 'print_head_scripts'), 15);
-        
+
 		add_action('wp_footer', array($this, 'print_footer_scripts'), 15);
 		add_action('admin_footer', array($this, 'print_footer_scripts'), 15);
 
