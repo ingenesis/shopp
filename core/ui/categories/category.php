@@ -62,8 +62,7 @@
 
 <script type="text/javascript">
 /* <![CDATA[ */
-var flashuploader = <?php echo ($uploader == 'flash' && !(false !== strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'mac') && apache_mod_loaded('mod_security')))?'true':'false'; ?>,
-	category = <?php echo (!empty($Category->id))?$Category->id:'false'; ?>,
+var category = <?php echo (!empty($Category->id))?$Category->id:'false'; ?>,
 	product = false,
 	details = <?php echo json_encode($Category->specs) ?>,
 	priceranges = <?php echo json_encode($Category->priceranges) ?>,

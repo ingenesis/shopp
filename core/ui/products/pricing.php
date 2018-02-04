@@ -60,9 +60,20 @@
 <div><input type="hidden" name="deletePrices" id="deletePrices" value="" />
 	<input type="hidden" name="prices" value="" id="prices" /></div>
 
-<div id="chooser">
-	<p><label for="import-url"><?php _e('Attach file by URL','Shopp'); ?>&hellip;</label></p>
-	<p><span class="fileimporter"><input type="text" name="url" id="import-url" class="fileimport" /><span class="shoppui-spin-align"><span class="status"></span></span></span><button class="button-secondary" id="attach-file"><small><?php _e('Attach File','Shopp'); ?></small></button><br /><span><label for="import-url">file:///path/to/file.zip<?php if (!in_array('http',stream_get_wrappers())): ?>, http://server.com/file.zip<?php endif; ?></label></span></p>
-	<label class="alignleft"><?php _e('Select a file from your computer','Shopp'); ?>:</label>
-	<div class=""><div id="flash-upload-file"></div><button id="ajax-upload-file" class="button-secondary"><small><?php _e('Upload File','Shopp'); ?></small></button></div>
+<div id="filechooser">
+	<p><label for="import-url"><?php Shopp::_e('Attach file by URL'); ?>&hellip;</label></p>
+	<p><span class="fileimporter"><input type="text" name="url" id="import-url" class="fileimport" /><span class="shoppui-spin-align"><span class="status"></span></span></span><button class="button-secondary" id="attach-file"><small><?php Shopp::_e('Attach File'); ?></small></button><br /><span><label for="import-url">file:///path/to/file.zip<?php if (!in_array('http',stream_get_wrappers())): ?>, http://server.com/file.zip<?php endif; ?></label></span></p>
+	<div><button id="filechooser-upload-file" class="button-secondary filechooser-upload"><small><?php Shopp::_e('Upload a file from your device'); ?></small></button></div>
 </div>
+
+<script id="filechooser-upload-template" type="text/x-jquery-tmpl">
+<div>
+    <div class="file dz-preview dz-file-preview">
+    	<div class="icon shoppui-file"></div>
+        <span class="name dz-filename" data-dz-name></span>
+        <small class="size dz-size" data-dz-size></small>
+    	<div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+    	<div class="dz-error-message"><span data-dz-errormessage></span></div>
+    </div>
+</div>
+</script>

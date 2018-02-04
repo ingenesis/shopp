@@ -706,107 +706,46 @@ function addDetail (data) {
 	}
 }
 
-/**
- * Image Uploads using SWFUpload or the jQuery plugin One Click Upload
- **/
-function ImageUploads (id,type) {
-	var $ = jQuery,
-	swfu,
-	settings = {
-		button_text: ADD_IMAGE_BUTTON_TEXT,
-		button_text_style: '.buttonText{text-align:center;font-family:"Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana,_sans;font-size:9px;color:#333333;}',
-		button_text_top_padding: 3,
-		button_height: "22",
-		button_width: "100",
-		button_image_url: uidir+'/icons/buttons.png',
-		button_placeholder_id: "swf-uploader-button",
-		upload_url : ajaxurl,
-		flash_url : uidir+'/behaviors/swfupload/swfupload.swf',
-		file_queue_limit : 0,
-		file_size_limit : filesizeLimit+'b',
-		file_types : "*.jpg;*.jpeg;*.png;*.gif",
-		file_types_description : "Web-compatible Image Files",
-		file_upload_limit : filesizeLimit,
-		post_params : {
-			action:'shopp_upload_image',
-			parent:id,
-			type:type
-		},
+function ImageUploads(parent, type) {
+	var $ = jQuery;
+	Dropzone.autoDiscover = false;
 
-		swfupload_loaded_handler : swfuLoaded,
-		file_queue_error_handler : imageFileQueueError,
-		file_dialog_complete_handler : imageFileDialogComplete,
-		upload_start_handler : startImageUpload,
-		upload_progress_handler : imageUploadProgress,
-		upload_error_handler : imageUploadError,
-		upload_success_handler : imageUploadSuccess,
+	$.template('image-preview-template', $('#lightbox-image-template'));
 
-		custom_settings : {
-			loaded: false,
-			targetHolder : false,
-			progressBar : false,
-			sorting : false
+	var myDropzone = new Dropzone('ul.lightbox-dropzone', {
+		url: imgul_url + "&type=" + type + '&parent=' + parent,
+		maxFilesize: uploadLimit / 1024 / 1024,
+		autoDiscover: false,
+		parallelUploads: 5,
+		autoProcessQueue: true,
+		previewTemplate: $.tmpl('image-preview-template').html(),
+		acceptedFiles: "image/*",
+		init: function () {
+			var self = this;
+			$('.image-upload').on('click', function () {
+				self.hiddenFileInput.click();
+			});
 
-		},
-		prevent_swf_caching: $.ua.msie, // Prevents Flash caching issues in IE
-		debug: imageupload_debug
-
-	};
-
-	// Initialize image uploader
-	if (flashuploader)
-		swfu = new SWFUpload(settings);
-
-	// Browser image uploader
-	$('#image-upload').upload({
-		name: 'Filedata',
-		action: ajaxurl,
-		params: {
-			action:'shopp_upload_image',
-			type:type
-		},
-		onSubmit: function() {
-			this.targetHolder = $('<li id="image-uploading"><input type="hidden" name="images[]" value="" /><div class="progress"><div class="bar"></div><div class="gloss"></div></div></li>').appendTo('#lightbox');
-			this.progressBar = this.targetHolder.find('div.bar');
-			this.sorting = this.targetHolder.find('input');
-		},
-		onComplete: function(results) {
-			var image = false,img,deleteButton,targetHolder = this.targetHolder;
-
-			try {
-				image = $.parseJSON(results);
-			} catch (ex) {
-				image.error = results;
-			}
-
-			if (!image || !image.id) {
-				targetHolder.remove();
-				if (image.error) alert(image.error);
-				else alert(UNKNOWN_UPLOAD_ERROR);
-				return false;
-			}
-
-			targetHolder.attr({'id':'image-'+image.id});
-			this.sorting.val(image.id);
-			img = $('<img src="?siid='+image.id+'" width="96" height="96" class="handle" />').appendTo(targetHolder).hide();
-			deleteButton = $('<button type="button" name="deleteImage" value="'+image.src+'" class="delete"><span class="shoppui-minus"></span></button>').appendTo($(targetHolder)).hide();
-
-			$(this.progressBar).animate({'width':'76px'},250,function () {
-				$(this).parent().fadeOut(500,function() {
-					$(this).remove();
-					$(img).fadeIn('500');
-					enableDeleteButton(deleteButton);
+			self.on('error', function(file, message) {
+				$('.lightbox-dropzone li.dz-error').on('click', function () {
+					$(this).fadeOut(300, function () {
+						$(this).remove();
+					});
 				});
+			});
+
+			self.on('success', function (file, response) {
+				$(file.previewElement).find('.imageid').attr('value', response.id);
+			});
+
+			self.on('complete', function (file, response) {
+				sorting();
 			});
 		}
 	});
 
-	$(document).load(function() {
-		if (!swfu.loaded) $('#product-images .swfupload').remove();
-	});
-
 	sorting();
-	$('#lightbox li').each(function () {
+	$('.lightbox-dropzone li:not(.dz-upload-control)').each(function () {
 		$(this).dblclick(function () {
 			var id = $(this).attr('id')+"-details",
 				src = $('#'+id),
@@ -878,76 +817,9 @@ function ImageUploads (id,type) {
 		enableDeleteButton($(this).find('button.delete'));
 	});
 
-	function swfuLoaded () {
-		$('#browser-uploader').hide();
-		swfu.loaded = true;
-	}
-
 	function sorting () {
-		if ($('#lightbox li').size() > 0) $('#lightbox').sortable({'opacity':0.8});
-	}
-
-	function imageFileQueueError (file, error, message) {
-
-		if (error == SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED) {
-			alert("You selected too many files to upload at one time. " + (message === 0 ? "You have reached the upload limit." : "You may upload " + (message > 1 ? "up to " + message + " files." : "only one file.")));
-			return;
-		} else alert(message);
-
-	}
-
-	function imageFileDialogComplete (selected, queued) {
-		try {
-			this.startUpload();
-		} catch (ex) {
-			this.debug(ex);
-		}
-	}
-
-	function startImageUpload (file) {
-		this.targetHolder = $('<li class="image uploading"><input type="hidden" name="images[]" /><div class="progress"><div class="bar"></div><div class="gloss"></div></div></li>').appendTo($('#lightbox'));
-		this.progressBar = this.targetHolder.find('div.bar');
-		this.sorting = this.targetHolder.find('input');
-	}
-
-	function imageUploadProgress (file, loaded, total) {
-		this.progressBar.animate({'width':Math.ceil((loaded/total)*76)+'px'},100);
-	}
-
-	function imageUploadError (file, error, message) {
-		//debuglog(error+": "+message);
-	}
-
-	function imageUploadSuccess (file, results) {
-		var image = false,img,deleteButton,targetHolder = this.targetHolder;
-		try {
-			image = $.parseJSON(results);
-		} catch (ex) {
-			targetHolder.remove();
-			alert(results);
-			return false;
-		}
-
-		if (!image.id) {
-			targetHolder.remove();
-			if (image.error) alert(image.error);
-			else alert(UNKNOWN_UPLOAD_ERROR);
-			return true;
-		}
-
-		targetHolder.attr({'id':'image-'+image.id});
-		this.sorting.val(image.id);
-		img = $('<img src="?siid='+image.id+'" width="96" height="96" class="handle" />').appendTo(targetHolder).hide();
-		deleteButton = $('<button type="button" name="deleteImage" value="'+image.id+'" class="delete"><span class="shoppui-minus"></span></button>').appendTo(targetHolder).hide();
-		sorting();
-
-		this.progressBar.animate({'width':'76px'},250,function () {
-			$(this).parent().fadeOut(500,function() {
-				$(this).remove();
-				$(img).fadeIn('500');
-				enableDeleteButton(deleteButton);
-			});
-		});
+		if ($('.lightbox-dropzone li').length > 0)
+			$('.lightbox-dropzone').sortable({'opacity':0.8});
 	}
 
 	function enableDeleteButton (button) {
@@ -972,285 +844,368 @@ function ImageUploads (id,type) {
 			}
 		});
 	}
-
 }
 
 jQuery.fn.FileChooser = function (line, status) {
 	var $ = jQuery,
 		_ = this,
-		chooser = $('#chooser'),
-		importurl = chooser.find('.fileimport'),
-		importstatus = chooser.find('.status'),
-		attach = $('#attach-file'),
-		dlpath = $('#download_path-'+line),
-		dlname = $('#download_file-'+line),
+		uiChooser = $('#filechooser'),
+		uiImportURL = uiChooser.find('.fileimport'),
+		uiImportStatus = uiChooser.find('.status'),
+		uiAttachFile = $('#attach-file'),
+		uiDownloadPath = $('#download_path-'+line),
+		uiDownloadFilename = $('#download_file-'+line),
 		file = $('#file-'+line),
-		stored = false,
-		nostatus = 0,
-		progressbar = false;
+		stored = false;
 
 	_.line = line;
 	_.status = status;
 
-	chooser.unbind('change').on('change', '.fileimport', function (e) {
-		importstatus.attr('class','status').addClass('shoppui-spinner shoppui-spinfx shoppui-spinfx-steps8');
+	uiChooser.unbind('change').on('change', '.fileimport', function (e) {
+		uiImportStatus.attr('class','status').addClass('shoppui-spinner shoppui-spinfx shoppui-spinfx-steps8');
 		$.ajax({url:fileverify_url+'&action=shopp_verify_file&t=download',
 				type:"POST",
-				data:'url='+importurl.val(),
+				data:'url='+uiImportURL.val(),
 				timeout:10000,
 				dataType:'text',
 				success:function (results) {
-					importstatus.attr('class','status');
-					if (results == "OK") return importstatus.addClass('shoppui-ok-sign');
-					if (results == "NULL") importstatus.attr('title',FILE_NOT_FOUND_TEXT);
-					if (results == "ISDIR") importstatus.attr('title',FILE_ISDIR_TEXT);
-					if (results == "READ") importstatus.attr('title',FILE_NOT_READ_TEXT);
-					importstatus.addClass("shoppui-warning-sign");
+					uiImportStatus.attr('class','status');
+					if (results == "OK") return uiImportStatus.addClass('shoppui-ok-sign');
+					if (results == "NULL") uiImportStatus.attr('title',FILE_NOT_FOUND_TEXT);
+					if (results == "ISDIR") uiImportStatus.attr('title',FILE_ISDIR_TEXT);
+					if (results == "READ") uiImportStatus.attr('title',FILE_NOT_READ_TEXT);
+					uiImportStatus.addClass("shoppui-warning-sign");
 				}
 		});
 	});
 
-	importurl.unbind('keydown').unbind('keypress').suggest(
-		sugg_url+'&action=shopp_storage_suggestions&t=download',
-		{ delay:500, minchars:3, multiple:false, onSelect:function () { importurl.trigger('change'); } }
+	uiImportURL.unbind('keydown').unbind('keypress').suggest(
+		sugg_url + '&action=shopp_storage_suggestions&t=download', {
+			delay: 500,
+			minchars: 3,
+			multiple:false,
+			onSelect:function () {
+				uiImportURL.trigger('change');
+			}
+		}
 	);
 
 	$(this).click(function () {
-		fileUploads.updateLine(line,status);
-		importstatus.attr('class','status');
+		uiImportStatus.attr('class','status');
 
-		attach.unbind('click').click(function () {
+		fileUploads.dropzone.previewsContainer = file[0];
+		fileUploads.priceline = _.line;
+
+		// File import handling
+		uiAttachFile.unbind('click').click(function () {
 			$.colorbox.hide();
+
 			if (stored) {
-				dlpath.val(importurl.val());
-				importurl.val('').attr('class','fileimport');
+				uiDownloadPath.val(uiImportURL.val());
+				uiImportURL.val('').attr('class','fileimport');
 				return true;
 			}
 
-			var importid = false,
-				importdata = false,
-				importfile = importurl.val(),
+			var importId = false,
+				uiSetup = false,
+				noProgressTimeout = 0,
+				importFile = uiImportURL.val(),
 
-				completed = function (f) {
-					if (!f.name) return $this.attr('class','');
-					file.attr('class','file').html('<span class="icon shoppui-file '+f.mime.replace('/',' ')+'"></span>'+f.name+'<br /><small>'+readableFileSize(f.size)+'</small>');
-					dlpath.val(f.path); dlname.val(f.name);
-					importurl.val('').attr('class','fileimport');
+				completed = function (filedata) {
+					if ( ! filedata.name )
+						return $this.attr('class', '');
+					uiDownloadPath.val(filedata.path);
+					uiDownloadFilename.val(filedata.name);
+					uiImportURL.val('').attr('class', 'fileimport');
 				},
 
-				importing = function () {
-					var ui = file.find('div.progress'),
-						progressbar = ui.find('div.bar'),
-						scale = ui.outerWidth(),
-						dataframe = $('#import-file-'+line).get(0).contentWindow,
-						p = dataframe['importProgress'],
-						f = dataframe['importFile'];
+				error = function (message) {
+					if ( ! message ) message = FILE_UNKNOWN_IMPORT_ERROR;
+					file.attr('class', 'error').html('<small>' + message + '</small>');
+				},
 
-					if (f !== undefined) {
-						if (f.error) return file.attr('class','error').html('<small>'+f.error+'</small>');
-						if (!f.path) return file.attr('class','error').html('<small>'+FILE_UNKNOWN_IMPORT_ERROR+'</small>');
+				process = function () {
+					var progress = dataFrame.importProgress,
+						filedata = dataFrame.importFile;
 
-						if (f.stored) {
-							return completed(f);
-						} else {
-							savepath = f.path.split('/');
-							importid = savepath[savepath.length-1];
-						}
+					if ( filedata === undefined )
+						return waitForUploadProgress();
+
+					// Handle errors
+					if ( ! filedata.path )
+						return error();
+					if ( filedata.error )
+						return error(filedata.error);
+
+					// Allow a passthrough on already imported, stored files
+					if ( filedata.stored )
+						return completed(filedata);
+
+					if ( progress === undefined )
+						progress = 0;
+
+					savepath = filedata.path.split('/');
+					importId = savepath[ savepath.length - 1 ];
+
+					// Initialize the UI with file data
+					if ( ! uiSetup ) {
+						uiIcon.addClass(filedata.mime.replace('/',' '));
+						uiFilename.text(filedata.name);
+						uiFilesize.text(readableFileSize(filedata.size));
+						uiProgressBar.css('opacity',1);
+						uiSetup = true;
 					}
 
-					if (!p) p = 0;
+					if ( progress === 0 && noProgressTimeout++ > 60)
+						return error();
 
-					// No status timeout failure
-					if (p === 0 && nostatus++ > 60) return file.attr('class','error').html('<small>'+FILE_UNKNOWN_IMPORT_ERROR+'</small>');
+					var uploadProgress = Math.floor(progress * 100);
 
-					progressbar.animate({'width': Math.ceil(p*scale) +'px'},100);
-					if (p == 1) { // Completed
-						if (progressbar) progressbar.css({'width':'100%'}).fadeOut(500,function () { completed(f); });
-						return;
-					}
-					setTimeout(importing,100);
+					uiUploadProgress[0].style.width = uploadProgress + "%";
+
+					if ( uploadProgress >= 100 )
+						uiProgressBar.fadeOut(500, function() {
+							completed(filedata);
+						});
+					else waitForUploadProgress();
+
+				},
+
+				waitForUploadProgress = function () {
+					setTimeout(process, 100);
 				};
 
-			setTimeout(importing,100);
-			file.attr('class','').html(
-				'<div class="progress"><div class="bar"></div><div class="gloss"></div></div>'+
-				'<iframe id="import-file-'+line+'" width="0" height="0" src="'+fileimport_url+'&action=shopp_import_file&url='+importfile+'"></iframe>'
-			);
-		});
+			$.template('filechooser-upload-template', $('#filechooser-upload-template'));
 
-	});
+			file.attr('class','').html($.tmpl('filechooser-upload-template').html()).append('<iframe id="import-file-'+line+'" width="0" height="0" src="'+fileimport_url+'&action=shopp_import_file&url='+importFile+'"></iframe>');
 
-	$(this).colorbox({'title':'File Selector','innerWidth':'360','innerHeight':'140','inline':true,'href':chooser});
+			var dataFrame = $('#import-file-'+line)[0].contentWindow,
+				uiIcon = file.find('.icon'),
+				uiFilename = file.find('.dz-filename'),
+				uiFilesize = file.find('.dz-size'),
+				uiProgressBar = file.find('.dz-progress'),
+				uiUploadProgress = file.find('.dz-upload');
+
+			waitForUploadProgress();
+
+		}); // uiAttachFile click handler
+
+	}); // file chooser click handler
+
+	$(this).colorbox({'title':'File Selector','innerWidth':'360','innerHeight':'140','inline':true,'href':uiChooser});
 };
 
+function FileUploader(container) {
+	var $ = jQuery,
+		_ = this;
 
-/**
- * File upload handlers for product download files using SWFupload
- **/
-function FileUploader (button,defaultButton) {
-	var $ = jQuery, _ = this;
+	this.priceline = false;
 
-	_.swfu = false;
-	_.settings = {
-		button_text: '<span class="button">'+UPLOAD_FILE_BUTTON_TEXT+'</span>',
-		button_text_style: '.button { text-align: center; font-family:"Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana,sans-serif; font-size: 9px; color: #333333; }',
-		button_text_top_padding: 3,
-		button_height: "22",
-		button_width: "100",
-		button_image_url: uidir+'/icons/buttons.png',
-		button_placeholder_id: button,
-		button_action: SWFUpload.BUTTON_ACTION.SELECT_FILE,
-		flash_url : uidir+'/behaviors/swfupload/swfupload.swf',
-		upload_url : ajaxurl,
-		file_queue_limit : 1,
-		file_size_limit : filesizeLimit+'b',
-		file_types : "*.*",
-		file_types_description : "All Files",
-		file_upload_limit : filesizeLimit,
-		post_params : {
-			action:'shopp_upload_file'
-		},
+	$.template('filechooser-upload-template', $('#filechooser-upload-template'));
 
-		swfupload_loaded_handler : swfuLoaded,
-		file_queue_error_handler : fileQueueError,
-		file_dialog_complete_handler : fileDialogComplete,
-		upload_start_handler : startUpload,
-		upload_progress_handler : uploadProgress,
-		upload_success_handler : uploadSuccess,
+	this.dropzone = new Dropzone(container, {
+		url: fileupload_url,
+		autoDiscover: false,
+		uploadMultiple: false,
+		autoQueue: true,
+		autoProcessQueue: true,
+		chunking: true,
+		forceChunking: true,
+		chunkSize: chunkSize,
+		maxFilesize: 4096,
+		parallelChunkUploads: false,
+		retryChunks: true,
+		parallelConnectionsLimit: uploadMaxConnections,
+		previewTemplate: $.tmpl('filechooser-upload-template').html(),
+		init: function () {
+			var self = this;
+			self.startTime = false;
+			self.samples = [];
+			self.samplesLimit = 5;
+			self.connections = 0;
 
-		custom_settings : {
-			loaded : false,
-			targetCell : false,
-			targetLine : false,
-			progressBar : false
-		},
-		prevent_swf_caching: $.ua.msie, // Prevents Flash caching issues in IE
-		debug: fileupload_debug
+			$('.filechooser-upload').on('mousedown', function () {
+				self.hiddenFileInput.click();
+				$(self.previewsContainer).empty();
+			});
 
-	};
+			self.on('addedfile', function (file) {
+				$.colorbox.hide();
+				self.processQueue();
+				$(self.previewsContainer).find('.icon.shoppui-file').addClass(file.type.replace('/',' '));
+			});
 
-	// Initialize file uploader
+			self.on('success', function (file) {
+				var response = JSON.parse(file.xhr.response);
+				if ( response.id )
+					$('<input>').attr({
+						type: 'hidden',
+						name: 'price[' + _.priceline + '][download]',
+						value: response.id
+					}).appendTo($(self.previewsContainer));
+			});
 
-	if (flashuploader)
-		_.swfu = new SWFUpload(_.settings);
+			self.options.params = function (files, xhr, chunk) {
+				if (chunk) {
+					return {
+						dzuuid: chunk.file.upload.uuid,
+						dzchunkindex: chunk.index,
+						dztotalfilesize: chunk.file.size,
+						dzchunksize: chunk.chunkSize,
+						dztotalchunkcount: chunk.file.upload.totalChunkCount,
+						dzchunkbyteoffset: chunk.end
+					};
+				}
+			};
 
-	// Browser-based AJAX uploads
-	defaultButton.upload({
-		name: 'Filedata',
-		action: ajaxurl,
-		params: { action:'shopp_upload_file' },
-		onSubmit: function() {
-			$.colorbox.hide();
-			_.targetCell.attr('class','').html('');
-			$('<div class="progress"><div class="bar"></div><div class="gloss"></div></div>').appendTo(_.targetCell);
-			_.progressBar = _.targetCell.find('div.bar');
-		},
-		onComplete: function(results) {
-			$.colorbox.close();
+			self.uploadFiles = function (files) {
+				var _this15 = this;
 
-			var filedata = false,targetHolder = _.targetCell;
-			try {
-				filedata = $.parseJSON(results);
-			} catch (ex) {
-				filedata.error = results;
-			}
+				this._transformFiles(files, function (transformedFiles) {
+					if (files[0].upload.chunked) {
+						// This file should be sent in chunks!
 
-			if (!filedata.id && !filedata.name) {
-				targetHolder.html(NO_DOWNLOAD);
-				if (filedata.error) alert(filedata.error);
-				else alert(UNKNOWN_UPLOAD_ERROR);
-				return false;
-			}
-			filedata.type = filedata.type.replace(/\//gi," ");
-			$(_.progressBar).animate({'width':'76px'},250,function () {
-				$(this).parent().fadeOut(500,function() {
-					targetHolder.attr('class', 'file').html(
-						'<div class="icon shoppui-file ' + filedata.type + '"></div>' +
-						filedata.name + '<br /><small>' + readableFileSize(filedata.size)+'</small>' +
-						'<input type="hidden" name="price[' + _.targetLine + '][download]" value="' + filedata.id + '" />'
-					);
-					$(this).remove();
+						// If the chunking option is set, we **know** that there can only be **one** file, since
+						// uploadMultiple is not allowed with this option.
+						var file = files[0];
+						var transformedFile = transformedFiles[0];
+						var startedChunkCount = 0;
+
+						file.upload.chunks = [];
+
+						var handleNextChunk = function handleNextChunk() {
+							var chunkIndex = 0;
+
+							// Find the next item in file.upload.chunks that is not defined yet.
+							while (file.upload.chunks[chunkIndex] !== undefined) {
+								chunkIndex++;
+							}
+
+							// This means, that all chunks have already been started.
+							if (chunkIndex >= file.upload.totalChunkCount) return;
+
+							startedChunkCount++;
+
+							var start = chunkIndex * _this15.options.chunkSize;
+							var end = Math.min(start + _this15.options.chunkSize, file.size);
+
+							/** Added for dynamic bandwidth **/
+							if ( self.startTime === false )
+								self.startTime = (new Date()).getTime();
+
+						    var nowTime = (new Date()).getTime();
+
+							if (self.samples.length <= self.samplesLimit && file.upload.bytesSent > 0) {
+								self.samples.push(file.upload.bytesSent / ( (nowTime - self.startTime) / 1000 ));
+							}
+
+							if ( self.samples.length == self.samplesLimit ) {
+								var sum = self.samples.reduce(function(a, b) { return a + b; });
+								var avgSpeed = sum / self.samples.length;
+
+								self.options.chunkSize = Math.min(Math.floor(avgSpeed), uploadLimit - 1024);
+								file.upload.totalChunkCount = Math.ceil((file.size - file.upload.bytesSent) / self.options.chunkSize) + self.samplesLimit;
+
+								// Determine if there is spare bandwidth for parallel chunk uploads and set limits
+								var parallelConnectionsLimit = Math.floor(avgSpeed / self.options.chunkSize);
+								if ( parallelConnectionsLimit > 1 ) {
+									self.options.parallelChunkUploads = true;
+									self.options.parallelConnectionsLimit = Math.min(parallelConnectionsLimit, self.options.parallelConnectionsLimit);
+								}
+
+							}
+
+							if ( chunkIndex > 0 ) {
+								start = file.upload.chunks[chunkIndex - 1].end;
+								end = Math.min(start + self.options.chunkSize, file.size);
+							}
+							/** End dynamic bandwidth handler **/
+
+							var dataBlock = {
+								name: _this15._getParamName(0),
+								data: transformedFile.webkitSlice ? transformedFile.webkitSlice(start, end) : transformedFile.slice(start, end),
+								filename: file.upload.filename,
+								chunkIndex: chunkIndex
+							};
+
+							file.upload.chunks[chunkIndex] = {
+								file: file,
+								index: chunkIndex,
+								dataBlock: dataBlock, // In case we want to retry.
+								status: Dropzone.UPLOADING,
+								progress: 0,
+								start: start, // Added for dynamic bandiwdth handling
+								end: end, // Added for dynamic bandiwdth handling
+								chunkSize: self.options.chunkSize, // Added for dynamic bandiwdth handling
+								retries: 0 // The number of times this block has been retried.
+							};
+
+							_this15._uploadData(files, [dataBlock]);
+						};
+
+						var parallelChunkUpload = function() {
+							if ( self.connections > 0 )
+								self.connections--; // Finished an upload
+
+							for ( ; self.connections < self.options.parallelConnectionsLimit; self.connections++ )
+								handleNextChunk();
+						};
+
+						file.upload.finishedChunkUpload = function (chunk) {
+							var allFinished = true;
+							chunk.status = Dropzone.SUCCESS;
+
+							// Clear the data from the chunk
+							chunk.dataBlock = null;
+
+							for (var i = 0; i < file.upload.totalChunkCount; i++) {
+								if (file.upload.chunks[i] === undefined) {
+									// Handle parallel chunk upload connections
+									if ( self.options.parallelChunkUploads ) {
+										return parallelChunkUpload();
+									} else {
+										return handleNextChunk();
+									}
+								}
+								if (file.upload.chunks[i].status !== Dropzone.SUCCESS) {
+									allFinished = false;
+								}
+							}
+
+							if (allFinished) {
+								_this15.options.chunksUploaded(file, function () {
+									_this15._finished(files, '', null);
+								});
+							}
+						};
+
+						if (_this15.options.parallelChunkUploads) {
+							for (var i = 0; i < file.upload.totalChunkCount; i++) {
+								handleNextChunk();
+							}
+						} else {
+							handleNextChunk();
+						}
+					} else {
+						var dataBlocks = [];
+						for (var _i22 = 0; _i22 < files.length; _i22++) {
+							dataBlocks[_i22] = {
+								name: _this15._getParamName(_i22),
+								data: transformedFiles[_i22],
+								filename: files[_i22].upload.filename
+							};
+						}
+						_this15._uploadData(files, dataBlocks);
+					}
 				});
-			});
-		}
-	});
+			}
 
-	$(_).load(function () {
-		if (!_.swfu || !_.swfu.loaded) $(defaultButton).parent().parent().find('.swfupload').remove();
-	});
+		} //init
+	}); // this.dropzone
 
-	function swfuLoaded () {
-		$(defaultButton).hide();
-		this.loaded = true;
-	}
+} // FileUploader
 
-	_.updateLine = function (line,status) {
-		if (!_.swfu) {
-			_.targetLine = line;
-			_.targetCell = status;
-		} else {
-			_.swfu.targetLine = line;
-			_.swfu.targetCell = status;
-		}
-	};
-
-	function fileQueueError (file, error, message) {
-		if (error == SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED) {
-			alert("You selected too many files to upload at one time. " + (message === 0 ? "You have reached the upload limit." : "You may upload " + (message > 1 ? "up to " + message + " files." : "only one file.")));
-			return;
-		} else {
-			alert(message);
-		}
-
-	}
-
-	function fileDialogComplete (selected, queued) {
-		$.colorbox.hide();
-		if (!selected) return;
-		try { this.startUpload(); }
-		catch (ex) { this.debug(ex); }
-
-	}
-
-	function startUpload (file) {
-		this.targetCell.attr('class','').html('');
-		$('<div class="progress"><div class="bar"></div><div class="gloss"></div></div>').appendTo(this.targetCell);
-		this.progressBar = this.targetCell.find('div.bar');
-	}
-
-	function uploadProgress (file, loaded, total) {
-		this.progressBar.animate({'width':Math.ceil((loaded/total)*76)+'px'},100);
-	}
-
-	function uploadSuccess (file, results) {
-		var filedata = false,targetCell = this.targetCell,i = this.targetLine;
-
-		$.colorbox.close();
-		try { filedata = $.parseJSON(results); }
-		catch (ex) { filedata.error = results; }
-		if (!filedata.id && !filedata.name) {
-			targetCell.html(NO_DOWNLOAD);
-			if (filedata.error) alert(filedata.error);
-			else alert(UNKNOWN_UPLOAD_ERROR);
-			return false;
-		}
-
-		filedata.type = filedata.type.replace(/\//gi," ");
-		$(this.progressBar).animate({'width':'76px'},250,function () {
-			$(this).parent().fadeOut(500,function() {
-				$(this).remove();
-				$(targetCell).attr('class', 'file').html(
-					'<div class="icon shoppui-file ' + filedata.type + '"></div>' +
-					filedata.name + '<br /><small>' + readableFileSize(filedata.size)+'</small>' +
-					'<input type="hidden" name="price[' + i + '][download]" value="' + filedata.id + '" />'
-				);
-			});
-		});
-	}
-
-}
-
-function SlugEditor (id,type) {
+function SlugEditor(id,type) {
 	var $ = jQuery, _ = this,
 		editbs = $('#edit-slug-buttons'),
  		edit = editbs.find('.edit'),
