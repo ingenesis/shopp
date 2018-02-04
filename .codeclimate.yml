@@ -20,6 +20,8 @@ engines:
     checks:
         Controversial/CamelCaseMethodName:
                 enabled: false
+        Controversial/CamelCaseVariableName:
+                enabled: false
         CleanCode/StaticAccess:
                 enabled: false
         Naming/ShortVariable:
@@ -34,3 +36,6 @@ ratings:
 exclude_paths:
 - "core/library/SOAP.php"
 - "tests/"
+- "core/ui/behaviors/colorbox.js"
+- "core/ui/behaviors/dropzone.js"
+- "core/library/AdminTable.php"
