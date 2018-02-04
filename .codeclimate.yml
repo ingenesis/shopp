@@ -10,9 +10,9 @@ engines:
       - php
   eslint:
     enabled: true
-	checks:
-	  no-alert:
-	    enabled: false
+    checks:
+      no-alert:
+        enabled: false
   fixme:
     enabled: true
   phpmd:
