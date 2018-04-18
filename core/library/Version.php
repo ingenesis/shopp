@@ -18,7 +18,7 @@ class ShoppVersion {
 	const MAJOR = 1;
 
 	/** @type int MINOR The minor version number */
-	const MINOR = 4;
+	const MINOR = 5;
 
 	/** @type int PATCH The maintenance patch version number */
 	const PATCH = 0;
