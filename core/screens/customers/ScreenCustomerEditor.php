@@ -46,54 +46,6 @@ class ShoppScreenCustomerEditor extends ShoppScreenController {
 		add_action('shopp_admin_customers_ops', array($this, 'shipaddress') );
 		add_action('shopp_admin_customers_ops', array($this, 'info') );
 
-		return;
-
-		// $valid_email = filter_var( $_POST['email'], FILTER_VALIDATE_EMAIL );
-		// $password = !empty( $_POST['new_password'] );
-		//
-		// if ($wp_integration && $new_customer && $valid_email && $password) {
-		// 	$Customer->loginname = $_POST['userlogin'];
-		// 	$Customer->email = $_POST['email'];
-		// 	$Customer->firstname = $_POST['firstname'];
-		// 	$Customer->lastname = $_POST['lastname'];
-		//
-		// 	$return = $Customer->create_wpuser();
-		//
-		// 	if ( $return ) {
-		// 		$updated = sprintf( __( 'The Shopp and WordPress accounts have been created with the username &quot;%s&quot;.', 'Shopp'), '<strong>'.sanitize_user($_POST['userlogin']).'</strong>');
-		// 	} else {
-		// 		$updated = sprintf( __( 'Could not create a WordPress account for customer &quot;%s&quot;.','Shopp'), '<strong>'.sanitize_user($_POST['userlogin']).'</strong>');
-		// 	}
-		// }
-		// elseif ($new_customer && ( !$valid_email || !$password ) ) {
-		// 	$updated = __( 'Could not create new user. You must enter a valid email address and a password first.', 'Shopp' );
-		// 	$no_save = true;
-		// }
-		//
-		// if ( !isset( $new_save ) ) {
-		// 	$Customer->info = false; // No longer used from DB
-		// 	$Customer->save();
-		// }
-		//
-		//
-		// if (isset($_POST['info']) && !empty($_POST['info'])) {
-		// 	foreach ((array)$_POST['info'] as $id => $info) {
-		// 		$Meta = new ShoppMetaObject($id);
-		// 		$Meta->value = $info;
-		// 		$Meta->save();
-		// 	}
-		// }
-		//
-		// if (isset($Customer->id)) $Billing->customer = $Customer->id;
-		// $Billing->updates($_POST['billing']);
-		// $Billing->save();
-		//
-		// if (isset($Customer->id)) $Shipping->customer = $Customer->id;
-		// $Shipping->updates($_POST['shipping']);
-		// $Shipping->save();
-		// if ( ! $updated ) __('Customer updated.','Shopp');
-		// $Customer = false;
-
 	}
 
 	public function userlogin ( ShoppCustomer $Customer ) {

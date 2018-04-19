@@ -26,7 +26,7 @@
 				</select>
 				<div id="dates">
 					<div id="start-position" class="calendar-wrap"><input type="text" id="start" name="start" value="<?php echo $startdate; ?>" size="10" class="search-input selectall" /></div>
-					<small><?php _e('to','Shopp'); ?></small>
+					&hellip;
 					<div id="end-position" class="calendar-wrap"><input type="text" id="end" name="end" value="<?php echo $enddate; ?>" size="10" class="search-input selectall" /></div>
 				</div>
 				<button type="submit" id="filter-button" name="filter" value="customers" class="button-secondary"><?php _e('Filter','Shopp'); ?></button>
@@ -87,7 +87,7 @@
 		<div class="alignleft actions">
 			<form action="<?php echo esc_url(add_query_arg(array_merge($_GET,array('src'=>'export_customers')),admin_url("admin.php"))); ?>" id="log" method="post">
 			<button type="button" id="export-settings-button" name="export-settings" class="button-secondary"><?php _e('Export Options','Shopp'); ?></button>
-			<div id="export-settings" class="hidden">
+			<div id="export-settings" class="export-settings hidden">
 			<div id="export-columns" class="multiple-select">
 				<ul>
 					<li<?php $even = true; if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="checkbox" name="selectall_columns" id="selectall_columns" /><label for="selectall_columns"><strong><?php _e('Select All','Shopp'); ?></strong></label></li>

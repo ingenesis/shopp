@@ -1449,7 +1449,7 @@ div.comment-item:hover .row-actions {
 }
 
 /** Priceline file chooser **/
-#filechooser { 
+#filechooser {
 	font-size: 11px;
 	position: absolute;
 	left: -9999em;
@@ -1466,7 +1466,7 @@ div.comment-item:hover .row-actions {
 	left: auto;
 }
 
-#cboxContent #filechooser label { 
+#cboxContent #filechooser label {
 	margin: 0;
 	padding: 6px 0;
 	text-align: left;
@@ -1712,7 +1712,7 @@ div.comment-item:hover .row-actions {
 
 .shopp .multiple-select label {
     display: inline-block;
-    width: 100%;
+	 width: calc(100% - 28px);
 }
 
 .shopp .multipane ul li {
@@ -3078,6 +3078,12 @@ tfoot#order-totals td {
 .shopp .tablenav .actions .filtering select {
 	float: none;
 	display: inline-block;
+}
+
+.shopp .tablenav .export-settings select {
+	max-width: 250px;
+	width: 100%;
+	margin-bottom: 3px;
 }
 
 .shopp .postbox .customer-chooser {

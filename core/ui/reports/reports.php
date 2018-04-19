@@ -45,7 +45,7 @@
 			$selected = (array)$settings['columns'];
 			?>
 			<button type="button" id="export-settings-button" name="export-settings" class="button-secondary"><?php _e('Export Options','Shopp'); ?></button>
-			<div id="export-settings" class="hidden">
+			<div id="export-settings" class="export-settings hidden">
 			<div id="export-columns" class="multiple-select">
 				<ul>
 					<li<?php $even = true; if ($even) echo ' class="odd"'; $even = !$even; ?>><input type="checkbox" name="selectall_columns" id="selectall_columns" /><label for="selectall_columns"><strong><?php _e('Select All','Shopp'); ?></strong></label></li>
