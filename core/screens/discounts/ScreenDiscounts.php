@@ -109,10 +109,6 @@ class ShoppScreenDiscounts extends ShoppScreenController {
 		$args = array_merge($defaults, $this->request());
 		extract($args, EXTR_SKIP);
 
-		// $url = add_query_arg(array_merge($this->request(), array('page'=>$this->page)), admin_url('admin.php'));
-		// $f = array('action','selected','s');
-		// $url = remove_query_arg($f, $url);
-
 		// Get user defined pagination preferences
 		$per_page_option = get_current_screen()->get_option( 'per_page' );
 		$per_page = self::DEFAULT_PER_PAGE;

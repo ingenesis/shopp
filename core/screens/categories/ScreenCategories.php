@@ -14,6 +14,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class ShoppScreenCategories extends ShoppScreenController {
 
+	const DEFAULT_PER_PAGE = 20;
+
 	/**
 	 * Parses admin requests to determine which interface to display
 	 *
@@ -29,6 +31,33 @@ class ShoppScreenCategories extends ShoppScreenController {
 
 	}
 
+	public function actions () {
+		return array(
+			'delete'
+		);
+	}
+
+	public function delete () {
+		$request = $this->request('action');
+		if ( 'delete' !== $request) return;
+
+		$selected = (array)$this->request('selected');
+		if ( empty($selected) ) return;
+
+		$total = 0;
+		foreach ( $selected as $id ) {
+			$Category = new ProductCategory($id);
+			$deleted = $Category->name;
+			if ( $Category->delete() )
+				$total++;
+		}
+
+		if ( $total > 0 )
+			$this->notice( 1 == $total ? Shopp::__('Deleted %s category.', "<strong>&quot;$deleted&quot;</strong>") :
+										 Shopp::__('Deleted %s categories.', "<strong>$total</strong>") );
+
+	}
+
 	/**
 	 * Interface processor for the category list manager
 	 *
@@ -41,18 +70,21 @@ class ShoppScreenCategories extends ShoppScreenController {
 		if ( ! current_user_can('shopp_categories') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
-		$per_page_option = get_current_screen()->get_option( 'per_page' );
-
 		$defaults = array(
 			'paged' => 1,
 			'per_page' => 20,
 			's' => '',
 			'a' => ''
 		);
-		$args = array_merge($defaults, $_GET);
-		if ( false !== ( $user_per_page = get_user_option($per_page_option['option']) ) )
-			$args['per_page'] = $user_per_page;
+		$args = array_merge($defaults, $this->request());
 		extract($args, EXTR_SKIP);
+
+		// Get user defined pagination preferences
+		$per_page_option = get_current_screen()->get_option( 'per_page' );
+		$per_page = self::DEFAULT_PER_PAGE;
+
+		if ( false !== ( $user_per_page = get_user_option($per_page_option['option']) ) )
+			$per_page = $user_per_page;
 
 		if ('arrange' == $a)  {
 			$this->init_positions();
@@ -60,10 +92,8 @@ class ShoppScreenCategories extends ShoppScreenController {
 		}
 
 		$paged = absint( $paged );
-		$start = ($per_page * ($paged-1));
+		$start = $per_page * ( $paged - 1 );
 		$end = $start + $per_page;
-
-		$url = add_query_arg(array_merge($_GET, array('page' => ShoppAdmin::pagename('categories'))), admin_url('admin.php'));
 
 		$taxonomy = 'shopp_category';
 
@@ -131,15 +161,20 @@ class ShoppScreenCategories extends ShoppScreenController {
 	 * @return void
 	 **/
 	public function layout () {
-		$columns = array(
+		ShoppUI::register_column_headers($this->id, apply_filters('shopp_manage_category_columns', array(
 			'cb'        => '<input type="checkbox" />',
 			'name'      => Shopp::__('Name'),
 			'slug'      => Shopp::__('Slug'),
 			'products'  => Shopp::__('Products'),
 			'templates' => Shopp::__('Templates'),
 			'menus'     => Shopp::__('Menus')
-		);
-		ShoppUI::register_column_headers($this->id, apply_filters('shopp_manage_category_columns', $columns));
+		)));
+
+		add_screen_option( 'per_page', array(
+			'default' => self::DEFAULT_PER_PAGE,
+			'option' => 'shopp_' . $this->slug() . '_per_page'
+		));
+
 	}
 
 	/**
@@ -151,9 +186,9 @@ class ShoppScreenCategories extends ShoppScreenController {
 	 **/
 	public function arrange_cols () {
 		register_column_headers('shopp_page_shopp-categories', array(
-			'cat' => Shopp::__('Category'),
-			'move' => '<div class="move">&nbsp;</div>')
-		);
+			'cat'  => Shopp::__('Category'),
+			'move' => '<div class="move">&nbsp;</div>'
+		));
 	}
 
 	/**

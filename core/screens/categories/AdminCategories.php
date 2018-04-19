@@ -24,7 +24,6 @@ class ShoppAdminCategories extends ShoppAdminPostController {
 
 	protected function route () {
 
-		$this->ops();
 		$this->workflow();
 
 		if ( 'products' == $this->request('a') && $this->request('id') )
@@ -32,49 +31,6 @@ class ShoppAdminCategories extends ShoppAdminPostController {
 		elseif ( $this->request('id') )
 			return 'ShoppScreenCategoryEditor';
 		else return 'ShoppScreenCategories';
-	}
-
-	/**
-	 * Handles other category operations
-	 *
-	 * Currently only handles delete action.
-	 *
-	 * @since 1.4
-	 *
-	 * @return void
-	 **/
-    public function ops () {
-		$defaults = array(
-			'action' => false,
-			'selected' => array(),
-			'page' => false,
-			'id' => false,
-			'save' => false,
-			'next' => false,
-			'_wpnonce' => false
-		);
-		$args = array_merge($defaults, $_REQUEST);
-		extract($args, EXTR_SKIP);
-
-		add_screen_option( 'per_page', array( 'label' => __('Categories Per Page','Shopp'), 'default' => 20, 'option' => 'edit_' . ProductCategory::$taxon . '_per_page' ) );
-
-		if ( 'delete' == $action && wp_verify_nonce($_wpnonce, 'shopp_categories_manager') ) {
-			if ( ! empty($id) ) $selected = array($id);
-			$total = count($selected);
-			foreach ( $selected as $selection ) {
-				$DeletedCategory = new ProductCategory($selection);
-				$deleted = $DeletedCategory->name;
-				$DeletedCategory->delete();
-			}
-			// TODO Fix $this->notice() calls which can't happen from here (notice() is a ScreenController method, not Admin router method)
-			// $this->notice( 1 == $total ? Shopp::__('Deleted %s category.', "<strong>$deleted</strong>") :
-			// 							 Shopp::__('Deleted %s categories.', "<strong>$total</strong>") );
-
-			$reset = array('selected' => null, 'action' => null, 'next' => null, 'id' => null, '_wpnonce' => null, );
-			$redirect = add_query_arg(array_merge($_GET, $reset), admin_url('admin.php'));
-			Shopp::redirect( $redirect );
-			exit;
-		}
 	}
 
 	/**

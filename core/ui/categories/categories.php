@@ -4,8 +4,10 @@
 
 	<?php do_action('shopp_admin_notices'); ?>
 
-	<form action="<?php echo esc_url($url); ?>" id="categories" method="get">
+	<form action="<?php echo esc_url($this->url()); ?>" id="categories" method="get">
 	<?php include('navigation.php'); ?>
+
+		<input type="hidden" name="page" value="<?php echo esc_attr($this->pagename); ?>">
 
 	<p id="post-search" class="search-box">
 		<input type="text" id="categories-search-input" class="search-input" name="s" value="<?php echo esc_attr(stripslashes($s)); ?>" />
@@ -19,7 +21,7 @@
 	<div class="tablenav top">
 		<div class="alignleft actions">
 		<select name="action" id="actions">
-			<option value="" selected="selected"><?php _e('Bulk Actions&hellip;','Shopp'); ?></option>
+			<option value="" selected disabled><?php Shopp::_e('Bulk Actions&hellip;'); ?></option>
 			<?php echo Shopp::menuoptions(array('delete' => Shopp::__('Delete')), false, true); ?>
 		</select>
 		<input type="submit" value="<?php esc_attr_e('Apply','Shopp'); ?>" id="apply" class="button action" />
@@ -58,9 +60,8 @@
 				break;
 
 				case 'name':
-					$adminurl = add_query_arg(array_merge($_GET, array('page' => ShoppAdmin::pagename('categories'))), admin_url('admin.php'));
-					$editurl = wp_nonce_url(add_query_arg('id', $Category->id, $adminurl), 'shopp_categories_manager');
-					$deleteurl = wp_nonce_url(add_query_arg('action', 'delete', $editurl), 'shopp_categories_manager');
+					$editurl = $this->nonce('url', $this->url(array('id' => $Category->id)));
+					$deleteurl = $this->nonce('url', $this->url(array('selected' => $Category->id, 'action' => 'delete')));
 
 					$CategoryName = empty($Category->name) ? '('.Shopp::__('no category name').')' : $Category->name;
 
