@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, June 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Screens\Products
- * @since     1.4
+ * @since     1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -23,7 +23,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 	/**
 	 * Registers actions for the catalog products screen
 	 *
-	 * @version 1.4
+	 * @version 1.5
 	 *
 	 * @return array The list of actions to handle
 	 **/
@@ -38,9 +38,9 @@ class ShoppScreenProducts extends ShoppScreenController {
 	/**
 	 * Handle bulk actions
 	 *
-	 * Publish, Unpublish,Move to Trash, Feature and De-feature
+	 * Publish, Unpublish, Move to Trash, Feature and De-feature
 	 *
-	 * @version 1.4
+	 * @version 1.5
 	 * @return void
 	 **/
 	public function bulkaction() {
@@ -72,7 +72,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 	/**
 	 * Duplicates a requested product
 	 *
-	 * @version 1.4
+	 * @version 1.5
 	 * @return void
 	 **/
 	public function duplicate () {
@@ -86,24 +86,24 @@ class ShoppScreenProducts extends ShoppScreenController {
 
 		Shopp::redirect( $this->url(array('duplicate' => null)) );
 	}
-	
+
 	/**
 	 * Handles emptying products in the trash view
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function emptytrash () {
 		if ( ! $this->request('delete_all') ) return;
-		
+
 		$Template = new ShoppProduct();
 		$trash = sDB::query("SELECT ID FROM $Template->_table WHERE post_status='trash' AND post_type='" . ShoppProduct::$posttype . "'", 'array', 'col', 'ID');
 		foreach ( $trash as $id ) {
 			$Product = new ShoppProduct($id);
 			$Product->delete();
 		}
-		
-		Shopp::redirect( $this->url(array('delete_all' => null)) );		
+
+		Shopp::redirect( $this->url(array('delete_all' => null)) );
 	}
 
 	/**
@@ -228,8 +228,8 @@ class ShoppScreenProducts extends ShoppScreenController {
 
 	/**
 	 * Loads products for this screen view
-	 * 
-	 * @since 1.4
+	 *
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function loader () {
@@ -275,7 +275,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 	 * Interface processor for the product list manager
 	 *
 	 * @since 1.0
-	 * @version 1.4
+	 * @version 1.5
 	 *
 	 * @param boolean $workflow True to get workflow data
 	 * @return void
@@ -400,11 +400,11 @@ class ShoppScreenProducts extends ShoppScreenController {
 		));
 
 		// Remove inventory column if inventory tracking is disabled
-		if ( ! shopp_setting_enabled('inventory') ) 
+		if ( ! shopp_setting_enabled('inventory') )
 			unset($columns['inventory']);
 
 		// Remove category column from the "trash" view
-		if ( 'trash' == $this->view ) 
+		if ( 'trash' == $this->view )
 			unset($columns['category']);
 
 		ShoppUI::register_column_headers('toplevel_page_shopp-products', apply_filters('shopp_manage_product_columns', $columns));
