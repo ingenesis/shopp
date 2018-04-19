@@ -1,4 +1,7 @@
 # Travis CI Configuration File
+env:
+  global:
+    - CC_TEST_REPORTER_ID=4de3a3f7b31a76bf00174698b0b6077d1afaf16421bfd5d367236bc2c08f3590
 
 # Use container infrastructure
 sudo: false
@@ -34,6 +37,10 @@ matrix:
 
 # Clones WordPress and configures our testing environment.
 before_script:
+	- # Code Climate Test Coverage
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - ./cc-test-reporter before-build
     - # Environment variables
     - export WP_VERSION=master
     - export WP_DEVELOP_DIR=/tmp/wordpress/
@@ -56,3 +63,6 @@ before_script:
     - cp phpunit-sample.xml phpunit.xml
 
 script: phpunit
+
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
