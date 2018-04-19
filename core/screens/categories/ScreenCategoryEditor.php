@@ -33,8 +33,8 @@ class ShoppScreenCategoryEditor extends ShoppScreenController {
 		shopp_enqueue_script('category-editor');
 		shopp_enqueue_script('priceline');
 		shopp_enqueue_script('ocupload');
-		shopp_enqueue_script('swfupload');
-		shopp_enqueue_script('shopp-swfupload-queue');
+		shopp_enqueue_script('dropzone');
+		shopp_enqueue_script('jquery-tmpl');
 
 		do_action('shopp_category_editor_scripts');
 	}

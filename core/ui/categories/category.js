@@ -6,7 +6,6 @@ var Pricelines = new Pricelines(),
 	optionsidx = 1,
 	pricingidx = 1,
 	pricelevelsidx = 1,
-	fileUploader = false,
 	changes = false,
 	saving = false,
 	template = true;
