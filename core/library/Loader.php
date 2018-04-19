@@ -436,6 +436,7 @@ ShoppLoader::map(array(
 	'shoppadminmenusmetabox' => '/library/UI.php',
 	'shopppagesmenusbox' => '/library/UI.php',
 
+	'shoppadminlookup' => '/library/AdminLookup.php',
 	'shoppadmincontroller' => '/flow/Admin.php',
 	'shoppadmindashboard' => '/flow/Dashboard.php',
 	'shoppadminlisttable' => '/flow/Admin.php',
@@ -531,11 +532,11 @@ ShoppLoader::map(array(
 
     /* Screen Controllers */
 	'shoppscreencontroller' => '/library/Screen.php',
-    
+
     /* Settings Screens */
 	'shoppadminsettings' => '/screens/settings/AdminSettings.php',
 	'shoppsettingsscreencontroller' => '/screens/settings/SettingsScreenController.php',
-    
+
 	'shoppscreenadvanced' => '/screens/settings/ScreenAdvanced.php',
 	'shoppscreendownloads' => '/screens/settings/ScreenDownloads.php',
 	'shoppscreenimages' => '/screens/settings/ScreenImages.php',
@@ -573,7 +574,7 @@ ShoppLoader::map(array(
 	'shoppadminordernotesbox' => '/screens/orders/metabox/AdminOrderNotesBox.php',
 	'shoppadminordershippingaddressbox' => '/screens/orders/metabox/AdminOrderShippingAddressBox.php',
 
-    /* Customer Admin Screens */    
+    /* Customer Admin Screens */
 	'shoppadmincustomers' => '/screens/customers/AdminCustomers.php',
 	'shoppscreencustomers' => '/screens/customers/ScreenCustomers.php',
 	'shoppscreencustomereditor' => '/screens/customers/ScreenCustomerEditor.php',
@@ -586,7 +587,7 @@ ShoppLoader::map(array(
 	'shoppadmincustomersavebox' => '/screens/customers/metabox/AdminCustomerSaveBox.php',
 	'shoppadmincustomersettingsbox' => '/screens/customers/metabox/AdminCustomerSettingsBox.php',
 	'shoppadmincustomershippingaddressbox' => '/screens/customers/metabox/AdminCustomerShippingAddressBox.php',
-    
+
     /* Reports Admin Screens */
 	'shoppadminreports' => '/screens/reports/AdminReports.php',
 	'shoppscreenreports' => '/screens/reports/ScreenReports.php',
@@ -618,23 +619,23 @@ ShoppLoader::map(array(
 	'shoppscreencategories' => '/screens/categories/ScreenCategories.php',
 	'shoppscreencategoryeditor' => '/screens/categories/ScreenCategoryEditor.php',
 	'shoppscreencategoryarrangeproducts' => '/screens/categories/ScreenCategoryArrangeProducts.php',
-	
+
     /* Category Admin Editor Metaboxes */
 	'shoppadmincategoryimagesbox' => '/screens/categories/metabox/AdminCategoryImagesBox.php',
 	'shoppadmincategorysavebox' => '/screens/categories/metabox/AdminCategorySaveBox.php',
 	'shoppadmincategorysettingsbox' => '/screens/categories/metabox/AdminCategorySettingsBox.php',
 	'shoppadmincategorytemplatesbox' => '/screens/categories/metabox/AdminCategoryTemplatesBox.php',
-	
+
 	/* Discounts Admin Screens */
 	'shoppadmindiscounts' => '/screens/discounts/AdminDiscounts.php',
 	'shoppscreendiscounts' => '/screens/discounts/ScreenDiscounts.php',
 	'shoppscreendiscounteditor' => '/screens/discounts/ScreenDiscountEditor.php',
-	
+
 	/* Discount Admin Editor Metaboxes  */
 	'shoppadmindiscountbox' => '/screens/discounts/metabox/AdminDiscountBox.php',
 	'shoppadmindiscountrulesbox' => '/screens/discounts/metabox/AdminDiscountRulesBox.php',
 	'shoppadmindiscountsavebox' => '/screens/discounts/metabox/AdminDiscountSaveBox.php',
-	
+
 	'shoppscripts' => '/flow/Scripts.php',
 	'shoppsearchwidget' => '/ui/widgets/search.php',
 	'shoppservices' => '/library/ShoppServices.php',
