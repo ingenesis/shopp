@@ -64,6 +64,12 @@ class ShoppAdmin extends ShoppFlowController {
 		add_filter('wp_dropdown_pages', array($this, 'storepages'));
 		add_filter('pre_update_option_page_on_front', array($this, 'frontpage'));
 
+		// Enable custom screen options for Shopp admin screens
+		add_filter('set-screen-option', create_function('$flag, $option, $value',
+			'if ( false !== strpos($option, "shopp_") )
+				return $value;
+			return $flag;'
+		), 10, 3);
 	}
 
 	/**
@@ -298,6 +304,7 @@ abstract class ShoppAdminController extends ShoppFlowController {
 		add_action('load-' . $screen, array($this, 'help'));
 		add_action('load-' . $screen, array($this, 'layout'));
 		add_action('load-' . $screen, array($this, 'maintenance'));
+
 
 	}
 
@@ -600,7 +607,7 @@ class ShoppCustomThemeMenus {
 		new ShoppCollectionsMenusBox('nav-menus', 'side', 'low');
 
 		$this->enable();
-		
+
 	}
 
 	/**
@@ -655,7 +662,7 @@ class ShoppCustomThemeMenus {
 
 		return $menuitem;
 	}
-	
+
 	/**
 	 * Updates user preferences to automatically show all Shopp menus by default
 	 *
@@ -667,16 +674,16 @@ class ShoppCustomThemeMenus {
 
 		if ( get_user_option( 'metaboxhidden_nav-menus-shopp-enabled' ) !== false )
 			return; // Only do this once, otherwise skip it to allow user preference overrides
-		
+
 		$user = wp_get_current_user();
 		$hidden = get_user_option( 'metaboxhidden_nav-menus', $user->ID);
 		$updates = array_filter($options, function ($id) {
 			return false === strpos($id, 'shopp');
 		});
-		
+
 		if ( $hidden !== $updates)
 			update_user_option( $user->ID, 'metaboxhidden_nav-menus', $updates, true );
-		
+
 		update_user_option( $user->ID, 'metaboxhidden_nav-menus-shopp-enabled', true, true );
 	}
 
