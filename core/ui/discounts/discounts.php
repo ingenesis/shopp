@@ -6,6 +6,7 @@
 	<?php do_action('shopp_admin_notices'); ?>
 
 	<form action="<?php echo esc_url($url); ?>" id="discounts" method="get">
+		<input type="hidden" name="page" value="<?php echo $this->pagename; ?>">
 
 	<p id="post-search" class="search-box">
 		<input type="text" id="discounts-search-input" name="s" class="search-input" value="<?php echo esc_attr($s); ?>" />
@@ -15,10 +16,8 @@
 	<div class="tablenav">
 		<div class="alignleft actions">
 			<select name="action" id="actions">
-				<option value="" selected="selected"><?php Shopp::esc_html_e('Bulk Actions&hellip;'); ?></option>
-				<option value="enable"><?php Shopp::esc_html_e('Enable'); ?></option>
-				<option value="disable"><?php Shopp::esc_html_e('Disable'); ?></option>
-				<option value="delete"><?php Shopp::esc_html_e('Delete'); ?></option>
+				<option selected disabled><?php _e('Bulk Actions&hellip;','Shopp'); ?></option>
+				<?php echo Shopp::menuoptions($actions_menu, false, true); ?>
 			</select>
 			<input type="submit" value="<?php Shopp::esc_attr_e('Apply','Shopp'); ?>" name="apply" id="apply" class="button-secondary action" />
 		</div>

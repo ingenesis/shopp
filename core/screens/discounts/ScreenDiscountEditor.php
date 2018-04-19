@@ -16,12 +16,12 @@ class ShoppScreenDiscountEditor extends ShoppScreenController {
 
 	public function load () {
 		if ( $this->request('new') ) {
-			$Promotion = new ShoppPromo();
+			$Promo = new ShoppPromo();
 		} elseif ( $this->request('id') ) {
-			$Promotion = new ShoppPromo($_GET['id']);
-			do_action('shopp_discount_promo_loaded', $Promotion);
+			$Promo = new ShoppPromo($this->request('id'));
+			do_action('shopp_discount_promo_loaded', $Promo);
 		}
-		return $Promotion;
+		return $Promo;
 	}
 
 	public function assets () {
@@ -48,14 +48,62 @@ class ShoppScreenDiscountEditor extends ShoppScreenController {
 		if ( ! current_user_can('shopp_promotions') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
-		if ( 'new' !== $_GET['id'] ) {
-			$Promotion = new ShoppPromo($_GET['id']);
+		if ( ! $this->request('new') ) {
+			$Promotion = new ShoppPromo($this->request('id'));
 			do_action('shopp_discount_promo_loaded', $Promotion);
 		} else $Promotion = new ShoppPromo();
 
 		// $this->disabled_alert($Promotion);
 
 		include $this->ui('editor.php');
+	}
+
+	public function save ( ShoppPromo $Promo ) {
+
+		$uncatalog = ( 'Catalog' == $Promo->target );
+		$Promo->updates($this->form());
+
+		$fields = array('month' => '', 'date' => '', 'year' => '');
+
+		$starts = array_intersect_key((array)$this->form('starts'), $fields);
+		if ( '' !== join('', $starts) )
+			$Promo->starts = mktime(0, 0, 0, $starts['month'], $starts['date'], $starts['year']);
+
+		$ends = array_intersect_key((array)$this->form('ends'), $fields);
+		if ( '' !== join('', $ends) )
+			$Promo->ends = mktime(23, 59, 59, $ends['month'], $ends['date'], $ends['year']);
+
+		$rules = (array)$this->form('rules');
+		foreach($rules as &$rule) {
+
+			if ( 'promo code' == strtolower($rule['property']) )
+				$rule['value'] = trim($rule['value']);
+
+			if ( false !== stripos($rule['property'], 'country') && 'USA' == $rule['value'] )
+				$rule['value'] = 'US'; // country-based rules must use 2-character ISO code, see #3129
+
+		}
+		$Promo->discount = Shopp::floatval($Promo->discount);
+		$Promo->save();
+
+		do_action_ref_array('shopp_promo_saved', array(&$Promo));
+
+		// Apply catalog promotion discounts to catalog product price lines
+		if ( 'Catalog' == $Promo->target ) {
+			$Promo->catalog();
+		} elseif ( $uncatalog ) {
+			// Unapply catalog discounts for discounts that no longer target catalog products
+			$priceids = ShoppPromo::discounted_prices(array($Promo->id));
+			$Promo->uncatalog($priceids);
+		}
+
+		// Set confirmation notice
+		$this->notice(Shopp::__('Promotion has been updated!'));
+
+		// Stay in the editor
+		if ( $this->request('new') )
+			Shopp::redirect( $this->url(array('id' => $Promo->id, 'new' => null)) );
+
 	}
 
 	/**
