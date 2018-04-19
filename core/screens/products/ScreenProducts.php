@@ -44,7 +44,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 	 * @return void
 	 **/
 	public function bulkaction() {
-		$actions = array('publish', 'unpublish', 'trash', 'restore', 'feature', 'defeature');
+		$actions = array('publish', 'unpublish', 'trash', 'restore', 'feature', 'defeature', 'delete');
 
 		$request = $this->request('action');
 		$selected = (array)$this->request('selected');
@@ -65,6 +65,8 @@ class ShoppScreenProducts extends ShoppScreenController {
 			ShoppProduct::featureset($selected, 'on');
 		elseif ( 'defeature' == $request )
 			ShoppProduct::featureset($selected, 'off');
+		elseif ( 'delete' == $request)
+			array_walk($selected, 'shopp_rmv_product');
 
 		Shopp::redirect( $this->url(array('action' => null, 'selected' => null)) );
 	}
@@ -242,7 +244,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 		if ( $query = $this->request('s') )
 			$View->search($query);
 
-		if ( $category_id = $this->request('cat') );
+		if ( $category_id = $this->request('cat') )
 			$View->category($category_id);
 
 		// Detect custom taxonomies
@@ -337,7 +339,6 @@ class ShoppScreenProducts extends ShoppScreenController {
 		$per_page = $per_page_option['default'];
 		if ( false !== ( $user_per_page = get_user_option($per_page_option['option']) ) )
 			$per_page = $user_per_page;
-
 
 		// Setup UI
 		$views = $this->views;
