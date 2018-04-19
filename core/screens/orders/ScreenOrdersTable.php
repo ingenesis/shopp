@@ -27,19 +27,19 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
 	 * Load the order items for the table
 	 *
 	 * @since 1.4
-	 * 
+	 *
 	 * @return void
 	 **/
 	public function prepare_items() {
-		
+
 		$ItemsQuery = new ShoppScreenOrdersTableQuery();
 
 		if ( $this->request('start') || $this->request('end') )
 			$ItemsQuery->daterange($this->request('start'), $this->request('end'));
-		
+
 		if ( $this->request('status') )
 			$ItemsQuery->status($this->request('status'));
-		
+
 		if ( $this->request('s') )
 			$ItemsQuery->search($this->request('s'));
 
@@ -50,7 +50,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
 
 		$this->ordercount = $ItemsQuery->count();
 		$this->items = $ItemsQuery->items();
-		
+
 		$Gateways = Shopp::object()->Gateways;
 		$this->gateways = array_merge($Gateways->modules, array('ShoppFreeOrder' => $Gateways->freeorder));
 
@@ -68,9 +68,9 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
 		$date_format = str_replace('y', 'Y/', $date_format);
 		$date_format = preg_replace("/[^dmY0-9\/]/", '', $date_format);
 		$this->dates = trim($date_format, '/');
-		
+
 		$perpage = $ItemsQuery->perpage();
-		
+
 		$this->set_pagination_args( array(
 			'total_items' => $this->ordercount->total,
 			'total_pages' => $this->ordercount->total / $perpage,
@@ -111,7 +111,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
      * Render the bottom table navigation
      *
      * @since 1.4
-     * 
+     *
      * @return void
      **/
 	protected function bottom_tablenav() {
@@ -123,7 +123,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
 			. '	</form><form action="' . esc_url($exporturl) . '" id="log" method="post">'
 			. '		<button type="button" id="export-settings-button" name="export-settings" class="button-secondary">' . Shopp::__('Export Options') . '</button>'
 
-			. '	<div id="export-settings" class="hidden">'
+			. '	<div id="export-settings" class="export-settings hidden">'
 			. '		<div id="export-columns" class="multiple-select">'
 			. '			<ul>';
 
@@ -171,28 +171,13 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
      * Render the top table navigation
      *
      * @since 1.4
-     * 
+     *
      * @return void
      **/
 	protected function top_tablenav() {
 		$range = $this->request('range') ? $this->request('range') : 'all';
-		$ranges = array(
-			'all'		 => Shopp::__('Show All Orders'),
-			'today'	   => Shopp::__('Today'),
-			'week'		=> Shopp::__('This Week'),
-			'month'	   => Shopp::__('This Month'),
-			'quarter'	 => Shopp::__('This Quarter'),
-			'year'		=> Shopp::__('This Year'),
-			'yesterday'   => Shopp::__('Yesterday'),
-			'lastweek'	=> Shopp::__('Last Week'),
-			'last30'	  => Shopp::__('Last 30 Days'),
-			'last90'	  => Shopp::__('Last 3 Months'),
-			'lastmonth'   => Shopp::__('Last Month'),
-			'lastquarter' => Shopp::__('Last Quarter'),
-			'lastyear'	=> Shopp::__('Last Year'),
-			'lastexport'  => Shopp::__('Last Export'),
-			'custom'	  => Shopp::__('Custom Dates'),
-		);
+		$ranges = ShoppAdminLookup::daterange_options();
+		$ranges['all'] = Shopp::__('Show All Orders');
 
 		echo  '<div class="alignleft actions">'
 		  	. '<select name="range" id="range">'
@@ -218,7 +203,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
      * Specify the table columns
      *
      * @since 1.4
-     * 
+     *
      * @return void
      **/
 	public function get_columns() {
@@ -232,12 +217,12 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
 			'total'       => Shopp::__('Total')
 		);
 	}
-    
+
     /**
      * Render text when no orders are available
      *
      * @since 1.4
-     * 
+     *
      * @return void
      **/
 	public function no_items() {
@@ -247,11 +232,11 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
     /**
      * Render an empty column by default
      *
-     * This method is used to render the column by default when no 
+     * This method is used to render the column by default when no
      * specific renderer method matches the column name.
-     * 
+     *
      * @since 1.4
-     * 
+     *
      * @return string Empty string
      **/
 	public function column_default() {

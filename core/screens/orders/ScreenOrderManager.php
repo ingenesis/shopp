@@ -18,7 +18,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
      * Load the requested order
      *
      * @since 1.4
-     * 
+     *
      * @return void
      **/
 	public function load() {
@@ -51,13 +51,13 @@ class ShoppScreenOrderManager extends ShoppScreenController {
 			'co'	 => Shopp::__('Cancel Order'),
 			'mr'	 => Shopp::__('Mark Refunded'),
 			'pr'	 => Shopp::__('Process Refund'),
-			'dnc'	=> Shopp::__('Do Not Cancel'),
+			'dnc'	 => Shopp::__('Do Not Cancel'),
 			'ro'	 => Shopp::__('Refund Order'),
 			'cancel' => Shopp::__('Cancel'),
 			'rr'	 => Shopp::__('Reason for refund'),
 			'rc'	 => Shopp::__('Reason for cancellation'),
 			'mc'	 => Shopp::__('Mark Cancelled'),
-			'stg'	=> Shopp::__('Send to gateway')
+			'stg'	 => Shopp::__('Send to gateway')
 		));
 
 		shopp_enqueue_script('address');
@@ -70,7 +70,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
      * Specify operation handlers
      *
      * @since 1.4
-     * 
+     *
      * @return array List of operation handler method names
      **/
 	public function ops() {
@@ -85,7 +85,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
      * Handler for removing a line item from the order
      *
      * @since 1.4
-     * 
+     *
      * @return void
      **/
 	public function remove_item() {
@@ -133,7 +133,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
      * Handler for saving changes to a line item on the order
      *
      * @since 1.4
-     * 
+     *
      * @return void
      **/
 	public function save_item() {
@@ -218,7 +218,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
      * Handler for saving changes to order totals
      *
      * @since 1.4
-     * 
+     *
      * @return void
      **/
 	public function save_totals() {
@@ -245,7 +245,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
 		$Purchase->total = $Purchase->subtotal + $total;
 		$Purchase->save();
 	}
-	
+
     /**
      * Helper for tallying up multi-line tax, shipping, discounts and fees
      *
@@ -268,7 +268,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
 			'shipping' => 'shipfees',
 			'discount' => 'discounts'
 		);
-		
+
 		if ( isset($fields['labels']) ) {
 			$labels = $fields['labels'];
 			unset($fields['labels']);
@@ -294,10 +294,10 @@ class ShoppScreenOrderManager extends ShoppScreenController {
 	}
 
     /**
-     * Provide a list of shipping carriers 
+     * Provide a list of shipping carriers
      *
      * @since 1.4
-     * 
+     *
      * @return array A list of shipping carriers
      **/
 	public function shipcarriers() {
@@ -385,7 +385,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
 
 		$Purchase = ShoppPurchase();
 		$Purchase->Customer = new ShoppCustomer($Purchase->customer);
-        
+
 		$Purchase->taxes();
 		$Purchase->discounts();
 

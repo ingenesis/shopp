@@ -103,7 +103,6 @@ class ShoppScreenDiscounts extends ShoppScreenController {
 			'status' => false,
 			'type' => false,
 			'paged' => 1,
-			'per_page' => self::DEFAULT_PER_PAGE,
 			's' => '',
 		);
 
