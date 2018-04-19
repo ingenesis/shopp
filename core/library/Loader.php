@@ -443,8 +443,8 @@ ShoppLoader::map(array(
 	'shoppadminpage' => '/flow/AdminPages.php',
 	'shoppadminpages' => '/flow/AdminPages.php',
 	'shoppadminpostcontroller' => '/flow/Admin.php',
-	'shoppadminproductupdate' => '/screens/Products.php',
-	'shoppadminproductpriceupdate' => '/screens/Products.php',
+	'shoppadminproductupdate' => '/screens/products/AdminProductUpdate.php',
+	'shoppadminproductpriceupdate' => '/screens/products/AdminProductPriceUpdate.php',
 
 	'shoppadminsettings' => '/screens/Settings.php',
 	'shoppadmintable' => '/library/AdminTable.php',
