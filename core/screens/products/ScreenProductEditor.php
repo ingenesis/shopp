@@ -80,9 +80,6 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 		if ( ! empty($shiprates) )
 			ksort($shiprates);
 
-		$uploader = shopp_setting('uploader_pref');
-		if ( ! $uploader ) $uploader = 'flash';
-
 		//$_POST['action'] = add_query_arg(array_merge($_GET, array('page' => ShoppAdmin::pagename('products'))), admin_url('admin.php'));
 		$post_type = ShoppProduct::posttype();
 

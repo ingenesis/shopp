@@ -117,9 +117,6 @@ class ShoppScreenCategoryEditor extends ShoppScreenController {
 		$permalink = trailingslashit(Shopp::url()) . "category/";
 		$Category->slug = apply_filters('editable_slug', $Category->slug);
 
-		$uploader = shopp_setting('uploader_pref');
-		if (!$uploader) $uploader = 'flash';
-
 		do_action('add_meta_boxes', ProductCategory::$taxon, $Category);
 		do_action('add_meta_boxes_'.ProductCategory::$taxon, $Category);
 
