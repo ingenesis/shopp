@@ -30,7 +30,7 @@ class ShoppAdminSettings extends ShoppAdminPostController {
 			case 'downloads':    return 'ShoppScreenDownloads';
 			case 'images':       return 'ShoppScreenImages';
 			case 'log':          return 'ShoppScreenLog';
-			case 'orders':       return 'ShoppScreenOrders';
+			case 'orders':       return 'ShoppScreenOrdersManagement';
 			case 'pages':        return 'ShoppScreenPages';
 			case 'payments':     return 'ShoppScreenPayments';
 			case 'presentation': return 'ShoppScreenPresentation';

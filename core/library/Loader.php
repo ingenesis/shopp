@@ -542,7 +542,7 @@ ShoppLoader::map(array(
 	'shoppscreenimages' => '/screens/settings/ScreenImages.php',
 	'shoppscreenimagestable' => '/screens/settings/ScreenImagesTable.php',
 	'shoppscreenlog' => '/screens/settings/ScreenLog.php',
-	'shoppscreenorders' => '/screens/settings/ScreenOrders.php',
+	'shoppscreenordersmanagement' => '/screens/settings/ScreenOrdersManagement.php',
 	'shoppscreenpages' => '/screens/settings/ScreenPages.php',
 	'shoppscreenpagestable' => '/screens/settings/ScreenPagesTable.php',
 	'shoppscreenpayments' => '/screens/settings/ScreenPayments.php',
