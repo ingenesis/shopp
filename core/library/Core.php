@@ -1335,7 +1335,7 @@ abstract class ShoppCore {
 	 * @return string The markup of option elements
 	 **/
 	public static function menuoptions ( array $list, $selected = null, $values = false, $extend = false ) {
-		if ( ! is_array($list) ) 
+		if ( ! is_array($list) )
             return "";
 
 		$_ = array();
@@ -1346,11 +1346,11 @@ abstract class ShoppCore {
 		foreach ( $list as $value => $text ) {
 			$valueattr = $selectedattr = '';
 			if ( $values ) $valueattr = ' value="' . esc_attr($value) . '"';
-			
+
             if ( ( $values && (string)$value === (string)$selected )
 				|| ( ! $values && (string)$text === (string)$selected ) )
 					$selectedattr = ' selected="selected"';
-            
+
 			if ( is_array($text) ) {
 				$label = $value;
 				$_[] = '<optgroup label="' . esc_attr($label) . '">';
@@ -1358,10 +1358,10 @@ abstract class ShoppCore {
 				$_[] = '</optgroup>';
 				continue;
 			}
-            
+
 			$_[] = "<option$valueattr$selectedattr>$text</option>";
 		}
-        
+
 		return join('', $_);
 	}
 
@@ -2023,14 +2023,15 @@ abstract class ShoppCore {
 	 * @param boolean $exit (optional) Exit immediately after the redirect (defaults to true, set to false to override)
 	 * @return void
 	 **/
-	public static function redirect ($uri,$exit=true,$status=302) {
+	public static function redirect( $uri, $exit = true, $status = 302 ) {
 		shopp_debug("Redirecting to: $uri");
 
 		remove_action('shutdown', array(ShoppShopping(), 'save'));
 		ShoppShopping()->save();
 
 		wp_redirect($uri, $status);
-		if ($exit) exit();
+		if ( $exit )
+			exit();
 	}
 
 	/**
