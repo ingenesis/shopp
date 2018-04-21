@@ -1,8 +1,8 @@
 <?php
 /**
- * ScreenProductsView.php
+ * AdminProductsView.php
  *
- * Products screen view query generator for sub-views
+ * Products admin view query generator for sub-views
  *
  * @copyright Ingenesis Limited, June 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
@@ -17,7 +17,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  *
  * @since 1.4
  **/
-class ShoppScreenProductsView {
+class ShoppAdminProductsView {
 
 	public $views = array();
 
@@ -34,9 +34,9 @@ class ShoppScreenProductsView {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * Define available views for this screen and set the initial view
-	 * 
+	 *
 	 * @param string $view The initial view
 	 **/
 	public function __construct ( $view = 'all' ) {
@@ -105,7 +105,7 @@ class ShoppScreenProductsView {
 	 * Get or set the current view
 	 *
 	 * @since 1.4
-	 * 
+	 *
 	 * @param string $view The view slug to set
 	 * @return string The current view slug
 	 **/
@@ -124,12 +124,12 @@ class ShoppScreenProductsView {
 
 		return $this->view;
 	}
-	
+
 	/**
 	 * Set the current view page limit parameter
 	 *
 	 * @since 1.4
-	 * 
+	 *
 	 * @param int $page The page number to set
 	 * @return void
 	 **/

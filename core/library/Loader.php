@@ -601,7 +601,7 @@ ShoppLoader::map(array(
 	'shoppadminproducts' => '/screens/products/AdminProducts.php',
 	'shoppscreenproducts' => '/screens/products/ScreenProducts.php',
 	'shoppscreenproducteditor' => '/screens/products/ScreenProductEditor.php',
-	'shoppscreenproductsview' => '/screens/products/ScreenProductsView.php',
+	'shoppadminproductsview' => '/screens/products/AdminProductsView.php',
 
     /* Product Admin Editor Metaboxes */
 	'shoppadminproductsavebox' => '/screens/products/metabox/AdminProductSaveBox.php',
