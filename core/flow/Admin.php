@@ -277,6 +277,9 @@ abstract class ShoppAdminController extends ShoppFlowController {
 	/** @var array Registry of notices to display to hand off to the screen */
 	protected $notices = array();
 
+	/** @var array $pagename The list of default request parameters. */
+	protected $pagename = false;
+
 	/**
 	 * Constructor
 	 *
@@ -284,8 +287,11 @@ abstract class ShoppAdminController extends ShoppFlowController {
 	 * @return void
 	 **/
 	public function __construct () {
+		global $plugin_page;
 
 		if ( ! ShoppAdminPages()->shoppscreen() ) return;
+
+		$this->pagename = $plugin_page;
 
 		// Get the query request
 		$this->query();
