@@ -32,7 +32,7 @@ final class ShoppFlow extends ShoppFlowController {
 	 *
 	 * @return void
 	 **/
-	public function __construct () {
+	public function __construct() {
 
 		// Plugin activation & deactivation
 		register_deactivation_hook( SHOPP_PLUGINFILE, array($this, 'deactivate') );
@@ -51,7 +51,7 @@ final class ShoppFlow extends ShoppFlowController {
 
 	}
 
-	public function query ( $request = false ) {
+	public function query( $request = false ) {
 
 		if ( is_a($request,'WP') )
 			$request = empty($request->query_vars) ? $_GET : $request->query_vars;
@@ -61,8 +61,7 @@ final class ShoppFlow extends ShoppFlowController {
 
 	}
 
-	public function resources () {
-
+	public function resources() {
 		$this->query();
 
 		$controller = null;
@@ -76,7 +75,6 @@ final class ShoppFlow extends ShoppFlowController {
 		else apply_filters('shopp_flow_controller', false);
 
 		$this->controller($controller);
-
 	}
 
 	/**
@@ -87,8 +85,7 @@ final class ShoppFlow extends ShoppFlowController {
 	 * @param WP|array $request	The request to process
 	 * @return void
 	 **/
-	public function parse ( $request = false ) {
-
+	public function parse( $request = false ) {
 		$this->query($request);
 		$this->controller('ShoppStorefront');
 
@@ -102,7 +99,7 @@ final class ShoppFlow extends ShoppFlowController {
 	 * @param string $ControllerClass (optional) The class name to setup a new domain controller
 	 * @return ShoppFlowController|boolean The current domain flow controller or false otherwise
 	 **/
-	public function controller ( $ControllerClass = null ) {
+	public function controller( $ControllerClass = null ) {
 		if ( empty($ControllerClass) ) return $this->Controller;
 
 		$this->Controller = new $ControllerClass( $this->request );
@@ -118,7 +115,7 @@ final class ShoppFlow extends ShoppFlowController {
 	 *
 	 * @return void
 	 **/
-	public function menu () {
+	public function menu() {
 		if ( ! is_admin() ) return;
 
 		$Pages = ShoppAdminPages();
@@ -134,7 +131,7 @@ final class ShoppFlow extends ShoppFlowController {
 	 *
 	 * @return void
 	 **/
-	public function activate () {
+	public function activate() {
 		$this->installation();
 		do_action('shopp_activate');
 	}
@@ -160,7 +157,7 @@ final class ShoppFlow extends ShoppFlowController {
 	 *
 	 * @return void
 	 **/
-	public function installation () {
+	public function installation() {
 		if ( ! defined('WP_ADMIN') ) return;
 		// Prevent a new instance if already running
 		if ( false !== $this->Installer ) return;
@@ -176,7 +173,7 @@ final class ShoppFlow extends ShoppFlowController {
 	 *
 	 * @return void
 	 **/
-	public function upgrades () {
+	public function upgrades() {
 
 		if ( empty($_GET['action']) || 'shopp-upgrade' != $_GET['action'] ) return;
 
@@ -202,7 +199,7 @@ final class ShoppFlow extends ShoppFlowController {
 	 * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance
 	 * @return void
 	 **/
-	public function adminbar ( $wp_admin_bar ) {
+	public function adminbar( $wp_admin_bar ) {
 
 		$posttype = get_post_type_object(ShoppProduct::posttype());
 		if ( empty( $posttype ) || ! current_user_can($posttype->cap->edit_post) ) return;
@@ -235,7 +232,7 @@ final class ShoppFlow extends ShoppFlowController {
 	 *
 	 * @return boolean
 	 **/
-	public static function welcome () {
+	public static function welcome() {
 		return defined('WP_ADMIN') && shopp_setting_enabled('display_welcome') && empty($_POST['setup']);
 	}
 
@@ -266,13 +263,13 @@ abstract class ShoppFlowController extends ShoppRequestFormFramework {
 
 } // END class ShoppFlowController
 
-function ShoppFlow () {
+function ShoppFlow() {
 	$Shopp = Shopp::object();
 	if ( isset($Shopp->Flow) ) return $Shopp->Flow;
 	else return false;
 }
 
-function ShoppFlowController () {
+function ShoppFlowController() {
 	if ( ! ( $Flow = ShoppFlow() ) || ! $Flow->controller() ) return false;
 	return $Flow->controller();
 }
@@ -284,7 +281,7 @@ function ShoppFlowController () {
  *
  * @return ShoppStorefront|false
  **/
-function ShoppStorefront () {
+function ShoppStorefront() {
 	$Controller = ShoppFlowController();
 	if ( ! $Controller || 'ShoppStorefront' != get_class($Controller) ) return false;
 	return $Controller;
@@ -297,12 +294,12 @@ function ShoppStorefront () {
  *
  * @return ShoppAdminController|bool The ShoppAdmin super-controller instance or false
  **/
-function ShoppAdmin () {
+function ShoppAdmin() {
 	$Controller = ShoppFlowController();
 	if ( ! $Controller || 'ShoppAdmin' != get_class($Controller) ) return false;
 	return $Controller;
 }
 
-function ShoppAdminPages () {
+function ShoppAdminPages() {
 	return ShoppAdminPages::object();
 }
