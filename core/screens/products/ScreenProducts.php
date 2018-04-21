@@ -14,7 +14,6 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 class ShoppScreenProducts extends ShoppScreenController {
 
-	public $worklist = array();
 	public $products = array();
 	public $views = array();
 
@@ -24,10 +23,9 @@ class ShoppScreenProducts extends ShoppScreenController {
 	 * Registers actions for the catalog products screen
 	 *
 	 * @version 1.5
-	 *
 	 * @return array The list of actions to handle
 	 **/
-	public function actions () {
+	public function actions() {
 		return array(
 			'bulkaction',
 			'emptytrash',
@@ -44,29 +42,29 @@ class ShoppScreenProducts extends ShoppScreenController {
 	 * @return void
 	 **/
 	public function bulkaction() {
-		$actions = array('publish', 'unpublish', 'trash', 'restore', 'feature', 'defeature', 'delete');
+		$actions = array(
+			'publish' => array(array('ShoppProduct', 'publishset'), 'publish'),
+			'unpublish' => array(array('ShoppProduct', 'publishset'), 'draft'),
+			'trash' => array(array('ShoppProduct', 'publishset'), 'trash'),
+			'restore' => array(array('ShoppProduct', 'publishset'), 'draft'),
+			'feature' => array(array('ShoppProduct', 'featureset'), 'on'),
+			'defeature' => array(array('ShoppProduct', 'featureset'), 'off'),
+			'delete' => array('array_walk', 'shopp_rmv_product')
+		);
 
 		$request = $this->request('action');
+		if ( ! isset($actions[ $request ]) )
+			return;
+
 		$selected = (array)$this->request('selected');
+		if ( empty($selected) )
+			return;
+
 		$selected = array_map('intval', $selected);
 
-		if ( ! in_array($request, $actions) ) return;
-		elseif ( empty($selected) ) return;
+		list($callback, $value) = $actions[ $request ];
 
-		if ( 'publish' == $request )
-			ShoppProduct::publishset($selected, 'publish');
-		elseif ( 'unpublish' == $request )
-			ShoppProduct::publishset($selected, 'draft');
-		elseif ( 'trash' == $request )
-			ShoppProduct::publishset($selected, 'trash');
-		elseif ( 'restore' == $request )
-			ShoppProduct::publishset($selected, 'draft');
-		elseif( 'feature' == $request )
-			ShoppProduct::featureset($selected, 'on');
-		elseif ( 'defeature' == $request )
-			ShoppProduct::featureset($selected, 'off');
-		elseif ( 'delete' == $request)
-			array_walk($selected, 'shopp_rmv_product');
+		call_user_func($callback, $selected, $value);
 
 		Shopp::redirect( $this->url(array('action' => null, 'selected' => null)) );
 	}
@@ -77,7 +75,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 	 * @version 1.5
 	 * @return void
 	 **/
-	public function duplicate () {
+	public function duplicate() {
 		$duplicate = $this->request('duplicate');
 		if ( ! $duplicate ) return;
 		if ( ! current_user_can('shopp_products') ) return;
@@ -95,7 +93,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 	 * @since 1.5
 	 * @return void
 	 **/
-	public function emptytrash () {
+	public function emptytrash() {
 		if ( ! $this->request('delete_all') ) return;
 
 		$Template = new ShoppProduct();
@@ -109,162 +107,22 @@ class ShoppScreenProducts extends ShoppScreenController {
 	}
 
 	/**
-	 * Handles loading, saving and deleting products in the context of workflows
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.0
-	 * @version 1.2
-	 *
-	 * @return void
-	 **/
-	// public function workflow () {
-	//	 global $Shopp,$post;
-	//
-	//	 $defaults = array(
-	//		 'page' => false,
-	//		 'action' => false,
-	//		 'selected' => array(),
-	//		 'id' => false,
-	//		 'save' => false,
-	//		 'duplicate' => false,
-	//		 'next' => false
-	//	 );
-	//	 $args = array_merge($defaults, $_REQUEST);
-	//	 extract($args, EXTR_SKIP);
-	//
-	//	 if ( ! is_array($selected) ) $selected = array($selected);
-	//
-	//	 if ( ! defined('WP_ADMIN') || ! isset($page)
-	//		 || $this->Admin->pagename('products') != $page )
-	//			 return false;
-	//
-	//	 $adminurl = admin_url('admin.php');
-	//
-	//	 if ( $this->Admin->pagename('products') == $page && ( false !== $action || isset($_GET['delete_all']) ) ) {
-	//		 if (isset($_GET['delete_all'])) $action = 'emptytrash';
-	//		 switch ($action) {
-	//			 case 'publish':	 ShoppProduct::publishset($selected,'publish'); break;
-	//			 case 'unpublish':	 ShoppProduct::publishset($selected,'draft'); break;
-	//			 case 'feature':	 ShoppProduct::featureset($selected,'on'); break;
-	//			 case 'defeature':	 ShoppProduct::featureset($selected,'off'); break;
-	//			 case 'restore':	 ShoppProduct::publishset($selected,'draft'); break;
-	//			 case 'trash':		 ShoppProduct::publishset($selected,'trash'); break;
-	//			 case 'delete':
-	//				 foreach ($selected as $id) {
-	//					 $P = new ShoppProduct($id); $P->delete();
-	//				 } break;
-	//			 case 'emptytrash':
-	//				 $Template = new ShoppProduct();
-	//				 $trash = sDB::query("SELECT ID FROM $Template->_table WHERE post_status='trash' AND post_type='".ShoppProduct::posttype()."'",'array','col','ID');
-	//				 foreach ($trash as $id) {
-	//					 $P = new ShoppProduct($id); $P->delete();
-	//				 } break;
-	//		 }
-	//		 wp_cache_delete( 'shopp_product_subcounts' );
-	//		 $redirect = add_query_arg( $_GET, $adminurl );
-	//		 $redirect = remove_query_arg( array('action','selected','delete_all'), $redirect );
-	//		 Shopp::redirect( $redirect );
-	//	 }
-	//
-	//	 if ($duplicate) {
-	//		 $Product = new ShoppProduct($duplicate);
-	//		 $Product->duplicate();
-	//		 $this->index($Product);
-	//		 Shopp::redirect( add_query_arg(array('page' => $this->Admin->pagename('products'), 'paged' => $_REQUEST['paged']), $adminurl) );
-	//	 }
-	//
-	//	 if (isset($id) && $id != "new") {
-	//		 $Shopp->Product = new ShoppProduct($id);
-	//		 $Shopp->Product->load_data();
-	//
-	//		 // Adds CPT compatibility support for third-party plugins/themes
-	//		 global $post;
-	//		 if( is_null($post) ) $post = get_post($Shopp->Product->id);
-	//
-	//	 } else $Shopp->Product = new ShoppProduct();
-	//
-	//	 if ($save) {
-	//		 wp_cache_delete('shopp_product_subcounts');
-	//		 $this->save($Shopp->Product);
-	//		 $this->notice( sprintf(__('%s has been saved.','Shopp'),'<strong>'.stripslashes($Shopp->Product->name).'</strong>') );
-	//
-	//		 // Workflow handler
-	//		 if (isset($_REQUEST['settings']) && isset($_REQUEST['settings']['workflow'])) {
-	//			 $workflow = $_REQUEST['settings']['workflow'];
-	//			 $worklist = $this->worklist;
-	//			 $working = array_search($id,$this->worklist);
-	//
-	//			 switch($workflow) {
-	//				 case 'close': $next = 'close'; break;
-	//				 case 'new': $next = 'new'; break;
-	//				 case 'next': $key = $working+1; break;
-	//				 case 'previous': $key = $working-1; break;
-	//				 case 'continue': $next = $id; break;
-	//			 }
-	//
-	//			 if (isset($key)) $next = isset($worklist[$key]) ? $worklist[$key] : 'close';
-	//		 }
-	//
-	//		 if ($next) {
-	//			 $query = $_GET;
-	//			 if ( isset($this->worklist['query']) ) $query = array_merge($_GET, $this->worklist['query']);
-	//			 $redirect = add_query_arg($query,$adminurl);
-	//			 $cleanup = array('action','selected','delete_all');
-	//			 if ('close' == $next) { $cleanup[] = 'id'; $next = false; }
-	//			 $redirect = remove_query_arg($cleanup, $redirect);
-	//			 if ($next) $redirect = add_query_arg('id',$next,$redirect);
-	//			 Shopp::redirect($redirect);
-	//		 }
-	//
-	//		 if (empty($id)) $id = $Shopp->Product->id;
-	//		 $Shopp->Product = new ShoppProduct($id);
-	//		 $Shopp->Product->load_data();
-	//	 }
-	//
-	//	 // WP post type editing support for other plugins
-	//	 if (!empty($Shopp->Product->id))
-	//		 $post = get_post($Shopp->Product->id);
-	//
-	// }
-
-
-	/**
 	 * Loads products for this screen view
 	 *
 	 * @since 1.5
 	 * @return void
 	 **/
-	public function loader () {
-
+	public function loader() {
 		if ( ! current_user_can('shopp_products') ) return;
 
-		$View = new ShoppScreenProductsView($this->request('view'));
-		$View->page($this->request('paged'));
+		$View = ShoppAdminProducts::view();
 
-		if ( $query = $this->request('s') )
-			$View->search($query);
-
-		if ( $category_id = $this->request('cat') )
-			$View->category($category_id);
-
-		// Detect custom taxonomies
-		$taxonomies = array_intersect(get_object_taxonomies(ShoppProduct::$posttype), array_keys($_GET));
-		if ( $taxonomies )
-			$View->taxonomies($taxonomies);
-
-		if ( $stocklevel = $this->request('sl') )
-			$View->stocklevel($stocklevel);
-
-		$View->orderby($this->request('orderby'), $this->request('order'));
-
-		$loading = $View->loading();
+		// Handle pagination here instead of AdminProducts
+		$page = max(1, absint($this->request('paged')));
+		$View->page($page);
 
 		$this->products = new ProductCollection();
-		$this->products->load($loading);
-
-		// Return a list of product keys for workflow list requests
-		// if ( $workflow )
-		//			 return $this->products->worklist();
+		$this->products->load( $View->loading() );
 
 		$View->totals(); // Get sub-screen counts
 
@@ -282,7 +140,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 	 * @param boolean $workflow True to get workflow data
 	 * @return void
 	 **/
-	public function screen () {
+	public function screen() {
 
 		if ( ! current_user_can('shopp_products') )
 			wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -318,7 +176,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 			'unpublish' => Shopp::__('Unpublish'),
 			'feature'   => Shopp::__('Feature'),
 			'defeature' => Shopp::__('De-feature'),
-			'trash'	 => Shopp::__('Move to trash')
+			'trash'	    => Shopp::__('Move to trash')
 		);
 
 		if ( 'trash' == $this->view ) {
@@ -360,35 +218,35 @@ class ShoppScreenProducts extends ShoppScreenController {
 	/**
 	 * Registers the column headers for the product list manager
 	 *
-	 * @author Jonathan Davis
+	 * @since 1.3
 	 * @return void
 	 **/
-	public function layout () {
+	public function layout() {
 
 		$headings = array(
 			'default' => array(
 				'cb'		=> '<input type="checkbox" />',
-				'name'	  => Shopp::__('Name'),
+				'name'	    => Shopp::__('Name'),
 				'category'  => Shopp::__('Category'),
-				'price'	 => Shopp::__('Price'),
+				'price'	    => Shopp::__('Price'),
 				'inventory' => Shopp::__('Inventory'),
 				'featured'  => Shopp::__('Featured'),
-				'date'	  => Shopp::__('Date')
+				'date'	    => Shopp::__('Date')
 			),
 			'inventory' => array(
 				'inventory' => Shopp::__('Inventory'),
-				'sku'	   => Shopp::__('SKU'),
-				'name'	  => Shopp::__('Name')
+				'sku'	    => Shopp::__('SKU'),
+				'name'	    => Shopp::__('Name')
 			),
 			'bestselling' => array(
 				'cb'		=> '<input type="checkbox" />',
-				'name'	  => Shopp::__('Name'),
-				'sold'	  => Shopp::__('Sold'),
-				'gross'	 => Shopp::__('Sales'),
-				'price'	 => Shopp::__('Price'),
+				'name'	    => Shopp::__('Name'),
+				'sold'	    => Shopp::__('Sold'),
+				'gross'	    => Shopp::__('Sales'),
+				'price'	    => Shopp::__('Price'),
 				'inventory' => Shopp::__('Inventory'),
 				'featured'  => Shopp::__('Featured'),
-				'date'	  => Shopp::__('Date')
+				'date'	    => Shopp::__('Date')
 			)
 		);
 
@@ -414,19 +272,21 @@ class ShoppScreenProducts extends ShoppScreenController {
 	/**
 	 * Loads all categories for the product list manager category filter menu
 	 *
-	 * @author Jonathan Davis
+	 * @since 1.3
+	 *
+	 * @param string|int The Shopp product category slug or id
 	 * @return string HTML for a drop-down menu of categories
 	 **/
-	public function category ($id) {
+	public function category( $id ) {
 		global $wpdb;
 		$p = "$wpdb->posts AS p";
 		$where = array();
-		$joins[$wpdb->term_relationships] = "INNER JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id)";
-		$joins[$wpdb->term_taxonomy] = "INNER JOIN $wpdb->term_taxonomy AS tt ON (tr.term_taxonomy_id=tt.term_taxonomy_id AND tt.term_id=$id)";
+		$joins[ $wpdb->term_relationships ] = "INNER JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id)";
+		$joins[ $wpdb->term_taxonomy ] = "INNER JOIN $wpdb->term_taxonomy AS tt ON (tr.term_taxonomy_id=tt.term_taxonomy_id AND tt.term_id=$id)";
 
-		if (-1 == $id) {
-			$joins[$wpdb->term_relationships] = "LEFT JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id)";
-			unset($joins[$wpdb->term_taxonomy]);
+		if ( -1 == $id ) {
+			$joins[ $wpdb->term_relationships ] = "LEFT JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id)";
+			unset($joins[ $wpdb->term_taxonomy ]);
 			$where[] = 'tr.object_id IS NULL';
 			$where[] = "p.post_status='publish'";
 			$where[] = "p.post_type='shopp_product'";
@@ -438,10 +298,18 @@ class ShoppScreenProducts extends ShoppScreenController {
 			$products = sDB::query("SELECT p.id,p.post_title AS name FROM $p $where ORDER BY name ASC",'array','col','name','id');
 		else $products = sDB::query("SELECT p.id,p.post_title AS name FROM $p ".join(' ',$joins).$where." ORDER BY name ASC",'array','col','name','id');
 
-		return menuoptions($products,0,true);
+		return menuoptions($products, 0, true);
 	}
 
-	public function index ($Product) {
+	/**
+	 * Creates a search index for a product
+	 *
+	 * @since 1.3
+	 *
+	 * @param ShoppProduct $Product The ShoppProduct to index
+	 * @return void
+	 **/
+	public function index ( ShoppProduct $Product ) {
 		$Indexer = new IndexProduct($Product->id);
 		$Indexer->index();
 	}

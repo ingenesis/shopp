@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, June 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Screens\Products
- * @since     1.4
+ * @since     1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -17,7 +17,7 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 	/**
 	 * Load the requested product for the editor
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return ShoppProduct The loaded product based on the request
 	 **/
 	public function load () {
@@ -59,9 +59,9 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 
 		$workflows = array(
 			'continue' => Shopp::__('Continue Editing'),
-			'close'	=> Shopp::__('Products Manager'),
-			'new'	  => Shopp::__('New Product'),
-			'next'	 => Shopp::__('Edit Next'),
+			'close'	   => Shopp::__('Products Manager'),
+			'new'	   => Shopp::__('New Product'),
+			'next'	   => Shopp::__('Edit Next'),
 			'previous' => Shopp::__('Edit Previous')
 		);
 
@@ -117,53 +117,6 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 			foreach ( $options as &$menu )
 				$menu['options'] = array_values($menu['options']);
 		}
-	}
-
-	/**
-	 * Handles saving updates from the product editor
-	 *
-	 * Saves all product related information which includes core product data
-	 * and supporting elements such as images, digital downloads, tags,
-	 * assigned categories, specs and pricing variations.
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.0
-	 *
-	 * @param ShoppProduct $Product
-	 * @return void
-	 **/
-	public function save ( ShoppProduct &$Product ) {
-		check_admin_referer('shopp-save-product');
-
-		if ( ! current_user_can('shopp_products') )
-			wp_die(__('You do not have sufficient permissions to access this page.'));
-
-		ShoppSettings()->saveform(); // Save workflow setting
-
-		$Update = new ShoppAdminProductUpdate($Product);
-
-		$Update->status();
-		$Update->updates();
-
-		do_action('shopp_pre_product_save');
-		$Product->save();
-
-		$Update->prices();
-		$Product->load_sold($Product->id); // Refresh accurate product sales stats
-		$Product->sumup();
-		$Update->trimprices(); // Must occur after sumup()
-
-		$Update->images();
-		$Update->taxonomies();
-		$Update->specs();
-		$Update->meta();
-
-		// Reload product to refresh all of the saved data
-		// so everything is fresh for shopp_product_saved
-		$Product = $this->load();
-		$Product->load_data();
-
-		do_action_ref_array('shopp_product_saved', array(&$Product));
 	}
 
 	/**
