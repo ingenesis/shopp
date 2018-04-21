@@ -87,8 +87,8 @@ final class ShoppFlow extends ShoppFlowController {
 	 **/
 	public function parse( $request = false ) {
 		$this->query($request);
-		$this->controller('ShoppStorefront');
-
+		if ( ! is_admin() )
+			$this->controller('ShoppStorefront');
 	}
 
 	/**
