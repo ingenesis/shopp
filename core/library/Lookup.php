@@ -545,11 +545,11 @@ class ShoppLookup {
 
 		$_ = array();
 		$_['contact'] = array(
-			'shopp-support' => __('For help with this, contact the Shopp %ssupport team%s.','Shopp'),
-			'shopp-cs' => __('For help with this, contact Shopp %scustomer service%s.','Shopp'),
-			'server-manager' => __('For help with this, contact your web hosting provider or server administrator.','Shopp'),
-			'webmaster' => __('For help with this, contact your website developer.','Shopp'),
-			'admin' => __('For help with this, contact the website administrator.','Shopp'),
+			'shopp-support'  => Shopp::__('For help with this, contact the Shopp %ssupport team%s.'),
+			'shopp-cs'       => Shopp::__('For help with this, contact Shopp %scustomer service%s.'),
+			'server-manager' => Shopp::__('For help with this, contact your web hosting provider or server administrator.'),
+			'webmaster'      => Shopp::__('For help with this, contact your website developer.'),
+			'admin'          => Shopp::__('For help with this, contact the website administrator.'),
 		);
 
         /* AJAX and Resource errors */
@@ -558,83 +558,90 @@ class ShoppLookup {
         );
 
 		/* PHP file upload errors */
+		$ShoppAdmin = ShoppAdmin();
+		$ShoppAdmin->posted();
+		$max_file_size = $ShoppAdmin->form('MAX_FILE_SIZE');
+		$filesize_guidance = '';
+
+		$upload_max_filesize = Shopp::ini_size('upload_max_filesize');
+		if ( ! empty($upload_max_filesize) )
+			$filesize_guidance = ' ' . Shopp::__('Files must be less than %s.' . " {$_['contact']['server-manager']}", $upload_max_filesize);
+
+		if ( ! empty($max_file_size) )
+			$filesize_guidance = ' ' . Shopp::__('Files must be less than %s. Please try again with a smaller file.', readableFileSize($max_file_size) );
+
 		$_['uploads'] = array(
-			UPLOAD_ERR_INI_SIZE => sprintf(
-				__('The uploaded file is too big for the server.%s','Shopp'),
-					sprintf(' '.__('Files must be less than %s.','Shopp')." {$_['contact']['server-manager']}",
-					Shopp::ini_size('upload_max_filesize'))
-			),
-			UPLOAD_ERR_FORM_SIZE => sprintf(__('The uploaded file is too big.%s','Shopp'),
-				isset($_POST['MAX_FILE_SIZE']) ? sprintf(' '.__('Files must be less than %s. Please try again with a smaller file.','Shopp'),readableFileSize($_POST['MAX_FILE_SIZE'])) : ''
-			),
-			UPLOAD_ERR_PARTIAL => __('The file upload did not complete correctly.','Shopp'),
-			UPLOAD_ERR_NO_FILE => __('No file was uploaded.','Shopp'),
-			UPLOAD_ERR_NO_TMP_DIR => __('The server is missing the necessary temporary folder.','Shopp')." {$_['contact']['server-manager']}",
-			UPLOAD_ERR_CANT_WRITE => __('The file could not be saved to the server.%s','Shopp')." {$_['contact']['server-manager']}",
-			UPLOAD_ERR_EXTENSION => __('The file upload was stopped by a server extension.','Shopp')." {$_['contact']['server-manager']}"
+			UPLOAD_ERR_INI_SIZE   => Shopp::__('The uploaded file is too big for the server.%s', $filesize_guidance),
+			UPLOAD_ERR_FORM_SIZE  => Shopp::__('The uploaded file is too big.%s', $filesize_guidance),
+			UPLOAD_ERR_PARTIAL    => Shopp::__('The file upload did not complete correctly.'),
+			UPLOAD_ERR_NO_FILE    => Shopp::__('No file was uploaded.'),
+			UPLOAD_ERR_NO_TMP_DIR => Shopp::__('The server is missing the necessary temporary folder.') . " {$_['contact']['server-manager']}",
+			UPLOAD_ERR_CANT_WRITE => Shopp::__('The file could not be saved to the server.') . " {$_['contact']['server-manager']}",
+			UPLOAD_ERR_EXTENSION  => Shopp::__('The file upload was stopped by a server extension.') . " {$_['contact']['server-manager']}"
 		);
 
 		/* File upload security verification errors */
 		$_['uploadsecurity'] = array(
-			'is_uploaded_file' => __('The file specified is not a valid upload and is out of bounds. Nice try though!','Shopp'),
-			'is_readable' => __('The uploaded file cannot be read by the web server and is unusable.','Shopp')." {$_['contact']['server-manager']}",
-			'is_empty' => __('The uploaded file is empty.','Shopp'),
-			'filesize_mismatch' => __('The size of the uploaded file does not match the size reported by the client. Something fishy going on?','Shopp')
+			'is_uploaded_file'  => Shopp::__('The file specified is not a valid upload and is out of bounds. Nice try though!'),
+			'is_readable'       => Shopp::__('The uploaded file cannot be read by the web server and is unusable.') . " {$_['contact']['server-manager']}",
+			'is_empty'          => Shopp::__('The uploaded file is empty.'),
+			'filesize_mismatch' => Shopp::__('The size of the uploaded file does not match the size reported by the client. Something fishy going on?')
 		);
 
-		$callhome_fail = __('Could not connect to the shopplugin.net server.','Shopp');
+		$callhome_fail = Shopp::__('Could not connect to the shopplugin.net server.');
 		$_['callhome'] = array(
-			'fail' => $callhome_fail,
-			'noresponse' => __('No response was sent back by the shopplugin.net server.','Shopp')." {$_['contact']['admin']}",
-			'http-unknown' => __('The connection to the shopplugin.net server failed due to an unknown error.','Shopp')." {$_['contact']['admin']}",
-			'http-400' => $callhome_fail.__("The server couldn't understand the request.",'Shopp')." {$_['contact']['admin']} (HTTP 400)",
-			'http-401' => $callhome_fail.__('The server requires login authentication and denied access.','Shopp')." {$_['contact']['admin']} (HTTP 401)",
-			'http-403' => $callhome_fail.__('The server refused the connection.','Shopp')." {$_['contact']['admin']} (HTTP 403)",
-			'http-404' => __('The requested resource does not exist on the shopplugin.net server.','Shopp')." {$_['contact']['admin']} (HTTP 404)",
-			'http-500' => __('The shopplugin.net server experienced an error and could not handle the request.','Shopp')." {$_['contact']['admin']} (HTTP 500)",
-			'http-501' => __('The shopplugin.net server does not support the method of the request.','Shopp')." {$_['contact']['admin']} (HTTP 501)",
-			'http-502' => __('The shopplugin.net server is acting as a gateway and received an invalid response from the upstream server.','Shopp')." {$_['contact']['admin']} (HTTP 502)",
-			'http-503' => __('The shopplugin.net server is temporarily unavailable due to a high volume of traffic.','Shopp')." {$_['contact']['admin']} (HTTP 503)",
-			'http-504' => __('The connected shopplugin.net server is acting as a gateway and received a connection timeout from the upstream server.','Shopp')." {$_['contact']['admin']} (HTTP 504)",
-			'http-505' => __("The shopplugin.net server doesn't support the connection protocol version used in the request.",'Shopp')." {$_['contact']['admin']} (HTTP 505)"
+			'http-400'     => $callhome_fail . Shopp::__("The server couldn't understand the request.") . " {$_['contact']['admin']} (HTTP 400)",
+			'http-401'     => $callhome_fail . Shopp::__('The server requires login authentication and denied access.') . " {$_['contact']['admin']} (HTTP 401)",
+			'http-403'     => $callhome_fail . Shopp::__('The server refused the connection.') . " {$_['contact']['admin']} (HTTP 403)",
+			'http-404'     => Shopp::__('The requested resource does not exist on the shopplugin.net server.') . " {$_['contact']['admin']} (HTTP 404)",
+			'http-500'     => Shopp::__('The shopplugin.net server experienced an error and could not handle the request.') . " {$_['contact']['admin']} (HTTP 500)",
+			'http-501'     => Shopp::__('The shopplugin.net server does not support the method of the request.') . " {$_['contact']['admin']} (HTTP 501)",
+			'http-502'     => Shopp::__('The shopplugin.net server is acting as a gateway and received an invalid response from the upstream server.') . " {$_['contact']['admin']} (HTTP 502)",
+			'http-503'     => Shopp::__('The shopplugin.net server is temporarily unavailable due to a high volume of traffic.') . " {$_['contact']['admin']} (HTTP 503)",
+			'http-504'     => Shopp::__('The connected shopplugin.net server is acting as a gateway and received a connection timeout from the upstream server.') . " {$_['contact']['admin']} (HTTP 504)",
+			'http-505'     => Shopp::__("The shopplugin.net server doesn't support the connection protocol version used in the request.") . " {$_['contact']['admin']} (HTTP 505)",
+			'http-unknown' => Shopp::__('The connection to the shopplugin.net server failed due to an unknown error.') . " {$_['contact']['admin']}",
+			'noresponse'   => Shopp::__('No response was sent back by the shopplugin.net server.') . " {$_['contact']['admin']}",
+			'fail'         => $callhome_fail,
 		);
 
-		$gateway_fail = __('Could not connect to the payment server.','Shopp');
+		$gateway_fail = Shopp::__('Could not connect to the payment server.');
 		$_['gateway'] = array(
-			'nogateways' => __('No payment system has been setup for the storefront.','Shopp')." {$_['contact']['admin']}",
-			'fail' => $gateway_fail,
-			'noresponse' => __('No response was sent back by the payment server.','Shopp')." {$_['contact']['admin']}",
-			'http-unknown' => __('The connection to the payment server failed due to an unknown error.','Shopp')." {$_['contact']['admin']}",
-			'http-400' => $gateway_fail.__("The server couldn't understand the request.",'Shopp')." {$_['contact']['admin']} (HTTP 400)",
-			'http-401' => $gateway_fail.__('The server requires login authentication and denied access.','Shopp')." {$_['contact']['admin']} (HTTP 401)",
-			'http-403' => $gateway_fail.__('The server refused the connection.','Shopp')." {$_['contact']['admin']} (HTTP 403)",
-			'http-404' => __('The requested resource does not exist on the payment server.','Shopp')." {$_['contact']['admin']} (HTTP 404)",
-			'http-500' => __('The payment server experienced an error and could not handle the request.','Shopp')." {$_['contact']['admin']} (HTTP 500)",
-			'http-501' => __('The payment server does not support the method of the request.','Shopp')." {$_['contact']['admin']} (HTTP 501)",
-			'http-502' => __('The connected payment server is acting as a gateway and received an invalid response from the upstream server.','Shopp')." {$_['contact']['admin']} (HTTP 502)",
-			'http-503' => __('The payment server is temporarily unavailable due to a high volume of traffic.','Shopp')." {$_['contact']['admin']} (HTTP 503)",
-			'http-504' => __('The connected payment server is acting as a gateway and received a connection timeout from the upstream server.','Shopp')." {$_['contact']['admin']} (HTTP 504)",
-			'http-505' => __("The payment server doesn't support the connection protocol version used in the request.",'Shopp')." {$_['contact']['admin']} (HTTP 505)",
+			'nogateways'   => Shopp::__('No payment system has been setup for the storefront.') . " {$_['contact']['admin']}",
+			'fail'         => $gateway_fail,
+			'noresponse'   => Shopp::__('No response was sent back by the payment server.') . " {$_['contact']['admin']}",
+			'http-unknown' => Shopp::__('The connection to the payment server failed due to an unknown error.') . " {$_['contact']['admin']}",
+			'http-400'     => $gateway_fail . Shopp::__("The server couldn't understand the request.") . " {$_['contact']['admin']} (HTTP 400)",
+			'http-401'     => $gateway_fail . Shopp::__('The server requires login authentication and denied access.') . " {$_['contact']['admin']} (HTTP 401)",
+			'http-403'     => $gateway_fail . Shopp::__('The server refused the connection.') . " {$_['contact']['admin']} (HTTP 403)",
+			'http-404'     => Shopp::__('The requested resource does not exist on the payment server.') . " {$_['contact']['admin']} (HTTP 404)",
+			'http-500'     => Shopp::__('The payment server experienced an error and could not handle the request.') . " {$_['contact']['admin']} (HTTP 500)",
+			'http-501'     => Shopp::__('The payment server does not support the method of the request.') . " {$_['contact']['admin']} (HTTP 501)",
+			'http-502'     => Shopp::__('The connected payment server is acting as a gateway and received an invalid response from the upstream server.') . " {$_['contact']['admin']} (HTTP 502)",
+			'http-503'     => Shopp::__('The payment server is temporarily unavailable due to a high volume of traffic.') . " {$_['contact']['admin']} (HTTP 503)",
+			'http-504'     => Shopp::__('The connected payment server is acting as a gateway and received a connection timeout from the upstream server.') . " {$_['contact']['admin']} (HTTP 504)",
+			'http-505'     => Shopp::__("The payment server doesn't support the connection protocol version used in the request.") . " {$_['contact']['admin']} (HTTP 505)",
 		);
 
-		$shipping_fail = __('Could not connect to the shipping rates server.','Shopp');
+		$shipping_fail = Shopp::__('Could not connect to the shipping rates server.') ;
 		$_['shipping'] = array(
 			'fail' => $shipping_fail,
-			'noresponse' => __('No response was sent back by the shipping rates server.','Shopp')." {$_['contact']['admin']}",
-			'http-unknown' => __('The connection to the shipping rates server failed due to an unknown error.','Shopp')." {$_['contact']['admin']}",
-			'http-400' => $shipping_fail.__("The server couldn't understand the request.",'Shopp')." {$_['contact']['admin']} (HTTP 400)",
-			'http-401' => $shipping_fail.__('The server requires login authentication and denied access.','Shopp')." {$_['contact']['admin']} (HTTP 401)",
-			'http-403' => $shipping_fail.__('The server refused the connection.','Shopp')." {$_['contact']['admin']} (HTTP 403)",
-			'http-404' => __('The requested resource does not exist on the shipping rates server.','Shopp')." {$_['contact']['admin']} (HTTP 404)",
-			'http-500' => __('The shipping rates server experienced an error and could not handle the request.','Shopp')." {$_['contact']['admin']} (HTTP 500)",
-			'http-501' => __('The shipping rates server does not support the method of the request.','Shopp')." {$_['contact']['admin']} (HTTP 501)",
-			'http-502' => __('The connected shipping rates server is acting as a gateway and received an invalid response from the upstream server.','Shopp')." {$_['contact']['admin']} (HTTP 502)",
-			'http-503' => __('The shipping rates server is temporarily unavailable due to a high volume of traffic.','Shopp')." {$_['contact']['admin']} (HTTP 503)",
-			'http-504' => __('The connected shipping rates server is acting as a gateway and received a connection timeout from the upstream server.','Shopp')." {$_['contact']['admin']} (HTTP 504)",
-			'http-505' => __("The shipping rates server doesn't support the connection protocol version used in the request.",'Shopp')." {$_['contact']['admin']} (HTTP 505)",
+			'noresponse' => Shopp::__('No response was sent back by the shipping rates server.') . " {$_['contact']['admin']}",
+			'http-unknown' => Shopp::__('The connection to the shipping rates server failed due to an unknown error.') . " {$_['contact']['admin']}",
+			'http-400' => $shipping_fail . Shopp::__("The server couldn't understand the request.") . " {$_['contact']['admin']} (HTTP 400)",
+			'http-401' => $shipping_fail . Shopp::__('The server requires login authentication and denied access.') . " {$_['contact']['admin']} (HTTP 401)",
+			'http-403' => $shipping_fail . Shopp::__('The server refused the connection.') . " {$_['contact']['admin']} (HTTP 403)",
+			'http-404' => Shopp::__('The requested resource does not exist on the shipping rates server.') . " {$_['contact']['admin']} (HTTP 404)",
+			'http-500' => Shopp::__('The shipping rates server experienced an error and could not handle the request.') . " {$_['contact']['admin']} (HTTP 500)",
+			'http-501' => Shopp::__('The shipping rates server does not support the method of the request.') . " {$_['contact']['admin']} (HTTP 501)",
+			'http-502' => Shopp::__('The connected shipping rates server is acting as a gateway and received an invalid response from the upstream server.') . " {$_['contact']['admin']} (HTTP 502)",
+			'http-503' => Shopp::__('The shipping rates server is temporarily unavailable due to a high volume of traffic.') . " {$_['contact']['admin']} (HTTP 503)",
+			'http-504' => Shopp::__('The connected shipping rates server is acting as a gateway and received a connection timeout from the upstream server.') . " {$_['contact']['admin']} (HTTP 504)",
+			'http-505' => Shopp::__("The shipping rates server doesn't support the connection protocol version used in the request.") . " {$_['contact']['admin']} (HTTP 505)",
 		);
 
-		if (isset($_[$type]) && isset($_[$type][$code])) return $_[$type][$code];
+		if ( isset($_[ $type ] ) && isset($_[ $type ][ $code ]) )
+			return $_[ $type ][ $code ];
 
 		return false;
 	}
