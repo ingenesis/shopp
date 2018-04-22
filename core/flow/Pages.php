@@ -129,7 +129,7 @@ class ShoppPages extends ListFramework {
  * @since 1.2.1
  * @package storefront
  **/
-class ShoppPage {
+class ShoppPage extends ShoppRequestFormFramework {
 
 	public static $name = 'catalog';		// Internal name of the page
 	public static $template = '';			// Additional specific page template (more specific than: shopp.php, page.php)
@@ -142,7 +142,11 @@ class ShoppPage {
 		'page' => 'shopp-settings-pages'
 	);
 
-	public function __construct ( array $options = array() ) {
+	public function __construct( array $options = array() ) {
+
+		$this->query();
+		$this->posted();
+
 		$defaults = array(
 			'title' => $this->title,
 			'slug' => $this->slug,
@@ -156,36 +160,36 @@ class ShoppPage {
 
 	}
 
-	public function editlink ( $link ) {
+	public function editlink( $link ) {
 		$url = admin_url('admin.php');
 		if ( ! empty($this->edit) ) $link = add_query_arg($this->edit, $url);
 		return $link;
 	}
 
-	public function styleclass ( $classes ) {
+	public function styleclass( $classes ) {
 		$classes[] = $this->name();
 		return $classes;
 	}
 
-	public function name () {
+	public function name() {
 		$classname = get_class($this);
 		return get_class_property($classname, 'name');
 	}
 
-	public function head () {
+	public function head() {
 		/* Implemented in concrete classes */
 	}
 
-	public function pagetemplate () {
+	public function pagetemplate() {
 		$classname = get_class($this);
 		return get_class_property($classname, 'template');
 	}
 
-	public function content ( $content ) {
+	public function content( $content ) {
 		return $content;
 	}
 
-	public function nocomment () {
+	public function nocomment() {
 		return array();
 	}
 
@@ -197,7 +201,7 @@ class ShoppPage {
 	 *
 	 * @return string The page title
 	 **/
-	public function title () {
+	public function title() {
 		$classname = get_class($this);
 		$title = apply_filters('shopp_' . get_class_property($classname, 'name') . '_pagetitle', $this->title); // @deprecated Use shopp_storefront_page_title or shopp_{$name}_storefront_page_title instead
 
@@ -205,13 +209,13 @@ class ShoppPage {
 		return apply_filters('shopp_storefront_page_title', $title);
 	}
 
-	public function slug () {
+	public function slug() {
 		$classname = get_class($this);
 		$slug = apply_filters('shopp_' . get_class_property($classname, 'name') . '_storefront_page_slug', $this->slug);
 		return apply_filters('shopp_storefront_page_slug', $slug);
 	}
 
-	public function description () {
+	public function description() {
 		return $this->description;
 	}
 
@@ -223,7 +227,7 @@ class ShoppPage {
 	 *
 	 * @return array List of page templates
 	 **/
-	public function templates () {
+	public function templates() {
 		$templates = array('shopp.php', 'page.php');
 
 		$name = $this->name();
@@ -240,7 +244,7 @@ class ShoppPage {
 		return $templates;
 	}
 
-	public function filters () {
+	public function filters() {
 		add_filter('shopp_content_container_classes', array($this, 'styleclass'));
 		add_filter('body_class', array($this, 'styleclass'));
 		add_filter('get_edit_post_link', array($this, 'editlink'));
@@ -254,15 +258,11 @@ class ShoppPage {
 
 	}
 
-	public function wpseo ( $replacements ) {
-
+	public function wpseo( $replacements ) {
 		if ( is_shopp_page() && empty($replacements['%%title%%']) )
 			$replacements['%%title%%'] = $this->title();
-
 		return $replacements;
-
 	}
-
 
 	public function poststub () {
 		global $wp_query;
@@ -307,25 +307,25 @@ class ShoppCatalogPage extends ShoppPage {
 	protected $slug = 'shop';
 	protected $templates = array('catalog.php');
 
-	public function __construct($options = array()) {
+	public function __construct( $options = array() ) {
 
 		$defaults = array(
-			'title' => __('Shop', 'Shopp'),
-			'description' => __('The page title and base slug for products, categories & collections.', 'Shopp'),
+			'title'       => Shopp::__('Shop'),
+			'description' => Shopp::__('The page title and base slug for products, categories & collections.'),
 		);
 		$options = array_merge($defaults, $options);
 
 		parent::__construct($options);
 	}
 
-	public function templates () {
+	public function templates() {
 		$templates = parent::templates();
 		if ( $this->is_frontpage() )
 			array_unshift($templates, 'front-page.php');
 		return $templates;
 	}
 
-	public function content ($content) {
+	public function content( $content ) {
 		global $wp_query;
 		// Test that this is the main query and it is a catalog page
 		if ( ! $wp_query->is_main_query() || ! is_shopp_catalog_frontpage() ) return $content;
@@ -340,18 +340,18 @@ class ShoppCatalogPage extends ShoppPage {
 
 	}
 
-	static function frontid () {
+	static function frontid() {
 		return self::FRONTPAGE;
 	}
 
-	public function styleclass ( $classes ) {
+	public function styleclass( $classes ) {
 		if ( $this->is_frontpage() )
 			$classes[] = 'home';
 		$classes[] = $this->name();
 		return $classes;
 	}
 
-	public function poststub () {
+	public function poststub() {
 		global $wp_query;
 		if ( ! $wp_query->is_main_query() ) return;
 
@@ -363,7 +363,7 @@ class ShoppCatalogPage extends ShoppPage {
 		return $stub;
 	}
 
-	public function is_frontpage () {
+	public function is_frontpage() {
 		return self::frontid() == get_option('page_on_front');
 	}
 }
@@ -382,18 +382,18 @@ class ShoppAccountPage extends ShoppPage {
 	protected $slug = 'account';
 	protected $templates = array('account.php');
 
-	public function __construct ( $options = array() ) {
+	public function __construct( $options = array() ) {
 
 		$defaults = array(
-			'title' => __('Account', 'Shopp'),
-			'description' => __('Used to display customer account dashboard &amp; profile pages.', 'Shopp'),
+			'title'       => Shopp::__('Account'),
+			'description' => Shopp::__('Used to display customer account dashboard &amp; profile pages.'),
 		);
 
 		if ( 'none' == shopp_setting('account_system') ) {
-			$defaults['title'] = __('Order Lookup', 'Shopp');
+			$defaults['title'] = Shopp::__('Order Lookup');
 			$defaults = array(
-				'title' => __('Order Lookup', 'Shopp'),
-				'description' => __('The order lookup page allows customers to lookup previous orders.', 'Shopp'),
+				'title'       => Shopp::__('Order Lookup'),
+				'description' => Shopp::__('The order lookup page allows customers to lookup previous orders.'),
 			);
 
 		}
@@ -403,7 +403,7 @@ class ShoppAccountPage extends ShoppPage {
 		parent::__construct($options);
 	}
 
-	public function content ($content, $request=false) {
+	public function content( $content, $request = false ) {
 		if ( ! $request ) {
 			global $wp_query;
 			// Test that this is the main query and it is the account page
@@ -439,7 +439,6 @@ class ShoppAccountPage extends ShoppPage {
 		if ($widget) $content = '<!-- id="shopp" -->' . $content;
 
 		return apply_filters( 'shopp_account_template', $content, $request );
-
 	}
 
 	/**
@@ -449,22 +448,23 @@ class ShoppAccountPage extends ShoppPage {
 	 *
 	 * @return void
 	 **/
-	static function recovery () {
+	static function recovery() {
 		$errors = array();
+		$account_login = $this->form('account-login');
 
 		// Check email or login supplied
-		if ( empty($_POST['account-login']) ) {
+		if ( empty($account_login) ) {
 			if ( 'wordpress' == shopp_setting('account_system') )
 				$errors[] = new ShoppError(Shopp::__('Enter an email address or login name'));
 			else $errors[] = new ShoppError(Shopp::__('Enter an email address'));
 		} else {
 			// Check that the account exists
-			if ( false !== strpos($_POST['account-login'], '@') ) {
-				$RecoveryCustomer = new ShoppCustomer($_POST['account-login'], 'email');
+			if ( false !== strpos($account_login, '@') ) {
+				$RecoveryCustomer = new ShoppCustomer($account_login, 'email');
 				if ( ! $RecoveryCustomer->id )
 					$errors[] = new ShoppError(Shopp::__('There is no user registered with that email address.'), 'password_recover_noaccount', SHOPP_AUTH_ERR);
 			} else {
-				$user_data = get_userdatabylogin($_POST['account-login']);
+				$user_data = get_userdatabylogin($account_login);
 				$RecoveryCustomer = new ShoppCustomer($user_data->ID, 'wpuser');
 				if ( empty($RecoveryCustomer->id) )
 					$errors[] = new ShoppError(Shopp::__('There is no user registered with that login name.'), 'password_recover_noaccount', SHOPP_AUTH_ERR);
@@ -501,7 +501,7 @@ class ShoppAccountPage extends ShoppPage {
 			$_[] = '<li>' . sprintf(__('Login: %s', 'Shopp'), $user_data->user_login) . '</li>';
 		$_[] = '</ul>';
 		$_[] = '';
-		$_[] = '<p>' . __('To reset your password visit the following address, otherwise just ignore this email and nothing will happen.') . '</p>';
+		$_[] = '<p>' . Shopp::__('To reset your password visit the following address, otherwise just ignore this email and nothing will happen.') . '</p>';
 		$_[] = '';
 		$_[] = '<p>' . add_query_arg(array('rp' => $RecoveryCustomer->activation), Shopp::url(false, 'account')) . '</p>';
 		$message = apply_filters('shopp_recover_password_message', $_);
@@ -524,7 +524,7 @@ class ShoppAccountPage extends ShoppPage {
 	 * @param string $activation The activation key
 	 * @return void
 	 **/
-	static function resetpassword ( $activation ) {
+	static function resetpassword( $activation ) {
 		if ( 'none' == shopp_setting('account_system') || ShoppCustomer()->loggedin() ) return;
 
 		$user_data = false;
@@ -611,11 +611,11 @@ class ShoppCartPage extends ShoppPage {
 	protected $slug = 'cart';
 	protected $templates = array('cart.php');
 
-	public function __construct ( $options = array() ) {
+	public function __construct( $options = array() ) {
 
 		$defaults = array(
-			'title' => __('Cart', 'Shopp'),
-			'description' => __('Displays the shopping cart.', 'Shopp'),
+			'title'       => Shopp::__('Cart'),
+			'description' => Shopp::__('Displays the shopping cart.'),
 		);
 
 		$options = array_merge($defaults, $options);
@@ -623,7 +623,7 @@ class ShoppCartPage extends ShoppPage {
 		parent::__construct($options);
 	}
 
-	public function content ($content) {
+	public function content( $content ) {
 		global $wp_query;
 		// Test that this is the main query and it is the cart page
 		if ( ! $wp_query->is_main_query() || ! is_shopp_page('cart') ) return $content;
@@ -659,8 +659,8 @@ class ShoppCheckoutPage extends ShoppPage {
 	public function __construct ( $options = array() ) {
 
 		$defaults = array(
-			'title' => __('Checkout', 'Shopp'),
-			'description' => __('Displays the checkout form page.', 'Shopp'),
+			'title'       => Shopp::__('Checkout'),
+			'description' => Shopp::__('Displays the checkout form page.'),
 		);
 
 		$options = array_merge($defaults, $options);
@@ -668,12 +668,12 @@ class ShoppCheckoutPage extends ShoppPage {
 		parent::__construct($options);
 	}
 
-	public function head () {?>
+	public function head() {?>
 		<script type="text/javascript">//<![CDATA[ checkout JS-support detection
 			document.documentElement.className += ' js-on'; //]]></script><?php
 	}
 
-	public function content ($content) {
+	public function content( $content ) {
 		global $wp_query;
 		// Test that this is the main query and it is the checkout page
 		if ( ! $wp_query->is_main_query() || ! is_shopp_page('checkout') ) return $content;
@@ -715,18 +715,18 @@ class ShoppConfirmPage extends ShoppPage {
 	protected $slug = 'confirm-order';
 	protected $templates = array('confirm.php');
 
-	public function __construct ( $options = array() ) {
+	public function __construct( $options = array() ) {
 
 		$defaults = array(
-			'title' => __('Confirm Order', 'Shopp'),
-			'description' => __('Displays an order summary to allow the customer to confirm the order before submitting for payment.', 'Shopp'),
+			'title'       => Shopp::__('Confirm Order'),
+			'description' => Shopp::__('Displays an order summary to allow the customer to confirm the order before submitting for payment.'),
 		);
 		$options = array_merge($defaults, $options);
 
 		parent::__construct($options);
 	}
 
-	public function content ($content) {
+	public function content( $content ) {
 		global $wp_query;
 		// Test that this is the main query and it is the confirm order page
 		if ( ! $wp_query->is_main_query() || ! is_shopp_page('confirm') ) return $content;
@@ -769,15 +769,15 @@ class ShoppThanksPage extends ShoppPage {
 	public function __construct ( $options = array() ) {
 
 		$defaults = array(
-			'title' => __('Thanks', 'Shopp'),
-			'description' => __('The final page of the ordering process.', 'Shopp'),
+			'title'       => Shopp::__('Thanks'),
+			'description' => Shopp::__('The final page of the ordering process.'),
 		);
 		$options = array_merge($defaults, $options);
 
 		parent::__construct($options);
 	}
 
-	public function content ($content) {
+	public function content( $content ) {
 
 		global $wp_query;
 		// Make sure this is the main query and it is the thanks page
@@ -812,7 +812,7 @@ class ShoppMaintenancePage extends ShoppPage {
 
 	}
 
-	public function content ($content) {
+	public function content( $content ) {
 		global $wp_query;
 		if ( ! $wp_query->is_main_query() ) return $content;
 
@@ -820,7 +820,7 @@ class ShoppMaintenancePage extends ShoppPage {
 			ob_start();
 			locate_shopp_template($this->templates, true);
 			$content = ob_get_clean();
-		} else $content = '<div id="shopp" class="update"><p>' . Shopp::__('The store is currently down for maintenance. We’ll be back soon!').'</p><div class="clear"></div></div>';
+		} else $content = '<div id="shopp" class="update"><p>' . Shopp::__('The store is currently down for maintenance. We’ll be back soon!') . '</p><div class="clear"></div></div>';
 
 		return $content;
 	}
@@ -845,18 +845,18 @@ class ShoppProductPage extends ShoppPage {
 		parent::__construct($settings);
 	}
 
-	public function editlink ($link) {
+	public function editlink( $link ) {
 		return $link;
 	}
 
-	public function wp_title ( $title, $sep = null, $placement = null ) {
+	public function wp_title( $title, $sep = null, $placement = null ) {
 		if ( is_null($sep) ) $sep = '&mdash;';
 		if ( is_null($placement) ) $placement = '';
 
 		return $title;
 	}
 
-	public function content ($content) {
+	public function content( $content ) {
 		global $wp_query;
 		// Test that this is the main query and it is a product
 		if ( ! $wp_query->is_main_query() || ! is_shopp_product() ) return $content;
@@ -884,7 +884,7 @@ class ShoppProductPage extends ShoppPage {
 	}
 
 
-	public function filters () {
+	public function filters() {
 		parent::filters();
 		remove_filter('comments_array', array($this, 'nocomment'));
 	}
@@ -907,7 +907,7 @@ class ShoppCollectionPage extends ShoppPage {
 	public $slug = 'catalog';
 	public $templates = array('shopp-collection.php');
 
-	public function __construct ( $settings = array() ) {
+	public function __construct( $settings = array() ) {
 
 		$Collection = ShoppCollection();
 		// Define the edit link for collections and taxonomies
@@ -938,12 +938,12 @@ class ShoppCollectionPage extends ShoppPage {
 		parent::__construct($settings);
 	}
 
-	public function filters () {
+	public function filters() {
 		parent::filters();
 		add_filter('wp_title', array($this, 'unlabel'), 1, 3);
 	}
 
-	public function unlabel ( $title, $sep, $seplocation ) {
+	public function unlabel( $title, $sep, $seplocation ) {
 		global $wp_query;
 
 		$query_object = $wp_query->queried_object;
@@ -958,7 +958,7 @@ class ShoppCollectionPage extends ShoppPage {
 		return $title;
 	}
 
-	public function editlink ( $link ) {
+	public function editlink( $link ) {
 		return $this->edit;
 	}
 
@@ -979,7 +979,7 @@ class ShoppCollectionPage extends ShoppPage {
 	 *
 	 * @return array Collection page templates
 	 **/
-	public function templates () {
+	public function templates() {
 		global $wp_query;
 		$templates = array('shopp.php', 'page.php');
 
@@ -1008,7 +1008,7 @@ class ShoppCollectionPage extends ShoppPage {
 	}
 
 
-	public function content ($content) {
+	public function content( $content ) {
 		global $wp_query;
 		// Only modify content for Shopp collections (Shopp smart collections and taxonomies)
 		if ( ! $wp_query->is_main_query() ||  ! is_shopp_collection() ) return $content;
@@ -1032,7 +1032,7 @@ class ShoppCollectionPage extends ShoppPage {
 		return apply_filters('shopp_category_template', $content);
 	}
 
-	public function poststub () {
+	public function poststub() {
 		global $wp_query;
 		if ( ! $wp_query->is_main_query() ) return;
 
@@ -1069,7 +1069,7 @@ class ShoppShortcodes {
 	 * @param array $attrs The parsed shortcode attributes
 	 * @return string The processed content
 	 **/
-	static function product ($atts) {
+	static function product( array $atts ) {
 		$atts['template'] = array('product-shortcode.php', 'product.php');
 		$atts['published'] = 'hide';
 		ShoppStorefront()->shortcoded[] = get_the_ID();
@@ -1085,7 +1085,7 @@ class ShoppShortcodes {
 	 * @param array $attrs The parsed shortcode attributes
 	 * @return string The processed content
 	 **/
-	static function collection ( array $atts = array() ) {
+	static function collection( array $atts = array() ) {
 		$Shopp = Shopp::object();
 		$tag = 'category';
 		if ( isset($atts['name']) ) {
@@ -1125,7 +1125,7 @@ class ShoppShortcodes {
 	 * @param array $attrs The parsed shortcode attributes
 	 * @return string The processed content
 	 **/
-	static function buynow ( array $atts = array() ) {
+	static function buynow( array $atts = array() ) {
 
 		$properties = array('name', 'slug', 'id');
 		foreach ( $properties as $prop ) {
@@ -1161,7 +1161,7 @@ class ShoppShortcodes {
 				<?php shopp('product.quantity', $quantity); ?>
 			<?php endif; ?>
 			<?php
-				$button = 'label=' . ( isset($atts['label']) ? $atts['label'] : __('Buy Now', 'Shopp') );
+				$button = 'label=' . ( isset($atts['label']) ? $atts['label'] : Shopp::__('Buy Now') );
 				$button .= ( isset($atts['ajax']) && Shopp::str_true($atts['ajax']) ? '&ajax=on' : '' );
 				if ( isset($atts['button']) ) $button = html_entity_decode($atts['button']);
 			?>
@@ -1192,7 +1192,7 @@ class ShoppAccountDashboardPage {
 	public $label = "";
 	public $handler = false;
 
-	public function __construct ($request, $label, $handler) {
+	public function __construct( $request, $label, $handler ) {
 		$this->request = $request;
 		$this->label = $label;
 		$this->handler = $handler;

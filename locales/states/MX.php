@@ -45,5 +45,5 @@ return array(
 	'Tlaxcala'            => Shopp::__('Tlaxcala'),
 	'Veracruz'            => Shopp::__('Veracruz'),
 	'Yucatan'             => Shopp::__('Yucatán'),
-	'Zacatecas'           => Shopp::__('Zacatecas')
+	'Zacatecas'           => Shopp::__('Zacatecas'),
 );
