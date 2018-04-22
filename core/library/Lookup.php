@@ -558,17 +558,18 @@ class ShoppLookup {
         );
 
 		/* PHP file upload errors */
-		$ShoppAdmin = ShoppAdmin();
-		$ShoppAdmin->posted();
-		$max_file_size = $ShoppAdmin->form('MAX_FILE_SIZE');
 		$filesize_guidance = '';
 
 		$upload_max_filesize = Shopp::ini_size('upload_max_filesize');
 		if ( ! empty($upload_max_filesize) )
 			$filesize_guidance = ' ' . Shopp::__('Files must be less than %s.' . " {$_['contact']['server-manager']}", $upload_max_filesize);
 
-		if ( ! empty($max_file_size) )
-			$filesize_guidance = ' ' . Shopp::__('Files must be less than %s. Please try again with a smaller file.', readableFileSize($max_file_size) );
+		// FIXME: Find a way to get the $_POST['MAX_FILE_SIZE'] value
+		// $ShoppAdmin = ShoppAdmin();
+		// $ShoppAdmin->posted();
+		// $max_file_size = $ShoppAdmin->form('MAX_FILE_SIZE');
+		// if ( ! empty($max_file_size) )
+		// 	$filesize_guidance = ' ' . Shopp::__('Files must be less than %s. Please try again with a smaller file.', readableFileSize($max_file_size) );
 
 		$_['uploads'] = array(
 			UPLOAD_ERR_INI_SIZE   => Shopp::__('The uploaded file is too big for the server.%s', $filesize_guidance),
