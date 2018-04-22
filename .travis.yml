@@ -1,7 +1,4 @@
 # Travis CI Configuration File
-env:
-  global:
-    - CC_TEST_REPORTER_ID=4de3a3f7b31a76bf00174698b0b6077d1afaf16421bfd5d367236bc2c08f3590
 
 # Use container infrastructure
 sudo: false
@@ -15,6 +12,8 @@ php:
 
 # WordPress version used in first build configuration.
 env:
+  global:
+    - CC_TEST_REPORTER_ID=4de3a3f7b31a76bf00174698b0b6077d1afaf16421bfd5d367236bc2c08f3590
     - WP_VERSION=master
 
 # Next we define our matrix of additional build configurations to test against.
