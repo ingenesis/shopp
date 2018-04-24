@@ -7,7 +7,7 @@
 
 	<form action="<?php echo esc_url($action); ?>" id="orders-list" method="get">
 	<div>
-		<input type="hidden" name="page" value="<?php echo $page; ?>" />
+		<input type="hidden" name="page" value="<?php echo $this->pagename; ?>" />
 		<input type="hidden" name="status" value="<?php echo $status; ?>" />
 	</div>
 

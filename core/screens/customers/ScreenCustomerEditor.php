@@ -22,10 +22,10 @@ class ShoppScreenCustomerEditor extends ShoppScreenController {
 	);
 
 	public function load () {
-		$id = (int) $this->request('id');
-		if ( empty($id) ) return;
+		if ( $this->request('new') )
+			return new ShoppCustomer();
 
-		if ( $this->request('new') ) return new ShoppCustomer();
+		$id = (int) $this->request('id');
 
 		$Customer = new ShoppCustomer($id);
 		if ( ! $Customer->exists() )
@@ -242,7 +242,6 @@ class ShoppScreenCustomerEditor extends ShoppScreenController {
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$Customer = $this->load();
-
 
 		if ( $Customer->exists() ) {
 			$purchase_table = ShoppDatabaseObject::tablename(ShoppPurchase::$table);
