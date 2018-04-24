@@ -898,7 +898,7 @@ jQuery.fn.FileChooser = function (line, status) {
 
 		// File import handling
 		uiAttachFile.unbind('click').click(function () {
-			$.colorbox.hide();
+			$.colorbox.close();
 
 			if (stored) {
 				uiDownloadPath.val(uiImportURL.val());
@@ -1030,7 +1030,7 @@ function FileUploader(container) {
 			});
 
 			self.on('addedfile', function (file) {
-				$.colorbox.hide();
+				$.colorbox.close();
 				self.processQueue();
 				$(self.previewsContainer).find('.icon.shoppui-file').addClass(file.type.replace('/',' '));
 			});
