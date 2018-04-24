@@ -50,7 +50,7 @@ class ShoppAdminProducts extends ShoppAdminPostController {
 		ShoppProduct($Product);
 
 		if ( $this->form('save') ) // Save updates form the editor
-			$Product = $this->save($Product);
+			$this->save($Product);
 
 		$settings = $this->form('settings');
 		$workflow = isset($settings['workflow']) ? $settings['workflow'] : false;
