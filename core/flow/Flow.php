@@ -94,7 +94,7 @@ final class ShoppFlow extends ShoppFlowController {
 	/**
 	 * Get the current domain controller or setup a new domain controller
 	 *
-	 * @since @since 1.5
+	 * @since 1.5
 	 *
 	 * @param string $ControllerClass (optional) The class name to setup a new domain controller
 	 * @return ShoppFlowController|boolean The current domain flow controller or false otherwise
