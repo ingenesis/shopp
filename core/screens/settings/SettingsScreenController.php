@@ -10,7 +10,7 @@
  * @copyright Ingenesis Limited, January 2015
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Admin\Settings
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -25,7 +25,7 @@ class ShoppSettingsScreenController extends ShoppScreenController {
      * 
      * Set the title property to override the page label.
      *
-     * @since 1.4
+     * @since 1.5
      * @return string The title of the screen
      **/
 	public function title() {
@@ -37,7 +37,7 @@ class ShoppSettingsScreenController extends ShoppScreenController {
 	/**
 	 * Register processing operation methods
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function ops() {
@@ -47,7 +47,7 @@ class ShoppSettingsScreenController extends ShoppScreenController {
 	/**
 	 * Handle saving changes from the form
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function updates() {
@@ -58,7 +58,7 @@ class ShoppSettingsScreenController extends ShoppScreenController {
     /**
      * Get the path to include the correct UI template
      *
-     * @since 1.4
+     * @since 1.5
      * @return string The path to the UI template file
      **/
 	protected function ui ( $file ) {
@@ -125,7 +125,7 @@ class ShoppSettingsScreenController extends ShoppScreenController {
 	/**
 	 * Determines hidden settings screens
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param string $slug The tab slug name
 	 * @return bool True if the tab should be hidden, false otherwise
@@ -151,7 +151,7 @@ class ShoppSettingsScreenController extends ShoppScreenController {
     /**
      * Process posted form changes
      *
-     * @since 1.4
+     * @since 1.5
      * 
      * @return boolean True, always true
      **/
@@ -173,7 +173,7 @@ class ShoppSettingsScreenController extends ShoppScreenController {
     /**
      * Save settings form changes
      *
-     * @since 1.4
+     * @since 1.5
      * @return boolean True if saving form settings is successful, false otherwise
      **/
 	public function saveform() {
@@ -184,7 +184,7 @@ class ShoppSettingsScreenController extends ShoppScreenController {
     /**
      * Provides extra form attributes
      *
-     * @since 1.4
+     * @since 1.5
      * @return void
      **/
 	public function formattrs() {

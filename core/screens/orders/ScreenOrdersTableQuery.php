@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, June 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Screens\Orders
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -41,7 +41,7 @@ class ShoppScreenOrdersTableQuery {
 	/**
 	 * Query for order entry items
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * 
 	 * @return array List of order items
 	 **/
@@ -58,7 +58,7 @@ class ShoppScreenOrdersTableQuery {
 	 * 
 	 * Uses the current request query parameters to update the totals.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * 
 	 * @return object An object structuring containing the total, sales and avg sale numbers
 	 **/
@@ -80,7 +80,7 @@ class ShoppScreenOrdersTableQuery {
 	/**
 	 * Set the status index for the query
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param int $status The status index number
 	 * @return void
 	 **/
@@ -93,7 +93,7 @@ class ShoppScreenOrdersTableQuery {
 	/**
 	 * Set the date range for the query
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param string $startdate The start date request in a formatted string "MM/DD/YYYY"
 	 * @param string $enddate The end date request in a formatted string "MM/DD/YYYY"
 	 * @return void
@@ -118,7 +118,7 @@ class ShoppScreenOrdersTableQuery {
 	/**
 	 * Set the search query
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param string $query The search query string
 	 * @return void
 	 **/
@@ -142,7 +142,7 @@ class ShoppScreenOrdersTableQuery {
 	/**
 	 * Helper to search by specified keywords
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param array	$keywords The query type and keywords
 	 * @return void
 	 **/
@@ -189,7 +189,7 @@ class ShoppScreenOrdersTableQuery {
 	/**
 	 * Set the customer query
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param int $id The customer id number
 	 * @return void
 	 **/
@@ -200,7 +200,7 @@ class ShoppScreenOrdersTableQuery {
 	/**
 	 * Set the current page limit query parameter
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param int $page The page number to set
 	 * @return void
 	 **/
@@ -218,7 +218,7 @@ class ShoppScreenOrdersTableQuery {
 	/**
 	 * Determine the per page option to use for this screen
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * 
 	 * @return int The number of entries to show per page
 	 **/

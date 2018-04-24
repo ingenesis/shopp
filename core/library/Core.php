@@ -485,7 +485,7 @@ abstract class ShoppCore {
 	 * Recursively searches a nested array and returns the matching key
 	 *
 	 * @author Jonathan Davis
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param string $needle The string to find
 	 * @param array $haystack The array to search
@@ -662,7 +662,7 @@ abstract class ShoppCore {
 	 * Removes all WordPress actions/filters registered by a particular class or its children.
 	 *
 	 * @author John Dillick
-	 * @since 1.1.4.1
+	 * @since 1.@since 1.5.1
 	 *
 	 * @param array/string $tags the action/filter name(s) to be removed
 	 * @param string $class the classname of the objects you wish to remove actions from
@@ -1191,7 +1191,7 @@ abstract class ShoppCore {
 	/**
 	 * Detects image data in a binary string
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return string|bool Image mime type if detected, false otherwise
 	 **/
@@ -2370,7 +2370,7 @@ abstract class ShoppCore {
 	 * Keyed wrapper for wp_cache_set
 	 *
 	 * @author Clifton Griffin
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param mixed $key
 	 * @param mixed $data
@@ -2396,7 +2396,7 @@ abstract class ShoppCore {
 	 * Keyed wrapper for wp_cache_get function.
 	 *
 	 * @author Clifton Griffin
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param mixed $key
 	 * @param mixed $group (default: null)
@@ -2416,7 +2416,7 @@ abstract class ShoppCore {
 	 * Increment the cache key to gracefully invalidate Shopp specific caches
 	 *
 	 * @author Clifton Griffin
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 */

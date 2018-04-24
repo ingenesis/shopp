@@ -8,7 +8,7 @@
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   Shopp/Controllers/Screen
  * @version   1.0
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -91,7 +91,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	/**
 	 * Provides the page slug for this screen
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return string The page slug
 	 **/
 	public function slug () {
@@ -101,7 +101,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	/**
 	 * Prototype load method to load the data model for the screen
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return Object Some object data to pass back to the screen
 	 **/
 	public function load () {
@@ -113,7 +113,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 *
 	 * Providing a hook name
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return array A list of user request action hook names
 	 **/
 	public function actions () {
@@ -124,7 +124,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	/**
 	 * Used to handle operations on the loaded data model
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return array A list of operations to perform
 	 **/
 	public function ops () {
@@ -138,7 +138,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 * This is normally used for registering table column names, or meta boxes
 	 * or other references used in the user interface.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function layout () {
@@ -150,7 +150,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	 *
 	 * This is the main event. It includes a UI template for display.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function screen () {
@@ -160,7 +160,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	/**
 	 * Dynamically includes necessary JavaScript and stylesheets for the screen
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function assets () {
@@ -233,7 +233,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	/**
 	 * Create or get the admin table for this screen
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param string $classname The class name for the admin table renderer
 	 * @return ShoppAdminTable|bool The ShoppAdminTable object or false
 	 **/
@@ -250,7 +250,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	/**
 	 * Process posted form data and/or request action operations
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param Object $Object The model object for this screen
 	 * @return Object The model object for this screen
 	 **/
@@ -320,7 +320,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	/**
 	 * Generate a nonce field, nonce URL or get the current nonce name
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param string $nonce The nonce type ('field', 'url') or the nonce name
 	 * @param string $url (optional) The URL to nonce
 	 * @return string|void The nonce URL, nonce name or void when genrating the nonce field
@@ -363,7 +363,7 @@ abstract class ShoppScreenController extends ShoppRequestFormFramework {
 	/**
 	 * Registers callback handlers for actions or ops
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	private function handlers ( $action, array $methods = array() ) {

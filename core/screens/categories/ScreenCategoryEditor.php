@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, August 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Screens\Category
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -17,7 +17,7 @@ class ShoppScreenCategoryEditor extends ShoppScreenController {
 	/**
 	 * Load scripts needed for the user interface
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function assets () {
@@ -63,7 +63,7 @@ class ShoppScreenCategoryEditor extends ShoppScreenController {
 	 * Handles requested category ID by default, or a blank new category object,
 	 * or a workflow requested category ID.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return ProductCategory The loaded category
 	 */
 	public function load () {
@@ -133,7 +133,7 @@ class ShoppScreenCategoryEditor extends ShoppScreenController {
 	 * This is a no-op method to allow ShoppAdminCategories::save() to handle saving
 	 * during ShoppAdminCategories::workflow()
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 */
 	public function save () {

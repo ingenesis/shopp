@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, February 2015
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Admin\Settings
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -15,14 +15,14 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 /**
  * Taxes settings screen controller
  *
- * @since 1.4
+ * @since 1.5
  **/
 class ShoppScreenTaxes extends ShoppSettingsScreenController {
 
 	/**
 	 * Enqueue required script/style assets for the UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function assets() {
@@ -38,7 +38,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 	/**
 	 * Register action request methods
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function actions() {
@@ -48,7 +48,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 	/**
 	 * Gets the current tax rate settings
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * 
 	 * @return array The list of current tax rate settings
 	 **/
@@ -64,7 +64,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 	/**
 	 * Delete the requested tax rate entry
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function delete() {
@@ -101,7 +101,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 	 * 
 	 * This is used to initialize any metaboxes or tables.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function layout() {
@@ -111,7 +111,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 	/**
 	 * Handle saving form updates
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function updates() {
@@ -146,7 +146,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 	/**
 	 * Add a tax rule
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function addrule() {
@@ -160,7 +160,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 	/**
 	 * Delete a tax rule
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function deleterule() {
@@ -178,7 +178,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 	/**
 	 * Add local tax rates
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function addlocals() {
@@ -193,7 +193,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 	/**
 	 * Remove local tax rates
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function rmvlocals() {
@@ -284,7 +284,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 					<localtaxrates>
 						<taxrate name="Kent">1</taxrate>
 						<taxrate name="New Castle">0.25</taxrate>
-						<taxrate name="Sussex">1.4</taxrate>
+						<taxrate name="Sussex">@since 1.5</taxrate>
 					</localtaxrates>
 
 				Taxrate record format:
@@ -337,7 +337,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 	/**
 	 * Render the screen UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function screen() {
@@ -352,7 +352,7 @@ class ShoppScreenTaxes extends ShoppSettingsScreenController {
 	/**
 	 * Output the multipart form encoding type attribute
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function formattrs() {

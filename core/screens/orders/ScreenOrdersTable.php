@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, June 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Screens\Orders
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -26,7 +26,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
 	/**
 	 * Load the order items for the table
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/
@@ -81,7 +81,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
 	/**
 	 * Setup the bulk actions menu
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param string $which Specify which bulk action menu to change ('top', 'bottom')
 	 * @return array The list of actions
 	 **/
@@ -98,7 +98,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
 	/**
 	 * Show extra controls in the top or bottom table navigation
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param string $which Specify which bulk action menu to change ('top', 'bottom')
 	 * @return array The list of actions
 	 **/
@@ -110,7 +110,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
     /**
      * Render the bottom table navigation
      *
-     * @since 1.4
+     * @since 1.5
      *
      * @return void
      **/
@@ -170,7 +170,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
     /**
      * Render the top table navigation
      *
-     * @since 1.4
+     * @since 1.5
      *
      * @return void
      **/
@@ -202,7 +202,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
     /**
      * Specify the table columns
      *
-     * @since 1.4
+     * @since 1.5
      *
      * @return void
      **/
@@ -221,7 +221,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
     /**
      * Render text when no orders are available
      *
-     * @since 1.4
+     * @since 1.5
      *
      * @return void
      **/
@@ -235,7 +235,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
      * This method is used to render the column by default when no
      * specific renderer method matches the column name.
      *
-     * @since 1.4
+     * @since 1.5
      *
      * @return string Empty string
      **/
@@ -246,7 +246,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
     /**
      * Render the order checkbox to select the order row for bulk actions
      *
-     * @since 1.4
+     * @since 1.5
      * @param ShoppPurchase $Item The order Item object
      * @return string The selection checkbox
      **/
@@ -257,7 +257,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
     /**
      * Render the Order column description and convenience management controls
      *
-     * @since 1.4
+     * @since 1.5
      * @param ShoppPurchase $Item The order Item object
      * @return string The order column description and management controls
      **/
@@ -269,7 +269,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
     /**
      * Render the customer name for the order
      *
-     * @since 1.4
+     * @since 1.5
      * @param ShoppPurchase $Item The order Item object
      * @return string The customer name
      **/
@@ -288,7 +288,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
     /**
      * Render the order destination column
      *
-     * @since 1.4
+     * @since 1.5
      * @param ShoppPurchase $Item The order Item object
      * @return string The destination column
      **/
@@ -310,7 +310,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
     /**
      * Render the order transaction column
      *
-     * @since 1.4
+     * @since 1.5
      * @param ShoppPurchase $Item The order Item object
      * @return string The transaction column
      **/
@@ -324,7 +324,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
     /**
      * Render the order date column
      *
-     * @since 1.4
+     * @since 1.5
      * @param ShoppPurchase $Item The order Item object
      * @return string The formatted date column
      **/
@@ -338,7 +338,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
     /**
      * Render the order total column
      *
-     * @since 1.4
+     * @since 1.5
      * @param ShoppPurchase $Item The order Item object
      * @return string The total column with the transaction status
      **/

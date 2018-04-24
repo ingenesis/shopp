@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, February 2010-2014
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   Shopp/Locale/Countries
- * @version   1.4
+ * @version   @since 1.5
  * @since     1.0
  **/
 

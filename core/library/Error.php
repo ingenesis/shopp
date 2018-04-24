@@ -530,7 +530,7 @@ class ShoppErrorLogging {
 	/**
 	 * Provide the file size of the log file
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return int The size of the file in bytes
 	 **/

@@ -5,7 +5,7 @@
  * Processes resource requests for non-HTML data
  *
  * @author Jonathan Davis
- * @version 1.4
+ * @version 1.5
  * @copyright Ingenesis Limited, February, 2010-2017
  * @license GNU GPL version 3 (or later) {@see license.txt}
  * @package Shopp\Resources

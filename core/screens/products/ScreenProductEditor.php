@@ -99,7 +99,7 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 	/**
 	 * Re-key product options to maintain order in JS @see #2930
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param array $options The array of product options
 	 * @return void
 	 **/
@@ -181,7 +181,7 @@ class ShoppScreenProductEditor extends ShoppScreenController {
 	/**
 	 * Provide upload errors back to the browser
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param array $file The uploaded file data
 	 * @return boolean False if no errors, exits if there are errors
 	 **/

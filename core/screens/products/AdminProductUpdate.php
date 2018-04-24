@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, June 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Screens\Products
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -20,7 +20,7 @@ class ShoppAdminProductUpdate extends ShoppRequestFormFramework {
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param ShoppProduct $Product The target ShoppProduct object to update
 	 * @return void
 	 **/
@@ -32,7 +32,7 @@ class ShoppAdminProductUpdate extends ShoppRequestFormFramework {
 	/**
 	 * Update the product publishing status and publish date
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function status() {
@@ -69,7 +69,7 @@ class ShoppAdminProductUpdate extends ShoppRequestFormFramework {
 	/**
 	 * Update the product with core product data from the form
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function updates () {
@@ -89,7 +89,7 @@ class ShoppAdminProductUpdate extends ShoppRequestFormFramework {
  	 *
  	 * Depends on ShoppAdminProductPriceUpdate
  	 * 
- 	 * @since 1.4
+ 	 * @since 1.5
  	 * @return void
  	 **/
 	public function prices() {
@@ -133,7 +133,7 @@ class ShoppAdminProductUpdate extends ShoppRequestFormFramework {
 	/**
 	 * Delete leftover ShoppPrice entries when the defined variant/addon options are deleted
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function trimprices() {
@@ -161,7 +161,7 @@ class ShoppAdminProductUpdate extends ShoppRequestFormFramework {
   	/**
   	 * Delete, link or update images for the product
   	 *
-  	 * @since 1.4
+  	 * @since 1.5
   	 * @return void
   	 **/
 	public function images() {
@@ -190,7 +190,7 @@ class ShoppAdminProductUpdate extends ShoppRequestFormFramework {
 	/**
 	 * Update taxonomies added or removed from the product
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function taxonomies() {
@@ -226,7 +226,7 @@ class ShoppAdminProductUpdate extends ShoppRequestFormFramework {
 	/**
 	 * Delete or update product specs
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function specs() {
@@ -265,7 +265,7 @@ class ShoppAdminProductUpdate extends ShoppRequestFormFramework {
 	/**
 	 * Update product meta data
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function meta() {

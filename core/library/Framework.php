@@ -48,7 +48,7 @@ class ListFramework implements Iterator {
 	/**
 	 * Moves an entry to a new key
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param string $old The original key to move the entry from
 	 * @param string $new The new key to move the entry to

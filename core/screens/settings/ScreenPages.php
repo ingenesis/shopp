@@ -8,7 +8,7 @@
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   Shopp/Admin/Settings
  * @version   1.0
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -18,7 +18,7 @@ class ShoppScreenPages extends ShoppSettingsScreenController {
 	/**
 	 * Enqueue required script and style assets for the UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function assets() {
@@ -31,7 +31,7 @@ class ShoppScreenPages extends ShoppSettingsScreenController {
 	 * 
 	 * This is used to initialize any metaboxes or tables.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function layout() {
@@ -41,7 +41,7 @@ class ShoppScreenPages extends ShoppSettingsScreenController {
 	/**
 	 * Process and save form updates
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function updates() {
@@ -68,7 +68,7 @@ class ShoppScreenPages extends ShoppSettingsScreenController {
 	/**
 	 * Render the screen UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function screen() {
@@ -83,7 +83,7 @@ class ShoppScreenPages extends ShoppSettingsScreenController {
 	/**
 	 * Provide a clean URL for this screen
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param array $params A list of parameters to set for the URL
 	 * @return string The proper URL for this screen
 	 **/

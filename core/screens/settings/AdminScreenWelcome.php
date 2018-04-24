@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, August 2013-2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Admin\Welcome
- * @since	 1.4
+ * @since	 @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -34,7 +34,7 @@ class ShoppAdminScreenWelcome extends ShoppScreenController {
 	/**
 	 * Routes rendering to the correct UI rendering method
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return string Return the UI rendering method
 	 **/
 	public function route() {
@@ -47,7 +47,7 @@ class ShoppAdminScreenWelcome extends ShoppScreenController {
 	/**
 	 * The welcome UI rendering method
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function welcome() {
@@ -60,7 +60,7 @@ class ShoppAdminScreenWelcome extends ShoppScreenController {
 	/**
 	 * Disable the help tab
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return string Empty string
 	 **/
 	public function help() {
@@ -70,7 +70,7 @@ class ShoppAdminScreenWelcome extends ShoppScreenController {
 	/**
 	 * Render the welcome heading with tab navigation and version number
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function heading() {
@@ -88,7 +88,7 @@ Thank you for using Shopp! E-commerce just got a little easier and more secure. 
 	/**
 	 * Render the credits UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function credits() {
@@ -99,7 +99,7 @@ Thank you for using Shopp! E-commerce just got a little easier and more secure. 
 	/**
 	 * Download the current list of contributors from the GitHub API
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return array A list of contributors
 	 **/
 	public function contributors() {

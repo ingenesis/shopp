@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, June 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Screens\Orders
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -17,7 +17,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
     /**
      * Load the requested order
      *
-     * @since 1.4
+     * @since 1.5
      *
      * @return void
      **/
@@ -33,7 +33,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
 	/**
 	 * Enqueue the scripts
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/
@@ -69,7 +69,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
     /**
      * Specify operation handlers
      *
-     * @since 1.4
+     * @since 1.5
      *
      * @return array List of operation handler method names
      **/
@@ -84,7 +84,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
     /**
      * Handler for removing a line item from the order
      *
-     * @since 1.4
+     * @since 1.5
      *
      * @return void
      **/
@@ -132,7 +132,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
     /**
      * Handler for saving changes to a line item on the order
      *
-     * @since 1.4
+     * @since 1.5
      *
      * @return void
      **/
@@ -217,7 +217,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
     /**
      * Handler for saving changes to order totals
      *
-     * @since 1.4
+     * @since 1.5
      *
      * @return void
      **/
@@ -249,7 +249,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
     /**
      * Helper for tallying up multi-line tax, shipping, discounts and fees
      *
-     * @since 1.4
+     * @since 1.5
      * @param ShoppPurchase $Purchase The order we're working on
      * @param string $property The property getting tallied up
      * @param array $fields The list of fields to tally
@@ -296,7 +296,7 @@ class ShoppScreenOrderManager extends ShoppScreenController {
     /**
      * Provide a list of shipping carriers
      *
-     * @since 1.4
+     * @since 1.5
      *
      * @return array A list of shipping carriers
      **/

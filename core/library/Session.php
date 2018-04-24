@@ -348,7 +348,7 @@ abstract class ShoppSessionFramework {
 	 * Generate the session security key for encryption and decryption
 	 *
 	 * @since 1.0
-	 * @version 1.4
+	 * @version 1.5
 	 *
 	 * @return string|bool The secure key, or false if not available
 	 **/
@@ -479,7 +479,7 @@ abstract class ShoppSessionFramework {
 	/**
 	 * Determine whether Shopp can cook a new session.
 	 *
-	 * @since 1.4.0
+	 * @since 1.5.0
 	 *
 	 * @return void
 	 **/
@@ -490,7 +490,7 @@ abstract class ShoppSessionFramework {
 		 * Allow plugins to prevent Shopp from sessioning. Example: for performance,
 		 * a site could prevent sessioning on non-Shopp pages.
 		 *
-		 * @since 1.4.0
+		 * @since 1.5.0
 		 *
 		 * @param boolean  $session Allow Shopp to create a session. true or false
 		 */

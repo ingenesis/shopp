@@ -13,7 +13,7 @@
  * @copyright Ingenesis Limited, August 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Screens\Category
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -82,7 +82,7 @@ class ShoppAdminCategories extends ShoppAdminPostController {
 	 *
 	 * This is used for workflow next/previous handling.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 */
 	public function worklist () {
@@ -139,7 +139,7 @@ class ShoppAdminCategories extends ShoppAdminPostController {
 	 * @todo refactor complexity
 	 * @todo avoid direct access to $_POST
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function save ( $Category ) {
@@ -247,7 +247,7 @@ class ShoppAdminCategories extends ShoppAdminPostController {
 	/**
 	 * Convert a term to a Product Category
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 */
 	public static function termcategory ( $term, $taxonomy ) {
@@ -259,7 +259,7 @@ class ShoppAdminCategories extends ShoppAdminPostController {
 	/**
 	 * Load a product category for editing
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 */
 	public static function loader ( $id ) {

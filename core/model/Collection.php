@@ -789,7 +789,7 @@ class ProductTaxonomy extends ProductCollection {
 	 *
 	 * Stub functionality from WP_Term
 	 *
-	 * @since 1.4.0
+	 * @since 1.5.0
 	 * @access public
 	 *
 	 * @param string $filter Filter context. Accepts 'edit', 'db', 'display', 'attribute', 'js', 'raw'.

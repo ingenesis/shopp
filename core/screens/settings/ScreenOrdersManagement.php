@@ -17,7 +17,7 @@ class ShoppScreenOrdersManagement extends ShoppSettingsScreenController {
 	/**
 	 * Enqueue required script and style assets for the UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function assets() {
@@ -31,7 +31,7 @@ class ShoppScreenOrdersManagement extends ShoppSettingsScreenController {
 	/**
 	 * Process and save form updates
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function updates() {

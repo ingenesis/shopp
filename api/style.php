@@ -8,7 +8,7 @@
  * @license GNU GPL version 3 (or later) {@see license.txt}
  * @package shopp
  * @version 1.0
- * @since 1.4
+ * @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -16,7 +16,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 /**
  * Register a new stylesheet to ShoppStyles service
  *
- * @since 1.4
+ * @since 1.5
  *
  * @param string $handle Reference name for the stylesheet
  * @param string $src Path to the stylesheet
@@ -36,7 +36,7 @@ function shopp_register_style ( $handle, $src, $deps = array(), $ver = false, $m
 /**
  * Remove a registered stylesheet
  *
- * @since 1.4
+ * @since 1.5
  *
  * @param string $handle Reference name for the stylesheet
  * @return void
@@ -53,7 +53,7 @@ function shopp_deregister_style ( $handle ) {
  * Add an inline style to a stylesheet
  *
  * @author Jonathan Davis
- * @since 1.4
+ * @since 1.5
  *
  * @param string $handle Name of the stylesheet to add extra styles to
  * @param string $code The CSS to add
@@ -84,7 +84,7 @@ function shopp_inline_style ( $handle, $code ) {
  * Adds a stylesheet to the queue to be included
  *
  *
- * @since 1.4
+ * @since 1.5
  *
  * @param string $handle Reference name for the stylesheet
  * @param string $src (optional) Path to the stylesheet

@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, February 2015
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Admin\Settings
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -20,7 +20,7 @@ class ShoppScreenPresentation extends ShoppSettingsScreenController {
 	/**
 	 * Register processing operation methods
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function ops() {
@@ -35,7 +35,7 @@ class ShoppScreenPresentation extends ShoppSettingsScreenController {
 	/**
 	 * Handle saving form updates
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function updates() {
@@ -77,7 +77,7 @@ class ShoppScreenPresentation extends ShoppSettingsScreenController {
 	/**
 	 * Render the UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function screen() {

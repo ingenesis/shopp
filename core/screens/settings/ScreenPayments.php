@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, February 2015
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Admin\Settings
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -17,7 +17,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 	/**
 	 * Enqueue required script and style assets for the UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function assets() {
@@ -33,7 +33,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 	 * 
 	 * This is used to initialize any metaboxes or tables.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function layout() {
@@ -43,7 +43,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 	/**
 	 * Register action request methods
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function actions() {
@@ -53,7 +53,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 	/**
 	 * Register processing operation methods
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function ops() {
@@ -64,7 +64,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 	/**
 	 * Delete requested payment entry
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function delete() {
@@ -90,7 +90,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 	/**
 	 * Add a payment entry for a specified payment gateway
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
     public function add() {
@@ -119,7 +119,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 	/**
 	 * Handle saving form updates
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function updates() {
@@ -166,7 +166,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 	/**
 	 * Render the screen UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function screen() {

@@ -8,7 +8,7 @@
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Admin\Settings
  * @version   1.0
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -20,7 +20,7 @@ class ShoppAdminSettings extends ShoppAdminPostController {
 	/**
 	 * Used to route control to screen controllers
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return string Return the class name as a string of the subordinate screen controller
 	 **/
 	protected function route() {
@@ -45,7 +45,7 @@ class ShoppAdminSettings extends ShoppAdminPostController {
 	/**
 	 * Provides the slug for this page request
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return string The page request slug
 	 **/
 	protected function slug() {

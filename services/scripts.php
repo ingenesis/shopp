@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, May 2010-2014
  * @license GNU GPL version 3 (or later) {@see license.txt}
  * @package Shopp\Services\Scripts
- * @version 1.4
+ * @version 1.5
  * @since 1.1
  **/
 

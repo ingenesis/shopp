@@ -9,7 +9,7 @@
  * @copyright Ingenesis Limited, May 2014
  * @license GNU GPL version 3 (or later) {@see license.txt}
  * @package shopp
- * @since 1.4
+ * @since 1.5
  **/
 
 $load = isset($_GET['styles']) ? $_GET['styles'] : '';

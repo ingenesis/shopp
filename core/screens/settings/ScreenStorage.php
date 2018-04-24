@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, February 2015
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Admin\Settings
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -17,7 +17,7 @@ class ShoppScreenStorage extends ShoppSettingsScreenController {
 	/**
 	 * Enqueue required script/style assets for the UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function assets() {
@@ -30,7 +30,7 @@ class ShoppScreenStorage extends ShoppSettingsScreenController {
 	 * 
 	 * This is used to initialize anything before the screen UI is rendered.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function layout() {
@@ -42,7 +42,7 @@ class ShoppScreenStorage extends ShoppSettingsScreenController {
 	/**
 	 * Handle saving form updates
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function updates() {
@@ -66,7 +66,7 @@ class ShoppScreenStorage extends ShoppSettingsScreenController {
 	/**
 	 * Render the screen
 	 * 
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function screen() {

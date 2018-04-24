@@ -13,7 +13,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 /**
  * Shopp order admin controller
  *
- * @since 1.4
+ * @since 1.5
  **/
 class ShoppAdminOrders extends ShoppAdminController {
 
@@ -22,7 +22,7 @@ class ShoppAdminOrders extends ShoppAdminController {
 	/**
 	 * Route the screen requests to the screen controller
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return string The screen controller class in charge of the request
 	 **/

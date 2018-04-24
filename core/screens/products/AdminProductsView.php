@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, June 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Screens\Products
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -15,7 +15,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 /**
  * Screen view controller for sub-views
  *
- * @since 1.4
+ * @since 1.5
  **/
 class ShoppAdminProductsView {
 
@@ -104,7 +104,7 @@ class ShoppAdminProductsView {
 	/**
 	 * Get or set the current view
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param string $view The view slug to set
 	 * @return string The current view slug
@@ -128,7 +128,7 @@ class ShoppAdminProductsView {
 	/**
 	 * Set the current view page limit parameter
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param int $page The page number to set
 	 * @return void
@@ -150,7 +150,7 @@ class ShoppAdminProductsView {
 	/**
 	 * Set where clause additions for a product search query
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param string $query The product search query
 	 * @return void
 	 **/
@@ -164,7 +164,7 @@ class ShoppAdminProductsView {
 	/**
 	 * Set the category filter query parameters
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param int $id The category term id
 	 * @return void
 	 **/
@@ -185,7 +185,7 @@ class ShoppAdminProductsView {
 	/**
 	 * Set query parameters for custom taxonomy filters
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param array $list The list of custom taxonomy names and taxonomy term
 	 * @return void
 	 **/
@@ -204,7 +204,7 @@ class ShoppAdminProductsView {
 	/**
 	 * Set the query parameter for stock level filters
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param string $level The stock level filter
 	 * @return void
 	 **/
@@ -232,7 +232,7 @@ class ShoppAdminProductsView {
 	/**
 	 * Set the query parameter for column ordering
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param string $column The column name
 	 * @param string $order The order direction ('asc' or 'desc')
 	 * @return void
@@ -273,7 +273,7 @@ class ShoppAdminProductsView {
 	/**
 	 * Produces the ShoppProduct query loading parameters
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return array The loading parameters
 	 **/
 	public function loading () {
@@ -304,7 +304,7 @@ class ShoppAdminProductsView {
 	/**
 	 * Calculates cached sub-view product totals based on the view queries
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function totals () {

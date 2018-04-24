@@ -8,7 +8,7 @@
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   Shopp/Admin/Settings
  * @version   1.0
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -18,7 +18,7 @@ class ShoppScreenAdvanced extends ShoppSettingsScreenController {
 	/**
 	 * Enqueue required script/style assets for the UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function assets() {
@@ -35,7 +35,7 @@ class ShoppScreenAdvanced extends ShoppSettingsScreenController {
 	 *
 	 * @todo Move the screen update processing to a different method
 	 * 
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function screen() {
@@ -150,7 +150,7 @@ class ShoppScreenAdvanced extends ShoppSettingsScreenController {
 	/**
 	 * Determine if the helper plugin is installed
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return boolean True if installed, false otherwise
 	 **/
 	public function helper_installed() {
@@ -165,7 +165,7 @@ class ShoppScreenAdvanced extends ShoppSettingsScreenController {
 	 *
 	 * @todo Finish WP filesystem installer; this is currently handled in the screen() method
 	 * 
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public static function install_services_helper() {
@@ -179,7 +179,7 @@ class ShoppScreenAdvanced extends ShoppSettingsScreenController {
 	 *
 	 * @todo Move the handler in the screen() method to here
 	 * 
-	 * @since 1.4
+	 * @since 1.5
 	 * @return array The credentials data
 	 **/
 	protected static function filesystemcreds() {

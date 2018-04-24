@@ -8,7 +8,7 @@
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   Shopp/Admin/Settings
  * @version   1.0
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -16,7 +16,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 /**
  * Downloads settings screen controller
  *
- * @since 1.4
+ * @since 1.5
  * @package Shopp/Admin/Settings
  **/
 class ShoppScreenDownloads extends ShoppSettingsScreenController {
@@ -24,7 +24,7 @@ class ShoppScreenDownloads extends ShoppSettingsScreenController {
 	/**
 	 * Register processing operation methods
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function ops() {
@@ -34,7 +34,7 @@ class ShoppScreenDownloads extends ShoppSettingsScreenController {
 	/**
 	 * Update settings from the form
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function updates() {
@@ -45,7 +45,7 @@ class ShoppScreenDownloads extends ShoppSettingsScreenController {
 	/**
 	 * Renders the screen
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function screen() {

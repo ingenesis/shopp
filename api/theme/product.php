@@ -1006,7 +1006,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	 * Checks if the product has a subscription price line
 	 *
 	 * @api `shopp('product.has-subscription')`
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param string       $result  The output
 	 * @param array        $options The options

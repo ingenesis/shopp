@@ -8,7 +8,7 @@
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   Shopp/Admin/Settings
  * @version   1.0
- * @since	 1.4
+ * @since	 @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -16,7 +16,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 /**
  * Screen controller for the image settings screen
  *
- * @since 1.4
+ * @since 1.5
  * @package Shopp/Admin/Settings
  **/
 class ShoppScreenImages extends ShoppSettingsScreenController {
@@ -34,7 +34,7 @@ class ShoppScreenImages extends ShoppSettingsScreenController {
 	/**
 	 * Enqueue script or style assets needed for the UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function assets() {
@@ -48,7 +48,7 @@ class ShoppScreenImages extends ShoppSettingsScreenController {
 	/**
 	 * Register processing operation methods
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function ops() {
@@ -59,7 +59,7 @@ class ShoppScreenImages extends ShoppSettingsScreenController {
 	/**
 	 * Handle saving image setting changes from form updates
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function updates() {
@@ -80,7 +80,7 @@ class ShoppScreenImages extends ShoppSettingsScreenController {
 	/**
 	 * Process deleting image settings
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function delete() {
@@ -109,7 +109,7 @@ class ShoppScreenImages extends ShoppSettingsScreenController {
 	 * 
 	 * This is used to initialize any metaboxes or tables.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function layout() {
@@ -119,7 +119,7 @@ class ShoppScreenImages extends ShoppSettingsScreenController {
 	/**
 	 * Render the UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function screen() {

@@ -5,7 +5,7 @@
  * Shopp application domain router
  *
  * @copyright Ingenesis Limited, January 2010-2015
- * @version 1.4
+ * @version 1.5
  * @package Shopp\Flow
  **/
 
@@ -94,7 +94,7 @@ final class ShoppFlow extends ShoppFlowController {
 	/**
 	 * Get the current domain controller or setup a new domain controller
 	 *
-	 * @since 1.4
+	 * @since @since 1.5
 	 *
 	 * @param string $ControllerClass (optional) The class name to setup a new domain controller
 	 * @return ShoppFlowController|boolean The current domain flow controller or false otherwise

@@ -8,7 +8,7 @@
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   Shopp/Admin
  * @version   1.0
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -16,7 +16,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 /**
  * Admin pages controller
  *
- * @since 1.4
+ * @since 1.5
  **/
 class ShoppAdminPages {
 
@@ -147,7 +147,7 @@ class ShoppAdminPages {
 	/**
 	 * The singleton access method
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return ShoppAdminPages The singleton instance
 	 **/
@@ -297,7 +297,7 @@ class ShoppAdminPages {
 	/**
 	 * Provides an array of tabs for the current screen.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param string $page The page to get tabs for.
 	 * @return array The list of page tabs.
@@ -335,7 +335,7 @@ class ShoppAdminPages {
 	/**
 	 * Adds a tab to a parent page.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param string $tab Tab hook name.
 	 * @param string $parent The parent page to register the tabs to.
@@ -380,7 +380,7 @@ class ShoppAdminPages {
 	/**
 	 * Determines if the current request is a Shopp admin screen
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return boolean True if the current screen is Shopp admin screen, false otherwise
 	 **/
@@ -401,7 +401,7 @@ class ShoppAdminPages {
 	/**
 	 * Detects a Shopp post type editor.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return bool True if the admin page is a Shopp post-type editor, false otherwise.
 	 **/
@@ -442,7 +442,7 @@ class ShoppAdminPage {
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param string $name The name of the page.
 	 * @param string $page The page hook name.
@@ -466,7 +466,7 @@ class ShoppAdminPage {
 	/**
 	 * The page hook.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return string The 'shopp' page hook
 	 **/

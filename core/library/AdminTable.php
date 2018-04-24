@@ -19,7 +19,7 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
  *
  * Derived from WordPress
  *
- * @since 1.4
+ * @since 1.5
  * @access private
  *
  * @package Shopp/Admin/Table
@@ -92,7 +92,7 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 	/**
 	 * Editor markup
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @var string
 	 * @access private
 	 */
@@ -1069,7 +1069,7 @@ abstract class ShoppAdminTable extends ShoppRequestFramework {
 	/**
 	 * Set or get the current row editor markup
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return string The current editor markup
 	 **/

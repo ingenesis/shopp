@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, August 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Screens\Category
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -17,7 +17,7 @@ class ShoppScreenCategoryArrangeProducts extends ShoppScreenController {
 	/**
 	 * Prepare assets for the the interface
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function assets () {
@@ -48,7 +48,7 @@ class ShoppScreenCategoryArrangeProducts extends ShoppScreenController {
 	/**
 	 * Removes the move column from the list of columns in the table
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return array list of columns
 	 **/

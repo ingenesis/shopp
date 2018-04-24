@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, June 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Screens\Orders
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -19,7 +19,7 @@ class ShoppScreenOrders extends ShoppScreenController {
 	/**
 	 * Register the action handlers.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/
@@ -32,7 +32,7 @@ class ShoppScreenOrders extends ShoppScreenController {
 	/**
 	 * Handle bulk actions.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/
@@ -70,7 +70,7 @@ class ShoppScreenOrders extends ShoppScreenController {
 	/**
 	 * Delete an order with a given ID.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param string $id The ShoppPurchase ID to delete.
 	 * @return bool True if deleted successfully, false otherwise.
@@ -90,7 +90,7 @@ class ShoppScreenOrders extends ShoppScreenController {
 	/**
 	 * Update the status of an order.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param string $id The ShoppPurchase ID to update.
 	 * @return bool True if deleted successfully, false otherwise.
@@ -111,7 +111,7 @@ class ShoppScreenOrders extends ShoppScreenController {
 	/**
 	 * Enqueue the scripts
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/

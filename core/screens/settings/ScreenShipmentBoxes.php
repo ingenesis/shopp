@@ -8,7 +8,7 @@
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   Shopp/Admin/Settings
  * @version   1.0
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -18,7 +18,7 @@ class ShoppScreenShipmentBoxes extends ShoppSettingsScreenController {
 	/**
 	 * Enqueue script or style assets needed for the UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function assets() {
@@ -32,7 +32,7 @@ class ShoppScreenShipmentBoxes extends ShoppSettingsScreenController {
 	/**
 	 * Register processing operation methods
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function ops() {
@@ -43,7 +43,7 @@ class ShoppScreenShipmentBoxes extends ShoppSettingsScreenController {
 	/**
 	 * Update settings from the form
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function updates() {
@@ -64,7 +64,7 @@ class ShoppScreenShipmentBoxes extends ShoppSettingsScreenController {
 	/**
 	 * Handle deleting a shipment box setting
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function delete() {
@@ -93,7 +93,7 @@ class ShoppScreenShipmentBoxes extends ShoppSettingsScreenController {
 	 * 
 	 * This is used to initialize any metaboxes or tables.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function layout() {
@@ -103,7 +103,7 @@ class ShoppScreenShipmentBoxes extends ShoppSettingsScreenController {
 	/**
 	 * Render the screen UI
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function screen() {

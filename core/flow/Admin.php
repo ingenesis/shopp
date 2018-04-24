@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, January 2010-2014
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   Shopp/Flow/Admin
- * @version   1.4
+ * @version   @since 1.5
  * @since     1.0
  **/
 
@@ -75,7 +75,7 @@ class ShoppAdmin extends ShoppFlowController {
 	/**
 	 * Bootloader for the current page controller.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/
@@ -88,7 +88,7 @@ class ShoppAdmin extends ShoppFlowController {
 	/**
 	 * Routes the screen display to the page controller's screen handler.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/
@@ -226,7 +226,7 @@ class ShoppAdmin extends ShoppFlowController {
 	/**
 	 * Gets the current screen id.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return string The current screen ID.
 	 **/
@@ -259,7 +259,7 @@ class ShoppAdmin extends ShoppFlowController {
  *
  * @uses ShoppScreenController
  * @package Shopp/Flow/Admin
- * @since 1.4
+ * @since 1.5
  **/
 abstract class ShoppAdminController extends ShoppFlowController {
 
@@ -317,7 +317,7 @@ abstract class ShoppAdminController extends ShoppFlowController {
 	/**
 	 * Used to route control to screens
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return string Return the class name as a string of the subordinate screen controller
 	 **/
 	protected function route () {
@@ -327,7 +327,7 @@ abstract class ShoppAdminController extends ShoppFlowController {
 	/**
 	 * Calls the subordinate Screen help handler
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function help () {
@@ -337,7 +337,7 @@ abstract class ShoppAdminController extends ShoppFlowController {
 	/**
 	 * Calls the subordinate Screen layout handler
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function layout () {
@@ -347,7 +347,7 @@ abstract class ShoppAdminController extends ShoppFlowController {
 	/**
 	 * Calls the subordinate Screen's screen method handler
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function screen () {
@@ -362,7 +362,7 @@ abstract class ShoppAdminController extends ShoppFlowController {
 	/**
 	 * Dynamically includes necessary JavaScript and stylesheets for the admin
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/
@@ -420,7 +420,7 @@ abstract class ShoppAdminController extends ShoppFlowController {
  *
  * This is for HTTP-POST data handling in addition to HTTP-GET query handling.
  *
- * @since 1.4
+ * @since 1.5
  **/
 class ShoppAdminPostController extends ShoppAdminController {
 
@@ -437,14 +437,14 @@ class ShoppAdminPostController extends ShoppAdminController {
 /**
  * Customizes Shopp taxonomy screens.
  *
- * @since 1.4
+ * @since 1.5
  **/
 class ShoppAdminTaxonomies {
 
 	/**
 	 * Resets the parent menu to the Shopp Catalog menu.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/
@@ -457,7 +457,7 @@ class ShoppAdminTaxonomies {
 	/**
 	 * Defines the column layout for Shopp taxonomy list screens.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param array $cols The default columns for taxonomy screens.
 	 * @return Defines the columns for Shopp taxonomy screens.
@@ -499,14 +499,14 @@ class ShoppAdminTaxonomies {
  *
  * @access private
  *
- * @since 1.4
+ * @since 1.5
  **/
 class ShoppTinyMCE {
 
 	/**
 	 * Initializes the runtime object.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/
@@ -518,7 +518,7 @@ class ShoppTinyMCE {
 	/**
 	 * Constructor
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function __construct () {
@@ -582,7 +582,7 @@ class ShoppTinyMCE {
  * Adds ShoppPages and SmartCollection support to WordPress theme menus system.
  *
  * @access private
- * @since 1.4
+ * @since 1.5
  **/
 class ShoppCustomThemeMenus {
 
@@ -619,7 +619,7 @@ class ShoppCustomThemeMenus {
 	/**
 	 * Modify the request for ShoppPages
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/
@@ -672,7 +672,7 @@ class ShoppCustomThemeMenus {
 	/**
 	 * Updates user preferences to automatically show all Shopp menus by default
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/

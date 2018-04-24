@@ -162,7 +162,7 @@ class ShoppTax {
 	 * Converts a tax rate setting to a decimal rate to use for tax calculations
 	 *
 	 * @author Jonathan Davis
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param array $setting A tax rate setting to convert
 	 * @return float The effective decimal rate
@@ -326,7 +326,7 @@ class ShoppTax {
 	 * between the base of operations tax rate that applies to the item
 	 * and the tax rate that applies to the current shipping location.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param float $amount The taxable amount
 	 * @param array $rates The applicable tax rates for a taxable item
 	 * @param object $Item A compatible taxable object
@@ -357,7 +357,7 @@ class ShoppTax {
 	 * detects differences to recalculate, but in some scenarios, these
 	 * anulled rates need ignored to find the actual applicable tax rate.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param array $rates The list of applicable item tax rates
 	 * @return ShoppItemTax The applied rate
 	 **/
@@ -423,7 +423,7 @@ class ShoppTax {
 	 *
 	 * The tax calculation used is dependent on the inclusive tax setting
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param float $amount The amount to calculate tax against
 	 * @param ShoppItemTax $rate The tax rate
 	 * @return float The tax amount

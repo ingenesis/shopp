@@ -42,7 +42,7 @@ class ShoppPartialUpload {
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @param array $file The uploaded file data
 	 * @param array $data The posted data
@@ -71,7 +71,7 @@ class ShoppPartialUpload {
 	 * finish process on the final chunk. The path to the complete file
 	 * is returned.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return string Returns the completed file name on the final upload
 	 **/
@@ -89,7 +89,7 @@ class ShoppPartialUpload {
 	 *
 	 * Assembles all of the file parts in order to create the complete file.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return string The completed file name.
 	 **/
@@ -122,7 +122,7 @@ class ShoppPartialUpload {
 	 * For unsuccessful status codes (anything other than 200)
 	 * cleans up the remnant partial uploads.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/
@@ -139,7 +139,7 @@ class ShoppPartialUpload {
 	/**
 	 * Clean up any left over part files for this upload
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 *
 	 * @return void
 	 **/

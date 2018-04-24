@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, January 2010-2014
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   Shopp/Flow/Admin
- * @version   1.4
+ * @version   @since 1.5
  * @since     1.0
  **/
 

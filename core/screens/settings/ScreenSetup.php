@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, February 2015
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Admin\Settings
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -17,7 +17,7 @@ class ShoppScreenSetup extends ShoppSettingsScreenController {
 	/**
 	 * Setup extra js/css assets needed.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 */
 	public function assets() {
@@ -35,7 +35,7 @@ class ShoppScreenSetup extends ShoppSettingsScreenController {
 	/**
 	 * Queue up operation handlers.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 */
 	public function ops() {
@@ -45,7 +45,7 @@ class ShoppScreenSetup extends ShoppSettingsScreenController {
 	/**
 	 * Process setting changes.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 */
 	public function updates() {
@@ -107,7 +107,7 @@ class ShoppScreenSetup extends ShoppSettingsScreenController {
 	/**
 	 * Prepare data and show the UI.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 */
 	public function screen() {
@@ -145,7 +145,7 @@ class ShoppScreenSetup extends ShoppSettingsScreenController {
 	 * Note that the sort order within the region is defined by the order specified in
 	 * the core/locales/regions.php file.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param array $targets The list of enabled target markets
 	 * @return array The region-sorted list of enabled target markets
 	 */

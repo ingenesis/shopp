@@ -284,7 +284,7 @@ class sDB extends SingletonFramework {
 	/**
 	 * Escape a single string
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param string $data The string to escape
 	 * @return string The escaped string
 	 **/

@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, February 2015
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Admin\Settings
- * @since	 1.4
+ * @since	 @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -17,7 +17,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Prepare image setting item data for rendering in the table
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function prepare_items() {
@@ -65,7 +65,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Provide a list of actions for the bulk actions menu
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return array The list of bulk actions
 	 **/
 	protected function get_bulk_actions() {
@@ -77,7 +77,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Render custom table navigation elements
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function extra_tablenav( $which ) {
@@ -90,7 +90,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Provide the list of columns for the table
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return array The list of columns to render for the table
 	 **/
 	public function get_columns() {
@@ -107,7 +107,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Renders a default message when no items are available
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function no_items() {
@@ -117,7 +117,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Determines if editing is requested for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return boolean True if it is an edit request, false otherwise
 	 **/
 	protected function editing( $Item ) {
@@ -127,7 +127,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Renders the editor template
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return void
 	 **/
@@ -147,7 +147,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Renders the checkbox column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/
@@ -158,7 +158,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Renders the name column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/
@@ -176,7 +176,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Renders the dimensions column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/
@@ -187,7 +187,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Renders the fit column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/
@@ -200,7 +200,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Renders the quality column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/
@@ -216,7 +216,7 @@ class ShoppScreenImagesTable extends ShoppAdminTable {
 	/**
 	 * Renders the sharpness column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/

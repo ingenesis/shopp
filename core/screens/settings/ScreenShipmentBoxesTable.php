@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, February 2015
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Admin\Settings
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -17,7 +17,7 @@ class ShoppScreenShipmentBoxesTable extends ShoppAdminTable {
 	/**
 	 * Prepare shipment boxes setting item data for rendering in the table
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function prepare_items() {
@@ -27,7 +27,7 @@ class ShoppScreenShipmentBoxesTable extends ShoppAdminTable {
 	/**
 	 * Provide a list of actions for the bulk actions menu
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return array The list of bulk actions
 	 **/
 	protected function get_bulk_actions() {
@@ -39,7 +39,7 @@ class ShoppScreenShipmentBoxesTable extends ShoppAdminTable {
 	/**
 	 * Render custom table navigation elements
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function extra_tablenav( $which ) {
@@ -52,7 +52,7 @@ class ShoppScreenShipmentBoxesTable extends ShoppAdminTable {
 	/**
 	 * Provide the list of columns for the table
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return array The list of columns to render for the table
 	 **/
 	public function get_columns() {
@@ -69,7 +69,7 @@ class ShoppScreenShipmentBoxesTable extends ShoppAdminTable {
 	/**
 	 * Renders a default message when no items are available
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function no_items() {
@@ -79,7 +79,7 @@ class ShoppScreenShipmentBoxesTable extends ShoppAdminTable {
 	/**
 	 * Determines if editing is requested for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return boolean True if it is an edit request, false otherwise
 	 **/
 	protected function editing( $Item ) {
@@ -89,7 +89,7 @@ class ShoppScreenShipmentBoxesTable extends ShoppAdminTable {
 	/**
 	 * Renders the editor template
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return void
 	 **/
@@ -102,7 +102,7 @@ class ShoppScreenShipmentBoxesTable extends ShoppAdminTable {
 	/**
 	 * Renders a fallback default column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/
@@ -113,7 +113,7 @@ class ShoppScreenShipmentBoxesTable extends ShoppAdminTable {
 	/** 
 	 * Renders the checkbox column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/
@@ -124,7 +124,7 @@ class ShoppScreenShipmentBoxesTable extends ShoppAdminTable {
 	/**
 	 * Renders a name column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/

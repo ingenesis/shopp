@@ -7,7 +7,7 @@
  * @copyright Ingenesis Limited, February 2015
  * @license   GNU GPL version 3 (or later) {@see license.txt}
  * @package   \Shopp\Admin\Settings
- * @since     1.4
+ * @since     @since 1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
@@ -17,7 +17,7 @@ class ShoppScreenPagesTable extends ShoppAdminTable {
 	/**
 	 * Prepare page setting item data for rendering in the table
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function prepare_items() {
@@ -53,7 +53,7 @@ class ShoppScreenPagesTable extends ShoppAdminTable {
 	/**
 	 * Provide the list of columns for the table
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return array The list of columns to render for the table
 	 **/
 	public function get_columns() {
@@ -67,7 +67,7 @@ class ShoppScreenPagesTable extends ShoppAdminTable {
 	/**
 	 * Renders a default message when no items are available
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return void
 	 **/
 	public function no_items() {
@@ -77,7 +77,7 @@ class ShoppScreenPagesTable extends ShoppAdminTable {
 	/**
 	 * Determines if editing is requested for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @return boolean True if it is an edit request, false otherwise
 	 **/
 	protected function editing( $Item ) {
@@ -87,7 +87,7 @@ class ShoppScreenPagesTable extends ShoppAdminTable {
 	/**
 	 * Renders the editor template
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return void
 	 **/
@@ -106,7 +106,7 @@ class ShoppScreenPagesTable extends ShoppAdminTable {
 	/**
 	 * Renders a fallback default column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/
@@ -117,7 +117,7 @@ class ShoppScreenPagesTable extends ShoppAdminTable {
 	/**
 	 * Renders a title column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/
@@ -136,7 +136,7 @@ class ShoppScreenPagesTable extends ShoppAdminTable {
 	/**
 	 * Renders a slug column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/
@@ -147,7 +147,7 @@ class ShoppScreenPagesTable extends ShoppAdminTable {
 	/**
 	 * Renders a description column for the current item
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 * @param stdClass $Item The item data to render
 	 * @return string The markup to output
 	 **/
