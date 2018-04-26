@@ -109,7 +109,7 @@
 				$wrap_open = $column == "cb" ? "<th scope='row' class='check-column'>" : '<td class="' . esc_attr(join(' ', $classes)) .'">';
 				echo apply_filters('shopp_manage_orders_column_wrap_close', $wrap_open, $column, $Order );
 
-				do_action("shopp_manage_orders_column_{$column}_before");
+				do_action("shopp_manage_orders_column_{$column}_before", $Order);
 
 				switch ( $column ) {
 					case 'cb':
