@@ -101,6 +101,37 @@ function check_pass_strength() {
 	}
 }
 
+function copyAddress () {
+	var copiedData = {},
+		loadBilling = this.id.indexOf('billing') !== -1,
+		from = loadBilling ? 'shipping' : 'billing',
+		to = loadBilling ? 'billing' : 'shipping',
+		fromId = '#customer-' + from;
+		toId = '#customer-' + to;
+
+	$(fromId + ' input[type=text]:enabled, ' + fromId + ' select').each(function() {
+		if ( ! this.name ) return;
+		var field = this.name.replace(from, '');
+		copiedData[field] = $(this).val();
+	});
+
+	$.fn.reverseEach = [].reverse;
+	$(toId + ' input[type=text], ' + toId + ' select').reverseEach().each(function() {
+		if ( ! this.name) return;
+		var field = this.name.replace(to, '');
+		if ( copiedData[field] !== undefined )
+			$(this).val(copiedData[field]);
+
+		if ( $(this)[0].selectize ) {
+			var selectized = $(this)[0].selectize;
+			selectized.setValue(copiedData[field]);
+		}
+	});
+}
+
+$('#load-billing-address').click(copyAddress);
+$('#load-shipping-address').click(copyAddress);
+
 });
 /* ]]> */
 </script>
