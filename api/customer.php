@@ -109,7 +109,7 @@ function shopp_customer_marketing ( $customer = false, $flag = null ) {
 function shopp_customer_marketing_list ( $exclude = false ) {
 	$table = ShoppDatabaseObject::tablename(ShoppCustomer::$table);
 	$where = ( $exclude ? "WHERE marketing='yes'" : "");
-	$results = db::query( "SELECT id, firstname, lastname, email, marketing, type FROM $table $where", 'array' );
+	$results = sDB::query( "SELECT id, firstname, lastname, email, marketing, type FROM $table $where", 'array' );
 
 	$marketing = array();
 	foreach ( $results as $c ) {
@@ -447,8 +447,8 @@ function shopp_customer_address_count ( $customer = false ) {
 		return false;
 	}
 	$table = ShoppDatabaseObject::tablename(Address::$table);
-	$customer = db::escape($customer);
-	$results = db::query("SELECT COUNT(*) as addresses FROM $table WHERE customer=$customer");
+	$customer = sDB::escape($customer);
+	$results = sDB::query("SELECT COUNT(*) as addresses FROM $table WHERE customer=$customer");
 	return ( is_object($results) && $results->addresses ? $results->addresses : 0 );
 }
 

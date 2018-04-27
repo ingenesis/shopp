@@ -960,7 +960,7 @@ class PurchasesExport {
 	}
 
 	public function parse ( $column ) {
-		if ( sdb::serialized($column) ) {
+		if ( sDB::serialized($column) ) {
 			$list = unserialize($column);
 			$column = "";
 			foreach ( $list as $name => $value ) {
