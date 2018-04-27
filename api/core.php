@@ -120,7 +120,6 @@ function ShoppSettings () {
 	return ShoppSettings::object();
 }
 
-
 function ShoppBaseLocale () {
 	$Shopp = Shopp::object();
 	if ( empty($Shopp) ) return false;

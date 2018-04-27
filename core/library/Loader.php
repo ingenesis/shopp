@@ -150,7 +150,7 @@ class ShoppLoader {
 		if ( empty($path) ) $path = self::$basepath;
 		$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator( $path ), RecursiveIteratorIterator::SELF_FIRST);
 		foreach( $objects as $name => $object )
-			$this->scanfile( $name, $path );
+			$object && $this->scanfile( $name, $path );
 
 		self::$scanned = true; // Flag file system scan done (so it only ever runs once)
 
@@ -266,7 +266,6 @@ ShoppLoader::map(array(
 	'customersreport' => '/ui/reports/customers.php',
 	'customerstabexport' => '/model/Customer.php',
 	'databaseobject' => '/library/Deprecated.php',
-	'db' => '/library/DB.php',
 	'debitordereventmessage' => '/model/Events.php',
 	'decryptorderevent' => '/model/Events.php',
 	'decryptordereventrenderer' => '/ui/orders/events.php',
@@ -404,7 +403,7 @@ ShoppLoader::map(array(
 	'saleorderevent' => '/model/Events.php',
 	'saleordereventrenderer' => '/ui/orders/events.php',
 	'salesreport' => '/ui/reports/sales.php',
-	'sdb' => '/library/DB.php',
+	// 'sdb' => '/db/DB.php',
 	'searchparser' => '/model/Search.php',
 	'searchresults' => '/model/Collection.php',
 	'searchtextfilters' => '/model/Search.php',
@@ -424,6 +423,19 @@ ShoppLoader::map(array(
 	'shippingpackaginginterface' => '/model/Shipping.php',
 	'shippingreport' => '/ui/reports/shipping.php',
 	'shippingsettingsui' => '/model/Shipping.php',
+
+	/* DB */
+	'sdb' => '/db/DB.php',
+	'shoppdbmanager' => '/db/DBManager.php',
+	'shoppdbdataadapter' => '/db/DBDataAdapter.php',
+	'shoppdbquery' => '/db/DBQuery.php',
+	'shoppdatabaseobject' => '/db/DatabaseObject.php',
+	'shoppdbinterface' => '/db/DBInterface.php',
+	'shoppmysqlengine' => '/db/MySQLEngine.php',
+	'shoppmysqliengine' => '/db/MySQLiEngine.php',
+	'wpdatabaseobject' => '/db/WPDatabaseObject.php',
+	'wpshoppobject' => '/db/WPShoppObject.php',
+
 	'shopp' => '/library/Shopp.php',
 	'shoppaccountdashboardpage' => '/flow/Pages.php',
 	'shoppaccountpage' => '/flow/Pages.php',
@@ -473,7 +485,7 @@ ShoppLoader::map(array(
 	'shoppcore_upgrader' => '/flow/Install.php',
 	'shoppcurrency' => '/model/Currency.php',
 	'shoppcustomer' => '/model/Customer.php',
-	'shoppdatabaseobject' => '/library/DB.php',
+	// 'shoppdatabaseobject' => '/db/DB.php',
 	'shoppdeveloperapi' => '/library/API.php',
 	'shoppdiscountrule' => '/model/Discounts.php',
 	'shoppdiscounts' => '/model/Discounts.php',
@@ -724,8 +736,6 @@ ShoppLoader::map(array(
 	'voidfailordereventrenderer' => '/ui/orders/events.php',
 	'voidorderevent' => '/model/Events.php',
 	'voidordereventrenderer' => '/ui/orders/events.php',
-	'wpdatabaseobject' => '/library/DB.php',
-	'wpshoppobject' => '/library/DB.php',
 	'wsdl' => '/library/SOAP.php',
 	'xmlquery' => '/library/XML.php',
 	'xmlschema' => '/library/SOAP.php',

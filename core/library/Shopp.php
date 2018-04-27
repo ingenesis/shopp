@@ -34,6 +34,9 @@ final class Shopp extends ShoppCore {
 		// Load the Developer API
 		ShoppDeveloperAPI::load( SHOPP_PATH );
 
+		// Initialize the database
+		sDB::object();
+
 		// Initialize error system
 		ShoppErrors();
 
