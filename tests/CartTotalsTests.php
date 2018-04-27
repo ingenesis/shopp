@@ -660,7 +660,7 @@ class CartTotalsTests extends ShoppTestCase {
 		$actual = shopp('cart','discount',$options);
 		$this->assertEquals($expected, $actual,'Cart discount assertion failed');
 
-		$expected = '£@since 1.57';
+		$expected = '£1.47';
 		$actual = shopp('cart','tax',$options);
 		$this->assertEquals($expected, $actual,'Cart tax assertion failed');
 
