@@ -424,7 +424,10 @@ function shopp_add_order ( $customer = false ) {
 	$Order = ShoppOrder();
 	$Order->Customer = $Customer;
 	$Order->Billing = $Customer->Billing;
+	$Order->Billing->card = NULL;
 	$Order->Billing->cardtype = 'api';
+	$Order->Billing->cardexpires = NULL;
+	$Order->Billing->cardholder = NULL;
 	$Order->Shipping = $Customer->Shipping;
 
 	shopp_add_order_event(false, 'purchase', array(
