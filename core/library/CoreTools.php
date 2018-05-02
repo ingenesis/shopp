@@ -13,6 +13,9 @@
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
+/** @var SHOPP_CLEAR_PNG Defines a transparent PNG image string suitable for use as an image src */
+define('SHOPP_CLEAR_PNG', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAABRJREFUeF6VwIEAAAAAgKD9qWeo0AAwAAEnvySkAAAAAElFTkSuQmCC');
+
 abstract class ShoppCoreTools {
 
 	public static function debug_caller () {
@@ -243,18 +246,6 @@ abstract class ShoppCoreTools {
 			$crc = (($crc << 8) ^ ($x << 12) ^ ($x << 5) ^ $x) & 0xFFFF;
 		}
 		return $crc;
-	}
-
-	/**
-	 * Provides a data-uri scheme transparent PNG image for embedding in CSS or HTML <img> tags
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.3
-	 *
-	 * @return string Clear PNG data-URI
-	 **/
-	public static function clearpng () {
-		return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAABRJREFUeF6VwIEAAAAAgKD9qWeo0AAwAAEnvySkAAAAAElFTkSuQmCC';
 	}
 
 	/**
