@@ -240,7 +240,7 @@ class ShoppUI {
 		
 		$dz = isset($options['data-dz-remove']) ? ' data-dz-remove' : '';
 
-		return '<button type="' . $type . '" name="' . $name . '"' . inputattrs($options) . $dz . '><span class="' . $icon . '"><span class="hidden">' . $title . '</span></span></button>';
+		return '<button type="' . $type . '" name="' . $name . '"' . Shopp::inputattrs($options) . $dz . '><span class="' . $icon . '"><span class="hidden">' . $title . '</span></span></button>';
 	}
 
 	public static function template ( $ui, array $data = array() ) {

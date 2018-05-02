@@ -175,7 +175,7 @@ class ShoppAdminDashboard {
 		<div class="table"><table>
 		<tr><th colspan="2"><form action="<?php echo admin_url('index.php'); ?>">
 			<select name="shopp-stats-range" id="shopp-stats-range">
-				<?php echo menuoptions($ranges,$range,true); ?>
+				<?php echo Shopp::menuoptions($ranges,$range,true); ?>
 			</select>
 			<button type="submit" id="filter-button" name="filter" value="order" class="button-secondary hide-if-js"><?php _e('Filter','Shopp'); ?></button>
 		</form>
@@ -185,11 +185,11 @@ class ShoppAdminDashboard {
 		<tr><td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo (int)$results->wkorders; ?></a></td><td class="label"><?php echo _n('Order', 'Orders', (int)$results->wkorders, 'Shopp'); ?></td>
 		<td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo (int)$results->orders; ?></a></td><td class="label"><?php echo _n('Order', 'Orders', (int)$results->orders, 'Shopp'); ?></td></tr>
 
-		<tr><td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo money($results->wksales); ?></a></td><td class="label"><?php _e('Sales','Shopp'); ?></td>
-		<td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo money($results->sales); ?></a></td><td class="label"><?php _e('Sales','Shopp'); ?></td></tr>
+		<tr><td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo Shopp::money($results->wksales); ?></a></td><td class="label"><?php _e('Sales','Shopp'); ?></td>
+		<td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo Shopp::money($results->sales); ?></a></td><td class="label"><?php _e('Sales','Shopp'); ?></td></tr>
 
-		<tr><td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo money($results->wkavg); ?></a></td><td class="label"><?php _e('Average Order','Shopp'); ?></td>
-		<td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo money($results->average); ?></a></td><td class="label"><?php _e('Average Order','Shopp'); ?></td></tr>
+		<tr><td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo Shopp::money($results->wkavg); ?></a></td><td class="label"><?php _e('Average Order','Shopp'); ?></td>
+		<td class="amount"><a href="<?php echo esc_url($orderscreen); ?>"><?php echo Shopp::money($results->average); ?></a></td><td class="label"><?php _e('Average Order','Shopp'); ?></td></tr>
 
 		<?php if (!empty($RecentBestsellers->products) || !empty($LifeBestsellers->products)): ?>
 		<tr>
@@ -303,7 +303,7 @@ class ShoppAdminDashboard {
 					. '	<td><a class="row-title" href="' . $url . '" title="View &quot;Order '.$Order->id.'&quot;">'.((empty($Order->firstname) && empty($Order->lastname))?'(no contact name)':$Order->firstname.' '.$Order->lastname).'</a></td>'
 					. '	<td>'.date("Y/m/d",mktimestamp($Order->created)).'</td>'
 					. '	<td class="num items">'.$Order->items.'</td>'
-					. '	<td class="num total">'.money($Order->total).'</td>'
+					. '	<td class="num total">'.Shopp::money($Order->total).'</td>'
 					. '	<td class="num status">'.$statusLabels[ $Order->status ].'</td>'
 					. '</tr>';
 			}

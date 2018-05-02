@@ -55,11 +55,11 @@ class TaxReport extends ShoppReportFramework implements ShoppReport {
 
 	public static function orders ( $data ) { return intval($data->orders); }
 
-	public static function subtotal ( $data ) { return money($data->subtotal); }
+	public static function subtotal ( $data ) { return Shopp::money($data->subtotal); }
 
-	public static function taxable ( $data ) { return money($data->taxable); }
+	public static function taxable ( $data ) { return Shopp::money($data->taxable); }
 
-	public static function tax ( $data ) { return money($data->tax); }
+	public static function tax ( $data ) { return Shopp::money($data->tax); }
 
 	public static function rate ( $data ) { return percentage($data->rate * 100); }
 

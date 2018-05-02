@@ -2,7 +2,7 @@
 	<tfoot>
 		<tr class="balance">
 			<td colspan="3"><?php Shopp::_e('Order Balance'); ?></td>
-			<td><?php echo money($Purchase->balance); ?></td>
+			<td><?php echo Shopp::money($Purchase->balance); ?></td>
 		</tr>
 	</tfoot>
 	<tbody>

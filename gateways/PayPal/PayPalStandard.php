@@ -260,7 +260,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 	 * @return array The modified list of button tags
 	 **/
 	public function submit ( $tag = false, array $options = array(), array $attrs = array() ) {
-		$tag[ $this->settings['label'] ] = '<input type="image" name="process" src="' . esc_url( $this->buttonurl() ) . '" class="checkout-button" ' . inputattrs($options, $attrs) . ' />';
+		$tag[ $this->settings['label'] ] = '<input type="image" name="process" src="' . esc_url( $this->buttonurl() ) . '" class="checkout-button" ' . Shopp::inputattrs($options, $attrs) . ' />';
 		return $tag;
 	}
 

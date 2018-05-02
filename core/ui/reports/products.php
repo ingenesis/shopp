@@ -98,6 +98,6 @@ class ProductsReport extends ShoppReportFramework implements ShoppReport {
 
 	public static function sold ( $data ) { return intval($data->sold); }
 
-	public static function grossed ( $data ) { return money($data->grossed); }
+	public static function grossed ( $data ) { return Shopp::money($data->grossed); }
 
 }

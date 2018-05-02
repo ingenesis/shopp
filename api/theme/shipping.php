@@ -169,7 +169,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 	 **/
 	public static function option_cost ( $result, $options, $O ) {
 		$option = $O->current();
-		return money($option->amount);
+		return Shopp::money($option->amount);
 	}
 
 	/**
@@ -230,7 +230,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 
 		$_[] = '<select name="shipmethod" class="' . $classes . '">';
 		foreach ( $O as $method ) {
-			$cost = money($method->amount);
+			$cost = Shopp::money($method->amount);
 			$delivery = false;
 			if ( Shopp::str_true($times) && ! empty($method->delivery) ) {
 				$delivery = self::_delivery_format($method->delivery, $options) . ' ';
@@ -238,7 +238,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 			if ( $selected_option && Shopp::str_true($difference) ) {
 				$diff = $method->amount - $selected_option->amount;
 				$pre = $diff < 0 ? '-' : '+';
-				$cost = $pre . money(abs($diff));
+				$cost = $pre . Shopp::money(abs($diff));
 			}
 
 			$selected = $selected_option && $selected_option->slug == $method->slug ? ' selected="selected"' : false;
@@ -346,7 +346,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 		);
 		$options = array_merge($defaults, $options);
 		$options['class'] .= " $stdclasses";
-		return '<input type="submit" name="update-shipping"' . inputattrs($options, $submit_attrs) . ' />';
+		return '<input type="submit" name="update-shipping"' . Shopp::inputattrs($options, $submit_attrs) . ' />';
 	}
 
 	/**
@@ -382,7 +382,7 @@ class ShoppShippingThemeAPI implements ShoppAPI {
 			if ( empty($interval) ) $interval = 1;
 			if ( empty($p) ) $p = 'd';
 			if ( ! empty($result) ) $result .= $dateseparator;
-			$result .= _d( $dateformat, current_time('timestamp') + $interval * $periods[ $p ] );
+			$result .= Shopp::_d( $dateformat, current_time('timestamp') + $interval * $periods[ $p ] );
 		}
 		return $result;
 	}

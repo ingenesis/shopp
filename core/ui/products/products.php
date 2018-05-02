@@ -139,7 +139,7 @@
 					case 'gross':
 					?>
 						<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
-							<?php echo money($Product->grossed); ?>
+							<?php echo Shopp::money($Product->grossed); ?>
 						</td>
 					<?php
 					break;
@@ -257,7 +257,7 @@ jQuery(document).ready( function() {
 
 	$('a.submitdelete').click(function () {
 		var name = $(this).attr('title');
-		if ( confirm(<?php _jse('You are about to delete this product!\n \'Cancel\' to stop, \'OK\' to delete.','Shopp'); ?>)) {
+		if ( confirm(<?php Shopp::_jse('You are about to delete this product!\n \'Cancel\' to stop, \'OK\' to delete.'); ?>)) {
 			$('<input type="hidden" name="delete[]" />').val($(this).attr('rel')).appendTo('#products-manager');
 			$('<input type="hidden" name="deleting" />').val('product').appendTo('#products-manager');
 			$('#products-manager').submit();

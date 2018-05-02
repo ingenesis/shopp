@@ -168,7 +168,7 @@ class ShoppCartItem {
 		$this->sale = Shopp::str_true($Product->sale);
 		$this->freeshipping = ( isset($Price->freeshipping) ? $Price->freeshipping : false );
 
-		$baseprice = roundprice( $this->sale ? $Price->promoprice : $Price->price );
+		$baseprice = Shopp::roundprice( $this->sale ? $Price->promoprice : $Price->price );
 		$this->unitprice = $baseprice + $this->addonsum;
 
 		if ( shopp_setting_enabled('taxes') ) {
@@ -186,7 +186,7 @@ class ShoppCartItem {
 
 		$this->inventory = Shopp::str_true($Price->inventory) && shopp_setting_enabled('inventory');
 
-		$this->data = stripslashes_deep(esc_attrs($data));
+		$this->data = stripslashes_deep(Shopp::esc_attrs($data));
 
 		// Handle Recurrences
 		if ( $this->has_recurring() ) {
@@ -425,8 +425,8 @@ class ShoppCartItem {
 			}
 
 			$price = '';
-			if ( $difference > 0 ) $price = '  (+'.money($difference).')';
-			if ( $difference < 0 ) $price = '  (-'.money(abs($difference)).')';
+			if ( $difference > 0 ) $price = '  (+'.Shopp::money($difference).')';
+			if ( $difference < 0 ) $price = '  (-'.Shopp::money(abs($difference)).')';
 
 			$selected = '';
 			if ( $selection == $option->id ) $selected = ' selected="selected"';
@@ -605,7 +605,7 @@ class ShoppCartItem {
 
 			// string replacements
 			if ( $trialprice > 0 ) {
-				$trial_label = sprintf($trial_label, money($trialprice), $trialint);
+				$trial_label = sprintf($trial_label, Shopp::money($trialprice), $trialint);
 			} else {
 				$trial_label = sprintf($trial_label, $trialint);
 			}
@@ -622,7 +622,7 @@ class ShoppCartItem {
 
 		// pick singular or plural translation
 		$subscription_label = translate_nooped_plural($subscription_label, $interval);
-		$subscription_label = sprintf($subscription_label, money($this->subprice), $interval);
+		$subscription_label = sprintf($subscription_label, Shopp::money($this->subprice), $interval);
 
 		// pick rebilling label and translate if plurals
 		$rebill_label = sprintf(translate_nooped_plural($rebill_labels[1], $cycles, 'Shopp'), $cycles);

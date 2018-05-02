@@ -76,7 +76,7 @@
 														else $addonprice = $addon->value->unitprice;
 
 														?>
-														<li><small><?php echo apply_filters('shopp_purchased_addon_name', $addon->name); ?><?php if ( ! empty($addon->value->sku) ) echo apply_filters('shopp_purchased_addon_sku',' [SKU: ' . $addon->value->sku . ']'); ?>: <strong><?php echo apply_filters('shopp_purchased_addon_unitprice', money($addonprice)); ?></strong></small></li>
+														<li><small><?php echo apply_filters('shopp_purchased_addon_name', $addon->name); ?><?php if ( ! empty($addon->value->sku) ) echo apply_filters('shopp_purchased_addon_sku',' [SKU: ' . $addon->value->sku . ']'); ?>: <strong><?php echo apply_filters('shopp_purchased_addon_unitprice', Shopp::money($addonprice)); ?></strong></small></li>
 													<?php endforeach; ?>
 												<?php endif; ?>
 												<?php foreach ( (array)$Item->data as $name => $value ): ?>

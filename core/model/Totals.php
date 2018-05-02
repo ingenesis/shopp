@@ -458,7 +458,7 @@ abstract class OrderTotalAmount {
 	}
 
 	private function precision () {
-		$format = currency_format();
+		$format = Shopp::currency_format();
 		return $format['precision'];
 	}
 

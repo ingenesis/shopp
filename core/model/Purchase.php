@@ -729,7 +729,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		}
 
 		ob_start();
-		locate_shopp_template(array($template, 'receipt.php'), true);
+		Shopp::locate_template(array($template, 'receipt.php'), true);
 		$content = ob_get_clean();
 
 		return apply_filters('shopp_order_receipt', $content);
@@ -966,7 +966,7 @@ class PurchasesExport {
 			foreach ( $list as $name => $value ) {
 				if ( is_a($value, 'ShoppPurchaseDiscount') ) {
 					$Discount = $value;
-					$column .= ( empty($column) ? "" : ";" ) . trim("$Discount->id:$Discount->name (" . money($Discount->discount) . ") $Discount->code");
+					$column .= ( empty($column) ? "" : ";" ) . trim("$Discount->id:$Discount->name (" . Shopp::money($Discount->discount) . ") $Discount->code");
 				} else $column .= ( empty($column) ? "" : ";" ) . "$name:$value";
 			}
 		}

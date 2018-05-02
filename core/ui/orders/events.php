@@ -180,8 +180,8 @@ class TxnOrderEventRenderer extends OrderEventRenderer {
 	}
 
 	public function amount() {
-		if ($this->debit) $amount = money($this->amount);
-		else $amount = '-'.money($this->amount);
+		if ($this->debit) $amount = Shopp::money($this->amount);
+		else $amount = '-'.Shopp::money($this->amount);
 		return $amount;
 	}
 

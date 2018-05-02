@@ -92,7 +92,7 @@
 		<tr class="subtotal">
 			<td scope="col" class="add"><select class="add-product" name="product" placeholder="<?php Shopp::_e('Search to add a product&hellip;'); ?>"></select></td>
 			<td scope="row" colspan="<?php echo $colspan - 1; ?>" class="label"><?php _e('Subtotal','Shopp'); ?></td>
-			<td class="money" data-value="<?php echo $Purchase->subtotal; ?>"><?php echo money($Purchase->subtotal); ?></td>
+			<td class="money" data-value="<?php echo $Purchase->subtotal; ?>"><?php echo Shopp::money($Purchase->subtotal); ?></td>
 		</tr>
 		<?php
 			if ( count($Purchase->fees()) > 1 ) {
@@ -109,7 +109,7 @@
 		?>
 		<tr class="fee<?php if ( floatval($Purchase->fees) == 0.0 ) echo ' empty'; ?>">
 			<td scope="row" colspan="<?php echo $colspan; ?>" class="label"><?php _e('Fees','Shopp'); ?></td>
-			<td class="money"><input type="text" id="fee-total" name="totals[fees][]" value="<?php echo money($Purchase->fees); ?>" size="7" class="money selectall">
+			<td class="money"><input type="text" id="fee-total" name="totals[fees][]" value="<?php echo Shopp::money($Purchase->fees); ?>" size="7" class="money selectall">
 				<button type="button" class="add" data-label="<?php Shopp::_e('Fee Label&hellip;'); ?>" value="fee"><span class="shoppui-plus"><span class="hidden"><?php Shopp::_e('Add'); ?></span></span></button></td>
 		</tr>
 		<?php
@@ -127,7 +127,7 @@
 		?>
 		<tr class="discount<?php if ( floatval($Purchase->discount) == 0.0 ) echo ' empty'; ?>">
 			<td scope="row" colspan="<?php echo $colspan; ?>" class="label"><?php _e('Discounts','Shopp'); ?></td>
-			<td class="money"><input type="text" id="discount-total" name="totals[discount][]" value="<?php echo money($Purchase->discount); ?>" size="7" class="money selectall">
+			<td class="money"><input type="text" id="discount-total" name="totals[discount][]" value="<?php echo Shopp::money($Purchase->discount); ?>" size="7" class="money selectall">
 				<button type="button" class="add" data-label="<?php Shopp::_e('Discount Label&hellip;'); ?>" value="discount"><span class="shoppui-plus"><span class="hidden"><?php Shopp::_e('Add'); ?></span></span></button>
 				</td>
 		</tr>
@@ -147,7 +147,7 @@
 		<tr class="shipping<?php if ( floatval($Purchase->freight) == 0.0 && empty($Purchase->shipoption) ) echo ' empty'; ?>">
 			<td scope="row" colspan="<?php echo $colspan; ?>" class="label shipping">
 				<span class="method"><?php echo apply_filters('shopp_order_manager_shipping_method',$Purchase->shipoption); ?></span> <?php _e('Shipping','Shopp'); ?></td>
-			<td class="money"><input type="text" id="shipping-total" name="totals[shipping][]" value="<?php echo money($Purchase->freight); ?>"size="7" class="money selectall shipping">
+			<td class="money"><input type="text" id="shipping-total" name="totals[shipping][]" value="<?php echo Shopp::money($Purchase->freight); ?>"size="7" class="money selectall shipping">
 				<button type="button" class="add" data-label="<?php Shopp::_e('Shipping Label&hellip;'); ?>" value="shipping"><span class="shoppui-plus"><span class="hidden"><?php Shopp::_e('Add'); ?></span></span></button></td>
 		</tr>
 		<?php
@@ -165,13 +165,13 @@
 		?>
 		<tr class="tax<?php if ( floatval($Purchase->tax) == 0.0 ) echo ' empty'; ?>">
 			<td scope="row" colspan="<?php echo $colspan; ?>" class="label"><?php _e('Tax','Shopp'); ?></td>
-			<td class="money"><input type="text" id="tax-total" name="totals[tax][]" value="<?php echo money($Purchase->tax); ?>" size="7" class="money selectall tax"><button class="shoppui-calculator" id="calculate-tax" title="<?php Shopp::__('Calculate Tax&hellip;'); ?>" tabindex="2"><?php Shopp::__('Calculate Tax&hellip;'); ?></button>
+			<td class="money"><input type="text" id="tax-total" name="totals[tax][]" value="<?php echo Shopp::money($Purchase->tax); ?>" size="7" class="money selectall tax"><button class="shoppui-calculator" id="calculate-tax" title="<?php Shopp::__('Calculate Tax&hellip;'); ?>" tabindex="2"><?php Shopp::__('Calculate Tax&hellip;'); ?></button>
 			<button type="button" class="add" data-label="<?php Shopp::_e('Tax Label&hellip;'); ?>" value="tax"><span class="shoppui-plus"><span class="hidden"><?php Shopp::_e('Add'); ?></span></span></button>
 		</td>
 		</tr>
 		<tr class="total">
 			<td scope="row" colspan="<?php echo $colspan; ?>" class="label"><?php _e('Total','Shopp'); ?></td>
-			<td class="money"><input type="text" id="order-total" name="totals[total]" value="<?php echo money($Purchase->total); ?>" size="7" class="money selectall">
+			<td class="money"><input type="text" id="order-total" name="totals[total]" value="<?php echo Shopp::money($Purchase->total); ?>" size="7" class="money selectall">
 				<input type="submit" id="save-totals" name="save-totals" value="<?php Shopp::_e('Save'); ?>" class="button-primary"></td>
 		</tr>
 
@@ -200,8 +200,8 @@
 						'${lineid}'     => (int)$_GET['editline'],
 						'${itemname}'   => $itemname,
 						'${quantity}'   => $Item->quantity,
-						'${unitprice}'  => money($Item->unitprice),
-						'${totalprice}' => money($Item->total)
+						'${unitprice}'  => Shopp::money($Item->unitprice),
+						'${totalprice}' => Shopp::money($Item->total)
 					);
 					echo ShoppUI::template($itemeditor, $data);
 				} else {
@@ -250,7 +250,7 @@
 												else $addonprice = $addon->value->unitprice;
 
 												?>
-												<li><small><?php echo apply_filters('shopp_purchased_addon_name', $addon->name); ?><?php if ( ! empty($addon->value->sku) ) echo apply_filters('shopp_purchased_addon_sku',' [SKU: ' . $addon->value->sku . ']'); ?>: <strong><?php echo apply_filters('shopp_purchased_addon_unitprice', money($addonprice)); ?></strong></small></li>
+												<li><small><?php echo apply_filters('shopp_purchased_addon_name', $addon->name); ?><?php if ( ! empty($addon->value->sku) ) echo apply_filters('shopp_purchased_addon_sku',' [SKU: ' . $addon->value->sku . ']'); ?>: <strong><?php echo apply_filters('shopp_purchased_addon_unitprice', Shopp::money($addonprice)); ?></strong></small></li>
 											<?php endforeach; ?>
 										<?php endif; ?>
 										<?php foreach ( (array)$Item->data as $name => $value ): ?>
@@ -273,14 +273,14 @@
 							case 'price':
 							$classes[] = 'money';
 								?>
-									<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php echo money($Item->unitprice); ?></td>
+									<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php echo Shopp::money($Item->unitprice); ?></td>
 								<?php
 								break;
 
 							case 'total':
 								$classes[] = 'money';
 								?>
-									<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php echo money($Item->total); ?></td>
+									<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php echo Shopp::money($Item->total); ?></td>
 								<?php
 								break;
 

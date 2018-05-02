@@ -72,9 +72,9 @@ class SalesReport extends ShoppReportFramework implements ShoppReport {
 
 	function scores () {
 		return array(
-			__('Total','Shopp') => money( isset($this->totals->total) ? $this->totals->total : 0 ),
+			__('Total','Shopp') => Shopp::money( isset($this->totals->total) ? $this->totals->total : 0 ),
 			__('Orders','Shopp') => intval( isset($this->totals->orders) ? $this->totals->orders : 0 ),
-			__('Average Order','Shopp') => money( isset($this->totals->total) && isset($this->totals->orders) ? $this->totals->total/$this->totals->orders : 0)
+			__('Average Order','Shopp') => Shopp::money( isset($this->totals->total) && isset($this->totals->orders) ? $this->totals->total/$this->totals->orders : 0)
 		);
 	}
 
@@ -87,31 +87,31 @@ class SalesReport extends ShoppReportFramework implements ShoppReport {
 	}
 
 	static function subtotal ($data) {
-		return money( isset($data->subtotal) ? $data->subtotal : 0 );
+		return Shopp::money( isset($data->subtotal) ? $data->subtotal : 0 );
 	}
 
 	static function tax ($data) {
-		return money( isset($data->tax) ? $data->tax : 0 );
+		return Shopp::money( isset($data->tax) ? $data->tax : 0 );
 	}
 
 	static function shipping ($data) {
-		return money( isset($data->shipping) ? $data->shipping : 0 );
+		return Shopp::money( isset($data->shipping) ? $data->shipping : 0 );
 	}
 
 	static function discounts ($data) {
-		return money( isset($data->discounts) ? $data->discounts : 0 );
+		return Shopp::money( isset($data->discounts) ? $data->discounts : 0 );
 	}
 
 	static function total ($data) {
-		return money( isset($data->total) ? $data->total : 0 );
+		return Shopp::money( isset($data->total) ? $data->total : 0 );
 	}
 
 	static function orderavg ($data) {
-		return money( isset($data->orderavg) ? $data->orderavg : 0 );
+		return Shopp::money( isset($data->orderavg) ? $data->orderavg : 0 );
 	}
 
 	static function itemavg ($data) {
-		return money( isset($data->itemavg) ? $data->itemavg : 0 );
+		return Shopp::money( isset($data->itemavg) ? $data->itemavg : 0 );
 	}
 
 }

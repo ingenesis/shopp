@@ -597,7 +597,7 @@ abstract class ShoppReportFramework {
 					'lastyear' => __('Last Year','HelpDesk'),
 					'custom' => __('Custom Dates','HelpDesk')
 				);
-				echo menuoptions($ranges, $range, true);
+				echo Shopp::menuoptions($ranges, $range, true);
 			?>
 		</select>
 		<div id="dates" class="hide-if-js">
@@ -627,7 +627,7 @@ abstract class ShoppReportFramework {
 			'month' => __('By Month','Shopp')
 		);
 
-		echo menuoptions($scales,$scale,true);
+		echo Shopp::menuoptions($scales,$scale,true);
 		?>
 		</select>
 

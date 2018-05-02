@@ -966,7 +966,7 @@ class ShoppOrderDiscount {
 		if ( isset($name) ) $this->name = $name;
 
 		if ( $this->type() == self::CREDIT ) // Add remaining
-			return $this->name . ' ' . Shopp::__('(%s remaining)', money($this->discount() - $this->amount()));
+			return $this->name . ' ' . Shopp::__('(%s remaining)', Shopp::money($this->discount() - $this->amount()));
 
 		return $this->name;
 	}

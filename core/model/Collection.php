@@ -366,7 +366,7 @@ class ProductCollection implements Iterator {
 
 		if ( $product->min[ $priceindex ] != $product->max[ $priceindex ] )
 			$pricing .= Shopp::__('from') . ' ';
-		$pricing .= money($product->min[ $priceindex ]);
+		$pricing .= Shopp::money($product->min[ $priceindex ]);
 
 		$item['description'] .= "<td><p><big>$pricing</big></p>";
 
@@ -1023,9 +1023,9 @@ class ProductCategory extends ProductTaxonomy {
 
 				foreach ($ranges as $id => $range) {
 					if ( ! isset($counts[$id]) || $counts[$id] < 1 ) continue;
-					$label = money($range['min']).' &mdash; '.money($range['max']);
-					if ($range['min'] == 0) $label = sprintf(__('Under %s','Shopp'),money($range['max']));
-					if ($range['max'] == 0) $label = sprintf(__('%s and up','Shopp'),money($range['min']));
+					$label = Shopp::money($range['min']).' &mdash; '.Shopp::money($range['max']);
+					if ($range['min'] == 0) $label = sprintf(__('Under %s','Shopp'),Shopp::money($range['max']));
+					if ($range['max'] == 0) $label = sprintf(__('%s and up','Shopp'),Shopp::money($range['min']));
 
 					$FacetFilter = new ProductCategoryFacetFilter();
 					$FacetFilter->label = $label;

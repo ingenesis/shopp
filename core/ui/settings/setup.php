@@ -1,23 +1,23 @@
 <table class="form-table">
 	<tr>
 		<th scope="row" valign="top"><label for="maintenance-toggle"><?php Shopp::_e('Maintenance Mode'); ?></label></th>
-		<td><p class="toggle-setting"><input type="hidden" name="settings[maintenance]" value="off" /><input type="checkbox" name="settings[maintenance]" value="on" id="maintenance-toggle"<?php echo Shopp::inputattrs(array('checked' => shopp_setting('maintenance'))); ?> /><label for="maintenance-toggle"> <?php Shopp::_e('Enable maintenance mode'); ?></label></p>
+		<td><p class="toggle-setting"><input type="hidden" name="settings[maintenance]" value="off" /><input type="checkbox" name="settings[maintenance]" value="on" id="maintenance-toggle"<?php echo Shopp::array('checked' => shopp_setting('maintenance'))); ?> /><label for="maintenance-toggle"> <?php Shopp::_e('Enable maintenance mode'); ?></label></p>
 		<p><?php Shopp::_e('All storefront pages will display a maintenance mode message.'); ?></p></td>
 	</tr>
 
 	<tr>
 		<th scope="row" valign="top"><label for="shopping-cart-toggle"><?php Shopp::_e('Features'); ?></label></th>
 		<td>
-        <p class="toggle-setting"><input type="hidden" name="settings[shopping_cart]" value="off" /><input type="checkbox" name="settings[shopping_cart]" value="on" id="shopping-cart-toggle"<?php echo Shopp::inputattrs(array('checked' => shopp_setting('shopping_cart'))); ?> /><label for="shopping-cart-toggle"> <?php Shopp::_e('Enable shopping cart'); ?></label></p>
+        <p class="toggle-setting"><input type="hidden" name="settings[shopping_cart]" value="off" /><input type="checkbox" name="settings[shopping_cart]" value="on" id="shopping-cart-toggle"<?php echo Shopp::array('checked' => shopp_setting('shopping_cart'))); ?> /><label for="shopping-cart-toggle"> <?php Shopp::_e('Enable shopping cart'); ?></label></p>
 		<p><?php Shopp::_e('Uncheck this to disable the shopping cart and checkout. Useful for catalog-only sites.'); ?></p>
         
-        <p class="toggle-setting"><input type="hidden" name="settings[shipping]" value="off" /><input type="checkbox" name="settings[shipping]" value="on" id="shipping-toggle"<?php echo Shopp::inputattrs(array('checked' => shopp_setting('shipping'))); ?> /><label for="shipping-toggle"> <?php Shopp::_e('Enable shipping costs'); ?></label></p>
+        <p class="toggle-setting"><input type="hidden" name="settings[shipping]" value="off" /><input type="checkbox" name="settings[shipping]" value="on" id="shipping-toggle"<?php echo Shopp::array('checked' => shopp_setting('shipping'))); ?> /><label for="shipping-toggle"> <?php Shopp::_e('Enable shipping costs'); ?></label></p>
     	<p><?php Shopp::_e('Enables shipping cost calculations. Disable if you are exclusively selling intangible products.'); ?></p>
         
-        <p class="toggle-setting"><input type="hidden" name="settings[taxes]" value="off" /><input type="checkbox" name="settings[taxes]" value="on" id="taxes-toggle"<?php echo Shopp::inputattrs(array('checked' => shopp_setting('taxes'))); ?> /><label for="taxes-toggle"> <?php Shopp::_e('Enable tax calculations'); ?></label></p>
+        <p class="toggle-setting"><input type="hidden" name="settings[taxes]" value="off" /><input type="checkbox" name="settings[taxes]" value="on" id="taxes-toggle"<?php echo Shopp::array('checked' => shopp_setting('taxes'))); ?> /><label for="taxes-toggle"> <?php Shopp::_e('Enable tax calculations'); ?></label></p>
         <p><?php Shopp::_e('Disable if you are exclusively selling non-taxable items.'); ?></p>
         
-        <p class="toggle-setting"><input type="hidden" name="settings[inventory]" value="off" /><input type="checkbox" name="settings[inventory]" value="on" id="inventory-toggle"<?php echo Shopp::inputattrs(array('checked' => shopp_setting('inventory'))); ?> /><label for="inventory-toggle"> <?php Shopp::_e('Enable inventory tracking'); ?></label></p>
+        <p class="toggle-setting"><input type="hidden" name="settings[inventory]" value="off" /><input type="checkbox" name="settings[inventory]" value="on" id="inventory-toggle"<?php echo Shopp::array('checked' => shopp_setting('inventory'))); ?> /><label for="inventory-toggle"> <?php Shopp::_e('Enable inventory tracking'); ?></label></p>
         <p><?php Shopp::_e('Disable if you are exclusively selling intangible products or not keeping track of product stock.'); ?></p>
         </td>
 	</tr>

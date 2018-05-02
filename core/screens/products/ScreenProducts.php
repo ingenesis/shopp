@@ -298,7 +298,7 @@ class ShoppScreenProducts extends ShoppScreenController {
 			$products = sDB::query("SELECT p.id,p.post_title AS name FROM $p $where ORDER BY name ASC",'array','col','name','id');
 		else $products = sDB::query("SELECT p.id,p.post_title AS name FROM $p ".join(' ',$joins).$where." ORDER BY name ASC",'array','col','name','id');
 
-		return menuoptions($products, 0, true);
+		return Shopp::menuoptions($products, 0, true);
 	}
 
 	/**

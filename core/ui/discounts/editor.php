@@ -121,7 +121,7 @@ var suggurl = '<?php echo wp_nonce_url(admin_url('admin-ajax.php'), 'wp_ajax_sho
 			var name = (type=='cartitem')?'rules[item]['+i+'][value]':'rules['+i+'][value]';
 			if (fieldtype == "number") field = $('<input type="number" name="'+name+'" class="selectall" size="5" />').appendTo(value);
 			else field = $('<input type="text" name="'+name+'" class="selectall" />').appendTo(value);
-			if (fieldtype == "price") field.change(function () { this.value = asMoney(this.value); });
+			if (fieldtype == "price") field.change(function () { this.value = asShopp::money(this.value); });
 			return field;
 		}
 
@@ -190,7 +190,7 @@ $('#discount-type').change(function () {
 			loading = !loading;
 		}
 		if (type == "Percentage Off") this.value = asPercent(value);
-		if (type == "Amount Off") this.value = asMoney(value);
+		if (type == "Amount Off") this.value = asShopp::money(value);
 	}).change();
 
 }).change();

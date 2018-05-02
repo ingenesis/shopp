@@ -7,13 +7,13 @@
 	);
 
 	$target = '<select name="target" id="promotion-target" class="small">';
-	$target .= menuoptions($targets,$Promotion->target,true);
+	$target .= Shopp::menuoptions($targets,$Promotion->target,true);
 	$target .= '</select>';
 
 	if (empty($Promotion->search)) $Promotion->search = "all";
 
 	$logic = '<select name="search" class="small">';
-	$logic .= menuoptions(array('any' => Shopp::__('any'),'all' => strtolower(Shopp::__('All'))), $Promotion->search, true);
+	$logic .= Shopp::menuoptions(array('any' => Shopp::__('any'),'all' => strtolower(Shopp::__('All'))), $Promotion->search, true);
 	$logic .= '</select>';
 
 ?>

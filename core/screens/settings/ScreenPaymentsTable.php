@@ -156,7 +156,7 @@ class ShoppScreenPaymentsTable extends ShoppAdminTable {
 		return '<a class="row-title edit" href="' . esc_url($edit_link) . '" title="' . Shopp::__('Edit') . ' &quot;' . esc_attr($label) . '&quot;">' . esc_html($label) . '</a>' .
                 $this->row_actions( array(
         			'edit' => '<a class="edit" href="' . $edit_link . '">' . __( 'Edit' ) . '</a>',
-        			'delete' => '<a class="delete" href="' . $delete_link . '">' . __( 'Delete' ) . '</a>', 
+        			'delete' => '<a class="delete" href="' . $delete_link . '">' . __( 'Delete' ) . '</a>',
         		) );
 
 	}

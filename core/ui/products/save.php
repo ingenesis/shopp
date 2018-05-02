@@ -40,7 +40,7 @@
 </div>
 <div id="major-publishing-actions">
 	<select name="settings[workflow]" id="workflow">
-	<?php echo menuoptions($workflows,shopp_setting('workflow'),true); ?>
+	<?php echo Shopp::menuoptions($workflows,shopp_setting('workflow'),true); ?>
 	</select>
 <input type="submit" class="button-primary" name="save" value="<?php _e('Save Product','Shopp'); ?>" />
 </div>

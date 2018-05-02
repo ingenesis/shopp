@@ -59,7 +59,7 @@ class ShoppScreenTaxesTable extends ShoppAdminTable {
             ShoppTax::ALL => Shopp::__('All Markets'),
             ShoppTax::EUVAT => Shopp::__('European Union')
         );
-        
+
 		$this->countries = array_filter(array_merge($specials, (array) shopp_setting('target_markets')));
 		$this->zones = 	ShoppLookup::country_zones();
 
@@ -158,8 +158,8 @@ class ShoppScreenTaxesTable extends ShoppAdminTable {
 		$data = array(
 			'${id}'           => $id,
 			'${rate}'         => percentage($rate, array('precision' => 4)),
-			'${countries}'    => menuoptions($this->countries, $country, true),
-			'${zones}'        => ! empty($zones[ $country ]) ? menuoptions($zones[ $country ], $zone, true) : '',
+			'${countries}'    => Shopp::menuoptions($this->countries, $country, true),
+			'${zones}'        => ! empty($zones[ $country ]) ? Shopp::menuoptions($zones[ $country ], $zone, true) : '',
 			'${conditions}'   => join('', $conditions),
 			'${haslocals}'    => $haslocals,
 			'${localrates}'   => join('', $localrates),
@@ -214,7 +214,7 @@ class ShoppScreenTaxesTable extends ShoppAdminTable {
 			$this->conditional_ui = $template;
 		return $this->conditional_ui;
 	}
-	
+
 	/**
 	 * Get or set the local rate UI markup
 	 *

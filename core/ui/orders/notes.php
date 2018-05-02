@@ -5,8 +5,8 @@
 	<tr>
 		<th class="column-author column-username"><?php echo get_avatar($User->ID,32); ?>
 			<?php echo esc_html($User->display_name); ?><br />
-			<span><?php echo _d(get_option('date_format'), $Note->created); ?></span>
-			<span><?php echo _d(get_option('time_format'), $Note->created); ?></span></th>
+			<span><?php echo Shopp::_d(get_option('date_format'), $Note->created); ?></span>
+			<span><?php echo Shopp::_d(get_option('time_format'), $Note->created); ?></span></th>
 		<td>
 			<div id="note-<?php echo $Note->id; ?>">
 			<?php if($Note->value->sent == 1): ?>

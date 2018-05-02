@@ -92,6 +92,6 @@ class LocationsReport extends ShoppReportFramework implements ShoppReport {
 
 	static function items ($data) { return intval($data->items); }
 
-	static function grossed ($data) { return money($data->grossed); }
+	static function grossed ($data) { return Shopp::money($data->grossed); }
 
 }

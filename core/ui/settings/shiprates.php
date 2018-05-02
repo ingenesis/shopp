@@ -86,8 +86,8 @@
 
 				if ($edit && $edit == $setting) {
 					$template_data = array(
-						'${mindelivery_menu}' => menuoptions($deliverymenu,$shipping['mindelivery'],true),
-						'${maxdelivery_menu}' => menuoptions($deliverymenu,$shipping['maxdelivery'],true),
+						'${mindelivery_menu}' => Shopp::menuoptions($deliverymenu,$shipping['mindelivery'],true),
+						'${maxdelivery_menu}' => Shopp::menuoptions($deliverymenu,$shipping['maxdelivery'],true),
 						'${fallbackon}' => ('on' == $shipping['fallback'])?'checked="checked"':'',
 						'${cancel_href}' => $this->url
 					);

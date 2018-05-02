@@ -1311,7 +1311,7 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 		$_ = array();
 		$_[] = '<td class="unit textright">';
 		$_[] = '<select name="'.$this->module.'[table]['.$row.'][destination]" class="drilldown">';
-		$_[] = menuoptions($options,$selection,true);
+		$_[] = Shopp::menuoptions($options,$selection,true);
 		$_[] = '</select>';
 		$_[] = '<button type="submit" name="'.$this->module.'[table]['.$row.'][subregions]" value="+" class="button-secondary hide-if-js" title="'.__('Click to load sub-regions of the selected region...','Shopp').'"><small>'.trim($menuarrow).'</small></button>';
 		$_[] = '</td>';

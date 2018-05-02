@@ -571,7 +571,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		$_ = array();
 		$_[] = '<form action="' . self::url(false, false, $O) . '" method="get">';
 		$_[] = '<input type="hidden" name="s_ff" value="on" /><input type="hidden" name="' . $facet->slug . '" value="" />';
-		$_[] = '<label><input type="' . $type . '" name="' . $facet->slug . '" value="' . $value . '"' . inputattrs($options) . ' />' . ( ! empty($label) ? '&nbsp;' . $label : '' ) . '</label>';
+		$_[] = '<label><input type="' . $type . '" name="' . $facet->slug . '" value="' . $value . '"' . Shopp::inputattrs($options) . ' />' . ( ! empty($label) ? '&nbsp;' . $label : '' ) . '</label>';
 		$_[] = '</form>';
 		return join('', $_);
 	}
@@ -591,7 +591,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		$_ = array();
 
 		// Use a template if available
-		$template = locate_shopp_template(array('facetedmenu-' . $O->slug . '.php', 'facetedmenu.php'));
+		$template = Shopp::locate_template(array('facetedmenu-' . $O->slug . '.php', 'facetedmenu.php'));
 		if ( $template ) {
 			ob_start();
 			include($template);

@@ -66,7 +66,7 @@
 			<?php echo ShoppUI::button('add','addrule'); ?>
 			<?php
 				$options = array('any' => Shopp::__('any'), 'all' => strtolower(Shopp::__('All')));
-				$menu = '<select name="settings[taxrates][${id}][logic]" class="logic">'.menuoptions($options,false,true).'</select>';
+				$menu = '<select name="settings[taxrates][${id}][logic]" class="logic">'.Shopp::menuoptions($options,false,true).'</select>';
 			?>
 				<div class="conditionals no-conditions">
 					<p><label><?php printf(__('Apply tax rate when %s of the following conditions match','Shopp'),$menu); ?>:</label></p>
@@ -131,8 +131,8 @@
 				echo ShoppUI::template($editor,array(
 					'${id}' => $edit,
 					'${rate}' => percentage($rate,array('precision'=>4)),
-					'${countries}' => menuoptions($countries,$country,true),
-					'${zones}' => !empty($zones[$country])?menuoptions($zones[$country],$zone,true):'',
+					'${countries}' => Shopp::menuoptions($countries,$country,true),
+					'${zones}' => !empty($zones[$country])?Shopp::menuoptions($zones[$country],$zone,true):'',
 					'${conditions}' => join('',$conditions),
 					'${haslocals}' => $haslocals,
 					'${localrates}' => join('',$localrates),
@@ -178,7 +178,7 @@
 						$condition_template_data = array(
 							'${id}' => $edit,
 							'${ruleid}' => $ruleid,
-							'${property_menu}' => menuoptions($propertymenu,$rule['p'],true),
+							'${property_menu}' => Shopp::menuoptions($propertymenu,$rule['p'],true),
 							'${rulevalue}' => esc_attr($rule['v'])
 						);
 						$conditions[] = str_replace(array_keys($condition_template_data),$condition_template_data,$conditional);
@@ -198,8 +198,8 @@
 					$data = array(
 						'${id}' => $edit,
 						'${rate}' => $rate,
-						'${countries}' => menuoptions($countries,$country,true),
-						'${zones}' => !empty($zones[$country])?menuoptions(array_merge(array(''=>''),$zones[$country]),$zone,true):'',
+						'${countries}' => Shopp::menuoptions($countries,$country,true),
+						'${zones}' => !empty($zones[$country])?Shopp::menuoptions(array_merge(array(''=>''),$zones[$country]),$zone,true):'',
 						'${conditions}' => join('',$conditions),
 						'${haslocals}' => $haslocals,
 						'${localrates}' => join('',$localrates),

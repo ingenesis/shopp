@@ -446,11 +446,11 @@ class ProductAPITests extends ShoppTestCase {
 			$this->assertEquals($Price->label, shopp('product.get-variation','label'));
 			$this->assertEquals($Price->type, shopp('product.get-variation','type'));
 			$this->assertEquals($Price->sku, shopp('product.get-variation','sku'));
-			$this->assertEquals(money($Price->price), shopp('product.get-variation','price'));
-			$this->assertEquals(money($Price->saleprice), shopp('product.get-variation','saleprice'));
+			$this->assertEquals(Shopp::money($Price->price), shopp('product.get-variation','price'));
+			$this->assertEquals(Shopp::money($Price->saleprice), shopp('product.get-variation','saleprice'));
 			$this->assertEquals($Price->stock, shopp('product.get-variation','stock'));
 			$this->assertEquals(floatval($Price->dimensions['weight']), shopp('product.get-variation','weight'));
-			$this->assertEquals(money($Price->shipfee), shopp('product.get-variation','shipfee'));
+			$this->assertEquals(Shopp::money($Price->shipfee), shopp('product.get-variation','shipfee'));
 			$this->assertEquals(str_true($Price->sale), shopp('product.get-variation','sale'));
 			$this->assertEquals(str_true($Price->shipping), shopp('product.get-variation','shipping'));
 			$this->assertEquals(str_true($Price->tax), shopp('product.get-variation','tax'));

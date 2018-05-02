@@ -481,8 +481,16 @@ ShoppLoader::map(array(
 	'shoppcheckoutpage' => '/flow/Pages.php',
 	'shoppcollectionpage' => '/flow/Pages.php',
 	'shoppconfirmpage' => '/flow/Pages.php',
+
+	/* Shopp Core Library */
 	'shoppcore' => '/library/Core.php',
+	'shoppcoreformatting' => '/library/CoreFormatting.php',
+	'shoppcorelocalization' => '/library/CoreLocalization.php',
+	'shoppcoretemplates' => '/library/CoreTemplates.php',
+	'shoppcoretools' => '/library/CoreTools.php',
+	'shoppcoreurltools' => '/library/CoreURLTools.php',
 	'shoppcore_upgrader' => '/flow/Install.php',
+
 	'shoppcurrency' => '/model/Currency.php',
 	'shoppcustomer' => '/model/Customer.php',
 	// 'shoppdatabaseobject' => '/db/DB.php',

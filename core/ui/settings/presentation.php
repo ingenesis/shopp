@@ -47,13 +47,13 @@
 	<tr>
 		<th scope="row" valign="top"><label for="default-catalog-view"><?php _e('Catalog View','Shopp'); ?></label></th>
 		<td><select name="settings[default_catalog_view]" id="default-catalog-view">
-			<?php echo menuoptions($category_views,shopp_setting('default_catalog_view'),true); ?>
+			<?php echo Shopp::menuoptions($category_views,shopp_setting('default_catalog_view'),true); ?>
 		</select></td>
 	</tr>
 	<tr>
 		<th scope="row" valign="top"><label for="row-products"><?php _e('Grid Rows','Shopp'); ?></label></th>
 		<td><select name="settings[row_products]" id="row-products">
-			<?php echo menuoptions($row_products,shopp_setting('row_products')); ?>
+			<?php echo Shopp::menuoptions($row_products,shopp_setting('row_products')); ?>
 		</select>
         <label for="row-products"><?php _e('products per row','Shopp'); ?></label></td>
 	</tr>
@@ -65,7 +65,7 @@
 	<tr>
 		<th scope="row" valign="top"><label for="product-order"><?php _e('Product Order','Shopp'); ?></label></th>
 		<td><select name="settings[default_product_order]" id="product-order">
-			<?php echo menuoptions($productOrderOptions,shopp_setting('default_product_order'),true); ?>
+			<?php echo Shopp::menuoptions($productOrderOptions,shopp_setting('default_product_order'),true); ?>
 		</select>
 		<br />
         <?php _e('Set the default display order of products shown in categories.','Shopp'); ?></td>
@@ -73,10 +73,10 @@
 	<tr>
 		<th scope="row" valign="top"><label for="showcase-order"><?php _e('Image Order','Shopp'); ?></label></th>
 		<td><select name="settings[product_image_order]" id="showcase-order">
-			<?php echo menuoptions($orderOptions,shopp_setting('product_image_order'),true); ?>
+			<?php echo Shopp::menuoptions($orderOptions,shopp_setting('product_image_order'),true); ?>
 		</select> by
 		<select name="settings[product_image_orderby]" id="showcase-orderby">
-			<?php echo menuoptions($orderBy,shopp_setting('product_image_orderby'),true); ?>
+			<?php echo Shopp::menuoptions($orderBy,shopp_setting('product_image_orderby'),true); ?>
 		</select>
 		<br />
         <?php _e('Set how to organize the presentation of product images.','Shopp'); ?></td>

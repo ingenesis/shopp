@@ -28,7 +28,7 @@ class ShoppAdminCategoryTemplatesBox extends ShoppAdminMetabox {
 			'custom'   => Shopp::__('Use custom price ranges'),
 		);
 
-		$this->references['pricemenu'] = menuoptions($options, $this->references['Category']->pricerange, true);
+		$this->references['pricemenu'] = Shopp::menuoptions($options, $this->references['Category']->pricerange, true);
 		parent::box();
 	}
 

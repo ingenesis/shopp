@@ -62,10 +62,10 @@ class ShoppProductWidget extends WP_Widget {
 			<br /><br />
 			<select id="<?php echo $this->get_field_id('limit'); ?>" name="<?php echo $this->get_field_name('limit'); ?>">
 				<?php $limits = array(1,2,3,4,5,6,7,8,9,10,15,20,25);
-					echo menuoptions($limits,$options['limit']); ?>
+					echo Shopp::menuoptions($limits,$options['limit']); ?>
 			</select>
 			<select id="<?php echo $this->get_field_id('order'); ?>" name="<?php echo $this->get_field_name('order'); ?>">
-				<?php echo menuoptions(ProductCategory::sortoptions(), $options['order'], true); ?>
+				<?php echo Shopp::menuoptions(ProductCategory::sortoptions(), $options['order'], true); ?>
 			</select>
 			<label for="<?php echo $this->get_field_id('order'); ?>"><?php _e('products'); ?></label>
 		</p>

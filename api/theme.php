@@ -51,12 +51,12 @@ function shopp ( $context, $property = false, $options = false ) {
 		$tag = strtolower($second);
 	} elseif ( false !== strpos($first, '.') ) { // Handle object.tag first argument
 		list($context, $tag) = explode('.', strtolower($first));
-		if ( $num > 1 ) $options = shopp_parse_options($second);
+		if ( $num > 1 ) $options = Shopp::parse_options($second);
 	} elseif ( '' == $context . $tag ) { // Normal tag handler
 		list($context, $tag) = array_map('strtolower', array($first, $second));
 	}
 
-	if ( $num > 2 ) $options = shopp_parse_options($third);
+	if ( $num > 2 ) $options = Shopp::parse_options($third);
 
 	// strip hypens from tag names
 	$tag = str_replace ( '-', '', $tag );

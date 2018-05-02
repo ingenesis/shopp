@@ -112,10 +112,10 @@
 /* <![CDATA[ */
 jQuery(document).ready( function($) {
 	var m = {
-			none:<?php Shopp::_jse('Select some discounts!','Shopp'); ?>,
-			enable:<?php Shopp::_jse('Are you sure you want to enable the selected discounts?','Shopp'); ?>,
-			disable:<?php Shopp::_jse('Are you sure you want to disable the selected discounts?','Shopp'); ?>,
-			delete:<?php Shopp::_jse('Are you sure you want to delete the selected discounts?','Shopp'); ?>
+			none:<?php Shopp::_jse('Select some discounts!'); ?>,
+			enable:<?php Shopp::_jse('Are you sure you want to enable the selected discounts?'); ?>,
+			disable:<?php Shopp::_jse('Are you sure you want to disable the selected discounts?'); ?>,
+			delete:<?php Shopp::_jse('Are you sure you want to delete the selected discounts?'); ?>
 		},form = $('#discounts');
 
 	columns.init(pagenow);

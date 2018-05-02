@@ -54,11 +54,11 @@ class DiscountsReport extends ShoppReportFramework implements ShoppReport {
 	}
 
 	static function subtotal( $data ) {
-		return money( isset($data->subtotal) ? $data->subtotal : 0 );
+		return Shopp::money( isset($data->subtotal) ? $data->subtotal : 0 );
 	}
 
 	static function discounts( $data ) {
-		return money( isset($data->discounts) ? $data->discounts : 0 );
+		return Shopp::money( isset($data->discounts) ? $data->discounts : 0 );
 	}
 
 }

@@ -72,7 +72,7 @@ class ShoppShoppersWidget extends WP_Widget {
 		<input type="text" name="<?php echo $this->get_field_name('title'); ?>" id="<?php echo $this->get_field_id('title'); ?>" class="widefat" value="<?php echo $options['title']; ?>"></p>
 
 		<p><label><?php Shopp::_e('Name format'); ?><select name="<?php echo $this->get_field_name('abbr'); ?>">
-		<?php echo menuoptions($format_options, $options['abbr'], true); ?>
+		<?php echo Shopp::menuoptions($format_options, $options['abbr'], true); ?>
 		</select></label></p>
 
 		<p><label><input type="hidden" name="<?php echo $this->get_field_name('city'); ?>" value="off" /><input type="checkbox" name="<?php echo $this->get_field_name('city'); ?>" value="on" <?php echo $options['city'] == "on"?' checked="checked"':''; ?> /> <?php _e('Show city'); ?></label><br />

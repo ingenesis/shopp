@@ -34,7 +34,7 @@
 				$levels = array_combine($values,$labels);
 			?>
 			<select name="settings[lowstock_level]" id="lowstock-level">
-			<?php echo menuoptions($levels,$lowstock,true); ?>
+			<?php echo Shopp::menuoptions($levels,$lowstock,true); ?>
 			</select><br />
         	<?php _e('Select the level for low stock warnings.','Shopp'); ?>
 		</td>
@@ -44,7 +44,7 @@
 		<th scope="row" valign="top"><label for="promo-limit"><?php Shopp::_e('Discount Limit'); ?></label></th>
 		<td><select name="settings[promo_limit]" id="promo-limit">
 			<option value="">&infin;</option>
-			<?php echo menuoptions($promolimit,shopp_setting('promo_limit')); ?>
+			<?php echo Shopp::menuoptions($promolimit,shopp_setting('promo_limit')); ?>
 			</select>
 			<label> <?php _e('per order','Shopp'); ?></label>
 		</td>
@@ -58,7 +58,7 @@
 
 	<tr>
 		<th scope="row" valign="top"><label for="order_handling_fee"><?php _e('Order Handling Fee','Shopp'); ?></label></th>
-		<td><input type="text" name="settings[order_shipfee]" value="<?php echo money(shopp_setting('order_shipfee')); ?>" id="order_handling_fee" size="7" class="right selectall money" /><br />
+		<td><input type="text" name="settings[order_shipfee]" value="<?php echo Shopp::money(shopp_setting('order_shipfee')); ?>" id="order_handling_fee" size="7" class="right selectall money" /><br />
         <?php _e('Handling fee applied once to each order with shipped products.','Shopp'); ?></td>
 	</tr>
 	
@@ -66,9 +66,9 @@
 		<th scope="row" valign="top"><label for="order-processing-min"><?php _e('Order Processing','Shopp'); ?></label></th>
 		<td>
 		<select name="settings[order_processing_min]" id="order-processing">
-				<?php echo menuoptions(Lookup::timeframes_menu(),shopp_setting('order_processing_min'),true); ?>
+				<?php echo Shopp::menuoptions(Lookup::timeframes_menu(),shopp_setting('order_processing_min'),true); ?>
 		</select> &mdash; <select name="settings[order_processing_max]" id="order-processing">
-					<?php echo menuoptions(Lookup::timeframes_menu(),shopp_setting('order_processing_max'),true); ?>
+					<?php echo Shopp::menuoptions(Lookup::timeframes_menu(),shopp_setting('order_processing_max'),true); ?>
 		</select><br />
 		<?php _e('Set the estimated time range for processing orders for shipment.','Shopp'); ?></td>
 	</tr>

@@ -605,8 +605,8 @@ class CoreTests extends ShoppTestCase {
 	}
 
 	public function test_input_attrs() {
-		$this->assertEquals( ' class="magical"', Shopp::inputattrs(array('class' => 'magical')) );
-		$this->assertEquals( ' class="magical &quot; onclick=&quot;alert()&quot; class=&quot;"', Shopp::inputattrs(array('class' => 'magical " onclick="alert()" class="')));
+		$this->assertEquals( ' class="magical"', Shopp::array('class' => 'magical')) );
+		$this->assertEquals( ' class="magical &quot; onclick=&quot;alert()&quot; class=&quot;"', Shopp::array('class' => 'magical " onclick="alert()" class="')));
 	}
 
 	public function test_is_robot() {
@@ -667,7 +667,7 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue(16 === Shopp::mk24hour('4', 'PM'));
 	}
 
-	public function test_menuoptions() {
+	public function test_Shopp::menuoptions() {
 		$html = Shopp::menuoptions(array('13' => 'Mars', '14' => 'Orion'), '13', array('13', '14'));
 		$select = simplexml_load_string("<select> $html </select>");
 
@@ -691,7 +691,7 @@ class CoreTests extends ShoppTestCase {
 	/**
 	 * @depends test_numeric_format
 	 */
-	public function test_money() {
+	public function test_Shopp::money() {
 		$format = array(
 			'precision' => 3,
 			'decimals' => ',',
