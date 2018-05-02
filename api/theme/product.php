@@ -826,7 +826,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			if ( empty($previews) ) { // Adds "filler" image to reserve the dimensions in the DOM
 				$firstPreview = $previews .=
 					'<li class="fill">' .
-					'<img src="' .  Shopp::clearpng() . '" alt="" style="width: ' . (int) $maxwidth . 'px; height: ' . (int) $maxheight . 'px;" />' .
+					'<img src="' .  SHOPP_CLEAR_PNG . '" alt="" style="width: ' . (int) $maxwidth . 'px; height: ' . (int) $maxheight . 'px;" />' .
 					'</li>';
 			}
 
