@@ -15,6 +15,8 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
 abstract class ShoppCoreLocalization extends ShoppCoreTemplates {
 
+	const DOMAIN = 'Shopp';
+
 	/**
 	 * Shopp wrapper to return gettext translation strings
 	 *
@@ -193,39 +195,37 @@ abstract class ShoppCoreLocalization extends ShoppCoreTemplates {
 	 * @return string The formatted localized date/time
 	 **/
 	public static function _d( $format, $timestamp = null ) {
-
 		$tokens = array(
 			'D' => array('Mon' => Shopp::__('Mon'), 'Tue' => Shopp::__('Tue'),
-						'Wed' => Shopp::__('Wed'), 'Thu' => Shopp::__('Thu'),
-						'Fri' => Shopp::__('Fri'), 'Sat' => Shopp::__('Sat'),
-						'Sun' => Shopp::__('Sun')),
-			'l' => array('Monday' => Shopp::__('Monday'), 'Tuesday' => Shopp::__('Tuesday'),
+						'Wed'  => Shopp::__('Wed'), 'Thu' => Shopp::__('Thu'),
+						'Fri'  => Shopp::__('Fri'), 'Sat' => Shopp::__('Sat'),
+						'Sun'  => Shopp::__('Sun')),
+			'l' => array('Monday'   => Shopp::__('Monday'),    'Tuesday'  => Shopp::__('Tuesday'),
 						'Wednesday' => Shopp::__('Wednesday'), 'Thursday' => Shopp::__('Thursday'),
-						'Friday' => Shopp::__('Friday'), 'Saturday' => Shopp::__('Saturday'),
-						'Sunday' => Shopp::__('Sunday')),
-			'F' => array('January' => Shopp::__('January'), 'February' => Shopp::__('February'),
-						'March' => Shopp::__('March'), 'April' => Shopp::__('April'),
-						'May' => Shopp::__('May'), 'June' => Shopp::__('June'),
-						'July' => Shopp::__('July'), 'August' => Shopp::__('August'),
-						'September' => Shopp::__('September'), 'October' => Shopp::__('October'),
-						'November' => Shopp::__('November'), 'December' => Shopp::__('December')),
+						'Friday'    => Shopp::__('Friday'),    'Saturday' => Shopp::__('Saturday'),
+						'Sunday'    => Shopp::__('Sunday')),
+			'F' => array('January'  => Shopp::__('January'),   'February' => Shopp::__('February'),
+						'March'     => Shopp::__('March'),     'April'    => Shopp::__('April'),
+						'May'       => Shopp::__('May'),       'June'     => Shopp::__('June'),
+						'July'      => Shopp::__('July'),      'August'   => Shopp::__('August'),
+						'September' => Shopp::__('September'), 'October'  => Shopp::__('October'),
+						'November'  => Shopp::__('November'),  'December' => Shopp::__('December')),
 			'M' => array('Jan' => Shopp::__('Jan'), 'Feb' => Shopp::__('Feb'),
-						'Mar' => Shopp::__('Mar'), 'Apr' => Shopp::__('Apr'),
-						'May' => Shopp::__('May'), 'Jun' => Shopp::__('Jun'),
-						'Jul' => Shopp::__('Jul'), 'Aug' => Shopp::__('Aug'),
-						'Sep' => Shopp::__('Sep'), 'Oct' => Shopp::__('Oct'),
-						'Nov' => Shopp::__('Nov'), 'Dec' => Shopp::__('Dec'))
+						'Mar'  => Shopp::__('Mar'), 'Apr' => Shopp::__('Apr'),
+						'May'  => Shopp::__('May'), 'Jun' => Shopp::__('Jun'),
+						'Jul'  => Shopp::__('Jul'), 'Aug' => Shopp::__('Aug'),
+						'Sep'  => Shopp::__('Sep'), 'Oct' => Shopp::__('Oct'),
+						'Nov'  => Shopp::__('Nov'), 'Dec' => Shopp::__('Dec'))
 		);
 
-		if ( is_null($timestamp) ) $date = date($format);
-		else $date = date($format, $timestamp);
+		$date = is_null($timestamp) ? date($format) : date($format, $timestamp);
 
-		foreach ($tokens as $token => $strings) {
-			if ( strpos($format, $token) === false ) continue;
+		foreach ( $tokens as $token => $strings ) {
+			if ( strpos($format, $token) === false )
+				continue;
 			$string = ! $timestamp ? date($token) : date($token, $timestamp);
 			$date = str_replace($string, $strings[ $string ], $date);
 		}
-
 		return $date;
 	}
 
@@ -247,16 +247,13 @@ abstract class ShoppCoreLocalization extends ShoppCoreTemplates {
 	 * @since 1.3
 	 *
 	 * @param string $text The text to translate
-	 * @param string $context An explination of how and where the text is used
+	 * @param string $context An explanation of how and where the text is used
 	 * @return string The translated text
 	 **/
 	private static function translate( $text, $context = null ) {
-		$domain = 'Shopp';
-
-		if ( is_null($context) ) $string = translate( $text, $domain );
-		else $string = translate_with_gettext_context($text, $context, $domain);
-
-		return $string;
+		if ( is_null($context) )
+			return translate($text, self::DOMAIN);
+		else return translate_with_gettext_context($text, $context, self::DOMAIN);
 	}
 
 }

@@ -172,10 +172,10 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param boolean $fields Ensure all date elements are present for field order (+1.1.6)
 	 * @return array The list version of date_format
 	 **/
-	public static function date_format_order ($fields=false) {
+	public static function date_format_order( $fields = false ) {
 		$format = get_option('date_format');
 
-		$default = array('month' => 'F','day' => 'j','year' => 'Y');
+		$default = array('month' => 'F', 'day' => 'j', 'year' => 'Y');
 
 		$tokens = array(
 			'day' => 'dDjl',
@@ -186,7 +186,7 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 		$dt = join('',$tokens);
 		$_ = array(); $s = 0;
 		preg_match_all("/(.{1})/",$format,$matches);
-		foreach ($matches[1] as $i => $token) {
+		foreach ( $matches[1] as $token ) {
 			foreach ($tokens as $type => $pattern) {
 				if (preg_match("/[$pattern]/",$token)) {
 					$_[$type] = $token;
@@ -377,7 +377,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @return string The formatted amount
 	 **/
 	public static function money ( $amount, array $format = array() ) {
-
 		$format = apply_filters('shopp_money_format', Shopp::currency_format($format) );
 		extract($format, EXTR_SKIP);
 
@@ -617,7 +616,7 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 		if ( ! empty($f['thousands']) && false !== strpos($df, $f['thousands']) ) {
 			$groupings = explode($f['thousands'], $dfc);
 			$grouping = array();
-			while ( list($i, $g) = each($groupings) )
+			while ( list(, $g) = each($groupings) )
 				if ( strlen($g) > 1 ) array_unshift($grouping, strlen($g));
 			$f['grouping'] = $grouping;
 		}
@@ -626,7 +625,7 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	}
 
 	/**
-	 * Recursively sorts a heirarchical tree of data
+	 * Recursively sorts a hierarchical tree of data
 	 *
 	 * @param array $item The item data to be sorted
 	 * @param int $parent (internal) The parent item of the current iteration

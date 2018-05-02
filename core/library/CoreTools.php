@@ -56,7 +56,6 @@ abstract class ShoppCoreTools {
 				$call['class'] . $call['type'] . $call['function'] . "()"
 				: $call['function'];
 		}
-		$callstack = (object) $stack;
 
 		$caller = ( empty($callby['class']) ? '' : $callby['class'] . $callby['type'] ) . $callby['function'] . '() from ' . $debugcall['file'] . ' @ ' . $debugcall['line'];
 
@@ -81,8 +80,7 @@ abstract class ShoppCoreTools {
 		$Shopp = Shopp::object();
 		ob_start();
 		print_r($object);
-		$result = ob_get_clean();
-		return $result;
+		return ob_get_clean();
 	}
 
 	/**
@@ -201,11 +199,13 @@ abstract class ShoppCoreTools {
 	 * @param array $mask A list of keys to keep
 	 * @return array The filtered array
 	 **/
-	public static function array_filter_keys ($array,$mask) {
-		if ( !is_array($array) ) return $array;
+	public static function array_filter_keys( array $array, array $mask ) {
+		if ( ! is_array($array) )
+			return $array;
 
-		foreach ($array as $key => $value)
-			if ( !in_array($key,$mask) ) unset($array[$key]);
+		foreach ( $array as $key => $value )
+			if ( ! in_array($key, $mask) )
+				unset($array[ $key ]);
 
 		return $array;
 	}
@@ -261,17 +261,20 @@ abstract class ShoppCoreTools {
 	 * @param int $priority
 	 * @return void
 	 **/
-	public static function remove_class_actions ( $tags = false, $class = 'stdClass', $priority = false ) {
+	public static function remove_class_actions( $tags = false, $class = 'stdClass', $priority = false ) {
 		global $wp_filter;
 
 		// action tags are required
-		if ( false === $tags ) { return; }
+		if ( false === $tags )
+			return;
 
 		foreach ( (array) $tags as $tag) {
-			if ( ! isset($wp_filter[$tag]) ) continue;
+			if ( ! isset($wp_filter[$tag]) )
+				continue;
 
 			foreach ( $wp_filter[$tag] as $pri_index => $callbacks ) {
-				if ( $priority !== $pri_index && false !== $priority ) { continue; }
+				if ( $priority !== $pri_index && false !== $priority )
+					continue;
 				foreach( $callbacks as $idx => $callback ) {
 					if ( $tag == $idx ) continue; // idx will be the same as tag for non-object function callbacks
 
@@ -281,7 +284,6 @@ abstract class ShoppCoreTools {
 				}
 			}
 		}
-		return;
 	}
 
 	/**
@@ -407,25 +409,9 @@ abstract class ShoppCoreTools {
 	 * @param string $pkey PEM encoded RSA public key
 	 * @return string Encrypted binary data
 	 **/
-	public static function rsa_encrypt ( $data, $pkey ) {
+	public static function rsa_encrypt( $data, $pkey ) {
 		openssl_public_encrypt($data, $encrypted, $pkey);
 		return ($encrypted) ? $encrypted : false;
-	}
-
-	/**
-	 * Supports deprecated functions
-	 *
-	 * @since 
-	 * 
-	 * @return void Description...
-	 **/
-	public static function deprecated() {
-		$args = func_get_args();
-        if ( empty($args) )
-            return;
-        $method = array_shift($args);
-        if ( method_exists('Shopp', $method) )
-            return call_user_func_array(array('Shopp', $method), $args);
 	}
 
 }
