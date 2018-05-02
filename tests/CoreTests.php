@@ -111,23 +111,6 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue(defined('SHOPP_UNSUPPORTED'));
 	}
 
-	public function test_translate() {
-		$this->setup_translation_filters();
-
-		$translation = Shopp::translate('Some of the colonists objected to having an anatomically correct android running around without any clothes on');
-		$this->assertTrue($translation === self::TRANSLATED);
-		$this->assertTrue($this->domain === 'Shopp');
-		$this->assertEmpty($this->context);
-
-		$translation = Shopp::translate("Who knows if we're even dead or alive?", "Geordi La Forge's philosophy");
-		$this->assertTrue($translation === self::TRANSLATED);
-		$this->assertTrue($this->context === "Geordi La Forge's philosophy");
-		$this->assertTrue($this->domain === 'Shopp');
-	}
-
-	/**
-	 * @depends test_translate
-	 */
 	public function test___() {
 		$string = 'It is the woman from Ceres. She was taken prisoner by the Martians during their last invasion of that world, and since then has been a slave in the palace of the Emperor.';
 		$this->assertTrue( (Shopp::__($string) === $string) );
@@ -605,8 +588,8 @@ class CoreTests extends ShoppTestCase {
 	}
 
 	public function test_input_attrs() {
-		$this->assertEquals( ' class="magical"', Shopp::array('class' => 'magical')) );
-		$this->assertEquals( ' class="magical &quot; onclick=&quot;alert()&quot; class=&quot;"', Shopp::array('class' => 'magical " onclick="alert()" class="')));
+		$this->assertEquals( ' class="magical"', Shopp::inputattrs(array('class' => 'magical')) );
+		$this->assertEquals( ' class="magical &quot; onclick=&quot;alert()&quot; class=&quot;"', Shopp::inputattrs(array('class' => 'magical " onclick="alert()" class="')));
 	}
 
 	public function test_is_robot() {
@@ -667,7 +650,7 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue(16 === Shopp::mk24hour('4', 'PM'));
 	}
 
-	public function test_Shopp::menuoptions() {
+	public function test_menuoptions() {
 		$html = Shopp::menuoptions(array('13' => 'Mars', '14' => 'Orion'), '13', array('13', '14'));
 		$select = simplexml_load_string("<select> $html </select>");
 
@@ -691,7 +674,7 @@ class CoreTests extends ShoppTestCase {
 	/**
 	 * @depends test_numeric_format
 	 */
-	public function test_Shopp::money() {
+	public function test_money() {
 		$format = array(
 			'precision' => 3,
 			'decimals' => ',',

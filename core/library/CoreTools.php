@@ -374,17 +374,27 @@ abstract class ShoppCoreTools {
 	/**
 	 * Determines if the current client is a known web crawler bot
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @return boolean Returns true if a bot user agent is detected
 	 **/
 	public static function is_robot() {
-		$bots = array('Googlebot', 'TeomaAgent', 'Zyborg', 'Gulliver', 'Architext spider', 'FAST-WebCrawler', 'Slurp', 'Ask Jeeves', 'ia_archiver', 'Scooter', 'Mercator', 'crawler@fast', 'Crawler', 'InfoSeek sidewinder', 'Lycos_Spider_(T-Rex)', 'Fluffy the Spider', 'Ultraseek', 'MantraAgent', 'Moget', 'MuscatFerret', 'VoilaBot', 'Sleek Spider', 'KIT_Fireball', 'WebCrawler');
-		if ( ! isset($_SERVER['HTTP_USER_AGENT']) ) return apply_filters('shopp_agent_is_robot', true, '');
-		foreach ( $bots as $bot )
-			if ( false !== strpos(strtolower($_SERVER['HTTP_USER_AGENT']), strtolower($bot))) return apply_filters('shopp_agent_is_robot', true, esc_attr($_SERVER['HTTP_USER_AGENT']));
-		return apply_filters('shopp_agent_is_robot', false, esc_attr($_SERVER['HTTP_USER_AGENT']));
+		$is_robot = false;
+		$user_agent = filter_var($_SERVER['HTTP_USER_AGENT'], FILTER_SANITIZE_STRING);
+
+		// Bots sorted by most prevelant for better performance
+		$bots = array('mj12bot', 'googlebot', 'bingbot', 'simplepie', 'slurp', 'adsbot-google', 'mediapartners', 'okhttp', 'curl', 'ips-agent', 'blexbot', 'yandexbot', 'scoutjet', 'teomaagent', 'zyborg', 'gulliver', 'architext spider', 'fast-webcrawler',  'ask jeeves', 'ia_archiver', 'scooter', 'mercator', 'crawler@fast', 'crawler', 'infoseek sidewinder', 'lycos_spider_(t-rex)', 'fluffy the spider', 'ultraseek', 'mantraagent', 'moget', 'muscatferret', 'voilabot', 'sleek spider', 'kit_fireball', 'webcrawler');
+
+		if ( empty($user_agent) )
+			$bots = array();
+
+		foreach ( $bots as $bot ) {
+			$is_robot = false !== stripos($user_agent, $bot);
+			if ( $is_robot )
+				break;
+		}
+
+		return apply_filters('shopp_agent_is_robot', $is_robot, $user_agent);
 	}
 
 	/**
