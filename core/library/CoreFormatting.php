@@ -38,9 +38,9 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param array $format (optional) The currency format to use for precision (defaults to the current base of operations)
 	 * @return float
 	 **/
-	public static function floatval ( $value, $round = true, array $format = array() ) {
+	public static function floatval( $value, $round = true, array $format = array() ) {
 		$format = ShoppCore::currency_format($format); // Use ShoppCore here instead of Shopp here
-		extract($format, EXTR_SKIP);
+		extract($format, EXTR_SKIP) && isset($currency);
 
 		$float = false;
 		if ( is_float($value) ) $float = $value;
@@ -77,8 +77,8 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param int $end The ending timestamp
 	 * @return int	Number of days between the start and end
 	 **/
-	public static function duration ($start,$end) {
-		return ceil(($end - $start) / 86400);
+	public static function duration( $start, $end ) {
+		return ceil(( $end - $start ) / 86400);
 	}
 
 	/**
@@ -104,8 +104,7 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param array $format (optional) A currency format settings array
 	 * @return array Format settings array
 	 **/
-	public static function currency_format ( array $format = array() ) {
-
+	public static function currency_format( array $format = array() ) {
 		$default = ShoppBaseCurrency()->settings();
 
 		// No format provided, use default
@@ -113,7 +112,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 
 		// Merge the format options with the default
 		return array_merge($default, $format);
-
 	}
 
 	/**
@@ -128,25 +126,22 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param int $year The year, uses current year if none provided
 	 * @return void
 	 **/
-	public static function datecalc ( $week = -1, $dayOfWeek = -1, $month = -1, $year = -1 ) {
-		$weekdays = array('sunday' => 0, 'monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4, 'friday' => 5, 'saturday' => 6);
-		$weeks = array('first' => 1, 'second' => 2, 'third' => 3, 'fourth' => 4, 'last' => -1);
+	public static function datecalc( $week = -1, $dayOfWeek = -1, $month = -1, $year = -1 ) {
+		if ( $dayOfWeek < 0 || $dayOfWeek > 6 )
+			return false;
 
-		if ( $month == -1 ) $month = date ('n'); // No month provided, use current month
-		if ( $year == -1 ) $year = date('Y');    // No year provided, use current year
+		if ( $month == -1 )
+			$month = date ('n'); // No month provided, use current month
+
+		if ( $year == -1 )
+			$year = date('Y');    // No year provided, use current year
 
 		// Day of week is a string, look it up in the weekdays list
-		if ( ! is_numeric($dayOfWeek) ) {
-			foreach ( $weekdays as $dayName => $dayNum ) {
-				if ( strtolower($dayOfWeek) == substr($dayName, 0, strlen($dayOfWeek)) ) {
-					$dayOfWeek = $dayNum;
-					break;
-				}
-			}
-		}
-		if ( $dayOfWeek < 0 || $dayOfWeek > 6 ) return false;
+		$dayOfWeek = self::find_dayofweek($dayOfWeek);
 
-		if ( ! is_numeric($week) ) $week = $weeks[ $week ];
+		$weeks = array('first' => 1, 'second' => 2, 'third' => 3, 'fourth' => 4, 'last' => -1);
+		if ( isset($weeks[ $week ]) )
+			$week = $weeks[ $week ];
 
 		if ( $week == -1 ) {
 			$lastday = date('t', mktime(0, 0, 0, $month, 1, $year));
@@ -160,6 +155,35 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 		}
 
 		return mktime(0, 0, 0, $month, $day, $year);
+	}
+
+	/**
+	 * Helper for datecalc() to convert a specified day of the week to an index
+	 *
+	 * Finds partial matches (e.g. "sun" is 0, "thur" is 4, etc.)
+	 *
+	 * @since 1.5
+	 *
+	 * @param int|string $dayofweek A value for the day of the week
+	 * @return int An index value (0-6) for the day of the week
+	 **/
+	private static function find_dayofweek( $dayofweek ) {
+		if ( is_numeric($dayofweek) )
+			return $dayofweek;
+
+		$weekdays = array('sunday' => 0, 'monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4, 'friday' => 5, 'saturday' => 6);
+		$dayofweek = strtolower($dayofweek);
+		if ( isset($week[ $dayofweek ]) )
+			return $week[ $dayofweek ];
+
+		$charlen = strlen($dayofweek);
+		foreach ( $weekdays as $name => $index ) {
+			if ( $dayofweek == substr($name, 0, $charlen) ) {
+				$dayofweek = $index;
+				break;
+			}
+		}
+		return $dayofweek;
 	}
 
 	/**
@@ -183,37 +207,26 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 			'year' => 'yY'
 		);
 
-		$dt = join('',$tokens);
-		$_ = array(); $s = 0;
-		preg_match_all("/(.{1})/",$format,$matches);
+		$dt = join('', $tokens);
+		$_ = array();
+		$s = 0;
+		preg_match_all("/(.{1})/", $format, $matches);
 		foreach ( $matches[1] as $token ) {
-			foreach ($tokens as $type => $pattern) {
-				if (preg_match("/[$pattern]/",$token)) {
-					$_[$type] = $token;
+			foreach ( $tokens as $type => $pattern ) {
+				if ( preg_match("/[$pattern]/", $token) ) {
+					$_[ $type ] = $token;
 					break;
-				} elseif (preg_match("/[^$dt]/",$token)) {
-					$_['s'.$s++] = $token;
+				} elseif ( preg_match("/[^$dt]/", $token) ) {
+					$_[ 's' . $s++ ] = $token;
 					break;
 				}
 			}
 		}
 
-		if ($fields) $_ = array_merge($_,$default,$_);
+		if ( $fields )
+			$_ = array_merge($_, $default, $_);
 
 		return $_;
-	}
-
-	public static function daytimes () {
-		$args = func_get_args();
-		$periods = array("h"=>3600,"d"=>86400,"w"=>604800,"m"=>2592000);
-
-		$total = 0;
-		foreach ($args as $timeframe) {
-			if (empty($timeframe)) continue;
-			list($i,$p) = sscanf($timeframe,'%d%s');
-			$total += $i*$periods[$p];
-		}
-		return ceil($total/$periods['d']).'d';
 	}
 
 	/**
@@ -225,7 +238,7 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param string $datetime A MySQL date time string
 	 * @return int A timestamp number usable by PHP date functions
 	 **/
-	public static function mktimestamp ($datetime) {
+	public static function mktimestamp( $datetime ) {
 		$h = $mn = $s = 0;
 		list($Y, $M, $D, $h, $mn, $s) = sscanf($datetime,"%d-%d-%d %d:%d:%d");
 		if (max($Y, $M, $D, $h, $mn, $s) == 0) return 0;
@@ -241,8 +254,8 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param int $timestamp A timestamp number
 	 * @return string An SQL datetime formatted string
 	 **/
-	public static function mkdatetime ($timestamp) {
-		return date("Y-m-d H:i:s",$timestamp);
+	public static function mkdatetime ( $timestamp ) {
+		return date("Y-m-d H:i:s", $timestamp);
 	}
 
 	/**
@@ -255,17 +268,15 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param string $meridiem Specified meridiem of "AM" or "PM"
 	 * @return int The 24-hour equivalent
 	 **/
-	public static function mk24hour ($hour, $meridiem) {
+	public static function mk24hour( $hour, $meridiem ) {
 		if ($hour < 12 && $meridiem == "PM") return $hour + 12;
 		if ($hour == 12 && $meridiem == "AM") return 0;
 		return (int) $hour;
 	}
 
-
 	/**
 	 * Converts weight units from base setting to needed unit value
 	 *
-	 * @author John Dillick, Jonathan Davis
 	 * @since 1.1
 	 * @version 1.1
 	 *
@@ -274,8 +285,9 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param string $from (optional) The unit that we are converting from - defaults to system settings
 	 * @return float|boolean The converted value, false on error
 	 **/
-	public static function convert_unit ($value = 0, $unit, $from=false) {
-		if ($unit == $from || $value == 0) return $value;
+	public static function convert_unit( $value = 0, $unit, $from = false ) {
+		if ( $unit === $from || $value == 0 )
+			return $value;
 
 		$defaults = array(
 			'mass' => shopp_setting('weight_unit'),
@@ -283,39 +295,38 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 		);
 
 		// Conversion table to International System of Units (SI)
-		$table = array(
+		$table = apply_filters('shopp_unit_conversion_table', array(
 			'mass' => array(		// SI base unit "grams"
 				'lb' => 453.59237, 'oz' => 28.349523125, 'g' => 1, 'kg' => 1000
 			),
 			'dimension' => array(	// SI base unit "meters"
 				'ft' => 0.3048, 'in' => 0.0254, 'mm' => 0.001, 'cm' => 0.01, 'm' => 1
 			)
-		);
+		));
 
-		if ( $from && in_array( $from, array_keys($table['mass']) ) ) $defaults['mass'] = $from;
-		if ( $from && in_array( $from, array_keys($table['dimension']) ) ) $defaults['dimension'] = $from;
+		$charts = array_keys($table);
+		foreach ( $charts as $chart )
+			if ( isset($table[ $chart ][ $unit ]) )
+				break;
 
-		$table = apply_filters('shopp_unit_conversion_table',$table);
+		// If unit is unknown or the chart is unknown, return 0.
+		if ( ! isset($table[ $chart ][ $unit ]) )
+			return 0;
 
-		// Determine which chart to use
-		foreach ($table as $attr => $c) {
-			if (isset($c[$unit])) { $chart = $attr; $from = $defaults[$chart]; break; }
-		}
+		// If we don't know about the unit to convert from use the system default
+		if ( ! isset($table[ $chart ][ $from ]) )
+			$from = $defaults[ $chart ];
 
-		if ($unit == $from) return $value;
+		if ( $unit === $from )
+			return $value;
 
-		// If we don't know about unit, return 0.
-		if ( ! isset($table[$chart][$from]) ) return 0;
-		if ( ! isset($table[$chart][$unit]) ) return 0;
-
-		$siv = $value * $table[$chart][$from];	// Convert to SI unit value
-		return $siv/$table[$chart][$unit];		// Return target units
+		$siv = $value * $table[ $chart ][ $from ];	// Convert to SI unit value
+		return $siv / $table[ $chart ][ $unit ];	// Return target units
 	}
 
 	/**
 	 * Automatically generates a list of number ranges distributed across a number set
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param int $avg Mean average number in the distribution
@@ -323,35 +334,39 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param int $min The minimum in the distribution
 	 * @return array A list of number ranges
 	 **/
-	public static function auto_ranges ($avg, $max, $min, $values) {
-
+	public static function auto_ranges( $avg, $max, $min, $values ) {
 		$ranges = array();
-		if ($avg == 0 || $max == 0) return $ranges;
-		$power = floor(log10($avg));
-		$scale = pow(10,$power);
-		$mean = round($avg/$scale)*$scale;
-		$range = $max-$min;
+		if ( $avg == 0 || $max == 0 )
+			return $ranges;
 
-		if ($range == 0) return $ranges;
+		$power = floor( log10($avg) );
+		$scale = pow(10, $power);
+		$mean = round( $avg / $scale ) * $scale;
+		$range = $max - $min;
+
+		if ( $range == 0 )
+			return $ranges;
 
 		$steps = $values;
-		if ($steps > 7) $steps = 7;
-		elseif ($steps < 2) {
-			$scale = $scale/2;
-			$steps = ceil($range/$scale);
-			if ($steps > 7) $steps = 7;
-			elseif ($steps < 2) $steps = 2;
+		if ( $steps > 7 )
+			$steps = 7;
+		elseif ( $steps < 2 ) {
+			$scale = $scale / 2;
+			$steps = min(2, max(7, ceil( $range / $scale ) ));
 		}
 
-		$base = max($mean-($scale*floor(($steps-1)/2)),$scale);
+		$base = max( $mean - ( $scale * floor(( $steps - 1 ) / 2 )), $scale);
 
-		for ($i = 0; $i < $steps; $i++) {
-			$range = array("min" => 0,"max" => 0);
-			if ($i == 0) $range['max'] = $base;
-			else if ($i+1 >= $steps) $range['min'] = $base;
-			else $range = array("min" => $base, "max" => $base+$scale);
+		for ( $i = 0; $i < $steps; $i++ ) {
+			$range = array('min' => 0, 'max' => 0);
+			if ( $i == 0 )
+				$range['max'] = $base;
+			elseif ( $i + 1 >= $steps )
+				$range['min'] = $base;
+			else $range = array('min' => $base, 'max' => $base + $scale);
 			$ranges[] = $range;
-			if ($i > 0) $base += $scale;
+			if ( $i > 0 )
+				$base += $scale;
 		}
 
 		return $ranges;
@@ -376,16 +391,16 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param array $format The currency format to use
 	 * @return string The formatted amount
 	 **/
-	public static function money ( $amount, array $format = array() ) {
+	public static function money( $amount, array $format = array() ) {
 		$format = apply_filters('shopp_money_format', Shopp::currency_format($format) );
-		extract($format, EXTR_SKIP);
+		extract($format, EXTR_SKIP) && isset($cpos, $precision, $decimals, $thousands, $grouping);
 
 		$amount = apply_filters('shopp_money_amount', $amount);
 		$number = Shopp::numeric_format(abs($amount), $precision, $decimals, $thousands, $grouping);
 
-		if ( $cpos ) return ( $amount < 0 ? '-' : '' ) . $currency . $number;
+		if ( $cpos )
+			return ( $amount < 0 ? '-' : '' ) . $currency . $number;
 		else return $number . $currency;
-
 	}
 
 	/**
@@ -401,35 +416,36 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param int|array $grouping The number grouping pattern [default: array(3)]
 	 * @return string The formatted number
 	 **/
-	public static function numeric_format ( $number, $precision = 2, $decimals = '.', $separator=',', $grouping = array(3) ) {
+	public static function numeric_format( $number, $precision = 2, $decimals = '.', $separator=',', $grouping = array(3) ) {
 		$n = sprintf("%0.{$precision}F", $number);
 		$whole = $fraction = 0;
 
-		if ( strpos($n,'.') !== false ) list($whole, $fraction) = explode('.', $n);
+		if ( strpos($n,'.') !== false )
+			list($whole, $fraction) = explode('.', $n);
 		else $whole = $n;
 
-		if ( ! is_array($grouping) ) $grouping = array($grouping);
+		if ( ! is_array($grouping) )
+			$grouping = array($grouping);
 
 		$i = 0;
-		$lg = count($grouping)-1;
+		$lg = count($grouping) - 1;
 		$ng = array();
-		while(strlen($whole) > $grouping[min($i,$lg)] && !empty($grouping[min($i,$lg)])) {
-			$divide = strlen($whole) - $grouping[min($i++,$lg)];
+		while( strlen($whole) > $grouping[ min($i, $lg) ] && ! empty($grouping[ min($i, $lg) ]) ) {
+			$divide = strlen($whole) - $grouping[ min($i++, $lg) ];
 			$sequence = $whole;
-			$whole = substr($sequence,0,$divide);
-			array_unshift($ng,substr($sequence,$divide));
+			$whole = substr($sequence, 0, $divide);
+			array_unshift($ng, substr($sequence, $divide));
 		}
-		if (!empty($whole)) array_unshift($ng,$whole);
+		if ( ! empty($whole) )
+			array_unshift($ng, $whole);
 
-		$whole = join($separator,$ng);
-		$whole = str_pad($whole,1,'0');
+		$whole = join($separator, $ng);
+		$whole = str_pad($whole, 1, '0');
 
-		// echo BR.$fraction.BR;
+		$fraction = rtrim(substr($fraction, 0, $precision), '0');
+		$fraction = str_pad($fraction, $precision, '0');
 
-		$fraction = rtrim(substr($fraction,0,$precision),'0');
-		$fraction = str_pad($fraction,$precision,'0');
-
-		$n = $whole.(!empty($fraction)?$decimals.$fraction:'');
+		$n = $whole . ( ! empty($fraction) ? $decimals . $fraction : '');
 
 		return $n;
 	}
@@ -443,7 +459,7 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param int $num The number to format
 	 * @return array A list of phone number components
 	 **/
-	public static function parse_phone ( $num ) {
+	public static function parse_phone( $num ) {
 		if ( empty($num) ) return '';
 		$raw = preg_replace('/[^\d]/', '', $num);
 
@@ -463,7 +479,7 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param int $num The number to format
 	 * @return string The formatted telephone number
 	 **/
-	public static function phone ( $num ) {
+	public static function phone( $num ) {
 		if ( empty($num) ) return '';
 
 		$parsed = Shopp::parse_phone($num);
@@ -495,9 +511,10 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param array $format A specific format for the number
 	 * @return string The formatted percentage
 	 **/
-	public static function percentage ( $amount, $format = array() ) {
+	public static function percentage( $amount, $format = array() ) {
 		$format = Shopp::currency_format($format);
-		extract($format, EXTR_SKIP);
+		extract($format, EXTR_SKIP) && isset($precision, $decimals, $thousands, $grouping);
+
 		$float = Shopp::floatval($amount, true, $format);
 		$percent = Shopp::numeric_format($float, $precision, $decimals, $thousands, $grouping);
 		if ( false !== strpos($percent, $decimals) ) { // Only remove trailing 0's after the decimal
@@ -517,9 +534,9 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param array $format (optional) The formatting settings to use,
 	 * @return float The rounded float
 	 **/
-	public static function roundprice ($amount, $format = array() ) {
+	public static function roundprice( $amount, $format = array() ) {
 		$format = Shopp::currency_format($format);
-		extract($format);
+		extract($format, EXTR_SKIP) && isset($precision);
 		return round($amount, $precision);
 	}
 
@@ -535,125 +552,15 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param int $bytes The number of bytes
 	 * @return string The formatted unit size
 	 **/
-	public static function readableFileSize($bytes,$precision=1) {
-		$units = array(__('bytes','Shopp'),'KB','MB','GB','TB','PB');
-		$sized = $bytes*1;
-		if ($sized == 0) return $sized;
+	public static function readableFileSize( $bytes, $precision = 1 ) {
+		$units = array(Shopp::__('bytes'), 'KB', 'MB', 'GB', 'TB', 'PB');
+		$sized = $bytes * 1;
+		if ( $sized == 0 )
+			return $sized;
 		$unit = 0;
-		while ($sized >= 1024 && ++$unit) $sized = $sized/1024;
-		return round($sized,$precision)." ".$units[$unit];
+		while ( $sized >= 1024 && ++$unit )
+			$sized = $sized / 1024;
+		return round($sized, $precision) . " " . $units[ $unit ];
 	}
 
-	/**
-	 * Scans a formatted string to build a list of currency formatting settings
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.0
-	 * @version 1.1
-	 *
-	 * @param string $format A currency formatting string such as $#,###.##
-	 * @return array Formatting options list
-	 **/
-	public static function scan_money_format ( $format ) {
-		$f = array(
-			'cpos' => true,
-			'currency' => '',
-			'precision' => 0,
-			'decimals' => '',
-			'thousands' => '',
-			'grouping' => 3
-		);
-
-		$decimals = array('.', ',', '·', "'");
-
-		$ds = strpos($format, '#'); // Position of the first digit
-		$de = strrpos($format, '#') + 1; // Position of the last digit
-		$df = substr($format, $ds, ($de - $ds)); // Digit formatting from first to last #
-
-		// Currency symbol
-		$f['cpos'] = true; // True means symbol prefixes number
-		if ( 0 != $ds ) { // If starting digit is not at 0, currency symbol is in front of it
-			$f['currency'] = substr($format, 0, $ds);
-			if ( '#' != substr($format, $de) )
-				$f['decimals'] = substr($format, $de);
-		} else {
-			$currency = substr($format, $de);
-			if ( isset($currency{0}) && in_array($currency{0}, $decimals) ) {
-				$f['decimals'] = $currency{0};
-				$f['currency'] = substr($currency, 1);
-			} else {
-				$f['currency'] = substr($format, $de);
-			}
-			$f['cpos'] = false;
-		}
-		$f['currency'] = trim($f['currency']);
-
-		$found = array();
-		if ( ! preg_match_all('/([^#]+)/', $df, $found) || empty($found) ) return $f;
-
-		$dl = $found[0];
-		$dd = 0; // Decimal digits
-
-		if ( count($dl) > 1 ) {
-			if ( $dl[0] == $dl[1] && ! isset($dl[2]) ) {
-				$f['thousands'] = $dl[1];
-				$f['precision'] = 0;
-			} else {
-				$f['decimals'] = $dl[ count($dl) - 1 ];
-				$f['thousands'] = $dl[0];
-			}
-		} elseif ( ! empty($f['decimals']) && $dl[0] != $f['decimals'] ) {
-			$f['thousands'] = $dl[0];
-		} else $f['decimals'] = $dl[0];
-
-		$dfc = $df;
-		// Count for precision
-		if ( ! empty($f['decimals']) && strpos($df, $f['decimals']) !== false) {
-			list($dfc,$dd) = explode($f['decimals'], $df);
-			$f['precision'] = strlen($dd);
-		}
-
-		if ( ! empty($f['thousands']) && false !== strpos($df, $f['thousands']) ) {
-			$groupings = explode($f['thousands'], $dfc);
-			$grouping = array();
-			while ( list(, $g) = each($groupings) )
-				if ( strlen($g) > 1 ) array_unshift($grouping, strlen($g));
-			$f['grouping'] = $grouping;
-		}
-
-		return $f;
-	}
-
-	/**
-	 * Recursively sorts a hierarchical tree of data
-	 *
-	 * @param array $item The item data to be sorted
-	 * @param int $parent (internal) The parent item of the current iteration
-	 * @param int $key (internal) The identified index of the parent item in the current iteration
-	 * @param int $depth (internal) The number of the nested depth in the current iteration
-	 * @return array The sorted tree of data
-	 * @author Jonathan Davis
-	 * @deprecated 1.3
-	 **/
-	public static function sort_tree ($items,$parent=0,$key=-1,$depth=-1) {
-		$depth++;
-		$position = 1;
-		$result = array();
-		if ($items) {
-			foreach ($items as $item) {
-				// Preserve initial priority
-				if (isset($item->priority))	$item->_priority = $item->priority;
-				if ($item->parent == $parent) {
-					$item->parentkey = $key;
-					$item->depth = $depth;
-					$item->priority = $position++;
-					$result[] = $item;
-					$children = Shopp::sort_tree($items, $item->id, count($result)-1, $depth);
-					$result = array_merge($result,$children); // Add children in as they are found
-				}
-			}
-		}
-		$depth--;
-		return $result;
-	}
 }

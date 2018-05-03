@@ -105,7 +105,7 @@ class ShoppDBDataAdapter extends ShoppDBManager {
 	public static function mktime( $datetime ) {
 		$h = $mn = $s = 0;
 		list($Y, $M, $D, $h, $mn, $s) = sscanf($datetime, '%d-%d-%d %d:%d:%d');
-		if (max($Y, $M, $D, $h, $mn, $s) == 0) return 0;
+		if ( max($Y, $M, $D, $h, $mn, $s) == 0 ) return 0;
 		return mktime($h, $mn, $s, $M, $D, $Y);
 	}
 

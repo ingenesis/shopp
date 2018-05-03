@@ -18,6 +18,13 @@ define('SHOPP_CLEAR_PNG', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAA
 
 abstract class ShoppCoreTools {
 
+	/**
+	 * Provides a string of the call stack
+	 *
+	 * @since 1.2
+	 *
+	 * @return string A string of the call stack
+	 **/
 	public static function debug_caller () {
 		$backtrace  = debug_backtrace();
 		$stack = array();
@@ -30,7 +37,6 @@ abstract class ShoppCoreTools {
 		}
 
 		return join( ', ', $stack );
-
 	}
 
 	/**

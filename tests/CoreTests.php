@@ -16,6 +16,9 @@ class CoreTests extends ShoppTestCase {
 
 
 	public static function setUpBeforeClass() {
+		shopp_set_setting('weight_unit', 'lb');
+		shopp_set_setting('dimension_unit', 'ft');
+
 		self::create_tpl_dir();
 		self::create_test_product();
 	}
@@ -103,6 +106,9 @@ class CoreTests extends ShoppTestCase {
 	}
 
 	static function tearDownAfterClass () {
+		shopp_set_setting('weight_unit', '');
+		shopp_set_setting('dimension_unit', '');
+
 		$Product = shopp_product('shopp-branded-plain-white-tee', 'slug');
 		shopp_rmv_product($Product->id);
 	}
@@ -325,7 +331,8 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue( 5 == Shopp::convert_unit(12.7, 'in', 'cm') );
 		$this->assertTrue( 99.208 < Shopp::convert_unit(45, 'lb', 'kg') );
 		$this->assertTrue( 99.209 > Shopp::convert_unit(45, 'lb', 'kg') );
-		$this->assertTrue( 0 == Shopp::convert_unit(400, 'lb', 'splargons'));
+		$this->assertTrue( 400 == Shopp::convert_unit(400, 'lb', 'splargons'));
+		$this->assertTrue( 0 == Shopp::convert_unit(400, 'splargons', 'lb'));
 	}
 
 	public function test_copy_templates() {
@@ -635,7 +642,7 @@ class CoreTests extends ShoppTestCase {
 	public function test_mktimestamp() {
 		$stamp = mktime(0, 0, 0, 4, 5, 2063);
 		$mysql = date('Y-m-d H:i:s', $stamp);
-		$this->assertTrue($stamp === Shopp::mktimestamp($mysql));
+		$this->assertTrue($stamp === sDB::mktime($mysql));
 	}
 
 	public function test_mkdatetime() {
@@ -744,48 +751,17 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue(!empty($encrypted));
 	}
 
-	public function test_set_wp_query_var() {
-		global $wp, $wp_query;
-		Shopp::set_wp_query_var('custom_property', 'Shiney new space boots');
-
-		$in_wp = (isset($wp->query_vars['custom_property']) and 'Shiney new space boots' === $wp->query_vars['custom_property']);
-		$in_wp_query = (isset($wp_query->query_vars['custom_property']) and 'Shiney new space boots' === $wp_query->query_vars['custom_property']);
-
-		$this->assertTrue($in_wp);
-		$this->assertTrue($in_wp_query);
-	}
-
-	/**
-	 * @depends test_set_wp_query_var
-	 */
-	public function test_get_wp_query_var() {
-		Shopp::set_wp_query_var('warp_factor', '9');
-		$this->assertTrue('9' === Shopp::get_wp_query_var('warp_factor'));
-	}
-
 	public function test_daytimes() {
-		$this->assertEquals('3d', Shopp::daytimes('72h'));
-		$this->assertEquals('4d', Shopp::daytimes('2d', '48h'));
-		$this->assertEquals('8d', Shopp::daytimes('1w', '1d'));
-		$this->assertEquals('40d', Shopp::daytimes('1m', '1w', '3d'));
+		$this->assertEquals('3d', ShippingFramework::daytimes('72h'));
+		$this->assertEquals('4d', ShippingFramework::daytimes('2d', '48h'));
+		$this->assertEquals('8d', ShippingFramework::daytimes('1w', '1d'));
+		$this->assertEquals('40d', ShippingFramework::daytimes('1m', '1w', '3d'));
 	}
 
 	public function test_email() {
 		$valid_tpl_path = SHOPP_UNITTEST_DIR . '/data/email.php';
 		$mail_success = Shopp::email( $valid_tpl_path, array() );
 		$this->assertTrue(is_bool($mail_success));
-	}
-
-	public function test_rss() {
-		$data = array(
-			'link' => 'http://shopplugin.net/mars',
-			'title' => 'We are going to Mars',
-			'description' => 'Interesting news about our products.',
-			'rss_language' => 'en_CA',
-			'sitename' => 'Martian Shopping'
-		);
-		$rss = Shopp::rss($data);
-		$this->assertValidMarkup($rss);
 	}
 
 	public function test_pagename() {
@@ -868,52 +844,4 @@ class CoreTests extends ShoppTestCase {
 		foreach ( $invalid_types as $input_type ) $this->assertFalse(Shopp::valid_input($input_type));
 	}
 
-	public function test_scan_money_format() {
-		$specs = array();
-		$formats = array(
-			'$#,###.##', // "Conventional"
-			'# ###,##', // Space as the thousands separator
-			'£#,###.###', // Precision of 3 decimal places
-			'#,###.## £', // Trailing currency symbol
-			'##,###.## Yatts', // Irregular groupings (ie, Indian format)
-			'#,###. Kibbles' // No decimals in use
-		);
-
-		foreach ( $formats as $format )
-			$specs[$format] = Shopp::scan_money_format($format);
-
-		// Check all is in order with our conventional Canada/US style format
-		$this->assertTrue($specs['$#,###.##']['cpos']);
-		$this->assertEquals('$', $specs['$#,###.##']['currency']);
-		$this->assertEquals('.', $specs['$#,###.##']['decimals']);
-		$this->assertEquals(',', $specs['$#,###.##']['thousands']);
-		$this->assertEquals(2, $specs['$#,###.##']['precision']);
-		$this->assertEquals(3, $specs['$#,###.##']['grouping'][0]);
-
-		// Symbol-less, space for thousands and comma for decimals
-		$this->assertFalse($specs['# ###,##']['cpos']);
-		$this->assertEquals('', $specs['# ###,##']['currency']);
-		$this->assertEquals(',', $specs['# ###,##']['decimals']);
-		$this->assertEquals(' ', $specs['# ###,##']['thousands']);
-
-		// Pounds sterling and decimal precision of 3
-		$this->assertTrue($specs['£#,###.###']['cpos']);
-		$this->assertEquals('£', $specs['£#,###.###']['currency']);
-		$this->assertEquals(3, $specs['£#,###.###']['precision']);
-
-		// Trailing currency symbols
-		$this->assertFalse($specs['#,###.## £']['cpos']);
-		$this->assertEquals('£', $specs['#,###.## £']['currency']);
-
-		// Irregular groupings and long currency symbols
-		$this->assertEquals('Yatts', $specs['##,###.## Yatts']['currency']);
-		$this->assertEquals(3, $specs['##,###.## Yatts']['grouping'][0]);
-		$this->assertEquals(2, $specs['##,###.## Yatts']['grouping'][1]);
-
-		// No decimals (ensure precision, groupings, thousands separator etc are not confused)
-		$this->assertEquals(',', $specs['#,###. Kibbles']['thousands'], json_encode($specs['#,###. Kibbles']));
-		$this->assertEquals(3, $specs['#,###. Kibbles']['grouping'][0]);
-		$this->assertEquals(0, $specs['#,###. Kibbles']['precision']);
-		$this->assertEquals('.', $specs['#,###. Kibbles']['decimals']);
-	}
 }

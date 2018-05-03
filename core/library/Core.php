@@ -244,9 +244,6 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 		return ( 1 <= count($matches) );
 	}
 
-
-
-
 	/**
 	 * Determines the gateway path to a gateway file
 	 *
@@ -295,109 +292,12 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 	}
 
 	/**
-	 * Wrapper function to set the WP and WP_Query query_vars
-	 *
-	 * This wrapper is to make it easier to set query_vars in the
-	 * WP global object and the WP_Query simultaneously. This makes
-	 * it easier to manipulate requests as necessary
-	 * (especially in the case of Shopp searches)
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.2
-	 *
-	 * @param string $var Name of the var to set
-	 * @param string $value Value to set
-	 * @return void
-	 **/
-	public static function set_wp_query_var ($var,$value) {
-		global $wp;
-		$wp->set_query_var($var,$value);
-		set_query_var($var,$value);
-	}
-
-	/**
-	 * Wrapper function to get a WP query_var
-	 *
-	 * This is used only in contexts where the WP_Query public API
-	 * call get_query_var() doesn't work (specifically during parse_request)
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.2
-	 *
-	 * @param string $key The name of the query_var to retrieve
-	 * @return mixed
-	 **/
-	public static function get_wp_query_var ($key) {
-		global $wp;
-		if (isset($wp->query_vars[$key]))
-			return $wp->query_vars[$key];
-	}
-
-	/**
 	 * Wraps mark-up in a #shopp container, if needed
 	 *
 	 * @deprecated Use ShoppStorefront::wrapper() instead
 	 **/
 	public static function div ($string) {
 		return ShoppStorefront::wrapper($string);
-	}
-
-	/**
-	 * Generates RSS markup in XML from a set of provided data
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.0
-	 * @deprecated Functionality moved to the ShoppStorefront
-	 *
-	 * @param array $data The data to populate the RSS feed with
-	 * @return string The RSS markup
-	 **/
-	public static function rss ($data) {
-		// RSS filters
-		add_filter('shopp_rss_description','convert_chars');
-		add_filter('shopp_rss_description','ent2ncr');
-
-		$xmlns = '';
-		if ( isset($data['xmlns']) && is_array($data['xmlns']) )
-			foreach ($data['xmlns'] as $key => $value)
-				$xmlns .= 'xmlns:'.$key.'="'.$value.'" ';
-
-		$xml = "<?xml version=\"1.0\""." encoding=\"utf-8\"?>\n";
-		$xml .= "<rss version=\"2.0\" $xmlns>\n";
-		$xml .= "<channel>\n";
-
-		$xml .= '<atom:link href="'.esc_attr($data['link']).'" rel="self" type="application/rss+xml" />'."\n";
-		$xml .= "<title>".esc_html($data['title'])."</title>\n";
-		$xml .= "<description>".esc_html($data['description'])."</description>\n";
-		$xml .= "<link>".esc_html($data['link'])."</link>\n";
-		$xml .= "<language>".get_option('rss_language')."</language>\n";
-		$xml .= "<copyright>".esc_html("Copyright ".date('Y').", ".$data['sitename'])."</copyright>\n";
-
-		if ( isset($data['items']) && is_array($data['items']) ) {
-			foreach($data['items'] as $item) {
-				$xml .= "\t<item>\n";
-				foreach ($item as $key => $value) {
-					$attrs = '';
-					if (is_array($value)) {
-						$data = $value;
-						$value = '';
-						foreach ($data as $name => $content) {
-							if (empty($name)) $value = $content;
-							else $attrs .= ' '.$name.'="'.esc_attr($content).'"';
-						}
-					}
-					if (strpos($value,'<![CDATA[') === false) $value = esc_html($value);
-					if (!empty($value)) $xml .= "\t\t<$key$attrs>$value</$key>\n";
-					else $xml .= "\t\t<$key$attrs />\n";
-				}
-				$xml .= "\t</item>\n";
-			}
-		}
-
-		$xml .= "</channel>\n";
-		$xml .= "</rss>\n";
-
-		return $xml;
 	}
 
 	/**
@@ -860,28 +760,6 @@ function rsa_encrypt ($data, $pkey) {
 	return Shopp::rsa_encrypt($data, $pkey);
 }
 
-
-/**
- * @deprecated Use Shopp::scan_money_format()
- **/
-function scan_money_format ( $format ) {
-	return Shopp::scan_money_format( $format );
-}
-
-/**
- * @deprecated Use Shopp::set_wp_query_var()
- **/
-function set_wp_query_var ($var,$value) {
-	return Shopp::set_wp_query_var($var,$value);
-}
-
-/**
- * @deprecated Use Shopp::get_wp_query_var()
- **/
-function get_wp_query_var ($key) {
-	return Shopp::get_wp_query_var($key);
-}
-
 /**
  * @deprecated Use Shopp::div()
  **/
@@ -894,7 +772,7 @@ function shoppdiv ($string) {
  **/
 
 function shopp_daytimes () {
-	return Shopp::daytimes();
+	return ShippingFramework::daytimes();
 }
 
 /**
@@ -968,16 +846,8 @@ function shoppurl ($request=false,$page='catalog',$secure=null) {
 }
 
 /**
- * @deprecated Use Shopp::sort_tree()
- **/
-function sort_tree ($items,$parent=0,$key=-1,$depth=-1) {
-	return Shopp::sort_tree($items,$parent,$key,$depth);
-}
-
-/**
  * @deprecated Use Shopp::str_true()
  **/
-
 function str_true ( $string, $istrue = array('yes', 'y', 'true','1','on','open') ) {
 	return Shopp::str_true($string,$istrue);
 }
