@@ -18,7 +18,6 @@ abstract class ShoppCoreURLTools extends ShoppCoreTools {
 	/**
 	 * Generates canonical storefront URLs that respects the WordPress permalink settings
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.1
 	 * @version 1.2
 	 *
@@ -27,78 +26,10 @@ abstract class ShoppCoreURLTools extends ShoppCoreTools {
 	 * @param boolean $secure (optional) True for secure URLs, false to force unsecure URLs
 	 * @return string The final URL
 	 **/
-	public static function url ( $request = false, $page = 'catalog', $secure = null ) {
-		global $wp_rewrite;
-
-		$prettyurls = $wp_rewrite->using_permalinks();
-
-		// Support IIS index.php/ prefixed permalinks
-		if ( $wp_rewrite->using_index_permalinks() )
-			$path[] = 'index.php';
-
-		$path[] = ShoppPages()->baseslug();
-
-		// Build request path based on Storefront shopp_page requested
-		if ( 'images' == $page ) {
-			$path[] = 'images';
-			if ( ! $prettyurls ) $request = array('siid' => $request);
-		} else {
-			if ( false !== $page ) {
-				$Page = ShoppPages()->get($page);
-				if ( method_exists($Page, 'slug') )
-					$page_slug = $Page->slug();
-			}
-
-			if ( $page != 'catalog' && ! empty($page_slug) )
-				$path[] = $page_slug;
-		}
-
-		// Change the URL scheme as necessary
-		$scheme = null; // Full-auto
-		if ( $secure === false ) $scheme = 'http'; // Contextually forced off
-		elseif ( ( $secure || is_ssl() ) && ! SHOPP_NOSSL ) $scheme = 'https'; // HTTPS required
-
-		$url = home_url(false,$scheme);
-		if ( $prettyurls ) $url = home_url(join('/', $path), $scheme);
-		if ( false !== strpos($url, '?') ) list($url, $query) = explode('?', $url);
-
-		$url = trailingslashit($url);
-
-		if ( ! empty($query) ) {
-			parse_str($query, $home_queryvars);
-			if ( false === $request ) {
-				$request = array_merge($home_queryvars, array());
-			} else {
-				$request = array($request);
-				array_push($request, $home_queryvars);
-			}
-		}
-
-		if ( ! $prettyurls ) $url = isset($page_slug) ? add_query_arg('shopp_page', $page_slug, $url) : $url;
-
-		// No extra request, return the complete URL
-		if ( ! $request ) return apply_filters('shopp_url', $url);
-
-		// Filter URI request
-		$uri = false;
-		if ( ! is_array($request)) $uri = urldecode($request);
-		if ( is_array($request) && isset($request[0]) ) $uri = array_shift($request);
-		if ( ! empty($uri) ) $uri = join('/', array_map('urlencode', explode('/', $uri))); // sanitize
-
-		$url .= $uri;
-
-		if ( false === strpos(basename($uri), '.') ) // Not an image URL
-			$url = user_trailingslashit($url);
-
-		if ( ! empty($request) && is_array($request) ) {
-			$request = array_map('urldecode', $request);
-			$request = array_map('urlencode', $request);
-			$url = add_query_arg($request, $url);
-		}
-
-		return apply_filters('shopp_url', $url);
+	public static function url( $request = false, $page = 'catalog', $secure = null ) {
+		$PageURL = new ShoppPageURL($page, $request, $secure);
+		return $PageURL->url();
 	}
-
 
 	/**
 	 * Redirects the browser to a specified URL
@@ -135,7 +66,7 @@ abstract class ShoppCoreURLTools extends ShoppCoreTools {
 	 * @param int $status (optional) The HTTP status to send to the browser
 	 * @return void
 	 **/
-	public static function safe_redirect($location, $status = 302) {
+	public static function safe_redirect( $location, $status = 302 ) {
 
 		// Need to look at the URL the way it will end up in wp_redirect()
 		$location = wp_sanitize_redirect($location);
@@ -161,16 +92,14 @@ abstract class ShoppCoreURLTools extends ShoppCoreTools {
 	/**
 	 * Appends a string to the end of URL as a query string
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
 	 * @param string $string The string to add
 	 * @param string $url The url to append to
 	 * @return string
 	 **/
-	public static function add_query_string ($string,$url) {
-		if(strpos($url,'?') !== false) return "$url&$string";
-		else return "$url?$string";
+	public static function add_query_string( $string, $url ) {
+		return $url . ( strpos($url, '?') === false ? '?' : '&' ) . $string;
 	}
 
 	/**
@@ -182,8 +111,8 @@ abstract class ShoppCoreURLTools extends ShoppCoreTools {
 	 * @param string $url Source URL to rewrite
 	 * @return string $url The secure URL
 	 **/
-	public static function force_ssl ($url,$rewrite=false) {
-		if(is_ssl() || $rewrite)
+	public static function force_ssl( $url, $rewrite = false ) {
+		if ( is_ssl() || $rewrite )
 			$url = str_replace('http://', 'https://', $url);
 		return $url;
 	}
@@ -195,9 +124,9 @@ abstract class ShoppCoreURLTools extends ShoppCoreTools {
 	 * @since 1.1
 	 *
 	 * @param string $url The URL of the link to encode
-	 * @return void
+	 * @return string The encoded link
 	 **/
-	public static function linkencode ($url) {
+	public static function linkencode( $url ) {
 		$search = array('%2F','%3A','%3F','%3D','%26');
 		$replace = array('/',':','?','=','&');
 		$url = rawurlencode($url);
@@ -214,16 +143,20 @@ abstract class ShoppCoreURLTools extends ShoppCoreTools {
 	 *
 	 * @return string raw request url
 	 **/
-	public static function raw_request_url () {
+	public static function raw_request_url() {
+		$options = array(
+			'HTTP_HOST' => FILTER_SANITIZE_STRING,
+			'REQUEST_URI' => FILTER_SANITIZE_STRING,
+			'QUERY_STRING' => FILTER_SANITIZE_STRING
+		);
+		$server = filter_var_array($_SERVER, $options);
 		return esc_url(
-			'http'.
-			(is_ssl()?'s':'').
-			'://'.
-			$_SERVER['HTTP_HOST'].
-			$_SERVER['REQUEST_URI'].
-			('' != get_option('permalink_structure') ? (
-				(!empty($_SERVER['QUERY_STRING']) ? '?' : '' ).$_SERVER['QUERY_STRING'] ):''
-			)
+			'http' .
+			( is_ssl() ? 's' : '' ) .
+			'://' .
+			$server['HTTP_HOST'] .
+			$server['REQUEST_URI'] .
+			( ! empty($server['QUERY_STRING']) ? '?' : '' ) . $server['QUERY_STRING']
 		);
 	}
 

@@ -726,13 +726,6 @@ function percentage ( $amount, $format = array() ) {
 }
 
 /**
- * @deprecated Use Shopp::preg_e_callback()
- **/
-function preg_e_callback ($matches) {
-	return Shopp::preg_e_callback($matches);
-}
-
-/**
  * @deprecated Use Shopp::raw_request_url()
  **/
 function raw_request_url () {

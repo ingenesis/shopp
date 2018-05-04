@@ -809,6 +809,11 @@ class CoreTests extends ShoppTestCase {
 		$url = Shopp::url();
 		$expected = 'http://' . WP_TESTS_DOMAIN . '/?shopp_page=shop';
 		$this->assertEquals($expected, $url);
+
+		$url = Shopp::url(123, 'images');
+		$expected = 'http://' . WP_TESTS_DOMAIN . '/?siid=123';
+		$this->assertEquals($expected, $url);
+
 	}
 
 	public function test_str_true() {

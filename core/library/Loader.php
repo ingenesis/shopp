@@ -527,8 +527,11 @@ ShoppLoader::map(array(
 	'shopporder' => '/flow/Order.php',
 	'shopporderdiscount' => '/model/Discounts.php',
 	'shopporderpromo' => '/model/Discounts.php',
+
 	'shopppage' => '/flow/Pages.php',
 	'shopppages' => '/flow/Pages.php',
+	'shopppageurl' => '/library/PageURL.php',
+
 	'shopppartialupload' => '/library/PartialUpload.php',
 	'shopppaymentoption' => '/model/Payments.php',
 	'shopppayments' => '/model/Payments.php',
