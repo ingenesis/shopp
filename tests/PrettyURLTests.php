@@ -108,7 +108,6 @@ class PrettyURLTests extends ShoppTestCase {
 
 	}
 
-
 	function test_cart_url () {
         // $this->markTestSkipped('Skipped.');
 		$actual = shopp('cart.get-url');

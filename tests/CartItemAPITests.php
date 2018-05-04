@@ -183,7 +183,7 @@ class CartItemAPITests extends ShoppTestCase {
 		while(shopp('cart', 'items')) shopp('cartitem','url');
 		$actual = ob_get_clean();
 
-		$expected = 'http://' . WP_TESTS_DOMAIN . '?shopp_product=' . $Product->slug;
+		$expected = 'http://' . WP_TESTS_DOMAIN . '/?shopp_product=' . $Product->slug;
 		$this->assertEquals($expected, $actual);
 	}
 
@@ -345,7 +345,7 @@ ob_get_contents();
 
 		$expected = array(
 			'tag' => 'img',
-			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '?siid=' . $imageid . '&'. self::imgrequesthash($imageid,array(200,220)), 'alt' => 'original', 'width' => '200', 'height' => '203', 'class' => 'cart-thumb')
+			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '/?siid=' . $imageid . '&'. self::imgrequesthash($imageid,array(200,220)), 'alt' => 'original', 'width' => '200', 'height' => '203', 'class' => 'cart-thumb')
 		);
 		$this->assertTag($expected,$actual,$actual,true);
 
@@ -400,7 +400,7 @@ ob_get_contents();
 
 	function test_cartitem_inputslist (){
         // $this->markTestSkipped('Skipping for now.');
-        
+
 		$Product = shopp_product('command-uniform', 'slug');
 		shopp_empty_cart();
 
@@ -411,7 +411,7 @@ ob_get_contents();
 			$this->assertTrue(shopp('cartitem', 'hasinputs'));
 
 			while( shopp('cartitem', 'inputs') ) {
-                
+
 				$actual = shopp('cartitem.get-inputslist');
 				$this->assertTrue( ! empty($actual) );
 
@@ -439,7 +439,7 @@ With Newline</p>
 				$this->assertEquals($expected, $actual, $actual);
 				$this->assertValidMarkup($actual);
 			}
-            
+
 		}
 	}
 

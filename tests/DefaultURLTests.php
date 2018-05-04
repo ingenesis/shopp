@@ -102,7 +102,7 @@ class DefaultURLTests extends ShoppTestCase {
 
 		$actual = shopp('product.get-url');
 
-		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '?shopp_product=uss-enterprise', $actual);
+		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_product=uss-enterprise', $actual);
 	}
 
 	function test_category_url () {

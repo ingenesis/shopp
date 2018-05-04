@@ -135,7 +135,7 @@ class ProductAPITests extends ShoppTestCase {
 	function test_product_url () {
         // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$output = shopp('product.get-url');
-		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '?shopp_product=command-uniform', $output);
+		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_product=command-uniform', $output);
 	}
 
 	function test_product_description () {
@@ -233,7 +233,7 @@ class ProductAPITests extends ShoppTestCase {
 		$imageid = self::$image;
 		$expected = array(
 			'tag' => 'img',
-			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '?siid=' . $imageid . '&' . self::imgrequesthash( $imageid, array(96,96) ), 'alt' => 'original', 'width' => '95', 'height' => '96')
+			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '/?siid=' . $imageid . '&' . self::imgrequesthash( $imageid, array(96,96) ), 'alt' => 'original', 'width' => '95', 'height' => '96')
 		);
 		$this->assertTag($expected,$actual,$actual,true);
 		$this->assertValidMarkup($actual);
@@ -327,7 +327,7 @@ class ProductAPITests extends ShoppTestCase {
 		$imageid = self::$image;
 		$expected = array(
 			'tag' => 'img',
-			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '?siid=' . $imageid . '&' . self::imgrequesthash( $imageid, array(96,96) ), 'alt' => 'original', 'width' => '95', 'height' => '96')
+			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '/?siid=' . $imageid . '&' . self::imgrequesthash( $imageid, array(96,96) ), 'alt' => 'original', 'width' => '95', 'height' => '96')
 		);
 		$this->assertTag($expected,$actual,$actual,true);
 		$this->assertValidMarkup($actual);
