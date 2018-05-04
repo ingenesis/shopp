@@ -52,7 +52,7 @@ class ShoppPageURL {
 	}
 
 	protected function basepath() {
-		$this->paths['shopp_catalog'] = ShoppPages()->baseslug();
+		$this->paths[] = ShoppPages()->baseslug();
 	}
 
 	protected function page( $page ) {
@@ -63,8 +63,11 @@ class ShoppPageURL {
 			return $this->page = $this->paths[] = 'images';
 
 		$Page = ShoppPages()->get($page);
-		if ( ! method_exists($Page, 'slug') || 'catalog' == $page )
+		if ( ! method_exists($Page, 'slug') )
 			return;
+
+		if ( 'catalog' == $page )
+			unset($this->paths[0]);
 
 		$this->page = $page;
 		$this->paths['shopp_page'] = $Page->slug();
