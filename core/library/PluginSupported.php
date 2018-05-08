@@ -19,7 +19,7 @@ class ShoppPluginSupported {
 	const PHP_VERSION_REQUIRED = '5.2.4';
 
 	/** @var string WP_VERSION_REQUIRED The minimum WP version required to work with Shopp's codebase */
-	const WP_VERSION_REQUIRED = '5.1';
+	const WP_VERSION_REQUIRED = '3.5';
 
 	/** @var array $checks A list of check methods to verify the server environment will support Shopp */
 	protected $checks = array('check_php', 'check_wp', 'check_gd');
