@@ -535,6 +535,7 @@ ShoppLoader::map(array(
 	'shopppartialupload' => '/library/PartialUpload.php',
 	'shopppaymentoption' => '/model/Payments.php',
 	'shopppayments' => '/model/Payments.php',
+	'shopppluginsupported' => '/library/PluginSupported.php',
 	'shoppprice' => '/model/Price.php',
 	'shoppproduct' => '/model/Product.php',
 	'shoppproductpage' => '/flow/Pages.php',

@@ -29,84 +29,28 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 	 *
 	 * @author Jonathan Davis
 	 * @since 1.1
+	 * @version 1.5
 	 *
 	 * @return boolean True if requirements are missing, false if no errors were detected
 	 **/
 	public static function unsupported () {
-		if ( defined('SHOPP_UNSUPPORTED') ) return SHOPP_UNSUPPORTED;
-		$activation = false;
-		if ( isset($_GET['action']) && isset($_GET['plugin']) ) {
-			$activation = ('activate' == $_GET['action']);
-			if ($activation) {
-				$plugin = $_GET['plugin'];
-				if (function_exists('check_admin_referer'))
-					check_admin_referer('activate-plugin_' . $plugin);
-			}
+		$declared_support = defined('SHOPP_UNSUPPORTED');
+		if ( $declared_support )
+			return SHOPP_UNSUPPORTED;
+
+		$SupportedEnvironment = new ShoppPluginSupported();
+		$supported = $SupportedEnvironment->supported();
+		if ( ! $declared_support )
+			define('SHOPP_UNSUPPORTED', ! $supported);
+
+		if ( SHOPP_UNSUPPORTED ) {
+			if ( ! $SupportedEnvironment->activating() ) {
+				$SupportedEnvironment->log();
+				$SupportedEnvironment->force_deactivate();
+			} else $SupportedEnvironment->messaging();
 		}
 
-		$errors = array();
-
-		// Check PHP version
-		if ( version_compare(PHP_VERSION, '5.2.4', '<') ) array_push($errors, 'phpversion', 'php524');
-
-		// Check WordPress version
-		if ( version_compare(get_bloginfo('version'), '3.5', '<') )
-			array_push($errors, 'wpversion', 'wp35');
-
-		// Check for GD
-		if ( ! function_exists('gd_info') ) $errors[] = 'gdsupport';
-		elseif ( ! array_keys( gd_info(), array('JPG Support', 'JPEG Support')) ) $errors[] = 'jpgsupport';
-
-		if ( empty($errors) ) {
-			if ( ! defined('SHOPP_UNSUPPORTED') ) define('SHOPP_UNSUPPORTED', false);
-			return false;
-		}
-
-		$plugin_path = dirname(__FILE__);
-		// Manually load text domain for translated activation errors
-		$languages_path = str_replace('\\', '/', $plugin_path.'/lang');
-		load_plugin_textdomain('Shopp', false, $languages_path);
-
-		// Define translated messages
-		$_ = array(
-			'header' => Shopp::_x('Shopp Activation Error', 'Shopp activation error'),
-			'intro' => Shopp::_x('Sorry! Shopp cannot be activated for this WordPress install.', 'Shopp activation error'),
-			'phpversion' => sprintf(Shopp::_x('Your server is running PHP %s!', 'Shopp activation error'), PHP_VERSION),
-			'php524' => Shopp::_x('Shopp requires PHP 5.2.4+.', 'Shopp activation error'),
-			'wpversion' => sprintf(Shopp::_x('This site is running WordPress %s!', 'Shopp activation error'), get_bloginfo('version')),
-			'wp35' => Shopp::_x('Shopp requires WordPress 3.5.', 'Shopp activation error'),
-			'gdsupport' => Shopp::_x('Your server does not have GD support! Shopp requires the GD image library with JPEG support for generating gallery and thumbnail images.', 'Shopp activation error'),
-			'jpgsupport' => Shopp::_x('Your server does not have JPEG support for the GD library! Shopp requires JPEG support in the GD image library to generate JPEG images.', 'Shopp activation error'),
-			'nextstep' => sprintf(Shopp::_x('Try contacting your web hosting provider or server administrator to upgrade your server. For more information about the requirements for running Shopp, see the %sShopp Documentation%s', 'Shopp activation error'), '<a href="' . ShoppSupport::DOCS . 'system-requirements">', '</a>'),
-			'continue' => Shopp::_x('Return to Plugins page', 'Shopp activation error')
-		);
-
-		if ( $activation ) {
-			$string = '<h1>'.$_['header'].'</h1><p>'.$_['intro'].'</h1></p><ul>';
-			foreach ((array)$errors as $error) if (isset($_[$error])) $string .= "<li>{$_[$error]}</li>";
-			$string .= '</ul><p>'.$_['nextstep'].'</p><p><a class="button" href="'.admin_url('plugins.php').'">&larr; '.$_['continue'].'</a></p>';
-			wp_die($string);
-		}
-
-		if ( ! function_exists('deactivate_plugins') )
-			require( ABSPATH . 'wp-admin/includes/plugin.php' );
-
-		$plugin = basename($plugin_path).__FILE__;
-		deactivate_plugins($plugin, true);
-
-		$phperror = '';
-		if ( is_array($errors) && ! empty($errors) ) {
-			foreach ( $errors as $error ) {
-				if ( isset($_[$error]) )
-					$phperror .= $_[$error].' ';
-				trigger_error($phperror, E_USER_WARNING);
-			}
-		}
-
-		if ( ! defined('SHOPP_UNSUPPORTED') )
-			define('SHOPP_UNSUPPORTED', true);
-
-		return true;
+		return SHOPP_UNSUPPORTED;
 	}
 
 	/**
@@ -134,34 +78,9 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 	}
 
 	/**
-	 * Detect Suhosin enabled with problematic settings
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.2
-	 *
-	 * @return boolean True if Suhosin is dectected and has configuration issues
-	 **/
-	public static function suhosin_warning () {
-
-		return ( // Is Suhosin loaded or available?
-				(extension_loaded('Suhosin') || (defined('SUHOSIN_PATCH') && SUHOSIN_PATCH))
-				&& // Are the known problem settings defined?
-				(
-					@ini_get('suhosin.max_array_index_length') > 0 && @ini_get('suhosin.max_array_index_length') < 256
-					&& @ini_get('suhosin.post.max_array_index_length') > 0 && @ini_get('suhosin.post.max_array_index_length') < 256
-					&& @ini_get('suhosin.post.max_totalname_length') > 0 && @ini_get('suhosin.post.max_totalname_length') < 65535
-					&& @ini_get('suhosin.post.max_vars') > 0 && @ini_get('suhosin.post.max_vars') < 1024
-					&& @ini_get('suhosin.request.max_array_index_length') > 0 && @ini_get('suhosin.request.max_array_index_length') < 256
-					&& @ini_get('suhosin.request.max_totalname_length') > 0 && @ini_get('suhosin.request.max_totalname_length') < 65535
-					&& @ini_get('suhosin.request.max_vars') > 0 && @ini_get('suhosin.request.max_vars') < 1024
-				)
-		);
-	}
-
-	/**
 	 * Copies the builtin template files to the active WordPress theme
 	 *
-	 * Handles copying the builting template files to the shopp/ directory of
+	 * Handles copying the builtin template files to the shopp/ directory of
 	 * the currently active WordPress theme.  Strips out the header comment
 	 * block which includes a warning about editing the builtin templates.
 	 *
@@ -317,10 +236,6 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 		if ($prefix !== false) return substr($page,$prefix+10);
 		else return $page;
 	}
-
-
-
-
 
 	/**
 	 * Determines the effective tax rate (a single rate) for the store or an item based
