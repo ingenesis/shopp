@@ -77,90 +77,16 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 		return ( ! ShoppSettings()->available() || ShoppSettings()->dbversion() != ShoppVersion::db() );
 	}
 
-	/**
-	 * Copies the builtin template files to the active WordPress theme
-	 *
-	 * Handles copying the builtin template files to the shopp/ directory of
-	 * the currently active WordPress theme.  Strips out the header comment
-	 * block which includes a warning about editing the builtin templates.
-	 *
-	 * @author Jonathan Davis, John Dillick
-	 * @since 1.0
-	 *
-	 * @param string $src The source directory for the builtin template files
-	 * @param string $target The target directory in the active theme
-	 * @return void
-	 **/
-	public static function copy_templates ( $src, $target ) {
-		$builtin = array_filter(scandir($src), "filter_dotfiles");
-		foreach ( $builtin as $template ) {
-			$target_file = $target.'/'.$template;
-			if ( ! file_exists($target_file) ) {
-				$src_file = file_get_contents($src . '/' . $template);
-				$file = fopen($target_file, 'w');
-				$src_file = preg_replace('/^<\?php\s\/\*\*\s+(.*?\s)*?\*\*\/\s\?>\s/', '', $src_file); // strip warning comments
+	public static function filesystem( $url, $fields ) {
+		global $wp_filesystem;
 
-				fwrite($file, $src_file);
-				fclose($file);
-				chmod($target_file, 0666);
-			}
-		}
-	}
+		if ( false === ( $credentials = request_filesystem_credentials($url, '', false, false, $fields) ) )
+			return $wp_filesystem;
 
-	/**
-	 * Callback to filter out files beginning with a dot
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.0
-	 *
-	 * @param string $name The filename to check
-	 * @return boolean
-	 **/
-	public static function filter_dotfiles ($name) {
-		return (substr($name,0,1) != ".");
-	}
+		if ( ! WP_Filesystem($credentials) ) // credentials were no good, ask for them again
+			request_filesystem_credentials($url, '', true, false, $fields);
 
-	/**
-	 * Find a target file starting at a given directory
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.1
-	 * @param string $filename The target file to find
-	 * @param string $directory The starting directory
-	 * @param string $root The original starting directory
-	 * @param array $found Result array that matching files are added to
-	 * @deprecated 1.3 please use filefind() instead
-	 **/
-	public static function find_filepath ($filename, $directory, $root, &$found) {
-		if (is_dir($directory)) {
-			$Directory = @dir($directory);
-			if ($Directory) {
-				while (( $file = $Directory->read() ) !== false) {
-					if (substr($file,0,1) == "." || substr($file,0,1) == "_") continue;				// Ignore .dot files and _directories
-					if (is_dir($directory.'/'.$file) && $directory == $root)		// Scan one deep more than root
-						self::find_filepath($filename,$directory.'/'.$file,$root, $found);	// but avoid recursive scans
-					elseif ($file == $filename)
-						$found[] = substr($directory,strlen($root)).'/'.$file;		// Add the file to the found list
-				}
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static function findfile ( $filename, $directory, array &$matches = array(), $greedy = true ) {
-		if ( ! is_dir($directory) ) return false;
-
-		try {
-			foreach ( new RecursiveIteratorIterator( new RecursiveDirectoryIterator($directory) ) as $file )
-				if ( $file->getFilename() === $filename ) {
-					$matches[] = $file->getPathname();
-					if ( ! $greedy ) break;
-				}
-		}
-		catch (Exception $e) {}
-
-		return ( 1 <= count($matches) );
+		return $wp_filesystem;
 	}
 
 	/**
@@ -208,33 +134,6 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 
 		return false;
 
-	}
-
-	/**
-	 * Wraps mark-up in a #shopp container, if needed
-	 *
-	 * @deprecated Use ShoppStorefront::wrapper() instead
-	 **/
-	public static function div ($string) {
-		return ShoppStorefront::wrapper($string);
-	}
-
-	/**
-	 * Returns the platform appropriate page name for Shopp internal pages
-	 *
-	 * IIS rewriting requires including index.php as part of the page
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.0
-	 *
-	 * @param string $page The normal page name
-	 * @return string The modified page name
-	 **/
-	public static function pagename ($page) {
-		global $is_IIS;
-		$prefix = strpos($page,"index.php/");
-		if ($prefix !== false) return substr($page,$prefix+10);
-		else return $page;
 	}
 
 	/**
@@ -488,20 +387,6 @@ function esc_attrs ($value) {
 }
 
 /**
- * @deprecated Use Shopp::filter_dotfiles()
- **/
-function filter_dotfiles ($name) {
-	return Shopp::filter_dotfiles($name);
-}
-
-/**
- * @deprecated Use Shopp::find_filepath()
- **/
-function findfile ($filename, $directory, $root, &$found) {
-	return Shopp::find_filepath($filename, $directory, $root, $found);
-}
-
-/**
  * @deprecated Use Shopp::file_mimetype()
  **/
 function file_mimetype ($file,$name=false) {
@@ -666,13 +551,6 @@ function roundprice ($amount, $format = array()) {
  **/
 function rsa_encrypt ($data, $pkey) {
 	return Shopp::rsa_encrypt($data, $pkey);
-}
-
-/**
- * @deprecated Use Shopp::div()
- **/
-function shoppdiv ($string) {
-	return Shopp::div($string);
 }
 
 /**

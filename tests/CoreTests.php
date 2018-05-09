@@ -335,7 +335,9 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue( 0 == Shopp::convert_unit(400, 'splargons', 'lb'));
 	}
 
+	/*
 	public function test_copy_templates() {
+		$this->markTestSkipped('The template directory must be empty and writeable.');
 		// Can we perform this test?
 		if ( ! self::$template_dir_ready || ! is_writeable( self::$template_dir ) )
 			$this->markTestSkipped('The template directory must be empty and writeable.');
@@ -390,6 +392,7 @@ class CoreTests extends ShoppTestCase {
 			$this->assertTrue($header_stripped);
 		}
 	}
+	*/
 
 	public function test_crc16() {
 		$tests = array(
@@ -522,37 +525,6 @@ class CoreTests extends ShoppTestCase {
 
 		foreach ($target['nested'] as $checkval)
 			$this->assertTrue(1 < strpos($checkval, '&gt;'));
-	}
-
-	/**
-	 * Shopp::filter_dotfiles operates as a callback, so matches should return false and vice versa.
-	 */
-	public function test_filter_dotfiles() {
-		foreach ( array('.', '.htaccess') as $match ) $this->assertFalse(Shopp::filter_dotfiles($match));
-		$this->assertTrue(Shopp::filter_dotfiles('image.png'));
-	}
-
-	public function test_findfile () {
-		$files = array();
-
-		// There is at least one of these
-		$result = Shopp::findfile('ball.png', SHOPP_PATH);
-		$this->assertTrue($result);
-
-		// We can expect at least 4 of these (Shopp 1.3)
-		$result = Shopp::findfile('product.php', SHOPP_PATH, $files);
-		$this->assertTrue($result);
-		$this->assertGreaterThanOrEqual(4, count($files));
-
-		// We may wish it to operate efficiently and stop at the first match
-		$files = array();
-		$result = Shopp::findfile('admin.php', ABSPATH, $files, false);
-		$this->assertTrue($result);
-		$this->assertCount(1, $files);
-
-		// It should fail gracefully even when given ridiculous params
-		$result = Shopp::findfile('@*Nyota Uhura', '/unworkable/~path');
-		$this->assertFalse($result);
 	}
 
 	/**
@@ -753,11 +725,6 @@ class CoreTests extends ShoppTestCase {
 		$valid_tpl_path = SHOPP_UNITTEST_DIR . '/data/email.php';
 		$mail_success = Shopp::email( $valid_tpl_path, array() );
 		$this->assertTrue(is_bool($mail_success));
-	}
-
-	public function test_pagename() {
-		$this->assertEquals('mars-admin-screen.php', Shopp::pagename('index.php/mars-admin-screen.php')); // IIS rewrites
-		$this->assertEquals('mars-admin-screen.php', Shopp::pagename('mars-admin-screen.php'));
 	}
 
 	public function test_parse_options() {
