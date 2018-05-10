@@ -1984,9 +1984,8 @@ class ShoppProductThemeAPI implements ShoppAPI {
 	 * @return void
 	 **/
 	public static function taxrate ( $result, $options, $O ) {
-		return Shopp::taxrate($O);
+		return ShoppTaxItemRates::effective($O);
 	}
-
 
 	/**
 	 * Provides the product type or list of variant types
@@ -2279,7 +2278,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			$jsoptions = array('prices'=> $pricekeys,'format' => $format);
 			if ( 'hide' == $options['disabled'] ) $jsoptions['disabled'] = false;
 			if ( 'hide' == $options['pricetags'] ) $jsoptions['pricetags'] = false;
-			if ( ! empty($taxrate) ) $jsoptions['taxrate'] = Shopp::taxrate($O);
+			if ( ! empty($taxrate) ) $jsoptions['taxrate'] = ShoppTaxItemRates::effective($O);
 			$select_collection = ( ! empty($collection_class) ) ? '.' . $collection_class : '';
 
 			ob_start();
@@ -2346,8 +2345,8 @@ new ProductOptionsMenus(<?php printf("'select%s.product%d.options'",$select_coll
 		if( ! isset($O->min['weight']) ) return false;
 
 		if ( $convert !== false ) {
-			$min = convert_unit($min, $convert);
-			$max = convert_unit($max, $convert);
+			$min = Shopp::convert_unit($min, $convert);
+			$max = Shopp::convert_unit($max, $convert);
 			if ( is_null($units) ) $units = true;
 			$unit = $convert;
 		}

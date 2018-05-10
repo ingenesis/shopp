@@ -674,6 +674,7 @@ ShoppLoader::map(array(
 	'shoppsupport' => '/library/Support.php',
 	'shopptagcloudwidget' => '/ui/widgets/tagcloud.php',
 	'shopptax' => '/model/Tax.php',
+	'shopptaxitemrates' => '/model/TaxItemRates.php',
 	'shopptaxableitem' => '/model/Tax.php',
 	'shoppthankspage' => '/flow/Pages.php',
 	'shopptmceloader' => '/ui/behaviors/tinymce/dialog.php',
