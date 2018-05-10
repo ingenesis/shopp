@@ -193,35 +193,30 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @param boolean $fields Ensure all date elements are present for field order (+1.1.6)
 	 * @return array The list version of date_format
 	 **/
-	public static function date_format_order( $fields = false ) {
+	public static function date_format_order( $required = array() ) {
 		$format = get_option('date_format');
 
-		$default = array('month' => 'F', 'day' => 'j', 'year' => 'Y');
+		$datefields = array('month' => 'F', 'day' => 'j', 'year' => 'Y');
 
 		$tokens = array(
-			'day' => 'dDjl',
-			'month' => 'FmMn',
-			'year' => 'yY'
+			'd' => 'day', 'D' => 'day', 'j' => 'day', 'l' => 'day',
+			'F' => 'month', 'm' => 'month', 'M' => 'month', 'n' => 'month',
+			'y' => 'year', 'Y' => 'year'
 		);
 
-		$dt = join('', $tokens);
-		$_ = array();
 		$s = 0;
-		preg_match_all("/(.{1})/", $format, $matches);
-		foreach ( $matches[1] as $token ) {
-			foreach ( $tokens as $type => $pattern ) {
-				if ( preg_match("/[$pattern]/", $token) ) {
-					$_[ $type ] = $token;
-					break;
-				} elseif ( preg_match("/[^$dt]/", $token) ) {
-					$_[ 's' . $s++ ] = $token;
-					break;
-				}
-			}
+		$_ = array();
+		$format_tokens = str_split($format);
+		foreach ( (array)$format_tokens as $token ) {
+			if ( isset($tokens[ $token ]) )
+				$_[ $tokens[ $token ] ] = $token;
+			else $_[ 's' . $s++ ] = $token;
 		}
 
-		if ( $fields )
-			$_ = array_merge($_, $default, $_);
+		if ( ! empty($required) ) {
+			$required = array_intersect_key($datefields, array_flip($required));
+			$_ = array_merge($_, $required, $_);
+		}
 
 		return $_;
 	}

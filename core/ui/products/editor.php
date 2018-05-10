@@ -112,7 +112,7 @@ var product = <?php echo ( ! empty($Product->id) ) ? $Product->id : 'false'; ?>,
 	fileupload_debug = <?php echo (defined('SHOPP_FILEUPLOAD_DEBUG') && SHOPP_FILEUPLOAD_DEBUG)?'true':'false'; ?>,
 	dimensionsRequired = <?php echo $Shopp->Shipping->dimensions?'true':'false'; ?>,
 	startWeekday = <?php echo get_option('start_of_week'); ?>,
-	calendarTitle = '<?php $df = date_format_order(true); $format = $df["month"]." ".$df["year"]; echo $format; ?>',
+	calendarTitle = '<?php $df = Shopp::date_format_order(array("month", "day", "year")); $format = $df["month"]." ".$df["year"]; echo $format; ?>',
 
 	// Warning/Error Dialogs
 	DELETE_IMAGE_WARNING = <?php Shopp::_jse('Are you sure you want to delete this product image?'); ?>,

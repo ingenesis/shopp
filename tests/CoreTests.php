@@ -360,64 +360,6 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue( 0 == Shopp::convert_unit(400, 'splargons', 'lb'));
 	}
 
-	/*
-	public function test_copy_templates() {
-		$this->markTestSkipped('The template directory must be empty and writeable.');
-		// Can we perform this test?
-		if ( ! self::$template_dir_ready || ! is_writeable( self::$template_dir ) )
-			$this->markTestSkipped('The template directory must be empty and writeable.');
-
-		// Yes? Do it!
-		$source = trailingslashit(SHOPP_PATH) . 'templates';
-		$target = self::$template_dir;
-		Shopp::copy_templates($source, $target);
-
-		// Done? Test it!
-		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(self::$template_dir));
-		$list = array();
-
-		foreach ($files as $file) {
-			if ( ! $file->isFile() ) continue;
-			$list[] = $file->getFilename();
-		}
-
-		$expected = array(
-			'account.php',
-			'account-downloads.php',
-			'account-orders.php',
-			'account-profile.php',
-			'cart.php',
-			'catalog.php',
-			'category.php',
-			'checkout.php',
-			'confirm.php',
-			'email.css',
-			'email.php',
-			'email-order.php',
-			'email-shipped.php',
-			'errors.php',
-			'login.php',
-			'login-recover.php',
-			'product.php',
-			'receipt.php',
-			'shopp.css',
-			'sidecart.php',
-			'sideproduct.php',
-			'summary.php',
-			'thanks.php'
-		);
-
-		foreach ($expected as $tpl_override) {
-			// Check that the expected templates made it across
-			$this->assertContains($tpl_override, $list);
-
-			// Check that the file header doc was stripped
-			$sample = file_get_contents( trailingslashit(self::$template_dir) . $tpl_override);
-			$header_stripped = ( 0 === preg_match('/^<\?php\s\/\*\*\s+(.*?\s)*?\*\*\/\s\?>\s/', $sample) );
-			$this->assertTrue($header_stripped);
-		}
-	}
-	*/
 
 	public function test_crc16() {
 		$tests = array(
@@ -501,9 +443,24 @@ class CoreTests extends ShoppTestCase {
 	public function test_date_format_order() {
 		$this->force_uk_date_style();
 		$format = Shopp::date_format_order();
-		$expected = array_flip( array('day', 'month', 'year', 's0', 's1', 's2') );
-		$present = array_intersect_key($expected, $format);
-		$this->assertCount(6, $present);
+		$this->assertEquals(array(
+			'day' => 'j',
+			's0' => 'S',
+			's1' => ' ',
+			'month' => 'F',
+			's2' => ' ',
+			'year' => 'Y'
+		), $format);
+
+		$this->force_partial_date_style();
+		$format = Shopp::date_format_order(array('month', 'day', 'year'));
+		$this->assertEquals(array(
+			'day' => 'j',
+			's0' => 'S',
+			's1' => ' ',
+			'month' => 'F',
+			'year' => 'Y'
+		), $format);
 	}
 
 	public function test_debug_caller() {
@@ -536,6 +493,15 @@ class CoreTests extends ShoppTestCase {
 	public function use_uk_date_format() {
 		remove_filter('pre_option_date_format', array($this, 'use_uk_date_format') );
 		return 'jS F Y';
+	}
+
+	protected function force_partial_date_style() {
+		add_filter('pre_option_date_format', array($this, 'use_partial_date_style') );
+	}
+
+	public function use_partial_date_style() {
+		remove_filter('pre_option_date_format', array($this, 'use_partial_date_style') );
+		return 'jS F';
 	}
 
 	public function test_duration() {

@@ -264,13 +264,6 @@ function datecalc ( $week = -1, $dayOfWeek = -1, $month = -1, $year = -1 ) {
 }
 
 /**
- * @deprecated Use Shopp::date_format_order()
- **/
-function date_format_order ($fields=false) {
-	return Shopp::date_format_order($fields);
-}
-
-/**
  * @deprecated Use Shopp::debug_caller()
  **/
 function debug_caller () {

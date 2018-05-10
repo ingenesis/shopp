@@ -22,7 +22,7 @@
 <?php
 
 function datefields( $name, $property ) {
-	$dateorder = array_keys(Shopp::date_format_order(true));
+	$dateorder = array_keys(Shopp::date_format_order(array('month', 'day', 'year')));
 
 	$value = '';
 	if ( $property > 1 ) {
