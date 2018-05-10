@@ -53,7 +53,7 @@ abstract class ShoppCoreLocalization extends ShoppCoreTemplates {
 	 * @since 1.3
 	 *
 	 * @param string $text The text to translate
-	 * @param string $context An explination of how and where the text is used
+	 * @param string $context An explanation of how and where the text is used
 	 * @return string The translated text
 	 **/
 	public static function _x() {
@@ -237,7 +237,7 @@ abstract class ShoppCoreLocalization extends ShoppCoreTemplates {
 	 * @param string $text Text to translate
 	 * @return void
 	 **/
-	public static function _jse ( $text) {
+	public static function _jse ( $text ) {
 		echo json_encode(self::translate($text));
 	}
 
