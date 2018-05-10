@@ -129,7 +129,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		$Message = $this->Message;
 		if ( ! $Message ) return; // Requires an IPN/PDT message
 
-		shopp_debug(__METHOD__ . ': ' . Shopp::_object_r($Message));
+		shopp_debug(__METHOD__ . ': ' . Shopp::object_r($Message));
 
 		if ( $payer_status = $Message->payer() ) { // Note the payer status
 			shopp_add_order_event( $Event->order, 'review', array(
@@ -785,7 +785,7 @@ class ShoppPayPalStandard extends GatewayFramework implements GatewayModule {
 		}
 
 		$this->Message = new ShoppPayPalStandardMessage($response);
-		shopp_debug('PayPal PDT response protocol: ' . Shopp::_object_r($this->Message));
+		shopp_debug('PayPal PDT response protocol: ' . Shopp::object_r($this->Message));
 
 		// Everything looks good, return true and let the order PDT order processing handle it from here
 		return true;

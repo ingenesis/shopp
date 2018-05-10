@@ -612,7 +612,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 	public function email ( $addressee, $address, $subject, array $templates = array() ) {
 		global $is_IIS;
 
-		shopp_debug("ShoppPurchase::email(): $addressee,$address,$subject,".Shopp::_object_r($templates));
+		shopp_debug("ShoppPurchase::email(): $addressee,$address,$subject," . Shopp::object_r($templates));
 
 		// Build the e-mail message data
 		$email['from'] = Shopp::email_from( shopp_setting('merchant_email'), shopp_setting('business_name') );
