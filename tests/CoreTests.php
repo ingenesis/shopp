@@ -270,15 +270,40 @@ class CoreTests extends ShoppTestCase {
 		return self::TRANSLATED;
 	}
 
-	/**
-	 * @todo add additional tests to ensure correct output, discuss with jond
-	 */
 	public function test_auto_ranges() {
-		$set_of_4 = Shopp::auto_ranges(150, 5000, 100, 4);
-		$set_of_7 = Shopp::auto_ranges(150, 5000, 100, 20); // Though we're requesting 20 steps it should cap this at 7
 
-		$this->assertCount( 4, $set_of_4 );
-		$this->assertCount( 7, $set_of_7 );
+		// Normal baseline of values
+		$this->assertEquals(array(
+			array('min' => 0, 'max' => 100),
+			array('min' => 100, 'max' => 200),
+			array('min' => 200, 'max' => 300),
+			array('min' => 300, 'max' => 0)
+		), Shopp::auto_ranges(150, 5000, 100, 4));
+
+		// Request 1 set of ranges, but we expect 7 because
+		// it doesn't make sense to have a menu of only 1 range
+		// Minimum it should offer 2 ranges of values
+		$this->assertEquals(array(
+			array('min' => 0, 'max' => 150),
+			array('min' => 150, 'max' => 200),
+			array('min' => 200, 'max' => 250),
+			array('min' => 250, 'max' => 300),
+			array('min' => 300, 'max' => 350),
+			array('min' => 350, 'max' => 400),
+			array('min' => 400, 'max' => 0)
+		), Shopp::auto_ranges(300, 5000, 100, 1));
+
+		// Request a set of 20 ranges, but we expect 7 because
+		// past 7 and it becomes too many choices
+		$this->assertEquals(array(
+			array('min' => 0, 'max' => 100),
+			array('min' => 100, 'max' => 200),
+			array('min' => 200, 'max' => 300),
+			array('min' => 300, 'max' => 400),
+			array('min' => 400, 'max' => 500),
+			array('min' => 500, 'max' => 600),
+			array('min' => 600, 'max' => 0),
+		), Shopp::auto_ranges(150, 5000, 100, 20));
 	}
 
 	public function test_object_r() {
@@ -468,6 +493,9 @@ class CoreTests extends ShoppTestCase {
 
 		$mayan_apocalypse = Shopp::datecalc(3, 5, 12, 2012);
 		$this->assertTrue('2012-12-21' === date('Y-m-d', $mayan_apocalypse));
+
+		$lastsundayindecember2020 = Shopp::datecalc(-1, 'sun', 12, 2020);
+		$this->assertTrue('2020-12-27' === date('Y-m-d', $lastsundayindecember2020));
 	}
 
 	public function test_date_format_order() {
