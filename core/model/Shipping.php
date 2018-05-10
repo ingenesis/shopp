@@ -551,7 +551,7 @@ abstract class ShippingFramework {
 			$match = array_intersect_key($target, $rule);
 
             // Find any differences between the rule and potential match target
-            // The potential match can have an array of country areas, 
+            // The potential match can have an array of country areas,
             // so we suppress datatype conversion warnings and match areas separately
             // in the special case below.
 			$d = @array_diff($rule, $match);
@@ -652,7 +652,7 @@ abstract class ShippingFramework {
 	public function size ( $value = 0, $size = 'weight' ) {
 		if ( ! isset($this->sizes[ $size ]) ) return $value;
 
-		$dimension = convert_unit($value, $this->sizes[ $size ]['unit']);
+		$dimension = Shopp::convert_unit($value, $this->sizes[ $size ]['unit']);
 
 		$method = "size$size";
 		if ( method_exists($this, $method) ) $dimension = $this->$method($dimension);

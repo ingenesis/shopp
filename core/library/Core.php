@@ -2,38 +2,28 @@
 /**
  * Core.php
  *
- * Namespaced utility library for Shopp
+ * Provides core plugin-related utility functions
  *
- * @author Jonathan Davis
- * @version 1.3
- * @copyright Ingenesis Limited, June 2013
- * @package shopp
- * @subpackage shopplib
+ * @copyright Ingenesis Limited, May 2018
+ * @license   GNU GPL version 3 (or later) {@see license.txt}
+ * @package   Shopp/Core
+ * @version   1.0
+ * @since     1.5
  **/
 
 defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 
-/**
- * Provides a library of utility functions
- *
- * To call, use Shopp::{static_method_name}()
- *
- * @author Jonathan Davis
- * @since 1.3
- * @package shopplib
- **/
 abstract class ShoppCore extends ShoppCoreFormatting {
 
 	/**
 	 * Detects if Shopp is unsupported in the current hosting environment
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.1
 	 * @version 1.5
 	 *
 	 * @return boolean True if requirements are missing, false if no errors were detected
 	 **/
-	public static function unsupported () {
+	public static function unsupported() {
 		$declared_support = defined('SHOPP_UNSUPPORTED');
 		if ( $declared_support )
 			return SHOPP_UNSUPPORTED;
@@ -43,12 +33,16 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 		if ( ! $declared_support )
 			define('SHOPP_UNSUPPORTED', ! $supported);
 
-		if ( SHOPP_UNSUPPORTED ) {
-			if ( ! $SupportedEnvironment->activating() ) {
-				$SupportedEnvironment->log();
-				$SupportedEnvironment->force_deactivate();
-			} else $SupportedEnvironment->messaging();
+		if ( $supported )
+			return SHOPP_UNSUPPORTED;
+
+		if ( $SupportedEnvironment->activating() ) {
+			$SupportedEnvironment->messaging();
+			return SHOPP_UNSUPPORTED;
 		}
+
+		$SupportedEnvironment->log();
+		$SupportedEnvironment->force_deactivate();
 
 		return SHOPP_UNSUPPORTED;
 	}
@@ -56,7 +50,6 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 	/**
 	 * Detect if the Shopp installation needs maintenance
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
 	 * @return boolean
@@ -68,7 +61,6 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 	/**
 	 * Detect if a database schema upgrade is required
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.3
 	 *
 	 * @return boolean
@@ -77,6 +69,12 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 		return ( ! ShoppSettings()->available() || ShoppSettings()->dbversion() != ShoppVersion::db() );
 	}
 
+	/**
+	 * Provides access to WP_Filesystem
+	 *
+	 * @since 1.5
+	 * @return WP_Filesystem Setup credentials if needed and provide access to the WP_Filesystem global
+	 **/
 	public static function filesystem( $url, $fields ) {
 		global $wp_filesystem;
 
@@ -90,22 +88,8 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 	}
 
 	/**
-	 * Determines the gateway path to a gateway file
-	 *
-	 * @author Jonathan Davis
-	 * @since 1.0
-	 *
-	 * @param string $file The target gateway file
-	 * @return string The path fragment for the gateway file
-	 **/
-	public static function gateway_path ($file) {
-		return basename(dirname($file)).'/'.basename($file);
-	}
-
-	/**
 	 * Returns readable php.ini data size settings
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
 	 * @param string $name The name of the setting to read
@@ -116,8 +100,6 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 		if (preg_match('/\d+\w+/',$setting) !== false) return $setting;
 		else Shopp::readableFileSize($setting);
 	}
-
-
 
 	/**
 	 * Detects image data in a binary string
@@ -139,7 +121,6 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 	/**
 	 * Determines the effective tax rate (a single rate) for the store or an item based
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 * @version 1.3
 	 *
@@ -163,7 +144,6 @@ abstract class ShoppCore extends ShoppCoreFormatting {
 	/**
 	 * Determines all applicable tax rates for the store or an item
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 * @version 1.3
 	 *
@@ -193,7 +173,6 @@ abstract class ShoppCore extends ShoppCoreFormatting {
  * Wrapper for securing URLs generated with the WordPress
  * add_query_arg() function
  *
- * @author Jonathan Davis
  * @since 1.0
  *
  * @param mixed $param1 Either newkey or an associative_array
@@ -219,7 +198,6 @@ if ( ! function_exists('mkobject')) {
 	 * and converting associative arrays contained within the
 	 * numeric arrays
 	 *
-	 * @author Jonathan Davis
 	 *
 	 * @param array $data The associative array to convert
 	 * @return void
@@ -233,6 +211,7 @@ if ( ! function_exists('mkobject')) {
 		if (!$numeric) settype($data,'object');
 	}
 }
+
 if ( ! function_exists('sanitize_path') ) {
 	/**
 	 * Normalizes path separators to always use forward-slashes
@@ -241,13 +220,12 @@ if ( ! function_exists('sanitize_path') ) {
 	 * backslashes as the directory separator.  This function is used to
 	 * ensure we are always working with forward-slash paths
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param string $path The path to clean up
 	 * @return string $path The forward-slash path
 	 **/
-	function sanitize_path ($path) {
+	function sanitize_path( $path ) {
 		return str_replace('\\', '/', $path);
 	}
 }
@@ -260,7 +238,6 @@ if ( ! function_exists('get_class_property') ) {
 	 * class by dynamic name.  As of PHP 5.3.0 this function is no
 	 * longer necessary as you can simply reference as $Classname::$property
 	 *
-	 * @author Jonathan Davis
 	 * @since PHP 5.3.0
 	 *
 	 * @param string $classname Name of the class
@@ -279,83 +256,11 @@ if ( ! function_exists('get_class_property') ) {
 
 /** Deprecated global function aliases **/
 
-
-
-/**
- * @deprecated Use Shopp::_jse()
- **/
-function _jse ( $text, $domain = 'default' ) {
-	Shopp::_jse($text, $domain );
-}
-
-/**
- * @deprecated Use Shopp::_object_r()
- **/
-function _object_r ($object) {
-	return Shopp::object_r($object);
-}
-
-/**
- * @deprecated Use Shopp::add_query_string()
- **/
-function add_query_string ( $string, $url) {
-	return Shopp::add_query_string($string, $url);
-}
-
-/**
- * @deprecated Use Shopp::add_storefrontjs()
- **/
-function add_storefrontjs ($script,$global=false) {
-	Shopp::add_storefrontjs($script,$global);
-}
-
-/**
- * @deprecated Use Shopp::array_filter_keys()
- **/
-function array_filter_keys ($array,$mask) {
-	return Shopp::array_filter_keys($array,$mask);
-}
-
-/**
- * @deprecated Use Shopp::auto_ranges()
- **/
-function auto_ranges ($avg, $max, $min, $values) {
-	return Shopp::auto_ranges($avg, $max, $min, $values);
-}
-
-/**
- * @deprecated Use Shopp::convert_unit()
- **/
-function convert_unit ($value = 0, $unit, $from=false) {
-	return Shopp::convert_unit($value, $unit, $from);
-}
-
-/**
- * @deprecated Use Shopp::copy_templates()
- **/
-function copy_shopp_templates ( $src, $target ) {
-	Shopp::copy_templates($src, $target);
-}
-
-/**
- * @deprecated Use Shopp::crc16()
- **/
-function crc16 ($data) {
-	return Shopp::crc16($data);
-}
-
-/**
- * @deprecated Use Shopp::currency_format()
- **/
-function currency_format ( $format = array() ) {
-	return Shopp::currency_format($format);
-}
-
 /**
  * @deprecated Use Shopp::datecalc()
  **/
 function datecalc ( $week = -1, $dayOfWeek = -1, $month = -1, $year = -1 ) {
-	return Shopp::datecalc($week, $dayofWeek, $month, $year);
+	return Shopp::datecalc($week, $dayOfWeek, $month, $year);
 }
 
 /**
@@ -398,20 +303,6 @@ function file_mimetype ($file,$name=false) {
  **/
 function force_ssl ($url,$rewrite=false) {
 	return Shopp::force_ssl($url,$rewrite);
-}
-
-/**
- * @deprecated Use Shopp::gateway_path()
- **/
-function gateway_path ($file) {
-	return Shopp::gateway_path($file);
-}
-
-/**
- * @deprecated Use Shopp::ini_size()
- **/
-function ini_size ($name) {
-	return Shopp::ini_size($name);
 }
 
 /**
@@ -604,13 +495,6 @@ function shopp_safe_redirect ($location, $status = 302) {
 }
 
 /**
- * @deprecated Use Shopp::taxrate()
- **/
-function shopp_taxrate ($override=null,$taxprice=true,$Item=false) {
-	return Shopp::taxrate($Item);
-}
-
-/**
  * @deprecated Use Shopp::template_prefix()
  **/
 function shopp_template_prefix ($name) {
@@ -636,13 +520,6 @@ function shoppurl ($request=false,$page='catalog',$secure=null) {
  **/
 function str_true ( $string, $istrue = array('yes', 'y', 'true','1','on','open') ) {
 	return Shopp::str_true($string,$istrue);
-}
-
-/**
- * @deprecated Use Shopp::str_true()
- **/
-function value_is_true ($value) {
-	return Shopp::str_true($value);
 }
 
 /**

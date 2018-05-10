@@ -1111,7 +1111,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		extract($options, EXTR_SKIP);
 
 		$href = Shopp::url( '' != get_option('permalink_structure') ? trailingslashit('000') : '000', 'images');
-		$imgsrc = add_query_string("$width,$height", $href);
+		$imgsrc = Shopp::add_query_string("$width,$height", $href);
 
 		$string = '<ul class="slideshow ' . $fx . '-fx ' . $order . '-order duration-' . $duration . ' delay-' . $delay . '">';
 		$string .= '<li class="clear"><img src="' . $imgsrc . '" width="' . $width . '" height="' . $height . '" /></li>';
