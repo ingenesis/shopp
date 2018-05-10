@@ -546,12 +546,6 @@ class CoreTests extends ShoppTestCase {
 		$this->assertStringMatchesFormat('https://%A', $url);
 	}
 
-	public function test_gateway_path() {
-		$path = '/var/public_html/wp-content/plugins/shopp/gateways/2Checkout/2Checkout.php';
-		$expected = '2Checkout/2Checkout.php';
-		$this->assertTrue($expected === Shopp::gateway_path($path));
-	}
-
 	public function test_ini_size() {
 		$size = Shopp::ini_size('upload_max_filesize');
 		$this->assertFalse( empty($size) );

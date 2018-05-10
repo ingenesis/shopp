@@ -18,6 +18,12 @@ class DefaultURLTests extends ShoppTestCase {
 	private $permastruct = false;
 	private $extra_permastructs = false;
 
+	static $HeavyCruiser;
+	static $Cheyenne;
+	static $Constitution;
+
+	static $products = array();
+
 	static function setUpBeforeClass () {
 
 		global $wp_rewrite;
@@ -58,7 +64,7 @@ class DefaultURLTests extends ShoppTestCase {
 			'categories'=> array('terms' => array($HeavyCruiser))
 		);
 
-		shopp_add_product($args);
+		self::$products[] = shopp_add_product($args);
 
 		$shipsoftheline = array(
 			'Constellation', 'Constitution', 'Defiant', 'Enterprise', 'Excalibur', 'Exeter', 'Farragut',
@@ -75,10 +81,21 @@ class DefaultURLTests extends ShoppTestCase {
 					'price' => 99.99,
 				)
 			);
-			shopp_add_product($product);
+			self::$products[] = shopp_add_product($product);
 		}
 
 	}
+
+	public static function tearDownAfterClass () {
+		parent::tearDownAfterClass();
+		foreach (self::$products as $id)
+			shopp_rmv_product($id);
+
+		shopp_rmv_product_category(self::$HeavyCruiser);
+		shopp_rmv_product_category(self::$Cheyenne);
+		shopp_rmv_product_category(self::$Constitution);
+	}
+
 
 	function test_cart_url () {
 		$actual = shopp('cart.get-url');
@@ -113,6 +130,7 @@ class DefaultURLTests extends ShoppTestCase {
 	}
 
 	function test_category_paginated_url () {
+		$default_catalog_pagination = shopp_setting('catalog_pagination');
 		shopp_set_setting('catalog_pagination',10);
 		shopp('storefront.category', 'slug=heavy-cruiser&load=true');
 		shopp('collection', 'load-products'); // Load the products
@@ -129,6 +147,8 @@ class DefaultURLTests extends ShoppTestCase {
 
 		$this->assertTag($markup, $actual, $actual, true);
 		$this->assertValidMarkup($actual);
+
+		shopp_set_setting('catalog_pagination', $default_catalog_pagination);
 	}
 
 	function test_category_feed_url () {
@@ -136,7 +156,6 @@ class DefaultURLTests extends ShoppTestCase {
 		$actual = shopp('category.get-feed-url');
 		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_category=heavy-cruiser&src=category_rss',$actual);
 	}
-
 
 	function test_catalog_url () {
 		$actual = shopp('catalog.get-url');

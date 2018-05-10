@@ -5,6 +5,7 @@
 class CollectionDevAPITests extends ShoppTestCase {
 
 	static $category;
+	static $Product;
 
 	static function setUpBeforeClass () {
 		if ( ! ShoppStorefront() ) ShoppStorefront(new ShoppStorefront());
@@ -46,8 +47,13 @@ class CollectionDevAPITests extends ShoppTestCase {
 				)
 		);
 
-		$Product = shopp_add_product($args);
+		self::$Product = shopp_add_product($args);
 
+	}
+
+	static function tearDownAfterClass() {
+		shopp_rmv_product(self::$Product);
+		shopp_rmv_product_category(self::$category);
 	}
 
 	function test_shopp_add_product_category () {
