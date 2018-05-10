@@ -30,7 +30,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	/**
 	 * Converts a numeric string to a floating point number
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param string $value Numeric string to be converted
@@ -40,7 +39,7 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 **/
 	public static function floatval( $value, $round = true, array $format = array() ) {
 		$format = ShoppCore::currency_format($format); // Use ShoppCore here instead of Shopp here
-		extract($format, EXTR_SKIP) && isset($currency);
+		extract($format, EXTR_SKIP);
 
 		$float = false;
 		if ( is_float($value) ) $float = $value;
@@ -70,7 +69,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	/**
 	 * Returns the duration (in days) between two timestamps
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param int $start The starting timestamp
@@ -97,7 +95,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * decimals		string	The decimal delimiter
 	 * thousands	string	The thousands separator
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.1
 	 * @version 1.2
 	 *
@@ -108,7 +105,8 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 		$default = ShoppBaseCurrency()->settings();
 
 		// No format provided, use default
-		if ( empty($format) ) return $default;
+		if ( empty($format) )
+			return $default;
 
 		// Merge the format options with the default
 		return array_merge($default, $format);
@@ -117,7 +115,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	/**
 	 * Calculates the timestamp of a day based on a repeating interval (Fourth Thursday in November (Thanksgiving))
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param int|string $week The week of the month (1-4, -1 or first-fourth, last)
@@ -143,16 +140,17 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 		if ( isset($weeks[ $week ]) )
 			$week = $weeks[ $week ];
 
-		if ( $week == -1 ) {
-			$lastday = date('t', mktime(0, 0, 0, $month, 1, $year));
-			$tmp = ( date("w", mktime(0, 0, 0, $month, $lastday, $year)) - $dayOfWeek ) % 7;
-			if ( $tmp < 0 ) $tmp += 7;
-			$day = $lastday - $tmp;
-		} else {
-			$tmp = ( $dayOfWeek - date('w', mktime(0, 0, 0, $month, 1, $year)) ) % 7;
-			if ( $tmp < 0 ) $tmp += 7;
-			$day = ( 7 * $week ) - 6 + $tmp;
-		}
+		$startday = ( 7 * $week ) - 6;
+		$lastday = date('t', mktime(0, 0, 0, $month, 1, $year));
+
+		$delta = $week == -1 ?
+			( date("w", mktime(0, 0, 0, $month, $lastday, $year)) - $dayOfWeek ) % 7:
+			( $dayOfWeek - date('w', mktime(0, 0, 0, $month, 1, $year)) ) % 7;
+
+		if ( $delta < 0 )
+			$delta += 7;
+
+		$day = $week == -1 ? $lastday - $delta : $startday + $delta;
 
 		return mktime(0, 0, 0, $month, $day, $year);
 	}
@@ -189,7 +187,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	/**
 	 * Builds an array of the current WP date_format setting
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.1
 	 * @version 1.1
 	 *
@@ -232,7 +229,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	/**
 	 * Generates a timestamp from a MySQL datetime format
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param string $datetime A MySQL date time string
@@ -240,28 +236,27 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 **/
 	public static function mktimestamp( $datetime ) {
 		$h = $mn = $s = 0;
-		list($Y, $M, $D, $h, $mn, $s) = sscanf($datetime,"%d-%d-%d %d:%d:%d");
-		if (max($Y, $M, $D, $h, $mn, $s) == 0) return 0;
+		list($Y, $M, $D, $h, $mn, $s) = sscanf($datetime, "%d-%d-%d %d:%d:%d");
+		if ( max($Y, $M, $D, $h, $mn, $s) == 0 )
+			return 0;
 		return mktime($h, $mn, $s, $M, $D, $Y);
 	}
 
 	/**
 	 * Converts a timestamp number to an SQL datetime formatted string
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param int $timestamp A timestamp number
 	 * @return string An SQL datetime formatted string
 	 **/
-	public static function mkdatetime ( $timestamp ) {
+	public static function mkdatetime( $timestamp ) {
 		return date("Y-m-d H:i:s", $timestamp);
 	}
 
 	/**
-	 * Returns the 24-hour equivalent of a the Ante Meridiem or Post Meridem hour
+	 * Returns the 24-hour equivalent of a the Ante Meridiem or Post Meridiem hour
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param int $hour The hour of the meridiem
@@ -269,8 +264,10 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * @return int The 24-hour equivalent
 	 **/
 	public static function mk24hour( $hour, $meridiem ) {
-		if ($hour < 12 && $meridiem == "PM") return $hour + 12;
-		if ($hour == 12 && $meridiem == "AM") return 0;
+		if ( $hour < 12 && $meridiem == 'PM' )
+			return $hour + 12;
+		if ( $hour == 12 && $meridiem == 'AM' )
+			return 0;
 		return (int) $hour;
 	}
 
@@ -278,7 +275,7 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * Converts weight units from base setting to needed unit value
 	 *
 	 * @since 1.1
-	 * @version 1.1
+	 * @version 1.5
 	 *
 	 * @param float $value The value that needs converted
 	 * @param string $unit The unit that we are converting to
@@ -296,12 +293,10 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 
 		// Conversion table to International System of Units (SI)
 		$table = apply_filters('shopp_unit_conversion_table', array(
-			'mass' => array(		// SI base unit "grams"
-				'lb' => 453.59237, 'oz' => 28.349523125, 'g' => 1, 'kg' => 1000
-			),
-			'dimension' => array(	// SI base unit "meters"
-				'ft' => 0.3048, 'in' => 0.0254, 'mm' => 0.001, 'cm' => 0.01, 'm' => 1
-			)
+			// SI base unit "grams"
+			'mass' => array('lb' => 453.59237, 'oz' => 28.349523125, 'g' => 1, 'kg' => 1000),
+			// SI base unit "meters"
+			'dimension' => array('ft' => 0.3048, 'in' => 0.0254, 'mm' => 0.001, 'cm' => 0.01, 'm' => 1)
 		));
 
 		$charts = array_keys($table);
@@ -325,13 +320,15 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	}
 
 	/**
-	 * Automatically generates a list of number ranges distributed across a number set
+	 * Automatically generates a list of numeric ranges distributed across a number set
 	 *
 	 * @since 1.0
+	 * @version 1.5
 	 *
 	 * @param int $avg Mean average number in the distribution
 	 * @param int $max The max number in the distribution
 	 * @param int $min The minimum in the distribution
+	 * @param int $values The number of ranges to generate
 	 * @return array A list of number ranges
 	 **/
 	public static function auto_ranges( $avg, $max, $min, $values ) {
@@ -347,26 +344,21 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 		if ( $range == 0 )
 			return $ranges;
 
-		$steps = $values;
-		if ( $steps > 7 )
-			$steps = 7;
-		elseif ( $steps < 2 ) {
+		$steps = min(7, $values); // No more than 7 steps
+		if ( $steps < 2 ) {
 			$scale = $scale / 2;
-			$steps = min(2, max(7, ceil( $range / $scale ) ));
+			$steps = max(2, min(7, ceil( $range / $scale ) ));
 		}
 
-		$base = max( $mean - ( $scale * floor(( $steps - 1 ) / 2 )), $scale);
+		$base = max( $mean - ( $scale * floor(( $steps - 1 ) / 2 ) ), $scale);
 
-		for ( $i = 0; $i < $steps; $i++ ) {
-			$range = array('min' => 0, 'max' => 0);
-			if ( $i == 0 )
-				$range['max'] = $base;
-			elseif ( $i + 1 >= $steps )
-				$range['min'] = $base;
-			else $range = array('min' => $base, 'max' => $base + $scale);
+		$ranges[0] = array('min' => 0, 'max' => $base);
+		for ( $i = 1; $i < $steps; $i++ ) {
+			$range = array('min' => $base, 'max' => $base + $scale);
+			if ( $i + 1 >= $steps )
+				$range['max'] = 0;
 			$ranges[] = $range;
-			if ( $i > 0 )
-				$base += $scale;
+			$base += $scale;
 		}
 
 		return $ranges;
@@ -384,8 +376,8 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * store setting is used.  If no setting is available, the currency format
 	 * for US dollars is used.
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
+	 * @version 1.3
 	 *
 	 * @param float $amount The amount to be formatted
 	 * @param array $format The currency format to use
@@ -393,7 +385,7 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 **/
 	public static function money( $amount, array $format = array() ) {
 		$format = apply_filters('shopp_money_format', Shopp::currency_format($format) );
-		extract($format, EXTR_SKIP) && isset($cpos, $precision, $decimals, $thousands, $grouping);
+		extract($format, EXTR_SKIP);
 
 		$amount = apply_filters('shopp_money_amount', $amount);
 		$number = Shopp::numeric_format(abs($amount), $precision, $decimals, $thousands, $grouping);
@@ -406,7 +398,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	/**
 	 * Formats a number with typographically accurate multi-byte separators and variable algorisms
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
 	 * @param float $number A floating point or integer to format
@@ -420,7 +411,7 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 		$n = sprintf("%0.{$precision}F", $number);
 		$whole = $fraction = 0;
 
-		if ( strpos($n,'.') !== false )
+		if ( strpos($n, '.') !== false )
 			list($whole, $fraction) = explode('.', $n);
 		else $whole = $n;
 
@@ -453,7 +444,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	/**
 	 * Parse a US or Canadian telephone number
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
 	 * @param int $num The number to format
@@ -463,9 +453,12 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 		if ( empty($num) ) return '';
 		$raw = preg_replace('/[^\d]/', '', $num);
 
-		if ( strlen($raw) == 7 ) sscanf($raw, "%3s%4s", $prefix, $exchange);
-		if ( strlen($raw) == 10 ) sscanf($raw, "%3s%3s%4s", $area, $prefix, $exchange);
-		if ( strlen($raw) == 11 ) sscanf($raw, "%1s%3s%3s%4s", $country, $area, $prefix, $exchange);
+		if ( strlen($raw) == 7 )
+			sscanf($raw, "%3s%4s", $prefix, $exchange);
+		if ( strlen($raw) == 10 )
+			sscanf($raw, "%3s%3s%4s", $area, $prefix, $exchange);
+		if ( strlen($raw) == 11 )
+			APCIteratorsscanf($raw, "%1s%3s%3s%4s", $country, $area, $prefix, $exchange);
 
 		return compact('country', 'area', 'prefix', 'exchange', 'raw');
 	}
@@ -473,7 +466,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	/**
 	 * Formats a number to telephone number style
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param int $num The number to format
@@ -504,7 +496,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 * thousands separator.  If no setting is available, a default configuration
 	 * is used (precision: 1) (decimal separator: .) (thousands separator: ,)
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param float $amount The amount to format
@@ -513,21 +504,18 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 **/
 	public static function percentage( $amount, $format = array() ) {
 		$format = Shopp::currency_format($format);
-		extract($format, EXTR_SKIP) && isset($precision, $decimals, $thousands, $grouping);
+		extract($format, EXTR_SKIP);
 
 		$float = Shopp::floatval($amount, true, $format);
 		$percent = Shopp::numeric_format($float, $precision, $decimals, $thousands, $grouping);
-		if ( false !== strpos($percent, $decimals) ) { // Only remove trailing 0's after the decimal
-			$percent = rtrim($percent, '0');
-			$percent = rtrim($percent, $decimals);
-		}
+		if ( false !== strpos($percent, $decimals) ) // Only remove trailing 0's after the decimal
+			$percent = rtrim(rtrim($percent, '0'), $decimals);
 		return "$percent%";
 	}
 
 	/**
 	 * Rounds a price amount with the store's currency format
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
 	 * @param float $amount The number to be rounded
@@ -536,7 +524,7 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 **/
 	public static function roundprice( $amount, $format = array() ) {
 		$format = Shopp::currency_format($format);
-		extract($format, EXTR_SKIP) && isset($precision);
+		extract($format, EXTR_SKIP);
 		return round($amount, $precision);
 	}
 
@@ -546,7 +534,6 @@ abstract class ShoppCoreFormatting extends ShoppCoreLocalization {
 	 *
 	 * Supports up to petabyte sizes
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param int $bytes The number of bytes
