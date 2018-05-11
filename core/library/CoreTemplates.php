@@ -29,36 +29,53 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	 * @param bool $require_once (optional) Whether to require_once or require. Default true. Has no effect if $load is false.
 	 * @return string The full template file path, if one is located
 	 **/
-	public static function locate_template ($template_names, $load = false, $require_once = false ) {
-		if ( ! is_array($template_names) ) return '';
+	public static function locate_template( $template_names, $load = false, $require_once = false ) {
+		if ( ! is_array($template_names) )
+			return '';
 
 		$located = '';
 
-		if ('off' != shopp_setting('theme_templates')) {
+		if ( 'off' != shopp_setting('theme_templates') ) {
 			$templates = array_map(array(__CLASS__, 'template_prefix'), $template_names);
-			$located = locate_template($templates,false);
+			$located = locate_template($templates);
 		}
 
-		if ('' == $located) {
-			foreach ( $template_names as $template_name ) {
-				if ( ! $template_name ) continue;
+		// If a template is already located, skip the manual search
+		if ( ! empty($located) )
+			$template_names = array();
 
-				if ( file_exists(SHOPP_PATH . '/templates/' . $template_name)) {
-					$located = SHOPP_PATH . '/templates/' . $template_name;
-					break;
-				}
+		foreach ( $template_names as $template_name ) {
+			if ( ! $template_name )
+				continue;
 
-			}
+			$template_path = SHOPP_PATH . '/templates/' . $template_name;
+			if ( ! file_exists($template_path) )
+				continue;
+
+			$located = $template_path;
+			break;
 		}
 
-		if ( $load && '' != $located ) {
-			$context = ShoppStorefront::intemplate();
-			ShoppStorefront::intemplate($located);
-			load_template( $located, $require_once );
-			ShoppStorefront::intemplate($context);
-		}
+		if ( $load && '' != $located )
+			self::load_template($located, $require_once);
 
 		return $located;
+	}
+
+	/**
+	 * Loads a template file while maintaining existing ShoppStorefront context
+	 *
+	 * @since 1.5
+	 *
+	 * @param string $template The located path to a template file
+	 * @param bool $require_once (optional) Whether to require_once or require. Default false.
+	 * @return void
+	 **/
+	public static function load_template( $template, $require_once = false ) {
+		$context = ShoppStorefront::intemplate();
+		ShoppStorefront::intemplate($template);
+		load_template($template, $require_once);
+		ShoppStorefront::intemplate($context);
 	}
 
 	/**
@@ -178,9 +195,10 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	 * @param string $type The HTML element type name
 	 * @return boolean True if valid, false if not
 	 **/
-	public static function valid_input ($type) {
+	public static function valid_input( $type ) {
 		$inputs = array('text', 'hidden', 'checkbox', 'radio', 'button', 'submit');
-		if ( in_array($type, $inputs) !== false ) return true;
+		if ( in_array($type, $inputs) !== false )
+			return true;
 		return false;
 	}
 
@@ -195,46 +213,94 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	 * @return string Attribute markup fragment
 	 **/
 	public static function inputattrs ( $options, array $allowed = array() ) {
+		if ( ! is_array($options) )
+			return '';
 
-		if ( ! is_array($options) ) return '';
-		if ( empty($allowed) ) {
-			$allowed = array('autocomplete','accesskey','alt','checked','class','disabled','format',
-				'minlength','maxlength','placeholder','readonly','required','size','src','tabindex','cols','rows',
-				'title','value');
-		}
+		if ( empty($allowed) )
+			$allowed = array('autocomplete', 'accesskey', 'alt', 'checked', 'class', 'disabled', 'format',
+				'minlength', 'maxlength', 'placeholder', 'readonly', 'required', 'size', 'src', 'tabindex', 'cols', 'rows',
+				'title', 'value');
+
 		$allowed = apply_filters( 'shopp_allowed_inputattrs', $allowed, $options );
-		$string = "";
-		$classes = "";
 
-		if ( isset($options['label']) && !isset($options['value']) ) $options['value'] = $options['label'];
+
+		if ( isset($options['label']) && ! isset($options['value']) )
+			$options['value'] = $options['label'];
+
+		$attrs = array();
+		$attrs = array_merge($attrs, self::inputattrs_parse($options, $allowed));
+
+		return ' ' . join(' ', $attrs);
+	}
+
+	private static function inputattrs_parse( array $options, array $allowed ) {
+		$default_callback = array(__CLASS__, 'input_attribute');
+
+		$attrs = array('classes' => array());
 		foreach ( $options as $key => $value ) {
-			if ( ! in_array($key, $allowed) ) continue;
-			switch($key) {
-				case "class": $classes .= " $value"; break;
-				case "checked":
-					if (Shopp::str_true($value)) $string .= ' checked="checked"';
-					break;
-				case "disabled":
-					if (Shopp::str_true($value)) {
-						$classes .= " disabled";
-						$string .= ' disabled="disabled"';
-					}
-					break;
-				case "readonly":
-					if (Shopp::str_true($value)) {
-						$classes .= " readonly";
-						$string .= ' readonly="readonly"';
-					}
-					break;
-				case "required": if (Shopp::str_true($value)) $classes .= " required"; break;
-				case "minlength": $classes .= " min$value"; break;
-				case "format": $classes .= " $value"; break;
-				default:
-					$string .= ' '.$key.'="'.esc_attr($value).'"';
-			}
+			if ( ! in_array($key, $allowed) )
+				continue;
+
+			if ( method_exists(__CLASS__, "input_attr_$key") )
+				$attrs = call_user_func(array(__CLASS__, "input_attr_$key"), $attrs, $value);
+			else $attrs = call_user_func($default_callback, $attrs, $key, $value);
 		}
-		if ( ! empty($classes) ) $string .= ' class="' . esc_attr(trim($classes)) . '"';
-	 	return $string;
+
+		$classes = $attrs['classes'];
+		unset($attrs['classes']);
+		$attrs[] = 'class="' . join(' ', $classes). '"';
+
+		return $attrs;
+	}
+
+	private static function input_attribute( $attrs, $key, $value ) {
+		$attrs[] = $key . '="' . esc_attr($value) . '"';
+		return $attrs;
+	}
+
+	private static function input_attr_class( $attrs, $value ) {
+		$attrs['classes'][] = esc_attr($value);
+		return $attrs;
+	}
+
+	private static function input_attr_checked( $attrs, $value ) {
+		if ( Shopp::str_true($value) )
+			$attrs[] = 'checked="checked"';
+
+		return $attrs;
+	}
+
+	private static function input_attr_disabled( $attrs, $value ) {
+		if ( ! Shopp::str_true($value) )
+			return $attrs;
+
+		$attrs[] = 'disabled="disabled"';
+		$attrs['classes'][] = 'disabled';
+		return $attrs;
+	}
+
+	private static function input_attr_readonly( $attrs, $value ) {
+		if ( ! Shopp::str_true($value) )
+			return $attrs;
+
+		$attrs[] = 'readonly="readonly"';
+		$attrs['classes'][] = 'readonly';
+		return $attrs;
+	}
+
+	private static function input_attr_required( $attrs, $value ) {
+		$attrs['classes'][] = 'required';
+		return $attrs;
+	}
+
+	private static function input_attr_minlength( $attrs, $value ) {
+		$attrs['classes'][] = "min" . intval($value);
+		return $attrs;
+	}
+
+	private static function input_attr_format( $attrs, $value ) {
+		$attrs['classes'][] = esc_attr($value);
+		return $attrs;
 	}
 
 	/**
@@ -264,17 +330,22 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
             return "";
 
 		$_ = array();
+
 		// Extend the options if the selected value doesn't exist
 		if ( ( ! in_array($selected, $list) && ! isset($list[ $selected ])) && $extend )
 			$_[] = '<option value="' . esc_attr($selected) . '">' . esc_html($selected) . '</option>';
 
 		foreach ( $list as $value => $text ) {
 			$valueattr = $selectedattr = '';
-			if ( $values ) $valueattr = ' value="' . esc_attr($value) . '"';
+			$selection = $text;
 
-            if ( ( $values && (string)$value === (string)$selected )
-				|| ( ! $values && (string)$text === (string)$selected ) )
-					$selectedattr = ' selected="selected"';
+			if ( $values ) {
+				$selection = $value;
+				$valueattr = ' value="' . esc_attr($value) . '"';
+			}
+
+			if ( (string)$selection === (string)$selected )
+				$selectedattr = ' selected="selected"';
 
 			if ( is_array($text) ) {
 				$label = $value;
@@ -289,7 +360,6 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 
 		return join('', $_);
 	}
-
 
 	/**
 	 * Sends an email message based on a specified template file
