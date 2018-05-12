@@ -2,7 +2,7 @@
 /**
  * AdminCategorySaveBox.php
  *
- * Category editor save box. 
+ * Category editor save box.
  *
  * @copyright Ingenesis Limited, July 2017
  * @license   GNU GPL version 3 (or later) {@see license.txt}

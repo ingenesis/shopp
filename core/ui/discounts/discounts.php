@@ -86,11 +86,11 @@
 			?></td>
 			<td class="applied column-applied<?php echo in_array('applied',$hidden)?' hidden':''; ?>"><?php echo $Promotion->target; ?></td>
 			<td class="eff column-eff<?php echo in_array('eff',$hidden)?' hidden':''; ?>"><strong><?php echo $states[$Promotion->status]; ?></strong><?php
-				$starts = (mktimestamp($Promotion->starts) > 1) ?
-				                 Shopp::_d(get_option('date_format'), Shopp::mktimestamp($Promotion->starts)) :
-				                 Shopp::_d(get_option('date_format'), Shopp::mktimestamp($Promotion->created));
-				$ends = (Shopp::mktimestamp($Promotion->ends) > 1) ?
-				               " — " . Shopp::_d(get_option('date_format'), Shopp::mktimestamp($Promotion->ends)) :
+				$starts = (sDB::mktime($Promotion->starts) > 1) ?
+				                 Shopp::_d(get_option('date_format'), sDB::mktime($Promotion->starts)) :
+				                 Shopp::_d(get_option('date_format'), sDB::mktime($Promotion->created));
+				$ends = (sDB::mktime($Promotion->ends) > 1) ?
+				               " — " . Shopp::_d(get_option('date_format'), sDB::mktime($Promotion->ends)) :
 				               ", " . __('does not expire','Shopp');
 				echo "<br />".$starts.$ends;
 			?></td>
@@ -112,10 +112,10 @@
 /* <![CDATA[ */
 jQuery(document).ready( function($) {
 	var m = {
-			none:<?php Shopp::_jse('Select some discounts!','Shopp'); ?>,
-			enable:<?php Shopp::_jse('Are you sure you want to enable the selected discounts?','Shopp'); ?>,
-			disable:<?php Shopp::_jse('Are you sure you want to disable the selected discounts?','Shopp'); ?>,
-			delete:<?php Shopp::_jse('Are you sure you want to delete the selected discounts?','Shopp'); ?>
+			none:<?php Shopp::_jse('Select some discounts!'); ?>,
+			enable:<?php Shopp::_jse('Are you sure you want to enable the selected discounts?'); ?>,
+			disable:<?php Shopp::_jse('Are you sure you want to disable the selected discounts?'); ?>,
+			delete:<?php Shopp::_jse('Are you sure you want to delete the selected discounts?'); ?>
 		},form = $('#discounts');
 
 	columns.init(pagenow);

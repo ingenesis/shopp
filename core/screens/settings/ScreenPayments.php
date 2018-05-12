@@ -24,13 +24,13 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 		shopp_enqueue_script('jquery-tmpl');
 		shopp_enqueue_script('payments');
 		shopp_localize_script( 'payments', '$ps', array(
-			'confirm' => __('Are you sure you want to remove this payment system?','Shopp'),
+			'confirm' => Shopp::__('Are you sure you want to remove this payment system?'),
 		));
 	}
 
 	/**
 	 * Setup the layout for the screen
-	 * 
+	 *
 	 * This is used to initialize any metaboxes or tables.
 	 *
 	 * @since 1.5
@@ -86,7 +86,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 
 		Shopp::redirect(add_query_arg(array('delete' => null, '_wpnonce' => null)));
 	}
-    
+
 	/**
 	 * Add a payment entry for a specified payment gateway
 	 *
@@ -96,16 +96,16 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
     public function add() {
 		$form = $this->form();
 		if ( empty($form) ) return;
-        
+
         $id = $this->form('id');
         if ( empty($id) ) return;
 
         $gateway = $id;
         $index = false;
 
-        if ( false !== strpos($id, '-') ) 
+        if ( false !== strpos($id, '-') )
             list($gateway, $index) = explode('-', $gateway);
-        
+
         if ( isset($Gateways->active[ $gateway ]) ) {
             $Gateway = $Gateways->get($gateway);
             if ( $Gateway->multi && false === $index ) {
@@ -113,7 +113,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
                 $index = count($Gateway->settings);
             }
         }
-        
+
     }
 
 	/**
@@ -131,7 +131,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 
 		$gateways = array_keys($Gateways->activated());
 		$gateway = key($form);
-        
+
 		// Handle Multi-instance payment systems
 		$indexed = false;
 		if ( preg_match('/\[(\d+)\]/', $gateway, $matched) ) {
@@ -159,7 +159,7 @@ class ShoppScreenPayments extends ShoppSettingsScreenController {
 
         if ( $this->form('save') )
     		Shopp::redirect(add_query_arg(array('id' => null)));
-        
+
 		Shopp::redirect(add_query_arg());
 	}
 

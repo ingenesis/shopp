@@ -612,7 +612,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 	public function email ( $addressee, $address, $subject, array $templates = array() ) {
 		global $is_IIS;
 
-		shopp_debug("ShoppPurchase::email(): $addressee,$address,$subject,"._object_r($templates));
+		shopp_debug("ShoppPurchase::email(): $addressee,$address,$subject," . Shopp::object_r($templates));
 
 		// Build the e-mail message data
 		$email['from'] = Shopp::email_from( shopp_setting('merchant_email'), shopp_setting('business_name') );
@@ -626,11 +626,11 @@ class ShoppPurchase extends ShoppDatabaseObject {
 
 		$email = apply_filters('shopp_email_receipt_data', $email);
 		$email = apply_filters('shopp_purchase_email_message', $email);
-		$this->message = array_merge($this->message,$email);
+		$this->message = array_merge($this->message, $email);
 
 		// Load and process the template file
 		$defaults = array('email.php','order.php','order.html');
-		$emails = array_merge((array)$templates,$defaults);
+		$emails = array_merge((array)$templates, $defaults);
 
 		$template = Shopp::locate_template($emails);
 
@@ -640,7 +640,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		}
 
 		// Send the email
-		if (Shopp::email($template, $this->message)) {
+		if ( Shopp::email($template) ) {
 			shopp_debug('A purchase notification was sent to: ' . $this->message['to']);
 			return true;
 		}
@@ -729,7 +729,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		}
 
 		ob_start();
-		locate_shopp_template(array($template, 'receipt.php'), true);
+		Shopp::locate_template(array($template, 'receipt.php'), true);
 		$content = ob_get_clean();
 
 		return apply_filters('shopp_order_receipt', $content);
@@ -966,7 +966,7 @@ class PurchasesExport {
 			foreach ( $list as $name => $value ) {
 				if ( is_a($value, 'ShoppPurchaseDiscount') ) {
 					$Discount = $value;
-					$column .= ( empty($column) ? "" : ";" ) . trim("$Discount->id:$Discount->name (" . money($Discount->discount) . ") $Discount->code");
+					$column .= ( empty($column) ? "" : ";" ) . trim("$Discount->id:$Discount->name (" . Shopp::money($Discount->discount) . ") $Discount->code");
 				} else $column .= ( empty($column) ? "" : ";" ) . "$name:$value";
 			}
 		}

@@ -70,7 +70,7 @@
 				case 'gross':
 				?>
 					<td class="<?php echo esc_attr(join(' ',$classes)); ?>">
-						<?php echo money($Product->grossed); ?>
+						<?php echo Shopp::money($Product->grossed); ?>
 					</td>
 				<?php
 				break;

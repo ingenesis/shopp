@@ -339,7 +339,7 @@ class ShoppStorefront extends ShoppFlowController {
 	 * @return void
 	 **/
 	public function trackurl ( WP $wp ) {
-		
+
 		if ( ! is_shopp_catalog_page() || is_shopp_cart_page() ) return;
 
 		 // Track referrer for the cart referrer URL
@@ -495,7 +495,7 @@ class ShoppStorefront extends ShoppFlowController {
 
 		$tax_inclusive = shopp_setting_enabled('tax_inclusive');
 
-		$template = locate_shopp_template( array('feed-' . $Collection->slug . '.php', 'feed.php') );
+		$template = Shopp::locate_template( array('feed-' . $Collection->slug . '.php', 'feed.php') );
 		if ( ! $template ) $template = SHOPP_ADMIN_PATH . '/categories/feed.php';
 
 		header('Content-type: application/rss+xml; charset=' . get_option('blog_charset') );
@@ -581,7 +581,7 @@ class ShoppStorefront extends ShoppFlowController {
 
 		if ( is_ssl() ) {
 			$urls = array('option_siteurl', 'option_home', 'option_url', 'option_wpurl', 'option_stylesheet_url', 'option_template_url', 'script_loader_src');
-			foreach ( $urls as $filter ) add_filter($filter, 'force_ssl');
+			foreach ( $urls as $filter ) add_filter($filter, array('Shopp', 'force_ssl'));
 		}
 
 		// Replace the WordPress canonical link
@@ -624,7 +624,7 @@ class ShoppStorefront extends ShoppFlowController {
 			shopp_enqueue_script('address');
 			$regions = Lookup::country_zones();
 			$js = 'var regions=' . json_encode($regions);
-			add_storefrontjs($js, true);
+			Shopp::add_storefrontjs($js, true);
 		}
 
 	}
@@ -1094,7 +1094,7 @@ class ShoppStorefront extends ShoppFlowController {
 	static function errors ( array $templates = array('errors.php') ) {
 
 		ob_start();
-		locate_shopp_template( $templates, true );
+		Shopp::locate_template( $templates, true );
 		$content = ob_get_clean();
 
 		return apply_filters('shopp_storefront_errors', $content);

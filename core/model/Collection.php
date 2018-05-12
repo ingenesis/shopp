@@ -356,7 +356,7 @@ class ProductCollection implements Iterator {
 		$Image = current($product->images);
 		if ( ! empty($Image) ) {
 			$item['description'] .= '<td><a href="' . $item['link'] . '" title="' . $product->name . '">';
-			$item['description'] .= '<img src="' . esc_attr(add_query_string($Image->resizing(75, 75, 0), Shopp::url($Image->id, 'images'))) . '" alt="' . $product->name . '" width="75" height="75" />';
+			$item['description'] .= '<img src="' . esc_attr(Shopp::add_query_string($Image->resizing(75, 75, 0), Shopp::url($Image->id, 'images'))) . '" alt="' . $product->name . '" width="75" height="75" />';
 			$item['description'] .= '</a></td>';
 		}
 
@@ -366,7 +366,7 @@ class ProductCollection implements Iterator {
 
 		if ( $product->min[ $priceindex ] != $product->max[ $priceindex ] )
 			$pricing .= Shopp::__('from') . ' ';
-		$pricing .= money($product->min[ $priceindex ]);
+		$pricing .= Shopp::money($product->min[ $priceindex ]);
 
 		$item['description'] .= "<td><p><big>$pricing</big></p>";
 
@@ -381,7 +381,7 @@ class ProductCollection implements Iterator {
 		// You can use the shopp_rss_item filter hook to add new item attributes or change the existing attributes
 
 		if ( $Image )
-			$item['g:image_link'] = add_query_string($Image->resizing(400, 400, 0), Shopp::url($Image->id, 'images'));
+			$item['g:image_link'] = Shopp::add_query_string($Image->resizing(400, 400, 0), Shopp::url($Image->id, 'images'));
 		$item['g:condition'] = 'new';
 		$item['g:availability'] = shopp_setting_enabled('inventory') && $product->outofstock ? 'out of stock' : 'in stock';
 
@@ -1005,7 +1005,7 @@ class ProductCategory extends ProductTaxonomy {
 			$Facet->link = add_query_arg(array('s_ff'=>'on',urlencode($Facet->slug) => ''),shopp('category','get-url'));
 
 			if ( ! $this->loaded ) $this->load();
-			if ('auto' == $this->pricerange) $ranges = auto_ranges($this->pricing->average, $this->pricing->max, $this->pricing->min, $this->pricing->uniques);
+			if ('auto' == $this->pricerange) $ranges = Shopp::auto_ranges($this->pricing->average, $this->pricing->max, $this->pricing->min, $this->pricing->uniques);
 			else $ranges = $this->priceranges;
 
 			if ( ! empty($ranges) ) {
@@ -1023,9 +1023,9 @@ class ProductCategory extends ProductTaxonomy {
 
 				foreach ($ranges as $id => $range) {
 					if ( ! isset($counts[$id]) || $counts[$id] < 1 ) continue;
-					$label = money($range['min']).' &mdash; '.money($range['max']);
-					if ($range['min'] == 0) $label = sprintf(__('Under %s','Shopp'),money($range['max']));
-					if ($range['max'] == 0) $label = sprintf(__('%s and up','Shopp'),money($range['min']));
+					$label = Shopp::money($range['min']).' &mdash; '.Shopp::money($range['max']);
+					if ($range['min'] == 0) $label = sprintf(__('Under %s','Shopp'),Shopp::money($range['max']));
+					if ($range['max'] == 0) $label = sprintf(__('%s and up','Shopp'),Shopp::money($range['min']));
 
 					$FacetFilter = new ProductCategoryFacetFilter();
 					$FacetFilter->label = $label;
@@ -1123,7 +1123,7 @@ class ProductCategory extends ProductTaxonomy {
 						if (preg_match('/^(.*?)(\d+[\.\,\d]*)(.*)$/',$data->value,$matches))
 							$format = $matches[1].'%s'.$matches[3];
 
-						$ranges = auto_ranges($data->avg,$data->max,$data->min,$data->uniques);
+						$ranges = Shopp::auto_ranges($data->avg,$data->max,$data->min,$data->uniques);
 
 						if ( ! empty($ranges) ) {
 							$casewhen = '';

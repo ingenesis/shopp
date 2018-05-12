@@ -23,7 +23,7 @@
 			<div id="schedule-calendar" class="calendar-wrap">
 				<?php
 					$previous = false;
-					$dateorder = Shopp::date_format_order(true);
+					$dateorder = Shopp::date_format_order(array('month', 'day', 'year'));
 					foreach ($dateorder as $type => $format):
 						if ($previous == "s" && $type[0] == "s") continue;
 						if ("month" == $type): ?><input type="text" name="publish[month]" id="publish-month" title="<?php _e('Month','Shopp'); ?>" size="2" maxlength="2" value="<?php echo ($Product->publish>1)?date("n",$Product->publish):''; ?>" class="publishdate selectall" /><?php elseif ("day" == $type): ?><input type="text" name="publish[date]" id="publish-date" title="<?php _e('Day','Shopp'); ?>" size="2" maxlength="2" value="<?php echo ($Product->publish>1)?date("j",$Product->publish):''; ?>" class="publishdate selectall" /><?php elseif ("year" == $type): ?><input type="text" name="publish[year]" id="publish-year" title="<?php _e('Year','Shopp'); ?>" size="4" maxlength="4" value="<?php echo ($Product->publish>1)?date("Y",$Product->publish):''; ?>" class="publishdate selectall" /><?php elseif ($type[0] == "s"): echo "/"; endif; $previous = $type[0]; ?><?php endforeach; ?>
@@ -40,7 +40,7 @@
 </div>
 <div id="major-publishing-actions">
 	<select name="settings[workflow]" id="workflow">
-	<?php echo menuoptions($workflows,shopp_setting('workflow'),true); ?>
+	<?php echo Shopp::menuoptions($workflows,shopp_setting('workflow'),true); ?>
 	</select>
 <input type="submit" class="button-primary" name="save" value="<?php _e('Save Product','Shopp'); ?>" />
 </div>

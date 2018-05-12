@@ -102,10 +102,10 @@ var sugg_url = '<?php echo wp_nonce_url(admin_url("admin-ajax.php"), "wp_ajax_sh
 	rule_types = <?php echo json_encode($ruletypes); ?>,
 	bill_periods = <?php echo json_encode(ShoppPrice::periods()); ?>,
 	rules = <?php echo json_encode($MemberPlan->stages); ?>,
-	STAGE_LABEL = <?php _jse('Content Access Rules','Shopp'); ?>,
-	STAGES_LABEL = <?php _jse('Step','Shopp'); ?>,
-	DELETE_RULE_PROMPT = <?php _jse('Are you sure you want to delete this rule?','Shopp'); ?>,
-	DELETE_GROUP_PROMPT = <?php _jse('Are you sure you want to delete this rule?','Shopp'); ?>;
+	STAGE_LABEL = <?php Shopp::_jse('Content Access Rules'); ?>,
+	STAGES_LABEL = <?php Shopp::_jse('Step'); ?>,
+	DELETE_RULE_PROMPT = <?php Shopp::_jse('Are you sure you want to delete this rule?'); ?>,
+	DELETE_GROUP_PROMPT = <?php Shopp::_jse('Are you sure you want to delete this rule?'); ?>;
 
 /* ]]> */
 </script>

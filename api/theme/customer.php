@@ -176,7 +176,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if ( ! isset($options['autocomplete']) ) $options['autocomplete'] = "off";
 		if ( ! empty($_POST['account-login']) )
 			$options['value'] = $_POST['account-login'];
-		return '<input type="text" name="account-login" id="account-login"' . inputattrs($options) . ' />';
+		return '<input type="text" name="account-login" id="account-login"' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -452,7 +452,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if ( $options['mode'] == 'value' ) return $O->company;
 		if ( ! empty($O->company) )
 			$options['value'] = $O->company;
-		return '<input type="text" name="company" id="company" ' . inputattrs($options) . ' />';
+		return '<input type="text" name="company" id="company" ' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -490,7 +490,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if ( ! isset($options['autocomplete']) )
 			$options['autocomplete'] = 'off';
 		$options['value'] = '';
-		return '<input type="password" name="confirm-password" id="confirm-password"' . inputattrs($options) . ' />';
+		return '<input type="password" name="confirm-password" id="confirm-password"' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -516,10 +516,10 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if ( array_key_exists('downloads', $options) ) $string .= $download->downloads;
 		if ( array_key_exists('key', $options) ) $string .= $download->dkey;
 		if ( array_key_exists('created', $options) ) $string .= $download->created;
-		if ( array_key_exists('total', $options) ) $string .= money($download->total);
+		if ( array_key_exists('total', $options) ) $string .= Shopp::money($download->total);
 		if ( array_key_exists('filetype', $options) ) $string .= $download->mime;
 		if ( array_key_exists('size', $options) ) $string .= readableFileSize($download->size);
-		if ( array_key_exists('date', $options) ) $string .= _d($df, $download->created);
+		if ( array_key_exists('date', $options) ) $string .= Shopp::_d($df, $download->created);
 		if ( array_key_exists('url', $options) )
 			$string .= Shopp::url( ('' == get_option('permalink_structure') ?
 					array('src' => 'download', 'shopp_download' => $download->dkey) : 'download/' . $download->dkey),
@@ -582,7 +582,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if ( 'value' == $options['mode'] ) return $O->email;
 		if ( ! empty($O->email) )
 			$options['value'] = $O->email;
-		return '<input type="text" name="email" id="email" ' . inputattrs($options) . ' />';
+		return '<input type="text" name="email" id="email" ' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -621,7 +621,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if ( 'value' == $options['mode'] ) return $O->firstname;
 		if ( ! empty($O->firstname) )
 			$options['value'] = $O->firstname;
-		return '<input type="text" name="firstname" id="firstname" ' . inputattrs($options) . ' />';
+		return '<input type="text" name="firstname" id="firstname" ' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -788,7 +788,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		$type = in_array($type, $allowed_types) ? $type : 'hidden';
 		$id = 'customer-info-' . sanitize_title_with_dashes($name);
 
-		return '<input type="' . $type . '" name="info[' . esc_attr($name) . ']" id="' . $id . '"' . inputattrs($options) . ' />';
+		return '<input type="' . $type . '" name="info[' . esc_attr($name) . ']" id="' . $id . '"' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -827,7 +827,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if ($options['mode'] == "value") return $O->lastname;
 		if (!empty($O->lastname))
 			$options['value'] = $O->lastname;
-		return '<input type="text" name="lastname" id="lastname" '.inputattrs($options).' />';
+		return '<input type="text" name="lastname" id="lastname" '.Shopp::inputattrs($options).' />';
 	}
 
 	/**
@@ -901,7 +901,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if ($options['mode'] == "value") return $O->loginname;
 		if (!empty($O->loginname))
 			$options['value'] = $O->loginname;
-		return '<input type="text" name="loginname" id="login" '.inputattrs($options).' />';
+		return '<input type="text" name="loginname" id="login" '.Shopp::inputattrs($options).' />';
 	}
 
 	/**
@@ -939,7 +939,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 			'title');
 		if ( Shopp::str_true($options['value']) ) $options['checked'] = true;
 		$input = '<input type="hidden" name="marketing" value="no" />';
-		$input .= '<input type="checkbox" name="marketing" id="marketing" value="yes" ' . inputattrs($options, $attrs) . ' />';
+		$input .= '<input type="checkbox" name="marketing" id="marketing" value="yes" ' . Shopp::inputattrs($options, $attrs) . ' />';
 		return $input;
 	}
 
@@ -990,7 +990,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 			if ( ShoppPurchase()->exists() && ShoppPurchase()->email == $_POST['email'] ) {
 				ShoppPurchase()->load_purchased();
 				ob_start();
-				locate_shopp_template(array('receipt.php'), true);
+				Shopp::locate_template(array('receipt.php'), true);
 				$content = ob_get_clean();
 				return apply_filters('shopp_order_lookup', $content);
 			} else {
@@ -1042,7 +1042,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 			return strlen($O->password) == 34 ? str_pad('&bull;', 8) : $O->password;
 		if ( ! empty($O->password) )
 			$options['value'] = $O->password;
-		return '<input type="password" name="password" id="password" ' . inputattrs($options) . ' />';
+		return '<input type="password" name="password" id="password" ' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -1109,7 +1109,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if ( ! isset($options['autocomplete']) ) $options['autocomplete'] = "off";
 		if ( ! empty($_POST['password-login']) )
 			$options['value'] = $_POST['password-login'];
-		return '<input type="password" name="password-login" id="password-login" ' . inputattrs($options) . ' />';
+		return '<input type="password" name="password-login" id="password-login" ' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -1147,7 +1147,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if ( 'value' == $options['mode'] ) return $O->phone;
 		if ( ! empty($O->phone) )
 			$options['value'] = $O->phone;
-		return '<input type="text" name="phone" id="phone" ' . inputattrs($options) . ' />';
+		return '<input type="text" name="phone" id="phone" ' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -1208,7 +1208,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 **/
 	public static function recover_button ( $result, $options, $O ) {
 		if ( ! isset($options['value']) ) $options['value'] = Shopp::__('Get New Password');
-		return '<input type="submit" name="recover-login" id="recover-button"' . inputattrs($options) . ' />';
+		return '<input type="submit" name="recover-login" id="recover-button"' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -1255,7 +1255,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 		$submit_attrs = array('title', 'class', 'label', 'value', 'disabled', 'tabindex', 'accesskey');
 
-		return '<input type="submit" name="shopp_registration" ' . inputattrs($options, $submit_attrs) . ' />';
+		return '<input type="submit" name="shopp_registration" ' . Shopp::inputattrs($options, $submit_attrs) . ' />';
 	}
 
 	/**
@@ -1273,7 +1273,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		$Errors = ShoppErrors();
 			if ( ! $Errors->exist(SHOPP_ERR) ) return false;
 		ob_start();
-		locate_shopp_template(array('errors.php'), true);
+		Shopp::locate_template(array('errors.php'), true);
 		return ob_get_clean();
 	}
 
@@ -1290,7 +1290,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 	 **/
 	public static function registration_form ( $result, $options, $O ) {
 		$regions = Lookup::country_zones();
-		add_storefrontjs('var regions = ' . json_encode($regions) . ';', true);
+		Shopp::add_storefrontjs('var regions = ' . json_encode($regions) . ';', true);
 		shopp_enqueue_script('address');
 		return Shopp::raw_request_url();
 	}
@@ -1359,7 +1359,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		$_ = array();
 		$_[] = '<label for="' . $id . '">';
 		$_[] = '<input type="hidden" name="sameaddress" value="off" />';
-		$_[] = '<input type="checkbox" name="sameaddress" value="' . $type . '" id="' . $id . '" ' . inputattrs($options,$allowed) . ' />';
+		$_[] = '<input type="checkbox" name="sameaddress" value="' . $type . '" id="' . $id . '" ' . Shopp::inputattrs($options,$allowed) . ' />';
 		$_[] = "&nbsp;$label</label>";
 
 		return join('', $_);
@@ -1389,7 +1389,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		if ( ! isset($options['label']) ) $options['label'] = Shopp::__('Save');
 		$result = '<input type="hidden" name="customer" value="true" />';
 		$result .= wp_nonce_field('shopp_profile_update', '_wpnonce', true, false);
-		$result .= '<input type="submit" name="save" id="save-button"' . inputattrs($options) . ' />';
+		$result .= '<input type="submit" name="save" id="save-button"' . Shopp::inputattrs($options) . ' />';
 		return $result;
 	}
 
@@ -1640,7 +1640,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		}
 
 		return '<input type="hidden" name="redirect" value="' . esc_attr($redirect) . '" />'
-			 . '<input type="submit" name="submit-login" id="' . $id . '"' . inputattrs($options) . ' />';
+			 . '<input type="submit" name="submit-login" id="' . $id . '"' . Shopp::inputattrs($options) . ' />';
 
 	}
 
@@ -1774,7 +1774,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		extract($options, EXTR_SKIP);
 
 		if ( 'value' == $mode ) return $value;
-		return '<input type="text" name="' . $address . '[' . $property . ']" id="' . $address . '-' . $property . '" '.inputattrs($options).' />';
+		return '<input type="text" name="' . $address . '[' . $property . ']" id="' . $address . '-' . $property . '" '.Shopp::inputattrs($options).' />';
 	}
 
 	/**
@@ -1811,8 +1811,8 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 		if ( empty($selected) ) $selected = ShoppBaseLocale()->country();
 
-		return '<select name="' . $address . '[country]" id="' . $id . '" ' . inputattrs($options, $select_attrs) . '>' .
-			 		menuoptions($countries, $selected, true) .
+		return '<select name="' . $address . '[country]" id="' . $id . '" ' . Shopp::inputattrs($options, $select_attrs) . '>' .
+			 		Shopp::menuoptions($countries, $selected, true) .
 					'</select>';
 	}
 
@@ -1882,20 +1882,20 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		$options['class'] = join(' ', $classes);
 
 		if ( 'text' == $type )
-			return '<input type="text" name="' . $address . '[state]" id="' . $id . '" ' . inputattrs($options) . '/>';
+			return '<input type="text" name="' . $address . '[state]" id="' . $id . '" ' . Shopp::inputattrs($options) . '/>';
 
 		$options['disabled'] = 'disabled';
 		$options['class'] = join(' ', array_merge($classes, array('disabled', 'hidden')));
 
-		$result = '<select name="' . $address .'[state]" id="' . $id . '-menu" ' . inputattrs($options, $select_attrs) . '>' .
+		$result = '<select name="' . $address .'[state]" id="' . $id . '-menu" ' . Shopp::inputattrs($options, $select_attrs) . '>' .
 					'<option value="">' . $label . '</option>' .
-					( ! empty($states) ? menuoptions($states, $selected, true) : '' ) .
+					( ! empty($states) ? Shopp::menuoptions($states, $selected, true) : '' ) .
 					'</select>';
 
 		unset($options['disabled']);
 
 		$options['class'] = join(' ', $classes);
-		$result .= '<input type="text" name="' . $address . '[state]" id="' . $id . '" ' . inputattrs($options) . '/>';
+		$result .= '<input type="text" name="' . $address . '[state]" id="' . $id . '" ' . Shopp::inputattrs($options) . '/>';
 
 		return $result;
 	}

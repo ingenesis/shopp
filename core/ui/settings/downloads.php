@@ -3,7 +3,7 @@
 <th scope="row" valign="top"><label for="download-limit"><?php Shopp::_e('Download Limit'); ?></label></th>
 		<td><select name="settings[download_limit]" id="download-limit">
 			<option value="">&infin;</option>
-	<?php echo menuoptions($downloads, shopp_setting('download_limit')); ?>
+	<?php echo Shopp::menuoptions($downloads, shopp_setting('download_limit')); ?>
 			</select>
 		</td>
 	</tr>
@@ -11,7 +11,7 @@
 <th scope="row" valign="top"><label for="download-timelimit"><?php Shopp::_e('Time Limit'); ?></label></th>
 		<td><select name="settings[download_timelimit]" id="download-timelimit">
 	<option value=""><?php Shopp::_e('No Limit'); ?></option>
-	<?php echo menuoptions($time, shopp_setting('download_timelimit'), true); ?>
+	<?php echo Shopp::menuoptions($time, shopp_setting('download_timelimit'), true); ?>
 			</select>
 		</td>
 	</tr>

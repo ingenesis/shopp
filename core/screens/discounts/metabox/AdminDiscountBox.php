@@ -22,7 +22,7 @@ class ShoppAdminDiscountBox extends ShoppAdminMetabox {
 	}
 
 	public function box () {
-		$this->references['types_menu'] = menuoptions(ShoppScreenDiscountEditor::types(), $this->references['Promotion']->type, true);
+		$this->references['types_menu'] = Shopp::menuoptions(ShoppScreenDiscountEditor::types(), $this->references['Promotion']->type, true);
 		parent::box();
 	}
 

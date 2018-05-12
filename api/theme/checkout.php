@@ -186,7 +186,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if ( 'value' == $options['mode'] ) return $O->Billing->name;
 		if ( ! empty($O->Billing->name) )
 			$options['value'] = $O->Billing->name;
-		return '<input type="text" name="billing[name]" id="billing-name" ' . inputattrs($options) . ' />';
+		return '<input type="text" name="billing[name]" id="billing-name" ' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -244,7 +244,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$options['class'] = join(' ', $classes);
 
 		if ( ! isset($options['autocomplete']) ) $options['autocomplete'] = 'off';
-		return '<input type="text" name="billing[card]" id="billing-card" ' . inputattrs($options) . ' />';
+		return '<input type="text" name="billing[card]" id="billing-card" ' . Shopp::inputattrs($options) . ' />';
 	}
 
 
@@ -298,15 +298,15 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if ( 'value' == $options['mode'] ) return date('m', $O->Billing->cardexpires);
 
 		if ( 'text' == $options['type'] )
-			return '<input type="text" name="' . $name . '" id="' . $id . '" ' . inputattrs($options) . ' />';
+			return '<input type="text" name="' . $name . '" id="' . $id . '" ' . Shopp::inputattrs($options) . ' />';
 
 		$months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
 
 		$menu = array();
 		$label = ( ! empty($options['label']) ) ? $options['label'] : '';
-		$menu[] = '<select name="' . $name . '" id="' . $id . '" ' . inputattrs($options, $select_attrs) . '>';
+		$menu[] = '<select name="' . $name . '" id="' . $id . '" ' . Shopp::inputattrs($options, $select_attrs) . '>';
 		$menu[] = '<option>' . $label . '</option>';
-		$menu[] = menuoptions($months, $options['value']);
+		$menu[] = Shopp::menuoptions($months, $options['value']);
 		$menu[] = '</select>';
 
 		return join('', $menu);
@@ -363,7 +363,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if ( 'value' == $options['mode'] ) return date('y', $O->Billing->cardexpires);
 
 		if ( 'text' == $options['type'] )
-			return '<input type="text" name="' . $name . '" id="' . $id . '" ' . inputattrs($options) . ' />';
+			return '<input type="text" name="' . $name . '" id="' . $id . '" ' . Shopp::inputattrs($options) . ' />';
 
 		$time = current_time('timestamp');
 		$thisyear = date('y', $time);
@@ -371,9 +371,9 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		$menu = array();
 		$label = ( ! empty($options['label']) ) ? $options['label'] : '';
-		$menu[] = '<select name="' . $name . '" id="' . $id . '" ' . inputattrs($options, $select_attrs) . '>';
+		$menu[] = '<select name="' . $name . '" id="' . $id . '" ' . Shopp::inputattrs($options, $select_attrs) . '>';
 		$menu[] = '<option>' . $label . '</option>';
-		$menu[] = menuoptions($years, $options['value']);
+		$menu[] = Shopp::menuoptions($years, $options['value']);
 		$menu[] = '</select>';
 
 		return join('', $menu);
@@ -418,7 +418,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if ( ! isset($options['autocomplete']) ) $options['autocomplete'] = 'off';
 		if ( ! empty($O->Billing->cardholder) )
 			$options['value'] = $O->Billing->cardholder;
-		return '<input type="text" name="billing[cardholder]" id="billing-cardholder" ' . inputattrs($options) . ' />';
+		return '<input type="text" name="billing[cardholder]" id="billing-cardholder" ' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -460,15 +460,15 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		}
 
 		$label = ( ! empty($options['label']) ) ? $options['label'] : '';
-		$output = '<select name="billing[cardtype]" id="billing-cardtype" ' . inputattrs($options, $select_attrs) . '>';
+		$output = '<select name="billing[cardtype]" id="billing-cardtype" ' . Shopp::inputattrs($options, $select_attrs) . '>';
 		$output .= '<option value="">' . $label . '</option>';
-	 	$output .= menuoptions($cards, $options['selected'], true);
+	 	$output .= Shopp::menuoptions($cards, $options['selected'], true);
 		$output .= '</select>';
 
 		$js = array("var paycards = {};");
 		foreach ($accepted as $slug => $paycard)
 			$js[] = "paycards['" . $slug . "'] = " . json_encode($paycard) . ";";
-		add_storefrontjs(join('', $js), true);
+		Shopp::add_storefrontjs(join('', $js), true);
 
 		return $output;
 	}
@@ -509,7 +509,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if ( ! empty($_POST['billing']['cvv']) )
 			$options['value'] = $_POST['billing']['cvv'];
 		$options['class'] = isset($options['class']) ? $options['class'] . ' paycard' : 'paycard';
-		return '<input type="text" name="billing[cvv]" id="billing-cvv" ' . inputattrs($options) . ' />';
+		return '<input type="text" name="billing[cvv]" id="billing-cvv" ' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -557,7 +557,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		// if there are local tax jurisdictions in settings
 		if ( ! empty($locales) ) {
 			// Add all the locales to the javascript environment
-			add_storefrontjs('var locales = ' . json_encode($locales) . ';', true);
+			Shopp::add_storefrontjs('var locales = ' . json_encode($locales) . ';', true);
 
 			// $Taxes = new CartTax();
 			$Tax = ShoppOrder()->Tax;
@@ -579,10 +579,10 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 			if ( empty($localities) ) $options['disabled'] = 'disabled';
 
 			// Start stub select menu for billing local tax jurisdiction (needed for javascript to populate)
-			$output = '<select name="billing[locale]" id="billing-locale" ' . inputattrs($options, $select_attrs) . '>';
+			$output = '<select name="billing[locale]" id="billing-locale" ' . Shopp::inputattrs($options, $select_attrs) . '>';
 
 		 	if ( ! empty($localities) )
-				$output .= "<option></option>" . menuoptions($localities, $options['selected']);
+				$output .= "<option></option>" . Shopp::menuoptions($localities, $options['selected']);
 
 			// End stub select menu for billing local tax jurisdiction
 			$output .= '</select>';
@@ -683,7 +683,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$id = 'billing-xcsc-' . sanitize_title_with_dashes($input);
 
 		if ( ! isset( $options['autocomplete']) ) $options['autocomplete'] = 'off';
-		return '<input type="text" name="billing[xcsc][' . esc_attr($input) . ']" id="' . $id . '" ' . inputattrs($options) . ' />';
+		return '<input type="text" name="billing[xcsc][' . esc_attr($input) . ']" id="' . $id . '" ' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -745,7 +745,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 			array_unshift($templates, "summary-$context");
 
 		ob_start();
-		locate_shopp_template($templates, true);
+		Shopp::locate_template($templates, true);
 		$content = ob_get_clean();
 
 		// If inside the checkout form, strip the extra <form> tag so we don't break standards
@@ -805,8 +805,8 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		$checkouturl = Shopp::url(false, 'checkout', $O->security());
 
-		$button = '<input type="submit" name="confirmed" id="confirm-button" ' . inputattrs($options, $submit_attrs) . ' />';
-		$return = '<a href="' . $checkouturl . '"' . inputattrs($options, array('class')) . '>' . $options['errorlabel'] . '</a>';
+		$button = '<input type="submit" name="confirmed" id="confirm-button" ' . Shopp::inputattrs($options, $submit_attrs) . ' />';
+		$return = '<a href="' . $checkouturl . '"' . Shopp::inputattrs($options, array('class')) . '>' . $options['errorlabel'] . '</a>';
 
 		$markup = ! $O->isvalid() ? $return : $button;
 
@@ -847,7 +847,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if ( ! isset($options['autocomplete']) ) $options['autocomplete'] = 'off';
 		if ( ! empty($O->Customer->_confirm_password) )
 			$options['value'] = $O->Customer->_confirm_password;
-		return '<input type="password" name="confirm-password" id="confirm-password" ' . inputattrs($options) . ' />';
+		return '<input type="password" name="confirm-password" id="confirm-password" ' . Shopp::inputattrs($options) . ' />';
 	}
 
 	/**
@@ -939,14 +939,14 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		switch ( strtolower($type) ) {
 			case 'textarea':
-				return '<textarea name="info[' . esc_attr($name) . ']" cols="' . (int) $cols . '" rows="' . (int) $rows . '" id="' . $id . '" ' . inputattrs($op, $textarea_attrs) . '>' . esc_html($value) . '</textarea>';
+				return '<textarea name="info[' . esc_attr($name) . ']" cols="' . (int) $cols . '" rows="' . (int) $rows . '" id="' . $id . '" ' . Shopp::inputattrs($op, $textarea_attrs) . '>' . esc_html($value) . '</textarea>';
 				break;
 			case 'menu':
 				if ( is_string($options) ) $options = explode(',', $options);
-				return '<select name="info[' . esc_attr($name) . ']" id="' . $id . '" ' . inputattrs($op, $select_attrs) . '>' . menuoptions($options, $value) . '</select>';
+				return '<select name="info[' . esc_attr($name) . ']" id="' . $id . '" ' . Shopp::inputattrs($op, $select_attrs) . '>' . Shopp::menuoptions($options, $value) . '</select>';
 				break;
 			default:
-				return '<input type="' . $type . '" name="info[' . esc_attr($name) . ']" id="' . $id . '" ' . inputattrs($op) . ' />';
+				return '<input type="' . $type . '" name="info[' . esc_attr($name) . ']" id="' . $id . '" ' . Shopp::inputattrs($op) . ' />';
 				break;
 		}
 	}
@@ -1008,7 +1008,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
         $DefaultPayment = $Payments->selected();
         $payslug = isset($DefaultPayment->slug) ? $DefaultPayment->slug : '';
-        
+
 		$js = "var regions=" . json_encode($regions) . "," .
 				  "c_upd='" . $updating . "'," .
 				  "d_pm='" . $payslug . "'," .
@@ -1018,7 +1018,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 			if (empty($option->cards)) continue;
 			$js .= "pm_cards['" . $slug . "'] = " . json_encode($option->cards) . ";";
 		}
-		add_storefrontjs($js, true);
+		Shopp::add_storefrontjs($js, true);
 
 		if ( ! empty($options['value']) ) $value = $options['value'];
 		else $value = 'process';
@@ -1073,7 +1073,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if ( ! empty($label) )
 			$_[] = '<label for="guest-checkout">';
 		$_[] = '<input type="hidden" name="guest" value="no" />';
-		$_[] = '<input type="checkbox" name="guest" value="yes" id="guest-checkout"' . inputattrs($options, $allowed) . ' />';
+		$_[] = '<input type="checkbox" name="guest" value="yes" id="guest-checkout"' . Shopp::inputattrs($options, $allowed) . ' />';
 		if ( ! empty($label) )
 			$_[] = "&nbsp;$label</label>";
 
@@ -1159,7 +1159,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 				$frame = '<div class="scrollable clickwrap clickwrap-terms' . esc_attr( $termsclass ? " $termsclass" : "" ) . '">' . apply_filters('shopp_checkout_clickwrap_terms', $page->post_content) . '</div>';
 		}
 
-		$input = '<input type="hidden" name="data[clickwrap]" value="no" /><input type="checkbox" name="data[clickwrap]" id="clickwrap" value="agreed" ' . inputattrs($options, $attrs) . ' />';
+		$input = '<input type="hidden" name="data[clickwrap]" value="no" /><input type="checkbox" name="data[clickwrap]" id="clickwrap" value="agreed" ' . Shopp::inputattrs($options, $attrs) . ' />';
 		return $frame . $input;
 	}
 
@@ -1267,7 +1267,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		switch (strtolower($type)) {
 			case "textarea":
-				return '<textarea name="data['.$name.']" cols="'.$cols.'" rows="'.$rows.'" id="'.$id.'" '.inputattrs($op,$textarea_attrs).'>'.$value.'</textarea>';
+				return '<textarea name="data['.$name.']" cols="'.$cols.'" rows="'.$rows.'" id="'.$id.'" '.Shopp::inputattrs($op,$textarea_attrs).'>'.$value.'</textarea>';
 				break;
 			case "menu":
 				$menuvalues = true;
@@ -1275,10 +1275,10 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 					$menuvalues = false;
 					$options = explode(',',$options);
 				}
-				return '<select name="data['.$name.']" id="'.$id.'" '.inputattrs($op,$select_attrs).'>'.menuoptions($options,$value,$menuvalues).'</select>';
+				return '<select name="data['.$name.']" id="'.$id.'" '.Shopp::inputattrs($op,$select_attrs).'>'.Shopp::menuoptions($options,$value,$menuvalues).'</select>';
 				break;
 			default:
-				return '<input type="'.$type.'" name="data['.$name.']" id="'.$id.'" '.inputattrs($op).' />';
+				return '<input type="'.$type.'" name="data['.$name.']" id="'.$id.'" '.Shopp::inputattrs($op).' />';
 				break;
 		}
 	}
@@ -1523,7 +1523,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$_ = array();
 		$_[] = '<label for="residential-shipping">';
 		$_[] = '<input type="hidden" name="shipping[residential]" value="no" />';
-		$_[] = '<input type="checkbox" name="shipping[residential]" value="yes" id="residential-shipping"' . inputattrs($options, $allowed) . ' />';
+		$_[] = '<input type="checkbox" name="shipping[residential]" value="yes" id="residential-shipping"' . Shopp::inputattrs($options, $allowed) . ' />';
 		$_[] = "&nbsp;$label</label>";
 
 		return join('', $_);
@@ -1592,7 +1592,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		if ($options['mode'] == "value") return $O->Shipping->name;
 		if (!empty($O->Shipping->name))
 			$options['value'] = $O->Shipping->name;
-		return '<input type="text" name="shipping[name]" id="shipping-name" '.inputattrs($options).' />';
+		return '<input type="text" name="shipping[name]" id="shipping-name" '.Shopp::inputattrs($options).' />';
 	}
 
 	/**
@@ -1624,7 +1624,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		$wrapclass = '';
 		if ( isset($options['wrapclass']) ) $wrapclass = ' ' . $options['wrapclass'];
 
-		$buttons = array('<input type="submit" name="process" id="checkout-button" ' . inputattrs($options, $submit_attrs) . ' />');
+		$buttons = array('<input type="submit" name="process" id="checkout-button" ' . Shopp::inputattrs($options, $submit_attrs) . ' />');
 
 		if ( ! $O->Cart->orderisfree() )
 			$buttons = apply_filters('shopp_checkout_submit_button', $buttons, $options, $submit_attrs);

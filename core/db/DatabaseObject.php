@@ -507,7 +507,7 @@ abstract class ShoppDatabaseObject implements Iterator {
 	 * @return mixed
 	 **/
 	public function tag ( $property, array $options = array() ) {
-		$options = array_merge( array('return' => true), shopp_parse_options($options) );
+		$options = array_merge( array('return' => true), Shopp::parse_options($options) );
 		return shopp($this, $property, $options);
 	}
 

@@ -29,7 +29,6 @@ class ShoppScreenPresentation extends ShoppSettingsScreenController {
 		$this->theme_path = sanitize_path(STYLESHEETPATH . '/shopp');
 
 		add_action('shopp_admin_settings_ops', array($this, 'updates') );
-		add_action('shopp_admin_settings_ops', array($this, 'install_templates') );
 	}
 
 	/**
@@ -39,17 +38,12 @@ class ShoppScreenPresentation extends ShoppSettingsScreenController {
 	 * @return void
 	 **/
 	public function updates() {
+		$form = $this->form();
 
-		$builtin_path = SHOPP_PATH . '/templates';
-		$theme_path = sanitize_path(STYLESHEETPATH . '/shopp');
-
-		if ( Shopp::str_true($this->form('theme_templates')) && ! is_dir($theme_path) ) {
+		if ( Shopp::str_true($this->form('theme_templates')) && ! is_dir($this->theme_path) ) {
 			$this->form['theme_templates'] = 'off';
 			$this->notice(Shopp::__("Shopp theme templates can't be used because they don't exist."), 'error');
 		}
-
-		if ( ! $this->form('catalog_pagination') )
-			$this->form['catalog_pagination'] = 0;
 
 		// Recount terms when this setting changes
 		if ( $this->form('outofstock_catalog') != shopp_setting('outofstock_catalog') ) {
@@ -60,18 +54,9 @@ class ShoppScreenPresentation extends ShoppSettingsScreenController {
 		}
 
 		shopp_set_formsettings();
-		$this->notice(Shopp::__('Presentation settings saved.'), 'notice', 20);
-	}
 
-	/**
-	 * Handle installing Shopp theme template files into the current theme
-	 *
-	 * @since 1.3
-	 * @return void
-	 **/
-	public function install_templates() {
-		if ( empty($_POST['install']) ) return;
-		copy_shopp_templates($this->template_path, $this->theme_path);
+		if ( ! empty($form) )
+			$this->notice(Shopp::__('Presentation settings saved.'), 'notice', 20);
 	}
 
 	/**
@@ -81,19 +66,11 @@ class ShoppScreenPresentation extends ShoppSettingsScreenController {
 	 * @return void
 	 **/
 	public function screen() {
+		$install = filter_input(INPUT_POST, 'install', FILTER_SANITIZE_STRING);
 
-		$status = 'available';
-		if ( ! is_dir($this->theme_path) ) $status = 'directory';
-		else {
-			if ( ! is_writable($this->theme_path) ) $status = 'permissions';
-			else {
-				$builtin = array_filter(scandir($this->template_path), 'filter_dotfiles');
-				$theme = array_filter(scandir($this->theme_path), 'filter_dotfiles');
-
-				if ( empty($theme) ) $status = 'ready';
-				elseif ( array_diff($builtin, $theme) ) $status = 'incomplete';
-			}
-		}
+		$status = $this->template_ready();
+		if ( $install )
+			$status = $this->install_templates();
 
 		$category_views = array('grid' => Shopp::__('Grid'), 'list' => Shopp::__('List'));
 		$row_products = array(2, 3, 4, 5, 6, 7);
@@ -109,7 +86,76 @@ class ShoppScreenPresentation extends ShoppSettingsScreenController {
 						 'created'   => Shopp::__('Upload date'));
 
 		include $this->ui('presentation.php');
+	}
+
+	/**
+	 * Installs Shopp theme template files into the currently active theme
+	 *
+	 * @since 1.3
+	 * @version 1.5
+	 * @return string Status label
+	 **/
+	protected function install_templates() {
+		$install = filter_input(INPUT_POST, 'install', FILTER_SANITIZE_STRING);
+		if ( ! $install )
+			return false;
+
+		$filesystem = Shopp::filesystem($this->url(), array('install'));
+		if ( ! $filesystem )
+			return false;
+
+
+		$templates = array_keys($filesystem->dirlist($this->template_path, false));
+		foreach ( $templates as $file ) {
+			$source_file = "$this->template_path/$file";
+			$target_file = "$this->theme_path/$file";
+
+			if ( $filesystem->exists($target_file) )
+				continue;
+
+			$template = $filesystem->get_contents($source_file);
+			$template = preg_replace('/^<\?php\s\/\*\*\s+(.*?\s)*?\*\*\/\s\?>\s/', '', $template);
+			$filesystem->put_contents($target_file, $template);
+		}
+
+		return 'available';
 
 	}
 
+	/**
+	 * Checks how template-ready the active theme is
+	 *
+	 * The status strings returned match messaging to prompt the user on
+	 * what they can do to make their theme template-ready.
+	 *
+	 * @since 1.5
+	 * @return string The status of template readiness
+	 **/
+	protected function template_ready() {
+		$filesystem = Shopp::filesystem($this->url(), array('install'));
+		if ( ! $filesystem )
+			return 'filesystem';
+
+		if ( ! $filesystem->is_writable(STYLESHEETPATH) )
+			return 'directory';
+
+		// Check for Shopp directory in theme and try to create it
+		if ( ! $filesystem->exists($this->theme_path) )
+			$filesystem->mkdir($this->theme_path);
+
+		if ( ! $filesystem->is_dir($this->theme_path) )
+			return 'directory';
+
+		if ( ! $filesystem->is_writable($this->theme_path) )
+			return 'permissions';
+
+		$builtin = array_keys($filesystem->dirlist($this->template_path));
+		$theme = array_keys($filesystem->dirlist($this->theme_path));
+
+		if ( empty($theme) )
+			return 'ready';
+
+		if ( array_diff($builtin, $theme) )
+			return 'incomplete';
+	}
 }

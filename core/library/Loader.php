@@ -481,8 +481,16 @@ ShoppLoader::map(array(
 	'shoppcheckoutpage' => '/flow/Pages.php',
 	'shoppcollectionpage' => '/flow/Pages.php',
 	'shoppconfirmpage' => '/flow/Pages.php',
+
+	/* Shopp Core Library */
 	'shoppcore' => '/library/Core.php',
+	'shoppcoreformatting' => '/library/CoreFormatting.php',
+	'shoppcorelocalization' => '/library/CoreLocalization.php',
+	'shoppcoretemplates' => '/library/CoreTemplates.php',
+	'shoppcoretools' => '/library/CoreTools.php',
+	'shoppcoreurltools' => '/library/CoreURLTools.php',
 	'shoppcore_upgrader' => '/flow/Install.php',
+
 	'shoppcurrency' => '/model/Currency.php',
 	'shoppcustomer' => '/model/Customer.php',
 	// 'shoppdatabaseobject' => '/db/DB.php',
@@ -519,11 +527,15 @@ ShoppLoader::map(array(
 	'shopporder' => '/flow/Order.php',
 	'shopporderdiscount' => '/model/Discounts.php',
 	'shopporderpromo' => '/model/Discounts.php',
+
 	'shopppage' => '/flow/Pages.php',
 	'shopppages' => '/flow/Pages.php',
+	'shopppageurl' => '/library/PageURL.php',
+
 	'shopppartialupload' => '/library/PartialUpload.php',
 	'shopppaymentoption' => '/model/Payments.php',
 	'shopppayments' => '/model/Payments.php',
+	'shopppluginsupported' => '/library/PluginSupported.php',
 	'shoppprice' => '/model/Price.php',
 	'shoppproduct' => '/model/Product.php',
 	'shoppproductpage' => '/flow/Pages.php',
@@ -662,6 +674,7 @@ ShoppLoader::map(array(
 	'shoppsupport' => '/library/Support.php',
 	'shopptagcloudwidget' => '/ui/widgets/tagcloud.php',
 	'shopptax' => '/model/Tax.php',
+	'shopptaxitemrates' => '/model/TaxItemRates.php',
 	'shopptaxableitem' => '/model/Tax.php',
 	'shoppthankspage' => '/flow/Pages.php',
 	'shopptmceloader' => '/ui/behaviors/tinymce/dialog.php',

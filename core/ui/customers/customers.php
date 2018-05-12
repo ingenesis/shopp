@@ -71,7 +71,7 @@
 				$location .= $Customer->country;
 				echo esc_html($location);
 				 ?></td>
-			<td class="customer-orders column-customer-orders<?php echo in_array('customer-orders',$hidden)?' hidden':''; ?>"><a href="<?php echo esc_url( add_query_arg(array('page'=>'shopp-orders','customer'=>$Customer->id),admin_url('admin.php'))); ?>"><?php echo $Customer->orders; ?> &mdash; <?php echo money($Customer->total); ?></a></td>
+			<td class="customer-orders column-customer-orders<?php echo in_array('customer-orders',$hidden)?' hidden':''; ?>"><a href="<?php echo esc_url( add_query_arg(array('page'=>'shopp-orders','customer'=>$Customer->id),admin_url('admin.php'))); ?>"><?php echo $Customer->orders; ?> &mdash; <?php echo Shopp::money($Customer->total); ?></a></td>
 			<td class="customer-joined column-customer-joined<?php echo in_array('customer-joined',$hidden)?' hidden':''; ?>"><?php echo date("Y/m/d",mktimestamp($Customer->created)); ?></td>
 		</tr>
 		<?php endforeach; ?>
@@ -100,7 +100,7 @@
 				</ul>
 			</div><br />
 			<select name="settings[customerexport_format]">
-				<?php echo menuoptions($exports,$formatPref,true); ?>
+				<?php echo Shopp::menuoptions($exports,$formatPref,true); ?>
 			</select></div>
 			<button type="submit" id="download-button" name="download" value="export" class="button-secondary"><?php _e('Download','Shopp'); ?></button>
 			</form>

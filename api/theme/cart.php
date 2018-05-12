@@ -140,7 +140,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		extract($options);
 
 		if ( Shopp::str_true($number) ) return $result;
-		if ( Shopp::str_true($money)  ) $result = money( roundprice($result) );
+		if ( Shopp::str_true($money)  ) $result = Shopp::money( Shopp::roundprice($result) );
 		if ( Shopp::str_true($wrap)   ) return '<span class="shopp-cart cart-' . strtolower($property) . '">' . $result . '</span>';
 
 		return $result;
@@ -192,7 +192,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		}
 
 		$result .= '<span><input type="text" id="discount-code" name="discount" value="" size="10" /></span>';
-		$result .= '<span><input type="submit" id="apply-code" name="update" ' . inputattrs($options, $submit_attrs) . ' /></span>';
+		$result .= '<span><input type="submit" id="apply-code" name="update" ' . Shopp::inputattrs($options, $submit_attrs) . ' /></span>';
 		$result .= '</div>';
 		return $result;
 	}
@@ -240,7 +240,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		}
 
 		$result .= '<span><input type="text" id="giftcard" name="credit" value="" size="20" /></span>';
-		$result .= '<span><input type="submit" id="apply-giftcard" name="giftcard" ' . inputattrs($options, $submit_attrs) . ' /></span>';
+		$result .= '<span><input type="submit" id="apply-giftcard" name="giftcard" ' . Shopp::inputattrs($options, $submit_attrs) . ' /></span>';
 		$result .= '</div>';
 		return $result;
 	}
@@ -304,8 +304,8 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		switch ( $Discount->type() ) {
 			case ShoppOrderDiscount::SHIP_FREE:		$string .= Shopp::esc_html__( 'Free Shipping!' ); break;
 			case ShoppOrderDiscount::PERCENT_OFF:	$string .= sprintf(esc_html($label), percentage((float)$Discount->discount(), array('precision' => 0))); break;
-			case ShoppOrderDiscount::AMOUNT_OFF:	$string .= sprintf(esc_html($label), money($Discount->discount())); break;
-			case ShoppOrderDiscount::CREDIT:		$string .= sprintf(esc_html($creditlabel), money($Discount->amount())); break;
+			case ShoppOrderDiscount::AMOUNT_OFF:	$string .= sprintf(esc_html($label), Shopp::money($Discount->discount())); break;
+			case ShoppOrderDiscount::CREDIT:		$string .= sprintf(esc_html($creditlabel), Shopp::money($Discount->amount())); break;
 			case ShoppOrderDiscount::BOGOF:			list($buy, $get) = $Discount->discount(); $string .= ucfirst(strtolower(Shopp::esc_html__('Buy %s Get %s Free', $buy, $get))); break;
 		}
 
@@ -481,7 +481,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 
 		if ( false !== strpos($options['class'], 'empty-button') ) $options['class'] .= ' empty-button';
 
-		return '<input type="submit" name="empty" id="empty-button" ' . inputattrs($options, $submit_attrs) . ' />';
+		return '<input type="submit" name="empty" id="empty-button" ' . Shopp::inputattrs($options, $submit_attrs) . ' />';
 	}
 
 	/**
@@ -843,7 +843,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		if ( count($markets) > 1 ) {
 			$_ .= '<span>';
 			$_ .= '<select name="shipping[country]" id="shipping-country">';
-			$_ .= menuoptions($markets, $selected, true);
+			$_ .= Shopp::menuoptions($markets, $selected, true);
 			$_ .= '</select>';
 			$_ .= '</span>';
 		} else {
@@ -851,7 +851,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		}
 		if ( $postcode ) {
 			$_ .= '<span>';
-			$_ .= '<input type="text" name="shipping[postcode]" id="shipping-postcode" size="6" value="' . $Shipping->postcode . '"' . inputattrs($options) . ' />&nbsp;';
+			$_ .= '<input type="text" name="shipping[postcode]" id="shipping-postcode" size="6" value="' . $Shipping->postcode . '"' . Shopp::inputattrs($options) . ' />&nbsp;';
 			$_ .= '</span>';
 			$_ .= shopp('cart','get-update-button', array('value' => $label));
 		}
@@ -878,7 +878,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 		if ( ! shopp_setting_enabled('shopping_cart') ) return '';
 
 		ob_start();
-		locate_shopp_template(array('sidecart.php'), true);
+		Shopp::locate_template(array('sidecart.php'), true);
 		return ob_get_clean();
 
 	}
@@ -1051,7 +1051,7 @@ class ShoppCartThemeAPI implements ShoppAPI {
 
 		if ( false !== strpos($options['class'], 'update-button') ) $options['class'] .= ' update-button';
 
-		return '<input type="submit" name="update"' . inputattrs($options, $submit_attrs) . ' />';
+		return '<input type="submit" name="update"' . Shopp::inputattrs($options, $submit_attrs) . ' />';
 	}
 
 	/**

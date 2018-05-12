@@ -39,7 +39,7 @@
 				<th scope="row" valign="top"><label for="promo-limit"><?php _e('Discount Limit','Shopp'); ?></label></th>
 				<td><select name="settings[promo_limit]" id="promo-limit">
 					<option value="">&infin;</option>
-					<?php echo menuoptions($promolimit,shopp_setting('promo_limit')); ?>
+					<?php echo Shopp::menuoptions($promolimit,shopp_setting('promo_limit')); ?>
 					</select>
 					<label> <?php _e('per order','Shopp'); ?></label>
 				</td>

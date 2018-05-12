@@ -137,13 +137,13 @@ class ShoppScreenShipping extends ShoppSettingsScreenController {
 					array('oz' => Shopp::__('ounces (oz)'), 'lb' => Shopp::__('pounds (lbs)')) :
 					array('g'  => Shopp::__('gram (g)'),    'kg' => Shopp::__('kilogram (kg)'));
 
-		$weightsmenu = menuoptions($weights, shopp_setting('weight_unit'), true);
+		$weightsmenu = Shopp::menuoptions($weights, shopp_setting('weight_unit'), true);
 
 		$dimensions = $imperial ?
 				 		array('in' => Shopp::__('inches (in)'),      'ft' => Shopp::__('feet (ft)')) :
 						array('cm' => Shopp::__('centimeters (cm)'), 'm'  => Shopp::__('meters (m)'));
 
-		$dimsmenu = menuoptions($dimensions, shopp_setting('dimension_unit'), true);
+		$dimsmenu = Shopp::menuoptions($dimensions, shopp_setting('dimension_unit'), true);
 
 		$rates = shopp_setting('shipping_rates');
 		if (!empty($rates)) ksort($rates);

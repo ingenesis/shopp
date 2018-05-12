@@ -133,7 +133,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 			return $result; // Pass thru percentage rendering
 
 		if ( Shopp::str_true($number) ) return $result;
-		if ( Shopp::str_true($money)  ) $result = money( roundprice($result) );
+		if ( Shopp::str_true($money)  ) $result = Shopp::money( Shopp::roundprice($result) );
 
 		return $result;
 
@@ -495,7 +495,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 		} elseif ( isset($options['input']) && Shopp::valid_input($options['input']) ) {
 			if ( ! isset($options['size']) ) $options['size'] = 5;
 			if ( ! isset($options['value']) ) $options['value'] = $O->quantity;
-			$result = '<input type="' . $options['input'] . '" name="items[' . $O->_id . '][quantity]" id="items-' . $O->_id . '-quantity" ' . inputattrs($options) . '/>';
+			$result = '<input type="' . $options['input'] . '" name="items[' . $O->_id . '][quantity]" id="items-' . $O->_id . '-quantity" ' . Shopp::inputattrs($options) . '/>';
 		} else $result = $O->quantity;
 		return $result;
 	}
@@ -677,7 +677,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 					if ( $field === 'saleprice' ) $field = 'promoprice';
 					if ( isset($addon->$field) ) {
 						$_[] = ( isset($options['currency']) && Shopp::str_true($options['currency']) ) ?
-							 money($addon->$field) : $addon->$field;
+							 Shopp::money($addon->$field) : $addon->$field;
 					}
 					break;
 				default:
@@ -750,7 +750,7 @@ class ShoppCartItemThemeAPI implements ShoppAPI {
 				$price = $price + ( $price * $O->taxrate );
 
 			if ( $prices )
-				$pricing = " (" . ( $addon->price < 0 ? '-' : '+' ) . money($price) . ')';
+				$pricing = " (" . ( $addon->price < 0 ? '-' : '+' ) . Shopp::money($price) . ')';
 
 			$result .= '<li>' . $menu . $addon->label . $pricing . '</li>';
 		}

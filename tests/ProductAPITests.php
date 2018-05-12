@@ -135,7 +135,7 @@ class ProductAPITests extends ShoppTestCase {
 	function test_product_url () {
         // $this->markTestSkipped('The '.__CLASS__.' unit tests have not been re-implemented.');
 		$output = shopp('product.get-url');
-		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '?shopp_product=command-uniform', $output);
+		$this->assertEquals('http://' . WP_TESTS_DOMAIN . '/?shopp_product=command-uniform', $output);
 	}
 
 	function test_product_description () {
@@ -233,7 +233,7 @@ class ProductAPITests extends ShoppTestCase {
 		$imageid = self::$image;
 		$expected = array(
 			'tag' => 'img',
-			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '?siid=' . $imageid . '&' . self::imgrequesthash( $imageid, array(96,96) ), 'alt' => 'original', 'width' => '95', 'height' => '96')
+			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '/?siid=' . $imageid . '&' . self::imgrequesthash( $imageid, array(96,96) ), 'alt' => 'original', 'width' => '95', 'height' => '96')
 		);
 		$this->assertTag($expected,$actual,$actual,true);
 		$this->assertValidMarkup($actual);
@@ -327,7 +327,7 @@ class ProductAPITests extends ShoppTestCase {
 		$imageid = self::$image;
 		$expected = array(
 			'tag' => 'img',
-			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '?siid=' . $imageid . '&' . self::imgrequesthash( $imageid, array(96,96) ), 'alt' => 'original', 'width' => '95', 'height' => '96')
+			'attributes' => array('src' => 'http://' . WP_TESTS_DOMAIN . '/?siid=' . $imageid . '&' . self::imgrequesthash( $imageid, array(96,96) ), 'alt' => 'original', 'width' => '95', 'height' => '96')
 		);
 		$this->assertTag($expected,$actual,$actual,true);
 		$this->assertValidMarkup($actual);
@@ -446,11 +446,11 @@ class ProductAPITests extends ShoppTestCase {
 			$this->assertEquals($Price->label, shopp('product.get-variation','label'));
 			$this->assertEquals($Price->type, shopp('product.get-variation','type'));
 			$this->assertEquals($Price->sku, shopp('product.get-variation','sku'));
-			$this->assertEquals(money($Price->price), shopp('product.get-variation','price'));
-			$this->assertEquals(money($Price->saleprice), shopp('product.get-variation','saleprice'));
+			$this->assertEquals(Shopp::money($Price->price), shopp('product.get-variation','price'));
+			$this->assertEquals(Shopp::money($Price->saleprice), shopp('product.get-variation','saleprice'));
 			$this->assertEquals($Price->stock, shopp('product.get-variation','stock'));
 			$this->assertEquals(floatval($Price->dimensions['weight']), shopp('product.get-variation','weight'));
-			$this->assertEquals(money($Price->shipfee), shopp('product.get-variation','shipfee'));
+			$this->assertEquals(Shopp::money($Price->shipfee), shopp('product.get-variation','shipfee'));
 			$this->assertEquals(str_true($Price->sale), shopp('product.get-variation','sale'));
 			$this->assertEquals(str_true($Price->shipping), shopp('product.get-variation','shipping'));
 			$this->assertEquals(str_true($Price->tax), shopp('product.get-variation','tax'));

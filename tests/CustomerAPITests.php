@@ -88,6 +88,7 @@ class CustomerAPITests extends ShoppTestCase {
 		shopp_set_setting('account_system', 'none');
 		$Customer = shopp_customer('mccoy@starfleet.gov','email');
 		wp_delete_user( $Customer->wpuser );
+		$Customer->delete();
 	}
 
 	function test_customer_accounturl () {

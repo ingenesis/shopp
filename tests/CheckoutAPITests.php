@@ -10,6 +10,9 @@
 class CheckoutAPITests extends ShoppTestCase {
 
 	static function setUpBeforeClass () {
+
+		shopp_set_setting('target_markets', array('US' => 'USA','UK' => 'United Kingdom'));
+
 		$Shopp = Shopp::object();
 		$Shopp->Flow->controller('ShoppStorefront');
 
@@ -47,6 +50,11 @@ class CheckoutAPITests extends ShoppTestCase {
 		$Product = shopp_add_product($args);
 		shopp_add_cart_product($Product->id, 1);
 
+	}
+
+	static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		shopp_rmv_setting('target_markets');
 	}
 
 	public function test_checkout_url () {
@@ -551,4 +559,4 @@ class CheckoutAPITests extends ShoppTestCase {
 
 	}
 
-} // end CheckoutAPITests class
+}

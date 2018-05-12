@@ -157,7 +157,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
 
 		echo  '		<br />'
 			. '		<select name="settings[purchaselog_format]" id="purchaselog-format">'
-			. '			' . menuoptions($exports, $format, true)
+			. '			' . Shopp::menuoptions($exports, $format, true)
 			. '		</select>'
 			. '		</div>'
 
@@ -343,7 +343,7 @@ class ShoppScreenOrdersTable extends ShoppAdminTable {
      * @return string The total column with the transaction status
      **/
 	public function column_total( $Item ) {
-		return money($Item->total);
+		return Shopp::money($Item->total);
 
 		$status = $Item->txnstatus;
 		if ( isset($this->txnstatuses[ $Item->txnstatus ]) )

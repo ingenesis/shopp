@@ -16,6 +16,9 @@ class CoreTests extends ShoppTestCase {
 
 
 	public static function setUpBeforeClass() {
+		shopp_set_setting('weight_unit', 'lb');
+		shopp_set_setting('dimension_unit', 'ft');
+
 		self::create_tpl_dir();
 		self::create_test_product();
 	}
@@ -103,6 +106,9 @@ class CoreTests extends ShoppTestCase {
 	}
 
 	static function tearDownAfterClass () {
+		shopp_set_setting('weight_unit', '');
+		shopp_set_setting('dimension_unit', '');
+
 		$Product = shopp_product('shopp-branded-plain-white-tee', 'slug');
 		shopp_rmv_product($Product->id);
 	}
@@ -111,23 +117,6 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue(defined('SHOPP_UNSUPPORTED'));
 	}
 
-	public function test_translate() {
-		$this->setup_translation_filters();
-
-		$translation = Shopp::translate('Some of the colonists objected to having an anatomically correct android running around without any clothes on');
-		$this->assertTrue($translation === self::TRANSLATED);
-		$this->assertTrue($this->domain === 'Shopp');
-		$this->assertEmpty($this->context);
-
-		$translation = Shopp::translate("Who knows if we're even dead or alive?", "Geordi La Forge's philosophy");
-		$this->assertTrue($translation === self::TRANSLATED);
-		$this->assertTrue($this->context === "Geordi La Forge's philosophy");
-		$this->assertTrue($this->domain === 'Shopp');
-	}
-
-	/**
-	 * @depends test_translate
-	 */
 	public function test___() {
 		$string = 'It is the woman from Ceres. She was taken prisoner by the Martians during their last invasion of that world, and since then has been a slave in the palace of the Emperor.';
 		$this->assertTrue( (Shopp::__($string) === $string) );
@@ -281,15 +270,40 @@ class CoreTests extends ShoppTestCase {
 		return self::TRANSLATED;
 	}
 
-	/**
-	 * @todo add additional tests to ensure correct output, discuss with jond
-	 */
 	public function test_auto_ranges() {
-		$set_of_4 = Shopp::auto_ranges(150, 5000, 100, 4);
-		$set_of_7 = Shopp::auto_ranges(150, 5000, 100, 20); // Though we're requesting 20 steps it should cap this at 7
 
-		$this->assertCount( 4, $set_of_4 );
-		$this->assertCount( 7, $set_of_7 );
+		// Normal baseline of values
+		$this->assertEquals(array(
+			array('min' => 0, 'max' => 100),
+			array('min' => 100, 'max' => 200),
+			array('min' => 200, 'max' => 300),
+			array('min' => 300, 'max' => 0)
+		), Shopp::auto_ranges(150, 5000, 100, 4));
+
+		// Request 1 set of ranges, but we expect 7 because
+		// it doesn't make sense to have a menu of only 1 range
+		// Minimum it should offer 2 ranges of values
+		$this->assertEquals(array(
+			array('min' => 0, 'max' => 150),
+			array('min' => 150, 'max' => 200),
+			array('min' => 200, 'max' => 250),
+			array('min' => 250, 'max' => 300),
+			array('min' => 300, 'max' => 350),
+			array('min' => 350, 'max' => 400),
+			array('min' => 400, 'max' => 0)
+		), Shopp::auto_ranges(300, 5000, 100, 1));
+
+		// Request a set of 20 ranges, but we expect 7 because
+		// past 7 and it becomes too many choices
+		$this->assertEquals(array(
+			array('min' => 0, 'max' => 100),
+			array('min' => 100, 'max' => 200),
+			array('min' => 200, 'max' => 300),
+			array('min' => 300, 'max' => 400),
+			array('min' => 400, 'max' => 500),
+			array('min' => 500, 'max' => 600),
+			array('min' => 600, 'max' => 0),
+		), Shopp::auto_ranges(150, 5000, 100, 20));
 	}
 
 	public function test_object_r() {
@@ -342,73 +356,10 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue( 5 == Shopp::convert_unit(12.7, 'in', 'cm') );
 		$this->assertTrue( 99.208 < Shopp::convert_unit(45, 'lb', 'kg') );
 		$this->assertTrue( 99.209 > Shopp::convert_unit(45, 'lb', 'kg') );
-		$this->assertTrue( 0 == Shopp::convert_unit(400, 'lb', 'splargons'));
+		$this->assertTrue( 400 == Shopp::convert_unit(400, 'lb', 'splargons'));
+		$this->assertTrue( 0 == Shopp::convert_unit(400, 'splargons', 'lb'));
 	}
 
-	public function test_copy_templates() {
-		// Can we perform this test?
-		if ( ! self::$template_dir_ready || ! is_writeable( self::$template_dir ) )
-			$this->markTestSkipped('The template directory must be empty and writeable.');
-
-		// Yes? Do it!
-		$source = trailingslashit(SHOPP_PATH) . 'templates';
-		$target = self::$template_dir;
-		Shopp::copy_templates($source, $target);
-
-		// Done? Test it!
-		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(self::$template_dir));
-		$list = array();
-
-		foreach ($files as $file) {
-			if ( ! $file->isFile() ) continue;
-			$list[] = $file->getFilename();
-		}
-
-		$expected = array(
-			'account.php',
-			'account-downloads.php',
-			'account-orders.php',
-			'account-profile.php',
-			'cart.php',
-			'catalog.php',
-			'category.php',
-			'checkout.php',
-			'confirm.php',
-			'email.css',
-			'email.php',
-			'email-order.php',
-			'email-shipped.php',
-			'errors.php',
-			'login.php',
-			'login-recover.php',
-			'product.php',
-			'receipt.php',
-			'shopp.css',
-			'sidecart.php',
-			'sideproduct.php',
-			'summary.php',
-			'thanks.php'
-		);
-
-		foreach ($expected as $tpl_override) {
-			// Check that the expected templates made it across
-			$this->assertContains($tpl_override, $list);
-
-			// Check that the file header doc was stripped
-			$sample = file_get_contents( trailingslashit(self::$template_dir) . $tpl_override);
-			$header_stripped = ( 0 === preg_match('/^<\?php\s\/\*\*\s+(.*?\s)*?\*\*\/\s\?>\s/', $sample) );
-			$this->assertTrue($header_stripped);
-		}
-	}
-
-	/**
-	 * Seems ini_sets for suhosin properties will not work on all runtimes, therefore we can't really simulate failure
-	 * since we can't guarantee Suhosin being available in all test environments.
-	 */
-	public function test_suhosin_warning() {
-		$is_bool = is_bool(Shopp::suhosin_warning());
-		$this->assertTrue($is_bool);
-	}
 
 	public function test_crc16() {
 		$tests = array(
@@ -484,14 +435,32 @@ class CoreTests extends ShoppTestCase {
 
 		$mayan_apocalypse = Shopp::datecalc(3, 5, 12, 2012);
 		$this->assertTrue('2012-12-21' === date('Y-m-d', $mayan_apocalypse));
+
+		$lastsundayindecember2020 = Shopp::datecalc(-1, 'sun', 12, 2020);
+		$this->assertTrue('2020-12-27' === date('Y-m-d', $lastsundayindecember2020));
 	}
 
 	public function test_date_format_order() {
 		$this->force_uk_date_style();
 		$format = Shopp::date_format_order();
-		$expected = array_flip( array('day', 'month', 'year', 's0', 's1', 's2') );
-		$present = array_intersect_key($expected, $format);
-		$this->assertCount(6, $present);
+		$this->assertEquals(array(
+			'day' => 'j',
+			's0' => 'S',
+			's1' => ' ',
+			'month' => 'F',
+			's2' => ' ',
+			'year' => 'Y'
+		), $format);
+
+		$this->force_partial_date_style();
+		$format = Shopp::date_format_order(array('month', 'day', 'year'));
+		$this->assertEquals(array(
+			'day' => 'j',
+			's0' => 'S',
+			's1' => ' ',
+			'month' => 'F',
+			'year' => 'Y'
+		), $format);
 	}
 
 	public function test_debug_caller() {
@@ -526,6 +495,15 @@ class CoreTests extends ShoppTestCase {
 		return 'jS F Y';
 	}
 
+	protected function force_partial_date_style() {
+		add_filter('pre_option_date_format', array($this, 'use_partial_date_style') );
+	}
+
+	public function use_partial_date_style() {
+		remove_filter('pre_option_date_format', array($this, 'use_partial_date_style') );
+		return 'jS F';
+	}
+
 	public function test_duration() {
 		$begin = mktime(0, 0, 0, 1, 25, 1759); // Birth of Rabby Burns
 
@@ -541,37 +519,6 @@ class CoreTests extends ShoppTestCase {
 
 		foreach ($target['nested'] as $checkval)
 			$this->assertTrue(1 < strpos($checkval, '&gt;'));
-	}
-
-	/**
-	 * Shopp::filter_dotfiles operates as a callback, so matches should return false and vice versa.
-	 */
-	public function test_filter_dotfiles() {
-		foreach ( array('.', '.htaccess') as $match ) $this->assertFalse(Shopp::filter_dotfiles($match));
-		$this->assertTrue(Shopp::filter_dotfiles('image.png'));
-	}
-
-	public function test_findfile () {
-		$files = array();
-
-		// There is at least one of these
-		$result = Shopp::findfile('ball.png', SHOPP_PATH);
-		$this->assertTrue($result);
-
-		// We can expect at least 4 of these (Shopp 1.3)
-		$result = Shopp::findfile('product.php', SHOPP_PATH, $files);
-		$this->assertTrue($result);
-		$this->assertGreaterThanOrEqual(4, count($files));
-
-		// We may wish it to operate efficiently and stop at the first match
-		$files = array();
-		$result = Shopp::findfile('admin.php', ABSPATH, $files, false);
-		$this->assertTrue($result);
-		$this->assertCount(1, $files);
-
-		// It should fail gracefully even when given ridiculous params
-		$result = Shopp::findfile('@*Nyota Uhura', '/unworkable/~path');
-		$this->assertFalse($result);
 	}
 
 	/**
@@ -591,12 +538,6 @@ class CoreTests extends ShoppTestCase {
 	public function test_force_ssl() {
 		$url = Shopp::force_ssl('http://shopplugin.net', true);
 		$this->assertStringMatchesFormat('https://%A', $url);
-	}
-
-	public function test_gateway_path() {
-		$path = '/var/public_html/wp-content/plugins/shopp/gateways/2Checkout/2Checkout.php';
-		$expected = '2Checkout/2Checkout.php';
-		$this->assertTrue($expected === Shopp::gateway_path($path));
 	}
 
 	public function test_ini_size() {
@@ -652,7 +593,7 @@ class CoreTests extends ShoppTestCase {
 	public function test_mktimestamp() {
 		$stamp = mktime(0, 0, 0, 4, 5, 2063);
 		$mysql = date('Y-m-d H:i:s', $stamp);
-		$this->assertTrue($stamp === Shopp::mktimestamp($mysql));
+		$this->assertTrue($stamp === sDB::mktime($mysql));
 	}
 
 	public function test_mkdatetime() {
@@ -761,53 +702,17 @@ class CoreTests extends ShoppTestCase {
 		$this->assertTrue(!empty($encrypted));
 	}
 
-	public function test_set_wp_query_var() {
-		global $wp, $wp_query;
-		Shopp::set_wp_query_var('custom_property', 'Shiney new space boots');
-
-		$in_wp = (isset($wp->query_vars['custom_property']) and 'Shiney new space boots' === $wp->query_vars['custom_property']);
-		$in_wp_query = (isset($wp_query->query_vars['custom_property']) and 'Shiney new space boots' === $wp_query->query_vars['custom_property']);
-
-		$this->assertTrue($in_wp);
-		$this->assertTrue($in_wp_query);
-	}
-
-	/**
-	 * @depends test_set_wp_query_var
-	 */
-	public function test_get_wp_query_var() {
-		Shopp::set_wp_query_var('warp_factor', '9');
-		$this->assertTrue('9' === Shopp::get_wp_query_var('warp_factor'));
-	}
-
 	public function test_daytimes() {
-		$this->assertEquals('3d', Shopp::daytimes('72h'));
-		$this->assertEquals('4d', Shopp::daytimes('2d', '48h'));
-		$this->assertEquals('8d', Shopp::daytimes('1w', '1d'));
-		$this->assertEquals('40d', Shopp::daytimes('1m', '1w', '3d'));
+		$this->assertEquals('3d', ShippingFramework::daytimes('72h'));
+		$this->assertEquals('4d', ShippingFramework::daytimes('2d', '48h'));
+		$this->assertEquals('8d', ShippingFramework::daytimes('1w', '1d'));
+		$this->assertEquals('40d', ShippingFramework::daytimes('1m', '1w', '3d'));
 	}
 
 	public function test_email() {
 		$valid_tpl_path = SHOPP_UNITTEST_DIR . '/data/email.php';
 		$mail_success = Shopp::email( $valid_tpl_path, array() );
 		$this->assertTrue(is_bool($mail_success));
-	}
-
-	public function test_rss() {
-		$data = array(
-			'link' => 'http://shopplugin.net/mars',
-			'title' => 'We are going to Mars',
-			'description' => 'Interesting news about our products.',
-			'rss_language' => 'en_CA',
-			'sitename' => 'Martian Shopping'
-		);
-		$rss = Shopp::rss($data);
-		$this->assertValidMarkup($rss);
-	}
-
-	public function test_pagename() {
-		$this->assertEquals('mars-admin-screen.php', Shopp::pagename('index.php/mars-admin-screen.php')); // IIS rewrites
-		$this->assertEquals('mars-admin-screen.php', Shopp::pagename('mars-admin-screen.php'));
 	}
 
 	public function test_parse_options() {
@@ -850,6 +755,11 @@ class CoreTests extends ShoppTestCase {
 		$url = Shopp::url();
 		$expected = 'http://' . WP_TESTS_DOMAIN . '/?shopp_page=shop';
 		$this->assertEquals($expected, $url);
+
+		$url = Shopp::url(123, 'images');
+		$expected = 'http://' . WP_TESTS_DOMAIN . '/?siid=123';
+		$this->assertEquals($expected, $url);
+
 	}
 
 	public function test_str_true() {
@@ -885,52 +795,4 @@ class CoreTests extends ShoppTestCase {
 		foreach ( $invalid_types as $input_type ) $this->assertFalse(Shopp::valid_input($input_type));
 	}
 
-	public function test_scan_money_format() {
-		$specs = array();
-		$formats = array(
-			'$#,###.##', // "Conventional"
-			'# ###,##', // Space as the thousands separator
-			'£#,###.###', // Precision of 3 decimal places
-			'#,###.## £', // Trailing currency symbol
-			'##,###.## Yatts', // Irregular groupings (ie, Indian format)
-			'#,###. Kibbles' // No decimals in use
-		);
-
-		foreach ( $formats as $format )
-			$specs[$format] = Shopp::scan_money_format($format);
-
-		// Check all is in order with our conventional Canada/US style format
-		$this->assertTrue($specs['$#,###.##']['cpos']);
-		$this->assertEquals('$', $specs['$#,###.##']['currency']);
-		$this->assertEquals('.', $specs['$#,###.##']['decimals']);
-		$this->assertEquals(',', $specs['$#,###.##']['thousands']);
-		$this->assertEquals(2, $specs['$#,###.##']['precision']);
-		$this->assertEquals(3, $specs['$#,###.##']['grouping'][0]);
-
-		// Symbol-less, space for thousands and comma for decimals
-		$this->assertFalse($specs['# ###,##']['cpos']);
-		$this->assertEquals('', $specs['# ###,##']['currency']);
-		$this->assertEquals(',', $specs['# ###,##']['decimals']);
-		$this->assertEquals(' ', $specs['# ###,##']['thousands']);
-
-		// Pounds sterling and decimal precision of 3
-		$this->assertTrue($specs['£#,###.###']['cpos']);
-		$this->assertEquals('£', $specs['£#,###.###']['currency']);
-		$this->assertEquals(3, $specs['£#,###.###']['precision']);
-
-		// Trailing currency symbols
-		$this->assertFalse($specs['#,###.## £']['cpos']);
-		$this->assertEquals('£', $specs['#,###.## £']['currency']);
-
-		// Irregular groupings and long currency symbols
-		$this->assertEquals('Yatts', $specs['##,###.## Yatts']['currency']);
-		$this->assertEquals(3, $specs['##,###.## Yatts']['grouping'][0]);
-		$this->assertEquals(2, $specs['##,###.## Yatts']['grouping'][1]);
-
-		// No decimals (ensure precision, groupings, thousands separator etc are not confused)
-		$this->assertEquals(',', $specs['#,###. Kibbles']['thousands'], json_encode($specs['#,###. Kibbles']));
-		$this->assertEquals(3, $specs['#,###. Kibbles']['grouping'][0]);
-		$this->assertEquals(0, $specs['#,###. Kibbles']['precision']);
-		$this->assertEquals('.', $specs['#,###. Kibbles']['decimals']);
-	}
 }

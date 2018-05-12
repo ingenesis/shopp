@@ -50,8 +50,8 @@ class ShippingReport extends ShoppReportFramework implements ShoppReport {
 
 	static function items ( $data ) { return intval($data->items); }
 
-	static function subtotal ( $data ) { return money($data->subtotal); }
+	static function subtotal ( $data ) { return Shopp::money($data->subtotal); }
 
-	static function shipping ( $data ) { return money($data->shipping); }
+	static function shipping ( $data ) { return Shopp::money($data->shipping); }
 
 }

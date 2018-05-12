@@ -108,7 +108,6 @@ class PrettyURLTests extends ShoppTestCase {
 
 	}
 
-
 	function test_cart_url () {
         // $this->markTestSkipped('Skipped.');
 		$actual = shopp('cart.get-url');
@@ -151,7 +150,7 @@ class PrettyURLTests extends ShoppTestCase {
 
 	function test_category_paginated_url () {
         // $this->markTestSkipped('Skipped.');
-
+		$default_catalog_pagination = shopp_setting('catalog_pagination');
 		shopp_set_setting('catalog_pagination',10);
 		shopp('storefront.category', 'slug=heavy-cruiser&load=true');
 		shopp('collection', 'load-products'); // Load the products
@@ -168,6 +167,7 @@ class PrettyURLTests extends ShoppTestCase {
 
 		$this->assertTag($markup, $actual, $actual, true);
 		$this->assertValidMarkup($actual);
+		shopp_set_setting('catalog_pagination', $default_catalog_pagination);
 	}
 
 	function test_category_feed_url () {

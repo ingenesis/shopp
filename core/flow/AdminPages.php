@@ -173,8 +173,8 @@ class ShoppAdminPages {
 		if ( Shopp::maintenance() ) $access = 'manage_options';
 
 		// Add main menus
-		$position = shopp_admin_add_menu(Shopp::__('Shopp'), 'orders', 40, false, 'shopp_orders', Shopp::clearpng());
-		shopp_admin_add_menu(Shopp::__('Catalog'), 'products', $position, false, 'shopp_products', Shopp::clearpng());
+		$position = shopp_admin_add_menu(Shopp::__('Shopp'), 'orders', 40, false, 'shopp_orders', SHOPP_CLEAR_PNG);
+		shopp_admin_add_menu(Shopp::__('Catalog'), 'products', $position, false, 'shopp_products', SHOPP_CLEAR_PNG);
 
 		// Add after the Shopp menus to avoid being purged by the duplicate separator check
 		$menu[ $position - 1 ] = array( '', 'read', 'separator-shopp', '', 'wp-menu-separator' );

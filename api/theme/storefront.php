@@ -482,7 +482,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			if ( isset(ShoppCollection()->$property) ) $id = ShoppCollection()->$property;
 			array_unshift($templates, 'category-' . $id . '.php', 'collection-' . $id . '.php');
 		}
-		locate_shopp_template($templates, true);
+		Shopp::locate_template($templates, true);
 		$content = ob_get_clean();
 
 		// Reset the current collection to previously requested collection or empty it
@@ -1010,7 +1010,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 					if ( 'sort' != $key ) $_[] = '<input type="hidden" name="' . $key . '" value="' . $value . '" />';
 			}
 			$_[] = '<select name="sort" class="shopp-orderby-menu ' . esc_attr($class) . '">';
-			$_[] = menuoptions($menuoptions,$default,true);
+			$_[] = Shopp::menuoptions($menuoptions,$default,true);
 			$_[] = '</select>';
 			$_[] = '</form>';
 		} else {
@@ -1086,7 +1086,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 		$templates = array_merge($idslugs, $templates);
 
 		ob_start();
-		locate_shopp_template($templates, true);
+		Shopp::locate_template($templates, true);
 		$content = ob_get_clean();
 
 		return $content;
@@ -1203,23 +1203,23 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 
 		switch ( $type ) {
 			case 'checkbox':
-				$input =  '<input type="checkbox" name="s_cs"' . inputattrs($options, $allowed) . ' />';
+				$input =  '<input type="checkbox" name="s_cs"' . Shopp::inputattrs($options, $allowed) . ' />';
 				break;
 			case 'radio':
-				$input =  '<input type="radio" name="s_cs"' . inputattrs($options, $allowed) . ' />';
+				$input =  '<input type="radio" name="s_cs"' . Shopp::inputattrs($options, $allowed) . ' />';
 				break;
 			case 'menu':
 				$allowed = array('accesskey', 'alt', 'class', 'disabled', 'format', 'id',
 					'readonly', 'required', 'size', 'tabindex', 'title');
 
-				$input = '<select name="s_cs"' . inputattrs($options, $allowed) . '>';
+				$input = '<select name="s_cs"' . Shopp::inputattrs($options, $allowed) . '>';
 				$input .= '<option value="">' . $blog_option . '</option>';
 				$input .= '<option value="1"' . ( $shopsearch || ( ! $searching && 'shopp' == $option ) ? ' selected="selected"' : '' ) . '>' . $shop_option . '</option>';
 				$input .= '</select>';
 				break;
 			default:
 				$allowed = array('alt', 'class', 'disabled', 'format', 'id', 'readonly', 'title', 'value');
-				$input =  '<input type="hidden" name="s_cs"' . inputattrs($options, $allowed) . ' />';
+				$input =  '<input type="hidden" name="s_cs"' . Shopp::inputattrs($options, $allowed) . ' />';
 				break;
 		}
 
@@ -1292,7 +1292,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 				if ( empty($Shopp->Product->id) ) continue;
 				if ( isset($options['load']) ) return true;
 				ob_start();
-				locate_shopp_template(array('sideproduct-' . $Shopp->Product->id . '.php', 'sideproduct.php'), true);
+				Shopp::locate_template(array('sideproduct-' . $Shopp->Product->id . '.php', 'sideproduct.php'), true);
 				$content .= ob_get_clean();
 			}
 			 // Restore original requested Product
@@ -1320,7 +1320,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			$options['load'] = array('coverimages');
 			ShoppCollection()->load($options);
 
-			$template = locate_shopp_template(array('sideproduct-' . $Shopp->Category->slug . '.php', 'sideproduct.php'));
+			$template = Shopp::locate_template(array('sideproduct-' . $Shopp->Category->slug . '.php', 'sideproduct.php'));
 			ob_start();
 			foreach ( ShoppCollection()->products as &$product ) {
 				ShoppProduct($product);
@@ -1603,7 +1603,7 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			if ( in_array($name, $booleans) ) $value = Shopp::str_true($value);
 
 		$js = 'var cbo = '.json_encode($options).';';
-		add_storefrontjs($js, true);
+		Shopp::add_storefrontjs($js, true);
 	}
 
 	/**

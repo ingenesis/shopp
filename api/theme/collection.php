@@ -571,7 +571,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		$_ = array();
 		$_[] = '<form action="' . self::url(false, false, $O) . '" method="get">';
 		$_[] = '<input type="hidden" name="s_ff" value="on" /><input type="hidden" name="' . $facet->slug . '" value="" />';
-		$_[] = '<label><input type="' . $type . '" name="' . $facet->slug . '" value="' . $value . '"' . inputattrs($options) . ' />' . ( ! empty($label) ? '&nbsp;' . $label : '' ) . '</label>';
+		$_[] = '<label><input type="' . $type . '" name="' . $facet->slug . '" value="' . $value . '"' . Shopp::inputattrs($options) . ' />' . ( ! empty($label) ? '&nbsp;' . $label : '' ) . '</label>';
 		$_[] = '</form>';
 		return join('', $_);
 	}
@@ -591,7 +591,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		$_ = array();
 
 		// Use a template if available
-		$template = locate_shopp_template(array('facetedmenu-' . $O->slug . '.php', 'facetedmenu.php'));
+		$template = Shopp::locate_template(array('facetedmenu-' . $O->slug . '.php', 'facetedmenu.php'));
 		if ( $template ) {
 			ob_start();
 			include($template);
@@ -1025,7 +1025,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		else {
 			unset($O->_product_loop);
 			ShoppProduct($null);
-			if ( is_a(ShoppStorefront()->Requested, 'ShoppProduct') )
+			if ( isset(ShoppStorefront()->Requested) && is_a(ShoppStorefront()->Requested, 'ShoppProduct') )
 				ShoppProduct(ShoppStorefront()->Requested);
 			$O->_pindex = 0;
 			return false;
@@ -1111,7 +1111,7 @@ class ShoppCollectionThemeAPI implements ShoppAPI {
 		extract($options, EXTR_SKIP);
 
 		$href = Shopp::url( '' != get_option('permalink_structure') ? trailingslashit('000') : '000', 'images');
-		$imgsrc = add_query_string("$width,$height", $href);
+		$imgsrc = Shopp::add_query_string("$width,$height", $href);
 
 		$string = '<ul class="slideshow ' . $fx . '-fx ' . $order . '-order duration-' . $duration . ' delay-' . $delay . '">';
 		$string .= '<li class="clear"><img src="' . $imgsrc . '" width="' . $width . '" height="' . $height . '" /></li>';

@@ -333,7 +333,7 @@ class ShoppCatalogPage extends ShoppPage {
 		shopp_debug('Displaying catalog page request: ' . $_SERVER['REQUEST_URI']);
 
 		ob_start();
-		locate_shopp_template(array('catalog.php'), true);
+		Shopp::locate_template(array('catalog.php'), true);
 		$content = ob_get_clean();
 
 		return apply_filters('shopp_catalog_template', $content);
@@ -634,7 +634,7 @@ class ShoppCartPage extends ShoppPage {
 		if ( $Errors->exist() )
 			echo ShoppStorefront::errors(array('errors-cart.php', 'errors.php'));
 
-		locate_shopp_template(array('cart.php'), true);
+		Shopp::locate_template(array('cart.php'), true);
 
 		$content = ob_get_clean();
 
@@ -688,7 +688,7 @@ class ShoppCheckoutPage extends ShoppPage {
 		if ( $Errors->exist() )
 			echo ShoppStorefront::errors(array('errors-checkout.php', 'errors.php'));
 
-		locate_shopp_template(array('checkout.php'), true);
+		Shopp::locate_template(array('checkout.php'), true);
 
 		$content = ob_get_clean();
 
@@ -742,7 +742,7 @@ class ShoppConfirmPage extends ShoppPage {
 		if ( $Errors->exist(SHOPP_COMM_ERR) )
 			echo ShoppStorefront::errors(array('errors-confirm.php', 'errors.php'));
 
-		locate_shopp_template(array('confirm.php'), true);
+		Shopp::locate_template(array('confirm.php'), true);
 		$content = ob_get_contents();
 
 		unset(ShoppStorefront()->_confirm_page_content);
@@ -784,7 +784,7 @@ class ShoppThanksPage extends ShoppPage {
 		if ( ! $wp_query->is_main_query() || ! is_shopp_page('thanks') ) return $content;
 
 		ob_start();
-		locate_shopp_template(array('thanks.php'), true);
+		Shopp::locate_template(array('thanks.php'), true);
 		$content = ob_get_contents();
 		ob_end_clean();
 		return apply_filters('shopp_thanks', $content);
@@ -816,9 +816,9 @@ class ShoppMaintenancePage extends ShoppPage {
 		global $wp_query;
 		if ( ! $wp_query->is_main_query() ) return $content;
 
-		if ( '' != locate_shopp_template($this->templates) ) {
+		if ( '' != Shopp::locate_template($this->templates) ) {
 			ob_start();
-			locate_shopp_template($this->templates, true);
+			Shopp::locate_template($this->templates, true);
 			$content = ob_get_clean();
 		} else $content = '<div id="shopp" class="update"><p>' . Shopp::__('The store is currently down for maintenance. We’ll be back soon!') . '</p><div class="clear"></div></div>';
 
@@ -877,7 +877,7 @@ class ShoppProductPage extends ShoppPage {
 			array_unshift($templates, 'product-outofstock.php');
 
 		ob_start();
-		locate_shopp_template($templates, true);
+		Shopp::locate_template($templates, true);
 		$content = ob_get_contents();
 		ob_end_clean();
 		return ShoppStorefront::wrapper($content);
@@ -1017,7 +1017,7 @@ class ShoppCollectionPage extends ShoppPage {
 		$Collection = ShoppCollection();
 
 		ob_start();
-		if (empty($Collection)) locate_shopp_template(array('catalog.php'), true);
+		if (empty($Collection)) Shopp::locate_template(array('catalog.php'), true);
 		else {
 			$templates = array('category.php', 'collection.php');
 			$ids = array('slug', 'id');
@@ -1025,7 +1025,7 @@ class ShoppCollectionPage extends ShoppPage {
 				if (isset($Collection->$property)) $id = $Collection->$property;
 				array_unshift($templates, 'category-'.$id.'.php', 'collection-'.$id.'.php');
 			}
-			locate_shopp_template($templates, true);
+			Shopp::locate_template($templates, true);
 		}
 		$content = ob_get_clean();
 

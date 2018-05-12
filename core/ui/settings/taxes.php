@@ -51,7 +51,7 @@
 		<?php echo ShoppUI::button('add','addrule'); ?>
 		<?php
 			$options = array('any' => Shopp::__('any'), 'all' => strtolower(Shopp::__('All')));
-			$menu = '<select name="settings[taxrates][${id}][logic]" class="logic">'.menuoptions($options,false,true).'</select>';
+			$menu = '<select name="settings[taxrates][${id}][logic]" class="logic">'.Shopp::menuoptions($options,false,true).'</select>';
 		?>
 			<div class="conditionals no-conditions">
 				<p><label><?php printf(__('Apply tax rate when %s of the following conditions match','Shopp'),$menu); ?>:</label></p>

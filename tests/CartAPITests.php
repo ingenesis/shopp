@@ -173,8 +173,15 @@ class CartAPITests extends ShoppTestCase {
 
 	}
 
+	static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		self::resetTests();
+	}
+
 	static function resetTests () {
 		ShoppOrder()->clear();
+		shopp_set_setting('tax_shipping', 'off');
+		shopp_rmv_setting('target_markets');
 	}
 
 	function setUp () {

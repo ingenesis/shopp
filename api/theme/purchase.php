@@ -347,7 +347,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 	 **/
 	public static function date ( $result, $options, $O ) {
 		if (empty($options['format'])) $options['format'] = get_option('date_format').' '.get_option('time_format');
-		return _d($options['format'], is_int($O->created) ? $O->created : sDB::mktime($O->created));
+		return Shopp::_d($options['format'], is_int($O->created) ? $O->created : sDB::mktime($O->created));
 	}
 
 	/**
@@ -704,7 +704,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 					if ( $field === 'saleprice' ) $field = 'promoprice';
 					if ( isset($addon->$field) ) {
 						$_[] = ( isset($options['currency']) && Shopp::str_true($options['currency']) ) ?
-							 money($addon->$field) : $addon->$field;
+							 Shopp::money($addon->$field) : $addon->$field;
 					}
 					break;
 				case 'download':
@@ -791,7 +791,7 @@ class ShoppPurchaseThemeAPI implements ShoppAPI {
 
 			$menu = isset( $menumap[ $addon->value->options ]) ? $menus[ $menumap[ $addon->value->options ] ] : '';
 
-			$pricing = Shopp::str_true($prices) ? " (" . money($price) . ")" : '';
+			$pricing = Shopp::str_true($prices) ? " (" . Shopp::money($price) . ")" : '';
 			$result .= '<li>' . esc_html($menu . $separator . $addon->name . $pricing) . $link . '</li>';
 		}
 		$result .= '</ul>' . $after;

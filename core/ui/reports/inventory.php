@@ -91,6 +91,6 @@ class InventoryReport extends ShoppReportFramework implements ShoppReport {
 
 	static function sold ( $data ) { return intval($data->sold); }
 
-	static function grossed ( $data ) { return money($data->grossed); }
+	static function grossed ( $data ) { return Shopp::money($data->grossed); }
 
 }

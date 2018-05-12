@@ -18,8 +18,8 @@
 <p><input type="hidden" name="meta[processing]" value="off" /><input type="checkbox" name="meta[processing]" value="on" id="process-time" tabindex="18"  <?php if(isset($Product->meta['processing']) && Shopp::str_true($Product->meta['processing']->value)) echo 'checked="checked"'; ?> /> <label for="process-time"><?php _e('Processing Time','Shopp'); ?></label>
 
 <div id="processing" class="hide-if-js">
-	<select name="meta[minprocess]"><?php echo menuoptions(Lookup::timeframes_menu(),isset($Product->meta['minprocess'])?$Product->meta['minprocess']->value:false,true); ?></select> &mdash;
-	<select name="meta[maxprocess]"><?php echo menuoptions(Lookup::timeframes_menu(),isset($Product->meta['maxprocess'])?$Product->meta['maxprocess']->value:false,true); ?></select>
+	<select name="meta[minprocess]"><?php echo Shopp::menuoptions(Lookup::timeframes_menu(),isset($Product->meta['minprocess'])?$Product->meta['minprocess']->value:false,true); ?></select> &mdash;
+	<select name="meta[maxprocess]"><?php echo Shopp::menuoptions(Lookup::timeframes_menu(),isset($Product->meta['maxprocess'])?$Product->meta['maxprocess']->value:false,true); ?></select>
 </div>
 
 </p>

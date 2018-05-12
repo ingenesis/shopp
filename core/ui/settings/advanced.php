@@ -19,7 +19,7 @@
 	<tr>
 		<th scope="row" valign="top"><label for="error-logging"><?php _e('Logging','Shopp'); ?></label></th>
 		<td><select name="settings[error_logging]" id="error-logging">
-			<?php echo menuoptions($errorlog_levels,shopp_setting('error_logging'),true); ?>
+			<?php echo Shopp::menuoptions($errorlog_levels,shopp_setting('error_logging'),true); ?>
 			</select><br />
 			<label for="error-notifications"><?php _e("Limit logging errors up to the level of the selected error type.","Shopp"); ?></label>
         </td>

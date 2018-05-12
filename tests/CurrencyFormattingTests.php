@@ -193,7 +193,7 @@ class CurrencyFormatting extends ShoppTestCase {
 		$formatted = Shopp::money($float, $format);
 
 		$this->assertEquals($expected, $formatted, "Formatting floating point failed for country code $code");
-		$this->assertEquals($expected, money((string)$float, $format), "Formatting string failed for country code $code");
+		$this->assertEquals($expected, Shopp::money((string)$float, $format), "Formatting string failed for country code $code");
 
 		$this->assertEquals(round($float, $format['precision']), Shopp::floatval($formatted, true, $format), "Float value failed for country code $code");
 

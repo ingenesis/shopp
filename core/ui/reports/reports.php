@@ -60,7 +60,7 @@
 			</div>
 			<br />
 			<select name="settings[report_export_format]" id="report-format">
-				<?php echo menuoptions($exports,shopp_setting('report_export_format'),true); ?>
+				<?php echo Shopp::menuoptions($exports,shopp_setting('report_export_format'),true); ?>
 			</select>
 			</div>
 			<button type="submit" id="download-button" name="download" value="export" class="button-secondary"<?php if ($Report->total < 1) echo ' disabled="disabled"'; ?>><?php _e('Download','Shopp'); ?></button>

@@ -578,7 +578,7 @@ class ModuleSettingsUI {
 		$id = "{$this->id}-".sanitize_title_with_dashes($name);
 
 		$this->ui('<div>',$column);
-		$this->ui('<select name="settings['.$this->module.']['.$name.']" id="'.$id.'"'.inputattrs($attributes).'>',$column);
+		$this->ui('<select name="settings['.$this->module.']['.$name.']" id="'.$id.'"'.Shopp::inputattrs($attributes).'>',$column);
 
 		if (is_array($options)) {
 			foreach ($options as $val => $option) {
@@ -622,7 +622,7 @@ class ModuleSettingsUI {
 		$classes = empty($class)?'':' class="'.$class.'"';
 
 		$this->ui('<div'.$classes.'><div class="multiple-select">',$column);
-		$this->ui('<ul '.inputattrs($attributes).'>',$column);
+		$this->ui('<ul '.Shopp::inputattrs($attributes).'>',$column);
 		if (is_array($options)) {
 			$checked = '';
 			$alt = false;
@@ -669,7 +669,7 @@ class ModuleSettingsUI {
 		extract($attributes);
 
 		$this->ui('<div>',$column);
-		$this->ui('<input type="'.$type.'" name="settings['.$this->module.']['.$name.']" id="'.$id.'"'.inputattrs($attributes).' />',$column);
+		$this->ui('<input type="'.$type.'" name="settings['.$this->module.']['.$name.']" id="'.$id.'"'.Shopp::inputattrs($attributes).' />',$column);
 		if (!empty($label)) $this->ui('<br /><label for="'.$id.'">'.$label.'</label>',$column);
 		$this->ui('</div>',$column);
 	}
@@ -748,7 +748,7 @@ class ModuleSettingsUI {
 			$attributes['id'] = "{$this->id}-".sanitize_title_with_dashes($attributes['id']);
 		extract($attributes);
 
-		$this->ui('<div><textarea name="settings['.$this->module.']['.$name.']" '.inputattrs($attributes).'>'.esc_html($value).'</textarea>',$column);
+		$this->ui('<div><textarea name="settings['.$this->module.']['.$name.']" '.Shopp::inputattrs($attributes).'>'.esc_html($value).'</textarea>',$column);
 		if (!empty($label)) $this->ui('<br /><label for="'.$id.'">'.$label.'</label>',$column);
 		$this->ui('</div>',$column);
 	}
@@ -779,7 +779,7 @@ class ModuleSettingsUI {
 		$attributes['class'] = 'button-secondary'.('' == $attributes['class']?'':' '.$attributes['class']);
 		extract($attributes);
 
-		$this->ui('<button type="'.$type.'" name="'.$name.'" id="'.$id.'"'.inputattrs($attributes).'>'.$content.'</button>',$column);
+		$this->ui('<button type="'.$type.'" name="'.$name.'" id="'.$id.'"'.Shopp::inputattrs($attributes).'>'.$content.'</button>',$column);
 		if (!empty($label)) $this->ui('<br /><label for="'.$id.'">'.$label.'</label>',$column);
 
 	}

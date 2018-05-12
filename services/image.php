@@ -118,7 +118,6 @@ class ShoppImageServer {
 	 * @return boolean Status of the image load
 	 **/
 	public function load () {
-
 		$cache = 'image_' . $this->request . ($this->valid ? '_' . $this->valid : '');
 		$cached = Shopp::cache_get($cache, 'shopp_image');
 		if ( $cached ) return ($this->Image = $cached);
@@ -140,10 +139,10 @@ class ShoppImageServer {
 		if ( $this->Image->width == $this->width && $this->Image->height == $this->height ) return;
 
 		$Cached = new ImageAsset(array(
-			'parent' => $this->Image->id,
-			'context'=>'image',
-			'type'=>'image',
-			'name'=>'cache_' . implode('_', $this->parameters)
+			'parent'  => $this->Image->id,
+			'context' => 'image',
+			'type'    => 'image',
+			'name'    => 'cache_' . implode('_', $this->parameters)
 		));
 
 		// Use the cached version if it exists, otherwise resize the image
@@ -185,9 +184,7 @@ class ShoppImageServer {
 
 		do_action('shopp_imageserver_processed', $ResizedImage, $this->parameters);
 
-
 		$ResizedImage->data = $Resized->imagefile($this->quality);
-
 
 		if ( empty($ResizedImage->data) ) return false;
 
@@ -198,7 +195,6 @@ class ShoppImageServer {
 			return false;
 
 		$ResizedImage->save();
-
 	}
 
 	/**
@@ -306,8 +302,6 @@ class ShoppImageServer {
 
 		ShoppDeveloperAPI::load( SHOPP_PATH );
 		ShoppSettings();
-		// $Shopp = Shopp::plugin();
-		// $Shopp->Storage = new StorageEngines();
 
 		$modules = shopp_setting('imaging_modules');
 

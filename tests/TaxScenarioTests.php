@@ -133,7 +133,16 @@ class TaxTests extends ShoppTestCase {
 
 	static function tearDownAfterClass () {
 		parent::tearDownAfterClass();
-		self::resetTests();
+
+		ShoppBaseLocale()->save('US', 'OH');
+
+		shopp_rmv_setting('taxes');
+		shopp_rmv_setting('taxrates');
+
+		shopp_rmv_setting('tax_shipping');
+		shopp_rmv_setting('tax_inclusive');
+		shopp_rmv_setting('base_operations');
+
 	}
 
 	static function resetTests () {
@@ -141,6 +150,7 @@ class TaxTests extends ShoppTestCase {
 
 		ShoppOrder()->Billing = new BillingAddress;
 		ShoppOrder()->Shipping = new ShippingAddress;
+
 
 		$args = array(
 			array(
@@ -364,7 +374,7 @@ class TaxTests extends ShoppTestCase {
 		$Order->locate();
 
 		$Totals = $Order->Cart->totals();
-		
+
 		// Item Pricing
 		$this->assertEquals('109.08', $this->number($Item->unitprice), 'Cart line item unit price:');
 		$this->assertEquals('109.08', $this->number($Item->total), 'Cart line item total:');

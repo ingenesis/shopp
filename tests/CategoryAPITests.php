@@ -46,7 +46,8 @@ class CategoryAPITests extends ShoppTestCase {
 	}
 
 	public static function tearDownAfterClass () {
-		foreach ($products as $id)
+		parent::tearDownAfterClass();
+		foreach (self::$products as $id)
 			shopp_rmv_product($id);
 
 		shopp_rmv_product_category(self::$HeavyCruiser);
