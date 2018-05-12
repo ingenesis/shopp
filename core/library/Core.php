@@ -446,13 +446,6 @@ function shopp_daytimes () {
 }
 
 /**
- * @deprecated Use Shopp::email()
- **/
-function shopp_email ($template,$data=array()) {
-	return Shopp::email($template,$data);
-}
-
-/**
  * @deprecated Use Shopp::rss()
  **/
 function shopp_rss ($data) {

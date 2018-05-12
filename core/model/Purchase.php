@@ -626,11 +626,11 @@ class ShoppPurchase extends ShoppDatabaseObject {
 
 		$email = apply_filters('shopp_email_receipt_data', $email);
 		$email = apply_filters('shopp_purchase_email_message', $email);
-		$this->message = array_merge($this->message,$email);
+		$this->message = array_merge($this->message, $email);
 
 		// Load and process the template file
 		$defaults = array('email.php','order.php','order.html');
-		$emails = array_merge((array)$templates,$defaults);
+		$emails = array_merge((array)$templates, $defaults);
 
 		$template = Shopp::locate_template($emails);
 
@@ -640,7 +640,7 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		}
 
 		// Send the email
-		if (Shopp::email($template, $this->message)) {
+		if ( Shopp::email($template) ) {
 			shopp_debug('A purchase notification was sent to: ' . $this->message['to']);
 			return true;
 		}

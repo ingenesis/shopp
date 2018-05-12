@@ -21,7 +21,6 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	 * Uses WP locate_template() to add child-theme aware template support toggled
 	 * by the theme template setting.
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
 	 * @param array $template_names Array of template files to search for in priority order.
@@ -81,7 +80,6 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	/**
 	 * Helper to prefix theme template file names
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
 	 * @param string $name The name of the template file
@@ -94,7 +92,6 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	/**
 	 * Returns the URI for a template file
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
 	 * @param string $name The name of the template file
@@ -119,7 +116,6 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	/**
 	 * Parses tag option strings or arrays
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
 	 * @param string|array $options URL-compatible query string or associative array of tag options
@@ -153,7 +149,6 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	 *
 	 * Replaces the 1.0-1.1 value_is_true()
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.2
 	 *
 	 * @param string $string The natural language value
@@ -170,7 +165,6 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	/**
 	 * Adds JavaScript to be included in the footer on shopping pages
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.1
 	 *
 	 * @param string $script JavaScript fragment
@@ -189,7 +183,6 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	/**
 	 * Determines if a specified type is a valid HTML input element
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param string $type The HTML element type name
@@ -205,7 +198,6 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	/**
 	 * Generates attribute markup for HTML inputs based on specified options
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param array $options An associative array of options
@@ -316,7 +308,6 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	 * value does not exist in the menu, it will be automatically added at the
 	 * top of the list.
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param array $list The list of options
@@ -369,40 +360,73 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 	 * the template as a bracketed [variable] with data from the
 	 * provided data array or the super-global $_POST array
 	 *
-	 * @author Jonathan Davis
 	 * @since 1.0
 	 *
 	 * @param string $template Email template file path (or a string containing the template itself)
-	 * @param array $data The data to populate the template with
 	 * @return boolean True on success, false on failure
 	 **/
-	public static function email ( $template, array $data = array() ) {
-
-		$debug = defined('SHOPP_DEBUG_EMAIL') && SHOPP_DEBUG_EMAIL;
+	public static function email ( $template ) {
 
 		$headers = array();
 		$to = $subject = $message = '';
-		$addrs = array('from', 'sender', 'reply-to', 'to', 'cc', 'bcc');
-		$protected = array_merge($addrs, array('subject'));
 		if ( false == strpos($template, "\n") && file_exists($template) ) {
-			$templatefile = $template;
-			// Include to parse the PHP and Theme API tags
-			ob_start();
-			ShoppStorefront::intemplate($templatefile);
-			include $templatefile;
-			ShoppStorefront::intemplate('');
-			$template = ob_get_clean();
+			$file = $template;
+			$template = self::email_templatefile($file);
 			if ( empty($template) )
-				return shopp_add_error(Shopp::__('Could not open the email template because the file does not exist or is not readable.'), SHOPP_ADMIN_ERR, array('template' => $templatefile));
+				return shopp_add_error(Shopp::__('Could not open the email template because the file does not exist or is not readable.'), SHOPP_ADMIN_ERR, array('template' => $file));
 		}
 
 		// Sanitize line endings
 		$template = str_replace(array("\r\n", "\r"), "\n", $template);
-		$lines = explode("\n", $template);
+
+		list($headerlines, $message) = explode("\n\n", $template, 2);
 
 		// Collect headers
-		while ( $line = array_shift($lines) ) {
-			if ( false === strpos($line, ':') ) continue; // Skip invalid header lines
+		$headers = self::email_parseheaders( explode("\n", $headerlines) );
+
+		// If not already in place, setup default system email filters
+		ShoppEmailDefaultFilters::init();
+
+		// Message filters first
+		$message = apply_filters('shopp_email_message', $message, $headers);
+		$headers = apply_filters('shopp_email_headers', $headers, $message);
+
+		$to = $headers['to'];
+		unset($headers['to']);
+
+		$subject = $headers['subject'];
+		unset($headers['subject']);
+
+		$sent = wp_mail($to, $subject, $message, $headers);
+
+		do_action('shopp_email_completed');
+
+		if ( defined('SHOPP_DEBUG_EMAIL') && SHOPP_DEBUG_EMAIL )
+			shopp_debug("To: " . htmlspecialchars($to) . "\n" .
+						"Subject: $subject\n\n" .
+						"Headers:\n" .
+						"\nMessage:\n$message\n");
+
+		return $sent;
+	}
+
+	private static function email_templatefile( $file ) {
+		// Include to parse the PHP and Theme API tags
+		ob_start();
+		ShoppStorefront::intemplate($file);
+		include $file;
+		ShoppStorefront::intemplate('');
+		$template = ob_get_clean();
+		return $template;
+	}
+
+	private static function email_parseheaders( array $data ) {
+		$protected = array('from', 'sender', 'reply-to', 'to', 'cc', 'bcc', 'subject');
+		$headers = array();
+
+		foreach ( $data as $line ) {
+			if ( false === strpos($line, ':') )
+				continue; // Skip invalid header lines
 
 			list($header, $value) = explode(':', $line, 2);
 			$header = strtolower($header);
@@ -414,28 +438,8 @@ abstract class ShoppCoreTemplates extends ShoppCoreURLTools {
 				$headers[ $header ] = trim($value);
 			else $headers[ $header ] = $line;
 		}
-		$message = join("\n", $lines);
-		// If not already in place, setup default system email filters
-		ShoppEmailDefaultFilters::init();
-		// Message filters first
-		$message = apply_filters('shopp_email_message', $message, $headers);
 
-		$headers = apply_filters('shopp_email_headers', $headers, $message);
-		$to = $headers['to']; unset($headers['to']);
-		$subject = $headers['subject']; unset($headers['subject']);
-
-		$sent = wp_mail($to, $subject, $message, $headers);
-
-		do_action('shopp_email_completed');
-
-		if ( $debug ) {
-			shopp_debug("To: " . htmlspecialchars($to) . "\n");
-			shopp_debug("Subject: $subject\n\n");
-			shopp_debug("Headers:\n");
-			shopp_debug("\nMessage:\n$message\n");
-		}
-
-		return $sent;
+		return $headers;
 	}
 
 	/**
