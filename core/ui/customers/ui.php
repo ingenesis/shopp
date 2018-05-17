@@ -110,11 +110,11 @@ function info_meta_box ( $Customer ) {
 	if ( ! is_array($Customer->info->meta) )
         return;
 
-	foreach( $Customer->info->meta as $id => $meta ): ?>
-        <?php if ( in_array(strtolower($meta->value), array('yes', 'no','1','0','on','off','true','false'))): ?>
+	foreach( $Customer->info->meta as $meta ):
+        $label = ucwords(str_replace(array('-', '_'), ' ', $meta->name));
+        if ( in_array(strtolower($meta->value), array('yes', 'no','1','0','on','off','true','false'))): ?>
 		<p>
             <?php
-            $label = $meta->name;
     		$date_format = get_option('date_format');
     		$time_format = get_option('time_format');
     		$datetime    = "$date_format $time_format";
@@ -128,7 +128,7 @@ function info_meta_box ( $Customer ) {
 		<p>
 			<?php echo apply_filters('shopp_customer_info_input', '<input type="text" name="info[' . $meta->id . ']" id="info-' . $meta->id . '" value="' . esc_attr($meta->value) . '" />', $meta); ?>
 			<br />
-			<label for="info-<?php echo $meta->id; ?>"><?php echo esc_html($meta->name); ?></label>
+			<label for="info-<?php echo $meta->id; ?>"><?php echo esc_html($label); if ($label != $meta->name) echo ' <em>(' . esc_html($meta->name) .')</em>'; ?></label>
 		</p>
         <?php endif;?>
 <?php
