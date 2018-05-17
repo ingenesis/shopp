@@ -910,6 +910,7 @@ class ShoppStorefront extends ShoppFlowController {
 		$this->add_dashboard( 'profile', Shopp::__('My Account'), true );
 
 		// Pages not in menu navigation
+		$this->add_dashboard( 'data', Shopp::__('Request Data'), false, array(ShoppCustomer(), 'data_request') );
 		$this->add_dashboard( 'login', __('Login to your Account'), false );
 		$this->add_dashboard( 'recover', __('Password Recovery'), false );
 		$this->add_dashboard( 'rp', __('Password Recovery'), false );

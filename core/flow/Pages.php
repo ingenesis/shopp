@@ -420,9 +420,10 @@ class ShoppAccountPage extends ShoppPage {
 			$orderlookup = shopp( 'customer', 'get-order-lookup' );
 
 		// $download_request = get_query_var('s_dl');
-		if ( ! $request ) $request = ShoppStorefront()->account['request'];
+		if ( ! $request )
+            $request = ShoppStorefront()->account['request'];
 
-		$templates = array( 'account-'.$request.'.php', 'account.php' );
+		$templates = array( 'account-' . $request . '.php', 'account.php' );
 		$context   = ShoppStorefront::intemplate(); // Set account page context
 
 		$Errors = ShoppErrorStorefrontNotices();
@@ -432,8 +433,11 @@ class ShoppAccountPage extends ShoppPage {
 
 		if ( ! empty($orderlookup) ) {
 			echo $orderlookup;
+        } elseif ( 'data' == $request ) {
+    		include SHOPP_ADMIN_PATH . "/orders/datarequest.php";
 		} else {
-			if ( 'login' == $request || ! ShoppCustomer()->loggedin() ) $templates = array( 'login-' . $request . '.php', 'login.php' );
+			if ( 'login' == $request || ! ShoppCustomer()->loggedin() )
+                $templates = array( 'login-' . $request . '.php', 'login.php' );
 			Shopp::locate_template( $templates, true );
 		}
 		$content = ob_get_clean();
