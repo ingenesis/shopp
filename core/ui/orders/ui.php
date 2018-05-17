@@ -588,7 +588,7 @@ function contact_meta_box ($Purchase) {
 	<?php if ( ! empty($Purchase->email) ) echo '<br /><span class="email"><a href="'.esc_url($email_url).'">'.esc_html($Purchase->email).'</a></span>'; ?>
 	<?php if ( ! empty($Purchase->phone) ) echo '<br /><span class="phone"><a href="'.esc_attr($phone_url).'">'.esc_html($Purchase->phone).'</a></span>'; ?>
 	<p class="customer <?php echo ($Purchase->Customer->marketing == "yes") ? 'marketing' : 'nomarketing'; ?>"><?php ( $Purchase->Customer->marketing == "yes" ) ? Shopp::_e('Agreed to marketing') : Shopp::_e('No marketing'); ?></p>
-	</div>
+    </div>
 	<br class="clear" />
 	</div>
 	<?php

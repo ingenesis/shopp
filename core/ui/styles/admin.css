@@ -537,6 +537,10 @@ p.controls { position:absolute;top:0;right:0;margin:0; }
 .shopp .postbox p { text-indent:0;display:block;position:relative;padding:4px 0;margin:0;line-height:1.4em;overflow:hidden;padding-right: 5px; }
 .shopp .postbox p input,
 .shopp .postbox p select { width:100%; }
+.shopp .postbox p input[type=checkbox],
+.shopp .postbox p input[type=radio] { width:auto; }
+.shopp #customer input:disabled { opacity: 1; border: 1px solid #b4b9be;}
+
 .shopp .postbox p span { float:left;padding:0 5px 0 0;display:inline-block;text-align:left; }
 .shopp .postbox p span input,
 .shopp .postbox p span select { width:auto; }

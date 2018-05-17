@@ -184,6 +184,9 @@
 				<div class="inline">
 					<label for="marketing"><?php shopp('checkout.marketing'); ?> <?php Shopp::_e( 'Yes, I would like to receive e-mail updates and special offers!' ); ?></label>
 				</div>
+				<div class="inline gdpr">
+					<label for="data-protection"><?php shopp('checkout.data-protection'); ?> <?php Shopp::_e( 'I agree to the storage and handling of my data by %s.', shopp_setting('business_name') ); ?></label>
+				</div>
 			</li>
 		</ul>
 		<p class="submit"><?php shopp( 'checkout.submit', 'value=' . Shopp::__( 'Submit Order' ) ); ?></p>

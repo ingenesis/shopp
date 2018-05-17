@@ -107,17 +107,32 @@ function profile_meta_box ( $Customer ) {
 ShoppUI::addmetabox('customer-profile', Shopp::__('Profile') . $Admin->boxhelp('customer-editor-profile'), 'profile_meta_box', 'shopp_page_shopp-customers', 'normal', 'core');
 
 function info_meta_box ( $Customer ) {
-	if ( is_array($Customer->info->meta) ):
+	if ( ! is_array($Customer->info->meta) )
+        return;
 
-		foreach( $Customer->info->meta as $id => $meta ): ?>
+	foreach( $Customer->info->meta as $id => $meta ): ?>
+        <?php if ( in_array(strtolower($meta->value), array('yes', 'no','1','0','on','off','true','false'))): ?>
+		<p>
+            <?php
+            $label = $meta->name;
+    		$date_format = get_option('date_format');
+    		$time_format = get_option('time_format');
+    		$datetime    = "$date_format $time_format";
+            if ( 'data-protection' == $meta->name && Shopp::str_true($meta->value) )
+                $label = Shopp::__('Data Protection Agreement: %s', date($datetime, $meta->created));
+            ?>
+			<label for="info-<?php echo $meta->id; ?>"><?php echo apply_filters('shopp_customer_info_input', '<input type="checkbox" name="info[' . $meta->id . ']" id="info-' . $meta->id . '" readonly="readonly" disabled="disabled"'. Shopp::inputattrs(array('checked' => Shopp::str_true($meta->value))).' />', $meta); ?>
+			<?php echo esc_html($label); ?></label>
+		</p>
+        <?php else: ?>
 		<p>
 			<?php echo apply_filters('shopp_customer_info_input', '<input type="text" name="info[' . $meta->id . ']" id="info-' . $meta->id . '" value="' . esc_attr($meta->value) . '" />', $meta); ?>
 			<br />
 			<label for="info-<?php echo $meta->id; ?>"><?php echo esc_html($meta->name); ?></label>
 		</p>
+        <?php endif;?>
 <?php
-		endforeach;
-	endif;
+	endforeach;
 }
 
 ShoppUI::addmetabox('customer-info', Shopp::__('Details') . $Admin->boxhelp('customer-editor-details'), 'info_meta_box', 'shopp_page_shopp-customers', 'normal', 'core');

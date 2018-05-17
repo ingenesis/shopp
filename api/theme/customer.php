@@ -61,6 +61,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		'loginname'                  => 'login_name',
 		'management'                 => 'management',
 		'marketing'                  => 'marketing',
+		'dataprotection'             => 'data_protection',
 		'menu'                       => 'menu',
 		'notloggedin'                => 'not_logged_in',
 		'orderlookup'                => 'order_lookup',
@@ -862,7 +863,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 
 		if ( 'wordpress' == $accounts ) $label = Shopp::__('Login Name');
 		if ( isset($options['label']) ) $label = $options['label'];
-		
+
 		return $label;
 	}
 
@@ -940,10 +941,56 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		$attrs = array('accesskey', 'alt', 'checked', 'class', 'disabled', 'format',
 			'minlength', 'maxlength', 'readonly', 'size', 'src', 'tabindex',
 			'title');
-		
+
 		if ( Shopp::str_true($options['value']) ) $options['checked'] = true;
 		$input = '<input type="hidden" name="marketing" value="no" />';
 		$input .= '<input type="checkbox" name="marketing" id="marketing" value="yes" ' . inputattrs($options, $attrs) . ' />';
+		return $input;
+	}
+
+	/**
+	 * Provides the customer GDPR agreement toggle input field
+	 *
+	 * @api `shopp('customer.data-protection')`
+	 * @since 1.1
+	 *
+	 * @param string        $result  The output
+	 * @param array         $options The options
+	 * - **mode**: `input` (input, value) Displays the field `input` or the current value of the property
+	 * - **accesskey**: Specifies a shortcut key to activate/focus an element. Linux/Windows: `[Alt]`+`accesskey`, Mac: `[Ctrl]``[Opt]`+`accesskey`
+	 * - **alt**: Specifies an alternate text for images (only for type="image")
+	 * - **checked**: Specifies that an `<input>` element should be pre-selected when the page loads (for type="checkbox" or type="radio")
+	 * - **class**: The class attribute specifies one or more class-names for an element
+	 * - **disabled**: Specifies that an `<input>` element should be disabled
+	 * - **format**: Specifies special field formatting class names for JS validation
+	 * - **minlength**: Sets a minimum length for the field enforced by JS validation
+	 * - **maxlength**: Specifies the maximum number of characters allowed in an `<input>` element
+	 * - **readonly**: Specifies that an input field is read-only
+	 * - **size**: Specifies the width, in characters, of an `<input>` element
+	 * - **src**: Specifies the URL of the image to use as a submit button (only for type="image")
+	 * - **tabindex**: Specifies the tabbing order of an element
+	 * - **title**: Specifies extra information about an element
+	 * @param ShoppCustomer $O       The working object
+	 * @return string The input markup
+	 **/
+	public static function data_protection ( $result, $options, $O ) {
+		if ( ! isset($options['mode']) )
+            $options['mode'] = 'input';
+
+		if ( 'value' == $options['mode'] )
+            return $O->marketing;
+
+		if ( ! empty($O->marketing) )
+			$options['value'] = $O->marketing;
+
+		$attrs = array('accesskey', 'alt', 'checked', 'class', 'disabled', 'format',
+			'minlength', 'maxlength', 'readonly', 'size', 'src', 'tabindex',
+			'title');
+
+		if ( Shopp::str_true($options['value']) )
+            $options['checked'] = true;
+		$input = '<input type="hidden" name="info[data-protection]" value="no" />';
+		$input .= '<input type="checkbox" name="info[data-protection]" id="data-protection" value="yes" ' . inputattrs($options, $attrs) . ' />';
 		return $input;
 	}
 
@@ -1805,7 +1852,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		$Address            = self::AddressObject($options['address']);
 
 		if ( ! isset($options['value']) ) $options['value'] = $Address->country;
-		
+
 		$options['selected'] = $options['value'];
 		$options['id']       = "{$options['address']}-country";
 		extract($options, EXTR_SKIP);
@@ -1858,7 +1905,7 @@ class ShoppCustomerThemeAPI implements ShoppAPI {
 		$Address            = self::AddressObject($options['address']);
 
 		if ( ! isset($options['value']) ) $options['value'] = $Address->state;
-		
+
 		$options['selected'] = $options['value'];
 		$options['id']       = "{$options['address']}-state";
 		extract($options, EXTR_SKIP);

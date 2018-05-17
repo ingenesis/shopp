@@ -59,6 +59,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 		'password'            => array('ShoppCustomerThemeAPI', 'password'),
 		'passwordlogin'       => array('ShoppCustomerThemeAPI', 'password_login'),
 		'phone'               => array('ShoppCustomerThemeAPI', 'phone'),
+		'dataprotection'      => array('ShoppCustomerThemeAPI', 'data_protection'),
 		'sameshippingaddress' => array('ShoppCustomerThemeAPI', 'same_shipping_address'),
 		'shipping'            => array('ShoppCustomerThemeAPI', 'shipping'),
 		'shippingaddress'     => array('ShoppCustomerThemeAPI', 'shipping_address'),
@@ -1020,7 +1021,7 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
         $DefaultPayment = $Payments->selected();
         $payslug = isset($DefaultPayment->slug) ? $DefaultPayment->slug : '';
-        
+
 		$js = "var regions=" . json_encode($regions) . "," .
 				  "c_upd='" . $updating . "'," .
 				  "d_pm='" . $payslug . "'," .
