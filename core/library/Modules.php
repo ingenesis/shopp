@@ -85,7 +85,7 @@ abstract class ModuleLoader {
 
 		}
 
-		shopp_set_setting(self::MODULES_SETTING, $detected);
+		//shopp_set_setting(self::MODULES_SETTING, $detected);
 		set_transient(self::INVALID_FILES_SETTING, $invalid, 60);
 
 	}
