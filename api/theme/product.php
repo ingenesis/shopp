@@ -1534,7 +1534,7 @@ class ShoppProductThemeAPI implements ShoppAPI {
 			'labelpos' => 'before',
 			'label' => '',
 			'options' => '1-15,20,25,30,40,50,75,100',
-			'size' => false
+			'size' => '1'
 		);
 		$options = array_merge($defaults, $options);
 		$attributes = $options;
