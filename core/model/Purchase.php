@@ -742,6 +742,9 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		if ( ! empty($this->card) )
 			$this->card = PayCard::truncate($this->card);
 
+		$this->country = substr( $this->country, 0, 2 );
+		$this->shipcountry = substr( $this->shipcountry, 0, 2 );
+
 		parent::save();
 	}
 

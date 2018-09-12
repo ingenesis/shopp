@@ -113,6 +113,19 @@ class ShoppAddress extends ShoppDatabaseObject {
 
 	}
 
+	/**
+	 * Overloads the default save to truncate the country code
+	 *
+	 * @author Matthew Sigley
+	 * @since 1.4
+	 *
+	 * @return void
+	 **/
+	public function save () {
+		$this->country = substr( $this->country, 0, 2 );
+		parent::save();
+	}
+
 } // END class Address
 
 
