@@ -2020,29 +2020,29 @@ class RelatedProducts extends SmartCollection {
 			if ( empty($scope) ) $scope = array_keys($this->product->tags);
 		}
 
-		if ( empty($scope) ) return false;
+		if ( empty($scope) ) {
+			$loading = compact('where');
+		} else {
+			$this->name = __("Products related to","Shopp")." &quot;".stripslashes($name)."&quot;";
+			$this->uri = urlencode($slug);
+			$this->controls = false;
 
-		$this->name = __("Products related to","Shopp")." &quot;".stripslashes($name)."&quot;";
-		$this->uri = urlencode($slug);
-		$this->controls = false;
-
-		global $wpdb;
-		$joins[ $wpdb->term_relationships ] = "INNER JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id)";
-		$joins[ $wpdb->term_taxonomy ] = "INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id=tt.term_taxonomy_id";
-		$where[] = "tt.term_id IN (" . join(',', $scope) . ")";
-		$columns = 'COUNT(p.ID) AS score';
-		$groupby = 'p.ID';
-		$orderby = 'score DESC';
-		$loading = compact('columns', 'joins', 'where', 'groupby', 'orderby');
+			global $wpdb;
+			$joins[ $wpdb->term_relationships ] = "INNER JOIN $wpdb->term_relationships AS tr ON (p.ID=tr.object_id)";
+			$joins[ $wpdb->term_taxonomy ] = "INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id=tt.term_taxonomy_id";
+			$where[] = "tt.term_id IN (" . join(',', $scope) . ")";
+			$columns = 'COUNT(p.ID) AS score';
+			$groupby = 'p.ID';
+			$orderby = 'score DESC';
+			$loading = compact('columns', 'joins', 'where', 'groupby', 'orderby');
+		}
 
 		$this->loading = array_merge($options, $loading);
 
 		if ( isset($options['order']) ) $this->loading['order'] = $options['order'];
 		if ( isset($options['controls']) && Shopp::str_true($options['controls']) )
 			unset($this->controls);
-
 	}
-
 }
 
 /**
