@@ -80,7 +80,7 @@ class ShoppStorefront extends ShoppFlowController {
 		add_filter( 'shopp_checkout_page',		array('Storefront', 'wrapper') );
 		add_filter( 'shopp_account_template',	array('Storefront', 'wrapper') );
 		add_filter( 'shopp_category_template',	array('Storefront', 'wrapper') );
-		add_filter( 'shopp_order_receipt',		array('Storefront', 'wrapper') );
+		add_filter( 'shopp_thanks',		array('Storefront', 'wrapper') );
 		add_filter( 'shopp_account_manager',	array('Storefront', 'wrapper') );
 		add_filter( 'shopp_account_vieworder',	array('Storefront', 'wrapper') );
 		add_filter( 'the_content',				array($this, 'autowrap'), 99 );

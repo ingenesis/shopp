@@ -784,6 +784,11 @@ class ShoppThanksPage extends ShoppPage {
 		if ( ! $wp_query->is_main_query() || ! is_shopp_page('thanks') ) return $content;
 
 		ob_start();
+
+		$Errors = ShoppErrorStorefrontNotices();
+		if ( $Errors->exist() )
+			echo ShoppStorefront::errors(array('errors-checkout.php', 'errors.php'));
+
 		locate_shopp_template(array('thanks.php'), true);
 		$content = ob_get_contents();
 		ob_end_clean();
