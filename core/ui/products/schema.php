@@ -12,7 +12,7 @@
 					<?php while( shopp('product','categories') ): ?>
 						<meta itemprop="category" content="<?php echo str_replace('"', '&quot;', shopp('product','get-category')); ?>" />
 					<?php endwhile; ?>
-					<meta itemprop="price" content="<?php shopp('product.variation', 'saleprice'); ?>" />
+					<meta itemprop="price" content="<?php echo preg_replace('/[^0-9-.]+/', '', shopp('product.variation', 'saleprice', 'return=1')); ?>" />
 					<meta itemprop="priceCurrency" content="<?php shopp('storefront.currency'); ?>" />
 				</div>
 			</div>
@@ -25,7 +25,7 @@
 			<?php while( shopp('product','categories') ): ?>
 				<meta itemprop="category" content="<?php echo str_replace('"', '&quot;', shopp('product','get-category')); ?>" />
 			<?php endwhile; ?>
-			<meta itemprop="price" content="<?php shopp('product.saleprice'); ?>" />
+			<meta itemprop="price" content="<?php echo preg_replace('/[^0-9-.]+/', '', shopp('product.saleprice', 'return=1')); ?>" />
 			<meta itemprop="priceCurrency" content="<?php shopp('storefront.currency'); ?>" />
 			<?php if ( shopp('product.get-outofstock') ): ?>
 				<link itemprop="availability" href="http://schema.org/OutOfStock" />
