@@ -252,7 +252,11 @@ class ShoppPage {
 		add_filter('the_excerpt', array($this, 'content'), 20);
 		add_filter('comments_array', array($this, 'nocomment'));
 		add_filter('wpseo_replacements', array($this, 'wpseo')); // compatibility helper for WPSEO
-	    add_filter('get_the_excerpt', create_function('$c', 'remove_filter("get_the_excerpt", "wp_trim_excerpt"); return $c;'), 5);
+	    add_filter('get_the_excerpt', function ( $c ) {
+		    remove_filter( 'get_the_excerpt', 'wp_trim_excerpt' );
+
+		    return $c;
+        }, 5);
 
 	}
 

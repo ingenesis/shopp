@@ -885,23 +885,23 @@ class ShoppAdminSystem extends ShoppAdminController {
 		return false;
 	}
 
-	public static function install_services_helper () {
-		if ( ! self::filesystemcreds() ) {
-
-		}
-	}
-
-	protected static function filesystemcreds () {
-		if ( false === ( $creds = request_filesystem_credentials($this->url, '', false, false, null) ) ) {
-			return false; // stop the normal page form from displaying
-		}
-
-		if ( ! WP_Filesystem($creds) ) { // credentials were no good, ask for them again
-			request_filesystem_credentials($this->url, $method, true, false, $form_fields);
-			return false;
-		}
-		return $creds;
-	}
+//	public static function install_services_helper () {
+//		if ( ! self::filesystemcreds() ) {
+//
+//		}
+//	}
+//
+//	protected static function filesystemcreds () {
+//		if ( false === ( $creds = request_filesystem_credentials($this->url, '', false, false, null) ) ) {
+//			return false; // stop the normal page form from displaying
+//		}
+//
+//		if ( ! WP_Filesystem($creds) ) { // credentials were no good, ask for them again
+//			request_filesystem_credentials($this->url, $method, true, false, $form_fields);
+//			return false;
+//		}
+//		return $creds;
+//	}
 
 	public function log () {
 		if ( isset($_POST['resetlog']) ) {

@@ -34,6 +34,9 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit;
 // Start the bootloader
 require 'core/library/Loader.php';
 
+// Load Composer dependencies
+require 'vendor/autoload.php';
+
 // Prevent loading the plugin in special circumstances
 if ( Shopp::services() || Shopp::unsupported() ) return;
 

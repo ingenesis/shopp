@@ -525,10 +525,11 @@ class ShoppCustomer extends ShoppDatabaseObject {
 	}
 
 	protected function extract_downloads ( $items ) {
-
 		$this->_filemap = array(); // Temporary property to hold the file mapping index
 
-		while ( list($index, $Purchased) = each($items) ) {
+		foreach( $items as $item ) {
+			list($index, $Purchased) = $item;
+
 			// Check for downloadable addons
 			if ( isset($Purchased->addons->meta) && count($Purchased->addons->meta) >= 1 ) {
 				$this->extract_downloads($Purchased->addons->meta);

@@ -366,7 +366,9 @@ class ShoppCheckoutThemeAPI implements ShoppAPI {
 
 		$time     = current_time('timestamp');
 		$thisyear = date('y', $time);
-		$years    = array_map( create_function('$n','return sprintf("%02d", $n);'), range((int)$thisyear, (int)$thisyear + $options['max'] ) );
+		$years    = array_map( function ( $n ) {
+			return sprintf("%02d", $n);
+		}, range((int)$thisyear, (int)$thisyear + $options['max'] ) );
 
 		$menu   = array();
 		$menu[] = '<select name="' . $name . '" id="' . $id . '" ' . inputattrs($options, $select_attrs) . '>';

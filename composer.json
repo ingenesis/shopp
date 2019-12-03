@@ -1,0 +1,5 @@
+{
+    "require": {
+        "pelago/emogrifier": "^2.0"
+    }
+}

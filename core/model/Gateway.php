@@ -120,9 +120,13 @@ abstract class GatewayFramework {
 		add_action('shopp_' . $gateway . '_refunded', array($this, 'cancelorder') );
 
 		if ( $this->authonly )
-			add_filter('shopp_purchase_order_' . $gateway . '_processing', create_function('', 'return "auth";'));
+			add_filter('shopp_purchase_order_' . $gateway . '_processing', function () {
+				return "auth";
+			} );
 		elseif ( $this->saleonly )
-			add_filter('shopp_purchase_order_' . $gateway . '_processing', create_function('', 'return "sale";'));
+			add_filter('shopp_purchase_order_' . $gateway . '_processing', function () {
+				return "sale";
+			} );
 
 	}
 

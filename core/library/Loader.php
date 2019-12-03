@@ -61,15 +61,24 @@ class ShoppLoader {
 	 * @param string $basepath The base path to use (if any). Use '' to use full paths, '.' to use paths relative to the base path of the loader instance, or pass a directory path to use as the base path
 	 * @return boolean True if successful
 	 **/
-	public static function map ( $new = array(), $basepath = '.' ) {
-		if ( empty($new) ) return false;
+	public static function map( $new = array(), $basepath = '.' ) {
+		if ( empty( $new ) ) {
+			return false;
+		}
 
-		if ( '.' == $basepath ) $basepath = self::$basepath;
+		if ( '.' === $basepath ) {
+			$basepath = self::$basepath;
+		}
 
-		$fullpath = create_function('$f','return "' . $basepath . '" . $f;');
-		if ( ! empty($basepath) ) $new = array_map($fullpath, $new);
+		$fullpath = function ( $f ) use ( $basepath ) {
+			return "$basepath" . $f;
+		};
 
-		self::$classmap = array_merge($new,self::$classmap);
+		if ( ! empty( $basepath ) ) {
+			$new = array_map( $fullpath, $new );
+		}
+
+		self::$classmap = array_merge( $new, self::$classmap );
 		return true;
 	}
 

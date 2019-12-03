@@ -572,7 +572,10 @@ class ShoppAjax {
 		$Shopp  = Shopp::object();
 		$Engine =& $Shopp->Storage->engines['download'];
 
-		$error    = create_function('$s', 'die(json_encode(array("error" => $s)));');
+		$error    = function ( $s ) {
+			die( json_encode( array( "error" => $s ) ) );
+        };
+
 		if ( empty($_REQUEST['url']) )
 			$error(Shopp::__('No file import URL was provided.'));
 		$url      = $_REQUEST['url'];

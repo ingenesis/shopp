@@ -111,7 +111,7 @@ if ( ! class_exists('nusoap_base') ) {
 			'lt' => '<','gt' => '>','apos' => "'");
 
 
-		function nusoap_base() {
+		function __construct() {
 			$this->debugLevel = $GLOBALS['_transient']['static']['nusoap_base']['globalDebugLevel'];
 		}
 
@@ -660,8 +660,8 @@ if ( ! class_exists('nusoap_base') ) {
 		var $faultdetail;
 
 
-		function nusoap_fault($faultcode,$faultactor='',$faultstring='',$faultdetail=''){
-			parent::nusoap_base();
+		function __construct($faultcode,$faultactor='',$faultstring='',$faultdetail=''){
+			parent::__construct();
 			$this->faultcode = $faultcode;
 			$this->faultactor = $faultactor;
 			$this->faultstring = $faultstring;
@@ -720,8 +720,8 @@ if ( ! class_exists('nusoap_base') ) {
 		var $defaultNamespace = array();
 
 
-		function nusoap_xmlschema($schema='',$xml='',$namespaces=array()){
-			parent::nusoap_base();
+		function __construct($schema='',$xml='',$namespaces=array()){
+			parent::__construct();
 			$this->debug('nusoap_xmlschema class instantiated, inside constructor');
 						$this->schema = $schema;
 			$this->xml = $xml;
@@ -1398,8 +1398,8 @@ if ( ! class_exists('nusoap_base') ) {
 		var $attributes;
 
 
-	  	function soapval($name='soapval',$type=false,$value=-1,$element_ns=false,$type_ns=false,$attributes=false) {
-			parent::nusoap_base();
+	  	function __construct($name='soapval',$type=false,$value=-1,$element_ns=false,$type_ns=false,$attributes=false) {
+			parent::__construct();
 			$this->name = $name;
 			$this->type = $type;
 			$this->value = $value;
@@ -1444,8 +1444,8 @@ if ( ! class_exists('nusoap_base') ) {
 		var $digestRequest = array();
 		var $certRequest = array();
 
-		function soap_transport_http($url, $curl_options = NULL, $use_curl = false){
-			parent::nusoap_base();
+		function __construct($url, $curl_options = NULL, $use_curl = false){
+			parent::__construct();
 			$this->debug("ctor url=$url use_curl=$use_curl curl_options:");
 			$this->appendDebug($this->varDump($curl_options));
 			$this->setURL($url);
@@ -2434,8 +2434,8 @@ if ( ! class_exists('nusoap_base') ) {
 		var $response_timeout = 30;
 		var $curl_options = array();			var $use_curl = false;							var $username = '';						var $password = '';						var $authtype = '';						var $certRequest = array();
 
-	    function wsdl($wsdl = '',$proxyhost=false,$proxyport=false,$proxyusername=false,$proxypassword=false,$timeout=0,$response_timeout=30,$curl_options=null,$use_curl=false){
-			parent::nusoap_base();
+	    function __construct($wsdl = '',$proxyhost=false,$proxyport=false,$proxyusername=false,$proxypassword=false,$timeout=0,$response_timeout=30,$curl_options=null,$use_curl=false){
+			parent::__construct();
 			$this->debug("ctor wsdl=$wsdl timeout=$timeout response_timeout=$response_timeout");
 	        $this->proxyhost = $proxyhost;
 	        $this->proxyport = $proxyport;
@@ -4002,8 +4002,8 @@ if ( ! class_exists('nusoap_base') ) {
 				var $decode_utf8 = true;
 
 
-		function nusoap_parser($xml,$encoding='UTF-8',$method='',$decode_utf8=true){
-			parent::nusoap_base();
+		function __construct($xml,$encoding='UTF-8',$method='',$decode_utf8=true){
+			parent::__construct();
 			$this->xml = $xml;
 			$this->xml_encoding = $encoding;
 			$this->method = $method;
@@ -4456,8 +4456,8 @@ if ( ! class_exists('nusoap_base') ) {
 		var $faultdetail;
 
 
-		function nusoap_client($endpoint,$wsdl = false,$proxyhost = false,$proxyport = false,$proxyusername = false, $proxypassword = false, $timeout = 0, $response_timeout = 30, $portName = ''){
-			parent::nusoap_base();
+		function __construct($endpoint,$wsdl = false,$proxyhost = false,$proxyport = false,$proxyusername = false, $proxypassword = false, $timeout = 0, $response_timeout = 30, $portName = ''){
+			parent::__construct();
 			$this->endpoint = $endpoint;
 			$this->proxyhost = $proxyhost;
 			$this->proxyport = $proxyport;

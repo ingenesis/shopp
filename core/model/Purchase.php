@@ -451,7 +451,9 @@ class ShoppPurchase extends ShoppDatabaseObject {
 		$updates = array_filter($updates);
 
 		$data = sDB::escape($updates);
-		$data = array_map(create_function('$value', 'return "\'$value\'";'), $data);
+		$data = array_map( function ( $value ) {
+			return "'$value'";
+        }, $data);
 		$dataset = ShoppDatabaseObject::dataset($data);
 
 		if ( ! empty($dataset) ) {

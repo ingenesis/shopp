@@ -200,7 +200,10 @@ class ShoppOrder {
 		if ( empty($_REQUEST['_txnupdate']) ) return;
 
 		// Check for remote transaction update messages
-		add_action('shopp_txn_update', create_function('', "status_header('200'); exit();"), 101); // Default shopp_txn_update requests to HTTP status 200
+		add_action('shopp_txn_update', function () {
+			status_header('200');
+			exit();
+		}, 101); // Default shopp_txn_update requests to HTTP status 200
 		do_action('shopp_txn_update');
 
 	}
@@ -278,7 +281,9 @@ class ShoppOrder {
 
 		} else {
 			set_transient($lockid, true, $timeout);
-			add_action('shutdown', create_function('', 'delete_transient("' . $lockid . '");'));
+			add_action('shutdown', function () use ( $lockid ) {
+				delete_transient($lockid);
+			} );
 		}
 
 		shopp_add_order_event(false, 'purchase', array(

@@ -753,27 +753,31 @@ abstract class ShoppReportFramework {
 
 				$even = false;
 				$records = 0;
-				while ( list($id, $data) = each($report) ):
-					if ( $records++ > $per_page ) break;
-				?>
-					<tr<?php if ( ! $even ) echo " class='alternate'"; $even = ! $even; ?>>
+
+				foreach( $report as $data ): ?>
 				<?php
 
+				if ( $records++ > $per_page ) {
+					break;
+				}
+				?>
+                <tr<?php if ( ! $even ) echo " class='alternate'"; $even = ! $even; ?>>
+					<?php
 					foreach ( $columns as $column => $column_title ) {
 						$classes = array($column, "column-$column");
 						if ( in_array($column, $hidden) ) $classes[] = 'hidden';
 
 						if ( method_exists(get_class($this), $column) ): ?>
-							<td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php echo call_user_func(array($this, $column), $data, $column, $column_title, $this->options); ?></td>
+                            <td class="<?php echo esc_attr(join(' ', $classes)); ?>"><?php echo call_user_func(array($this, $column), $data, $column, $column_title, $this->options); ?></td>
 						<?php else: ?>
-							<td class="<?php echo esc_attr(join(' ', $classes)); ?>">
-							<?php do_action( 'shopp_manage_report_custom_column', $column, $column_title, $data );	?>
-							</td>
+                            <td class="<?php echo esc_attr(join(' ', $classes)); ?>">
+								<?php do_action( 'shopp_manage_report_custom_column', $column, $column_title, $data );	?>
+                            </td>
 						<?php endif;
-				} /* $columns */
-				?>
-				</tr>
-				<?php endwhile; /* records */ ?>
+					} /* $columns */
+					?>
+                </tr>
+                <?php endforeach; ?>
 
 				<tr class="summary average">
 					<?php

@@ -589,13 +589,12 @@ abstract class ShippingFramework {
 				else $postcodes = array($rule['postcode']);
 
 				//Exclusive rules need to be evaluated first
-				usort($postcodes, create_function(
-						'$a, $b',
-						'$a = ( "!" == $a{0} );
-						 $b = ( "!" == $b{0} );
-						 if ( $a == $b ) return 0;
-						 return ( $a < $b ) ? -1 : 1;'
-				));
+				usort($postcodes, function( $a, $b ) {
+					$a = ( "!" == $a{0} );
+					$b = ( "!" == $b{0} );
+					if ( $a == $b ) return 0;
+					return ( $a < $b ) ? -1 : 1;
+				} );
 
 				$exclusions = 0;
 				foreach ( $postcodes as $coderule ) {
@@ -1237,7 +1236,9 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 		$keys = array_slice(array_keys($selected), 0, count($selection));
 		$selected = array_merge( $selected, array_combine($keys, $selection) );
 
-		$regional_countries = array_filter($countries, create_function('$c', 'return (\'' . ($selected['region']) . '\' === (string)$c[\'region\']);'));
+		$regional_countries = array_filter($countries, function ( $c ) use( $selected ) {
+			return $selected['region'] === (string)$c['region'];
+		} );
 
 		if ( ! empty($selected['country']) ) {
 			$ca = Lookup::country_areas();
@@ -1303,7 +1304,9 @@ class ShippingSettingsUI extends ModuleSettingsUI {
 
 		} // end foreach ($regions)
 
-		$selected = array_filter($selected, create_function('$i', 'return (\'\' != $i);'));
+		$selected = array_filter($selected, function ( $i ) {
+			return ( '' != $i );
+		} );
 		$selection = join( ',', $selected );
 
 		return array('options' => $options, 'selection' => $selection,'postcode' => $postcode);

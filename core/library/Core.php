@@ -920,11 +920,12 @@ abstract class ShoppCore {
 		if ( ! is_dir($directory) ) return false;
 
 		try {
-			foreach ( new RecursiveIteratorIterator( new RecursiveDirectoryIterator($directory) ) as $file )
+			foreach ( new RecursiveIteratorIterator( new RecursiveDirectoryIterator($directory) ) as $file ) {
 				if ( $file->getFilename() === $filename ) {
 					$matches[] = $file->getPathname();
 					if ( ! $greedy ) break;
 				}
+			}
 		}
 		catch (Exception $e) {}
 
@@ -1645,8 +1646,15 @@ abstract class ShoppCore {
 		if ( ! empty($f['thousands']) && false !== strpos($df, $f['thousands']) ) {
 			$groupings = explode($f['thousands'], $dfc);
 			$grouping = array();
-			while ( list($i, $g) = each($groupings) )
-				if ( strlen($g) > 1 ) array_unshift($grouping, strlen($g));
+
+			foreach ( $groupings as $grouping ) {
+				list($i, $g) = $grouping;
+
+				if ( strlen($g) > 1 ) {
+					array_unshift($grouping, strlen($g) );
+				}
+			}
+
 			$f['grouping'] = $grouping;
 		}
 

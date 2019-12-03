@@ -137,7 +137,9 @@ class ShoppAPIFile extends ModuleFile {
 
 		// Otherwise, the register function will assume that all method names (excluding _ prefixed methods) correspond to tag you want.
 		// _ prefix members can be used as helper functions
-		$methods = array_filter( get_class_methods ($api), create_function( '$m','return ( "_" != $m{0} );' ) );
+		$methods = array_filter( get_class_methods ($api), function ( $m ) {
+			return ( "_" != $m{0} );
+		} );
 		foreach ( $methods as $tag )
 			add_filter( 'shopp_themeapi_'.strtolower($apicontext.'_'.$tag), array($api, $tag), 9, 3 );
 

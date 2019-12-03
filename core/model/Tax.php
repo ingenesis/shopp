@@ -293,7 +293,9 @@ class ShoppTax {
 			'locale' => $locale
 		));
 
-		$this->address = array_merge($this->address, array_filter($address, create_function('$e', 'return ! is_null($e);')));
+		$this->address = array_merge($this->address, array_filter($address, function ( $e ) {
+			return ! is_null($e);
+		} ) );
 
 		return $this->address;
 	}

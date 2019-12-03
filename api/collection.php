@@ -43,10 +43,10 @@ function shopp_register_collection ( $name = '' ) {
 
 	add_filter( $permastruct . '_rewrite_rules', array('ProductCollection', 'pagerewrites') );
 
-	$apicall = create_function ( '$result, $options, $O',
-		'ShoppCollection( new ' . $name . '($options) );
-		return ShoppStorefrontThemeAPI::category($result, $options, $O);'
-	);
+	$apicall = function ( $result, $options, $O ) use ( $name ) {
+		ShoppCollection( new $name($options) );
+		return ShoppStorefrontThemeAPI::category($result, $options, $O);
+	};
 
 	foreach ( (array)$slugs as $collection) {
 		$collection = str_replace(array('-','_'), '', $collection); // Sanitize slugs

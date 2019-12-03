@@ -200,7 +200,10 @@ class ShoppAdmin extends ShoppFlowController {
 		if ( isset($this->menus[ $parent ]) && false === strpos($this->menus[ $parent ], 'toplevel') ) {
 			$current_page = $plugin_page;
 			$plugin_page = $parent;
-			add_action('adminmenu', create_function('','global $plugin_page; $plugin_page = "' . $current_page. '";'));
+			add_action('adminmenu', function () use ( $current_page ) {
+				global $plugin_page;
+				$plugin_page = $current_page;
+            } );
 		}
 
 		// Add admin JavaScript & CSS

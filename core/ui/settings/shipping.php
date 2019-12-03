@@ -103,7 +103,9 @@
 					<?php
 						$values = array_reverse(array_merge(range(0, 25), range(30, 50, 5), range(60, 100, 10)));
 						$labels = $values;
-						array_walk($labels,create_function('&$val','$val = "$val%";'));
+						array_walk( $labels, function( &$val ) {
+							$val = "$val%";
+                        } );
 						$levels = array_combine($values, $labels);
 					?>
 					<select name="settings[lowstock_level]" id="lowstock-level">

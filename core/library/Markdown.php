@@ -84,7 +84,9 @@ class MarkdownText extends ArrayObject {
         if (is_string($markdown) || method_exists($markdown, '__toString')) {
             $markdown = explode("\n", (string) $markdown);
             $markdown = array_map(
-				create_function('$markdown', 'return trim($markdown, "\r");'),
+				function ( $markdown ) {
+					return trim($markdown, "\r");
+				},
                 $markdown
             );
         }
@@ -588,11 +590,11 @@ class MarkdownCode extends MarkdownFilter {
             } else {
                 $line->gist = preg_replace_callback(
                     '/(?<!\\\)(`+)(?!`)(?P<code>.+?)(?<!`)\1(?!`)/u',
-                    create_function('$values', '
-                        $line = trim($values["code"]);
-                        $line = htmlspecialchars($line, ENT_NOQUOTES);
-                        return "<code>" . $line . "</code>";
-					'),
+                    function ( $values ) {
+	                    $line = trim($values["code"]);
+	                    $line = htmlspecialchars($line, ENT_NOQUOTES);
+	                    return "<code>" . $line . "</code>";
+                    },
                     $line->gist
                 );
             }
@@ -932,17 +934,17 @@ class MarkdownLink extends MarkdownFilter {
         foreach($text as $no => $line) {
             $line->gist = preg_replace_callback(
                 '/[!]?\[(.*?)\]\((.*?)(\s+"[\w ]+")?\)/uS',
-                create_function('$match', '
-                    if (!isset($match[3])) {
-                        $match[3] = null;
-                    }
+                function ( $match ) {
+	                if (!isset($match[3])) {
+		                $match[3] = null;
+	                }
 
-                    if (substr($match[0],0,1) == "!") {
-                        return MarkdownLink::buildImage($match[1], $match[2], $match[3]);
-                    } else {
-                        return MarkdownLink::buildHtml($match[1], $match[2], $match[3]);
-                    };
-				'),
+	                if (substr($match[0],0,1) == "!") {
+		                return MarkdownLink::buildImage($match[1], $match[2], $match[3]);
+	                } else {
+		                return MarkdownLink::buildHtml($match[1], $match[2], $match[3]);
+	                }
+                },
                 $line->gist
             );
 

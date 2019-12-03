@@ -18,10 +18,6 @@ defined( 'WPINC' ) || header( 'HTTP/1.1 403' ) & exit; // Prevent direct access
 if ( ! defined('SHOPP_DBPREFIX') ) define('SHOPP_DBPREFIX', 'shopp_');
 if ( ! defined('SHOPP_QUERY_DEBUG') ) define('SHOPP_QUERY_DEBUG', false);
 
-// Make sure that compatibility mode is not enabled
-if ( ini_get('zend.ze1_compatibility_mode') )
-	ini_set('zend.ze1_compatibility_mode', 'Off');
-
 /**
  * The database query interface for Shopp
  *
@@ -109,9 +105,7 @@ class sDB extends SingletonFramework {
 
 		if ( empty($wpdb->dbh) ) return;
 
-		if ( ! isset($wpdb->use_mysqli) || ! $wpdb->use_mysqli )
-			$this->api = new ShoppMySQLEngine();
-		else $this->api = new ShoppMySQLiEngine();
+		$this->api = new ShoppMySQLiEngine();
 
 		$this->api->tether($wpdb->dbh);
 	}
@@ -124,9 +118,7 @@ class sDB extends SingletonFramework {
 	 * @return void
 	 **/
 	protected function engine () {
-		if ( ! function_exists('mysqli_connect') )
-			$this->api = new ShoppMySQLEngine();
-		else $this->api = new ShoppMySQLiEngine();
+		$this->api = new ShoppMySQLiEngine();
 	}
 
 	/**
@@ -753,69 +745,6 @@ interface ShoppDBInterface {
 	public function escape ( $string );
 }
 
-/**
- * Implements the original PHP MySQL extension
- *
- * @author Jonathan Davis
- * @since 1.3.3
- * @package sDB
- **/
-class ShoppMySQLEngine implements ShoppDBInterface {
-
-	private $connection;
-	private $results;
-
-	public function tether ( $connection ) {
-		$this->connection = $connection;
-	}
-
-	public function connect ( $host, $user, $password ) {
-		$this->connection = @mysql_connect($host, $user, $password);
-		return $this->connection;
-	}
-
-	public function db ( $database ) {
-		return @mysql_select_db($database, $this->connection);
-	}
-
-	public function ping () {
-		return mysql_ping($this->connection);
-
-	}
-
-	public function close () {
-		return @mysql_close($this->connection);
-	}
-
-	public function query ( $query ) {
-		$this->result = @mysql_query($query, $this->connection);
-		return $this->result;
-	}
-
-	public function error () {
-		return mysql_error($this->connection);
-	}
-
-	public function affected () {
-		return mysql_affected_rows($this->connection);
-	}
-
-	public function object ( $results = null ) {
-		if ( empty($results) ) $results = $this->results;
-		if ( ! is_resource($results) ) return false;
-		return @mysql_fetch_object($results);
-	}
-
-	public function free () {
-		if ( ! is_resource($this->result) ) return false;
-		return mysql_free_result($this->result);
-	}
-
-	public function escape ( $string ) {
-		return mysql_real_escape_string($string, $this->connection);
-	}
-
-}
 
 /**
  * Implements the PHP mysqli extension

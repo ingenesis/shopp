@@ -1428,9 +1428,13 @@ class ShoppStorefrontThemeAPI implements ShoppAPI {
 			if ( 'RAND' == $order ) shuffle($tags);
 			else {
 				if ( 'name' == $orderby )
-					usort( $tags, create_function('$a, $b', 'return strnatcasecmp($a->name, $b->name);') );
+					usort( $tags, function ( $a, $b ) {
+						return strnatcasecmp( $a->name, $b->name );
+					} );
 				else
-					usort( $tags, create_function('$a, $b', 'return ($a->count > $b->count);') );
+					usort( $tags, function ( $a, $b ) {
+						return ($a->count > $b->count);
+					} );
 
 				if ( 'DESC' == $order ) $tags = array_reverse( $tags, true );
 			}

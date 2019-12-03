@@ -10,3 +10,4 @@ tests/clover.xml
 node_modules/*
 
 .tm_properties
+/vendor

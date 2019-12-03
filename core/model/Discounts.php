@@ -213,11 +213,14 @@ class ShoppDiscounts extends ListFramework {
 
 			foreach ( $rules as $rule ) {
 				$ItemRule = new ShoppDiscountRule($rule, $Promo);
-				if ( $ItemRule->match($Item) && ! $Discount->hasitem($id) ) $matches++;
+				if ( $ItemRule->match($Item) && ! $Discount->hasitem($id) ) {
+					$matches++;
+				}
 			}
 
-			if ( count($rules) == $matches ) // all conditions must match
+			if ( apply_filters( 'shopp_discount_cart_item_matches', count( $rules ) === $matches, $Item, $Discount ) ) { // all conditions must match
 				$Discount->item( $Item );
+			}
 
 		}
 
@@ -1169,6 +1172,7 @@ class ShoppOrderDiscount {
 	 * @return float The item discount amount
 	 **/
 	public function item ( ShoppCartItem $Item ) {
+		$amount = 0;
 
 		// These must result in the discount applied to the *unit price*!
 		switch ( $this->type ) {
@@ -1191,7 +1195,8 @@ class ShoppOrderDiscount {
 
 		}
 
-		$this->items[ $Item->fingerprint() ] = (float)$amount;
+		$amount                              = apply_filters( 'shopp_discount_item_amount', (float) $amount, $Item, $this );
+		$this->items[ $Item->fingerprint() ] = $amount;
 
 		return $amount;
 	}

@@ -48,7 +48,7 @@ class FSStorage extends StorageModule implements StorageEngine {
 
 		// Override access checks when resuming a previous download
 		if (isset($_SERVER['HTTP_RANGE']) && !empty($_SERVER['HTTP_RANGE']))
-			add_filter('shopp_download_forbidden', create_function('$a', 'return false;'));
+			add_filter( 'shopp_download_forbidden', '__return_false' );
 	}
 
 	public function context ( $context ) {
